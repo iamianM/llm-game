@@ -709,41 +709,103 @@ Temporary boons earned during a season:
 
 ## 📊 Document Version
 
-**Version**: 0.1 (Initial Brainstorm)
-**Status**: Concept phase - no files created yet
-**Last Updated**: 2025-01-08
+**Version**: 0.2 (Core Systems Defined)
+**Status**: Systems design complete - ready for implementation planning
+**Last Updated**: 2025-10-08
 
 **Major Changes**:
-- Initial CLAUDE.md creation
-- Documented core game concept from brainstorm session
-- Established documentation philosophy
-- Defined roadmap for future file creation
+- ✅ Genre finalized: Social Sandbox with Seasonal Runs (not hardcore roguelite)
+- ✅ Core systems fully designed and documented
+- ✅ LLM architecture defined (algorithm-first, LLM-second approach)
+- ✅ State management schemas complete
+- ✅ Interaction system designed (hybrid Sims-style)
+- ✅ Location/spatial system mapped
+- ✅ Gossip and information architecture designed
+- ✅ Daily loop and pacing finalized
+
+---
+
+## 🎯 Current Status: Core Systems Defined
+
+**Phase:** Systems Design Complete (Ready for Implementation Planning)
+
+**What's Been Decided:**
+- ✅ **Genre:** Social Sandbox with Seasonal Runs (NOT hardcore roguelite)
+- ✅ **Format:** Love Island structure (locked in)
+- ✅ **Run length:** 2-3 hours (15-20 key days, not full 42)
+- ✅ **Target audience:** General/women, casual-friendly, low failure tolerance
+- ✅ **LLM role:** Narrative flavor and personality, NOT game mechanics
+- ✅ **Core philosophy:** Algorithm calculates outcomes, LLM writes dialogue
+- ✅ **Interaction model:** Hybrid (player selects intent, LLM generates exchange)
+- ✅ **Islander count:** Start with 10, peak at 14-16 with bombshells
+- ✅ **Personality system:** Big 5 OCEAN + Attachment Styles + Type on Paper
+- ✅ **Information architecture:** Hybrid visibility (map shown, dialogue hidden)
+- ✅ **Location system:** Discrete locations with context-specific actions
+- ✅ **No save scumming:** Choices locked in
+
+**Documentation Structure:**
+
+| File | Contents | Lines | Status |
+|------|----------|-------|--------|
+| **01-Game-Vision.md** | Genre, philosophy, inspiration, why this works | ~450 | ✅ Complete |
+| **02-Core-Mechanics.md** | Stats, relationships, interactions, formulas | ~650 | ✅ Complete |
+| **03-LLM-Architecture.md** | Multi-AI system, code vs LLM separation | ~750 | ✅ Complete |
+| **04-State-Management.md** | Data structures, schemas, state flow | ~800 | ✅ Complete |
+| **05-Interaction-System.md** | Conversation system, success calculation | ~700 | ✅ Complete |
+| **06-Location-System.md** | Villa layout, actions, spatial gameplay | ~600 | ✅ Complete |
+| **07-Gossip-And-Information.md** | Knowledge systems, information architecture | ~650 | ✅ Complete |
+| **08-Daily-Loop.md** | Run structure, pacing, time management | ~550 | ✅ Complete |
+| **09-Social-Dynamics.md** | Interruptions, group chats, pulls for chat | ~750 | ✅ Complete |
+
+**Next Steps:**
+- Design specific challenges and events (file 10)
+- Detail NPC autonomous behavior algorithms (file 11)
+- Design meta-progression system (file 12)
+- UI/UX specifications (file 13)
+- Technical implementation plan (file 14)
 
 ---
 
 ## 🔍 Finding Information
 
-**Since everything is currently in this file:**
+**High-level questions:**
+- "What is this game?" → **CLAUDE.md** (this file)
+- "Why Love Island?" → **01-Game-Vision.md**
+- "What's the tech stack?" → **CLAUDE.md** ## Tech Stack
 
-Use Obsidian search or grep:
+**System-specific questions:**
+
+| Question | Read This | Key Section |
+|----------|-----------|-------------|
+| "How do stats work?" | 02-Core-Mechanics.md | ## Player Stats, ## Relationship Stats |
+| "How does success calculation work?" | 02-Core-Mechanics.md | ## Interaction Success Formula |
+| "How does the LLM work?" | 03-LLM-Architecture.md | ## The Multi-AI System |
+| "When to use code vs LLM?" | 03-LLM-Architecture.md | ## Algorithm vs LLM Boundaries |
+| "What are the data structures?" | 04-State-Management.md | ## Islander State, ## Villa State |
+| "How do conversations work?" | 05-Interaction-System.md | ## The Interaction Flow |
+| "What's the menu system?" | 05-Interaction-System.md | ## Hybrid Menu System |
+| "How do locations work?" | 06-Location-System.md | ## Villa Locations |
+| "What actions are available?" | 06-Location-System.md | ## Location-Specific Actions |
+| "How does gossip work?" | 07-Gossip-And-Information.md | ## The Gossip System |
+| "What can the player see?" | 07-Gossip-And-Information.md | ## Information Architecture |
+| "What's the daily structure?" | 08-Daily-Loop.md | ## The Four Phases |
+| "How long is a run?" | 08-Daily-Loop.md | ## Run Length and Pacing |
+| "How do interruptions work?" | 09-Social-Dynamics.md | ## Conversation Interruptions |
+| "What are group conversations?" | 09-Social-Dynamics.md | ## Group Conversations |
+| "How does pulling for a chat work?" | 09-Social-Dynamics.md | ## The Pull System |
+
+**Use grep to find specific topics:**
 ```bash
-# Find player stats
-grep -n "Player Stats" CLAUDE.md
+# Find all mentions of chemistry
+grep -rn "chemistry" *.md
 
-# Find LLM tagging system
-grep -n "Tagging & Scoring" CLAUDE.md
+# Find where relationship thresholds are defined
+grep -n "threshold" 05-Interaction-System.md
 
-# Find meta-progression
-grep -n "Meta-Progression" CLAUDE.md
+# Find personality system details
+grep -n "Big 5" 03-LLM-Architecture.md
 ```
-
-**As files are created**, update this section with a reference table like:
-
-| Question | Read This | Section |
-|----------|-----------|---------|
-| "How does LLM scoring work?" | 04-LLM-Integration.md | ## Tagging & Scoring System |
-| "What are player stats?" | 02-Core-Mechanics.md | ## Player Stats |
 
 ---
 
-*This is the main entry point for understanding and developing the LLM-powered Love Island roguelite. All current knowledge about the game is contained in this file. As systems are finalized, they will be extracted into numbered documentation files following the philosophy outlined above.*
+*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Core systems are now fully documented in 8 comprehensive files. Ready for implementation planning.*
