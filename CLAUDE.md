@@ -736,7 +736,9 @@ Temporary boons earned during a season:
 - ✅ **Target audience:** General/women, casual-friendly, low failure tolerance
 - ✅ **LLM role:** Narrative flavor and personality, NOT game mechanics
 - ✅ **Core philosophy:** Algorithm calculates outcomes, LLM writes dialogue
-- ✅ **Interaction model:** Hybrid (player selects intent, LLM generates exchange)
+- ✅ **Interaction model:** Two-tier hybrid (static intent menu → dynamic contextual follow-ups)
+- ✅ **Conversation system:** LLM generates both player dialogue and NPC response in single call
+- ✅ **Conversation endings:** Organic (hybrid algorithm + LLM decides when NPC leaves, no hard cap)
 - ✅ **Islander count:** 8 Islanders (4 couples), peak at 14-16 with bombshells/Casa Amor
 - ✅ **Personality system:** Big 5 OCEAN + Attachment Styles + Type on Paper
 - ✅ **Information architecture:** Hybrid visibility (map shown, dialogue hidden)
@@ -759,7 +761,7 @@ Temporary boons earned during a season:
 | **02-Core-Mechanics.md** | Stats (fixed 3-9), relationships, interactions, formulas | ~1115 | ✅ Complete |
 | **03-LLM-Architecture.md** | Multi-AI system, code vs LLM separation | ~750 | ✅ Complete |
 | **04-State-Management.md** | Data structures, schemas, state flow | ~800 | ✅ Complete |
-| **05-Interaction-System.md** | Conversation system, success calculation | ~700 | ✅ Complete |
+| **05-Interaction-System.md** | Conversation system, contextual follow-ups, organic endings | ~1508 | ✅ Complete |
 | **06-Location-System.md** | Villa layout, actions, spatial gameplay | ~600 | ✅ Complete |
 | **07-Gossip-And-Information.md** | Knowledge systems, information architecture | ~650 | ✅ Complete |
 | **08-Daily-Loop.md** | Run structure, pacing, social events | ~1090 | ✅ Complete |
@@ -800,6 +802,9 @@ Temporary boons earned during a season:
 | "What are the data structures?" | 04-State-Management.md | ## Islander State, ## Villa State |
 | "How do conversations work?" | 05-Interaction-System.md | ## The Interaction Flow |
 | "What's the menu system?" | 05-Interaction-System.md | ## Hybrid Menu System |
+| "How do contextual follow-ups work?" | 05-Interaction-System.md | ## Conversation Structure & Continuity |
+| "When do conversations end?" | 05-Interaction-System.md | ## Organic Conversation Endings |
+| "Does the LLM generate player dialogue?" | 05-Interaction-System.md | ## Single Exchange Generation |
 | "How do locations work?" | 06-Location-System.md | ## Villa Locations |
 | "What actions are available?" | 06-Location-System.md | ## Location-Specific Actions |
 | "How does gossip work?" | 07-Gossip-And-Information.md | ## The Gossip System |
