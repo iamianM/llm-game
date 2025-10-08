@@ -388,6 +388,101 @@ Villa dynamics have shifted:
 
 ---
 
+### Social Events (When No Ceremony)
+
+**Purpose:** Provide structure to non-ceremony evenings, build relationships, create talking points
+
+**Format:** Round-table gathering where everyone shares in response to a prompt
+
+**Frequency:** Triggered when no major ceremony scheduled (~every 3 days)
+
+**Event Types** (see 10-Ceremonies-And-Events.md for full details):
+1. **Never Have I Ever** - Expose secrets
+2. **Most Embarrassing Story** - Character depth, humor
+3. **Worst Breakup Story** - Vulnerability, relationship history
+4. **What Are You Looking For?** - Type on paper hints, creates drama
+5. **Biggest Fear** - Deep vulnerability, emotional connection
+6. **Celebrity Crush / Hall Pass** - Light, fun, reveals type
+
+**How social events work:**
+```javascript
+function executeSocialEvent(eventType) {
+  // 1. All Islanders gather at firepit/terrace
+  gatherAllIslanders("firepit")
+
+  // 2. Announce prompt
+  const prompt = socialEventPrompts[eventType]
+  displayPrompt(prompt) // e.g., "Share your biggest fear"
+
+  // 3. Each Islander shares (including player)
+  for (const islander of shuffleOrder(allIslanders)) {
+    if (islander === player) {
+      // Player chooses tone
+      const toneChoice = await showPlayerMenu([
+        "Vulnerable (deep connection)",
+        "Funny (entertaining)",
+        "Deflect (safe but boring)"
+      ])
+
+      // LLM generates story based on tone
+      const playerStory = await LLM.generate({
+        tone: toneChoice,
+        eventType: eventType,
+        archetype: player.archetype
+      })
+
+      displayStory(playerStory)
+      applyEffects(toneChoice.effects) // +EQ perception, +audience, etc.
+
+    } else {
+      // NPC shares (LLM generates based on personality)
+      const npcStory = await LLM.generate({
+        character: islander,
+        eventType: eventType,
+        villaContext: currentDrama
+      })
+
+      displayStory(npcStory)
+
+      // Everyone learns this fact
+      addKnowledgeFact({
+        fact: npcStory,
+        knownBy: allIslanders,
+        source: "witnessed"
+      })
+    }
+  }
+
+  // 4. Aftermath reactions (optional drama)
+  await generateReactions()
+}
+
+function selectSocialEvent(villaState) {
+  // Week 1: Light events
+  if (villaState.day <= 5) {
+    return random(["Celebrity Crush", "Most Embarrassing"])
+  }
+
+  // Week 2: Medium events
+  if (villaState.day <= 10) {
+    return random(["What Are You Looking For", "Never Have I Ever"])
+  }
+
+  // Week 3+: Heavy events
+  return random(["Worst Breakup", "Biggest Fear"])
+}
+```
+
+**Player benefits:**
+- Learns about Islanders they haven't talked to
+- Creates conversation topics for later
+- Affects perception stats based on tone chosen
+- No time cost (evening is for events)
+
+**Social events replace "free days"** - every evening has structure, either a ceremony OR a social event.
+
+---
+
 ## Daily Structure
 
 ### Phase Transitions
@@ -442,11 +537,12 @@ function transitionToEvening() {
   const eveningEvent = scheduledEvents.find(e => e.day === currentDay && e.phase === "evening")
 
   if (eveningEvent) {
-    // Execute event (recoupling, dumping, etc.)
+    // Execute major event (recoupling, dumping, etc.)
     executeEveningEvent(eveningEvent)
   } else {
-    // Free evening (rare)
-    executeFreeEvening()
+    // Social event (round-table gathering)
+    // Triggered when no ceremony scheduled
+    executeSocialEvent(selectSocialEvent(villaState))
   }
 }
 ```
@@ -495,9 +591,9 @@ function advanceToNextDay() {
 - Learn preferences
 
 **Events:**
-- Day 1: Initial coupling (random or strategic choice)
-- Day 2: First challenge (icebreaker)
-- Day 3: First recoupling (small stakes)
+- Day 1: Initial coupling
+- Day 2: Challenge (icebreaker) + Social event ("Celebrity Crush")
+- Day 3: Recoupling (small stakes)
 
 **Difficulty:** Easy
 - Low elimination risk
@@ -520,9 +616,11 @@ function advanceToNextDay() {
 - Manage emerging rivalries
 
 **Events:**
-- Day 5: First bombshell arrival
+- Day 5: Bombshell arrival + Challenge
+- Day 6: Social event ("What Are You Looking For?")
 - Day 7: Recoupling (girls/boys choose)
-- Day 9: Challenge with meaningful prize
+- Day 8: Public vote (bottom 2 couples)
+- Day 9: Social event ("Never Have I Ever")
 
 **Difficulty:** Moderate
 - Real elimination risk
@@ -546,10 +644,9 @@ function advanceToNextDay() {
 - Manage multiple competing interests
 
 **Events:**
-- Day 11: Second bombshell
-- Day 12: Casa Amor (ultimate test)
-- Day 14: Public vote (eliminations)
-- Day 15: Explosive recoupling
+- Day 11: Individual vote (bottom 3) + Social event ("Worst Breakup")
+- Day 12-14: Casa Amor (ultimate test, 3-day event)
+- Day 15: Casa Amor recoupling + Social event ("Biggest Fear")
 
 **Difficulty:** Hard
 - High elimination risk
@@ -574,8 +671,8 @@ function advanceToNextDay() {
 - Create legacy
 
 **Events:**
-- Day 16: Final dates
-- Day 17: Declarations
+- Day 16: Public vote (bottom 2 couples, down to final 3)
+- Day 17: Final recoupling + Individual vote (down to final 2 couples)
 - Day 18: Final vote and winner announcement
 
 **Difficulty:** Moderate (but high stakes)

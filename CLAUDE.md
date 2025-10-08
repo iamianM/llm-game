@@ -737,29 +737,36 @@ Temporary boons earned during a season:
 - ✅ **LLM role:** Narrative flavor and personality, NOT game mechanics
 - ✅ **Core philosophy:** Algorithm calculates outcomes, LLM writes dialogue
 - ✅ **Interaction model:** Hybrid (player selects intent, LLM generates exchange)
-- ✅ **Islander count:** Start with 10, peak at 14-16 with bombshells
+- ✅ **Islander count:** 8 Islanders (4 couples), peak at 14-16 with bombshells/Casa Amor
 - ✅ **Personality system:** Big 5 OCEAN + Attachment Styles + Type on Paper
 - ✅ **Information architecture:** Hybrid visibility (map shown, dialogue hidden)
 - ✅ **Location system:** Discrete locations with context-specific actions
 - ✅ **No save scumming:** Choices locked in
+- ✅ **Stats:** 5 fixed stats (Charm, Banter, EQ, Graft, Loyalty) set at character creation (3-9 range, 30 points)
+- ✅ **Stat gating:** Advanced options locked behind stat thresholds (e.g., Graft 5 = Bold category)
+- ✅ **Social events:** Round-table sharing events (6 types) replace free days
+- ✅ **Setup flow:** Archetype selection → stat allocation → character card examination → reroll system
+- ✅ **Challenges:** All non-interactive (algorithm-based), no physical challenges
+- ✅ **Audience meter:** Visible individual (1-8) and couple (1-4) rankings with trajectory arrows
 
 **Documentation Structure:**
 
 | File | Contents | Lines | Status |
 |------|----------|-------|--------|
 | **Love-Island-Reference.md** | Complete show breakdown, what works/doesn't | ~800 | ✅ Reference |
+| **00-Game-Start-And-Setup.md** | Character creation, archetypes, stats, rerolls, meta-progression | ~900 | ✅ Complete |
 | **01-Game-Vision.md** | Genre, philosophy, inspiration, why this works | ~450 | ✅ Complete |
-| **02-Core-Mechanics.md** | Stats, relationships, interactions, formulas | ~650 | ✅ Complete |
+| **02-Core-Mechanics.md** | Stats (fixed 3-9), relationships, interactions, formulas | ~1115 | ✅ Complete |
 | **03-LLM-Architecture.md** | Multi-AI system, code vs LLM separation | ~750 | ✅ Complete |
 | **04-State-Management.md** | Data structures, schemas, state flow | ~800 | ✅ Complete |
 | **05-Interaction-System.md** | Conversation system, success calculation | ~700 | ✅ Complete |
 | **06-Location-System.md** | Villa layout, actions, spatial gameplay | ~600 | ✅ Complete |
 | **07-Gossip-And-Information.md** | Knowledge systems, information architecture | ~650 | ✅ Complete |
-| **08-Daily-Loop.md** | Run structure, pacing, time management | ~550 | ✅ Complete |
+| **08-Daily-Loop.md** | Run structure, pacing, social events | ~1090 | ✅ Complete |
 | **09-Social-Dynamics.md** | Interruptions, group chats, pulls for chat | ~750 | ✅ Complete |
+| **10-Ceremonies-And-Events.md** | Producer AI, ceremonies, challenges, social events, Casa Amor | ~2600 | ✅ Complete |
 
 **Next Steps:**
-- Design specific challenges and events (file 10)
 - Detail NPC autonomous behavior algorithms (file 11)
 - Design meta-progression system (file 12)
 - UI/UX specifications (file 13)
@@ -781,6 +788,11 @@ Temporary boons earned during a season:
 |----------|-----------|-------------|
 | "How does the show work?" | Love-Island-Reference.md | ## The Rules of the Game |
 | "What do fans love/hate?" | Love-Island-Reference.md | ## What Fans Love/Hate |
+| "How does character creation work?" | 00-Game-Start-And-Setup.md | ## The Setup Flow |
+| "What are the archetypes?" | 00-Game-Start-And-Setup.md | ## Archetype Selection |
+| "How do I allocate stats?" | 00-Game-Start-And-Setup.md | ## Stat Allocation |
+| "How do rerolls work?" | 00-Game-Start-And-Setup.md | ## The Reroll System |
+| "What is meta-progression?" | 00-Game-Start-And-Setup.md | ## Meta-Progression |
 | "How do stats work?" | 02-Core-Mechanics.md | ## Player Stats, ## Relationship Stats |
 | "How does success calculation work?" | 02-Core-Mechanics.md | ## Interaction Success Formula |
 | "How does the LLM work?" | 03-LLM-Architecture.md | ## The Multi-AI System |
@@ -794,9 +806,18 @@ Temporary boons earned during a season:
 | "What can the player see?" | 07-Gossip-And-Information.md | ## Information Architecture |
 | "What's the daily structure?" | 08-Daily-Loop.md | ## The Four Phases |
 | "How long is a run?" | 08-Daily-Loop.md | ## Run Length and Pacing |
+| "What are social events?" | 08-Daily-Loop.md | ## Social Events |
 | "How do interruptions work?" | 09-Social-Dynamics.md | ## Conversation Interruptions |
 | "What are group conversations?" | 09-Social-Dynamics.md | ## Group Conversations |
 | "How does pulling for a chat work?" | 09-Social-Dynamics.md | ## The Pull System |
+| "How does the Producer AI work?" | 10-Ceremonies-And-Events.md | ## The Producer AI System |
+| "What are the recoupling rules?" | 10-Ceremonies-And-Events.md | ## Recoupling Ceremonies |
+| "How do challenges work?" | 10-Ceremonies-And-Events.md | ## Challenge System |
+| "What social events exist?" | 10-Ceremonies-And-Events.md | ## Social Events (Round-Table Sharing) |
+| "When do bombshells arrive?" | 10-Ceremonies-And-Events.md | ## Bombshell System |
+| "How does Casa Amor work?" | 10-Ceremonies-And-Events.md | ## Casa Amor |
+| "How do votes and eliminations work?" | 10-Ceremonies-And-Events.md | ## Voting and Eliminations |
+| "How does audience ranking work?" | 10-Ceremonies-And-Events.md | ## Audience/Public Perception System |
 
 **Use grep to find specific topics:**
 ```bash
@@ -812,4 +833,4 @@ grep -n "Big 5" 03-LLM-Architecture.md
 
 ---
 
-*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Core systems are now fully documented in 8 comprehensive files. Ready for implementation planning.*
+*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Core systems are now fully documented in 10 comprehensive files plus Love Island reference. Ready for implementation planning.*

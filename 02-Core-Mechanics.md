@@ -24,155 +24,195 @@
 
 ## Player Stats
 
-These represent your Islander's natural abilities and personality traits. They grow slowly through successful interactions and challenges.
+**IMPORTANT:** These stats are **fixed for the entire run**. They are set during character creation (see 00-Game-Start-And-Setup.md) and **do not change** during gameplay.
 
-### Charm (0-10)
+Stats range from **3-9** (minimum 3, maximum 9). You allocate 30 points total across 5 stats.
+
+---
+
+### Charm (3-9)
 
 **What it is:** Natural charisma and romantic appeal
 
 **Affects:**
-- First impressions with new Islanders
-- Romantic interaction success rates
+- Romantic interaction success rates (+15% to +45% bonus)
 - Flirting effectiveness
-- Initial chemistry generation
+- Chemistry building rate
+- Romantic moments
 
-**How it grows:**
-- Successful flirts (+0.1 per success)
-- Winning romantic challenges (+0.5)
-- Positive feedback from partners (+0.1)
-- Caps at 10
+**Success bonus:** Charm × 5%
+- Charm 3 = +15% success on romantic actions
+- Charm 6 = +30% success
+- Charm 9 = +45% success
+
+**Unlocks advanced options:**
+- **Charm 6:** "Intimate compliment" action
+- **Charm 7:** "Bold romantic gesture" action
+- **Charm 8:** "Sweep them off their feet" action (massive chemistry gain)
 
 **Example usage:**
 ```javascript
 // Flirting with Chloe
 const baseChance = 50
-const charmBonus = player.stats.charm * 5 // 0-50 bonus
+const charmBonus = player.stats.charm * 5 // 15-45%
 const finalChance = baseChance + charmBonus + otherModifiers
 ```
 
-### Banter (0-10)
+**Playstyle:** High Charm builds are romantic specialists (Heartthrob archetype)
+
+---
+
+### Banter (3-9)
 
 **What it is:** Wit, humor, and conversational skill
 
 **Affects:**
-- Joke interaction success
+- Humor interaction success rates (+15% to +45% bonus)
 - Group conversation effectiveness
-- Challenge performance (humor-based challenges)
+- Entertainment value (audience score)
 - Friendship building rate
 
-**How it grows:**
-- Successful jokes (+0.1)
-- Making groups laugh (+0.2)
-- Winning banter challenges (+0.5)
-- Caps at 10
+**Success bonus:** Banter × 5%
+- Banter 3 = +15% success on humor actions
+- Banter 6 = +30% success
+- Banter 9 = +45% success
+
+**Unlocks advanced options:**
+- **Banter 6:** "Roast them playfully" action
+- **Banter 7:** "Make group laugh" action
+- **Banter 8:** "Diffuse tension with joke" action (special crisis option)
 
 **Example usage:**
 ```javascript
 // Telling a joke at the pool
-const banterCheck = player.stats.banter >= 6 // threshold check
-if (banterCheck) {
-  // Unlock advanced joke options
-}
+const banterBonus = player.stats.banter * 5 // 15-45%
+const audienceBonus = player.stats.banter * 2 // audience loves humor
 ```
 
-### Graft (0-10)
+**Playstyle:** High Banter builds are entertainers (Comedian archetype)
 
-**What it is:** Active pursuit and flirtation intensity (Love Island core concept)
+---
 
-**Affects:**
-- Success at "pulling for a chat"
-- Chemistry building rate
-- Ability to steal partners
-- Bombshell effectiveness
-
-**How it grows:**
-- Successfully pursuing new connections (+0.2)
-- Bold romantic moves (+0.1)
-- Winning coupling competitions (+0.5)
-- Caps at 10
-
-**Special mechanic:** High Graft unlocks aggressive options but can damage Trust with current partner
-
-**Example usage:**
-```javascript
-// Trying to graft on a coupled Islander
-const graftBonus = player.stats.graft * 7 // Higher weight for graft
-const penalty = targetIsCoupled ? -30 : 0
-const success = (baseChance + graftBonus + penalty) > roll
-```
-
-### Loyalty (0-10)
-
-**What it is:** Faithfulness and commitment to current partner
-
-**Affects:**
-- Trust building rate with partner
-- Partner's security level
-- Public perception (audience loves loyalty)
-- Resistance to bombshell temptation
-
-**How it grows:**
-- Staying coupled over time (+0.1 per day)
-- Rejecting advances (+0.2)
-- Reassuring partner (+0.1)
-- Caps at 10
-
-**Tradeoff:** High Loyalty limits chemistry with others, low Loyalty enables multi-connection play
-
-**Example usage:**
-```javascript
-// Partner feels secure
-const loyaltyBonus = player.stats.loyalty * 3
-partner.relationships.player.trust += loyaltyBonus / 10 // daily passive gain
-```
-
-### Emotional Intelligence (0-10)
+### Emotional IQ (3-9)
 
 **What it is:** Reading emotions and responding appropriately
 
 **Affects:**
-- Deep conversation success
+- Deep conversation success rates (+15% to +45% bonus)
+- Trust building effectiveness
 - Reading NPC moods accurately
-- Gossip interpretation
 - Conflict resolution
+- Interpreting gossip correctly
 
-**How it grows:**
-- Successful deep conversations (+0.2)
-- Correctly reading situations (+0.1)
-- Resolving arguments (+0.3)
-- Caps at 10
+**Success bonus:** EQ × 5%
+- EQ 3 = +15% success on deep conversations
+- EQ 6 = +30% success
+- EQ 9 = +45% success
+
+**Unlocks advanced options:**
+- **EQ 6:** "Read their emotions" action (reveals current mood and concerns)
+- **EQ 7:** "Vulnerable confession" action
+- **EQ 8:** "Deep emotional support" action (crisis intervention, massive trust gain)
 
 **Example usage:**
 ```javascript
 // Deep heart-to-heart conversation
-const eiBonus = player.stats.emotional_intelligence * 6
-const moodPenalty = target.mood === "upset" ? -20 : 0
-// High EI overcomes mood penalty
+const eqBonus = player.stats.emotional_iq * 5 // 15-45%
+// High EQ helps overcome mood penalties
 ```
 
-### Physical (0-10)
+**Playstyle:** High EQ builds are emotional specialists (Romantic/Strategist archetypes)
 
-**What it is:** Athletic ability and physical attractiveness
+---
+
+### Graft (3-9)
+
+**What it is:** Active pursuit and flirtation intensity (Love Island core concept)
 
 **Affects:**
-- Physical challenge success
-- Initial attraction
-- Gym/sports activity effectiveness
-- Some Islanders' preferences
+- Bold move success rates (+15% to +45% bonus)
+- Ability to pursue coupled Islanders
+- "Pull for chat" effectiveness
+- Competitive grafting
+- Bombshell-style gameplay
 
-**How it grows:**
-- Winning physical challenges (+0.5)
-- Working out (+0.1)
-- Physical activities with others (+0.1)
-- Caps at 10
+**Success bonus:** Graft × 5%
+- Graft 3 = +15% success on bold actions
+- Graft 6 = +30% success
+- Graft 9 = +45% success
+
+**Unlocks advanced options:**
+- **Graft 5:** **UNLOCKS "Bold 🔥" CATEGORY** (entire category requires Graft 5+)
+  - Steal a kiss
+  - Pull for private chat
+- **Graft 7:** "Steal from couple" action (approach coupled Islander romantically)
+- **Graft 8:** "Public declaration" action (dramatic moment, high risk/reward)
 
 **Example usage:**
 ```javascript
-// Physical challenge: Beach volleyball
-const physicalCheck = player.stats.physical * 10 // 0-100
-const challengeDifficulty = 60
-const success = physicalCheck > challengeDifficulty
+// Trying to graft on a coupled Islander
+const graftBonus = player.stats.graft * 5 // 15-45%
+const coupledPenalty = targetIsCoupled ? -20 : 0
+const success = baseChance + graftBonus + coupledPenalty
 ```
+
+**Special mechanic:** Graft actions can damage Trust with current partner and create Animosity with rivals
+
+**Playstyle:** High Graft builds are bold pursuers (Heartthrob/Bombshell archetypes)
+
+---
+
+### Loyalty (3-9) - SPECIAL STAT
+
+**What it is:** Faithfulness and commitment to current partner
+
+**IMPORTANT:** Loyalty does **NOT** affect success rates like other stats. Instead, it affects relationship stability and social perception.
+
+**Effects:**
+
+**Partner Security (when coupled):**
+- **Loyalty 7+:** Partner anxiety decreases by 5 per day (they feel very secure)
+- **Loyalty 5-6:** Neutral (normal anxiety levels)
+- **Loyalty 3-4:** Partner anxiety increases by 3 per day (they worry about you)
+
+**Guilt Penalty (when grafting on others while coupled):**
+- **Loyalty 7+:** -20% success penalty when flirting with others (feels wrong, less confident)
+- **Loyalty 5-6:** -10% penalty
+- **Loyalty 3-4:** No penalty (can play the field guilt-free)
+
+**Audience Perception:**
+- **Loyalty 7+ staying loyal:** +10 audience score (audience loves commitment)
+- **Loyalty 3-4 playing field:** -5 audience score (but less penalty than high loyalty player doing same)
+- **Loyalty 7+ being disloyal:** -20 audience score (seen as worse betrayal)
+
+**Example usage:**
+```javascript
+// Daily partner security update
+if (player.stats.loyalty >= 7) {
+  partner.anxiety -= 5 // feels secure
+  partner.relationships.player.trust += 2 // passive trust gain
+}
+
+if (player.stats.loyalty <= 4) {
+  partner.anxiety += 3 // worries about player
+}
+
+// Grafting on someone else while coupled
+if (action.type === "flirt" && player.coupledWith !== target.id) {
+  let guiltPenalty = 0
+  if (player.stats.loyalty >= 7) guiltPenalty = -20
+  else if (player.stats.loyalty >= 5) guiltPenalty = -10
+  // else no penalty (low loyalty = no guilt)
+}
+```
+
+**Strategic choice:**
+- **High Loyalty (7-9):** Easier to build strong couple, audience loves you, commit to one person
+- **Low Loyalty (3-4):** Freedom to explore options, can pursue multiple connections, "play the game"
+
+**Playstyle:**
+- High Loyalty = Loyal Romantic archetype
+- Low Loyalty = Strategic Player / Bombshell archetypes
 
 ---
 
@@ -199,10 +239,12 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 - Betrayal (-10-20)
 
 **Critical thresholds:**
-- 20: Interest sparked
-- 40: Genuine attraction
-- 60: Strong feelings
-- 80: Falling in love
+- 20: Interest sparked (unlocks Flirty category)
+- 40: Genuine attraction (unlocks Deep category)
+- 60: Strong feelings (unlocks Kiss, physical intimacy)
+- 80: Falling in love (unlocks "I'm falling for you" confessions)
+
+---
 
 ### Chemistry (0-100)
 
@@ -227,6 +269,8 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 - 50: Strong chemistry
 - 70: "Can't keep hands off each other"
 - 90: Electric connection
+
+---
 
 ### Trust (0-100)
 
@@ -254,6 +298,8 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 
 **Special:** Trust is hardest to build, easiest to destroy
 
+---
+
 ### Friendship (0-100)
 
 **What it is:** Platonic bond independent of romance
@@ -273,6 +319,8 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 **Critical for:** Survival in votes, getting gossip, having allies
 
 **Can exist with OR without romance** - you can have high romance AND high friendship, or high friendship with zero romance
+
+---
 
 ### Animosity (0-100)
 
@@ -302,6 +350,8 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 - 70: Active rivalry
 - 90: Vendetta
 
+---
+
 ### Familiarity (0-100)
 
 **What it is:** How well you know each other
@@ -330,13 +380,13 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 
 ## Interaction Categories
 
-These are the foundational interaction types available to the player.
+**NOTE:** See 05-Interaction-System.md for the full conversation flow and continuity system. This section defines the mechanical categories only.
 
-### Friendly
+### Friendly 💬
 
 **Purpose:** Build friendship, general positive interaction
 
-**Options:**
+**Options (examples):**
 - Ask how they're feeling
 - Chat about the villa
 - Compliment their personality
@@ -352,80 +402,86 @@ These are the foundational interaction types available to the player.
 
 **When to use:** Building social safety net, maintaining relationships
 
-### Flirty
+---
+
+### Flirty 💕
 
 **Purpose:** Build chemistry and romance
 
-**Options:**
-- Compliment their looks
-- Playful teasing
-- Intimate eye contact
-- Subtle touching
-- Suggestive comments
+**Options (examples):**
+- Compliment their looks (always available)
+- Playful teasing (always available)
+- Intimate compliment (requires Charm 6+)
+- Bold romantic gesture (requires Charm 7+)
 
 **Primary stats affected:**
 - Chemistry +4-6
 - Affection +2-4
 - Trust -1 if coupled with someone else
 
-**Stat used:** Charm
+**Stat used:** Charm (Charm × 5% success bonus)
 
 **When to use:** Building romantic connection, testing chemistry
 
-**Unlocked:** Relationship ≥20 OR high chemistry
+**Unlocked:** Relationship Affection ≥20 OR high chemistry
 
-### Deep
+---
+
+### Deep 🗨️
 
 **Purpose:** Build trust and emotional connection
 
-**Options:**
-- Ask about their life back home
-- Share your feelings
-- Discuss your connection
-- Vulnerable confession
-- Future planning
+**Options (examples):**
+- Ask about their life back home (always available)
+- Share your feelings (always available)
+- Vulnerable confession (requires EQ 7+)
+- Deep emotional support (requires EQ 8+)
 
 **Primary stats affected:**
 - Trust +4-6
 - Affection +3-5
 - Familiarity +5-8
 
-**Stat used:** Emotional Intelligence
+**Stat used:** Emotional IQ (EQ × 5% success bonus)
 
 **When to use:** Deepening existing connection, building security
 
-**Unlocked:** Relationship ≥40
+**Unlocked:** Relationship Affection ≥40
 
-### Banter
+---
+
+### Funny 😂
 
 **Purpose:** Build friendship through humor
 
-**Options:**
-- Tell a joke
-- Playful roasting
-- Funny story
-- Impression/performance
-- Self-deprecating humor
+**Options (examples):**
+- Tell a joke (always available)
+- Playful roasting (requires Banter 6+)
+- Make group laugh (requires Banter 7+)
+- Diffuse tension with humor (requires Banter 8+)
 
 **Primary stats affected:**
 - Friendship +4-6
 - Affection +2-3
 - Public Perception +1-2 (if others witness)
 
-**Stat used:** Banter
+**Stat used:** Banter (Banter × 5% success bonus)
 
 **When to use:** Group settings, lightening mood, building friendship
 
-### Graft
+---
 
-**Purpose:** Actively pursue romantic connection (can be risky)
+### Bold 🔥
 
-**Options:**
-- Pull them for a private chat
-- Make bold romantic move
-- Declare interest
-- Ask to couple up
-- Steal from current partner
+**Purpose:** Actively pursue romantic connection (risky)
+
+**Requirements:** **Graft 5+** (entire category locked below Graft 5)
+
+**Options (examples):**
+- Pull them for a private chat (requires Graft 5+)
+- Steal a kiss (requires Graft 5+)
+- Steal from couple (requires Graft 7+)
+- Public declaration (requires Graft 8+)
 
 **Primary stats affected:**
 - Chemistry +5-8 (if successful)
@@ -433,17 +489,19 @@ These are the foundational interaction types available to the player.
 - Animosity +5-10 from their current partner (if coupled)
 - Public Perception -2-5 (if seen as sneaky)
 
-**Stat used:** Graft
+**Stat used:** Graft (Graft × 5% success bonus)
 
 **When to use:** Pursuing new connections, competing for someone
 
 **Risks:** Can damage reputation, create enemies, hurt current partner
 
+---
+
 ### Reassure
 
 **Purpose:** Build trust and security with current partner
 
-**Options:**
+**Options (examples):**
 - "You're the only one I'm interested in"
 - "I'm not getting my head turned"
 - Address their worries
@@ -455,17 +513,19 @@ These are the foundational interaction types available to the player.
 - Affection +2-4
 - Couple Strength +5-10
 
-**Stat used:** Loyalty
+**Stat used:** Loyalty (higher Loyalty = more convincing)
 
 **When to use:** Partner seems worried, bombshell arrived, before recoupling
 
 **Contextual:** Only available with current partner or when concerns exist
 
+---
+
 ### Confront
 
 **Purpose:** Address conflicts or drama
 
-**Options:**
+**Options (examples):**
 - Call out their behavior
 - Defend yourself
 - Demand explanation
@@ -478,7 +538,7 @@ These are the foundational interaction types available to the player.
 - Friendship +5-8 (if resolves well)
 - Public Perception ±3-8 (depends on context)
 
-**Stat used:** Emotional Intelligence (for de-escalation), Banter (for verbal sparring)
+**Stat used:** Emotional IQ (for de-escalation), Banter (for verbal sparring)
 
 **When to use:** Addressing gossip, resolving conflicts, defending yourself
 
@@ -495,11 +555,11 @@ function calculateInteractionSuccess(action, target, player, context) {
   // 1. BASE CHANCE
   let chance = 50 // Starting point
 
-  // 2. STAT BONUS (0-50)
-  const relevantStat = action.statUsed // "charm", "banter", "graft", etc.
+  // 2. STAT BONUS (15-45)
+  const relevantStat = action.statUsed // "charm", "banter", "graft", "eq"
   if (relevantStat) {
-    const statValue = player.stats[relevantStat] // 0-10
-    const statBonus = statValue * 5 // 0-50
+    const statValue = player.stats[relevantStat] // 3-9
+    const statBonus = statValue * 5 // 15-45
     chance += statBonus
   }
 
@@ -540,13 +600,18 @@ function calculateInteractionSuccess(action, target, player, context) {
     chance -= 20
   }
 
-  // Player is coupled with someone else (public location)
+  // Player is coupled with someone else (loyalty guilt penalty)
   if (action.type === "flirt" && player.coupledWith && player.coupledWith !== target.id) {
+    let guiltPenalty = 0
+    if (player.stats.loyalty >= 7) guiltPenalty = -20 // high loyalty = feels wrong
+    else if (player.stats.loyalty >= 5) guiltPenalty = -10
+    // low loyalty = no guilt penalty
+
     if (!isPrivateLocation(player.currentLocation)) {
-      chance -= 30 // risky public flirting
-    } else {
-      chance -= 15 // less risky in private
+      guiltPenalty -= 10 // public makes it worse
     }
+
+    chance += guiltPenalty // apply penalty
   }
 
   // High animosity
@@ -559,7 +624,7 @@ function calculateInteractionSuccess(action, target, player, context) {
     chance -= 15
   }
 
-  // 8. PERSONALITY MODIFIERS
+  // 8. NPC PERSONALITY MODIFIERS (no player personality penalties)
 
   // Extraversion affects social interactions
   if (action.isGroupInteraction) {
@@ -626,7 +691,7 @@ function getMoodModifier(mood, actionType) {
 **Example calculation:**
 
 ```javascript
-// Player (Charm: 7, coupled with Chloe) flirts with Aisha (single) at the pool
+// Player (Charm 8, Loyalty 7, coupled with Chloe) flirts with Aisha (single) at the pool
 
 const action = { type: "flirt", statUsed: "charm", preferredLocation: "pool" }
 const target = aisha // Single, mood: flirty, affection: 35, animosity: 0
@@ -634,7 +699,7 @@ const target = aisha // Single, mood: flirty, affection: 35, animosity: 0
 let chance = 50 // base
 
 // Stat bonus
-chance += 7 * 5 // +35 (good charm)
+chance += 8 * 5 // +40 (high charm)
 
 // Relationship bonus
 chance += 35 / 2 // +17.5 (some existing affection)
@@ -648,12 +713,12 @@ chance += 20 // +20 (she's in flirty mood, bonus to flirt actions)
 // Location
 chance += 10 // +10 (pool is good for flirting)
 
-// PENALTY: Player is coupled with Chloe (not Aisha), public location
-chance -= 30 // -30 (risky!)
+// PENALTY: Player is coupled with Chloe (not Aisha), public location, high loyalty
+chance -= 20 // -20 (guilt from high loyalty, public setting)
 
-// Final: 50 + 35 + 17.5 + 5 + 20 + 10 - 30 = 107.5 → clamped to 95%
+// Final: 50 + 40 + 17.5 + 5 + 20 + 10 - 20 = 122.5 → clamped to 95%
 
-// Very likely to succeed, but risky (Chloe might find out)
+// Very likely to succeed, but high loyalty makes player feel guilty
 ```
 
 ---
@@ -712,7 +777,7 @@ function applyRelationshipChange(action, target, success) {
         break
     }
 
-    // Personality multipliers
+    // NPC Personality multipliers (only for NPCs, not player)
     if (target.personality.agreeableness > 7) {
       // Agreeable people respond more positively
       changes.affection *= 1.2
@@ -753,7 +818,7 @@ function applyRelationshipChange(action, target, success) {
         break
     }
 
-    // High neuroticism = takes failure harder
+    // High neuroticism = takes failure harder (NPC only)
     if (target.personality.neuroticism > 7) {
       changes.animosity += 2
       changes.trust -= 1
@@ -808,18 +873,18 @@ Certain interactions unlock at specific relationship levels:
 
 ### Level 2: Acquaintance (20-39)
 **Unlocks:**
-- Flirty interactions (light)
-- Joke around
+- Flirty category (light flirting)
+- Joke around (Banter actions)
 - Suggest activities together
 
 **Locked:**
 - Deep conversations
-- Romantic actions
+- Advanced romantic actions
 - Couple-specific options
 
 ### Level 3: Friend/Interest (40-59)
 **Unlocks:**
-- Deep conversations
+- Deep category (vulnerable conversations)
 - Share vulnerabilities
 - Private chats
 - Ask to couple up
@@ -892,7 +957,7 @@ function calculateCoupleStrength(player, partner) {
 
 ## Public Perception
 
-The simulated "audience" has an opinion of you:
+The simulated "audience" has an opinion of you (see 10-Ceremonies-And-Events.md for full audience ranking system):
 
 ```javascript
 function calculatePublicPerception(player) {
@@ -901,7 +966,9 @@ function calculatePublicPerception(player) {
   // BONUSES
 
   // Loyalty (audience loves loyal players)
-  perception += player.stats.loyalty * 3 // 0-30
+  if (player.stats.loyalty >= 7 && playerStayedLoyal) {
+    perception += 10 // genuine loyalty rewarded
+  }
 
   // Being in a strong couple
   if (player.coupledWith) {
@@ -914,13 +981,14 @@ function calculatePublicPerception(player) {
   perception += avgAffection / 5 // 0-20
 
   // Humor (audience loves banter)
-  perception += player.stats.banter * 2 // 0-20
+  perception += player.stats.banter * 2 // 6-18 based on Banter stat
 
   // PENALTIES
 
-  // Being "snakey" (flirting while coupled)
+  // Being "snakey" (flirting while coupled, especially with high loyalty)
   const snakeyBehavior = countSnakeyActions(player)
-  perception -= snakeyBehavior * 5 // variable
+  const loyaltyMultiplier = player.stats.loyalty >= 7 ? 2 : 1 // worse if you have high loyalty
+  perception -= snakeyBehavior * 5 * loyaltyMultiplier
 
   // High animosity from others
   const avgAnimosity = getAverageAnimosity(player)
@@ -944,9 +1012,10 @@ function calculatePublicPerception(player) {
 ```
 
 **Public Perception affects:**
+- Individual audience ranking (1-8, visible to player)
+- Couple audience ranking (1-4, visible to player)
 - Final vote outcome
-- Bombshell targeting (they pursue popular players)
-- Recoupling save chances
+- Elimination risk (bottom 2-3 at risk)
 - Meta-progression rewards (Audience Appeal)
 
 ---
@@ -959,7 +1028,7 @@ Multiple paths to "winning":
 **Requirements:**
 - Be coupled at final (Day 18-20)
 - Couple Strength ≥70
-- Public Perception ≥65
+- Individual Audience Rank ≤3
 - Win final vote
 
 **Rewards:**
@@ -969,7 +1038,7 @@ Multiple paths to "winning":
 
 ### Fan Favorite (Good Ending)
 **Requirements:**
-- Public Perception ≥80
+- Individual Audience Rank = 1-2
 - NOT necessarily coupled (can be single)
 - High friendship across villa (avg 60+)
 
@@ -980,7 +1049,7 @@ Multiple paths to "winning":
 ### Friendship Ending (Alt Good Ending)
 **Requirements:**
 - Leave villa with at least 2 friendships ≥80
-- Public Perception ≥50
+- Individual Audience Rank ≤5
 - Doesn't matter if coupled
 
 **Rewards:**
@@ -991,12 +1060,12 @@ Multiple paths to "winning":
 **Requirements:**
 - High drama generated (75+ drama score)
 - Average animosity from others ≥40
-- Public Perception can be low
+- Individual Audience Rank doesn't matter
 
 **Rewards:**
 - Moderate Audience Appeal (250 AP)
 - "Chaos Incarnate" achievement
-- Unlock "Drama Queen/King" archetype
+- Unlock "Chaos Agent" archetype
 
 ### Dumped (Failure - but early)
 **Requirements:**
@@ -1020,13 +1089,12 @@ NPCs have the same stats as the player, but generated procedurally:
 
 ```javascript
 const npcStats = {
-  // Social Stats (0-10)
-  charm: random(4, 10),
-  banter: random(3, 10),
-  graft: random(2, 9),
-  loyalty: random(3, 10),
+  // Social Stats (3-9, same range as player)
+  charm: random(3, 9),
+  banter: random(3, 9),
+  graft: random(3, 9),
+  loyalty: random(3, 9),
   emotional_intelligence: random(3, 9),
-  physical: random(4, 10),
 
   // Derived from Big 5 personality
   attractiveness: 5 + (personality.extraversion / 2), // 5-10
@@ -1036,10 +1104,11 @@ const npcStats = {
 }
 ```
 
-NPCs use these stats for their autonomous interactions with each other.
+NPCs use these stats for their autonomous interactions with each other, using the same success formulas as the player.
 
 ---
 
-**Version:** 1.0
-**Status:** ✅ Complete
-**Next:** See 03-LLM-Architecture.md for how AI integrates with these mechanics
+**Version:** 2.0
+**Status:** ✅ Complete (Updated for fixed stat system)
+**Last Updated:** 2025-10-08
+**Next:** See 05-Interaction-System.md for conversation flow and continuity
