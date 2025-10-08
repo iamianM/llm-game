@@ -747,6 +747,7 @@ Temporary boons earned during a season:
 
 | File | Contents | Lines | Status |
 |------|----------|-------|--------|
+| **Love-Island-Reference.md** | Complete show breakdown, what works/doesn't | ~800 | ✅ Reference |
 | **01-Game-Vision.md** | Genre, philosophy, inspiration, why this works | ~450 | ✅ Complete |
 | **02-Core-Mechanics.md** | Stats, relationships, interactions, formulas | ~650 | ✅ Complete |
 | **03-LLM-Architecture.md** | Multi-AI system, code vs LLM separation | ~750 | ✅ Complete |
@@ -770,6 +771,7 @@ Temporary boons earned during a season:
 
 **High-level questions:**
 - "What is this game?" → **CLAUDE.md** (this file)
+- "How does Love Island actually work?" → **Love-Island-Reference.md**
 - "Why Love Island?" → **01-Game-Vision.md**
 - "What's the tech stack?" → **CLAUDE.md** ## Tech Stack
 
@@ -777,6 +779,8 @@ Temporary boons earned during a season:
 
 | Question | Read This | Key Section |
 |----------|-----------|-------------|
+| "How does the show work?" | Love-Island-Reference.md | ## The Rules of the Game |
+| "What do fans love/hate?" | Love-Island-Reference.md | ## What Fans Love/Hate |
 | "How do stats work?" | 02-Core-Mechanics.md | ## Player Stats, ## Relationship Stats |
 | "How does success calculation work?" | 02-Core-Mechanics.md | ## Interaction Success Formula |
 | "How does the LLM work?" | 03-LLM-Architecture.md | ## The Multi-AI System |
