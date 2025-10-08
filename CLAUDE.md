@@ -766,7 +766,9 @@ Temporary boons earned during a season:
 | **07-Gossip-And-Information.md** | Knowledge systems, information architecture | ~650 | ✅ Complete |
 | **08-Daily-Loop.md** | Run structure, pacing, social events | ~1090 | ✅ Complete |
 | **09-Social-Dynamics.md** | Interruptions, group chats, pulls for chat | ~750 | ✅ Complete |
-| **10-Ceremonies-And-Events.md** | Producer AI, ceremonies, challenges, social events, Casa Amor | ~2600 | ✅ Complete |
+| **10-Elimination-System.md** | Producer AI, recouplings, voting, bombshells, weekly flow | ~1269 | ✅ Complete |
+| **11-Conversation-Flow.md** | Contextual follow-ups, organic endings, two-tier system | ~800 | ✅ Complete |
+| **12-Challenges-And-Events.md** | Challenges, social events, Casa Amor, special events | ~1110 | ✅ Complete |
 
 **Next Steps:**
 - Detail NPC autonomous behavior algorithms (file 11)
