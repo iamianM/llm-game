@@ -32,7 +32,7 @@ def run(args: argparse.Namespace) -> int:
     state = new_game(seed)
     rng = SeededRng(seed)
     narrator = None if args.mock_llm else OpenAINarrator().narrate
-    print("Phase A1 CLI. Type a number, /state, /hash, /help, or /quit.")
+    print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
 
     while not state.is_terminal:
         _print_state(state)

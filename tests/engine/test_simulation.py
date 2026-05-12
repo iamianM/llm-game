@@ -17,3 +17,14 @@ def test_off_screen_simulation_deterministic_under_replay() -> None:
 
     assert first_events == second_events
     assert first.model_dump(mode="json") == second.model_dump(mode="json")
+
+
+def test_off_screen_npc_chat_does_not_change_player_relationships() -> None:
+    """NPC-NPC events do not mutate relationship-with-player values."""
+    state = new_game(7)
+    before = [islander.relationship.model_dump() for islander in state.islanders]
+
+    simulate_off_screen(state, SeededRng("phase"))
+
+    after = [islander.relationship.model_dump() for islander in state.islanders]
+    assert after == before

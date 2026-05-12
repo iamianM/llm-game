@@ -14,7 +14,7 @@ def test_recoupling_pairs_player_with_top_relationship() -> None:
     state = new_game(1)
     state.islanders[1].relationship.affection = 40
 
-    result = recoupling(state, SeededRng(1))
+    result = recoupling(state)
 
     assert result.couples[0].partner_a_id == "player"
     assert result.couples[0].partner_b_id == "maya"
@@ -23,9 +23,9 @@ def test_recoupling_pairs_player_with_top_relationship() -> None:
 def test_recoupling_eliminates_leftover_islander() -> None:
     """An odd active cast leaves one islander dumped."""
     state = new_game(1)
-    arrive_bombshell(state, SeededRng(1))
+    arrive_bombshell(state)
 
-    result = recoupling(state, SeededRng(1))
+    result = recoupling(state)
 
     assert result.eliminated_id is not None
     assert any(islander.eliminated for islander in state.islanders)
@@ -35,8 +35,8 @@ def test_bombshell_arrival_is_idempotent() -> None:
     """The day-four bombshell is inserted once."""
     state = new_game(1)
 
-    first = arrive_bombshell(state, SeededRng(1))
-    second = arrive_bombshell(state, SeededRng(99))
+    first = arrive_bombshell(state)
+    second = arrive_bombshell(state)
 
     assert first.id == "aisha"
     assert second.id == "aisha"

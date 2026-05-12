@@ -12,6 +12,7 @@ not mutate game state or decide outcomes.
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Callable
 from pathlib import Path
 
@@ -27,15 +28,6 @@ from src.game.state.models import GameState
 DEFAULT_MODEL = "gpt-4o-mini"
 DEFAULT_BUDGET_USD = 5.0
 ESTIMATED_COST_PER_CALL_USD = 0.002
-
-
-class Narration(BaseModel):
-    """Narrator output committed through the agent boundary."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    prose: str
-    tone: str
 
 
 class VisibleContext(BaseModel):
@@ -106,7 +98,8 @@ class OpenAINarrator:
             max_output_tokens=220,
         )
         prose = response.output_text.strip()
-        return prose if prose else mock_narration(state, result)
+        validate_narration(prose, context)
+        return prose
 
     def _reserve_budget(self) -> None:
         projected = self._spent_usd + ESTIMATED_COST_PER_CALL_USD
@@ -147,11 +140,11 @@ def mock_narration(state: GameState, result: MechanicalResult) -> str:
     if result.action.kind is ActionKind.TALK:
         target_id = result.action.target_id or "someone"
         outcome = "lands" if result.success else "falls flat"
-        return f"Your chat with {target_id} {outcome} by the {state.location_id}."
+        return f"Your chat with {target_id} {outcome} by the {state.location_id.value}."
     if result.action.kind is ActionKind.FLIRT:
         target_id = result.action.target_id or "someone"
         outcome = "sparks" if result.success else "gets awkward"
-        return f"Your flirt with {target_id} {outcome} by the {state.location_id}."
+        return f"Your flirt with {target_id} {outcome} by the {state.location_id.value}."
     if result.action.kind is ActionKind.BOLD_FLIRT:
         target_id = result.action.target_id or "someone"
         outcome = "makes the villa notice" if result.success else "pushes too hard"
@@ -165,7 +158,25 @@ def mock_narration(state: GameState, result: MechanicalResult) -> str:
         return f"The villa moves into {state.phase.value}."
     if result.action.kind is ActionKind.MOVE:
         return f"You head over to {state.location_id.value}."
+    if result.action.kind is ActionKind.RECOUPLE:
+        return "You make your recoupling choice."
     return "The villa shifts around your choice."
+
+
+def validate_narration(prose: str, context: VisibleContext) -> None:
+    """Fail loud if model prose violates the narrator contract."""
+    words = prose.split()
+    if not 20 <= len(words) <= 150:
+        raise ValueError(f"narration word count out of bounds: {len(words)}; prose={prose!r}")
+    if re.search(r"\d", prose):
+        raise ValueError(f"narration contains digits; prose={prose!r}")
+    allowed = set(context.visible_islanders)
+    known_names = {"Chloe", "Maya", "Liam", "Aisha"}
+    hidden_mentions = sorted(name for name in known_names - allowed if name in prose)
+    if hidden_mentions:
+        raise ValueError(
+            f"narration mentions hidden islander(s) {hidden_mentions}; prose={prose!r}"
+        )
 
 
 def _load_dotenv_local(path: Path = Path(".env.local")) -> None:

@@ -2,7 +2,7 @@
 # uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day6-full-run.yaml --mock-llm
 name: day6-full-run
 seed: 6
-expected_hash: abaa4822348e8d52f5589c015158830628e761ebfc7da753513869c35018ca02
+expected_hash: 7f381c73ddb1f876dd117ad5c8cc25c25280a14420650f69af5a138f9102af6f
 actions:
   - kind: advance_phase
   - kind: advance_phase

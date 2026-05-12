@@ -31,6 +31,17 @@ def test_run_turn_advances_phase() -> None:
     assert result.state.turn_index == 1
 
 
+def test_run_turn_surfaces_bombshell_event() -> None:
+    """Ceremony events are visible in TurnResult instead of hidden state changes."""
+    state = new_game(1)
+    state.day = 3
+    state.phase = Phase.EVENING
+
+    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+
+    assert any(event.kind == "bombshell" for event in result.ceremony_events)
+
+
 def test_apply_action_does_not_bump_turn_index() -> None:
     """Turn bookkeeping only happens inside run_turn."""
     state = new_game(1)

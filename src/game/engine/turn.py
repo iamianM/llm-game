@@ -15,7 +15,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.narrator import NarratorFn, mock_narration
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
-from src.game.engine.ceremonies import arrive_bombshell, recoupling
+from src.game.engine.ceremonies import CeremonyEvent, arrive_bombshell, recoupling
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
@@ -35,6 +35,7 @@ class TurnResult(BaseModel):
     available_actions: list[ActionSpec]
     state_hash: str
     off_screen_events: list[OffScreenEvent] = []
+    ceremony_events: list[CeremonyEvent] = []
 
 
 def run_turn(
@@ -46,12 +47,24 @@ def run_turn(
     """Run one deterministic game turn."""
     result = apply_action(state, action, rng)
     off_screen_events: list[OffScreenEvent] = []
+    ceremony_events: list[CeremonyEvent] = []
+    if action.kind is ActionKind.RECOUPLE:
+        ceremony = recoupling(state, action.target_id)
+        ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
     if action.kind is ActionKind.ADVANCE_PHASE:
         if state.phase.value == "evening" and state.day in {3, 5}:
-            recoupling(state, rng.fork(f"day-{state.day}-recoupling"))
+            ceremony = recoupling(state)
+            ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
         advance_phase(state)
         if state.day == 4 and state.phase.value == "morning":
-            arrive_bombshell(state, rng.fork("day-4-bombshell"))
+            bombshell = arrive_bombshell(state)
+            ceremony_events.append(
+                CeremonyEvent(
+                    kind="bombshell",
+                    message=f"Bombshell arrived: {bombshell.name} enters the villa.",
+                    islander_id=bombshell.id,
+                )
+            )
         off_screen_events = simulate_off_screen(
             state,
             rng.fork(f"day-{state.day}-phase-{state.phase.value}"),
@@ -65,4 +78,18 @@ def run_turn(
         available_actions=available_actions(state),
         state_hash=state_hash(state.model_dump(mode="json")),
         off_screen_events=off_screen_events,
+        ceremony_events=ceremony_events,
     )
+
+
+def _recoupling_events(eliminated_id: str | None) -> list[CeremonyEvent]:
+    events = [CeremonyEvent(kind="recoupling", message="Recoupling ceremony completed.")]
+    if eliminated_id is not None:
+        events.append(
+            CeremonyEvent(
+                kind="elimination",
+                message=f"Dumping decision: {eliminated_id} leaves the villa.",
+                islander_id=eliminated_id,
+            )
+        )
+    return events

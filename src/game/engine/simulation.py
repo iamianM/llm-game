@@ -5,15 +5,15 @@ Design sources:
 - 06-Location-System.md: spatial gameplay
 - 09-Social-Dynamics.md: off-screen social movement
 
-NPC simulation is mechanical only in Phase B: it mutates relationship values and
-returns traceable events, but it does not narrate.
+NPC simulation is mechanical only in Phase B: it returns traceable events but
+does not mutate player-facing relationships.
 """
 
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.state.models import GameState, Location, clamp_relationship
+from src.game.state.models import GameState, Location
 from src.game.state.rng import SeededRng
 
 
@@ -68,8 +68,6 @@ def simulate_off_screen(state: GameState, rng: SeededRng) -> list[OffScreenEvent
                 continue
             behavior = BEHAVIOR[actor.archetype]
             if rng.randint(1, 100) <= behavior.flirt_propensity:
-                actor.relationship.chemistry = clamp_relationship(actor.relationship.chemistry + 1)
-                target.relationship.chemistry = clamp_relationship(target.relationship.chemistry + 1)
                 events.append(
                     OffScreenEvent(
                         actor_id=actor.id,

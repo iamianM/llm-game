@@ -27,6 +27,7 @@ class ActionKind(StrEnum):
     LISTEN = "listen"
     LEAVE = "leave"
     MOVE = "move"
+    RECOUPLE = "recouple"
     ADVANCE_PHASE = "advance_phase"
 
 

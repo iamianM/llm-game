@@ -57,3 +57,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: command-level packet generation and link validation via local run; no new pytest module
 - QA result: `make qa` green, 39 tests passed; packet generated with real narration and opened locally at `http://127.0.0.1:8766/index.html`
 - Scenario fixture: `scripts/fixtures/policy-loyal.yaml`, `scripts/fixtures/policy-chaotic.yaml`, `scripts/fixtures/policy-strategic.yaml`
+
+## Phase E.1
+
+- Files added: none
+- Files changed: `src/game/engine/turn.py`, `src/game/engine/simulation.py`, `src/game/engine/ceremonies.py`, `src/game/agents/narrator.py`, `pyproject.toml`, scenario fixtures
+- Tests added: off-screen NPC chat does not mutate player relationships; turn results surface bombshell events
+- QA result: `make qa` green, 41 tests passed
+- Scenario fixture: existing fixtures regenerated after cosmetic-only NPC simulation and visible ceremony events

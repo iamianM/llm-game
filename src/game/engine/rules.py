@@ -75,6 +75,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return MechanicalResult(action=action, success=True, tags=["disengaged"])
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
+    if action.kind is ActionKind.RECOUPLE:
+        return MechanicalResult(action=action, success=True, tags=["recouple"])
     if action.kind is ActionKind.ADVANCE_PHASE:
         return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented in Phase A1: {action.kind}")

@@ -1,6 +1,6 @@
 name: bombshell-day4
 seed: 9
-expected_hash: 84a17c721f4118693690ab9471d83fa260b5779d3ee9f4f8eacc38ac838ecdf0
+expected_hash: 624e9551c51fb6b0d740e2fa2e8f6615f51662b5e1c446f70da27d3d16329979
 actions:
   - kind: advance_phase
   - kind: advance_phase
