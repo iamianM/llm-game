@@ -3,6 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import sys
+
+from src.game.engine.actions import ActionSpec, available_actions
+from src.game.engine.turn import TurnResult, run_turn
+from src.game.state.models import GameState, new_game
+from src.game.state.rng import SeededRng
+from src.game.state.snapshot import state_hash
 
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -16,10 +23,65 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 
 def run(args: argparse.Namespace) -> int:
-    """Run the interactive play command placeholder."""
-    print("play command is scaffolded; implement deterministic engine loop next")
     if args.snapshot:
-        print(f"snapshot: {args.snapshot}")
-    if args.seed is not None:
-        print(f"seed: {args.seed}")
+        print("play --snapshot is not implemented in Phase A1", file=sys.stderr)
+        return 2
+
+    seed = 1 if args.seed is None else args.seed
+    state = new_game(seed)
+    rng = SeededRng(seed)
+    print("Phase A1 CLI. Type a number, /state, /hash, /help, or /quit.")
+
+    while not state.is_terminal:
+        _print_state(state)
+        actions = available_actions(state)
+        _print_actions(actions)
+        raw = input("> ").strip()
+        if raw in {"/quit", "quit", "q"}:
+            return 0
+        if raw == "/help":
+            print("Commands: /state, /hash, /help, /quit. Choose actions by number.")
+            continue
+        if raw == "/state":
+            _print_state(state, debug=True)
+            continue
+        if raw == "/hash":
+            print(state_hash(state.model_dump(mode="json")))
+            continue
+
+        try:
+            index = int(raw) - 1
+            action = actions[index].action
+        except (ValueError, IndexError):
+            print("choose a listed action number or slash command")
+            continue
+
+        turn = run_turn(state, action, rng)
+        state = turn.state
+        _print_turn(turn)
+
+    print("Day complete.")
+    print(f"final hash: {state_hash(state.model_dump(mode='json'))}")
     return 0
+
+
+def _print_state(state: GameState, *, debug: bool = False) -> None:
+    print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
+    print(f"Location: {state.location_id}")
+    for islander in state.islanders:
+        detail = f" affection={islander.relationship.affection}" if debug else ""
+        print(f"- {islander.name} ({islander.archetype}){detail}")
+
+
+def _print_actions(actions: list[ActionSpec]) -> None:
+    for index, spec in enumerate(actions, start=1):
+        print(f"{index}. {spec.label}")
+
+
+def _print_turn(turn: TurnResult) -> None:
+    result = turn.mechanical_result
+    print(turn.narration)
+    if result.roll is not None and result.success_chance is not None:
+        outcome = "success" if result.success else "miss"
+        print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")
+    print(f"hash: {turn.state_hash}")

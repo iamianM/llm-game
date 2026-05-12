@@ -21,20 +21,20 @@ The goal is for the CLI, browser, and tests to exercise the same engine with the
 | L5 E2E | `tests/scenarios/e2e/` | Full no-LLM day, save/load, API parity | yes | no |
 | L6 Narrator | `tests/agents/` | Narration quality and contract compliance | opt-in | yes |
 
-L1-L5 are the intended non-LLM gate once Phase A has real fixtures. L6 is marked `llm`, opt-in, and cost-capped.
+L1-L5 are the current non-LLM gate. L6 is marked `llm`, opt-in, and cost-capped.
 
 ## Required Gates
 
-Today, before Phase A fixtures exist, `make qa` runs the honest non-LLM gate:
+`make qa` runs the honest non-LLM gate:
 
 1. `make lint`
 2. `make type-check`
 3. `make content-lint`
 4. `make test`
+5. `make smoke`
+6. `make determinism`
 
-`make smoke` and `make determinism` remain available targets, but they intentionally stay outside `make qa` until they exercise real replay fixtures and expected hashes.
-
-After Phase A creates `scripts/fixtures/day1-happy-path.yaml` and checked-in expected hashes, `make smoke` and `make determinism` must rejoin `make qa`.
+`make smoke` replays `scripts/fixtures/day1-happy-path.yaml`. `make determinism` verifies checked-in scenario fixtures and expected hashes.
 
 If a change touches Pydantic state models, also verify checked-in snapshots still load or regenerate them intentionally.
 

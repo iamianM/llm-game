@@ -6,6 +6,8 @@ import argparse
 import sys
 from pathlib import Path
 
+from src.game.engine.scenario import assert_expected_hash, load_action_script, run_action_script
+
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     """Register the verify command."""
@@ -16,20 +18,31 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 
 def run(args: argparse.Namespace) -> int:
-    """Run deterministic fixture verification placeholder."""
+    """Verify deterministic scenario fixtures."""
     if args.fixture:
-        if not Path(args.fixture).is_file():
-            print(f"fixture not found: {args.fixture}", file=sys.stderr)
-            return 2
-        print(f"verify command is scaffolded: {args.fixture}")
-        return 0
-    if args.all:
+        fixtures = [Path(args.fixture)]
+    elif args.all:
         fixture_root = Path("tests/scenarios/fixtures")
         fixtures = sorted(fixture_root.glob("*.yaml")) if fixture_root.is_dir() else []
-        if not fixtures:
-            print("no scenario fixtures to verify yet", file=sys.stderr)
-            return 2
-        print(f"verify command is scaffolded: {len(fixtures)} fixture(s)")
-        return 0
-    print("choose --all or --fixture", file=sys.stderr)
-    return 2
+    else:
+        print("choose --all or --fixture", file=sys.stderr)
+        return 2
+
+    if not fixtures:
+        print("no scenario fixtures to verify", file=sys.stderr)
+        return 2
+
+    failures: list[str] = []
+    for fixture in fixtures:
+        try:
+            result = run_action_script(load_action_script(fixture))
+            assert_expected_hash(result)
+            print(f"ok {fixture}: {result.final_hash}")
+        except (AssertionError, FileNotFoundError, ValueError) as exc:
+            failures.append(f"{fixture}: {exc}")
+
+    if failures:
+        for failure in failures:
+            print(failure, file=sys.stderr)
+        return 2
+    return 0

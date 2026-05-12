@@ -19,14 +19,12 @@ scenarios:
 	uv run pytest tests/scenarios
 
 smoke:
-	uv run python -m src.game.cli replay --seed 1 --actions scripts/fixtures/day1-happy-path.yaml --mock-llm --exit-on-end
+	uv run python -m src.game.cli replay --seed 1 --actions tests/scenarios/fixtures/day1-happy-path.yaml --mock-llm --exit-on-end
 
 determinism:
 	uv run python -m src.game.cli verify --all
 
-# smoke and determinism rejoin qa after Phase A creates real replay fixtures.
-# See docs/qa-strategy.md and docs/decisions/0007-engine-before-content-before-agents.md.
-qa: lint type-check content-lint test
+qa: lint type-check content-lint test smoke determinism
 
 play:
 	uv run python -m src.game.cli play

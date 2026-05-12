@@ -12,16 +12,17 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Any
+
+JsonValue = dict[str, object] | list[object] | str | int | float | bool | None
 
 
-def state_hash(payload: Any) -> str:
+def state_hash(payload: JsonValue) -> str:
     """Return a stable hash for a JSON-serializable state payload."""
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
 
 
-def save_snapshot(path: Path, payload: dict[str, Any]) -> None:
+def save_snapshot(path: Path, payload: dict[str, object]) -> None:
     """Write a snapshot payload.
 
     Placeholder JSON implementation until the SQLite snapshot store is built.
@@ -30,7 +31,7 @@ def save_snapshot(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
 
 
-def load_snapshot(path: Path) -> dict[str, Any]:
+def load_snapshot(path: Path) -> dict[str, object]:
     """Load a snapshot payload."""
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):

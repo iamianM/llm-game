@@ -1,0 +1,15 @@
+name: day1-happy-path
+seed: 1
+expected_hash: 8414a4744d228a17a2ef9f1a624e32ea3309ed42d9695f22eb75784f8a5fb440
+actions:
+  - kind: talk
+    target_id: chloe
+  - kind: talk
+    target_id: maya
+  - kind: advance_phase
+  - kind: talk
+    target_id: liam
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase

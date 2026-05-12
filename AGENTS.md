@@ -129,8 +129,8 @@ make qa
 2. `make type-check`
 3. `make content-lint`
 4. `make test`
-
-`make smoke` and `make determinism` are intentionally outside `make qa` until Phase A creates real replay fixtures and expected hashes. Add them back to `qa` once they verify real behavior.
+5. `make smoke`
+6. `make determinism`
 
 If the gate cannot run, report the exact blocker. Do not replace the gate with "looks right."
 
@@ -179,15 +179,8 @@ The CLI, browser, and tests must be able to start from the same snapshot and pro
 
 Planned in-session debug commands for CLI and browser dev mode:
 
-- `/save <name>`
-- `/load <name>`
-- `/record <name>`
-- `/stop`
-- `/state`
-- `/state --debug`
-- `/trace`
-- `/hash`
-- `/help`
+- Implemented in A1: `/state`, `/hash`, `/help`, `/quit`
+- Planned: `/save <name>`, `/load <name>`, `/record <name>`, `/stop`, `/state --debug`, `/trace`
 
 ---
 
@@ -462,7 +455,6 @@ The design vault is no longer in concept-solidification mode. The current priori
 - Implementation decisions live in `docs/decisions/`.
 - Runtime markdown under `content/` carries flavor and light metadata, not mechanics.
 - Code modules cite the design docs they implement in module docstrings.
-- `UI-UX.md` - Screen flow, visual style, text presentation
 
 ---
 
@@ -470,22 +462,23 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 ### Your Role
 
-**Brainstorm and Discuss FIRST** - Never implement without confirmation
+**Implement confirmed work decisively** - The implementation direction is set by the ADRs, `ENGINEERING.md`, and this file. When the user asks for a concrete change, make it and verify it.
 
-**Never Create Files Prematurely** - If a system isn't fleshed out, keep it in AGENTS.md
+**Keep scope tight** - Do not add features, agents, content, or abstractions beyond the current milestone.
 
-**Never Auto-Commit** - User handles all git operations
+**Git is user-owned** - Never commit, amend, push, force-push, branch, rebase, or reset unless the user explicitly asks.
 
-**Suggest Structure, Don't Impose It** - Adapt to user preferences
+**Use the shared engine path** - CLI, tests, and browser routes must call the same engine functions.
 
 ---
 
-### Discussion-First Workflow
+### Implementation Workflow
 
-1. **Discuss First**: Present options, design ideas, and tradeoffs
-2. **User Confirms**: Wait for user to approve approach
-3. **Then Implement**: Make changes only after confirmation
-4. **Iterate**: Repeat if refinement needed
+1. Read `ENGINEERING.md`, relevant ADRs, and the module docstrings.
+2. Make the smallest complete change that satisfies the request.
+3. Add or update tests that protect the contract touched by the change.
+4. Run `make qa`, or report the exact blocker.
+5. Summarize changed files and verification honestly.
 
 ---
 
@@ -516,6 +509,7 @@ The design vault is no longer in concept-solidification mode. The current priori
 - A section in AGENTS.md hits ~500 lines
 - A system is fully designed and won't change
 - The topic needs independent iteration
+- The file is implementation infrastructure named in an ADR, QA strategy, or current milestone
 
 **Keep in AGENTS.md When**:
 - User is flip-flopping on design
