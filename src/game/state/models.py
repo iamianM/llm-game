@@ -16,7 +16,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 
 
 class Phase(StrEnum):
@@ -134,11 +134,13 @@ class FollowUpOption(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    text: str
+    label: str
+    category: Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
     intent_kind: str
     stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
     risk: Literal["safe", "low", "medium", "high"]
     tone: str
+    unlock_threshold: dict[str, int] | None = None
 
 
 class FollowUpMenu(BaseModel):

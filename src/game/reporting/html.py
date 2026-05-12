@@ -113,21 +113,27 @@ def _follow_up_block(menu: object) -> str:
     if not isinstance(menu, dict):
         return ""
     options = menu.get("options")
-    option_items = ""
+    grouped: dict[str, list[str]] = {}
     if isinstance(options, list):
-        option_items = "".join(
-            f"<li>{escape(option.get('text', ''))} "
-            f"<span class='meta'>({escape(option.get('intent_kind', ''))}, "
-            f"{escape(option.get('risk', ''))})</span></li>"
-            for option in options
-            if isinstance(option, dict)
-        )
+        for option in options:
+            if not isinstance(option, dict):
+                continue
+            category = str(option.get("category", "other"))
+            grouped.setdefault(category, []).append(
+                f"<li>{escape(option.get('label', ''))} "
+                f"<span class='meta'>({escape(option.get('intent_kind', ''))}, "
+                f"{escape(option.get('risk', ''))})</span></li>"
+            )
+    option_groups = "".join(
+        f"<h3>{escape(category.title())}</h3><ol>{''.join(items)}</ol>"
+        for category, items in grouped.items()
+    )
     exit_line = menu.get("npc_exit_line")
     exit_text = f"<p><b>Exit:</b> {escape(exit_line)}</p>" if exit_line else ""
     return (
         "<div class='card'>"
         "<p><b>Follow-up menu</b></p>"
-        f"<ol>{option_items}</ol>"
+        f"{option_groups}"
         f"{exit_text}"
         "</div>"
     )

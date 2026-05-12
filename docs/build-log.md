@@ -98,3 +98,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; `make test-llm` equivalent green, 25 LLM tests passed
 - Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
 - Packet: regenerated with real LLM calls at `review-packet/index.html` and inspected locally at `http://127.0.0.1:8771/index.html`
+
+## Phase G1
+
+- Files added: `docs/build-plan-G.md`
+- Files changed: `src/game/state/models.py`, `src/game/agents/contextual_options.py`, `src/game/agents/prompts/contextual_options.md`, `src/game/engine/actions.py`, `src/game/cli/commands/play.py`, `src/game/reporting/html.py`, scenario fixtures
+- Tests added: existing Contextual Options LLM tests now validate short labels, categories, exit options, and threshold-safe parsed output
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; Contextual Options LLM subset green, 10 tests passed
+- Scenario fixture: existing fixtures regenerated for schema v6 short-label follow-up menu shape

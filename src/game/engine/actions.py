@@ -16,7 +16,7 @@ from enum import StrEnum
 from pydantic import BaseModel, ConfigDict
 
 from src.game.engine.intents import available_intents_for, get_intent
-from src.game.state.models import GameState, Location, Phase
+from src.game.state.models import FollowUpOption, GameState, IslanderState, Location, Phase
 
 
 class ActionKind(StrEnum):
@@ -59,7 +59,8 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     if state.active_conversation is not None:
         menu = state.active_conversation.pending_options
         if menu is not None and not menu.npc_will_leave:
-            for index, option in enumerate(menu.options):
+            target = _find_islander(state, state.active_conversation.target_id)
+            for index, option in _unlocked_follow_up_options(menu.options, target):
                 actions.append(
                     ActionSpec(
                         action=PlayerAction(
@@ -68,7 +69,10 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                             intent_id=option.intent_kind,
                             option_index=index,
                         ),
-                        label=f"{option.text} ({option.stat_used or 'exit'}, {option.risk})",
+                        label=(
+                            f"{option.category.title()}: {option.label} "
+                            f"({option.stat_used or 'exit'}, {option.risk})"
+                        ),
                     )
                 )
         actions.append(
@@ -122,12 +126,14 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         menu = conversation.pending_options
         if menu is None:
             raise ValueError("active conversation has no pending options")
+        target = _find_islander(state, conversation.target_id)
+        unlocked = dict(_unlocked_follow_up_options(menu.options, target))
         if action.option_index is not None:
-            if action.option_index < 0 or action.option_index >= len(menu.options):
+            if action.option_index not in unlocked:
                 raise ValueError(f"invalid follow-up option index: {action.model_dump()}")
             return
         if action.intent_id is not None and any(
-            option.intent_kind == action.intent_id for option in menu.options
+            option.intent_kind == action.intent_id for option in unlocked.values()
         ):
             return
         raise ValueError(f"RESPOND_WITH requires valid option_index or intent_id: {action.model_dump()}")
@@ -138,3 +144,32 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:
         raise ValueError(f"invalid action for current state: {action.model_dump()}")
+
+
+def _unlocked_follow_up_options(
+    options: list[FollowUpOption],
+    target: IslanderState,
+) -> list[tuple[int, FollowUpOption]]:
+    return [
+        (index, option)
+        for index, option in enumerate(options)
+        if _meets_unlock_threshold(option, target)
+    ]
+
+
+def _meets_unlock_threshold(option: FollowUpOption, target: IslanderState) -> bool:
+    if option.unlock_threshold is None:
+        return True
+    relationship = target.relationship
+    for key, required in option.unlock_threshold.items():
+        value = getattr(relationship, key)
+        if not isinstance(value, int) or value < required:
+            return False
+    return True
+
+
+def _find_islander(state: GameState, target_id: str) -> IslanderState:
+    for islander in state.islanders:
+        if islander.id == target_id:
+            return islander
+    raise ValueError(f"unknown islander: {target_id}")

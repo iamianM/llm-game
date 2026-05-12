@@ -1,6 +1,6 @@
 name: recoupling-day3
 seed: 8
-expected_hash: bedb9280d565958f2bca07fb0c91c480f757fe5cec9656b7723f62d763a949e4
+expected_hash: dc27727d25d92dc9e462ff7eddbfd166fd8fc2b16627440fdf500b6707ba2206
 actions:
 - kind: advance_phase
 - kind: advance_phase

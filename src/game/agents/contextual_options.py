@@ -14,6 +14,7 @@ from __future__ import annotations
 import re
 from collections.abc import Callable
 from pathlib import Path
+from typing import Literal
 
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
@@ -24,6 +25,8 @@ from src.game.state.models import FollowUpMenu, FollowUpOption, GameState
 
 CONTEXTUAL_OPTIONS_MODEL = "gpt-5.4-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
+FOLLOW_UP_CATEGORIES = {"friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"}
+FollowUpCategory = Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
 
 
 class ContextualOptionsContext(BaseModel):
@@ -67,19 +70,27 @@ class ContextualOptionsAgent:
         """Generate and validate one contextual follow-up menu."""
         context = contextual_options_context(state, result, exchange, departure_probability)
         rendered = _render_context(context)
-        menu = self._generate_menu(rendered)
-        try:
-            validate_follow_up_menu(menu)
-        except ValueError as exc:
-            retry = (
-                f"{rendered}\n\n"
-                "The previous FollowUpMenu failed validation. "
-                f"Validation error: {exc}. "
-                "Return a corrected FollowUpMenu that satisfies every hard rule."
-            )
-            menu = self._generate_menu(retry)
-            validate_follow_up_menu(menu)
-        return menu
+        last_error: ValueError | None = None
+        for attempt in range(3):
+            retry_context = rendered
+            if last_error is not None:
+                retry_context = (
+                    f"{rendered}\n\n"
+                    "The previous FollowUpMenu failed validation. "
+                    f"Validation error: {last_error}. "
+                    "Return a corrected FollowUpMenu that satisfies every hard rule. "
+                    "There must be exactly one option with category set to exit, and that "
+                    "option must use intent_kind end_softly or walk_away."
+                )
+            menu = _ensure_exit_when_npc_leaves(self._generate_menu(retry_context))
+            try:
+                validate_follow_up_menu(menu)
+                return menu
+            except ValueError as exc:
+                last_error = exc
+                if attempt == 2:
+                    raise
+        raise AssertionError("unreachable contextual options retry state")
 
     def _generate_menu(self, rendered_context: str) -> FollowUpMenu:
         """Request one parsed menu from the model."""
@@ -142,14 +153,16 @@ def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool 
     """Return a deterministic menu that includes ``intent_kind`` for replay."""
     options = [
         FollowUpOption(
-            text=f"Follow that thread with {intent_kind.replace('_', ' ')}.",
+            label=_mock_label(intent_kind),
+            category=_mock_category(intent_kind),
             intent_kind=intent_kind,
             stat_used="banter",
             risk="medium",
             tone="playful",
         ),
         FollowUpOption(
-            text="Let's leave this on a good note.",
+            label="End on a good note",
+            category="exit",
             intent_kind="end_softly",
             stat_used=None,
             risk="safe",
@@ -167,17 +180,53 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
     """Fail loud if a follow-up menu violates the prompt contract."""
     if not 2 <= len(menu.options) <= 4:
         raise ValueError(f"follow-up option count out of bounds: {len(menu.options)}")
-    exit_count = sum(option.intent_kind in EXIT_INTENT_KINDS for option in menu.options)
+    exit_count = sum(option.category == "exit" for option in menu.options)
     if exit_count != 1:
-        raise ValueError(f"follow-up menu must contain exactly one exit option: {menu}")
+        raise ValueError(f"follow-up menu must contain exactly one exit category option: {menu}")
     for option in menu.options:
-        if re.search(r"\d", option.text):
-            raise ValueError(f"follow-up option contains digits: {option.text!r}")
+        if option.category not in FOLLOW_UP_CATEGORIES:
+            raise ValueError(f"unknown follow-up category: {option.category}")
+        if option.category == "exit" and option.intent_kind not in EXIT_INTENT_KINDS:
+            raise ValueError(f"exit option has non-exit intent_kind: {option.intent_kind}")
+        if len(option.label.split()) > 6:
+            raise ValueError(f"follow-up label too long: {option.label!r}")
+        if re.search(r"\d", option.label):
+            raise ValueError(f"follow-up label contains digits: {option.label!r}")
+        if option.unlock_threshold is not None:
+            for key, value in option.unlock_threshold.items():
+                if key not in {"affection", "chemistry", "trust", "friendship"}:
+                    raise ValueError(f"unknown unlock threshold key: {key}")
+                if value < 0 or value > 100:
+                    raise ValueError(f"unlock threshold out of range: {option.unlock_threshold}")
     if menu.npc_will_leave:
         if not menu.npc_exit_line:
             raise ValueError("npc_exit_line is required when npc_will_leave is true")
         if len(menu.npc_exit_line.split()) > 40:
             raise ValueError(f"npc_exit_line too long: {menu.npc_exit_line!r}")
+
+
+def _ensure_exit_when_npc_leaves(menu: FollowUpMenu) -> FollowUpMenu:
+    """Normalize exit intent/category mismatches before validation."""
+    options = list(menu.options)
+    changed = False
+    for index, option in enumerate(options):
+        if option.intent_kind in EXIT_INTENT_KINDS and option.category != "exit":
+            options[index] = option.model_copy(update={"category": "exit", "stat_used": None})
+            changed = True
+    if changed:
+        menu = menu.model_copy(update={"options": options})
+        options = list(menu.options)
+    if not menu.npc_will_leave or any(option.category == "exit" for option in options):
+        return menu
+    options[-1] = FollowUpOption(
+        label="Let them go",
+        category="exit",
+        intent_kind="walk_away",
+        stat_used=None,
+        risk="safe",
+        tone="cool",
+    )
+    return menu.model_copy(update={"options": options})
 
 
 def _render_context(context: ContextualOptionsContext) -> str:
@@ -197,3 +246,31 @@ def _render_context(context: ContextualOptionsContext) -> str:
             "Write the follow-up menu now.",
         ]
     )
+
+
+def _mock_label(intent_kind: str) -> str:
+    labels = {
+        "joke_back": "Joke back",
+        "go_deeper": "Ask something deeper",
+        "honest_vulnerable": "Get vulnerable",
+        "escalate_flirt": "Push the flirt",
+        "apologize": "Apologize honestly",
+        "deflect_with_humor": "Deflect with humor",
+        "end_softly": "End on a good note",
+        "walk_away": "Walk away",
+    }
+    return labels.get(intent_kind, intent_kind.replace("_", " ").title())
+
+
+def _mock_category(intent_kind: str) -> FollowUpCategory:
+    if intent_kind in EXIT_INTENT_KINDS:
+        return "exit"
+    if intent_kind in {"escalate_flirt"}:
+        return "flirty"
+    if intent_kind in {"joke_back", "deflect_with_humor"}:
+        return "banter"
+    if intent_kind in {"go_deeper", "honest_vulnerable"}:
+        return "deep"
+    if intent_kind in {"apologize"}:
+        return "supportive"
+    return "friendly"

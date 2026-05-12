@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from itertools import groupby
 
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.event_narrator import OpenAIEventNarrator
@@ -90,6 +91,9 @@ def _print_state(state: GameState, *, debug: bool = False) -> None:
 
 
 def _print_actions(actions: list[ActionSpec]) -> None:
+    if any(spec.action.kind is ActionKind.RESPOND_WITH for spec in actions):
+        _print_follow_up_actions(actions)
+        return
     for index, spec in enumerate(actions, start=1):
         print(f"{index}. {spec.label}")
 
@@ -107,6 +111,23 @@ def _print_turn(turn: TurnResult) -> None:
         outcome = "success" if result.success else "miss"
         print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")
     print(f"hash: {turn.state_hash}")
+
+
+def _print_follow_up_actions(actions: list[ActionSpec]) -> None:
+    numbered = list(enumerate(actions, start=1))
+    followups = [
+        (index, spec)
+        for index, spec in numbered
+        if spec.action.kind is ActionKind.RESPOND_WITH
+    ]
+    for category, category_specs in groupby(followups, key=lambda item: item[1].label.split(":", 1)[0]):
+        print(f"{category}:")
+        for index, spec in category_specs:
+            label = spec.label.split(":", 1)[1].strip() if ":" in spec.label else spec.label
+            print(f"  {index}. {label}")
+    for index, spec in numbered:
+        if spec.action.kind is not ActionKind.RESPOND_WITH:
+            print(f"{index}. {spec.label}")
 
 
 def _target_name(turn: TurnResult) -> str:
