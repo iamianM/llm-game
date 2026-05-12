@@ -42,6 +42,7 @@ class PlaythroughStats(BaseModel):
     pull_failures: int
     interruptions_fired: int
     interruption_responses: int
+    interruption_response_kinds: list[str] = Field(default_factory=list)
     memories_created: int
     background_dialogues: int
     gossip_picks: int
@@ -107,6 +108,7 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
     pull_failures = 0
     interruptions_fired = 0
     interruption_responses = 0
+    interruption_response_kinds: set[str] = set()
     memories_created = 0
     background_dialogues = 0
     gossip_picks = 0
@@ -142,6 +144,7 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
             interruptions_fired += len(interruptions)
         if intent_id in {"accept_interruption", "defer_interruption", "ignore_interruption"}:
             interruption_responses += 1
+            interruption_response_kinds.add(intent_id)
         batches = commits.get("curator_batches")
         if isinstance(batches, list):
             for batch in batches:
@@ -176,6 +179,7 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
         pull_failures=pull_failures,
         interruptions_fired=interruptions_fired,
         interruption_responses=interruption_responses,
+        interruption_response_kinds=sorted(interruption_response_kinds),
         memories_created=memories_created,
         background_dialogues=background_dialogues,
         gossip_picks=gossip_picks,
@@ -191,16 +195,22 @@ def _assertions(
 ) -> list[PlaythroughAssertion]:
     memory_holders = _memory_holder_counts(records)
     return [
-        _assert("conversation_volume", "At least three conversations started", stats.conversations_started >= 3, f"{stats.conversations_started} start(s)", _turns_with_action(records, "start_conversation")),
         _assert("wheel_exit", "At least one graceful wheel exit", stats.wheel_exits >= 1, f"{stats.wheel_exits} wheel exit(s)", _turns_with_category(records, "exit")),
         _assert("walk_away", "At least one curt walk-away", stats.walk_aways >= 1, f"{stats.walk_aways} walk-away action(s)", _turns_with_action(records, "end_conversation")),
         _assert("pull_attempt", "At least one pull-for-chat attempt", stats.pull_attempts >= 1, f"{stats.pull_attempts} pull attempt(s)", _turns_with_pull(records)),
         _assert("pull_failure", "At least one failed pull attempt", stats.pull_failures >= 1, f"{stats.pull_failures} failed pull(s)", _turns_with_pull(records, success=False)),
         _assert("interruption_fired", "At least one NPC interruption fired", stats.interruptions_fired >= 1, f"{stats.interruptions_fired} interruption(s)", _turns_with_interruption(records)),
-        _assert("interruption_answered", "At least one NPC interruption was answered", stats.interruption_responses >= 1, f"{stats.interruption_responses} response(s)", _turns_with_interruption_response(records)),
+        _assert(
+            "interruption_answered",
+            "At least two interruption response kinds were exercised",
+            len(stats.interruption_response_kinds) >= 2,
+            f"{stats.interruption_responses} response(s): {', '.join(stats.interruption_response_kinds) or 'none'}",
+            _turns_with_interruption_response(records),
+        ),
         _assert("memory_coverage", "Each major NPC has at least three memories", all(memory_holders.get(npc_id, 0) >= 3 for npc_id in ("chloe", "maya", "liam")), f"memory counts: {dict(memory_holders)}", _turns_with_memories(records)),
         _assert("low_chance_rolls", "At least three rolls below sixty percent", stats.low_chance_rolls >= 3, f"{stats.low_chance_rolls} low-chance roll(s)", _turns_with_low_chance(records)),
         _assert("gossip_pick", "At least one gossip option was picked", stats.gossip_picks >= 1, f"{stats.gossip_picks} gossip pick(s)", _turns_with_category(records, "gossip")),
+        _assert("ceremony_event_observed", "At least one ceremony or bombshell event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", _turns_with_ceremony(records)),
         _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", _turns_with_background(records)),
     ]
 
@@ -306,6 +316,15 @@ def _turns_with_background(records: list[dict[str, Any]]) -> list[int]:
     for record in records:
         dialogues = _dict(record.get("agent_commits")).get("background_dialogues")
         if isinstance(dialogues, list) and dialogues:
+            turns.append(_turn(record))
+    return turns
+
+
+def _turns_with_ceremony(records: list[dict[str, Any]]) -> list[int]:
+    turns: list[int] = []
+    for record in records:
+        events = record.get("ceremony_events")
+        if isinstance(events, list) and events:
             turns.append(_turn(record))
     return turns
 

@@ -260,6 +260,8 @@ def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
     if conversation is None or not conversation.gossip_offers:
         return menu
     existing = {option.intent_kind for option in menu.options}
+    if any(intent_kind.startswith("ask_gossip:") for intent_kind in existing):
+        return menu
     options = list(menu.options)
     for memory in conversation.gossip_offers:
         intent_kind = f"ask_gossip:{memory.id}"

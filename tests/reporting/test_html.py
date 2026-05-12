@@ -12,6 +12,8 @@ def test_session_page_renders_math_villa_memories_pull_and_interruption() -> Non
     html = session_page("Session", [_record()])
 
     assert "Success math" in html
+    assert "banter 8 x 5 = 40" in html
+    assert "capped at 80" in html
     assert "Villa snapshot" in html
     assert "Pull attempt" in html
     assert "NPC interruption" in html
@@ -45,6 +47,24 @@ def _record() -> dict[str, object]:
             "success": True,
             "roll": 40,
             "success_chance": 80,
+            "chance_breakdown": {
+                "kind": "follow_up",
+                "base": 50,
+                "stat_name": "banter",
+                "stat_value": 8,
+                "stat_multiplier": 5,
+                "stat_contribution": 40,
+                "affection_value": 15,
+                "affection_divisor": 5,
+                "affection_contribution": 3,
+                "risk": "low",
+                "risk_modifier": 5,
+                "mood_modifier": 0,
+                "pre_cap": 98,
+                "cap": 80,
+                "floor": 5,
+                "final_chance": 80,
+            },
             "relationship_deltas": {"chloe": {"trust": 1}},
             "tags": ["end_softly", "safe"],
             "pull_attempt": {

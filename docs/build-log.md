@@ -220,3 +220,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: session HTML exposes success math, villa snapshots, memories, pulls, interruptions; eval dashboard links assertions back to session turns
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; full LLM suite green, 37 tests passed; packet regenerated and verified in the in-app browser at `http://127.0.0.1:8895/review-packet/index.html`
 - Packet: regenerated from `.game_traces/manual-day1.json`; dashboard shows the old recording passes 4/11 playthrough assertions, which is expected until the next G8-aware recorded session is played
+
+## Phase G8 review polish
+
+- Files added: none
+- Files changed: `.gitignore`, `src/game/engine/rules.py`, `src/game/agents/contextual_options.py`, `src/game/eval/playthrough.py`, `src/game/reporting/eval_dashboard.py`, `src/game/reporting/html.py`, tests, `review-packet/`
+- Tests added: chance breakdown formula terms, idempotent recorded gossip menu replay, ceremony assertion coverage, stricter interruption response-kind coverage, rendered formula breakdown text
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism, trace replay, and full LLM suite all green; fresh G8 trace passes 11/11 playthrough assertions
+- Packet: regenerated from `.game_traces/manual-g8.json`; in-app browser verified `session.html` includes formula breakdowns and `playthrough-eval.html` shows 11 passed / 0 failed

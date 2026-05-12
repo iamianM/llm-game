@@ -29,6 +29,29 @@ from src.game.state.models import (
 from src.game.state.rng import SeededRng
 
 
+class ChanceBreakdown(BaseModel):
+    """Auditable inputs that produced a final success chance."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: str
+    base: int
+    stat_name: str | None = None
+    stat_value: int | None = None
+    stat_multiplier: int = 0
+    stat_contribution: int = 0
+    affection_value: int = 0
+    affection_divisor: int = 1
+    affection_contribution: int = 0
+    risk: str | None = None
+    risk_modifier: int = 0
+    mood_modifier: int = 0
+    pre_cap: int
+    cap: int
+    floor: int
+    final_chance: int
+
+
 class MechanicalResult(BaseModel):
     """Resolved mechanical outcome from one player action."""
 
@@ -38,6 +61,7 @@ class MechanicalResult(BaseModel):
     success: bool
     roll: int | None = None
     success_chance: int | None = None
+    chance_breakdown: ChanceBreakdown | None = None
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
     pull_attempt: PullAttempt | None = None
@@ -173,7 +197,8 @@ def _apply_intent(state: GameState, action: PlayerAction, rng: SeededRng) -> Mec
     intent = get_intent(action.intent_id)
     if intent not in available_intents_for(state, target.id):
         raise ValueError(f"intent is locked for target: {action.intent_id}")
-    chance = intent_success_chance(state, target, intent)
+    breakdown = intent_success_breakdown(state, target, intent)
+    chance = breakdown.final_chance
     roll = rng.randint(1, 100)
     success = roll <= chance
     delta = (
@@ -187,6 +212,7 @@ def _apply_intent(state: GameState, action: PlayerAction, rng: SeededRng) -> Mec
         success=success,
         roll=roll,
         success_chance=chance,
+        chance_breakdown=breakdown,
         relationship_deltas={target.id: delta},
         tags=intent.tags,
     )
@@ -218,7 +244,8 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
     option_index = _follow_up_option_index(state, action)
     option = conversation.pending_options.options[option_index]
     target = _find_islander(state, conversation.target_id)
-    chance = follow_up_success_chance(state, target, option.stat_used, option.risk)
+    breakdown = follow_up_success_breakdown(state, target, option.stat_used, option.risk)
+    chance = breakdown.final_chance
     roll = rng.randint(1, 100)
     success = roll <= chance
     if option.intent_kind.startswith("ask_gossip:"):
@@ -238,6 +265,7 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
         success=success,
         roll=roll,
         success_chance=chance,
+        chance_breakdown=breakdown,
         relationship_deltas={target.id: delta},
         tags=[option.intent_kind, option.risk, option.tone],
     )
@@ -245,19 +273,48 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
 
 def intent_success_chance(state: GameState, target: IslanderState, intent: Intent) -> int:
     """Calculate F1 intent success chance."""
+    return intent_success_breakdown(state, target, intent).final_chance
+
+
+def intent_success_breakdown(
+    state: GameState,
+    target: IslanderState,
+    intent: Intent,
+) -> ChanceBreakdown:
+    """Calculate an auditable F1 intent success chance."""
     stat = getattr(state.player.stats, intent.stat_used)
     if not isinstance(stat, int):
         raise ValueError(f"unknown numeric stat for intent: {intent.stat_used}")
     mood_modifier = -10 if target.mood.value in {"upset", "angry"} else 0
     risk = effective_risk(intent)
-    chance = (
+    stat_contribution = stat * 5
+    affection_contribution = target.relationship.affection // 4
+    pre_cap = (
         50
-        + (stat * 5)
-        + (target.relationship.affection // 4)
+        + stat_contribution
+        + affection_contribution
         + mood_modifier
         + RISK_SUCCESS_MODIFIER[risk]
     )
-    return max(5, min(RISK_SUCCESS_CAP[risk], chance))
+    cap = RISK_SUCCESS_CAP[risk]
+    return ChanceBreakdown(
+        kind="initial_intent",
+        base=50,
+        stat_name=intent.stat_used,
+        stat_value=stat,
+        stat_multiplier=5,
+        stat_contribution=stat_contribution,
+        affection_value=target.relationship.affection,
+        affection_divisor=4,
+        affection_contribution=affection_contribution,
+        risk=risk,
+        risk_modifier=RISK_SUCCESS_MODIFIER[risk],
+        mood_modifier=mood_modifier,
+        pre_cap=pre_cap,
+        cap=cap,
+        floor=5,
+        final_chance=max(5, min(cap, pre_cap)),
+    )
 
 
 def follow_up_success_chance(
@@ -267,12 +324,41 @@ def follow_up_success_chance(
     risk: str,
 ) -> int:
     """Calculate success chance for a freeform contextual follow-up."""
+    return follow_up_success_breakdown(state, target, stat_used, risk).final_chance
+
+
+def follow_up_success_breakdown(
+    state: GameState,
+    target: IslanderState,
+    stat_used: str | None,
+    risk: str,
+) -> ChanceBreakdown:
+    """Calculate an auditable freeform contextual follow-up success chance."""
     stat = 5 if stat_used is None else getattr(state.player.stats, stat_used)
     if not isinstance(stat, int):
         raise ValueError(f"unknown numeric stat for follow-up: {stat_used}")
     risk_modifier = RISK_SUCCESS_MODIFIER[risk]
-    chance = 50 + (stat * 5) + (target.relationship.affection // 5) + risk_modifier
-    return max(5, min(RISK_SUCCESS_CAP[risk], chance))
+    stat_contribution = stat * 5
+    affection_contribution = target.relationship.affection // 5
+    pre_cap = 50 + stat_contribution + affection_contribution + risk_modifier
+    cap = RISK_SUCCESS_CAP[risk]
+    return ChanceBreakdown(
+        kind="follow_up",
+        base=50,
+        stat_name=stat_used or "neutral",
+        stat_value=stat,
+        stat_multiplier=5,
+        stat_contribution=stat_contribution,
+        affection_value=target.relationship.affection,
+        affection_divisor=5,
+        affection_contribution=affection_contribution,
+        risk=risk,
+        risk_modifier=risk_modifier,
+        pre_cap=pre_cap,
+        cap=cap,
+        floor=5,
+        final_chance=max(5, min(cap, pre_cap)),
+    )
 
 
 def _apply_move(state: GameState, action: PlayerAction) -> MechanicalResult:
@@ -362,9 +448,31 @@ def _apply_gossip_follow_up(
 
 def defer_chance(state: GameState, interrupter_id: str) -> int:
     """Return the chance that a polite deferral lands well."""
+    return defer_chance_breakdown(state, interrupter_id).final_chance
+
+
+def defer_chance_breakdown(state: GameState, interrupter_id: str) -> ChanceBreakdown:
+    """Return an auditable chance that a polite deferral lands well."""
     interrupter = _find_islander(state, interrupter_id)
-    chance = 50 + (state.player.stats.eq * 4) + (interrupter.relationship.affection // 4)
-    return max(10, min(90, chance))
+    stat = state.player.stats.eq
+    stat_contribution = stat * 4
+    affection_contribution = interrupter.relationship.affection // 4
+    pre_cap = 50 + stat_contribution + affection_contribution
+    return ChanceBreakdown(
+        kind="interruption_defer",
+        base=50,
+        stat_name="eq",
+        stat_value=stat,
+        stat_multiplier=4,
+        stat_contribution=stat_contribution,
+        affection_value=interrupter.relationship.affection,
+        affection_divisor=4,
+        affection_contribution=affection_contribution,
+        pre_cap=pre_cap,
+        cap=90,
+        floor=10,
+        final_chance=max(10, min(90, pre_cap)),
+    )
 
 
 def _apply_interruption_response(
@@ -382,6 +490,7 @@ def _apply_interruption_response(
     deltas: dict[str, RelationshipDelta] = {}
     roll: int | None = None
     chance: int | None = None
+    breakdown: ChanceBreakdown | None = None
     success = True
     tags = ["interruption", str(intent_id), interruption.reason, interruption.urgency]
 
@@ -392,7 +501,8 @@ def _apply_interruption_response(
         _apply_relationship_delta(interrupter, interrupter_delta)
         deltas = {current.id: current_delta, interrupter.id: interrupter_delta}
     elif intent_id == "defer_interruption":
-        chance = defer_chance(state, interrupter.id)
+        breakdown = defer_chance_breakdown(state, interrupter.id)
+        chance = breakdown.final_chance
         roll = rng.randint(1, 100)
         success = roll <= chance
         interrupter_delta = RelationshipDelta(affection=-1 if success else -3)
@@ -414,6 +524,7 @@ def _apply_interruption_response(
         success=success,
         roll=roll,
         success_chance=chance,
+        chance_breakdown=breakdown if chance is not None else None,
         relationship_deltas=deltas,
         tags=tags,
     )

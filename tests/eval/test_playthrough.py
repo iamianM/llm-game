@@ -88,6 +88,7 @@ def _complete_package():
             ),
             _record(6, "respond_with", intent_id="ask_gossip:mem1", chance=52),
             _record(7, "start_conversation", chance=75),
+            _record(8, "respond_with", intent_id="ignore_interruption", chance=None),
         ]
     }
 

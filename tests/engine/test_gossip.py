@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.game.agents.contextual_options import mock_follow_up_menu
+from src.game.agents.contextual_options import mock_follow_up_menu, with_gossip_options
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import create_memory
 from src.game.engine.turn import run_turn
@@ -87,6 +87,17 @@ def test_gossip_offer_content_does_not_affect_state_hash() -> None:
     state.active_conversation.gossip_offers[0].content = "Different wording."
 
     assert state_hash(state_hash_payload(state)) == first_hash
+
+
+def test_gossip_injection_is_idempotent_for_recorded_replay() -> None:
+    """Recorded menus that already contain gossip do not gain a second gossip option."""
+    state = _state_with_chloe_gossip(affection=25)
+    first_turn = _start_chloe_conversation(state)
+    assert first_turn.follow_up_menu is not None
+
+    replay_menu = with_gossip_options(first_turn.follow_up_menu, state)
+
+    assert sum(option.category == "gossip" for option in replay_menu.options) == 1
 
 
 def _state_with_chloe_gossip(*, affection: int):

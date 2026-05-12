@@ -27,6 +27,7 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Pull failures", stats.pull_failures),
         ("Interruptions fired", stats.interruptions_fired),
         ("Interruption responses", stats.interruption_responses),
+        ("Interruption response kinds", ", ".join(stats.interruption_response_kinds) or "none"),
         ("Memories created", stats.memories_created),
         ("Background dialogues", stats.background_dialogues),
         ("Gossip picks", stats.gossip_picks),

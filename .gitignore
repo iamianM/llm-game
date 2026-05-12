@@ -25,6 +25,7 @@ venv/
 # Local runtime artifacts
 .game_saves/
 .game_traces/
+.py-server-*.txt
 
 # Frontend
 web/node_modules/

@@ -7,7 +7,12 @@ from pydantic import ValidationError
 
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import Intent, IntentCategory, IntentDeltaTable, get_intent
-from src.game.engine.rules import apply_action, follow_up_success_chance, intent_success_chance
+from src.game.engine.rules import (
+    apply_action,
+    follow_up_success_chance,
+    intent_success_breakdown,
+    intent_success_chance,
+)
 from src.game.state.models import (
     Conversation,
     FollowUpMenu,
@@ -34,6 +39,26 @@ def test_initial_intent_chance_capped_by_category_default() -> None:
     intent = get_intent("banter_tell_joke")
 
     assert intent_success_chance(state, state.islanders[0], intent) == 80
+
+
+def test_intent_success_breakdown_names_formula_terms() -> None:
+    """Initial intent results carry a reviewable chance formula."""
+    state = new_game(1)
+    state.player.stats.banter = 9
+    state.islanders[0].relationship.affection = 100
+    intent = get_intent("banter_tell_joke")
+
+    breakdown = intent_success_breakdown(state, state.islanders[0], intent)
+
+    assert breakdown.base == 50
+    assert breakdown.stat_name == "banter"
+    assert breakdown.stat_contribution == 45
+    assert breakdown.affection_contribution == 25
+    assert breakdown.risk == "low"
+    assert breakdown.risk_modifier == 5
+    assert breakdown.pre_cap == 125
+    assert breakdown.cap == 80
+    assert breakdown.final_chance == 80
 
 
 def test_initial_intent_explicit_risk_overrides_default() -> None:
@@ -73,6 +98,8 @@ def test_friendly_intent_applies_success_delta() -> None:
 
     assert result.success is True
     assert result.roll == 18
+    assert result.chance_breakdown is not None
+    assert result.chance_breakdown.final_chance == result.success_chance
     assert result.relationship_deltas == {
         "chloe": RelationshipDelta(affection=2, friendship=1)
     }

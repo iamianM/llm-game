@@ -282,14 +282,63 @@ def _math_block(result: dict[str, Any]) -> str:
     outcome = "success" if result.get("success") else "miss"
     tags = result.get("tags")
     tag_text = ", ".join(str(tag) for tag in tags) if isinstance(tags, list) else "none"
+    breakdown = _chance_breakdown_text(result.get("chance_breakdown"), chance)
     return (
         "<div class='card math'>"
         "<p><b>Success math</b></p>"
-        f"<p>Final chance {chance}%. Rolled {roll}. Outcome: "
+        f"<p>{breakdown}</p>"
+        f"<p>Rolled {roll}. Outcome: "
         f"<span class='{'success' if outcome == 'success' else 'miss'}'>{escape(outcome)}</span>.</p>"
         f"<p class='meta'>Tags: {escape(tag_text)}</p>"
         "</div>"
     )
+
+
+def _chance_breakdown_text(breakdown: object, fallback_chance: int) -> str:
+    if not isinstance(breakdown, dict):
+        return f"Final chance {fallback_chance}%."
+    stat_name = breakdown.get("stat_name") or "stat"
+    stat_value = breakdown.get("stat_value")
+    stat_multiplier = breakdown.get("stat_multiplier")
+    stat_contribution = breakdown.get("stat_contribution")
+    affection_value = breakdown.get("affection_value")
+    affection_divisor = breakdown.get("affection_divisor")
+    affection_contribution = breakdown.get("affection_contribution")
+    risk = breakdown.get("risk")
+    risk_modifier = breakdown.get("risk_modifier")
+    mood_modifier = breakdown.get("mood_modifier")
+    pre_cap = breakdown.get("pre_cap")
+    cap = breakdown.get("cap")
+    floor = breakdown.get("floor")
+    final_chance = breakdown.get("final_chance", fallback_chance)
+    parts = [
+        f"base {escape(breakdown.get('base', 0))}",
+        (
+            f"{escape(stat_name)} {escape(stat_value)} x {escape(stat_multiplier)} "
+            f"= {escape(stat_contribution)}"
+        ),
+        (
+            f"affection {escape(affection_value)} / {escape(affection_divisor)} "
+            f"= {escape(affection_contribution)}"
+        ),
+    ]
+    if risk is not None:
+        parts.append(f"risk {escape(risk)}: {escape(_signed(risk_modifier))}")
+    if isinstance(mood_modifier, int) and mood_modifier != 0:
+        parts.append(f"mood {escape(_signed(mood_modifier))}")
+    cap_text = ""
+    if isinstance(pre_cap, int) and isinstance(cap, int) and isinstance(floor, int):
+        if pre_cap > cap:
+            cap_text = f", capped at {cap}"
+        elif pre_cap < floor:
+            cap_text = f", floored at {floor}"
+    return f"{' + '.join(parts)} = {escape(pre_cap)}{cap_text}. Final chance {escape(final_chance)}%."
+
+
+def _signed(value: object) -> str:
+    if not isinstance(value, int):
+        return str(value)
+    return f"+{value}" if value >= 0 else str(value)
 
 
 def _interruption_block(record: dict[str, Any]) -> str:

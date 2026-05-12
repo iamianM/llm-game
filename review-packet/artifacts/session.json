@@ -1,10 +1,10 @@
 {
-  "schema_version": 9,
-  "seed": 1,
-  "turn_index": 11,
-  "day": 1,
+  "schema_version": 10,
+  "seed": 8,
+  "turn_index": 28,
+  "day": 4,
   "phase": "morning",
-  "location_id": "terrace",
+  "location_id": "pool",
   "player": {
     "id": "player",
     "name": "You",
@@ -15,74 +15,87 @@
       "graft": 6,
       "loyalty": 6
     },
-    "public_perception": 48,
+    "public_perception": 50,
     "eliminated": false,
     "memories": [
       {
-        "id": "mem_62b38296b5704a32",
+        "id": "mem_1ef4869db96858ab",
         "holder_id": "player",
         "subject_id": "chloe",
-        "content": "Chloe laughed softly at my 'partners in crime' line and seemed genuinely amused, which made our playful banter feel easy and fun.",
+        "content": "Chloe and I had a messy but honest poolside conversation.",
         "source": "direct",
         "source_id": null,
         "formed_on_day": 1,
         "formed_on_turn": 6,
         "emotional_weight": 5,
         "tags": [
-          "felt_seen",
-          "flirty",
-          "playful"
+          "player_conversation"
         ],
         "durable": true
       },
       {
-        "id": "mem_ffbaa78520c4f165",
+        "id": "mem_dad2a4efc3b7b5d1",
         "holder_id": "player",
-        "subject_id": "chloe",
-        "content": "Chloe giggled nervously and looked away when I suggested breaking rules, showing me I needed to slow down and keep things comfortable for her.",
-        "source": "direct",
-        "source_id": null,
-        "formed_on_day": 1,
-        "formed_on_turn": 6,
-        "emotional_weight": 6,
-        "tags": [
-          "attuned",
-          "respectful",
-          "sensing_boundaries"
-        ],
-        "durable": true
-      },
-      {
-        "id": "mem_9e37d8ac6d6fb988",
-        "holder_id": "player",
-        "subject_id": "chloe",
-        "content": "At the end, Chloe smiled warmly and met my eyes, making it clear she appreciated taking things slow and just enjoying the moment.",
-        "source": "direct",
-        "source_id": null,
-        "formed_on_day": 1,
-        "formed_on_turn": 6,
-        "emotional_weight": 6,
-        "tags": [
-          "safe",
-          "trust_building",
-          "warm"
-        ],
-        "durable": true
-      },
-      {
-        "id": "mem_5a46415985411ed5",
-        "holder_id": "player",
-        "subject_id": "liam",
-        "content": "Liam\u2019s steady eye contact and laughter made it clear he was enjoying the playful challenge Maya threw his way.",
-        "source": "witnessed",
-        "source_id": null,
+        "subject_id": "maya",
+        "content": "I saw Maya and Liam flirting hard by the pool; Maya looked more interested than she admitted.",
+        "source": "told_by",
+        "source_id": "chloe",
         "formed_on_day": 1,
         "formed_on_turn": 8,
-        "emotional_weight": 4,
+        "emotional_weight": 7,
         "tags": [
-          "engaged",
-          "noticed_body_language",
-          "playful"
+          "flirty",
+          "gossip",
+          "liam",
+          "maya",
+          "source_memory:mem_5d896060b277dd0d"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_9291d1388b90ad6e",
+        "holder_id": "player",
+        "subject_id": "chloe",
+        "content": "Chloe and I had a messy but honest poolside conversation.",
+        "source": "direct",
+        "source_id": null,
+        "formed_on_day": 1,
+        "formed_on_turn": 13,
+        "emotional_weight": 5,
+        "tags": [
+          "player_conversation"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_28417e15bbc94c3f",
+        "holder_id": "player",
+        "subject_id": "villa",
+        "content": "Recoupling ceremony completed.",
+        "source": "witnessed",
+        "source_id": null,
+        "formed_on_day": 4,
+        "formed_on_turn": 28,
+        "emotional_weight": 5,
+        "tags": [
+          "ceremony",
+          "recoupling"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_94a6bbf78de9b80b",
+        "holder_id": "player",
+        "subject_id": "aisha",
+        "content": "Bombshell arrived: Aisha enters the villa.",
+        "source": "witnessed",
+        "source_id": null,
+        "formed_on_day": 4,
+        "formed_on_turn": 28,
+        "emotional_weight": 7,
+        "tags": [
+          "bombshell",
+          "ceremony"
         ],
         "durable": true
       }
@@ -93,82 +106,162 @@
       "id": "chloe",
       "name": "Chloe",
       "archetype": "sweetheart",
-      "location_id": "terrace",
+      "location_id": "pool",
       "relationship": {
-        "affection": 11,
-        "chemistry": 6,
-        "trust": 0,
-        "friendship": 4
+        "affection": 32,
+        "chemistry": 0,
+        "trust": 23,
+        "friendship": 2
       },
       "public_perception": 50,
       "eliminated": false,
       "mood": "content",
       "memories": [
         {
-          "id": "mem_b678139ff8715e81",
+          "id": "mem_5d896060b277dd0d",
           "holder_id": "chloe",
-          "subject_id": "player",
-          "content": "I smiled brightly and leaned in a little when he suggested being partners in crime, which made me feel like there might be some mischievous fun ahead.",
-          "source": "direct",
+          "subject_id": "maya",
+          "content": "I saw Maya and Liam flirting hard by the pool; Maya looked more interested than she admitted.",
+          "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 6,
-          "emotional_weight": 6,
-          "tags": [
-            "felt_playful",
-            "flirty",
-            "warm"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_6f0c7fb5040ceea2",
-          "holder_id": "chloe",
-          "subject_id": "player",
-          "content": "When he pushed to 'break a few rules,' I giggled nervously and looked away, signaling that he was moving too fast for me right now.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 6,
+          "formed_on_turn": 4,
           "emotional_weight": 7,
           "tags": [
-            "defensive",
             "flirty",
-            "uncertain"
+            "gossip",
+            "liam",
+            "maya"
           ],
           "durable": true
         },
         {
-          "id": "mem_a120d8c3f56374d9",
+          "id": "mem_76c9d6e871f97ff6",
+          "holder_id": "chloe",
+          "subject_id": "liam",
+          "content": "Liam was trying to make Maya laugh and seemed proud when she leaned in.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 4,
+          "emotional_weight": 6,
+          "tags": [
+            "flirty",
+            "gossip",
+            "liam"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_384e90ee24446bbd",
+          "holder_id": "chloe",
+          "subject_id": "maya",
+          "content": "Maya kept pretending it was just banter, but I caught the way she watched Liam leave.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 4,
+          "emotional_weight": 6,
+          "tags": [
+            "chemistry",
+            "gossip",
+            "maya"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_dc0f78647e2c508b",
           "holder_id": "chloe",
           "subject_id": "player",
-          "content": "When he joked about behaving until cameras stopped rolling, I laughed softly and shook my head, happy to keep things light and playful around the pool.",
+          "content": "The player kept trying even when the chat got awkward, which made me curious.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
           "formed_on_turn": 6,
           "emotional_weight": 5,
           "tags": [
-            "comfort",
-            "humorous",
-            "playful"
+            "player_conversation"
           ],
           "durable": true
         },
         {
-          "id": "mem_a5563d7f3e2e2da5",
+          "id": "mem_2c185d3e4bc6df34",
           "holder_id": "chloe",
-          "subject_id": "maya",
-          "content": "From where I stood, Maya\u2019s confident smirk and close body language toward Liam looked like she was really into teasing him, not just joking around.",
+          "subject_id": "player",
+          "content": "I saw the player try to pull Maya away and get brushed off.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 8,
-          "emotional_weight": 4,
+          "formed_on_turn": 7,
+          "emotional_weight": 6,
           "tags": [
-            "body_language",
-            "noticed_flirt",
-            "playful_tone"
+            "maya",
+            "pull",
+            "saw_pull_rejected"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_8b4d620885e79a76",
+          "holder_id": "chloe",
+          "subject_id": "player",
+          "content": "I saw the player handle an interruption and leave someone ignored in public.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 6,
+          "tags": [
+            "ignored_in_public",
+            "interruption",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_ed540a2fa2f10742",
+          "holder_id": "chloe",
+          "subject_id": "player",
+          "content": "The player kept trying even when the chat got awkward, which made me curious.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 13,
+          "emotional_weight": 5,
+          "tags": [
+            "player_conversation"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_419d32780cece44a",
+          "holder_id": "chloe",
+          "subject_id": "villa",
+          "content": "Recoupling ceremony completed.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "recoupling"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_a4dd3911cd67b409",
+          "holder_id": "chloe",
+          "subject_id": "aisha",
+          "content": "Bombshell arrived: Aisha enters the villa.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 7,
+          "tags": [
+            "bombshell",
+            "ceremony"
           ],
           "durable": true
         }
@@ -178,78 +271,7 @@
       "id": "maya",
       "name": "Maya",
       "archetype": "joker",
-      "location_id": "terrace",
-      "relationship": {
-        "affection": 13,
-        "chemistry": 3,
-        "trust": 3,
-        "friendship": 1
-      },
-      "public_perception": 50,
-      "eliminated": false,
-      "mood": "content",
-      "memories": [
-        {
-          "id": "mem_6cadacdbc6d0058c",
-          "holder_id": "maya",
-          "subject_id": "liam",
-          "content": "Liam's playful challenge about my heart matching his adventurous backpack made me feel daring and seen in a new way over breakfast.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 5,
-          "emotional_weight": 6,
-          "tags": [
-            "adventure_talk",
-            "felt_seen",
-            "flirty",
-            "playful_challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_f4e5b3042e87d3f9",
-          "holder_id": "maya",
-          "subject_id": "liam",
-          "content": "I noticed Liam\u2019s competitive streak comes out even in breakfast banter, and it felt intriguing rather than annoying.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 8,
-          "emotional_weight": 5,
-          "tags": [
-            "competitive",
-            "felt_intrigued",
-            "noticed_charm",
-            "playful"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_04e537c0476e6157",
-          "holder_id": "maya",
-          "subject_id": "liam",
-          "content": "When Liam said I\u2019d have to stick around to see what's under his charm, I felt a spark of curiosity about what he's really like.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 8,
-          "emotional_weight": 7,
-          "tags": [
-            "curious",
-            "felt_seen",
-            "flirty_tension",
-            "intimate"
-          ],
-          "durable": true
-        }
-      ]
-    },
-    {
-      "id": "liam",
-      "name": "Liam",
-      "archetype": "friend",
-      "location_id": "terrace",
+      "location_id": "pool",
       "relationship": {
         "affection": 6,
         "chemistry": 0,
@@ -261,233 +283,331 @@
       "mood": "content",
       "memories": [
         {
-          "id": "mem_da47a773528968fe",
-          "holder_id": "liam",
-          "subject_id": "maya",
-          "content": "Maya's soft admission about being a loner yet feeling like she might not have to be was unexpectedly warm and made me want to connect deeper with her.",
+          "id": "mem_1e9d75c12cac0d83",
+          "holder_id": "maya",
+          "subject_id": "liam",
+          "content": "Liam made breakfast flirting feel like a competition, and I liked that he kept up.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 5,
+          "formed_on_turn": 4,
           "emotional_weight": 7,
           "tags": [
-            "felt_warmth",
-            "soft_confession",
-            "trust_building",
-            "vulnerable"
+            "flirty",
+            "liam"
           ],
           "durable": true
         },
         {
-          "id": "mem_5ba50c0195477f95",
-          "holder_id": "liam",
-          "subject_id": "maya",
-          "content": "Maya's smirk when she leaned in made me want to show there's more to me than just games\u2014it felt like a real invitation to be honest.",
+          "id": "mem_bcdf91091ad68432",
+          "holder_id": "maya",
+          "subject_id": "player",
+          "content": "The player was nearby while my thing with Liam got more obvious.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 4,
+          "emotional_weight": 5,
+          "tags": [
+            "player",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_21c4438a8115f43b",
+          "holder_id": "maya",
+          "subject_id": "liam",
+          "content": "I might have pushed the teasing a little because Liam was giving it right back.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 8,
+          "formed_on_turn": 4,
           "emotional_weight": 6,
           "tags": [
-            "felt_challenged",
-            "flirty",
-            "intimate_moment",
-            "noticed_sympathy"
+            "chemistry",
+            "flirty"
           ],
           "durable": true
         },
         {
-          "id": "mem_3145e44251e78d96",
+          "id": "mem_e2dacd3f9b1dc371",
+          "holder_id": "maya",
+          "subject_id": "player",
+          "content": "I saw the player handle an interruption and leave someone ignored in public.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 6,
+          "tags": [
+            "ignored_in_public",
+            "interruption",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_2d8c55c6ede59140",
+          "holder_id": "maya",
+          "subject_id": "villa",
+          "content": "Recoupling ceremony completed.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "recoupling"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_b0aca6a27608b505",
+          "holder_id": "maya",
+          "subject_id": "aisha",
+          "content": "Bombshell arrived: Aisha enters the villa.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 7,
+          "tags": [
+            "bombshell",
+            "ceremony"
+          ],
+          "durable": true
+        }
+      ]
+    },
+    {
+      "id": "liam",
+      "name": "Liam",
+      "archetype": "friend",
+      "location_id": "pool",
+      "relationship": {
+        "affection": 2,
+        "chemistry": 0,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false,
+      "mood": "content",
+      "memories": [
+        {
+          "id": "mem_ee8fe7fe3eca0bbb",
           "holder_id": "liam",
           "subject_id": "maya",
-          "content": "I felt a bit vulnerable revealing there's more to me beyond competition when Maya got serious and leaned closer.",
+          "content": "Maya turned a silly breakfast bit into something that felt like a date.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 8,
+          "formed_on_turn": 4,
           "emotional_weight": 7,
           "tags": [
-            "felt_exposed",
-            "intimate",
-            "trust_building",
-            "vulnerable"
+            "flirty",
+            "maya"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_452d4c002cd116d7",
+          "holder_id": "liam",
+          "subject_id": "player",
+          "content": "The player saw enough to know Maya and I were not just chatting casually.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 4,
+          "emotional_weight": 5,
+          "tags": [
+            "player",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_b4272e5c4c78d8ed",
+          "holder_id": "liam",
+          "subject_id": "player",
+          "content": "I noticed the player kept Chloe's attention longer than expected.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 6,
+          "emotional_weight": 5,
+          "tags": [
+            "player",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_a1d277841242cfcd",
+          "holder_id": "liam",
+          "subject_id": "player",
+          "content": "I saw the player try to pull Maya away and get brushed off.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 7,
+          "emotional_weight": 6,
+          "tags": [
+            "maya",
+            "pull",
+            "saw_pull_rejected"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_28695cbc25f07eda",
+          "holder_id": "liam",
+          "subject_id": "player",
+          "content": "I remember the player leaving me feeling ignored in public.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 8,
+          "tags": [
+            "ignored_in_public",
+            "interruption"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_512488ffef3c72ee",
+          "holder_id": "liam",
+          "subject_id": "player",
+          "content": "I noticed the player kept Chloe's attention longer than expected.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 13,
+          "emotional_weight": 5,
+          "tags": [
+            "player",
+            "witnessed"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_2a5ed90324e08d6e",
+          "holder_id": "liam",
+          "subject_id": "villa",
+          "content": "Recoupling ceremony completed.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "recoupling"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_fe3a2c4e81710832",
+          "holder_id": "liam",
+          "subject_id": "aisha",
+          "content": "Bombshell arrived: Aisha enters the villa.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 7,
+          "tags": [
+            "bombshell",
+            "ceremony"
+          ],
+          "durable": true
+        }
+      ]
+    },
+    {
+      "id": "aisha",
+      "name": "Aisha",
+      "archetype": "joker",
+      "location_id": "terrace",
+      "relationship": {
+        "affection": 8,
+        "chemistry": 12,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 55,
+      "eliminated": false,
+      "mood": "content",
+      "memories": [
+        {
+          "id": "mem_f3d33f6a1ec75c00",
+          "holder_id": "aisha",
+          "subject_id": "villa",
+          "content": "Recoupling ceremony completed.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "recoupling"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_6e22e093536dc55f",
+          "holder_id": "aisha",
+          "subject_id": "aisha",
+          "content": "Bombshell arrived: Aisha enters the villa.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 4,
+          "formed_on_turn": 28,
+          "emotional_weight": 7,
+          "tags": [
+            "bombshell",
+            "ceremony"
           ],
           "durable": true
         }
       ]
     }
   ],
-  "couples": [],
-  "active_conversation": {
-    "target_id": "maya",
-    "started_on_turn": 8,
-    "started_on_day": 1,
-    "exchanges": [
-      {
-        "turn_index": 8,
-        "intent_id": "banter_funny_story",
-        "player_dialogue": "You won't believe what happened to me this morning\u2014I accidentally wore two different shoes to breakfast and didn't notice until someone pointed it out!",
-        "npc_dialogue": "*Laughs, shaking her head* Typical! That\u2019s the kind of blunder that makes me feel a bit less of a klutz. Definitely made my morning more interesting. Keep the surprises coming, yeah?",
-        "npc_tone": "amused",
-        "npc_mood_after": "happy",
-        "success": true,
-        "tags": [
-          "funny",
-          "charming"
-        ],
-        "relationship_deltas": {
-          "maya": {
-            "affection": 2,
-            "chemistry": 0,
-            "trust": 0,
-            "friendship": 1
-          }
-        }
-      },
-      {
-        "turn_index": 9,
-        "intent_id": "escalate_flirt",
-        "player_dialogue": "Well, if we're trading surprises, maybe next time I'll make it up to you with a dance-off on the terrace. You game?",
-        "npc_dialogue": "*Grins, flicking her hair back* A dance-off, huh? Now that\u2019s a challenge I can\u2019t resist. Just don\u2019t cry when I win; I might go easy on you though. Let\u2019s see if you can keep up!",
-        "npc_tone": "playful",
-        "npc_mood_after": "flirty",
-        "success": true,
-        "tags": [
-          "escalate_flirt",
-          "low",
-          "playful"
-        ],
-        "relationship_deltas": {
-          "maya": {
-            "affection": 1,
-            "chemistry": 5,
-            "trust": 0,
-            "friendship": 0
-          }
-        }
-      },
-      {
-        "turn_index": 10,
-        "intent_id": "escalate_flirt",
-        "player_dialogue": "Careful, or my dance moves might just sweep you off your feet\u2014literally.",
-        "npc_dialogue": "*Laughs, stepping back a little* Sweep me off my feet? Easy there, Romeo. I\u2019m not falling that fast\u2014not on day one, anyway! You'll have to be quicker than that to impress me.",
-        "npc_tone": "playful",
-        "npc_mood_after": "content",
-        "success": false,
-        "tags": [
-          "escalate_flirt",
-          "low",
-          "playful"
-        ],
-        "relationship_deltas": {
-          "maya": {
-            "affection": 0,
-            "chemistry": -2,
-            "trust": -1,
-            "friendship": 0
-          }
-        }
-      },
-      {
-        "turn_index": 11,
-        "intent_id": "go_deeper",
-        "player_dialogue": "So, what's something about you that not many people get to see?",
-        "npc_dialogue": "*Pauses, then shrugs with a playful smirk.* Honestly, people don\u2019t usually see the side of me that worries if I\u2019m being too much or not enough. Guess I like to keep that under wraps, but hey, you\u2019re getting a peek now.",
-        "npc_tone": "vulnerable",
-        "npc_mood_after": "content",
-        "success": true,
-        "tags": [
-          "go_deeper",
-          "low",
-          "curious"
-        ],
-        "relationship_deltas": {
-          "maya": {
-            "affection": 2,
-            "chemistry": 0,
-            "trust": 3,
-            "friendship": 0
-          }
-        }
-      }
-    ],
-    "accumulated_tags": [
-      "funny",
-      "charming",
-      "escalate_flirt",
-      "low",
-      "playful",
-      "escalate_flirt",
-      "low",
-      "playful",
-      "go_deeper",
-      "low",
-      "curious"
-    ],
-    "status": "open",
-    "departure_probability_last": 10,
-    "pending_options": {
-      "options": [
-        {
-          "label": "Get vulnerable too",
-          "category": "deep",
-          "intent_kind": "honest_vulnerable",
-          "stat_used": "eq",
-          "risk": "safe",
-          "tone": "vulnerable",
-          "unlock_threshold": null
-        },
-        {
-          "label": "Reassure her gently",
-          "category": "supportive",
-          "intent_kind": "apologize",
-          "stat_used": "loyalty",
-          "risk": "safe",
-          "tone": "warm",
-          "unlock_threshold": null
-        },
-        {
-          "label": "Make it playful again",
-          "category": "banter",
-          "intent_kind": "deflect_with_humor",
-          "stat_used": "banter",
-          "risk": "low",
-          "tone": "playful",
-          "unlock_threshold": null
-        },
-        {
-          "label": "Leave it there",
-          "category": "exit",
-          "intent_kind": "end_softly",
-          "stat_used": null,
-          "risk": "safe",
-          "tone": "cool",
-          "unlock_threshold": null
-        }
-      ],
-      "npc_will_leave": false,
-      "npc_exit_line": null
+  "couples": [
+    {
+      "partner_a_id": "player",
+      "partner_b_id": "chloe",
+      "formed_on_day": 3
     },
-    "gossip_offers": []
-  },
+    {
+      "partner_a_id": "maya",
+      "partner_b_id": "liam",
+      "formed_on_day": 3
+    }
+  ],
+  "active_conversation": null,
   "npc_conversations": [
     {
-      "id": "npcconv_35e21c49afc9",
+      "id": "npcconv_a8600bd6c63b",
       "participants": [
-        "chloe",
+        "maya",
         "liam"
       ],
-      "location_id": "terrace",
-      "topic": "comparing notes on morning chemistry",
-      "started_on_turn": 11,
+      "location_id": "pool",
+      "topic": "whether their teasing is turning into real attraction",
+      "started_on_turn": 5,
       "exchanges": [
         {
-          "turn_index": 11,
-          "speaker_a_id": "chloe",
+          "turn_index": 5,
+          "speaker_a_id": "maya",
           "speaker_b_id": "liam",
-          "speaker_a_line": "Honestly, Liam, I wasn't expecting to feel such a spark right off the bat. Did it hit you the same way? *glances toward Maya, who\u2019s nearby*",
-          "speaker_b_line": "You\u2019re not wrong, Chloe. There's definitely something electric this morning\u2014like when our eyes met over breakfast, it was more than just friendly vibes.",
-          "tone": "warm"
+          "speaker_a_line": "Maya keeps the joke going about Liam, beat 4.",
+          "speaker_b_line": "Liam laughs, but he is clearly trying to impress her back.",
+          "tone": "flirty"
         }
       ],
       "status": "active"
