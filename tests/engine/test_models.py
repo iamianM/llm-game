@@ -8,11 +8,14 @@ import pytest
 from pydantic import ValidationError
 
 from src.game.state.models import (
+    BackgroundExchangeRecord,
     Conversation,
     ExchangeRecord,
     GameState,
+    Location,
     Memory,
     Mood,
+    NPCNPCConversation,
     PlayerStats,
     clamp_relationship,
     new_game,
@@ -92,6 +95,36 @@ def test_memory_content_does_not_affect_hash() -> None:
     )
     first = state_hash(state_hash_payload(state))
     state.player.memories[0].content = "Changed memory text."
+
+    assert state_hash(state_hash_payload(state)) == first
+
+
+def test_background_dialogue_does_not_affect_hash() -> None:
+    """NPC-NPC dialogue prose stays out of the mechanical hash."""
+    state = new_game(1)
+    state.npc_conversations.append(
+        NPCNPCConversation(
+            id="npcconv_test",
+            participants=["chloe", "maya"],
+            location_id=Location.POOL,
+            topic="Original topic.",
+            started_on_turn=1,
+            exchanges=[
+                BackgroundExchangeRecord(
+                    turn_index=1,
+                    speaker_a_id="chloe",
+                    speaker_b_id="maya",
+                    speaker_a_line="Original line from Chloe.",
+                    speaker_b_line="Original line from Maya.",
+                    tone="warm",
+                )
+            ],
+        )
+    )
+    first = state_hash(state_hash_payload(state))
+    state.npc_conversations[0].topic = "Changed topic."
+    state.npc_conversations[0].exchanges[0].speaker_a_line = "Changed Chloe line."
+    state.npc_conversations[0].exchanges[0].speaker_b_line = "Changed Maya line."
 
     assert state_hash(state_hash_payload(state)) == first
 

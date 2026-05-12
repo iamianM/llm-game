@@ -11,8 +11,9 @@ optionally narrate -> persist state and trace -> return next visible actions.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.contextual_options import (
     ContextualOptionsFn,
     mock_follow_up_menu,
@@ -29,6 +30,7 @@ from src.game.agents.event_narrator import (
     mock_event_narration,
 )
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
+from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.ceremonies import CeremonyEvent, arrive_bombshell, recoupling
 from src.game.engine.conversation import (
@@ -40,7 +42,7 @@ from src.game.engine.conversation import (
 from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
-from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
+from src.game.engine.villa import AgentCommits, apply_villa_update
 from src.game.state.models import Conversation, FollowUpMenu, GameState, MemoryBatch
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -58,9 +60,9 @@ class TurnResult(BaseModel):
     follow_up_menu: FollowUpMenu | None = None
     available_actions: list[ActionSpec]
     state_hash: str
-    off_screen_events: list[OffScreenEvent] = []
     ceremony_events: list[CeremonyEvent] = []
     curator_batches: list[MemoryBatch] = []
+    agent_commits: AgentCommits = Field(default_factory=AgentCommits)
 
 
 def run_turn(
@@ -71,10 +73,11 @@ def run_turn(
     contextual_options: ContextualOptionsFn | None = None,
     event_narrator: EventNarratorFn | None = None,
     conversation_curator: ConversationCuratorFn | None = None,
+    villa_orchestrator: VillaOrchestratorFn | None = None,
+    background_dialogue: BackgroundDialogueFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
     result = apply_action(state, action, rng)
-    off_screen_events: list[OffScreenEvent] = []
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
         ceremony = recoupling(state, action.target_id)
@@ -93,10 +96,6 @@ def run_turn(
                     islander_id=bombshell.id,
                 )
             )
-        off_screen_events = simulate_off_screen(
-            state,
-            rng.fork(f"day-{state.day}-phase-{state.phase.value}"),
-        )
     state.turn_index += 1
     exchange = None
     follow_up_menu = None
@@ -140,6 +139,21 @@ def run_turn(
         remember_ceremony_events(state, ceremony_events)
         narrate_event = mock_event_narration if event_narrator is None else event_narrator
         event_narration = narrate_event(state, ceremony_events)
+    orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
+    villa_update = orchestrate(state)
+    villa_changes = apply_villa_update(
+        state,
+        villa_update,
+        rng.fork(f"villa-turn-{state.turn_index}"),
+        background_dialogue=background_dialogue,
+        conversation_curator=conversation_curator,
+    )
+    curator_batches.extend(villa_changes.curator_batches)
+    agent_commits = AgentCommits(
+        villa_update=villa_update,
+        background_dialogues=villa_changes.background_dialogues,
+        curator_batches=curator_batches,
+    )
     return TurnResult(
         state=state,
         mechanical_result=result,
@@ -148,9 +162,9 @@ def run_turn(
         follow_up_menu=follow_up_menu,
         available_actions=available_actions(state),
         state_hash=state_hash(state_hash_payload(state)),
-        off_screen_events=off_screen_events,
         ceremony_events=ceremony_events,
         curator_batches=curator_batches,
+        agent_commits=agent_commits,
     )
 
 

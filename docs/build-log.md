@@ -146,3 +146,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: mock curator emits participant memories, real Conversation Curator output validates as a typed `MemoryBatch`
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 63 non-LLM tests passed; curator LLM subset green, 1 LLM test passed
 - Scenario fixture: existing fixtures regenerated for schema v8 and typed curator memory commits
+
+## Phase G4 corrective
+
+- Files added: `src/game/agents/villa_orchestrator.py`, `src/game/agents/background_dialogue.py`, `src/game/engine/villa.py`, `tests/agents/test_villa_orchestrator.py`, `tests/agents/test_background_dialogue.py`, `tests/engine/test_villa.py`
+- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/agents/conversation_curator.py`, `src/game/engine/turn.py`, scenario fixtures
+- Files removed: `src/game/engine/simulation.py`, `tests/engine/test_simulation.py`
+- Tests added: VillaUpdate validation, movement application, background conversation start/close, hash exclusion for NPC-NPC dialogue, mock and live agent contract tests
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 68 non-LLM tests passed; Orchestrator and Background Dialogue LLM subsets green, 2 LLM tests passed
+- Scenario fixture: existing fixtures regenerated for schema v9 and empty mock VillaUpdate commits

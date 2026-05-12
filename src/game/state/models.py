@@ -16,7 +16,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 8
+SCHEMA_VERSION = 9
 
 
 class Phase(StrEnum):
@@ -212,6 +212,19 @@ class ExchangeRecord(BaseModel):
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
 
 
+class BackgroundExchangeRecord(BaseModel):
+    """One NPC-NPC exchange retained in a background conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    turn_index: int
+    speaker_a_id: str
+    speaker_b_id: str
+    speaker_a_line: str
+    speaker_b_line: str
+    tone: str
+
+
 class Conversation(BaseModel):
     """A single active one-on-one conversation."""
 
@@ -226,6 +239,20 @@ class Conversation(BaseModel):
     departure_probability_last: int = 0
     pending_options: FollowUpMenu | None = None
     gossip_offers: list[Memory] = Field(default_factory=list)
+
+
+class NPCNPCConversation(BaseModel):
+    """A persistent off-screen conversation between two NPC islanders."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    participants: list[str] = Field(min_length=2, max_length=2)
+    location_id: Location
+    topic: str
+    started_on_turn: int
+    exchanges: list[BackgroundExchangeRecord] = Field(default_factory=list)
+    status: Literal["active", "ending", "closed"] = "active"
 
 
 class GameState(BaseModel):
@@ -243,6 +270,7 @@ class GameState(BaseModel):
     islanders: list[IslanderState]
     couples: list[Couple] = Field(default_factory=list)
     active_conversation: Conversation | None = None
+    npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
 
     @property
     def is_terminal(self) -> bool:

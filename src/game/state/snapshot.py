@@ -48,6 +48,17 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
         for islander in islanders:
             if isinstance(islander, dict):
                 _strip_memory_content(islander.get("memories"))
+    npc_conversations = payload.get("npc_conversations")
+    if isinstance(npc_conversations, list):
+        for conversation in npc_conversations:
+            if isinstance(conversation, dict):
+                conversation.pop("topic", None)
+                exchanges = conversation.get("exchanges")
+                if isinstance(exchanges, list):
+                    for exchange in exchanges:
+                        if isinstance(exchange, dict):
+                            exchange.pop("speaker_a_line", None)
+                            exchange.pop("speaker_b_line", None)
     return payload
 
 

@@ -18,11 +18,18 @@ from pathlib import Path
 from openai import OpenAI
 
 from src.game.agents.islander_voice import load_dotenv_local
-from src.game.state.models import Conversation, GameState, MemoryBatch, MemoryDraft
+from src.game.state.models import (
+    Conversation,
+    GameState,
+    MemoryBatch,
+    MemoryDraft,
+    NPCNPCConversation,
+)
 
 CONVERSATION_CURATOR_MODEL = "gpt-4.1-mini"
 
-ConversationCuratorFn = Callable[[GameState, Conversation, Sequence[str]], MemoryBatch]
+CuratableConversation = Conversation | NPCNPCConversation
+ConversationCuratorFn = Callable[[GameState, CuratableConversation, Sequence[str]], MemoryBatch]
 
 
 class OpenAIConversationCurator:
@@ -36,7 +43,7 @@ class OpenAIConversationCurator:
     def curate(
         self,
         state: GameState,
-        conversation: Conversation,
+        conversation: CuratableConversation,
         bystander_ids: Sequence[str] = (),
     ) -> MemoryBatch:
         """Generate a validated memory batch for a closed conversation."""
@@ -58,10 +65,12 @@ class OpenAIConversationCurator:
 
 def mock_conversation_curator(
     state: GameState,
-    conversation: Conversation,
+    conversation: CuratableConversation,
     bystander_ids: Sequence[str] = (),
 ) -> MemoryBatch:
     """Return deterministic memory commits for non-LLM tests and fixtures."""
+    if isinstance(conversation, NPCNPCConversation):
+        return _mock_npc_conversation_memory(state, conversation, bystander_ids)
     target_id = conversation.target_id
     target_name = _name_for(state, target_id)
     tag = conversation.accumulated_tags[0] if conversation.accumulated_tags else "private"
@@ -126,9 +135,11 @@ def validate_memory_batch(
 
 def _render_context(
     state: GameState,
-    conversation: Conversation,
+    conversation: CuratableConversation,
     bystander_ids: Sequence[str],
 ) -> str:
+    if isinstance(conversation, NPCNPCConversation):
+        return _render_npc_context(state, conversation, bystander_ids)
     target = _name_for(state, conversation.target_id)
     exchanges = "\n".join(
         (
@@ -155,8 +166,81 @@ def _render_context(
     )
 
 
-def _participant_ids(conversation: Conversation) -> set[str]:
+def _participant_ids(conversation: CuratableConversation) -> set[str]:
+    if isinstance(conversation, NPCNPCConversation):
+        return set(conversation.participants)
     return {"player", conversation.target_id}
+
+
+def _mock_npc_conversation_memory(
+    state: GameState,
+    conversation: NPCNPCConversation,
+    bystander_ids: Sequence[str],
+) -> MemoryBatch:
+    first_id, second_id = conversation.participants
+    first_name = _name_for(state, first_id)
+    second_name = _name_for(state, second_id)
+    memories = [
+        MemoryDraft(
+            holder_id=first_id,
+            subject_id=second_id,
+            content=f"I remember {second_name} leaning into our chat about {conversation.topic}.",
+            source="direct",
+            emotional_weight=5,
+            tags=["background", "npc_conversation"],
+        ),
+        MemoryDraft(
+            holder_id=second_id,
+            subject_id=first_id,
+            content=f"I remember {first_name} having a real point about {conversation.topic}.",
+            source="direct",
+            emotional_weight=5,
+            tags=["background", "npc_conversation"],
+        ),
+    ]
+    for bystander_id in bystander_ids:
+        memories.append(
+            MemoryDraft(
+                holder_id=bystander_id,
+                subject_id=first_id,
+                content=f"I noticed {first_name} and {second_name} looked wrapped up in each other.",
+                source="witnessed",
+                emotional_weight=4,
+                tags=["background", "witnessed"],
+            )
+        )
+    return MemoryBatch(memories=memories)
+
+
+def _render_npc_context(
+    state: GameState,
+    conversation: NPCNPCConversation,
+    bystander_ids: Sequence[str],
+) -> str:
+    first_id, second_id = conversation.participants
+    exchanges = "\n".join(
+        (
+            f"- {exchange.speaker_a_id}: {exchange.speaker_a_line!r}; "
+            f"{exchange.speaker_b_id}: {exchange.speaker_b_line!r}; tone {exchange.tone}"
+        )
+        for exchange in conversation.exchanges
+    )
+    return "\n".join(
+        [
+            f"Day: {state.day}",
+            f"Location: {conversation.location_id.value}",
+            f"Participants: {first_id} ({_name_for(state, first_id)}), "
+            f"{second_id} ({_name_for(state, second_id)})",
+            f"Topic: {conversation.topic}",
+            f"Bystanders: {_list_ids(bystander_ids)}",
+            "Exchange history:",
+            exchanges or "No exchange history.",
+            "Participant relationship states:",
+            f"- {first_id}: {_relationship_summary(state, first_id)}",
+            f"- {second_id}: {_relationship_summary(state, second_id)}",
+            "Write the MemoryBatch now.",
+        ]
+    )
 
 
 def _relationship_summary(state: GameState, islander_id: str) -> str:
