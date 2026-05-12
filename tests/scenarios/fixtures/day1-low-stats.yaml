@@ -1,0 +1,22 @@
+# Regenerate expected_hash with:
+# uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-low-stats.yaml --mock-llm
+name: day1-low-stats
+seed: 4
+player_stats:
+  charm: 7
+  banter: 7
+  eq: 7
+  graft: 3
+  loyalty: 6
+expected_hash: 5e9f038468ba2aebd1fa25901003e0c05cf6f486ca1f2a4299dc9ea4d0a5e942
+actions:
+  - kind: listen
+    target_id: chloe
+  - kind: flirt
+    target_id: maya
+  - kind: advance_phase
+  - kind: leave
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase

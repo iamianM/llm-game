@@ -13,9 +13,9 @@ from __future__ import annotations
 
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 class Phase(StrEnum):
@@ -30,16 +30,23 @@ class Phase(StrEnum):
 
 
 class PlayerStats(BaseModel):
-    """Phase A1 player stats.
-
-    Full design has five fixed stats. A1 intentionally starts with Charm and
-    Banter only so the loop becomes playable before the full stat surface.
-    """
+    """Five fixed player stats with the A3 30-point budget."""
 
     model_config = ConfigDict(extra="forbid")
 
     charm: int = Field(ge=3, le=9)
     banter: int = Field(ge=3, le=9)
+    eq: int = Field(ge=3, le=9)
+    graft: int = Field(ge=3, le=9)
+    loyalty: int = Field(ge=3, le=9)
+
+    @model_validator(mode="after")
+    def validate_budget(self) -> PlayerStats:
+        """Reject stat allocations above the starting 30-point budget."""
+        total = self.charm + self.banter + self.eq + self.graft + self.loyalty
+        if total > 30:
+            raise ValueError("player stat total cannot exceed 30")
+        return self
 
 
 class PlayerState(BaseModel):
@@ -59,6 +66,8 @@ class RelationshipState(BaseModel):
 
     affection: int = Field(default=0, ge=0, le=100)
     chemistry: int = Field(default=0, ge=0, le=100)
+    trust: int = Field(default=0, ge=0, le=100)
+    friendship: int = Field(default=0, ge=0, le=100)
 
 
 class IslanderState(BaseModel):
@@ -98,11 +107,15 @@ def clamp_relationship(value: int) -> int:
     return max(0, min(100, value))
 
 
-def new_game(seed: int) -> GameState:
+def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState:
     """Create the deterministic Phase A1 starting state."""
     return GameState(
         seed=seed,
-        player=PlayerState(stats=PlayerStats(charm=6, banter=6)),
+        player=PlayerState(
+            stats=player_stats
+            if player_stats is not None
+            else PlayerStats(charm=6, banter=6, eq=6, graft=6, loyalty=6)
+        ),
         islanders=[
             IslanderState(
                 id="chloe",

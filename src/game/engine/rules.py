@@ -21,6 +21,11 @@ TALK_SUCCESS_AFFECTION_DELTA = 2
 FLIRT_SUCCESS_AFFECTION_DELTA = 2
 FLIRT_SUCCESS_CHEMISTRY_DELTA = 5
 FLIRT_MISS_CHEMISTRY_DELTA = -1
+BOLD_FLIRT_SUCCESS_AFFECTION_DELTA = 3
+BOLD_FLIRT_SUCCESS_CHEMISTRY_DELTA = 8
+BOLD_FLIRT_MISS_CHEMISTRY_DELTA = -3
+LISTEN_SUCCESS_TRUST_DELTA = 3
+LISTEN_FRIENDSHIP_DELTA = 1
 
 
 class RelationshipDelta(BaseModel):
@@ -30,6 +35,8 @@ class RelationshipDelta(BaseModel):
 
     affection: int = 0
     chemistry: int = 0
+    trust: int = 0
+    friendship: int = 0
 
 
 class MechanicalResult(BaseModel):
@@ -52,6 +59,12 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_talk(state, action, rng)
     if action.kind is ActionKind.FLIRT:
         return _apply_flirt(state, action, rng)
+    if action.kind is ActionKind.BOLD_FLIRT:
+        return _apply_bold_flirt(state, action, rng)
+    if action.kind is ActionKind.LISTEN:
+        return _apply_listen(state, action, rng)
+    if action.kind is ActionKind.LEAVE:
+        return MechanicalResult(action=action, success=True, tags=["disengaged"])
     if action.kind is ActionKind.ADVANCE_PHASE:
         return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented in Phase A1: {action.kind}")
@@ -102,6 +115,58 @@ def _apply_flirt(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
     )
 
 
+def _apply_bold_flirt(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
+    target = _find_islander(state, action.target_id)
+    chance = bold_flirt_success_chance(state, target)
+    roll = rng.randint(1, 100)
+    success = roll <= chance
+    affection_delta = BOLD_FLIRT_SUCCESS_AFFECTION_DELTA if success else 0
+    chemistry_delta = (
+        BOLD_FLIRT_SUCCESS_CHEMISTRY_DELTA if success else BOLD_FLIRT_MISS_CHEMISTRY_DELTA
+    )
+    target.relationship.affection = clamp_relationship(
+        target.relationship.affection + affection_delta
+    )
+    target.relationship.chemistry = clamp_relationship(
+        target.relationship.chemistry + chemistry_delta
+    )
+    return MechanicalResult(
+        action=action,
+        success=success,
+        roll=roll,
+        success_chance=chance,
+        relationship_deltas={
+            target.id: RelationshipDelta(affection=affection_delta, chemistry=chemistry_delta)
+        },
+        tags=["bold", "flirty"] if success else ["bold", "awkward"],
+    )
+
+
+def _apply_listen(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
+    target = _find_islander(state, action.target_id)
+    chance = listen_success_chance(state, target)
+    roll = rng.randint(1, 100)
+    success = roll <= chance
+    trust_delta = LISTEN_SUCCESS_TRUST_DELTA if success else 0
+    target.relationship.trust = clamp_relationship(target.relationship.trust + trust_delta)
+    target.relationship.friendship = clamp_relationship(
+        target.relationship.friendship + LISTEN_FRIENDSHIP_DELTA
+    )
+    return MechanicalResult(
+        action=action,
+        success=success,
+        roll=roll,
+        success_chance=chance,
+        relationship_deltas={
+            target.id: RelationshipDelta(
+                trust=trust_delta,
+                friendship=LISTEN_FRIENDSHIP_DELTA,
+            )
+        },
+        tags=["listen", "supportive"],
+    )
+
+
 def talk_success_chance(state: GameState, target: IslanderState) -> int:
     """Calculate Phase A1 TALK success chance.
 
@@ -115,6 +180,18 @@ def talk_success_chance(state: GameState, target: IslanderState) -> int:
 def flirt_success_chance(state: GameState, target: IslanderState) -> int:
     """Calculate Phase A2 FLIRT success chance."""
     chance = 40 + (state.player.stats.charm * 5) + (target.relationship.chemistry // 4)
+    return max(5, min(95, chance))
+
+
+def bold_flirt_success_chance(state: GameState, target: IslanderState) -> int:
+    """Calculate high-risk Phase A3 BOLD_FLIRT success chance."""
+    chance = 30 + (state.player.stats.graft * 6) + (target.relationship.chemistry // 5)
+    return max(5, min(95, chance))
+
+
+def listen_success_chance(state: GameState, target: IslanderState) -> int:
+    """Calculate Phase A3 LISTEN success chance."""
+    chance = 45 + (state.player.stats.eq * 5) + (target.relationship.affection // 5)
     return max(5, min(95, chance))
 
 

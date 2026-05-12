@@ -23,6 +23,7 @@ class ActionKind(StrEnum):
 
     TALK = "talk"
     FLIRT = "flirt"
+    BOLD_FLIRT = "bold_flirt"
     LISTEN = "listen"
     LEAVE = "leave"
     ADVANCE_PHASE = "advance_phase"
@@ -44,6 +45,7 @@ class ActionSpec(BaseModel):
 
     action: PlayerAction
     label: str
+    min_stat: tuple[str, int] | None = None
 
 
 def available_actions(state: GameState) -> list[ActionSpec]:
@@ -51,21 +53,33 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     if state.is_terminal:
         return []
 
-    actions = [
-        spec
-        for islander in state.islanders
-        if islander.location_id == state.location_id
-        for spec in (
-            ActionSpec(
-                action=PlayerAction(kind=ActionKind.TALK, target_id=islander.id),
-                label=f"Talk to {islander.name}",
-            ),
-            ActionSpec(
-                action=PlayerAction(kind=ActionKind.FLIRT, target_id=islander.id),
-                label=f"Flirt with {islander.name}",
-            ),
+    actions: list[ActionSpec] = []
+    for islander in state.islanders:
+        if islander.location_id != state.location_id:
+            continue
+        actions.extend(
+            [
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.TALK, target_id=islander.id),
+                    label=f"Talk to {islander.name}",
+                ),
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.FLIRT, target_id=islander.id),
+                    label=f"Flirt with {islander.name}",
+                ),
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.BOLD_FLIRT, target_id=islander.id),
+                    label=f"Flirt boldly with {islander.name}",
+                    min_stat=("graft", 5),
+                ),
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.LISTEN, target_id=islander.id),
+                    label=f"Listen to {islander.name}",
+                ),
+            ]
         )
-    ]
+    actions = [spec for spec in actions if _meets_requirement(state, spec)]
+    actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.LEAVE), label="Leave the chat"))
     actions.append(
         ActionSpec(
             action=PlayerAction(kind=ActionKind.ADVANCE_PHASE),
@@ -73,6 +87,16 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         )
     )
     return actions
+
+
+def _meets_requirement(state: GameState, spec: ActionSpec) -> bool:
+    if spec.min_stat is None:
+        return True
+    stat_name, minimum = spec.min_stat
+    value = getattr(state.player.stats, stat_name)
+    if not isinstance(value, int):
+        raise ValueError(f"unknown numeric stat requirement: {stat_name}")
+    return value >= minimum
 
 
 def validate_action(state: GameState, action: PlayerAction) -> None:

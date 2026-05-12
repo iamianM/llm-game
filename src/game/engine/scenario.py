@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import PlayerAction
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import GameState, new_game
+from src.game.state.models import GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash
 
@@ -30,6 +30,7 @@ class ActionScript(BaseModel):
 
     name: str
     seed: int
+    player_stats: PlayerStats | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None
 
@@ -58,7 +59,7 @@ def load_action_script(path: Path) -> ActionScript:
 def run_action_script(script: ActionScript, *, seed_override: int | None = None) -> ScenarioRunResult:
     """Replay ``script`` from a fresh deterministic Phase A1 game."""
     seed = script.seed if seed_override is None else seed_override
-    state = new_game(seed)
+    state = new_game(seed, player_stats=script.player_stats)
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
 

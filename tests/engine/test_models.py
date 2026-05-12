@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from src.game.state.models import GameState, clamp_relationship, new_game
+from src.game.state.models import GameState, PlayerStats, clamp_relationship, new_game
 from src.game.state.snapshot import load_snapshot, save_snapshot, state_hash
 
 
@@ -17,6 +17,12 @@ def test_game_state_forbids_extra_fields() -> None:
 
     with pytest.raises(ValidationError):
         GameState.model_validate(payload)
+
+
+def test_player_stats_rejects_budget_over_30() -> None:
+    """The starting stat allocation cannot exceed the 30-point budget."""
+    with pytest.raises(ValidationError):
+        PlayerStats(charm=9, banter=9, eq=6, graft=6, loyalty=6)
 
 
 def test_clamp_relationship_boundaries() -> None:
