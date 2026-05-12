@@ -18,6 +18,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.engine.intents import Intent, available_intents_for, effective_risk, get_intent
 from src.game.engine.memory import add_memory, create_memory
+from src.game.engine.pull import PullAttempt
 from src.game.state.models import (
     GameState,
     IslanderState,
@@ -39,6 +40,7 @@ class MechanicalResult(BaseModel):
     success_chance: int | None = None
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
+    pull_attempt: PullAttempt | None = None
 
 
 class FollowUpDeltaTable(BaseModel):

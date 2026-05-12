@@ -49,6 +49,7 @@ def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -
             f"<p><b>You chose:</b> {escape(action['kind'])} "
             f"{escape(str(action.get('target_id') or ''))} "
             f"{escape(str(action.get('intent_id') or ''))}</p>"
+            f"{_pull_attempt_block(result.get('pull_attempt'))}"
             f"{_exchange_block(record.get('exchange'))}"
             f"{_event_block(record.get('event_narration'))}"
             f"{_follow_up_block(record.get('follow_up_menu'))}"
@@ -216,6 +217,26 @@ def _agent_commit_details(update: dict[str, object], background: object) -> str:
     if not lines:
         return ""
     return f"<p><b>Details</b></p><ul>{''.join(f'<li>{line}</li>' for line in lines)}</ul>"
+
+
+def _pull_attempt_block(pull_attempt: object) -> str:
+    if not isinstance(pull_attempt, dict):
+        return ""
+    outcome = "success" if pull_attempt.get("success") else "miss"
+    deflection = pull_attempt.get("deflection_line")
+    deflection_html = (
+        "" if not isinstance(deflection, str) or not deflection else f"<p>{escape(deflection)}</p>"
+    )
+    return (
+        "<div class='card pull-attempt'>"
+        "<p><b>Pull attempt</b></p>"
+        f"<p>Target: {escape(str(pull_attempt.get('target_id', 'unknown')))}; "
+        f"chance {escape(str(pull_attempt.get('chance', '')))}; "
+        f"roll {escape(str(pull_attempt.get('roll', '')))}; "
+        f"outcome {escape(outcome)}.</p>"
+        f"{deflection_html}"
+        "</div>"
+    )
 
 
 def _short_text(value: str, *, limit: int = 140) -> str:

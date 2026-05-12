@@ -39,11 +39,25 @@ from src.game.engine.conversation import (
     departure_probability,
     start_conversation,
 )
-from src.game.engine.memory import add_memory_batch, remember_ceremony_events
+from src.game.engine.memory import (
+    add_memory,
+    add_memory_batch,
+    create_memory,
+    remember_ceremony_events,
+)
 from src.game.engine.phases import advance_phase
+from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.villa import AgentCommits, apply_villa_update
-from src.game.state.models import Conversation, FollowUpMenu, GameState, MemoryBatch
+from src.game.state.models import (
+    Conversation,
+    FollowUpMenu,
+    GameState,
+    MemoryBatch,
+    NPCNPCConversation,
+    RelationshipDelta,
+    clamp_relationship,
+)
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -77,7 +91,55 @@ def run_turn(
     background_dialogue: BackgroundDialogueFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
+    pre_curator_batches: list[MemoryBatch] = []
+    pull_attempt: PullAttempt | None = None
+    exchange: Exchange | None = None
+    if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
+        blocked = target_in_active_conversation(state, action.target_id)
+        if blocked is not None:
+            pull_attempt = attempt_pull(state, action.target_id, rng)
+            if pull_attempt.success:
+                batch = _curate_npc_conversation(state, blocked, conversation_curator)
+                pre_curator_batches.append(batch)
+                state.npc_conversations = [
+                    conversation
+                    for conversation in state.npc_conversations
+                    if conversation.id != blocked.id
+                ]
+            else:
+                result = _pull_rejected_result(state, action, pull_attempt)
+                state.turn_index += 1
+                speak = mock_islander_voice if islander_voice is None else islander_voice
+                exchange = speak(state, result)
+                pull_attempt.deflection_line = exchange.npc_dialogue
+                _remember_pull_rejection(state, pull_attempt)
+                orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
+                villa_update = orchestrate(state)
+                villa_changes = apply_villa_update(
+                    state,
+                    villa_update,
+                    rng.fork(f"villa-turn-{state.turn_index}"),
+                    background_dialogue=background_dialogue,
+                    conversation_curator=conversation_curator,
+                )
+                pull_curator_batches = [*pre_curator_batches, *villa_changes.curator_batches]
+                agent_commits = AgentCommits(
+                    villa_update=villa_update,
+                    background_dialogues=villa_changes.background_dialogues,
+                    curator_batches=pull_curator_batches,
+                )
+                return TurnResult(
+                    state=state,
+                    mechanical_result=result,
+                    exchange=exchange,
+                    available_actions=available_actions(state),
+                    state_hash=state_hash(state_hash_payload(state)),
+                    curator_batches=pull_curator_batches,
+                    agent_commits=agent_commits,
+                )
     result = apply_action(state, action, rng)
+    if pull_attempt is not None:
+        result.pull_attempt = pull_attempt
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
         ceremony = recoupling(state, action.target_id)
@@ -97,9 +159,8 @@ def run_turn(
                 )
             )
     state.turn_index += 1
-    exchange = None
     follow_up_menu = None
-    curator_batches: list[MemoryBatch] = []
+    curator_batches: list[MemoryBatch] = [*pre_curator_batches]
     if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
         conversation: Conversation
         if action.kind is ActionKind.START_CONVERSATION:
@@ -196,6 +257,76 @@ def _curate_conversation(
     batch = curate(state, conversation, bystander_ids)
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     return batch
+
+
+def _curate_npc_conversation(
+    state: GameState,
+    conversation: NPCNPCConversation,
+    curator: ConversationCuratorFn | None,
+) -> MemoryBatch:
+    conversation.status = "closed"
+    bystander_ids = [
+        islander.id
+        for islander in state.islanders
+        if islander.id not in conversation.participants
+        and not islander.eliminated
+        and islander.location_id == conversation.location_id
+    ]
+    if state.location_id == conversation.location_id:
+        bystander_ids.append("player")
+    curate = mock_conversation_curator if curator is None else curator
+    batch = curate(state, conversation, bystander_ids)
+    add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
+    return batch
+
+
+def _pull_rejected_result(
+    state: GameState,
+    action: PlayerAction,
+    pull_attempt: PullAttempt,
+) -> MechanicalResult:
+    target = next(islander for islander in state.islanders if islander.id == pull_attempt.target_id)
+    delta = RelationshipDelta(affection=-1)
+    target.relationship.affection = clamp_relationship(target.relationship.affection + delta.affection)
+    return MechanicalResult(
+        action=action.model_copy(update={"intent_id": "pull_rejected"}),
+        success=False,
+        roll=pull_attempt.roll,
+        success_chance=pull_attempt.chance,
+        relationship_deltas={target.id: delta},
+        tags=["pull_rejected"],
+        pull_attempt=pull_attempt,
+    )
+
+
+def _remember_pull_rejection(state: GameState, pull_attempt: PullAttempt) -> None:
+    target_name = _name_for_memory(state, pull_attempt.target_id)
+    for islander in state.islanders:
+        if (
+            islander.id != pull_attempt.target_id
+            and not islander.eliminated
+            and islander.location_id == state.location_id
+        ):
+            add_memory(
+                state,
+                create_memory(
+                    holder_id=islander.id,
+                    subject_id="player",
+                    source="witnessed",
+                    day=state.day,
+                    turn=state.turn_index,
+                    weight=6,
+                    tags=["saw_pull_rejected", "pull", pull_attempt.target_id],
+                    content=f"I saw the player try to pull {target_name} away and get brushed off.",
+                ),
+            )
+
+
+def _name_for_memory(state: GameState, islander_id: str) -> str:
+    for islander in state.islanders:
+        if islander.id == islander_id:
+            return islander.name
+    return islander_id
 
 
 def _is_wheel_exit(result: MechanicalResult) -> bool:

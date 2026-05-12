@@ -188,3 +188,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: initial intent risk caps, explicit intent risk override, wheel exit closes and grants trust, walk-away closes and applies affection penalty
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, smoke replay, fixture determinism all green
 - Scenario fixture: `conversation-multi-exchange.yaml` and `day1-full-stats.yaml` regenerated after exit semantics and intent caps
+
+## Phase G8.2
+
+- Files added: `src/game/engine/pull.py`, `tests/engine/test_pull.py`, `tests/agents/test_islander_voice_pull_rejected.py`
+- Files changed: `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/islander_voice.py`, `src/game/cli/commands/play.py`, `src/game/reporting/html.py`
+- Tests added: pull chance factors and clamps, contested pull success/failure, pull rejection memories, pull attempt trace fields, pull-rejection Islander Voice contracts
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; pull-rejection LLM subset green, 4 tests passed
+- Scenario fixture: unchanged

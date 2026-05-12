@@ -160,6 +160,14 @@ def _print_actions(actions: list[ActionSpec]) -> None:
 
 def _print_turn(turn: TurnResult) -> None:
     result = turn.mechanical_result
+    if result.pull_attempt is not None:
+        outcome = "succeeded" if result.pull_attempt.success else "missed"
+        print(
+            f"Pull attempt: {result.pull_attempt.target_id} "
+            f"({result.pull_attempt.chance}% chance, rolled {result.pull_attempt.roll}) -- {outcome}"
+        )
+        if result.pull_attempt.deflection_line:
+            print(result.pull_attempt.deflection_line)
     if turn.exchange is not None:
         print(f'You: "{turn.exchange.player_dialogue}"')
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')

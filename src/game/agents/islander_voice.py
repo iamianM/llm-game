@@ -138,13 +138,21 @@ def islander_voice_context(
         tags = intent.tags
     except ValueError:
         gossip = _gossip_memory_for_intent(state, intent_id)
-        intent_category = "gossip" if gossip is not None else "contextual"
-        intent_label = (
-            f"Ask about {_subject_name(state, gossip.subject_id)}: {gossip.content}"
-            if gossip is not None
-            else intent_id.replace("_", " ")
-        )
-        stat_used = "contextual"
+        if result.pull_attempt is not None and intent_id == "pull_rejected":
+            intent_category = "pull"
+            intent_label = (
+                "The player tried to pull this Islander away from another conversation. "
+                "The pull failed: the Islander should deflect, stay busy, and not warmly accept."
+            )
+            stat_used = "graft"
+        else:
+            intent_category = "gossip" if gossip is not None else "contextual"
+            intent_label = (
+                f"Ask about {_subject_name(state, gossip.subject_id)}: {gossip.content}"
+                if gossip is not None
+                else intent_id.replace("_", " ")
+            )
+            stat_used = "contextual"
         tags = result.tags
     index = content if content is not None else load_content()
     location_content = index.locations.get(state.location_id.value)
