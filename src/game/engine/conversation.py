@@ -102,7 +102,7 @@ def append_exchange(
 
 def close_conversation(
     state: GameState,
-    reason: Literal["player_exit", "npc_left", "phase_end"],
+    reason: Literal["player_exit", "npc_left", "phase_end", "wheel_exit"],
 ) -> None:
     """Close the active conversation and remove it from canonical state."""
     if state.active_conversation is None:

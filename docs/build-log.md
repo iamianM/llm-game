@@ -180,3 +180,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: CLI villa map rendering, detailed villa update rendering, risk-based follow-up success caps
 - QA result: `ruff`, `mypy`, non-LLM pytest green; manual trace replay still reproduces the same final hash after the balance change
 - Packet: regenerated from `.game_traces/manual-day1.json` at `review-packet/index.html`
+
+## Phase G8.1
+
+- Files added: none
+- Files changed: `src/game/engine/intents.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/engine/actions.py`, `src/game/cli/commands/play.py`, `src/game/engine/conversation.py`, `tests/engine/test_rules.py`, `tests/engine/test_turn.py`, scenario fixtures
+- Tests added: initial intent risk caps, explicit intent risk override, wheel exit closes and grants trust, walk-away closes and applies affection penalty
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, smoke replay, fixture determinism all green
+- Scenario fixture: `conversation-multi-exchange.yaml` and `day1-full-stats.yaml` regenerated after exit semantics and intent caps

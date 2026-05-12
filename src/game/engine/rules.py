@@ -16,7 +16,7 @@ import math
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
-from src.game.engine.intents import Intent, available_intents_for, get_intent
+from src.game.engine.intents import Intent, available_intents_for, effective_risk, get_intent
 from src.game.engine.memory import add_memory, create_memory
 from src.game.state.models import (
     GameState,
@@ -88,12 +88,16 @@ FOLLOW_UP_DELTA_TABLE: dict[str, FollowUpDeltaTable] = {
         miss=RelationshipDelta(affection=-1),
     ),
     "end_softly": FollowUpDeltaTable(
-        success=RelationshipDelta(),
-        miss=RelationshipDelta(),
+        success=RelationshipDelta(trust=1),
+        miss=RelationshipDelta(trust=1),
     ),
     "walk_away": FollowUpDeltaTable(
         success=RelationshipDelta(affection=-1),
         miss=RelationshipDelta(affection=-1),
+    ),
+    "change_subject_and_drift": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=1),
+        miss=RelationshipDelta(trust=1),
     ),
 }
 
@@ -111,6 +115,15 @@ RISK_SUCCESS_CAP = {
     "high": 50,
 }
 
+RISK_SUCCESS_MODIFIER = {
+    "safe": 15,
+    "low": 5,
+    "medium": -5,
+    "high": -20,
+}
+
+EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
+
 
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     """Apply one valid action and mutate ``state``."""
@@ -124,7 +137,19 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         update_public_perception(state, action, result)
         return result
     if action.kind is ActionKind.END_CONVERSATION:
-        return MechanicalResult(action=action, success=True, tags=["disengaged"])
+        delta = RelationshipDelta()
+        target_id: str | None = None
+        if state.active_conversation is not None:
+            target = _find_islander(state, state.active_conversation.target_id)
+            target_id = target.id
+            delta = RelationshipDelta(affection=-1)
+            _apply_relationship_delta(target, delta)
+        return MechanicalResult(
+            action=action,
+            success=True,
+            relationship_deltas={} if target_id is None else {target_id: delta},
+            tags=["walked_away"],
+        )
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:
@@ -211,8 +236,15 @@ def intent_success_chance(state: GameState, target: IslanderState, intent: Inten
     if not isinstance(stat, int):
         raise ValueError(f"unknown numeric stat for intent: {intent.stat_used}")
     mood_modifier = -10 if target.mood.value in {"upset", "angry"} else 0
-    chance = 50 + (stat * 5) + (target.relationship.affection // 4) + mood_modifier
-    return max(5, min(95, chance))
+    risk = effective_risk(intent)
+    chance = (
+        50
+        + (stat * 5)
+        + (target.relationship.affection // 4)
+        + mood_modifier
+        + RISK_SUCCESS_MODIFIER[risk]
+    )
+    return max(5, min(RISK_SUCCESS_CAP[risk], chance))
 
 
 def follow_up_success_chance(
@@ -225,7 +257,7 @@ def follow_up_success_chance(
     stat = 5 if stat_used is None else getattr(state.player.stats, stat_used)
     if not isinstance(stat, int):
         raise ValueError(f"unknown numeric stat for follow-up: {stat_used}")
-    risk_modifier = {"safe": 15, "low": 5, "medium": -5, "high": -20}[risk]
+    risk_modifier = RISK_SUCCESS_MODIFIER[risk]
     chance = 50 + (stat * 5) + (target.relationship.affection // 5) + risk_modifier
     return max(5, min(RISK_SUCCESS_CAP[risk], chance))
 
@@ -320,7 +352,7 @@ def _follow_up_delta(intent_kind: str, risk: str, success: bool) -> Relationship
         raise ValueError(f"unknown follow-up intent_kind: {intent_kind}")
     table = FOLLOW_UP_DELTA_TABLE[intent_kind]
     base = table.success if success else table.miss
-    scale = RISK_DELTA_SCALE[risk]
+    scale = 1.0 if intent_kind in EXIT_INTENT_KINDS else RISK_DELTA_SCALE[risk]
     return RelationshipDelta(
         affection=_scale_delta(base.affection, scale),
         chemistry=_scale_delta(base.chemistry, scale),

@@ -68,7 +68,10 @@ def run(args: argparse.Namespace) -> int:
             _write_recording(record_path, seed, state, records)
             return 0
         if raw == "/help":
-            print("Commands: /state, /hash, /help, /quit. Choose actions by number.")
+            print(
+                "Commands: /state, /hash, /help, /quit. Choose actions by number. "
+                "Wheel exit options close gracefully; Walk away is curt."
+            )
             continue
         if raw == "/state":
             _print_state(state, debug=True)

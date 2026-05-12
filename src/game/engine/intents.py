@@ -10,7 +10,7 @@ from __future__ import annotations
 from enum import StrEnum
 from functools import lru_cache
 from pathlib import Path
-from typing import cast
+from typing import Literal, cast
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
@@ -25,6 +25,21 @@ class IntentCategory(StrEnum):
     FLIRTY = "flirty"
     DEEP = "deep"
     BANTER = "banter"
+    SUPPORTIVE = "supportive"
+    GOSSIP = "gossip"
+
+
+Risk = Literal["safe", "low", "medium", "high"]
+
+
+CATEGORY_DEFAULT_RISK: dict[IntentCategory, Risk] = {
+    IntentCategory.FRIENDLY: "low",
+    IntentCategory.BANTER: "low",
+    IntentCategory.FLIRTY: "medium",
+    IntentCategory.DEEP: "high",
+    IntentCategory.SUPPORTIVE: "safe",
+    IntentCategory.GOSSIP: "medium",
+}
 
 
 class IntentDeltaTable(BaseModel):
@@ -47,6 +62,7 @@ class Intent(BaseModel):
     stat_used: str
     tags: list[str] = Field(default_factory=list)
     unlock_affection: int = Field(ge=0, le=100)
+    risk: Risk | None = None
     relationship_deltas: IntentDeltaTable
 
 
@@ -80,6 +96,11 @@ def available_intents_for(state: GameState, target_id: str) -> list[Intent]:
     target = _find_visible_target(state, target_id)
     affection = target.relationship.affection
     return [intent for intent in load_intents() if affection >= intent.unlock_affection]
+
+
+def effective_risk(intent: Intent) -> Risk:
+    """Return explicit intent risk or the category default."""
+    return intent.risk or CATEGORY_DEFAULT_RISK[intent.category]
 
 
 def _find_visible_target(state: GameState, target_id: str) -> IslanderState:

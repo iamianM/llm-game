@@ -76,7 +76,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     )
                 )
         actions.append(
-            ActionSpec(action=PlayerAction(kind=ActionKind.END_CONVERSATION), label="End conversation")
+            ActionSpec(action=PlayerAction(kind=ActionKind.END_CONVERSATION), label="Walk away (curt)")
         )
         return actions
 

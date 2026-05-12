@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.intents import get_intent
+from src.game.engine.intents import Intent, IntentCategory, IntentDeltaTable, get_intent
 from src.game.engine.rules import apply_action, follow_up_success_chance, intent_success_chance
 from src.game.state.models import (
     Conversation,
@@ -23,7 +23,38 @@ def test_intent_success_chance_uses_configured_stat_and_affection() -> None:
     state = new_game(1)
     intent = get_intent("friendly_chat_villa")
 
-    assert intent_success_chance(state, state.islanders[0], intent) == 82
+    assert intent_success_chance(state, state.islanders[0], intent) == 80
+
+
+def test_initial_intent_chance_capped_by_category_default() -> None:
+    """Initial conversation risk caps keep friendly/banter rolls from reaching 95."""
+    state = new_game(1)
+    state.player.stats.banter = 9
+    state.islanders[0].relationship.affection = 100
+    intent = get_intent("banter_tell_joke")
+
+    assert intent_success_chance(state, state.islanders[0], intent) == 80
+
+
+def test_initial_intent_explicit_risk_overrides_default() -> None:
+    """Explicit intent risk overrides category defaults."""
+    state = new_game(1)
+    state.player.stats.banter = 9
+    state.islanders[0].relationship.affection = 100
+    intent = Intent(
+        id="test_high_risk_joke",
+        category=IntentCategory.BANTER,
+        label="Risky joke",
+        stat_used="banter",
+        unlock_affection=0,
+        risk="high",
+        relationship_deltas=IntentDeltaTable(
+            success=RelationshipDelta(friendship=1),
+            miss=RelationshipDelta(friendship=-1),
+        ),
+    )
+
+    assert intent_success_chance(state, state.islanders[0], intent) == 50
 
 
 def test_friendly_intent_applies_success_delta() -> None:

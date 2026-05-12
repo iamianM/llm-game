@@ -41,7 +41,7 @@ from src.game.engine.conversation import (
 )
 from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.phases import advance_phase
-from src.game.engine.rules import MechanicalResult, apply_action
+from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.villa import AgentCommits, apply_villa_update
 from src.game.state.models import Conversation, FollowUpMenu, GameState, MemoryBatch
 from src.game.state.rng import SeededRng
@@ -115,20 +115,25 @@ def run_turn(
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
-        probability = departure_probability(conversation, state)
-        conversation.departure_probability_last = probability
-        menu_fn = (
-            (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
-            if contextual_options is None
-            else contextual_options
-        )
-        follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
-        validate_follow_up_menu(follow_up_menu)
-        conversation.pending_options = follow_up_menu
-        if follow_up_menu.npc_will_leave:
+        if _is_wheel_exit(result):
             batch = _curate_conversation(state, conversation, conversation_curator)
             curator_batches.append(batch)
-            close_conversation(state, "npc_left")
+            close_conversation(state, "wheel_exit")
+        else:
+            probability = departure_probability(conversation, state)
+            conversation.departure_probability_last = probability
+            menu_fn = (
+                (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
+                if contextual_options is None
+                else contextual_options
+            )
+            follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
+            validate_follow_up_menu(follow_up_menu)
+            conversation.pending_options = follow_up_menu
+            if follow_up_menu.npc_will_leave:
+                batch = _curate_conversation(state, conversation, conversation_curator)
+                curator_batches.append(batch)
+                close_conversation(state, "npc_left")
     if action.kind is ActionKind.END_CONVERSATION:
         if state.active_conversation is not None:
             batch = _curate_conversation(state, state.active_conversation, conversation_curator)
@@ -191,6 +196,13 @@ def _curate_conversation(
     batch = curate(state, conversation, bystander_ids)
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     return batch
+
+
+def _is_wheel_exit(result: MechanicalResult) -> bool:
+    return (
+        result.action.kind is ActionKind.RESPOND_WITH
+        and result.action.intent_id in EXIT_INTENT_KINDS
+    )
 
 
 def _conversation_bystanders(state: GameState, target_id: str) -> list[str]:
