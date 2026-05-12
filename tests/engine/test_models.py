@@ -8,7 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from src.game.state.models import GameState, PlayerStats, clamp_relationship, new_game
-from src.game.state.snapshot import load_snapshot, save_snapshot, state_hash
+from src.game.state.snapshot import load_snapshot, save_snapshot, state_hash, state_hash_payload
 
 
 def test_game_state_forbids_extra_fields() -> None:
@@ -36,7 +36,17 @@ def test_state_hash_is_stable_across_dumps() -> None:
     """The same state payload hashes identically across repeated dumps."""
     state = new_game(1)
 
-    assert state_hash(state.model_dump(mode="json")) == state_hash(state.model_dump(mode="json"))
+    assert state_hash(state_hash_payload(state)) == state_hash(state_hash_payload(state))
+
+
+def test_dialogue_does_not_affect_hash() -> None:
+    """F2 keeps prose out of the mechanical state hash."""
+    state = new_game(1)
+
+    payload = state_hash_payload(state)
+
+    assert "player_dialogue" not in str(payload)
+    assert "npc_dialogue" not in str(payload)
 
 
 def test_save_load_roundtrip_preserves_hash(tmp_path: Path) -> None:

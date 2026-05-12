@@ -34,20 +34,21 @@ def session_page(title: str, records: list[dict[str, Any]]) -> str:
         result = record["mechanical_result"]
         action = result["action"]
         outcome_class = "success" if result["success"] else "miss"
-        deltas = ", ".join(
-            f"{target}: {delta}"
-            for target, delta in result.get("relationship_deltas", {}).items()
-        )
         visible = record.get("visible_state", "")
         cards.append(
             "<section class='turn'>"
-            f"<h2>Turn {record['turn']} · Day {record['day']} · {escape(record['phase'])} · {escape(record['location'])}</h2>"
+            f"<h2>Turn {record['turn']} - Day {record['day']} - "
+            f"{escape(record['phase'])} - {escape(record['location'])}</h2>"
             f"<p class='meta'>{escape(visible)}</p>"
-            f"<p><b>You chose:</b> {escape(action['kind'])} {escape(str(action.get('target_id') or ''))}</p>"
-            f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs {escape(str(result.get('success_chance')))} "
+            f"<p><b>You chose:</b> {escape(action['kind'])} "
+            f"{escape(str(action.get('target_id') or ''))} "
+            f"{escape(str(action.get('intent_id') or ''))}</p>"
+            f"{_exchange_block(record.get('exchange'))}"
+            f"{_event_block(record.get('event_narration'))}"
+            f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs "
+            f"{escape(str(result.get('success_chance')))} "
             f"<span class='{outcome_class}'>{'Success' if result['success'] else 'Miss'}</span></p>"
-            f"<p><b>Deltas:</b> {escape(deltas or 'none')}</p>"
-            f"<p><b>Narration:</b> {escape(record['narration'])}</p>"
+            f"<p><b>Deltas:</b> {escape(_delta_text(result))}</p>"
             f"<p><b>Hash:</b> <code>{escape(record['output_hash'])}</code></p>"
             "</section>"
         )
@@ -76,3 +77,34 @@ def table_page(title: str, headers: list[str], rows: list[list[str]]) -> str:
 def escape(value: object) -> str:
     """HTML-escape any value."""
     return html.escape(str(value), quote=True)
+
+
+def _exchange_block(exchange: object) -> str:
+    if not isinstance(exchange, dict):
+        return ""
+    return (
+        "<div class='card'>"
+        f"<p><b>You:</b> {escape(exchange.get('player_dialogue', ''))}</p>"
+        f"<p><b>Islander:</b> {escape(exchange.get('npc_dialogue', ''))}</p>"
+        f"<p class='meta'>Tone: {escape(exchange.get('npc_tone', ''))}; "
+        f"mood after: {escape(exchange.get('npc_mood_after', ''))}</p>"
+        "</div>"
+    )
+
+
+def _event_block(event_narration: object) -> str:
+    if not isinstance(event_narration, dict):
+        return ""
+    return (
+        "<div class='card'>"
+        f"<p><b>Event:</b> {escape(event_narration.get('prose', ''))}</p>"
+        "</div>"
+    )
+
+
+def _delta_text(result: dict[str, Any]) -> str:
+    deltas = ", ".join(
+        f"{target}: {delta}"
+        for target, delta in result.get("relationship_deltas", {}).items()
+    )
+    return deltas or "none"

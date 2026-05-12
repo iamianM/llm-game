@@ -13,7 +13,12 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.agents.narrator import NarratorFn, mock_narration
+from src.game.agents.event_narrator import (
+    EventNarration,
+    EventNarratorFn,
+    mock_event_narration,
+)
+from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.ceremonies import CeremonyEvent, arrive_bombshell, recoupling
 from src.game.engine.phases import advance_phase
@@ -21,7 +26,7 @@ from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
 from src.game.state.models import GameState
 from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash
+from src.game.state.snapshot import state_hash, state_hash_payload
 
 
 class TurnResult(BaseModel):
@@ -31,7 +36,8 @@ class TurnResult(BaseModel):
 
     state: GameState
     mechanical_result: MechanicalResult
-    narration: str
+    exchange: Exchange | None = None
+    event_narration: EventNarration | None = None
     available_actions: list[ActionSpec]
     state_hash: str
     off_screen_events: list[OffScreenEvent] = []
@@ -42,7 +48,8 @@ def run_turn(
     state: GameState,
     action: PlayerAction,
     rng: SeededRng,
-    narrator: NarratorFn | None = None,
+    islander_voice: IslanderVoiceFn | None = None,
+    event_narrator: EventNarratorFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
     result = apply_action(state, action, rng)
@@ -70,13 +77,21 @@ def run_turn(
             rng.fork(f"day-{state.day}-phase-{state.phase.value}"),
         )
     state.turn_index += 1
-    narrate = mock_narration if narrator is None else narrator
+    exchange = None
+    if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+        speak = mock_islander_voice if islander_voice is None else islander_voice
+        exchange = speak(state, result)
+    event_narration = None
+    if ceremony_events:
+        narrate_event = mock_event_narration if event_narrator is None else event_narrator
+        event_narration = narrate_event(state, ceremony_events)
     return TurnResult(
         state=state,
         mechanical_result=result,
-        narration=narrate(state, result),
+        exchange=exchange,
+        event_narration=event_narration,
         available_actions=available_actions(state),
-        state_hash=state_hash(state.model_dump(mode="json")),
+        state_hash=state_hash(state_hash_payload(state)),
         off_screen_events=off_screen_events,
         ceremony_events=ceremony_events,
     )

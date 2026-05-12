@@ -5,13 +5,14 @@ from __future__ import annotations
 import argparse
 import sys
 
-from src.game.agents.narrator import OpenAINarrator
+from src.game.agents.event_narrator import OpenAIEventNarrator
+from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.turn import TurnResult, run_turn
 from src.game.state.models import GameState, new_game
 from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash
+from src.game.state.snapshot import state_hash, state_hash_payload
 
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -32,7 +33,8 @@ def run(args: argparse.Namespace) -> int:
     seed = 1 if args.seed is None else args.seed
     state = new_game(seed)
     rng = SeededRng(seed)
-    narrator = None if args.mock_llm else OpenAINarrator().narrate
+    islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
+    event_narrator = None if args.mock_llm else OpenAIEventNarrator().narrate
     print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
 
     while not state.is_terminal:
@@ -49,7 +51,7 @@ def run(args: argparse.Namespace) -> int:
             _print_state(state, debug=True)
             continue
         if raw == "/hash":
-            print(state_hash(state.model_dump(mode="json")))
+            print(state_hash(state_hash_payload(state)))
             continue
 
         try:
@@ -61,12 +63,18 @@ def run(args: argparse.Namespace) -> int:
         if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
             action = _choose_intent(state, action.target_id)
 
-        turn = run_turn(state, action, rng, narrator=narrator)
+        turn = run_turn(
+            state,
+            action,
+            rng,
+            islander_voice=islander_voice,
+            event_narrator=event_narrator,
+        )
         state = turn.state
         _print_turn(turn)
 
     print("Day complete.")
-    print(f"final hash: {state_hash(state.model_dump(mode='json'))}")
+    print(f"final hash: {state_hash(state_hash_payload(state))}")
     return 0
 
 
@@ -85,11 +93,23 @@ def _print_actions(actions: list[ActionSpec]) -> None:
 
 def _print_turn(turn: TurnResult) -> None:
     result = turn.mechanical_result
-    print(turn.narration)
+    if turn.exchange is not None:
+        print(f'You: "{turn.exchange.player_dialogue}"')
+        print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
+    if turn.event_narration is not None:
+        print(turn.event_narration.prose)
     if result.roll is not None and result.success_chance is not None:
         outcome = "success" if result.success else "miss"
         print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")
     print(f"hash: {turn.state_hash}")
+
+
+def _target_name(turn: TurnResult) -> str:
+    target_id = turn.mechanical_result.action.target_id
+    for islander in turn.state.islanders:
+        if islander.id == target_id:
+            return islander.name
+    return "Islander"
 
 
 def _choose_intent(state: GameState, target_id: str) -> PlayerAction:

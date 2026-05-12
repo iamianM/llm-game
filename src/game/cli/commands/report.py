@@ -7,14 +7,16 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.narrator import OpenAINarrator
+from src.game.agents.event_narrator import OpenAIEventNarrator
+from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.scenario import load_action_script
 from src.game.engine.turn import run_turn
 from src.game.reporting.balance import run_balance
 from src.game.reporting.html import index_page, session_page, table_page
-from src.game.state.models import GameState, new_game
+from src.game.state.models import GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash
+from src.game.state.snapshot import state_hash, state_hash_payload
 
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -36,6 +38,10 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     packet.add_argument("--out", required=True)
     packet.add_argument("--mock-llm", action="store_true")
     packet.set_defaults(func=packet_cmd)
+
+    preview_f2 = nested.add_parser("preview-f2", help="build the Phase F2 voice preview")
+    preview_f2.add_argument("--out", default="review-packet-preview/session-phaseF2.html")
+    preview_f2.set_defaults(func=preview_f2_cmd)
 
 
 def session_cmd(args: argparse.Namespace) -> int:
@@ -112,31 +118,98 @@ def packet_cmd(args: argparse.Namespace) -> int:
     return 0
 
 
+def preview_f2_cmd(args: argparse.Namespace) -> int:
+    """Build the mandatory Phase F2 single-exchange voice preview."""
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    state = new_game(42, player_stats=PlayerStats(charm=3, banter=3, eq=3, graft=3, loyalty=3))
+    for islander in state.islanders:
+        islander.location_id = Location.POOL
+    rng = SeededRng(42)
+    islander_voice = OpenAIIslanderVoice(budget_usd=10.0).generate
+    actions = [
+        ("chloe", "friendly_ask_feelings", 10),
+        ("chloe", "friendly_chat_villa", 10),
+        ("chloe", "friendly_compliment_personality", 10),
+        ("maya", "flirty_compliment_looks", 20),
+        ("maya", "flirty_playful_teasing", 20),
+        ("maya", "flirty_intimate_eye_contact", 30),
+        ("liam", "deep_ask_life", 40),
+        ("liam", "deep_share_feelings", 40),
+        ("chloe", "banter_tell_joke", 10),
+        ("chloe", "banter_playful_roast", 10),
+    ]
+    records: list[dict[str, Any]] = []
+    for target_id, intent_id, affection in actions:
+        _set_preview_target(state, target_id, affection)
+        action = PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id=target_id,
+            intent_id=intent_id,
+        )
+        input_hash = state_hash(state_hash_payload(state))
+        turn = run_turn(state, action, rng, islander_voice=islander_voice)
+        state = turn.state
+        records.append(_record_from_turn(input_hash, action, turn))
+
+    out.write_text(session_page("Phase F2 Voice Preview", records), encoding="utf-8")
+    print(out)
+    return 0
+
+
 def _run_session(path: Path, *, use_llm: bool) -> tuple[list[dict[str, Any]], GameState]:
     script = load_action_script(path)
     state = new_game(script.seed, player_stats=script.player_stats)
     rng = SeededRng(script.seed)
-    narrator = OpenAINarrator(budget_usd=10.0).narrate if use_llm else None
+    islander_voice = OpenAIIslanderVoice(budget_usd=10.0).generate if use_llm else None
+    event_narrator = OpenAIEventNarrator(budget_usd=10.0).narrate if use_llm else None
     records: list[dict[str, Any]] = []
     for action in script.actions:
-        input_hash = state_hash(state.model_dump(mode="json"))
-        turn = run_turn(state, action, rng, narrator=narrator)
-        state = turn.state
-        records.append(
-            {
-                "turn": state.turn_index,
-                "day": state.day,
-                "phase": state.phase.value,
-                "location": state.location_id.value,
-                "visible_state": _visible_state(state),
-                "input_hash": input_hash,
-                "action": action.model_dump(mode="json"),
-                "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
-                "narration": turn.narration,
-                "output_hash": turn.state_hash,
-            }
+        input_hash = state_hash(state_hash_payload(state))
+        turn = run_turn(
+            state,
+            action,
+            rng,
+            islander_voice=islander_voice,
+            event_narrator=event_narrator,
         )
+        state = turn.state
+        records.append(_record_from_turn(input_hash, action, turn))
     return records, state
+
+
+def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> dict[str, Any]:
+    from src.game.engine.turn import TurnResult
+
+    if not isinstance(turn, TurnResult):
+        raise TypeError("turn must be TurnResult")
+    state = turn.state
+    return {
+        "turn": state.turn_index,
+        "day": state.day,
+        "phase": state.phase.value,
+        "location": state.location_id.value,
+        "visible_state": _visible_state(state),
+        "input_hash": input_hash,
+        "action": action.model_dump(mode="json"),
+        "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
+        "exchange": None if turn.exchange is None else turn.exchange.model_dump(mode="json"),
+        "event_narration": (
+            None
+            if turn.event_narration is None
+            else turn.event_narration.model_dump(mode="json")
+        ),
+        "output_hash": turn.state_hash,
+    }
+
+
+def _set_preview_target(state: GameState, target_id: str, affection: int) -> None:
+    for islander in state.islanders:
+        if islander.id == target_id:
+            islander.location_id = state.location_id
+            islander.relationship.affection = affection
+            return
+    raise ValueError(f"preview target not found: {target_id}")
 
 
 def _visible_state(state: GameState) -> str:

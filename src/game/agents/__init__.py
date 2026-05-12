@@ -1,8 +1,9 @@
 """LLM agent layer.
 
 Design sources:
-- 03-LLM-Architecture.md: LLM Handles, Error Handling
-- docs/decisions/0003-one-narrator-agent-for-v0.md
+- 03-LLM-Architecture.md: Multi-AI System, Dialogue AI, Event Narrator AI
+- 11-Conversation-Flow.md: Single Exchange Generation
 
-v0 has one Narrator agent. Additional Producer/Curator agents are future layers.
+The active Phase F agents are Islander Voice for dialogue and Event Narrator
+for resolved ceremony beats. Producer and Curator remain deferred.
 """

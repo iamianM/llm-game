@@ -25,6 +25,8 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
 
     assert result.state.turn_index == 1
     assert result.state.islanders[0].relationship.affection == 12
+    assert result.exchange is not None
+    assert result.exchange.npc_dialogue
     assert result.available_actions
     assert len(result.state_hash) == 64
 
@@ -48,6 +50,7 @@ def test_run_turn_surfaces_bombshell_event() -> None:
     result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
 
     assert any(event.kind == "bombshell" for event in result.ceremony_events)
+    assert result.event_narration is not None
 
 
 def test_apply_action_does_not_bump_turn_index() -> None:

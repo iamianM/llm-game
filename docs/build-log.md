@@ -73,3 +73,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: intent catalog coverage, intent unlock thresholds, START_CONVERSATION validation, typed intent deltas
 - QA result: `make qa` green, 39 tests passed
 - Scenario fixture: existing fixtures regenerated for the schema v4 tiered intent vocabulary
+
+## Phase F2
+
+- Files added: `src/game/agents/event_narrator.py`, `src/game/agents/prompts/event_narrator.md`, `tests/agents/test_event_narrator.py`, `review-packet-preview/session-phaseF2.html`
+- Files changed: `src/game/agents/islander_voice.py`, `src/game/agents/prompts/islander_voice.md`, `src/game/engine/turn.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`
+- Tests added: real Islander Voice contract coverage across all 12 intents; real Event Narrator coverage for bombshell, recoupling, and elimination; state hash excludes dialogue text
+- QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
+- Scenario fixture: existing deterministic fixtures unchanged; F2 preview generated at `review-packet-preview/session-phaseF2.html`

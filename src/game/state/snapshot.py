@@ -13,6 +13,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from src.game.state.models import GameState
+
 JsonValue = dict[str, object] | list[object] | str | int | float | bool | None
 
 
@@ -20,6 +22,16 @@ def state_hash(payload: JsonValue) -> str:
     """Return a stable hash for a JSON-serializable state payload."""
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def state_hash_payload(state: GameState) -> dict[str, object]:
+    """Return the mechanical payload used for deterministic state hashes.
+
+    Dialogue prose is intentionally not part of GameState in F2. When F3 adds
+    active conversation history, this function remains the single place that
+    strips non-mechanical dialogue text before hashing.
+    """
+    return state.model_dump(mode="json")
 
 
 def save_snapshot(path: Path, payload: dict[str, object]) -> None:

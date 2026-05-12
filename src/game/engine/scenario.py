@@ -20,7 +20,7 @@ from src.game.engine.actions import PlayerAction
 from src.game.engine.turn import TurnResult, run_turn
 from src.game.state.models import GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash
+from src.game.state.snapshot import state_hash, state_hash_payload
 
 
 class ActionScript(BaseModel):
@@ -68,7 +68,7 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
         turns.append(turn.model_copy(deep=True))
         state = turn.state
 
-    final_hash = state_hash(state.model_dump(mode="json"))
+    final_hash = state_hash(state_hash_payload(state))
     return ScenarioRunResult(script=script, state=state, turns=turns, final_hash=final_hash)
 
 
