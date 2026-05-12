@@ -18,7 +18,7 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.islander_voice import load_dotenv_local
-from src.game.state.models import GameState, Location
+from src.game.state.models import GameState, Location, NPCInterruption
 
 VILLA_ORCHESTRATOR_MODEL = "gpt-5.4-mini"
 
@@ -70,6 +70,7 @@ class VillaUpdate(BaseModel):
     conversation_starts: list[NewConversation] = Field(default_factory=list)
     conversation_continues: list[ContinueConversation] = Field(default_factory=list)
     conversation_ends: list[EndConversation] = Field(default_factory=list)
+    npc_interruptions: list[NPCInterruption] = Field(default_factory=list)
 
 
 VillaOrchestratorFn = Callable[[GameState], VillaUpdate]
@@ -132,6 +133,11 @@ def _render_context(state: GameState) -> str:
         if state.active_conversation is None
         else state.active_conversation.target_id
     )
+    pending_interruption = (
+        "none"
+        if state.active_conversation is None or state.active_conversation.pending_interruption is None
+        else state.active_conversation.pending_interruption.model_dump_json()
+    )
     return "\n".join(
         [
             f"Day: {state.day}",
@@ -139,6 +145,7 @@ def _render_context(state: GameState) -> str:
             f"Turn: {state.turn_index}",
             f"Player location: {state.location_id.value}",
             f"Player active conversation target: {active_target}",
+            f"Player active conversation pending_interruption: {pending_interruption}",
             "Islanders:",
             islanders or "none",
             "Active NPC-NPC conversations:",

@@ -125,6 +125,11 @@ RISK_SUCCESS_MODIFIER = {
 }
 
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
+INTERRUPTION_INTENT_KINDS = {
+    "accept_interruption",
+    "defer_interruption",
+    "ignore_interruption",
+}
 
 
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
@@ -202,6 +207,12 @@ def _apply_relationship_delta(target: IslanderState, delta: RelationshipDelta) -
 
 def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     conversation = state.active_conversation
+    if (
+        conversation is not None
+        and conversation.pending_interruption is not None
+        and action.intent_id in INTERRUPTION_INTENT_KINDS
+    ):
+        return _apply_interruption_response(state, action, rng)
     if conversation is None or conversation.pending_options is None:
         raise ValueError("RESPOND_WITH requires active conversation pending options")
     option_index = _follow_up_option_index(state, action)
@@ -347,6 +358,105 @@ def _apply_gossip_follow_up(
         ),
     )
     return RelationshipDelta(trust=2)
+
+
+def defer_chance(state: GameState, interrupter_id: str) -> int:
+    """Return the chance that a polite deferral lands well."""
+    interrupter = _find_islander(state, interrupter_id)
+    chance = 50 + (state.player.stats.eq * 4) + (interrupter.relationship.affection // 4)
+    return max(10, min(90, chance))
+
+
+def _apply_interruption_response(
+    state: GameState,
+    action: PlayerAction,
+    rng: SeededRng,
+) -> MechanicalResult:
+    conversation = state.active_conversation
+    if conversation is None or conversation.pending_interruption is None:
+        raise ValueError("interruption response requires a pending interruption")
+    interruption = conversation.pending_interruption
+    current = _find_islander(state, conversation.target_id)
+    interrupter = _find_islander(state, interruption.interrupter_id)
+    intent_id = action.intent_id
+    deltas: dict[str, RelationshipDelta] = {}
+    roll: int | None = None
+    chance: int | None = None
+    success = True
+    tags = ["interruption", str(intent_id), interruption.reason, interruption.urgency]
+
+    if intent_id == "accept_interruption":
+        current_delta = RelationshipDelta(affection=-2)
+        interrupter_delta = RelationshipDelta(affection=3)
+        _apply_relationship_delta(current, current_delta)
+        _apply_relationship_delta(interrupter, interrupter_delta)
+        deltas = {current.id: current_delta, interrupter.id: interrupter_delta}
+    elif intent_id == "defer_interruption":
+        chance = defer_chance(state, interrupter.id)
+        roll = rng.randint(1, 100)
+        success = roll <= chance
+        interrupter_delta = RelationshipDelta(affection=-1 if success else -3)
+        _apply_relationship_delta(interrupter, interrupter_delta)
+        deltas = {interrupter.id: interrupter_delta}
+        if not success:
+            _remember_interruption_snub(state, interrupter.id, "snubbed_publicly", 7)
+    elif intent_id == "ignore_interruption":
+        interrupter_delta = RelationshipDelta(affection=-4)
+        _apply_relationship_delta(interrupter, interrupter_delta)
+        deltas = {interrupter.id: interrupter_delta}
+        _remember_interruption_snub(state, interrupter.id, "ignored_in_public", 8)
+    else:
+        raise ValueError(f"unknown interruption response: {intent_id}")
+
+    conversation.pending_interruption = None
+    return MechanicalResult(
+        action=action.model_copy(update={"target_id": interrupter.id}),
+        success=success,
+        roll=roll,
+        success_chance=chance,
+        relationship_deltas=deltas,
+        tags=tags,
+    )
+
+
+def _remember_interruption_snub(
+    state: GameState,
+    interrupter_id: str,
+    tag: str,
+    weight: int,
+) -> None:
+    add_memory(
+        state,
+        create_memory(
+            holder_id=interrupter_id,
+            subject_id="player",
+            source="direct",
+            day=state.day,
+            turn=state.turn_index,
+            weight=weight,
+            tags=["interruption", tag],
+            content=f"I remember the player leaving me feeling {tag.replace('_', ' ')}.",
+        ),
+    )
+    for islander in state.islanders:
+        if (
+            islander.id != interrupter_id
+            and not islander.eliminated
+            and islander.location_id == state.location_id
+        ):
+            add_memory(
+                state,
+                create_memory(
+                    holder_id=islander.id,
+                    subject_id="player",
+                    source="witnessed",
+                    day=state.day,
+                    turn=state.turn_index,
+                    weight=max(4, weight - 2),
+                    tags=["interruption", tag, "witnessed"],
+                    content=f"I saw the player handle an interruption and leave someone {tag.replace('_', ' ')}.",
+                ),
+            )
 
 
 def _follow_up_delta(intent_kind: str, risk: str, success: bool) -> RelationshipDelta:

@@ -47,7 +47,11 @@ from src.game.engine.memory import (
 )
 from src.game.engine.phases import advance_phase
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
-from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
+from src.game.engine.rules import (
+    EXIT_INTENT_KINDS,
+    MechanicalResult,
+    apply_action,
+)
 from src.game.engine.villa import AgentCommits, apply_villa_update
 from src.game.state.models import (
     Conversation,
@@ -161,7 +165,32 @@ def run_turn(
     state.turn_index += 1
     follow_up_menu = None
     curator_batches: list[MemoryBatch] = [*pre_curator_batches]
-    if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+    if result.action.intent_id == "accept_interruption":
+        active = state.active_conversation
+        if active is None or result.action.target_id is None:
+            raise ValueError("accept_interruption requires active conversation and target")
+        batch = _curate_conversation(state, active, conversation_curator)
+        curator_batches.append(batch)
+        close_conversation(state, "player_exit")
+        new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
+        speak = mock_islander_voice if islander_voice is None else islander_voice
+        exchange = speak(state, result)
+        append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
+        probability = departure_probability(new_conversation, state)
+        new_conversation.departure_probability_last = probability
+        menu_fn = (
+            (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
+            if contextual_options is None
+            else contextual_options
+        )
+        follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
+        validate_follow_up_menu(follow_up_menu)
+        new_conversation.pending_options = follow_up_menu
+    elif result.action.intent_id in {"defer_interruption", "ignore_interruption"}:
+        follow_up_menu = (
+            None if state.active_conversation is None else state.active_conversation.pending_options
+        )
+    elif action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
         conversation: Conversation
         if action.kind is ActionKind.START_CONVERSATION:
             if result.action.target_id is None:

@@ -57,6 +57,40 @@ def available_actions(state: GameState) -> list[ActionSpec]:
 
     actions: list[ActionSpec] = []
     if state.active_conversation is not None:
+        interruption = state.active_conversation.pending_interruption
+        if interruption is not None:
+            interrupter = _find_islander(state, interruption.interrupter_id)
+            actions.extend(
+                [
+                    ActionSpec(
+                        action=PlayerAction(
+                            kind=ActionKind.RESPOND_WITH,
+                            target_id=interrupter.id,
+                            intent_id="accept_interruption",
+                        ),
+                        label=(
+                            f"Interruption: Welcome them ({interrupter.name}, "
+                            f"{interruption.reason}, {interruption.urgency})"
+                        ),
+                    ),
+                    ActionSpec(
+                        action=PlayerAction(
+                            kind=ActionKind.RESPOND_WITH,
+                            target_id=interrupter.id,
+                            intent_id="defer_interruption",
+                        ),
+                        label="Interruption: Politely defer",
+                    ),
+                    ActionSpec(
+                        action=PlayerAction(
+                            kind=ActionKind.RESPOND_WITH,
+                            target_id=interrupter.id,
+                            intent_id="ignore_interruption",
+                        ),
+                        label="Interruption: Ignore them",
+                    ),
+                ]
+            )
         menu = state.active_conversation.pending_options
         if menu is not None and not menu.npc_will_leave:
             target = _find_islander(state, state.active_conversation.target_id)
@@ -123,6 +157,12 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         conversation = state.active_conversation
         if conversation is None:
             raise ValueError("cannot respond without an active conversation")
+        if (
+            conversation.pending_interruption is not None
+            and action.intent_id
+            in {"accept_interruption", "defer_interruption", "ignore_interruption"}
+        ):
+            return
         menu = conversation.pending_options
         if menu is None:
             raise ValueError("active conversation has no pending options")

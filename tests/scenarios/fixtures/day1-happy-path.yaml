@@ -1,6 +1,6 @@
 name: day1-happy-path
 seed: 1
-expected_hash: 024e314b46fc241722fe6dcfbdc9b1093372a97711cae3712c4b304106c48726
+expected_hash: e99517ea36d09dd580cbca24c45bab2a3077ee9b721c002bcd9fda290ec567ed
 actions:
 - kind: start_conversation
   target_id: chloe

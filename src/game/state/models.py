@@ -16,7 +16,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 
 
 class Phase(StrEnum):
@@ -196,6 +196,16 @@ class FollowUpMenu(BaseModel):
     npc_exit_line: str | None = None
 
 
+class NPCInterruption(BaseModel):
+    """An NPC walking up to interrupt the player's active conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    interrupter_id: str
+    reason: Literal["jealous", "has_gossip", "drawn_to_topic", "needs_to_talk"]
+    urgency: Literal["polite", "insistent", "dramatic"]
+
+
 class ExchangeRecord(BaseModel):
     """One exchange retained inside an active conversation."""
 
@@ -238,6 +248,7 @@ class Conversation(BaseModel):
     status: Literal["open", "closing", "closed"] = "open"
     departure_probability_last: int = 0
     pending_options: FollowUpMenu | None = None
+    pending_interruption: NPCInterruption | None = None
     gossip_offers: list[Memory] = Field(default_factory=list)
 
 

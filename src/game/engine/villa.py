@@ -76,6 +76,11 @@ def apply_villa_update(
     for movement in update.npc_movements:
         _islander(state, movement.npc_id).location_id = movement.target_location
 
+    if update.npc_interruptions:
+        if state.active_conversation is None:
+            raise ValueError("validated interruption missing active conversation")
+        state.active_conversation.pending_interruption = update.npc_interruptions[0]
+
     for start in update.conversation_starts:
         conversation = NPCNPCConversation(
             id=_conversation_id(state, start.participants, start.topic, rng),
@@ -139,6 +144,21 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
     }
     for movement in update.npc_movements:
         projected_locations[movement.npc_id] = movement.target_location
+
+    if len(update.npc_interruptions) > 1:
+        raise ValueError("at most one NPC interruption is allowed per turn")
+    if update.npc_interruptions:
+        active = state.active_conversation
+        if active is None:
+            raise ValueError("cannot interrupt when player has no active conversation")
+        if active.pending_interruption is not None:
+            raise ValueError("cannot interrupt while another interruption is already pending")
+        interruption = update.npc_interruptions[0]
+        _ensure_known_npc(interruption.interrupter_id, known)
+        if interruption.interrupter_id == active.target_id:
+            raise ValueError("conversation partner cannot interrupt their own conversation")
+        if projected_locations[interruption.interrupter_id] != state.location_id:
+            raise ValueError("interrupter is not at player location")
 
     locked = _player_locked_npc_ids(state)
     used_in_new: set[str] = set()

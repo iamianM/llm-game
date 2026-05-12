@@ -148,6 +148,12 @@ def _print_state(state: GameState, *, debug: bool = False) -> None:
         )
         if debug and islander.memories:
             print(f"    memories: {len(islander.memories)}")
+    if state.active_conversation is not None and state.active_conversation.pending_interruption is not None:
+        interruption = state.active_conversation.pending_interruption
+        print(
+            f"\n*** Interruption: {_name_for(state, interruption.interrupter_id)} wants to talk "
+            f"({interruption.urgency}, {interruption.reason}) ***"
+        )
 
 
 def _print_actions(actions: list[ActionSpec]) -> None:

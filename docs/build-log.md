@@ -196,3 +196,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: pull chance factors and clamps, contested pull success/failure, pull rejection memories, pull attempt trace fields, pull-rejection Islander Voice contracts
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; pull-rejection LLM subset green, 4 tests passed
 - Scenario fixture: unchanged
+
+## Phase G8.3
+
+- Files added: `tests/engine/test_interruptions.py`, `tests/agents/test_villa_orchestrator_interruptions.py`
+- Files changed: `src/game/state/models.py`, `src/game/agents/villa_orchestrator.py`, `src/game/engine/actions.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/engine/villa.py`, `src/game/cli/commands/play.py`, scenario fixtures
+- Tests added: VillaUpdate interruption validation, pending interruption wheel injection, welcome/defer/ignore mechanics and memories, Orchestrator interruption contract contexts
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; Orchestrator interruption LLM subset green, 5 tests passed
+- Scenario fixture: existing fixtures regenerated for schema v10 and pending interruption state shape
