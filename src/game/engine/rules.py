@@ -14,7 +14,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
-from src.game.state.models import GameState, IslanderState, clamp_relationship
+from src.game.state.models import GameState, IslanderState, Location, clamp_relationship
 from src.game.state.rng import SeededRng
 
 TALK_SUCCESS_AFFECTION_DELTA = 2
@@ -65,6 +65,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_listen(state, action, rng)
     if action.kind is ActionKind.LEAVE:
         return MechanicalResult(action=action, success=True, tags=["disengaged"])
+    if action.kind is ActionKind.MOVE:
+        return _apply_move(state, action)
     if action.kind is ActionKind.ADVANCE_PHASE:
         return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented in Phase A1: {action.kind}")
@@ -193,6 +195,13 @@ def listen_success_chance(state: GameState, target: IslanderState) -> int:
     """Calculate Phase A3 LISTEN success chance."""
     chance = 45 + (state.player.stats.eq * 5) + (target.relationship.affection // 5)
     return max(5, min(95, chance))
+
+
+def _apply_move(state: GameState, action: PlayerAction) -> MechanicalResult:
+    if action.target_id is None:
+        raise ValueError("target_id is required for MOVE")
+    state.location_id = Location(action.target_id)
+    return MechanicalResult(action=action, success=True, tags=["move"])
 
 
 def _find_islander(state: GameState, target_id: str | None) -> IslanderState:

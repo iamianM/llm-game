@@ -2,15 +2,19 @@
 # uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-flirt-mixed.yaml --mock-llm
 name: day1-flirt-mixed
 seed: 2
-expected_hash: a1ea363b7894aa7927bcdff2a95b2d2a03c014935605dce8a18b6a1bff4df1b4
+expected_hash: 9292bad3b3b9eecd1e8fec73f5f0778550c5dbe68ef85cb8c45b8fe3c37ef362
 actions:
   - kind: flirt
     target_id: chloe
+  - kind: move
+    target_id: kitchen
   - kind: talk
     target_id: maya
-  - kind: advance_phase
+  - kind: move
+    target_id: terrace
   - kind: flirt
     target_id: liam
+  - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase

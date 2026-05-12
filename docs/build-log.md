@@ -25,3 +25,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: stat-budget validation, bold-flirt gate, LISTEN deltas, BOLD_FLIRT deltas
 - QA result: `make qa` green, 28 tests passed
 - Scenario fixture: `tests/scenarios/fixtures/day1-full-stats.yaml`
+
+## Phase B
+
+- Files added: `src/game/engine/simulation.py`, `tests/engine/test_simulation.py`, `tests/scenarios/fixtures/day6-full-run.yaml`
+- Files changed: `src/game/state/models.py`, `src/game/engine/actions.py`, `src/game/engine/phases.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, scenario fixtures
+- Tests added: location filtering, move validation, multi-day phase rollover, deterministic off-screen simulation
+- QA result: `make qa` green, 32 tests passed
+- Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml`

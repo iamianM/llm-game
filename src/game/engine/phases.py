@@ -13,13 +13,21 @@ PHASE_ORDER = [
     Phase.AFTERNOON,
     Phase.TEXT,
     Phase.EVENING,
-    Phase.COMPLETE,
 ]
+
+MAX_DAYS = 6
 
 
 def advance_phase(state: GameState) -> None:
-    """Advance the one-day Phase A1 clock."""
+    """Advance the multi-day v0 clock."""
     if state.phase is Phase.COMPLETE:
+        return
+    if state.phase is Phase.EVENING:
+        if state.day >= MAX_DAYS:
+            state.phase = Phase.COMPLETE
+            return
+        state.day += 1
+        state.phase = Phase.MORNING
         return
     index = PHASE_ORDER.index(state.phase)
     state.phase = PHASE_ORDER[index + 1]

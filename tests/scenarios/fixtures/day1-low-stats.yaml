@@ -8,10 +8,12 @@ player_stats:
   eq: 7
   graft: 3
   loyalty: 6
-expected_hash: 5e9f038468ba2aebd1fa25901003e0c05cf6f486ca1f2a4299dc9ea4d0a5e942
+expected_hash: b448e2372e4407c816d40711778346248226f2a7c17c583f06b12f0f4b8ea4e6
 actions:
   - kind: listen
     target_id: chloe
+  - kind: move
+    target_id: kitchen
   - kind: flirt
     target_id: maya
   - kind: advance_phase

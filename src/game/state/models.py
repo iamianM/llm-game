@@ -19,7 +19,7 @@ SCHEMA_VERSION = 3
 
 
 class Phase(StrEnum):
-    """A minimal day clock for Phase A1."""
+    """The day clock for the playable v0 loop."""
 
     MORNING = "morning"
     CHALLENGE = "challenge"
@@ -27,6 +27,15 @@ class Phase(StrEnum):
     TEXT = "text"
     EVENING = "evening"
     COMPLETE = "complete"
+
+
+class Location(StrEnum):
+    """Discrete villa locations."""
+
+    POOL = "pool"
+    KITCHEN = "kitchen"
+    TERRACE = "terrace"
+    BEDROOM = "bedroom"
 
 
 class PlayerStats(BaseModel):
@@ -78,7 +87,7 @@ class IslanderState(BaseModel):
     id: str
     name: str
     archetype: str
-    location_id: str
+    location_id: Location
     relationship: RelationshipState = Field(default_factory=RelationshipState)
 
 
@@ -92,13 +101,13 @@ class GameState(BaseModel):
     turn_index: int = 0
     day: int = 1
     phase: Phase = Phase.MORNING
-    location_id: str = "pool"
+    location_id: Location = Location.POOL
     player: PlayerState
     islanders: list[IslanderState]
 
     @property
     def is_terminal(self) -> bool:
-        """Return whether the one-day A1 loop is complete."""
+        """Return whether the current run is terminal."""
         return self.phase is Phase.COMPLETE
 
 
@@ -121,21 +130,21 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
                 id="chloe",
                 name="Chloe",
                 archetype="sweetheart",
-                location_id="pool",
+                location_id=Location.POOL,
                 relationship=RelationshipState(affection=10),
             ),
             IslanderState(
                 id="maya",
                 name="Maya",
                 archetype="joker",
-                location_id="pool",
+                location_id=Location.KITCHEN,
                 relationship=RelationshipState(affection=8),
             ),
             IslanderState(
                 id="liam",
                 name="Liam",
                 archetype="friend",
-                location_id="pool",
+                location_id=Location.TERRACE,
                 relationship=RelationshipState(affection=6),
             ),
         ],

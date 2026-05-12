@@ -15,7 +15,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.state.models import GameState
+from src.game.state.models import GameState, Location, Phase
 
 
 class ActionKind(StrEnum):
@@ -26,6 +26,7 @@ class ActionKind(StrEnum):
     BOLD_FLIRT = "bold_flirt"
     LISTEN = "listen"
     LEAVE = "leave"
+    MOVE = "move"
     ADVANCE_PHASE = "advance_phase"
 
 
@@ -80,6 +81,15 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         )
     actions = [spec for spec in actions if _meets_requirement(state, spec)]
     actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.LEAVE), label="Leave the chat"))
+    if state.phase in {Phase.MORNING, Phase.AFTERNOON}:
+        for location in Location:
+            if location != state.location_id:
+                actions.append(
+                    ActionSpec(
+                        action=PlayerAction(kind=ActionKind.MOVE, target_id=location.value),
+                        label=f"Move to {location.value}",
+                    )
+                )
     actions.append(
         ActionSpec(
             action=PlayerAction(kind=ActionKind.ADVANCE_PHASE),

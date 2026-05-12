@@ -2,19 +2,25 @@
 # uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-full-stats.yaml --mock-llm
 name: day1-full-stats
 seed: 3
-expected_hash: 2f53b22fcfab1a4cae80409cab6777222658f980f31f5ba0e3dd1dc9da5940c5
+expected_hash: 0c3e334fc20fc86668146172edcca91444db191db2844a438f6ddd834e73cd7b
 actions:
   - kind: listen
     target_id: chloe
+  - kind: move
+    target_id: kitchen
   - kind: bold_flirt
     target_id: maya
   - kind: leave
-  - kind: advance_phase
+  - kind: move
+    target_id: terrace
   - kind: flirt
     target_id: liam
-  - kind: advance_phase
+  - kind: move
+    target_id: pool
   - kind: talk
     target_id: chloe
+  - kind: advance_phase
+  - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase
