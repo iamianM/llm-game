@@ -130,3 +130,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: off-screen chat creates memories for both NPCs, drama memories are high-weight, chemistry can pull NPCs toward the player location
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 58 non-LLM tests passed
 - Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml` now accumulates NPC memories through day six
+
+## Phase G5
+
+- Files added: `tests/engine/test_gossip.py`
+- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/engine/conversation.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/contextual_options.py`, `src/game/agents/islander_voice.py`, `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
+- Tests added: gossip appears from eligible NPC memories, gossip transfers memories to the player, affection threshold locks gossip, gossip offer content is hash-excluded
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 62 non-LLM tests passed
+- Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml` regenerated after the mock follow-up exit menu became single-exit only

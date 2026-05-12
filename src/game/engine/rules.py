@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.engine.intents import Intent, available_intents_for, get_intent
+from src.game.engine.memory import add_memory, create_memory
 from src.game.state.models import (
     GameState,
     IslanderState,
@@ -175,7 +176,10 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
     chance = follow_up_success_chance(state, target, option.stat_used, option.risk)
     roll = rng.randint(1, 100)
     success = roll <= chance
-    delta = _follow_up_delta(option.intent_kind, option.risk, success)
+    if option.intent_kind.startswith("ask_gossip:"):
+        delta = _apply_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
+    else:
+        delta = _follow_up_delta(option.intent_kind, option.risk, success)
     _apply_relationship_delta(target, delta)
     normalized = action.model_copy(
         update={
@@ -267,6 +271,41 @@ def update_public_perception(
     elif "flirty" in result.tags and not result.success:
         delta = -1
     state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
+
+
+def _apply_gossip_follow_up(
+    state: GameState,
+    source_id: str,
+    intent_kind: str,
+    success: bool,
+) -> RelationshipDelta:
+    memory_id = intent_kind.removeprefix("ask_gossip:")
+    conversation = state.active_conversation
+    if conversation is None:
+        raise ValueError("gossip follow-up requires active conversation")
+    source_memory = next(
+        (memory for memory in conversation.gossip_offers if memory.id == memory_id),
+        None,
+    )
+    if source_memory is None:
+        raise ValueError(f"gossip memory not offered: {memory_id}")
+    if not success:
+        return RelationshipDelta()
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id=source_memory.subject_id,
+            source="told_by",
+            source_id=source_id,
+            day=state.day,
+            turn=state.turn_index,
+            weight=source_memory.emotional_weight,
+            tags=["gossip", f"source_memory:{source_memory.id}", *source_memory.tags],
+            content=source_memory.content,
+        ),
+    )
+    return RelationshipDelta(trust=2)
 
 
 def _follow_up_delta(intent_kind: str, risk: str, success: bool) -> RelationshipDelta:

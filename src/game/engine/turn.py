@@ -13,7 +13,12 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
+from src.game.agents.contextual_options import (
+    ContextualOptionsFn,
+    mock_follow_up_menu,
+    validate_follow_up_menu,
+    with_gossip_options,
+)
 from src.game.agents.event_narrator import (
     EventNarration,
     EventNarratorFn,
@@ -111,7 +116,8 @@ def run_turn(
             if contextual_options is None
             else contextual_options
         )
-        follow_up_menu = menu_fn(state, result, exchange, probability)
+        follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
+        validate_follow_up_menu(follow_up_menu)
         conversation.pending_options = follow_up_menu
         if follow_up_menu.npc_will_leave:
             remember_conversation_close(state, conversation)

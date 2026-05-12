@@ -10,7 +10,14 @@ from __future__ import annotations
 from typing import Literal, Protocol
 
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import Conversation, ExchangeRecord, GameState, Mood
+from src.game.state.models import (
+    Conversation,
+    ExchangeRecord,
+    GameState,
+    IslanderState,
+    Memory,
+    Mood,
+)
 
 MAX_RETAINED_EXCHANGES = 8
 
@@ -39,9 +46,30 @@ def start_conversation(state: GameState, target_id: str, turn_index: int) -> Con
         target_id=target_id,
         started_on_turn=turn_index,
         started_on_day=state.day,
+        gossip_offers=eligible_gossip_memories(state, target_id),
     )
     state.active_conversation = conversation
     return conversation
+
+
+def eligible_gossip_memories(state: GameState, target_id: str) -> list[Memory]:
+    """Return gossip memories the target may share with the player."""
+    target = _target_islander(state, target_id)
+    if target.relationship.affection < 25:
+        return []
+    known_source_ids = {
+        tag.removeprefix("source_memory:")
+        for memory in state.player.memories
+        for tag in memory.tags
+        if tag.startswith("source_memory:")
+    }
+    return [
+        memory
+        for memory in target.memories
+        if memory.subject_id != "player"
+        and memory.emotional_weight >= 4
+        and memory.id not in known_source_ids
+    ][:3]
 
 
 def append_exchange(
@@ -125,8 +153,12 @@ def _last_two_repeat(conversation: Conversation) -> bool:
 
 
 def _target_relationship_strength(state: GameState, target_id: str) -> int:
+    rel = _target_islander(state, target_id).relationship
+    return rel.affection + rel.chemistry + rel.trust + rel.friendship
+
+
+def _target_islander(state: GameState, target_id: str) -> IslanderState:
     for islander in state.islanders:
         if islander.id == target_id:
-            rel = islander.relationship
-            return rel.affection + rel.chemistry + rel.trust + rel.friendship
+            return islander
     raise ValueError(f"unknown conversation target: {target_id}")

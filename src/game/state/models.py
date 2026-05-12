@@ -202,6 +202,7 @@ class Conversation(BaseModel):
     status: Literal["open", "closing", "closed"] = "open"
     departure_probability_last: int = 0
     pending_options: FollowUpMenu | None = None
+    gossip_offers: list[Memory] = Field(default_factory=list)
 
 
 class GameState(BaseModel):

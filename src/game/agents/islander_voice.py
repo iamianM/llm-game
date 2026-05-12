@@ -24,7 +24,7 @@ from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
 from src.game.engine.intents import get_intent
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import GameState, IslanderState, Mood
+from src.game.state.models import GameState, IslanderState, Memory, Mood
 
 ISLANDER_VOICE_MODEL = "gpt-4.1-mini"
 VALID_TONES = {
@@ -137,8 +137,13 @@ def islander_voice_context(
         stat_used = intent.stat_used
         tags = intent.tags
     except ValueError:
-        intent_category = "contextual"
-        intent_label = intent_id.replace("_", " ")
+        gossip = _gossip_memory_for_intent(state, intent_id)
+        intent_category = "gossip" if gossip is not None else "contextual"
+        intent_label = (
+            f"Ask about {_subject_name(state, gossip.subject_id)}: {gossip.content}"
+            if gossip is not None
+            else intent_id.replace("_", " ")
+        )
         stat_used = "contextual"
         tags = result.tags
     index = content if content is not None else load_content()
@@ -295,3 +300,20 @@ def _intent_label(intent_id: str | None) -> str:
         return get_intent(intent_id).label
     except ValueError:
         return intent_id.replace("_", " ")
+
+
+def _gossip_memory_for_intent(state: GameState, intent_id: str) -> Memory | None:
+    if not intent_id.startswith("ask_gossip:") or state.active_conversation is None:
+        return None
+    memory_id = intent_id.removeprefix("ask_gossip:")
+    for memory in state.active_conversation.gossip_offers:
+        if memory.id == memory_id:
+            return memory
+    return None
+
+
+def _subject_name(state: GameState, subject_id: str) -> str:
+    for islander in state.islanders:
+        if islander.id == subject_id:
+            return islander.name
+    return subject_id

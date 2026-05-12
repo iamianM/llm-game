@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.islander_voice import Exchange, load_dotenv_local
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import FollowUpMenu, FollowUpOption, GameState
+from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
 CONTEXTUAL_OPTIONS_MODEL = "gpt-5.4-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
@@ -47,6 +47,7 @@ class ContextualOptionsContext(BaseModel):
     graft: int
     loyalty: int
     departure_probability: int
+    gossip_memories: str
 
 
 ContextualOptionsFn = Callable[[GameState, MechanicalResult, Exchange, int], FollowUpMenu]
@@ -146,16 +147,18 @@ def contextual_options_context(
         graft=stats.graft,
         loyalty=stats.loyalty,
         departure_probability=departure_probability,
+        gossip_memories=_gossip_memory_context(state),
     )
 
 
 def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool = False) -> FollowUpMenu:
     """Return a deterministic menu that includes ``intent_kind`` for replay."""
+    primary_intent = "joke_back" if intent_kind in EXIT_INTENT_KINDS else intent_kind
     options = [
         FollowUpOption(
-            label=_mock_label(intent_kind),
-            category=_mock_category(intent_kind),
-            intent_kind=intent_kind,
+            label=_mock_label(primary_intent),
+            category=_mock_category(primary_intent),
+            intent_kind=primary_intent,
             stat_used="banter",
             risk="medium",
             tone="playful",
@@ -229,6 +232,37 @@ def _ensure_exit_when_npc_leaves(menu: FollowUpMenu) -> FollowUpMenu:
     return menu.model_copy(update={"options": options})
 
 
+def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
+    """Add deterministic gossip options from active conversation memory offers."""
+    conversation = state.active_conversation
+    if conversation is None or not conversation.gossip_offers:
+        return menu
+    existing = {option.intent_kind for option in menu.options}
+    options = list(menu.options)
+    for memory in conversation.gossip_offers:
+        intent_kind = f"ask_gossip:{memory.id}"
+        if intent_kind in existing:
+            continue
+        option = FollowUpOption(
+            label=f"Ask about {_subject_name(state, memory)}",
+            category="gossip",
+            intent_kind=intent_kind,
+            stat_used="eq",
+            risk="medium",
+            tone="curious",
+        )
+        if len(options) < 4:
+            options.insert(max(0, len(options) - 1), option)
+        else:
+            replace_at = next(
+                (index for index, existing_option in enumerate(options) if existing_option.category != "exit"),
+                0,
+            )
+            options[replace_at] = option
+        break
+    return menu.model_copy(update={"options": options})
+
+
 def _render_context(context: ContextualOptionsContext) -> str:
     return "\n".join(
         [
@@ -243,9 +277,32 @@ def _render_context(context: ContextualOptionsContext) -> str:
             f"charm {context.charm}, banter {context.banter}, eq {context.eq}, "
             f"graft {context.graft}, loyalty {context.loyalty}",
             f"Departure probability: {context.departure_probability}",
+            f"Gossip-eligible memories: {context.gossip_memories}",
             "Write the follow-up menu now.",
         ]
     )
+
+
+def _gossip_memory_context(state: GameState) -> str:
+    conversation = state.active_conversation
+    if conversation is None or not conversation.gossip_offers:
+        return "None."
+    return "\n".join(_memory_line(state, memory) for memory in conversation.gossip_offers)
+
+
+def _memory_line(state: GameState, memory: Memory) -> str:
+    return (
+        f"- id {memory.id}; subject {_subject_name(state, memory)}; "
+        f"weight {memory.emotional_weight}; tags {', '.join(memory.tags)}; "
+        f"content {memory.content}"
+    )
+
+
+def _subject_name(state: GameState, memory: Memory) -> str:
+    for islander in state.islanders:
+        if islander.id == memory.subject_id:
+            return islander.name
+    return memory.subject_id
 
 
 def _mock_label(intent_kind: str) -> str:

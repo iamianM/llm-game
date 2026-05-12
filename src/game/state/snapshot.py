@@ -39,6 +39,7 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
                 if isinstance(exchange, dict):
                     exchange.pop("player_dialogue", None)
                     exchange.pop("npc_dialogue", None)
+        _strip_memory_content(conversation.get("gossip_offers"))
     player = payload.get("player")
     if isinstance(player, dict):
         _strip_memory_content(player.get("memories"))
