@@ -4,19 +4,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.contextual_options import ContextualOptionsAgent, mock_follow_up_menu
-from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.islander_voice import Exchange, OpenAIIslanderVoice
+from src.game.agents.contextual_options import ContextualOptionsAgent
+from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.rules import MechanicalResult
-from src.game.engine.scenario import load_action_script
 from src.game.engine.turn import run_turn
 from src.game.reporting.balance import run_balance
 from src.game.reporting.html import index_page, session_page, table_page
-from src.game.state.models import FollowUpMenu, GameState, Location, PlayerStats, new_game
+from src.game.state.models import GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -31,14 +29,19 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     session.add_argument("--out", required=True)
     session.set_defaults(func=session_cmd)
 
+    from_trace = nested.add_parser("from-trace", help="render one recorded playthrough trace")
+    from_trace.add_argument("trace_path")
+    from_trace.add_argument("--out", required=True)
+    from_trace.set_defaults(func=session_cmd)
+
     balance = nested.add_parser("balance", help="render balance simulation")
     balance.add_argument("--seeds", type=int, default=1000)
     balance.add_argument("--out", required=True)
     balance.set_defaults(func=balance_cmd)
 
     packet = nested.add_parser("packet", help="build the full review packet")
-    packet.add_argument("--out", required=True)
-    packet.add_argument("--mock-llm", action="store_true")
+    packet.add_argument("--trace", required=True)
+    packet.add_argument("--out", default="review-packet")
     packet.set_defaults(func=packet_cmd)
 
     preview_f2 = nested.add_parser("preview-f2", help="build the Phase F2 voice preview")
@@ -48,8 +51,15 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
-    records = json.loads(Path(args.trace_path).read_text(encoding="utf-8"))
-    Path(args.out).write_text(session_page(Path(args.trace_path).stem, records), encoding="utf-8")
+    records, final_state, _final_hash = _load_recording(Path(args.trace_path))
+    Path(args.out).write_text(
+        session_page(
+            Path(args.trace_path).stem,
+            records,
+            preface=_final_state_summary(final_state) if final_state is not None else "",
+        ),
+        encoding="utf-8",
+    )
     return 0
 
 
@@ -63,56 +73,32 @@ def balance_cmd(args: argparse.Namespace) -> int:
 
 
 def packet_cmd(args: argparse.Namespace) -> int:
-    """Build the full self-contained review packet."""
+    """Build a single-session review packet from a recorded trace."""
+    trace_path = Path(args.trace)
+    records, final_state, final_hash = _load_recording(trace_path)
+    if final_state is None:
+        raise ValueError("packet requires a recorded trace package with final_state")
     out = Path(args.out)
-    (out / "sessions").mkdir(parents=True, exist_ok=True)
-    (out / "balance").mkdir(parents=True, exist_ok=True)
-    (out / "narration-quality").mkdir(parents=True, exist_ok=True)
+    _clean_packet_output(out)
     (out / "artifacts").mkdir(parents=True, exist_ok=True)
-
-    policies = [
-        ("session-01-loyal", Path("scripts/fixtures/policy-loyal.yaml")),
-        ("session-02-chaotic", Path("scripts/fixtures/policy-chaotic.yaml")),
-        ("session-03-strategic", Path("scripts/fixtures/policy-strategic.yaml")),
-    ]
-    all_records: list[dict[str, Any]] = []
-    for name, path in policies:
-        records, final_state = _run_session(path, use_llm=not args.mock_llm)
-        all_records.extend(records)
-        (out / "sessions" / f"{name}.html").write_text(
-            session_page(name, records),
-            encoding="utf-8",
-        )
-        (out / "artifacts" / f"{name}.json").write_text(
-            json.dumps(final_state.model_dump(mode="json"), indent=2),
-            encoding="utf-8",
-        )
-        (out / "artifacts" / f"{name}-trace.json").write_text(
-            json.dumps(records, indent=2),
-            encoding="utf-8",
-        )
-
-    outcomes, actions = run_balance(1000, Path("tests/scenarios/fixtures/day6-full-run.yaml"))
-    _write_balance_pages(out / "balance", outcomes, actions)
-    sample = [record for record in all_records if record["exchange"] is not None][:20]
-    (out / "narration-quality" / "sample-20-turns.html").write_text(
-        session_page("Narration Sample", sample),
+    (out / "session.html").write_text(
+        session_page("Recorded Playthrough", records, preface=_final_state_summary(final_state)),
         encoding="utf-8",
     )
-    (out / "narration-quality" / "flagged.md").write_text(
-        _flagged_turns(all_records),
+    (out / "artifacts" / "session.json").write_text(
+        json.dumps(final_state, indent=2),
         encoding="utf-8",
     )
-    (out / "notes.md").write_text(_notes(), encoding="utf-8")
-    (out / "how-to-reproduce.md").write_text(_repro(), encoding="utf-8")
+    (out / "artifacts" / "session-trace.json").write_text(
+        json.dumps(records, indent=2),
+        encoding="utf-8",
+    )
+    (out / "notes.md").write_text(_notes(records, final_hash), encoding="utf-8")
+    (out / "how-to-reproduce.md").write_text(_repro(trace_path, out), encoding="utf-8")
     links = [
-        ("Loyal session", "sessions/session-01-loyal.html"),
-        ("Chaotic session", "sessions/session-02-chaotic.html"),
-        ("Strategic session", "sessions/session-03-strategic.html"),
-        ("Balance distribution", "balance/distribution.html"),
-        ("Action coverage", "balance/action-coverage.html"),
-        ("Narration sample", "narration-quality/sample-20-turns.html"),
-        ("Flagged turns", "narration-quality/flagged.md"),
+        ("Recorded playthrough", "session.html"),
+        ("Final state JSON", "artifacts/session.json"),
+        ("Trace JSON", "artifacts/session-trace.json"),
         ("Notes", "notes.md"),
         ("How to reproduce", "how-to-reproduce.md"),
     ]
@@ -176,66 +162,6 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
     return 0
 
 
-def _run_session(path: Path, *, use_llm: bool) -> tuple[list[dict[str, Any]], GameState]:
-    script = load_action_script(path)
-    state = new_game(script.seed, player_stats=script.player_stats)
-    rng = SeededRng(script.seed)
-    islander_voice = OpenAIIslanderVoice().generate if use_llm else None
-    contextual_options = (
-        ContextualOptionsAgent().generate if use_llm else _scripted_contextual_options(script.actions)
-    )
-    event_narrator = OpenAIEventNarrator().narrate if use_llm else None
-    records: list[dict[str, Any]] = []
-    for action in script.actions:
-        input_hash = state_hash(state_hash_payload(state))
-        turn = run_turn(
-            state,
-            action,
-            rng,
-            islander_voice=islander_voice,
-            contextual_options=contextual_options,
-            event_narrator=event_narrator,
-        )
-        state = turn.state
-        records.append(_record_from_turn(input_hash, action, turn))
-    return records, state
-
-
-def _scripted_contextual_options(actions: list[PlayerAction]):
-    planned = _planned_follow_up_intents(actions)
-    index = 0
-
-    def contextual_options(
-        _state: GameState,
-        _result: MechanicalResult,
-        _exchange: Exchange,
-        _probability: int,
-    ) -> FollowUpMenu:
-        nonlocal index
-        intent_kind = planned[index] if index < len(planned) else None
-        index += 1
-        if intent_kind is None:
-            return mock_follow_up_menu(npc_will_leave=True)
-        return mock_follow_up_menu(intent_kind=intent_kind)
-
-    return contextual_options
-
-
-def _planned_follow_up_intents(actions: list[PlayerAction]) -> list[str | None]:
-    planned: list[str | None] = []
-    for index, action in enumerate(actions):
-        if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
-            continue
-        next_action = actions[index + 1] if index + 1 < len(actions) else None
-        if next_action is not None and next_action.kind is ActionKind.RESPOND_WITH:
-            planned.append(next_action.intent_id or "joke_back")
-        elif next_action is not None and next_action.kind is ActionKind.END_CONVERSATION:
-            planned.append("end_softly")
-        else:
-            planned.append(None)
-    return planned
-
-
 def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> dict[str, Any]:
     from src.game.engine.turn import TurnResult
 
@@ -260,6 +186,8 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "follow_up_menu": (
             None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
         ),
+        "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
+        "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }
 
@@ -298,59 +226,100 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     )
 
 
-def _flagged_turns(records: list[dict[str, Any]]) -> str:
-    flags: list[str] = []
-    for record in records:
-        exchange = record.get("exchange")
-        result = record.get("mechanical_result")
-        if not isinstance(exchange, dict) or not isinstance(result, dict):
-            continue
-        if result.get("success") is False and exchange.get("npc_tone") == "warm":
-            flags.append(
-                f"- Turn {record['turn']} ({record['day']}/{record['phase']}): miss with warm tone."
-            )
-    if not flags:
-        return "# Flagged Turns\n\nNo automatic flags in this packet.\n"
-    return "# Flagged Turns\n\n" + "\n".join(flags) + "\n"
+def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None]:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(raw, list):
+        return raw, None, None
+    if not isinstance(raw, dict):
+        raise ValueError(f"recording must be a JSON object or list: {path}")
+    records = raw.get("records")
+    if not isinstance(records, list):
+        raise ValueError(f"recording is missing records list: {path}")
+    final_state = raw.get("final_state")
+    if final_state is not None and not isinstance(final_state, dict):
+        raise ValueError(f"recording final_state must be an object: {path}")
+    final_hash = raw.get("final_hash")
+    if final_hash is not None and not isinstance(final_hash, str):
+        raise ValueError(f"recording final_hash must be a string: {path}")
+    return records, final_state, final_hash
 
 
-def _notes() -> str:
-    return """# Notes
+def _clean_packet_output(out: Path) -> None:
+    for directory in ("artifacts", "sessions", "balance", "narration-quality"):
+        shutil.rmtree(out / directory, ignore_errors=True)
+    for file_name in ("index.html", "session.html", "notes.md", "how-to-reproduce.md"):
+        (out / file_name).unlink(missing_ok=True)
+
+
+def _final_state_summary(final_state: dict[str, Any]) -> str:
+    player = final_state.get("player")
+    islanders = final_state.get("islanders")
+    memory_lines: list[str] = []
+    if isinstance(player, dict):
+        memories = player.get("memories")
+        if isinstance(memories, list):
+            memory_lines.append(f"<li>Player memories: {len(memories)}</li>")
+    if isinstance(islanders, list):
+        for islander in islanders:
+            if not isinstance(islander, dict):
+                continue
+            memories = islander.get("memories")
+            name = islander.get("name", islander.get("id", "islander"))
+            if isinstance(memories, list):
+                memory_lines.append(f"<li>{name} memories: {len(memories)}</li>")
+    return (
+        "<p><b>Recorded playthrough.</b> This report is rendered from a trace package; "
+        "agent commits are replayable and no new LLM calls are needed to inspect it.</p>"
+        f"<ul>{''.join(memory_lines)}</ul>"
+    )
+
+
+def _notes(records: list[dict[str, Any]], final_hash: str | None) -> str:
+    conversation_turns = sum(1 for record in records if record.get("exchange") is not None)
+    villa_turns = sum(
+        1
+        for record in records
+        if isinstance(record.get("agent_commits"), dict)
+        and record["agent_commits"].get("villa_update") is not None
+    )
+    return f"""# Notes
 
 ## What I noticed
 
-The F3 loop now shows multi-exchange conversations: each session opens with
-several one-on-one chats, generated player lines, Islander responses, and
-contextual follow-up menus. Ceremony and bombshell events are visible in the
-turn cards instead of being hidden in final state.
+This packet renders one recorded playthrough from trace data. It contains
+{len(records)} turn(s), {conversation_turns} player conversation turn(s), and
+{villa_turns} turn(s) with recorded villa agent commits.
 
 ## What felt good
 
-The report makes every roll, delta, hash, exchange, follow-up menu, and event
-callout inspectable in one pass. The policy scripts now spend meaningful time in
-conversation before the day clock starts moving.
+The report keeps player dialogue, follow-up wheel options, relationship deltas,
+ceremony narration, and off-screen villa commits together in one inspectable
+artifact.
 
 ## What felt off
 
-Follow-up responses are mechanically neutral in this slice, so the conversation
-feels alive in prose before it fully changes relationship state. The next
-game-feel pass should decide which contextual follow-up tags produce real deltas.
+This is a trace review, not a balance report. Read it for feel, continuity,
+memories, and gossip surfacing rather than aggregate win-rate conclusions.
 
 ## Open questions
 
-- Which contextual follow-up tags should affect affection, trust, chemistry, or friendship?
-- Should the report policies push harder into flirty/deep content once more unlock paths exist?
-- Should recouplings give the player an explicit choice in the CLI?
+- Did the wheel choices feel Sims-like and short enough?
+- Did off-screen villa commits make the world feel alive?
+- Did memories and gossip surface at the right level of specificity?
+
+Final hash: `{final_hash or "unknown"}`
 """
 
 
-def _repro() -> str:
-    return """# How To Reproduce
+def _repro(trace_path: Path, out: Path) -> str:
+    trace = trace_path.as_posix()
+    output = out.as_posix()
+    return f"""# How To Reproduce
 
 ```bash
-uv run python -m src.game.cli report packet --out review-packet/
-uv run python -m src.game.cli report packet --out review-packet/ --mock-llm
-uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day6-full-run.yaml --mock-llm
+uv run python -m src.game.cli play --record {trace}
+uv run python -m src.game.cli play --replay {trace}
+uv run python -m src.game.cli report packet --trace {trace} --out {output}
 uv run python -m src.game.cli verify --all
 ```
 """

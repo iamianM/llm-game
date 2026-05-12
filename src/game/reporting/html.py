@@ -52,6 +52,7 @@ def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -
             f"{_exchange_block(record.get('exchange'))}"
             f"{_event_block(record.get('event_narration'))}"
             f"{_follow_up_block(record.get('follow_up_menu'))}"
+            f"{_agent_commit_block(record.get('agent_commits'))}"
             f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs "
             f"{escape(str(result.get('success_chance')))} "
             f"<span class='{outcome_class}'>{'Success' if result['success'] else 'Miss'}</span></p>"
@@ -135,6 +136,34 @@ def _follow_up_block(menu: object) -> str:
         "<p><b>Follow-up menu</b></p>"
         f"{option_groups}"
         f"{exit_text}"
+        "</div>"
+    )
+
+
+def _agent_commit_block(agent_commits: object) -> str:
+    if not isinstance(agent_commits, dict):
+        return ""
+    update = agent_commits.get("villa_update")
+    if not isinstance(update, dict):
+        return ""
+    movements = update.get("npc_movements")
+    starts = update.get("conversation_starts")
+    continues = update.get("conversation_continues")
+    ends = update.get("conversation_ends")
+    background = agent_commits.get("background_dialogues")
+    batches = agent_commits.get("curator_batches")
+    rows = [
+        f"<li>Movements: {len(movements) if isinstance(movements, list) else 0}</li>",
+        f"<li>Starts: {len(starts) if isinstance(starts, list) else 0}</li>",
+        f"<li>Continues: {len(continues) if isinstance(continues, list) else 0}</li>",
+        f"<li>Ends: {len(ends) if isinstance(ends, list) else 0}</li>",
+        f"<li>Background dialogue commits: {len(background) if isinstance(background, list) else 0}</li>",
+        f"<li>Curator batches: {len(batches) if isinstance(batches, list) else 0}</li>",
+    ]
+    return (
+        "<div class='card'>"
+        "<p><b>Villa agent commits</b></p>"
+        f"<ul>{''.join(rows)}</ul>"
         "</div>"
     )
 

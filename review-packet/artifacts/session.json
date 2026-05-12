@@ -1,0 +1,151 @@
+{
+  "schema_version": 9,
+  "seed": 1,
+  "turn_index": 1,
+  "day": 1,
+  "phase": "morning",
+  "location_id": "pool",
+  "player": {
+    "id": "player",
+    "name": "You",
+    "stats": {
+      "charm": 6,
+      "banter": 6,
+      "eq": 6,
+      "graft": 6,
+      "loyalty": 6
+    },
+    "public_perception": 52,
+    "eliminated": false,
+    "memories": []
+  },
+  "islanders": [
+    {
+      "id": "chloe",
+      "name": "Chloe",
+      "archetype": "sweetheart",
+      "location_id": "pool",
+      "relationship": {
+        "affection": 12,
+        "chemistry": 0,
+        "trust": 2,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false,
+      "mood": "content",
+      "memories": []
+    },
+    {
+      "id": "maya",
+      "name": "Maya",
+      "archetype": "joker",
+      "location_id": "pool",
+      "relationship": {
+        "affection": 8,
+        "chemistry": 0,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false,
+      "mood": "content",
+      "memories": []
+    },
+    {
+      "id": "liam",
+      "name": "Liam",
+      "archetype": "friend",
+      "location_id": "kitchen",
+      "relationship": {
+        "affection": 6,
+        "chemistry": 0,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false,
+      "mood": "content",
+      "memories": []
+    }
+  ],
+  "couples": [],
+  "active_conversation": {
+    "target_id": "chloe",
+    "started_on_turn": 1,
+    "started_on_day": 1,
+    "exchanges": [
+      {
+        "turn_index": 1,
+        "intent_id": "friendly_ask_feelings",
+        "player_dialogue": "Hey Chloe, how are you feeling this morning?",
+        "npc_dialogue": "Oh, thanks for asking! I'm feeling pretty good, actually. Just enjoying the sunshine and a little calm before the chaos of the day kicks in. How about you?",
+        "npc_tone": "warm",
+        "npc_mood_after": "content",
+        "success": true,
+        "tags": [
+          "supportive",
+          "sincere"
+        ],
+        "relationship_deltas": {
+          "chloe": {
+            "affection": 2,
+            "chemistry": 0,
+            "trust": 2,
+            "friendship": 0
+          }
+        }
+      }
+    ],
+    "accumulated_tags": [
+      "supportive",
+      "sincere"
+    ],
+    "status": "open",
+    "departure_probability_last": 10,
+    "pending_options": {
+      "options": [
+        {
+          "label": "Match her calm vibe",
+          "category": "friendly",
+          "intent_kind": "change_subject",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Turn it flirtier",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Dig into her mood",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave it nicely",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "gossip_offers": []
+  },
+  "npc_conversations": []
+}

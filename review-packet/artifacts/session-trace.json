@@ -1,0 +1,111 @@
+[
+  {
+    "turn": 1,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 2, friendship 0; Maya: affection 8, chemistry 0, trust 0, friendship 0",
+    "input_hash": "afb03fcf83f25ccde09503302d4365e58dd80d728743a734951f6d34c4092139",
+    "action": {
+      "kind": "start_conversation",
+      "target_id": "chloe",
+      "intent_id": "friendly_ask_feelings",
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "start_conversation",
+        "target_id": "chloe",
+        "intent_id": "friendly_ask_feelings",
+        "option_index": null
+      },
+      "success": true,
+      "roll": 18,
+      "success_chance": 82,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 2,
+          "chemistry": 0,
+          "trust": 2,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "supportive",
+        "sincere"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Hey Chloe, how are you feeling this morning?",
+      "npc_dialogue": "Oh, thanks for asking! I'm feeling pretty good, actually. Just enjoying the sunshine and a little calm before the chaos of the day kicks in. How about you?",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Match her calm vibe",
+          "category": "friendly",
+          "intent_kind": "change_subject",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Turn it flirtier",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Dig into her mood",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave it nicely",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [
+          {
+            "npc_id": "maya",
+            "target_location": "pool",
+            "reason": "joining_friends"
+          },
+          {
+            "npc_id": "liam",
+            "target_location": "kitchen",
+            "reason": "passive_drift"
+          }
+        ],
+        "conversation_starts": [],
+        "conversation_continues": [],
+        "conversation_ends": []
+      },
+      "background_dialogues": [],
+      "curator_batches": []
+    },
+    "output_hash": "4bc1afa333f8d444b84af8508a710d419efbf68044aa992fc653c5023772eb8f"
+  }
+]

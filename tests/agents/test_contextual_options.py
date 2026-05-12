@@ -1,4 +1,4 @@
-"""Opt-in tests for real Contextual Options output."""
+"""Tests for Contextual Options output and runtime wheel validation."""
 
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from src.game.agents.contextual_options import ContextualOptionsAgent, validate_
 from src.game.agents.islander_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import Mood, RelationshipDelta, new_game
+from src.game.state.models import FollowUpMenu, FollowUpOption, Mood, RelationshipDelta, new_game
 
 Tone = Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
 
@@ -59,3 +59,57 @@ def test_contextual_options_contract(departure_probability: int, tone: Tone) -> 
         assert menu.npc_will_leave is False
     if departure_probability == 100:
         assert menu.npc_will_leave is True
+
+
+def test_contextual_options_repairs_missing_exit_affordance() -> None:
+    """The engine keeps one exit wheel option even when the agent omits it."""
+
+    class FakeContextualOptionsAgent(ContextualOptionsAgent):
+        def __init__(self) -> None:
+            pass
+
+        def _generate_menu(self, _rendered_context: str) -> FollowUpMenu:
+            return FollowUpMenu(
+                options=[
+                    FollowUpOption(
+                        label="Ask something deeper",
+                        category="deep",
+                        intent_kind="go_deeper",
+                        stat_used="eq",
+                        risk="medium",
+                        tone="curious",
+                    ),
+                    FollowUpOption(
+                        label="Make it playful",
+                        category="banter",
+                        intent_kind="joke_back",
+                        stat_used="banter",
+                        risk="low",
+                        tone="playful",
+                    ),
+                ],
+                npc_will_leave=False,
+            )
+
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        success=True,
+        relationship_deltas={"chloe": RelationshipDelta(affection=2)},
+        tags=["friendly"],
+    )
+    exchange = Exchange(
+        player_dialogue="I wanted to check in properly.",
+        npc_dialogue="I appreciate that.",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    menu = FakeContextualOptionsAgent().generate(state, result, exchange, 0)
+
+    validate_follow_up_menu(menu)
+    assert sum(option.category == "exit" for option in menu.options) == 1

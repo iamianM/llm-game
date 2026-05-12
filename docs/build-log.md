@@ -163,3 +163,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: manual CLI smoke for `play --mock-llm --record` followed by `play --replay` on the generated trace
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint green; recorded mock playthrough replayed to the same final hash; full LLM suite green, 28 tests passed
 - Scenario fixture: unchanged
+
+## Phase G6
+
+- Files added: `review-packet/session.html`, `review-packet/artifacts/session.json`, `review-packet/artifacts/session-trace.json`
+- Files changed: `src/game/cli/commands/report.py`, `src/game/reporting/html.py`, `src/game/agents/contextual_options.py`, `tests/agents/test_contextual_options.py`, `review-packet/index.html`, `review-packet/notes.md`, `review-packet/how-to-reproduce.md`
+- Files removed: policy script fixtures and the old multi-session/balance/narration-quality packet files
+- Tests added: non-LLM test proving the Contextual Options runtime preserves exactly one exit wheel option; manual CLI smoke for `report packet --trace` and `report from-trace`; trace replay confirmed the generated live recording reproduces the same final hash
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, smoke replay, fixture determinism all green; full LLM suite green, 28 tests passed
+- Packet: regenerated from `.game_traces/live-recording.json` at `review-packet/index.html`

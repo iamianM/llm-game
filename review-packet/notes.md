@@ -2,25 +2,25 @@
 
 ## What I noticed
 
-The F3 loop now shows multi-exchange conversations: each session opens with
-several one-on-one chats, generated player lines, Islander responses, and
-contextual follow-up menus. Ceremony and bombshell events are visible in the
-turn cards instead of being hidden in final state.
+This packet renders one recorded playthrough from trace data. It contains
+1 turn(s), 1 player conversation turn(s), and
+1 turn(s) with recorded villa agent commits.
 
 ## What felt good
 
-The report makes every roll, delta, hash, exchange, follow-up menu, and event
-callout inspectable in one pass. The policy scripts now spend meaningful time in
-conversation before the day clock starts moving.
+The report keeps player dialogue, follow-up wheel options, relationship deltas,
+ceremony narration, and off-screen villa commits together in one inspectable
+artifact.
 
 ## What felt off
 
-Follow-up responses are mechanically neutral in this slice, so the conversation
-feels alive in prose before it fully changes relationship state. The next
-game-feel pass should decide which contextual follow-up tags produce real deltas.
+This is a trace review, not a balance report. Read it for feel, continuity,
+memories, and gossip surfacing rather than aggregate win-rate conclusions.
 
 ## Open questions
 
-- Which contextual follow-up tags should affect affection, trust, chemistry, or friendship?
-- Should the report policies push harder into flirty/deep content once more unlock paths exist?
-- Should recouplings give the player an explicit choice in the CLI?
+- Did the wheel choices feel Sims-like and short enough?
+- Did off-screen villa commits make the world feel alive?
+- Did memories and gossip surface at the right level of specificity?
+
+Final hash: `4bc1afa333f8d444b84af8508a710d419efbf68044aa992fc653c5023772eb8f`

@@ -83,7 +83,7 @@ class ContextualOptionsAgent:
                     "There must be exactly one option with category set to exit, and that "
                     "option must use intent_kind end_softly or walk_away."
                 )
-            menu = _ensure_exit_when_npc_leaves(self._generate_menu(retry_context))
+            menu = _ensure_single_exit_option(self._generate_menu(retry_context))
             try:
                 validate_follow_up_menu(menu)
                 return menu
@@ -208,8 +208,8 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
             raise ValueError(f"npc_exit_line too long: {menu.npc_exit_line!r}")
 
 
-def _ensure_exit_when_npc_leaves(menu: FollowUpMenu) -> FollowUpMenu:
-    """Normalize exit intent/category mismatches before validation."""
+def _ensure_single_exit_option(menu: FollowUpMenu) -> FollowUpMenu:
+    """Enforce the engine-owned exit affordance before validating agent output."""
     options = list(menu.options)
     changed = False
     for index, option in enumerate(options):
@@ -219,16 +219,38 @@ def _ensure_exit_when_npc_leaves(menu: FollowUpMenu) -> FollowUpMenu:
     if changed:
         menu = menu.model_copy(update={"options": options})
         options = list(menu.options)
-    if not menu.npc_will_leave or any(option.category == "exit" for option in options):
+    exit_indexes = [index for index, option in enumerate(options) if option.category == "exit"]
+    if len(exit_indexes) == 1:
         return menu
-    options[-1] = FollowUpOption(
-        label="Let them go",
+    replacement = FollowUpOption(
+        label="Let them go" if menu.npc_will_leave else "End on a good note",
         category="exit",
-        intent_kind="walk_away",
+        intent_kind="walk_away" if menu.npc_will_leave else "end_softly",
         stat_used=None,
         risk="safe",
-        tone="cool",
+        tone="cool" if menu.npc_will_leave else "warm",
     )
+    if not exit_indexes:
+        options[-1] = replacement
+    else:
+        keep = exit_indexes[0]
+        options = [
+            option
+            for index, option in enumerate(options)
+            if index == keep or option.category != "exit"
+        ]
+        if len(options) < 2:
+            options.insert(
+                0,
+                FollowUpOption(
+                    label="Ask about that",
+                    category="friendly",
+                    intent_kind="change_subject",
+                    stat_used="eq",
+                    risk="safe",
+                    tone="warm",
+                ),
+            )
     return menu.model_copy(update={"options": options})
 
 
