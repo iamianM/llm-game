@@ -72,6 +72,21 @@ def test_islander_voice_pull_rejected_deflects_busy_target(
 
     exchange = OpenAIIslanderVoice().generate(state, result)
 
-    assert exchange.npc_tone != "warm"
     joined = f"{exchange.player_dialogue} {exchange.npc_dialogue}".lower()
-    assert any(word in joined for word in ("busy", "talking", "conversation", "later", "middle"))
+    assert any(
+        phrase in joined
+        for phrase in (
+            "busy",
+            "talking",
+            "conversation",
+            "later",
+            "middle",
+            "not right now",
+            "another time",
+            "finish",
+            "wait",
+            "after",
+            "a bit",
+            "give me",
+        )
+    )

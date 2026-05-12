@@ -212,3 +212,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: playthrough report assertion count, complete-trace pass, missing pull failure, memory holder coverage, interesting turn sorting
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; manual `verify --playthrough .game_traces/manual-day1.json` produced a structured report with 4/11 assertions passing for the old recording
 - Scenario fixture: unchanged
+
+## Phase G8.5
+
+- Files added: `src/game/reporting/eval_dashboard.py`, `tests/reporting/test_html.py`, `review-packet/playthrough-eval.html`
+- Files changed: `src/game/reporting/html.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `tests/agents/test_islander_voice_pull_rejected.py`, `review-packet/`
+- Tests added: session HTML exposes success math, villa snapshots, memories, pulls, interruptions; eval dashboard links assertions back to session turns
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; full LLM suite green, 37 tests passed; packet regenerated and verified in the in-app browser at `http://127.0.0.1:8895/review-packet/index.html`
+- Packet: regenerated from `.game_traces/manual-day1.json`; dashboard shows the old recording passes 4/11 playthrough assertions, which is expected until the next G8-aware recorded session is played

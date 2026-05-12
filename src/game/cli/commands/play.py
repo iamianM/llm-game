@@ -366,6 +366,7 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) -
         "phase": state.phase.value,
         "location": state.location_id.value,
         "visible_state": _visible_state(state),
+        "villa_snapshot": _villa_snapshot(state),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
@@ -394,6 +395,19 @@ def _visible_state(state: GameState) -> str:
                 f"trust {rel.trust}, friendship {rel.friendship}"
             )
     return "; ".join(parts) if parts else "No visible islanders."
+
+
+def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
+    snapshot: dict[str, list[str]] = {}
+    for location in Location:
+        occupants = ["you"] if location is state.location_id else []
+        occupants.extend(
+            islander.name
+            for islander in state.islanders
+            if islander.location_id is location and not islander.eliminated
+        )
+        snapshot[location.value] = occupants
+    return snapshot
 
 
 def _write_recording(

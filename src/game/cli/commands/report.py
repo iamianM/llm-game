@@ -12,7 +12,9 @@ from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.turn import run_turn
+from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
+from src.game.reporting.eval_dashboard import playthrough_eval_page
 from src.game.reporting.html import index_page, session_page, table_page
 from src.game.state.models import GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
@@ -43,6 +45,11 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     packet.add_argument("--trace", required=True)
     packet.add_argument("--out", default="review-packet")
     packet.set_defaults(func=packet_cmd)
+
+    eval_dashboard = nested.add_parser("eval-dashboard", help="render playthrough eval dashboard")
+    eval_dashboard.add_argument("trace_path")
+    eval_dashboard.add_argument("--out", required=True)
+    eval_dashboard.set_defaults(func=eval_dashboard_cmd)
 
     preview_f2 = nested.add_parser("preview-f2", help="build the Phase F2 voice preview")
     preview_f2.add_argument("--out", default="review-packet-preview/session-phaseF2.html")
@@ -81,8 +88,16 @@ def packet_cmd(args: argparse.Namespace) -> int:
     out = Path(args.out)
     _clean_packet_output(out)
     (out / "artifacts").mkdir(parents=True, exist_ok=True)
+    report = evaluate_trace(
+        {"records": records, "final_state": final_state, "final_hash": final_hash},
+        trace_path=str(trace_path),
+    )
     (out / "session.html").write_text(
         session_page("Recorded Playthrough", records, preface=_final_state_summary(final_state)),
+        encoding="utf-8",
+    )
+    (out / "playthrough-eval.html").write_text(
+        playthrough_eval_page(report),
         encoding="utf-8",
     )
     (out / "artifacts" / "session.json").write_text(
@@ -97,12 +112,24 @@ def packet_cmd(args: argparse.Namespace) -> int:
     (out / "how-to-reproduce.md").write_text(_repro(trace_path, out), encoding="utf-8")
     links = [
         ("Recorded playthrough", "session.html"),
+        ("Playthrough eval dashboard", "playthrough-eval.html"),
         ("Final state JSON", "artifacts/session.json"),
         ("Trace JSON", "artifacts/session-trace.json"),
         ("Notes", "notes.md"),
         ("How to reproduce", "how-to-reproduce.md"),
     ]
     (out / "index.html").write_text(index_page(links), encoding="utf-8")
+    return 0
+
+
+def eval_dashboard_cmd(args: argparse.Namespace) -> int:
+    """Render only the playthrough eval dashboard for one trace."""
+    records, final_state, final_hash = _load_recording(Path(args.trace_path))
+    report = evaluate_trace(
+        {"records": records, "final_state": final_state, "final_hash": final_hash},
+        trace_path=args.trace_path,
+    )
+    Path(args.out).write_text(playthrough_eval_page(report), encoding="utf-8")
     return 0
 
 
@@ -174,6 +201,7 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "phase": state.phase.value,
         "location": state.location_id.value,
         "visible_state": _visible_state(state),
+        "villa_snapshot": _villa_snapshot(state),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
@@ -212,6 +240,19 @@ def _visible_state(state: GameState) -> str:
     return "; ".join(parts) if parts else "No visible islanders."
 
 
+def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
+    snapshot: dict[str, list[str]] = {}
+    for location in Location:
+        occupants = ["you"] if location is state.location_id else []
+        occupants.extend(
+            islander.name
+            for islander in state.islanders
+            if islander.location_id is location and not islander.eliminated
+        )
+        snapshot[location.value] = occupants
+    return snapshot
+
+
 def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     out.mkdir(parents=True, exist_ok=True)
     outcome_rows = [[str(key), str(value)] for key, value in sorted(outcomes.items())]
@@ -247,7 +288,7 @@ def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | 
 def _clean_packet_output(out: Path) -> None:
     for directory in ("artifacts", "sessions", "balance", "narration-quality"):
         shutil.rmtree(out / directory, ignore_errors=True)
-    for file_name in ("index.html", "session.html", "notes.md", "how-to-reproduce.md"):
+    for file_name in ("index.html", "session.html", "playthrough-eval.html", "notes.md", "how-to-reproduce.md"):
         (out / file_name).unlink(missing_ok=True)
 
 
@@ -320,6 +361,7 @@ def _repro(trace_path: Path, out: Path) -> str:
 uv run python -m src.game.cli play --record {trace}
 uv run python -m src.game.cli play --replay {trace}
 uv run python -m src.game.cli report packet --trace {trace} --out {output}
+uv run python -m src.game.cli verify --playthrough {trace}
 uv run python -m src.game.cli verify --all
 ```
 """

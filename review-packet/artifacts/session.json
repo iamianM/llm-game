@@ -1,10 +1,10 @@
 {
   "schema_version": 9,
   "seed": 1,
-  "turn_index": 13,
+  "turn_index": 11,
   "day": 1,
   "phase": "morning",
-  "location_id": "pool",
+  "location_id": "terrace",
   "player": {
     "id": "player",
     "name": "You",
@@ -15,25 +15,74 @@
       "graft": 6,
       "loyalty": 6
     },
-    "public_perception": 50,
+    "public_perception": 48,
     "eliminated": false,
     "memories": [
       {
-        "id": "mem_e167480d72404f7a",
+        "id": "mem_62b38296b5704a32",
         "holder_id": "player",
         "subject_id": "chloe",
-        "content": "Chloe\u2019s laughter and how her eyes sparkled when she shyly admitted she liked my company more than just the jokes made me feel a real connection.",
+        "content": "Chloe laughed softly at my 'partners in crime' line and seemed genuinely amused, which made our playful banter feel easy and fun.",
         "source": "direct",
         "source_id": null,
         "formed_on_day": 1,
-        "formed_on_turn": 10,
-        "emotional_weight": 6,
+        "formed_on_turn": 6,
+        "emotional_weight": 5,
         "tags": [
-          "chemistry",
           "felt_seen",
           "flirty",
-          "playful",
+          "playful"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_ffbaa78520c4f165",
+        "holder_id": "player",
+        "subject_id": "chloe",
+        "content": "Chloe giggled nervously and looked away when I suggested breaking rules, showing me I needed to slow down and keep things comfortable for her.",
+        "source": "direct",
+        "source_id": null,
+        "formed_on_day": 1,
+        "formed_on_turn": 6,
+        "emotional_weight": 6,
+        "tags": [
+          "attuned",
+          "respectful",
+          "sensing_boundaries"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_9e37d8ac6d6fb988",
+        "holder_id": "player",
+        "subject_id": "chloe",
+        "content": "At the end, Chloe smiled warmly and met my eyes, making it clear she appreciated taking things slow and just enjoying the moment.",
+        "source": "direct",
+        "source_id": null,
+        "formed_on_day": 1,
+        "formed_on_turn": 6,
+        "emotional_weight": 6,
+        "tags": [
+          "safe",
+          "trust_building",
           "warm"
+        ],
+        "durable": true
+      },
+      {
+        "id": "mem_5a46415985411ed5",
+        "holder_id": "player",
+        "subject_id": "liam",
+        "content": "Liam\u2019s steady eye contact and laughter made it clear he was enjoying the playful challenge Maya threw his way.",
+        "source": "witnessed",
+        "source_id": null,
+        "formed_on_day": 1,
+        "formed_on_turn": 8,
+        "emotional_weight": 4,
+        "tags": [
+          "engaged",
+          "noticed_body_language",
+          "playful"
         ],
         "durable": true
       }
@@ -44,10 +93,10 @@
       "id": "chloe",
       "name": "Chloe",
       "archetype": "sweetheart",
-      "location_id": "kitchen",
+      "location_id": "terrace",
       "relationship": {
-        "affection": 15,
-        "chemistry": 15,
+        "affection": 11,
+        "chemistry": 6,
         "trust": 0,
         "friendship": 4
       },
@@ -56,21 +105,70 @@
       "mood": "content",
       "memories": [
         {
-          "id": "mem_b9294d63906ac2e6",
+          "id": "mem_b678139ff8715e81",
           "holder_id": "chloe",
           "subject_id": "player",
-          "content": "When he suggested making today fun together beyond jokes, I felt a spark of curiosity and warmth that made me want to spend more time with him.",
+          "content": "I smiled brightly and leaned in a little when he suggested being partners in crime, which made me feel like there might be some mischievous fun ahead.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 10,
+          "formed_on_turn": 6,
           "emotional_weight": 6,
           "tags": [
-            "curious",
-            "felt_seen",
+            "felt_playful",
             "flirty",
-            "playful",
             "warm"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_6f0c7fb5040ceea2",
+          "holder_id": "chloe",
+          "subject_id": "player",
+          "content": "When he pushed to 'break a few rules,' I giggled nervously and looked away, signaling that he was moving too fast for me right now.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 6,
+          "emotional_weight": 7,
+          "tags": [
+            "defensive",
+            "flirty",
+            "uncertain"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_a120d8c3f56374d9",
+          "holder_id": "chloe",
+          "subject_id": "player",
+          "content": "When he joked about behaving until cameras stopped rolling, I laughed softly and shook my head, happy to keep things light and playful around the pool.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 6,
+          "emotional_weight": 5,
+          "tags": [
+            "comfort",
+            "humorous",
+            "playful"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_a5563d7f3e2e2da5",
+          "holder_id": "chloe",
+          "subject_id": "maya",
+          "content": "From where I stood, Maya\u2019s confident smirk and close body language toward Liam looked like she was really into teasing him, not just joking around.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 8,
+          "emotional_weight": 4,
+          "tags": [
+            "body_language",
+            "noticed_flirt",
+            "playful_tone"
           ],
           "durable": true
         }
@@ -82,48 +180,66 @@
       "archetype": "joker",
       "location_id": "terrace",
       "relationship": {
-        "affection": 8,
-        "chemistry": 0,
-        "trust": 0,
-        "friendship": 0
+        "affection": 13,
+        "chemistry": 3,
+        "trust": 3,
+        "friendship": 1
       },
       "public_perception": 50,
       "eliminated": false,
       "mood": "content",
       "memories": [
         {
-          "id": "mem_6aea11601d9c7a7d",
+          "id": "mem_6cadacdbc6d0058c",
           "holder_id": "maya",
           "subject_id": "liam",
-          "content": "Liam\u2019s playful competitiveness about breakfast caught me off guard, making the morning instantly fun and sparking my curiosity about what he\u2019s really like.",
+          "content": "Liam's playful challenge about my heart matching his adventurous backpack made me feel daring and seen in a new way over breakfast.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
           "formed_on_turn": 5,
+          "emotional_weight": 6,
+          "tags": [
+            "adventure_talk",
+            "felt_seen",
+            "flirty",
+            "playful_challenge"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_f4e5b3042e87d3f9",
+          "holder_id": "maya",
+          "subject_id": "liam",
+          "content": "I noticed Liam\u2019s competitive streak comes out even in breakfast banter, and it felt intriguing rather than annoying.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 8,
           "emotional_weight": 5,
           "tags": [
             "competitive",
-            "felt_engaged",
-            "morning_banter",
+            "felt_intrigued",
+            "noticed_charm",
             "playful"
           ],
           "durable": true
         },
         {
-          "id": "mem_7d4ed03e26f8bf7b",
+          "id": "mem_04e537c0476e6157",
           "holder_id": "maya",
           "subject_id": "liam",
-          "content": "I caught Liam flirting with me under the guise of a playful competition, and it made me smile more than I expected.",
+          "content": "When Liam said I\u2019d have to stick around to see what's under his charm, I felt a spark of curiosity about what he's really like.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 10,
-          "emotional_weight": 6,
+          "formed_on_turn": 8,
+          "emotional_weight": 7,
           "tags": [
-            "competitive_edge",
-            "felt_charmed",
-            "flirty",
-            "playful"
+            "curious",
+            "felt_seen",
+            "flirty_tension",
+            "intimate"
           ],
           "durable": true
         }
@@ -145,38 +261,56 @@
       "mood": "content",
       "memories": [
         {
-          "id": "mem_31143441de8315dc",
+          "id": "mem_da47a773528968fe",
           "holder_id": "liam",
           "subject_id": "maya",
-          "content": "Maya\u2019s teasing about my poker face and her confident glint made me hope she\u2019s as sharp as she seems, and I\u2019m excited to see how she handles the real challenges.",
+          "content": "Maya's soft admission about being a loner yet feeling like she might not have to be was unexpectedly warm and made me want to connect deeper with her.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
           "formed_on_turn": 5,
-          "emotional_weight": 6,
+          "emotional_weight": 7,
           "tags": [
-            "anticipated_challenge",
-            "confident",
-            "flirty",
-            "teasing"
+            "felt_warmth",
+            "soft_confession",
+            "trust_building",
+            "vulnerable"
           ],
           "durable": true
         },
         {
-          "id": "mem_d57df440bbe222a9",
+          "id": "mem_5ba50c0195477f95",
           "holder_id": "liam",
           "subject_id": "maya",
-          "content": "Maya didn\u2019t just play competitive\u2014she hinted at using distractions, maybe even kisses, which definitely caught my attention.",
+          "content": "Maya's smirk when she leaned in made me want to show there's more to me than just games\u2014it felt like a real invitation to be honest.",
           "source": "direct",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 10,
+          "formed_on_turn": 8,
           "emotional_weight": 6,
           "tags": [
-            "competitive",
-            "felt_intrigued",
+            "felt_challenged",
             "flirty",
-            "secret_weapon"
+            "intimate_moment",
+            "noticed_sympathy"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_3145e44251e78d96",
+          "holder_id": "liam",
+          "subject_id": "maya",
+          "content": "I felt a bit vulnerable revealing there's more to me beyond competition when Maya got serious and leaned closer.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 8,
+          "emotional_weight": 7,
+          "tags": [
+            "felt_exposed",
+            "intimate",
+            "trust_building",
+            "vulnerable"
           ],
           "durable": true
         }
@@ -184,41 +318,176 @@
     }
   ],
   "couples": [],
-  "active_conversation": null,
+  "active_conversation": {
+    "target_id": "maya",
+    "started_on_turn": 8,
+    "started_on_day": 1,
+    "exchanges": [
+      {
+        "turn_index": 8,
+        "intent_id": "banter_funny_story",
+        "player_dialogue": "You won't believe what happened to me this morning\u2014I accidentally wore two different shoes to breakfast and didn't notice until someone pointed it out!",
+        "npc_dialogue": "*Laughs, shaking her head* Typical! That\u2019s the kind of blunder that makes me feel a bit less of a klutz. Definitely made my morning more interesting. Keep the surprises coming, yeah?",
+        "npc_tone": "amused",
+        "npc_mood_after": "happy",
+        "success": true,
+        "tags": [
+          "funny",
+          "charming"
+        ],
+        "relationship_deltas": {
+          "maya": {
+            "affection": 2,
+            "chemistry": 0,
+            "trust": 0,
+            "friendship": 1
+          }
+        }
+      },
+      {
+        "turn_index": 9,
+        "intent_id": "escalate_flirt",
+        "player_dialogue": "Well, if we're trading surprises, maybe next time I'll make it up to you with a dance-off on the terrace. You game?",
+        "npc_dialogue": "*Grins, flicking her hair back* A dance-off, huh? Now that\u2019s a challenge I can\u2019t resist. Just don\u2019t cry when I win; I might go easy on you though. Let\u2019s see if you can keep up!",
+        "npc_tone": "playful",
+        "npc_mood_after": "flirty",
+        "success": true,
+        "tags": [
+          "escalate_flirt",
+          "low",
+          "playful"
+        ],
+        "relationship_deltas": {
+          "maya": {
+            "affection": 1,
+            "chemistry": 5,
+            "trust": 0,
+            "friendship": 0
+          }
+        }
+      },
+      {
+        "turn_index": 10,
+        "intent_id": "escalate_flirt",
+        "player_dialogue": "Careful, or my dance moves might just sweep you off your feet\u2014literally.",
+        "npc_dialogue": "*Laughs, stepping back a little* Sweep me off my feet? Easy there, Romeo. I\u2019m not falling that fast\u2014not on day one, anyway! You'll have to be quicker than that to impress me.",
+        "npc_tone": "playful",
+        "npc_mood_after": "content",
+        "success": false,
+        "tags": [
+          "escalate_flirt",
+          "low",
+          "playful"
+        ],
+        "relationship_deltas": {
+          "maya": {
+            "affection": 0,
+            "chemistry": -2,
+            "trust": -1,
+            "friendship": 0
+          }
+        }
+      },
+      {
+        "turn_index": 11,
+        "intent_id": "go_deeper",
+        "player_dialogue": "So, what's something about you that not many people get to see?",
+        "npc_dialogue": "*Pauses, then shrugs with a playful smirk.* Honestly, people don\u2019t usually see the side of me that worries if I\u2019m being too much or not enough. Guess I like to keep that under wraps, but hey, you\u2019re getting a peek now.",
+        "npc_tone": "vulnerable",
+        "npc_mood_after": "content",
+        "success": true,
+        "tags": [
+          "go_deeper",
+          "low",
+          "curious"
+        ],
+        "relationship_deltas": {
+          "maya": {
+            "affection": 2,
+            "chemistry": 0,
+            "trust": 3,
+            "friendship": 0
+          }
+        }
+      }
+    ],
+    "accumulated_tags": [
+      "funny",
+      "charming",
+      "escalate_flirt",
+      "low",
+      "playful",
+      "escalate_flirt",
+      "low",
+      "playful",
+      "go_deeper",
+      "low",
+      "curious"
+    ],
+    "status": "open",
+    "departure_probability_last": 10,
+    "pending_options": {
+      "options": [
+        {
+          "label": "Get vulnerable too",
+          "category": "deep",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "vulnerable",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Reassure her gently",
+          "category": "supportive",
+          "intent_kind": "apologize",
+          "stat_used": "loyalty",
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Make it playful again",
+          "category": "banter",
+          "intent_kind": "deflect_with_humor",
+          "stat_used": "banter",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave it there",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "cool",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "gossip_offers": []
+  },
   "npc_conversations": [
     {
-      "id": "npcconv_133acfe6a297",
+      "id": "npcconv_35e21c49afc9",
       "participants": [
-        "maya",
+        "chloe",
         "liam"
       ],
       "location_id": "terrace",
-      "topic": "playful breakfast competition and flirting",
+      "topic": "comparing notes on morning chemistry",
       "started_on_turn": 11,
       "exchanges": [
         {
           "turn_index": 11,
-          "speaker_a_id": "maya",
+          "speaker_a_id": "chloe",
           "speaker_b_id": "liam",
-          "speaker_a_line": "*grinning as she grabs the last croissant* Bet you didn't think I'd beat you at breakfast already, Liam!",
-          "speaker_b_line": "*laughs, raising an eyebrow* Oh, the game just started, Maya. Wait until you see my pancake flipping skills\u2014it's a knockout!",
-          "tone": "playful"
-        },
-        {
-          "turn_index": 12,
-          "speaker_a_id": "maya",
-          "speaker_b_id": "liam",
-          "speaker_a_line": "*playfully twirling a strand of hair* If your pancake game is as smooth as your smile, Liam, maybe I\u2019m in trouble already.",
-          "speaker_b_line": "*smirking, handing her a glass of orange juice* Only one way to find out\u2014want to make breakfast a date?",
-          "tone": "flirty"
-        },
-        {
-          "turn_index": 13,
-          "speaker_a_id": "maya",
-          "speaker_b_id": "liam",
-          "speaker_a_line": "*leans in with a sly smile* Deal, but be warned\u2014I\u2019m undefeated when it comes to sweet moves in the kitchen and out of it.",
-          "speaker_b_line": "*grinning, taking her hand gently* Then I guess I\u2019ll have to bring my A-game\u2014to keep up with you, both on the stove and off.",
-          "tone": "flirty"
+          "speaker_a_line": "Honestly, Liam, I wasn't expecting to feel such a spark right off the bat. Did it hit you the same way? *glances toward Maya, who\u2019s nearby*",
+          "speaker_b_line": "You\u2019re not wrong, Chloe. There's definitely something electric this morning\u2014like when our eyes met over breakfast, it was more than just friendly vibes.",
+          "tone": "warm"
         }
       ],
       "status": "active"
