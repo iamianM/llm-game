@@ -10,7 +10,8 @@ Future YAML shape:
 name: day1-happy-path
 seed: 1
 actions:
-  - kind: talk
-    target_id: npc_1
+  - kind: start_conversation
+    target_id: chloe
+    intent_id: friendly_chat_villa
   - kind: advance_phase
 ```

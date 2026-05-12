@@ -1,21 +1,22 @@
-# Regenerate expected_hash with:
-# uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-flirt-mixed.yaml --mock-llm
 name: day1-flirt-mixed
 seed: 2
-expected_hash: 40d7c3d900d8c516602107709dce0ec0e703393efa55b249e84b15f986cafa92
+expected_hash: 09ad83e7dd1e0092f4db05bc0dc5ba6ed7754dedd66a731df4881f01551fa59c
 actions:
-  - kind: flirt
-    target_id: chloe
-  - kind: move
-    target_id: kitchen
-  - kind: talk
-    target_id: maya
-  - kind: move
-    target_id: terrace
-  - kind: flirt
-    target_id: liam
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
+- kind: start_conversation
+  target_id: chloe
+  intent_id: banter_tell_joke
+- kind: move
+  target_id: kitchen
+- kind: start_conversation
+  target_id: maya
+  intent_id: friendly_chat_villa
+- kind: move
+  target_id: terrace
+- kind: start_conversation
+  target_id: liam
+  intent_id: banter_tell_joke
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase

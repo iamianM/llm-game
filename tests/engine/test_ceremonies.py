@@ -48,6 +48,15 @@ def test_public_perception_bounds() -> None:
     state = new_game(1)
     state.player.public_perception = 1
 
-    apply_action(state, PlayerAction(kind=ActionKind.BOLD_FLIRT, target_id="chloe"), SeededRng(5))
+    state.islanders[0].relationship.affection = 20
+    apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="flirty_compliment_looks",
+        ),
+        SeededRng(19),
+    )
 
     assert state.player.public_perception == 0

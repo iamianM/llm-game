@@ -1,29 +1,29 @@
 name: elimination-day5
 seed: 10
-expected_hash: 6baebb730ce6868c1e7a6f6feb0d4ff6ce4dd5b9789f86e76be0dc7c6ffca8ec
+expected_hash: 52d2c2befab09b8f3039f7a2a61f36e4c594919ec6670473a2557b302824a3c2
 actions:
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase

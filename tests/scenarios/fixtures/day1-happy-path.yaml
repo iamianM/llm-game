@@ -1,19 +1,22 @@
 name: day1-happy-path
 seed: 1
-expected_hash: bbcecd76c549dae56892d240174300d3f024e5413210218faaa1baeae940ce20
+expected_hash: b48cd206a0f70bb781a87a5ca753132a59596aa06682ba8b33b64576a0a29ef4
 actions:
-  - kind: talk
-    target_id: chloe
-  - kind: move
-    target_id: kitchen
-  - kind: talk
-    target_id: maya
-  - kind: move
-    target_id: terrace
-  - kind: talk
-    target_id: liam
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: move
+  target_id: kitchen
+- kind: start_conversation
+  target_id: maya
+  intent_id: friendly_chat_villa
+- kind: move
+  target_id: terrace
+- kind: start_conversation
+  target_id: liam
+  intent_id: friendly_chat_villa
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase

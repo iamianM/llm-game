@@ -13,7 +13,15 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
     """A turn mutates state once and returns the next valid action surface."""
     state = new_game(1)
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.TALK, target_id="chloe"), SeededRng(1))
+    result = run_turn(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
 
     assert result.state.turn_index == 1
     assert result.state.islanders[0].relationship.affection == 12
@@ -46,6 +54,14 @@ def test_apply_action_does_not_bump_turn_index() -> None:
     """Turn bookkeeping only happens inside run_turn."""
     state = new_game(1)
 
-    apply_action(state, PlayerAction(kind=ActionKind.TALK, target_id="chloe"), SeededRng(1))
+    apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
 
     assert state.turn_index == 0

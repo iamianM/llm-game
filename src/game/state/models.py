@@ -15,7 +15,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
 
 class Phase(StrEnum):
@@ -36,6 +36,17 @@ class Location(StrEnum):
     KITCHEN = "kitchen"
     TERRACE = "terrace"
     BEDROOM = "bedroom"
+
+
+class Mood(StrEnum):
+    """Current Islander mood for conversation prompts and intent modifiers."""
+
+    HAPPY = "happy"
+    FLIRTY = "flirty"
+    UPSET = "upset"
+    ANXIOUS = "anxious"
+    ANGRY = "angry"
+    CONTENT = "content"
 
 
 class PlayerStats(BaseModel):
@@ -71,7 +82,7 @@ class PlayerState(BaseModel):
 
 
 class RelationshipState(BaseModel):
-    """Minimal relationship state for Phase A1."""
+    """Player-facing relationship state for one islander."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -79,6 +90,17 @@ class RelationshipState(BaseModel):
     chemistry: int = Field(default=0, ge=0, le=100)
     trust: int = Field(default=0, ge=0, le=100)
     friendship: int = Field(default=0, ge=0, le=100)
+
+
+class RelationshipDelta(BaseModel):
+    """Typed relationship changes for one target."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    affection: int = 0
+    chemistry: int = 0
+    trust: int = 0
+    friendship: int = 0
 
 
 class IslanderState(BaseModel):
@@ -93,6 +115,7 @@ class IslanderState(BaseModel):
     relationship: RelationshipState = Field(default_factory=RelationshipState)
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
+    mood: Mood = Mood.CONTENT
 
 
 class Couple(BaseModel):
@@ -106,7 +129,7 @@ class Couple(BaseModel):
 
 
 class GameState(BaseModel):
-    """Canonical Phase A1 game state."""
+    """Canonical deterministic game state."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -132,7 +155,7 @@ def clamp_relationship(value: int) -> int:
 
 
 def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState:
-    """Create the deterministic Phase A1 starting state."""
+    """Create the deterministic starting state."""
     return GameState(
         seed=seed,
         player=PlayerState(

@@ -16,11 +16,23 @@ from src.game.state.models import new_game
 @pytest.mark.parametrize(
     "result",
     [
-        MechanicalResult(action=PlayerAction(kind=ActionKind.TALK, target_id="chloe"), success=True),
-        MechanicalResult(action=PlayerAction(kind=ActionKind.FLIRT, target_id="chloe"), success=True),
-        MechanicalResult(action=PlayerAction(kind=ActionKind.LISTEN, target_id="chloe"), success=True),
-        MechanicalResult(action=PlayerAction(kind=ActionKind.BOLD_FLIRT, target_id="chloe"), success=False),
-        MechanicalResult(action=PlayerAction(kind=ActionKind.LEAVE), success=True),
+        MechanicalResult(
+            action=PlayerAction(
+                kind=ActionKind.START_CONVERSATION,
+                target_id="chloe",
+                intent_id="friendly_chat_villa",
+            ),
+            success=True,
+        ),
+        MechanicalResult(
+            action=PlayerAction(
+                kind=ActionKind.START_CONVERSATION,
+                target_id="chloe",
+                intent_id="banter_tell_joke",
+            ),
+            success=True,
+        ),
+        MechanicalResult(action=PlayerAction(kind=ActionKind.END_CONVERSATION), success=True),
     ],
 )
 def test_narrator_output_contract(result: MechanicalResult) -> None:

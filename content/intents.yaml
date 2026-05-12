@@ -1,0 +1,109 @@
+intents:
+  - id: friendly_ask_feelings
+    category: friendly
+    label: "Ask how she's feeling"
+    stat_used: eq
+    tags: [supportive, sincere]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {affection: 2, trust: 2}
+      miss: {affection: 0, trust: 0}
+  - id: friendly_chat_villa
+    category: friendly
+    label: "Chat about the villa"
+    stat_used: banter
+    tags: [casual, friendly]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {affection: 2, friendship: 1}
+      miss: {affection: 0, friendship: 0}
+  - id: friendly_compliment_personality
+    category: friendly
+    label: "Compliment her personality"
+    stat_used: charm
+    tags: [warm, sincere]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {affection: 3, trust: 1}
+      miss: {affection: 0, trust: -1}
+  - id: flirty_compliment_looks
+    category: flirty
+    label: "Compliment her looks"
+    stat_used: charm
+    tags: [flirty, surface]
+    unlock_affection: 20
+    relationship_deltas:
+      success: {chemistry: 5, affection: 2}
+      miss: {chemistry: -1, affection: 0}
+  - id: flirty_playful_teasing
+    category: flirty
+    label: "Playful teasing"
+    stat_used: banter
+    tags: [flirty, playful]
+    unlock_affection: 20
+    relationship_deltas:
+      success: {chemistry: 4, affection: 2}
+      miss: {chemistry: -2, affection: -1}
+  - id: flirty_intimate_eye_contact
+    category: flirty
+    label: "Intimate eye contact"
+    stat_used: graft
+    tags: [flirty, intense]
+    unlock_affection: 30
+    relationship_deltas:
+      success: {chemistry: 6, affection: 1}
+      miss: {chemistry: -2, affection: -2}
+  - id: deep_ask_life
+    category: deep
+    label: "Ask about her life back home"
+    stat_used: eq
+    tags: [deep, vulnerable]
+    unlock_affection: 40
+    relationship_deltas:
+      success: {trust: 5, affection: 3}
+      miss: {trust: -1, affection: 0}
+  - id: deep_share_feelings
+    category: deep
+    label: "Share your feelings"
+    stat_used: eq
+    tags: [deep, vulnerable]
+    unlock_affection: 40
+    relationship_deltas:
+      success: {trust: 5, affection: 4, chemistry: 2}
+      miss: {trust: -2, affection: -1}
+  - id: deep_discuss_connection
+    category: deep
+    label: "Discuss your connection"
+    stat_used: loyalty
+    tags: [deep, committed]
+    unlock_affection: 50
+    relationship_deltas:
+      success: {trust: 4, affection: 5, chemistry: 3}
+      miss: {trust: -3, affection: -2}
+  - id: banter_tell_joke
+    category: banter
+    label: "Tell a joke"
+    stat_used: banter
+    tags: [funny, light]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {affection: 2, friendship: 2}
+      miss: {affection: 0, friendship: 0}
+  - id: banter_playful_roast
+    category: banter
+    label: "Playful roasting"
+    stat_used: banter
+    tags: [funny, edgy]
+    unlock_affection: 10
+    relationship_deltas:
+      success: {chemistry: 2, friendship: 2}
+      miss: {affection: -2, friendship: -1}
+  - id: banter_funny_story
+    category: banter
+    label: "Tell a funny story"
+    stat_used: charm
+    tags: [funny, charming]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {affection: 2, friendship: 1}
+      miss: {affection: 0}

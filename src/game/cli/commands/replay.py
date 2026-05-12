@@ -26,7 +26,7 @@ def run(args: argparse.Namespace) -> int:
         print("replay requires --actions", file=sys.stderr)
         return 2
     if args.snapshot:
-        print("replay --snapshot is not implemented in Phase A1", file=sys.stderr)
+        print("replay --snapshot is not implemented yet", file=sys.stderr)
         return 2
     try:
         script = load_action_script(Path(args.actions))

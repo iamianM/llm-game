@@ -57,7 +57,7 @@ def load_action_script(path: Path) -> ActionScript:
 
 
 def run_action_script(script: ActionScript, *, seed_override: int | None = None) -> ScenarioRunResult:
-    """Replay ``script`` from a fresh deterministic Phase A1 game."""
+    """Replay ``script`` from a fresh deterministic game."""
     seed = script.seed if seed_override is None else seed_override
     state = new_game(seed, player_stats=script.player_stats)
     rng = SeededRng(seed)

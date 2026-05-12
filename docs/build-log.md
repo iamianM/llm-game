@@ -65,3 +65,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: off-screen NPC chat does not mutate player relationships; turn results surface bombshell events
 - QA result: `make qa` green, 41 tests passed
 - Scenario fixture: existing fixtures regenerated after cosmetic-only NPC simulation and visible ceremony events
+
+## Phase F1
+
+- Files added: `content/intents.yaml`, `src/game/engine/intents.py`, `tests/engine/test_intents.py`
+- Files changed: `src/game/state/models.py`, `src/game/engine/actions.py`, `src/game/engine/rules.py`, `src/game/cli/commands/play.py`, scenario fixtures
+- Tests added: intent catalog coverage, intent unlock thresholds, START_CONVERSATION validation, typed intent deltas
+- QA result: `make qa` green, 39 tests passed
+- Scenario fixture: existing fixtures regenerated for the schema v4 tiered intent vocabulary

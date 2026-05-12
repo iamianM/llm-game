@@ -6,7 +6,8 @@ import argparse
 import sys
 
 from src.game.agents.narrator import OpenAINarrator
-from src.game.engine.actions import ActionSpec, available_actions
+from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
+from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.turn import TurnResult, run_turn
 from src.game.state.models import GameState, new_game
 from src.game.state.rng import SeededRng
@@ -25,7 +26,7 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 def run(args: argparse.Namespace) -> int:
     if args.snapshot:
-        print("play --snapshot is not implemented in Phase A1", file=sys.stderr)
+        print("play --snapshot is not implemented yet", file=sys.stderr)
         return 2
 
     seed = 1 if args.seed is None else args.seed
@@ -57,6 +58,8 @@ def run(args: argparse.Namespace) -> int:
         except (ValueError, IndexError):
             print("choose a listed action number or slash command")
             continue
+        if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
+            action = _choose_intent(state, action.target_id)
 
         turn = run_turn(state, action, rng, narrator=narrator)
         state = turn.state
@@ -87,3 +90,34 @@ def _print_turn(turn: TurnResult) -> None:
         outcome = "success" if result.success else "miss"
         print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")
     print(f"hash: {turn.state_hash}")
+
+
+def _choose_intent(state: GameState, target_id: str) -> PlayerAction:
+    intents = available_intents_for(state, target_id)
+    numbered: list[tuple[int, str]] = []
+    index = 1
+    for category in IntentCategory:
+        category_intents = [intent for intent in intents if intent.category is category]
+        print(f"{category.value.title()}:")
+        if not category_intents:
+            print("  locked")
+            continue
+        for intent in category_intents:
+            print(f"  {index}. {intent.label} ({intent.stat_used})")
+            numbered.append((index, intent.id))
+            index += 1
+    while True:
+        raw = input("intent> ").strip()
+        try:
+            chosen = int(raw)
+        except ValueError:
+            print("choose an intent number")
+            continue
+        for number, intent_id in numbered:
+            if number == chosen:
+                return PlayerAction(
+                    kind=ActionKind.START_CONVERSATION,
+                    target_id=target_id,
+                    intent_id=intent_id,
+                )
+        print("choose an intent number")

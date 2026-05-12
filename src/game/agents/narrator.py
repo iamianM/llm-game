@@ -137,22 +137,14 @@ def visible_context(
 
 def mock_narration(state: GameState, result: MechanicalResult) -> str:
     """Return deterministic mock narration until the real Narrator is enabled."""
-    if result.action.kind is ActionKind.TALK:
+    if result.action.kind is ActionKind.START_CONVERSATION:
         target_id = result.action.target_id or "someone"
-        outcome = "lands" if result.success else "falls flat"
-        return f"Your chat with {target_id} {outcome} by the {state.location_id.value}."
-    if result.action.kind is ActionKind.FLIRT:
-        target_id = result.action.target_id or "someone"
-        outcome = "sparks" if result.success else "gets awkward"
-        return f"Your flirt with {target_id} {outcome} by the {state.location_id.value}."
-    if result.action.kind is ActionKind.BOLD_FLIRT:
-        target_id = result.action.target_id or "someone"
-        outcome = "makes the villa notice" if result.success else "pushes too hard"
-        return f"Your bold flirt with {target_id} {outcome}."
-    if result.action.kind is ActionKind.LISTEN:
-        target_id = result.action.target_id or "someone"
-        return f"You give {target_id} the floor and let the moment breathe."
-    if result.action.kind is ActionKind.LEAVE:
+        intent = result.action.intent_id or "conversation"
+        outcome = "lands" if result.success else "misses"
+        return f"Your {intent} with {target_id} {outcome} by the {state.location_id.value}."
+    if result.action.kind is ActionKind.RESPOND_WITH:
+        return "You follow the thread of the conversation."
+    if result.action.kind is ActionKind.END_CONVERSATION:
         return "You step away before the chat turns stale."
     if result.action.kind is ActionKind.ADVANCE_PHASE:
         return f"The villa moves into {state.phase.value}."
