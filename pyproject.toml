@@ -1,0 +1,44 @@
+[project]
+name = "llm-game"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115.0",
+  "openai-agents>=0.14.1",
+  "pydantic>=2.11.0",
+  "pyyaml>=6.0.2",
+  "uvicorn>=0.30.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "hypothesis>=6.0.0",
+  "mypy>=1.10.0",
+  "pytest>=8.0.0",
+  "pytest-asyncio>=0.23.0",
+  "ruff>=0.6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+asyncio_mode = "auto"
+pythonpath = ["."]
+markers = [
+  "llm: tests that hit a real LLM provider",
+]
+
+[tool.mypy]
+strict = true
+files = ["src/game/state", "src/game/engine", "src/game/content"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["D203", "D213", "E501"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D100", "D101", "D102", "D103", "D104"]

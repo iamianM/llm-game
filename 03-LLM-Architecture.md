@@ -3,7 +3,9 @@
 *How AI and code work together to create dynamic gameplay*
 
 **Document Status:** ✅ Complete
-**Last Updated:** 2025-10-08
+**Last Updated:** 2026-05-11
+
+**Implementation Update (2026-05-11):** The conceptual boundary in this file is still canon: code owns mechanics, the LLM owns narrative flavor. The concrete implementation stack has changed from TypeScript/Vercel AI SDK examples to a Python engine with Pydantic contracts, seeded RNG, FastAPI, and one v0 Narrator agent. Treat older TypeScript-style snippets as design pseudocode unless they have been converted to Python.
 
 ---
 
@@ -74,117 +76,109 @@ Benefits: Fast, consistent, strategic, affordable
 ### Code Handles (Deterministic Systems)
 
 **✅ Interaction Success Calculation**
-```javascript
-const success = calculateSuccess(action, target, player, context)
-// Code does all math, returns true/false
+```python
+success = calculate_success(action, target, player, context)
+# Code does all math, returns true/false.
 ```
 
 **✅ Relationship Value Changes**
-```javascript
-applyRelationshipChange(action, target, success)
-// Code updates all numbers
+```python
+apply_relationship_change(state, action, target, success)
+# Code updates all numbers.
 ```
 
 **✅ NPC Location/Activity Simulation**
-```javascript
-simulateNPCBehavior(timeElapsed)
-// Code decides where NPCs go, what they do
+```python
+simulate_npc_behavior(state, elapsed_phases, rng)
+# Code decides where NPCs go and what they do.
 ```
 
 **✅ Gossip Availability**
-```javascript
-const availableGossip = getAvailableGossip(speaker, player)
-// Code determines what gossip can be shared
+```python
+available_gossip = get_available_gossip(speaker, player)
+# Code determines what gossip can be shared.
 ```
 
 **✅ Event Triggering**
-```javascript
-if (shouldTriggerRecoupling(villaState)) {
-  scheduleEvent("recoupling", day, phase)
-}
-// Code decides when events happen
+```python
+if should_trigger_recoupling(villa_state):
+    schedule_event(state, event_type="recoupling", day=day, phase=phase)
+# Code decides when events happen.
 ```
 
 **✅ Compatibility Calculation**
-```javascript
-const compatibility = calculateCompatibility(player, target)
-// Code uses personality numbers to calculate chemistry
+```python
+compatibility = calculate_compatibility(player, target)
+# Code uses personality numbers to calculate chemistry.
 ```
 
 ### LLM Handles (Narrative Systems)
 
 **✅ Islander Personality Generation**
-```javascript
-const islander = await generateIslander(archetype)
-// LLM creates name, backstory, personality, appearance
+```python
+islander = await generate_islander(archetype)
+# LLM creates name, backstory, personality, and appearance.
 ```
 
 **✅ Dialogue Writing**
-```javascript
-const dialogue = await generateDialogue(character, situation, outcome)
-// LLM writes what the character says
+```python
+dialogue = await narrate_result(character, situation, mechanical_result)
+# LLM writes what the character says after code resolves the outcome.
 ```
 
 **✅ Gossip Delivery**
-```javascript
-const gossipText = await generateGossip(speaker, fact, context)
-// LLM writes how gossip is revealed
+```python
+gossip_text = await narrate_gossip(speaker, fact, context)
+# LLM writes how gossip is revealed.
 ```
 
 **✅ Event Narration**
-```javascript
-const narration = await narrateEvent(eventType, participants, context)
-// LLM describes ceremonies, arrivals, etc.
+```python
+narration = await narrate_event(event_type, participants, context)
+# LLM describes ceremonies, arrivals, etc.
 ```
 
 **✅ Contextual Options**
-```javascript
-const specialOptions = await generateContextualOptions(situation)
-// LLM suggests 1-2 situational dialogue choices
+```python
+special_options = await generate_contextual_options(situation)
+# Future enhancement: LLM suggests 1-2 situational dialogue choices.
 ```
 
 ### The Handoff Point
 
 **Example: Player flirts with Chloe**
 
-```javascript
-// 1. PLAYER SELECTS ACTION (UI)
-const action = { type: "flirt", target: "chloe" }
+```python
+# 1. Player selects action in CLI or browser.
+action = PlayerAction(kind="flirt", target_id="chloe")
 
-// 2. CODE CALCULATES OUTCOME (instant)
-const successChance = calculateInteractionSuccess(action, chloe, player, context)
-// Returns: 72%
+# 2. Code calculates outcome through seeded RNG.
+chance = calculate_interaction_success(state, action)
+roll = rng.randint(1, 100)
+success = roll <= chance
 
-const roll = random(1, 100)
-const success = roll <= successChance // true or false
+# 3. Code applies mechanical changes and records them.
+result = apply_action(state, action, success=success, roll=roll)
 
-// 3. CODE APPLIES MECHANICAL CHANGES (instant)
-if (success) {
-  chloe.relationships.player.chemistry += 5
-  chloe.relationships.player.affection += 3
+# Example result:
+# MechanicalResult(
+#     action_kind="flirt",
+#     target_id="chloe",
+#     success=True,
+#     relationship_deltas={"chloe": {"chemistry": 5, "affection": 3}},
+#     tags=["flirty", "public", "partner_might_notice"],
+# )
 
-  if (playerIsCoupledWithSomeoneElse) {
-    checkIfCaught() // might trigger drama
-  }
-}
+# 4. Narrator agent writes prose from the resolved result.
+narration = await narrate_mechanical_result(result, visible_context)
 
-// 4. LLM GENERATES NARRATIVE (1-2 seconds)
-const prompt = buildDialoguePrompt({
-  character: chloe,
-  situation: "player_flirted",
-  outcome: success ? "positive" : "rejected",
-  context: getCurrentContext()
-})
-
-const dialogue = await callLLM(prompt)
-// Returns: "Chloe blushes and bites her lip. \"You're trouble, you know that?\""
-
-// 5. DISPLAY TO PLAYER
-showResult({
-  dialogue: dialogue,
-  mechanicalChanges: { chemistry: +5, affection: +3 },
-  success: true
-})
+# 5. CLI or browser displays the narration plus next available actions.
+return TurnResult(
+    state=state,
+    mechanical_result=result,
+    narration=narration,
+    available_actions=available_actions(state),
+)
 ```
 
 **The LLM only writes the dialogue. Everything else is code.**
@@ -193,71 +187,21 @@ showResult({
 
 ## The Multi-AI System
 
-We don't use one LLM for everything. We use **specialized AI calls** for different tasks.
+Long-term, we do not use one LLM for everything. We use **specialized AI calls** for different tasks.
+
+**POC constraint:** v0 starts with one Narrator agent only. Producer AI, Curator, contextual option generation, and LLM-enhanced NPC behavior are future layers after the deterministic CLI loop is playable and replayable.
 
 ### 1. Producer AI
 
 **Job:** Decide what dramatic events happen
 
-**When it runs:** Once per day (between phases)
+**When it runs:** Future layer, likely once per day or at phase boundaries after deterministic scheduling works.
 
-**Input:**
-```javascript
-{
-  villaState: {
-    currentDay: 5,
-    couples: [...],
-    averageCoupleStrength: 62,
-    dramaLevel: 45,
-    daysSinceLastBombshell: 3
-  },
-  recentEvents: [
-    "Marcus and Sophie argued",
-    "Player kissed Chloe on terrace"
-  ]
-}
-```
+**Input shape:** A compact, code-derived villa summary: day, phase, couple stability, drama level, scheduled constraints, recent events, and valid event candidates.
 
-**Prompt:**
-```
-You are the Love Island producer. Based on villa state, decide what event should happen tomorrow.
+**Output shape:** A typed event suggestion that code validates against allowed events. The Producer may recommend a bombshell, recoupling, date, challenge, or twist, but Python still schedules the event and applies all mechanics.
 
-Current situation:
-- Day 5 of 18
-- Average couple strength: 62 (stable)
-- Drama level: 45 (moderate)
-- Last bombshell: 3 days ago
-
-Options:
-1. Send in a new bombshell (shake things up)
-2. Schedule a recoupling (force decisions)
-3. Create a challenge (test couples)
-4. Send couples on dates (build connections)
-5. Create a dramatic twist (Casa Amor, lie detector, etc.)
-
-Respond with JSON:
-{
-  "event": "bombshell_arrival",
-  "reasoning": "Couples are too stable, need disruption",
-  "timing": "afternoon",
-  "bombshellGender": "female"
-}
-```
-
-**Output:**
-```json
-{
-  "event": "bombshell_arrival",
-  "reasoning": "Average couple strength too high. Player and Chloe need testing.",
-  "timing": "afternoon",
-  "bombshellGender": "female",
-  "targetCouple": "player_chloe"
-}
-```
-
-**Cost:** ~500 tokens (~$0.0015 per call)
-
-**Frequency:** Once per day = ~20 calls per run = ~$0.03 per run
+**POC status:** Deferred. Initial event selection is deterministic Python.
 
 ---
 
@@ -267,119 +211,11 @@ Respond with JSON:
 
 **When it runs:** When new Islander enters villa (start + bombshells)
 
-**Input:**
-```javascript
-{
-  archetype: "The Charmer", // or randomly selected
-  gender: "female",
-  existingIslanders: [...], // to avoid duplicates
-  targetPlayer: true // is this a bombshell targeting player?
-}
-```
+**Input shape:** Archetype id, gender/presentation constraints, existing cast summary, and any production role such as original Islander or bombshell.
 
-**Prompt:**
-```
-Generate a Love Island contestant with the following requirements:
+**Output shape:** A Pydantic-validated Islander profile: identity, appearance, Big 5 traits, attachment style, preferences, backstory, secret, entrance line, and strategy.
 
-Archetype: The Charmer
-Gender: Female
-Age range: 22-28
-
-Create a psychologically realistic character using the Big 5 personality model (OCEAN).
-
-Output JSON with this exact schema:
-{
-  "name": "string",
-  "age": number,
-  "occupation": "string",
-  "hometown": "string",
-
-  "appearance": {
-    "description": "string (2-3 sentences)",
-    "hairColor": "string",
-    "eyeColor": "string",
-    "height": "string",
-    "build": "string",
-    "style": "string"
-  },
-
-  "personality": {
-    "openness": number (1-10),
-    "conscientiousness": number (1-10),
-    "extraversion": number (1-10),
-    "agreeableness": number (1-10),
-    "neuroticism": number (1-10)
-  },
-
-  "attachmentStyle": "secure" | "anxious" | "avoidant" | "fearful",
-
-  "preferences": {
-    "physicalType": "string",
-    "personalityType": "string",
-    "values": ["string", "string", "string"],
-    "dealbreakers": ["string", "string"]
-  },
-
-  "backstory": "string (3-4 sentences)",
-  "secret": "string (hidden insecurity or past)",
-  "chatUpLine": "string (what they'd say when entering)",
-  "strategy": "string (why they're on Love Island)"
-}
-
-Ensure:
-- Big 5 scores are varied (don't make everyone 7-8)
-- Preferences should be specific but not impossible to match
-- Secret should be something that could create drama if revealed
-- Personality should match archetype but feel realistic
-```
-
-**Output:**
-```json
-{
-  "name": "Aisha",
-  "age": 25,
-  "occupation": "Fashion Buyer",
-  "hometown": "Manchester",
-
-  "appearance": {
-    "description": "Stunning with an effortless elegance. Designer wardrobe, always impeccably styled. Knows she's attractive and carries herself with confidence.",
-    "hairColor": "Dark brown, long and wavy",
-    "eyeColor": "Hazel",
-    "height": "5'7\"",
-    "build": "Slim, athletic",
-    "style": "High fashion, trendy"
-  },
-
-  "personality": {
-    "openness": 8,
-    "conscientiousness": 7,
-    "extraversion": 9,
-    "agreeableness": 5,
-    "neuroticism": 6
-  },
-
-  "attachmentStyle": "avoidant",
-
-  "preferences": {
-    "physicalType": "Tall, well-groomed, stylish",
-    "personalityType": "Confident, ambitious, can keep up with her",
-    "values": ["ambition", "style", "adventure"],
-    "dealbreakers": ["insecurity", "clinginess", "lack of ambition"]
-  },
-
-  "backstory": "Grew up in a competitive family of high achievers. Worked her way up in the fashion industry through sheer determination. Used to getting what she wants. Past relationships failed because she struggles with vulnerability.",
-
-  "secret": "Terrified of being vulnerable. Uses confidence as armor. Deep down, fears she's unlovable.",
-
-  "chatUpLine": "Hope you're all ready for some real competition. May the best woman win.",
-
-  "strategy": "Play the game strategically. Pursue the most attractive/popular guy. Build alliances with other girls but don't get too close."
-}
-```
-
-**Cost:** ~1500 tokens (~$0.005 per Islander)
-
-**Frequency:** ~10 Islanders per run = ~$0.05 per run
+**POC status:** Use deterministic seed characters or tiny content stubs first. LLM generation can be added after state models and replay are stable.
 
 ---
 
@@ -391,80 +227,11 @@ Ensure:
 
 **This is the MOST FREQUENT and MOST EXPENSIVE call.**
 
-**Input:**
-```javascript
-{
-  character: islanderObject, // full personality
-  situation: "player_flirted",
-  outcome: "success",
-  context: {
-    location: "pool",
-    timeOfDay: "morning",
-    mood: "flirty",
-    relationship: {
-      affection: 65,
-      chemistry: 58,
-      trust: 72
-    },
-    recentHistory: [
-      "kissed on terrace 2 nights ago",
-      "player has been loyal and attentive",
-      "new bombshell Aisha arrived yesterday"
-    ],
-    currentlyPresent: ["Marcus", "Sophie", "Liam"]
-  }
-}
-```
+**v0 name:** Narrator agent.
 
-**Prompt:**
-```
-You are Chloe, a 24-year-old marketing manager on Love Island.
+**Input shape:** `MechanicalResult`, visible scene context, target Islander personality summary, recent visible history, and relevant content snippets.
 
-PERSONALITY:
-- Openness: 7/10 (creative, open-minded)
-- Conscientiousness: 6/10 (organized but spontaneous)
-- Extraversion: 9/10 (very social and outgoing)
-- Agreeableness: 8/10 (warm, compassionate)
-- Neuroticism: 4/10 (confident, emotionally stable)
-
-ATTACHMENT STYLE: Secure (comfortable with intimacy and independence)
-
-CURRENT RELATIONSHIP WITH PLAYER:
-- Affection: 65 (strong feelings developing)
-- Chemistry: 58 (attracted)
-- Trust: 72 (trusts them)
-- Coupled together for 3 days
-
-RECENT CONTEXT:
-- You kissed the player on the terrace 2 nights ago
-- Player has been loyal and attentive to you
-- New bombshell Aisha arrived yesterday (you're slightly worried)
-- Currently at the pool with others around
-
-SITUATION:
-The player just flirted with you poolside.
-
-OUTCOME: SUCCESS (it was charming and well-received)
-
-Generate a brief response (2-3 lines) showing Chloe reacting positively to the flirt.
-
-Requirements:
-- Show her personality (playful, warm, extraverted)
-- Include subtle hint of worry about Aisha
-- Keep it natural and in-character
-- No narration tags (no *smiles* or [laughs]), just dialogue and brief description
-
-Format:
-Just write the exchange naturally. Example:
-Chloe blushes and playfully pushes your shoulder. "You're such a charmer, you know that?"
-```
-
-**Output:**
-```
-Chloe blushes and bites her lip. "You're going to give me a big head with all these compliments."
-
-She glances toward Aisha across the pool, then back to you. "I'm glad we're solid though. You're not getting your head turned, right?"
-```
+**Output shape:** A validated narration commit. It may include prose, dialogue, tone tags, and display hints, but it must not invent mechanics or mutate state.
 
 **Cost:** ~800 tokens (~$0.0024 per conversation)
 
@@ -484,47 +251,9 @@ She glances toward Aisha across the pool, then back to you. "I'm glad we're soli
 
 **When it runs:** Special events (5-8 times per run)
 
-**Input:**
-```javascript
-{
-  eventType: "recoupling_ceremony",
-  participants: [...],
-  couplingChoices: [
-    { chooser: "Aisha", chosen: "Marcus", stolen: true, previousPartner: "Sophie" }
-  ],
-  context: {
-    day: 7,
-    tension: "high",
-    shockedIslanders: ["Sophie", "Liam", "Player"]
-  }
-}
-```
+**Input shape:** Resolved event result, participants, public/private visibility, emotional stakes, and ceremony beats.
 
-**Prompt:**
-```
-Narrate a Love Island recoupling ceremony in dramatic fashion.
-
-EVENT: Aisha (bombshell) chooses to couple with Marcus
-
-CONTEXT:
-- Marcus was previously coupled with Sophie
-- This is a shock - Marcus and Sophie seemed stable
-- Others watching: Player, Chloe, Liam, Emma
-
-Write 3-4 lines of dramatic narration capturing the tension and reactions.
-Style: Reality TV narrator voice (dramatic, punchy)
-
-Don't include dialogue from characters, just set the scene.
-```
-
-**Output:**
-```
-"Aisha, you have chosen to couple up with... Marcus."
-
-Sophie's face falls. Marcus looks shocked but doesn't protest. The tension is unbearable.
-
-Sophie stands alone, dumped from the island. The other Islanders exchange uncomfortable glances.
-```
+**Output shape:** A validated narration commit for the event.
 
 **Cost:** ~600 tokens (~$0.002 per event)
 
@@ -540,40 +269,9 @@ Sophie stands alone, dumped from the island. The other Islanders exchange uncomf
 
 **This is OPTIONAL - can be purely algorithmic. Using LLM adds personality but costs more.**
 
-**Algorithmic approach (recommended for POC):**
-```javascript
-function simulateNPCBehavior(npc, timeElapsed) {
-  // Code-driven decisions based on personality
+**Algorithmic approach (recommended for POC):** Code-driven decisions based on personality, relationship scores, goals, current phase, and location. NPCs use the same action validity and success formulas as the player.
 
-  // Location change chance (based on extraversion)
-  if (random(100) < npc.personality.extraversion * 5) {
-    npc.location = chooseNewLocation(npc) // algorithmic
-  }
-
-  // Social interaction chance
-  if (random(100) < npc.personality.extraversion * 6) {
-    const target = chooseSocialTarget(npc) // algorithmic: highest chemistry, or coupled partner, or friend
-    simulateNPCtoNPCInteraction(npc, target) // uses same success formulas as player
-  }
-
-  // Mood update (based on recent events)
-  updateMood(npc) // algorithmic
-}
-```
-
-**LLM-enhanced approach (future enhancement):**
-```javascript
-// Ask LLM for decision, constrain to valid options
-const decision = await getLLMDecision({
-  character: npc,
-  currentState: npc.currentState,
-  availableActions: getAvailableActions(npc),
-  recentEvents: npc.recentEvents
-})
-
-// LLM suggests: "Aisha should graft on Marcus"
-// Code executes the interaction using normal formulas
-```
+**LLM-enhanced approach (future enhancement):** A future agent may recommend one valid NPC action from a constrained list, but code still validates and executes that action using normal formulas.
 
 **Recommendation:** Start with algorithmic, add LLM enhancement post-POC if needed
 
@@ -687,49 +385,34 @@ Layered on top of Big 5 for relationship behavior:
 
 Each Islander has discoverable preferences:
 
-```javascript
-preferences: {
-  // Physical preferences
-  physicalType: "Tall, athletic, dark features",
-
-  // Personality preferences
-  personalityType: "Funny, confident, ambitious",
-
-  // Core values
-  values: ["loyalty", "adventure", "honesty"],
-
-  // Absolute dealbreakers
-  dealbreakers: ["arrogance", "laziness", "drama"]
-}
+```python
+preferences = Preferences(
+    physical_type="Tall, athletic, dark features",
+    personality_type="Funny, confident, ambitious",
+    values=["loyalty", "adventure", "honesty"],
+    dealbreakers=["arrogance", "laziness", "drama"],
+)
 ```
 
 **How preferences work:**
 
-```javascript
-function checkPreferenceMatch(player, target) {
-  let matchBonus = 0
+```python
+def check_preference_match(player: PlayerState, target: IslanderState) -> int:
+    match_bonus = 0
 
-  // Physical match (harder to change)
-  if (playerMatchesPhysicalType(player, target.preferences.physicalType)) {
-    matchBonus += 10 // significant bonus
-  }
+    if player_matches_physical_type(player, target.preferences.physical_type):
+        match_bonus += 10
 
-  // Personality match (based on stats)
-  if (playerHasHighStat(player, target.preferences.personalityType)) {
-    matchBonus += 8
-  }
+    if player_has_high_stat(player, target.preferences.personality_type):
+        match_bonus += 8
 
-  // Values alignment
-  const sharedValues = countSharedValues(player.values, target.preferences.values)
-  matchBonus += sharedValues * 3 // 0-9 bonus
+    shared_values = count_shared_values(player.values, target.preferences.values)
+    match_bonus += shared_values * 3
 
-  // Dealbreakers (PENALTY)
-  if (playerHasDealbreaker(player, target.preferences.dealbreakers)) {
-    matchBonus -= 15 // major penalty
-  }
+    if player_has_dealbreaker(player, target.preferences.dealbreakers):
+        match_bonus -= 15
 
-  return matchBonus
-}
+    return match_bonus
 ```
 
 **Discovery mechanic:**
@@ -902,7 +585,7 @@ Ensure:
 ### Optimization Strategies
 
 **1. Prompt caching**
-- Vercel AI SDK supports caching
+- Use provider/model prompt caching where available
 - Cache Islander personalities (reused every conversation)
 - Save ~30% on dialogue calls
 
@@ -942,33 +625,26 @@ Ensure:
 ### Optimization Techniques
 
 **1. Streaming responses**
-```javascript
-// Use Vercel AI SDK streaming
-const { textStream } = await streamText({
-  model: claude,
-  prompt: dialoguePrompt
-})
-
-// Display text as it generates (typewriter effect)
-for await (const chunk of textStream) {
-  displayText(chunk)
-}
+```python
+# Future enhancement: stream narrator text from the Python agent boundary.
+async for chunk in narrator.stream(mechanical_result, visible_context):
+    yield chunk
 ```
 
 **2. Parallel generation**
-```javascript
-// Generate all starting Islanders in parallel
-const islanders = await Promise.all(
-  archetypes.map(archetype => generateIslander(archetype))
+```python
+# Generate all starting Islanders concurrently when LLM generation is enabled.
+islanders = await asyncio.gather(
+    *(generate_islander(archetype) for archetype in archetypes)
 )
-// 5 seconds total instead of 5 × 5 = 25 seconds
+# 5 seconds total instead of 5 x 5 = 25 seconds.
 ```
 
 **3. Pregeneration**
-```javascript
-// Generate next day's events during player actions
-// Player won't notice background generation
-preloadNextDayEvents()
+```python
+# Future enhancement: precompute narrator/event prose after deterministic
+# mechanics have already scheduled the next beat.
+await preload_next_day_narration(state)
 ```
 
 ---
@@ -978,73 +654,39 @@ preloadNextDayEvents()
 ### LLM Failures
 
 **Timeout:**
-```javascript
-try {
-  const dialogue = await generateDialogue(params, { timeout: 5000 })
-} catch (timeoutError) {
-  // Fallback to generic response
-  return getGenericResponse(character, situation)
-}
+```python
+try:
+    narration = await narrate_mechanical_result(result, visible_context, timeout=5.0)
+except TimeoutError as exc:
+    raise NarrationError("Narrator timed out") from exc
 ```
 
 **Malformed output:**
-```javascript
-const result = await generateIslander(archetype)
-
-if (!validateIslanderSchema(result)) {
-  // Retry once
-  const retry = await generateIslander(archetype)
-
-  if (!validateIslanderSchema(retry)) {
-    // Use template Islander as fallback
-    return getTemplateIslander(archetype)
-  }
-}
+```python
+try:
+    narration = NarrationCommit.model_validate(raw_agent_output)
+except ValidationError as exc:
+    raise NarrationError("Narrator returned invalid output") from exc
 ```
 
 **Inappropriate content:**
-```javascript
-const dialogue = await generateDialogue(params)
-
-if (containsInappropriateContent(dialogue)) {
-  // Regenerate with stronger constraints
-  return await generateDialogue({
-    ...params,
-    constraints: "Keep PG-13, no explicit content"
-  })
-}
+```python
+narration = await narrate_mechanical_result(result, visible_context)
+if violates_content_rules(narration):
+    raise NarrationError("Narrator returned content outside the game rating")
 ```
 
 ### Fallback Systems
 
-**Generic dialogue templates:**
-```javascript
-const fallbacks = {
-  flirt_success: [
-    "{name} smiles warmly. \"That's sweet of you to say.\"",
-    "{name} laughs. \"You're a charmer, aren't you?\""
-  ],
-  flirt_failure: [
-    "{name} looks away awkwardly. \"Uh, thanks I guess.\"",
-    "{name} changes the subject quickly."
-  ]
-}
+For the POC, fail loud instead of silently substituting generic LLM content. If the Narrator times out or returns malformed output, surface the error in CLI/dev traces so prompts and contracts can be fixed.
 
-function getFallbackDialogue(character, situation) {
-  const template = random(fallbacks[situation])
-  return template.replace("{name}", character.name)
-}
-```
+Template content is still useful, but as authored content or mock data:
 
-**Template Islanders:**
-```javascript
-// Pre-written Islanders as fallback
-const templateIslanders = {
-  "The Charmer": { /* full Islander object */ },
-  "The Sweetheart": { /* full Islander object */ },
-  // ...
-}
-```
+- seed characters for engine tests
+- mock narration for `--mock-llm`
+- fallback-free local test fixtures
+
+It should not silently replace a failed live LLM call in normal gameplay.
 
 ---
 
