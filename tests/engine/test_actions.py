@@ -15,6 +15,7 @@ def test_available_actions_include_talk_targets_and_advance() -> None:
     actions = [spec.action for spec in available_actions(state)]
 
     assert PlayerAction(kind=ActionKind.TALK, target_id="chloe") in actions
+    assert PlayerAction(kind=ActionKind.FLIRT, target_id="chloe") in actions
     assert PlayerAction(kind=ActionKind.TALK, target_id="maya") in actions
     assert PlayerAction(kind=ActionKind.TALK, target_id="liam") in actions
     assert PlayerAction(kind=ActionKind.ADVANCE_PHASE) in actions

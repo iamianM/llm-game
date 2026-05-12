@@ -52,12 +52,19 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         return []
 
     actions = [
-        ActionSpec(
-            action=PlayerAction(kind=ActionKind.TALK, target_id=islander.id),
-            label=f"Talk to {islander.name}",
-        )
+        spec
         for islander in state.islanders
         if islander.location_id == state.location_id
+        for spec in (
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.TALK, target_id=islander.id),
+                label=f"Talk to {islander.name}",
+            ),
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.FLIRT, target_id=islander.id),
+                label=f"Flirt with {islander.name}",
+            ),
+        )
     ]
     actions.append(
         ActionSpec(

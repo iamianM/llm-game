@@ -9,3 +9,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: model extra-field rejection, relationship clamp bounds, snapshot hash roundtrip, turn-index mutation boundary
 - QA result: `make qa` green, 17 tests passed
 - Scenario fixture: `tests/scenarios/fixtures/day1-happy-path.yaml`
+
+## Phase A2
+
+- Files added: `tests/scenarios/fixtures/day1-flirt-mixed.yaml`
+- Files changed: `src/game/state/models.py`, `src/game/engine/actions.py`, `src/game/engine/rules.py`, `src/game/agents/narrator.py`, `tests/engine/test_actions.py`, `tests/engine/test_rules.py`
+- Tests added: flirt success and miss deltas, typed relationship-delta validation, FLIRT action availability
+- QA result: `make qa` green, 21 tests passed
+- Scenario fixture: `tests/scenarios/fixtures/day1-flirt-mixed.yaml`

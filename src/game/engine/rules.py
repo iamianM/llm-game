@@ -17,6 +17,20 @@ from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.state.models import GameState, IslanderState, clamp_relationship
 from src.game.state.rng import SeededRng
 
+TALK_SUCCESS_AFFECTION_DELTA = 2
+FLIRT_SUCCESS_AFFECTION_DELTA = 2
+FLIRT_SUCCESS_CHEMISTRY_DELTA = 5
+FLIRT_MISS_CHEMISTRY_DELTA = -1
+
+
+class RelationshipDelta(BaseModel):
+    """Typed relationship changes for one target."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    affection: int = 0
+    chemistry: int = 0
+
 
 class MechanicalResult(BaseModel):
     """Resolved mechanical outcome from one player action."""
@@ -27,7 +41,7 @@ class MechanicalResult(BaseModel):
     success: bool
     roll: int | None = None
     success_chance: int | None = None
-    relationship_deltas: dict[str, dict[str, int]] = Field(default_factory=dict)
+    relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
 
 
@@ -36,6 +50,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
     validate_action(state, action)
     if action.kind is ActionKind.TALK:
         return _apply_talk(state, action, rng)
+    if action.kind is ActionKind.FLIRT:
+        return _apply_flirt(state, action, rng)
     if action.kind is ActionKind.ADVANCE_PHASE:
         return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented in Phase A1: {action.kind}")
@@ -46,15 +62,43 @@ def _apply_talk(state: GameState, action: PlayerAction, rng: SeededRng) -> Mecha
     chance = talk_success_chance(state, target)
     roll = rng.randint(1, 100)
     success = roll <= chance
-    delta = 2 if success else 0
+    delta = TALK_SUCCESS_AFFECTION_DELTA if success else 0
     target.relationship.affection = clamp_relationship(target.relationship.affection + delta)
     return MechanicalResult(
         action=action,
         success=success,
         roll=roll,
         success_chance=chance,
-        relationship_deltas={target.id: {"affection": delta}},
+        relationship_deltas={target.id: RelationshipDelta(affection=delta)},
         tags=["talk", "friendly"],
+    )
+
+
+def _apply_flirt(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
+    target = _find_islander(state, action.target_id)
+    chance = flirt_success_chance(state, target)
+    roll = rng.randint(1, 100)
+    success = roll <= chance
+    affection_delta = FLIRT_SUCCESS_AFFECTION_DELTA if success else 0
+    chemistry_delta = FLIRT_SUCCESS_CHEMISTRY_DELTA if success else FLIRT_MISS_CHEMISTRY_DELTA
+    target.relationship.affection = clamp_relationship(
+        target.relationship.affection + affection_delta
+    )
+    target.relationship.chemistry = clamp_relationship(
+        target.relationship.chemistry + chemistry_delta
+    )
+    return MechanicalResult(
+        action=action,
+        success=success,
+        roll=roll,
+        success_chance=chance,
+        relationship_deltas={
+            target.id: RelationshipDelta(
+                affection=affection_delta,
+                chemistry=chemistry_delta,
+            )
+        },
+        tags=["flirty"] if success else ["awkward"],
     )
 
 
@@ -65,6 +109,12 @@ def talk_success_chance(state: GameState, target: IslanderState) -> int:
     and relationship value contributes a smaller familiarity bonus.
     """
     chance = 50 + (state.player.stats.banter * 5) + (target.relationship.affection // 5)
+    return max(5, min(95, chance))
+
+
+def flirt_success_chance(state: GameState, target: IslanderState) -> int:
+    """Calculate Phase A2 FLIRT success chance."""
+    chance = 40 + (state.player.stats.charm * 5) + (target.relationship.chemistry // 4)
     return max(5, min(95, chance))
 
 

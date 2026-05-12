@@ -1,0 +1,17 @@
+# Regenerate expected_hash with:
+# uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-flirt-mixed.yaml --mock-llm
+name: day1-flirt-mixed
+seed: 2
+expected_hash: 18e44f3890ad1647f16099f020991dcf069d2128b0adf9f34b7316d1adacc1d3
+actions:
+  - kind: flirt
+    target_id: chloe
+  - kind: talk
+    target_id: maya
+  - kind: advance_phase
+  - kind: flirt
+    target_id: liam
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase

@@ -22,6 +22,10 @@ def mock_narration(state: GameState, result: MechanicalResult) -> str:
         target_id = result.action.target_id or "someone"
         outcome = "lands" if result.success else "falls flat"
         return f"Your chat with {target_id} {outcome} by the {state.location_id}."
+    if result.action.kind is ActionKind.FLIRT:
+        target_id = result.action.target_id or "someone"
+        outcome = "sparks" if result.success else "gets awkward"
+        return f"Your flirt with {target_id} {outcome} by the {state.location_id}."
     if result.action.kind is ActionKind.ADVANCE_PHASE:
         return f"The villa moves into {state.phase.value}."
     return "The villa shifts around your choice."

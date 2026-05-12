@@ -15,7 +15,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class Phase(StrEnum):
@@ -58,6 +58,7 @@ class RelationshipState(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     affection: int = Field(default=0, ge=0, le=100)
+    chemistry: int = Field(default=0, ge=0, le=100)
 
 
 class IslanderState(BaseModel):
