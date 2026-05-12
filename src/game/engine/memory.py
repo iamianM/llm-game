@@ -14,7 +14,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.models import Conversation, GameState, Memory
+from src.game.state.models import GameState, Memory, MemoryBatch
 
 
 def create_memory(
@@ -28,6 +28,7 @@ def create_memory(
     tags: list[str],
     content: str,
     source_id: str | None = None,
+    durable: bool = True,
 ) -> Memory:
     """Create one deterministic memory."""
     return Memory(
@@ -41,6 +42,7 @@ def create_memory(
         formed_on_turn=turn,
         emotional_weight=max(1, min(10, weight)),
         tags=sorted(set(tags)),
+        durable=durable,
     )
 
 
@@ -52,48 +54,25 @@ def add_memory(state: GameState, memory: Memory) -> None:
     holder.append(memory)
 
 
-def remember_conversation_close(state: GameState, conversation: Conversation) -> None:
-    """Create direct memories for the player and target when a conversation closes."""
-    if not conversation.exchanges:
-        return
-    target = _islander_name(state, conversation.target_id)
-    tags = list(conversation.accumulated_tags)
-    weight = _conversation_weight(conversation)
-    location = state.location_id.value
-    player_content = (
-        f"I had a {', '.join(tags[:3]) or 'private'} conversation with {target} "
-        f"at the {location} on day {state.day}."
-    )
-    target_content = (
-        f"The player had a {', '.join(tags[:3]) or 'private'} conversation with me "
-        f"at the {location} on day {state.day}."
-    )
-    add_memory(
-        state,
-        create_memory(
-            holder_id="player",
-            subject_id=conversation.target_id,
-            source="direct",
-            day=state.day,
-            turn=state.turn_index,
-            weight=weight,
-            tags=tags,
-            content=player_content,
-        ),
-    )
-    add_memory(
-        state,
-        create_memory(
-            holder_id=conversation.target_id,
-            subject_id="player",
-            source="direct",
-            day=state.day,
-            turn=state.turn_index,
-            weight=weight,
-            tags=tags,
-            content=target_content,
-        ),
-    )
+def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: int) -> list[Memory]:
+    """Create deterministic memories from one curator commit."""
+    created: list[Memory] = []
+    for draft in batch.memories:
+        memory = create_memory(
+            holder_id=draft.holder_id,
+            subject_id=draft.subject_id,
+            source=draft.source,
+            source_id=draft.source_id,
+            day=day,
+            turn=turn,
+            weight=draft.emotional_weight,
+            tags=draft.tags,
+            content=draft.content,
+            durable=draft.durable,
+        )
+        add_memory(state, memory)
+        created.append(memory)
+    return created
 
 
 def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) -> None:
@@ -130,22 +109,6 @@ def _holder_memory_list(state: GameState, holder_id: str) -> list[Memory]:
 
 def _all_holder_ids(state: GameState) -> list[str]:
     return ["player"] + [islander.id for islander in state.islanders if not islander.eliminated]
-
-
-def _conversation_weight(conversation: Conversation) -> int:
-    affection = sum(
-        delta.affection
-        for record in conversation.exchanges
-        for delta in record.relationship_deltas.values()
-    )
-    return max(1, min(10, (affection // 2) + 3))
-
-
-def _islander_name(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
 
 
 def _memory_id(

@@ -138,3 +138,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: gossip appears from eligible NPC memories, gossip transfers memories to the player, affection threshold locks gossip, gossip offer content is hash-excluded
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 62 non-LLM tests passed
 - Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml` regenerated after the mock follow-up exit menu became single-exit only
+
+## Phase G3 corrective
+
+- Files added: `src/game/agents/conversation_curator.py`, `tests/agents/test_conversation_curator.py`
+- Files changed: `src/game/state/models.py`, `src/game/engine/memory.py`, `src/game/engine/turn.py`, scenario fixtures
+- Tests added: mock curator emits participant memories, real Conversation Curator output validates as a typed `MemoryBatch`
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 63 non-LLM tests passed; curator LLM subset green, 1 LLM test passed
+- Scenario fixture: existing fixtures regenerated for schema v8 and typed curator memory commits

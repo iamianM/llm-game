@@ -19,6 +19,10 @@ from src.game.agents.contextual_options import (
     validate_follow_up_menu,
     with_gossip_options,
 )
+from src.game.agents.conversation_curator import (
+    ConversationCuratorFn,
+    mock_conversation_curator,
+)
 from src.game.agents.event_narrator import (
     EventNarration,
     EventNarratorFn,
@@ -33,11 +37,11 @@ from src.game.engine.conversation import (
     departure_probability,
     start_conversation,
 )
-from src.game.engine.memory import remember_ceremony_events, remember_conversation_close
+from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
-from src.game.state.models import Conversation, FollowUpMenu, GameState
+from src.game.state.models import Conversation, FollowUpMenu, GameState, MemoryBatch
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -56,6 +60,7 @@ class TurnResult(BaseModel):
     state_hash: str
     off_screen_events: list[OffScreenEvent] = []
     ceremony_events: list[CeremonyEvent] = []
+    curator_batches: list[MemoryBatch] = []
 
 
 def run_turn(
@@ -65,6 +70,7 @@ def run_turn(
     islander_voice: IslanderVoiceFn | None = None,
     contextual_options: ContextualOptionsFn | None = None,
     event_narrator: EventNarratorFn | None = None,
+    conversation_curator: ConversationCuratorFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
     result = apply_action(state, action, rng)
@@ -94,6 +100,7 @@ def run_turn(
     state.turn_index += 1
     exchange = None
     follow_up_menu = None
+    curator_batches: list[MemoryBatch] = []
     if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
         conversation: Conversation
         if action.kind is ActionKind.START_CONVERSATION:
@@ -120,11 +127,13 @@ def run_turn(
         validate_follow_up_menu(follow_up_menu)
         conversation.pending_options = follow_up_menu
         if follow_up_menu.npc_will_leave:
-            remember_conversation_close(state, conversation)
+            batch = _curate_conversation(state, conversation, conversation_curator)
+            curator_batches.append(batch)
             close_conversation(state, "npc_left")
     if action.kind is ActionKind.END_CONVERSATION:
         if state.active_conversation is not None:
-            remember_conversation_close(state, state.active_conversation)
+            batch = _curate_conversation(state, state.active_conversation, conversation_curator)
+            curator_batches.append(batch)
         close_conversation(state, "player_exit")
     event_narration = None
     if ceremony_events:
@@ -141,6 +150,7 @@ def run_turn(
         state_hash=state_hash(state_hash_payload(state)),
         off_screen_events=off_screen_events,
         ceremony_events=ceremony_events,
+        curator_batches=curator_batches,
     )
 
 
@@ -155,3 +165,25 @@ def _recoupling_events(eliminated_id: str | None) -> list[CeremonyEvent]:
             )
         )
     return events
+
+
+def _curate_conversation(
+    state: GameState,
+    conversation: Conversation,
+    curator: ConversationCuratorFn | None,
+) -> MemoryBatch:
+    bystander_ids = _conversation_bystanders(state, conversation.target_id)
+    curate = mock_conversation_curator if curator is None else curator
+    batch = curate(state, conversation, bystander_ids)
+    add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
+    return batch
+
+
+def _conversation_bystanders(state: GameState, target_id: str) -> list[str]:
+    return [
+        islander.id
+        for islander in state.islanders
+        if islander.id != target_id
+        and not islander.eliminated
+        and islander.location_id == state.location_id
+    ]
