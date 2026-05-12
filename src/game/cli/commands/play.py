@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+from src.game.agents.narrator import OpenAINarrator
 from src.game.engine.actions import ActionSpec, available_actions
 from src.game.engine.turn import TurnResult, run_turn
 from src.game.state.models import GameState, new_game
@@ -30,6 +31,7 @@ def run(args: argparse.Namespace) -> int:
     seed = 1 if args.seed is None else args.seed
     state = new_game(seed)
     rng = SeededRng(seed)
+    narrator = None if args.mock_llm else OpenAINarrator().narrate
     print("Phase A1 CLI. Type a number, /state, /hash, /help, or /quit.")
 
     while not state.is_terminal:
@@ -56,7 +58,7 @@ def run(args: argparse.Namespace) -> int:
             print("choose a listed action number or slash command")
             continue
 
-        turn = run_turn(state, action, rng)
+        turn = run_turn(state, action, rng, narrator=narrator)
         state = turn.state
         _print_turn(turn)
 

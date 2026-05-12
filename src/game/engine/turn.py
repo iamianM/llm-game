@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.agents.narrator import mock_narration
+from src.game.agents.narrator import NarratorFn, mock_narration
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.ceremonies import arrive_bombshell, recoupling
 from src.game.engine.phases import advance_phase
@@ -37,7 +37,12 @@ class TurnResult(BaseModel):
     off_screen_events: list[OffScreenEvent] = []
 
 
-def run_turn(state: GameState, action: PlayerAction, rng: SeededRng) -> TurnResult:
+def run_turn(
+    state: GameState,
+    action: PlayerAction,
+    rng: SeededRng,
+    narrator: NarratorFn | None = None,
+) -> TurnResult:
     """Run one deterministic game turn."""
     result = apply_action(state, action, rng)
     off_screen_events: list[OffScreenEvent] = []
@@ -52,10 +57,11 @@ def run_turn(state: GameState, action: PlayerAction, rng: SeededRng) -> TurnResu
             rng.fork(f"day-{state.day}-phase-{state.phase.value}"),
         )
     state.turn_index += 1
+    narrate = mock_narration if narrator is None else narrator
     return TurnResult(
         state=state,
         mechanical_result=result,
-        narration=mock_narration(state, result),
+        narration=narrate(state, result),
         available_actions=available_actions(state),
         state_hash=state_hash(state.model_dump(mode="json")),
         off_screen_events=off_screen_events,

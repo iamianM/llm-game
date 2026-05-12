@@ -41,3 +41,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: recoupling partner choice, leftover elimination, bombshell idempotency, public-perception bounds
 - QA result: `make qa` green, 39 tests passed
 - Scenario fixture: `tests/scenarios/fixtures/recoupling-day3.yaml`
+
+## Phase D
+
+- Files added: runtime archetype/location content, `tests/agents/test_narrator_quality.py`, `fixtures/snapshots/phaseD-narrated-session.json`, `fixtures/traces/phaseD-narrated-session.json`
+- Files changed: `src/game/agents/narrator.py`, `src/game/content/*`, `src/game/engine/turn.py`, `src/game/cli/commands/play.py`
+- Tests added: opt-in real Narrator contract tests for bounded prose and visible-context safety
+- QA result: `make qa` green, 39 tests passed; `uv run pytest -m llm` green, 5 tests passed
+- Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml`; model used: `gpt-4o-mini` via verified `OPENAI_API_KEY`
