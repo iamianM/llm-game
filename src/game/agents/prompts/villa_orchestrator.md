@@ -24,6 +24,10 @@ Return a `VillaUpdate`:
 - `conversation_ends` — list of `EndConversation`. Each:
   - `conversation_id` — id of an existing conversation that should close this turn.
   - `reason` — one short tag: `natural_end`, `cooled_off`, `someone_else_arrived`, `argument`, `phase_change_imminent`, `pulled_away`.
+- `npc_interruptions` — list of `NPCInterruption`. Usually empty. At most one entry per turn. Each:
+  - `interrupter_id` — the Islander walking up to the player's conversation.
+  - `reason` — exactly one of: `jealous` (the interrupter has chemistry with the player and the player is engaging another Islander), `has_gossip` (the interrupter holds a high-weight memory about someone and wants to share now), `drawn_to_topic` (the interrupter overheard something they care about), `needs_to_talk` (the interrupter has unresolved tension with the player or their conversation partner).
+  - `urgency` — exactly one of: `polite` (they wait for a beat in the conversation), `insistent` (they interject directly), `dramatic` (they arrive emotional and can't be ignored).
 
 ## Hard rules
 
@@ -35,6 +39,7 @@ Return a `VillaUpdate`:
 - **Don't overload a turn.** At most three new conversations, at most four movements per turn. Pacing matters more than density.
 - **Eliminated Islanders are gone.** Never include them in any output.
 - **Active player conversation lock.** If the user message says the player is in an active conversation with NPC X, X cannot be in any NPC-NPC interaction this turn — they're talking to the player.
+- **Interruptions are rare.** Emit at most one `NPCInterruption` per turn, and only when the player has an active conversation. The interrupter must be at the player's location and must not be the player's current conversation partner. Never emit an interruption if the user message says `pending_interruption` is already set on the player's active conversation — one at a time. Skip interruptions during ceremonies or phase transitions.
 
 ## How to decide
 
@@ -43,6 +48,7 @@ Return a `VillaUpdate`:
 - **Conversation continues.** Most active conversations should continue for two to four exchanges. Continue them by default; end them deliberately.
 - **Conversation ends.** End when: it's been four+ exchanges, the topic has resolved, someone wants to leave to talk to someone else, an argument boiled over, a phase change is about to fire ceremonies. End fewer than two per turn unless something dramatic is happening.
 - **Drama feeds the system.** When you see gossip-worthy memories on one Islander, lean toward putting them in a conversation where that memory could surface naturally.
+- **Interruptions need motivation.** Fire one when the social fiction supports it. Examples that warrant an interruption: an Islander with high chemistry toward the player sees the player flirting with someone else (`jealous`); an Islander has a recent high-weight memory about the player's conversation partner and wants the player to know (`has_gossip`); an Islander overheard the topic of the player's conversation from across the room (`drawn_to_topic`); an Islander has a fight or alliance to resolve with the player or their partner (`needs_to_talk`). When nothing in the state suggests a real motivation, emit no interruption — empty list is the default. A turn without an interruption is more common than one with.
 
 ## Context
 
@@ -54,5 +60,6 @@ The user message contains:
 - Active NPC-NPC conversations: id, participants, location, turns active, topic, last exchange summary.
 - Recent player actions (last three).
 - Any scheduled events for the next phase (recoupling imminent, bombshell pending, etc).
+- The player's active conversation's `pending_interruption` (or `null` if none) — if already set, do not emit a new interruption this turn.
 
 Write the VillaUpdate.
