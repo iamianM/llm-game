@@ -106,3 +106,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: existing Contextual Options LLM tests now validate short labels, categories, exit options, and threshold-safe parsed output
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; Contextual Options LLM subset green, 10 tests passed
 - Scenario fixture: existing fixtures regenerated for schema v6 short-label follow-up menu shape
+
+## Phase G2
+
+- Files added: none
+- Files changed: `src/game/engine/rules.py`, `tests/engine/test_rules.py`, `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
+- Tests added: vulnerable follow-up trust gain, missed flirt chemistry loss, unknown follow-up intent failure, high-risk delta scaling
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 51 non-LLM tests passed
+- Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml` regenerated after follow-up deltas became mechanical

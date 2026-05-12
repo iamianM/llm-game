@@ -11,6 +11,8 @@ receives the resolved result; it never calculates outcomes.
 
 from __future__ import annotations
 
+import math
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
@@ -36,6 +38,70 @@ class MechanicalResult(BaseModel):
     success_chance: int | None = None
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
+
+
+class FollowUpDeltaTable(BaseModel):
+    """Success and miss deltas for one contextual follow-up intent."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    success: RelationshipDelta
+    miss: RelationshipDelta
+
+
+FOLLOW_UP_DELTA_TABLE: dict[str, FollowUpDeltaTable] = {
+    "honest_vulnerable": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=5, affection=2),
+        miss=RelationshipDelta(trust=-2),
+    ),
+    "escalate_flirt": FollowUpDeltaTable(
+        success=RelationshipDelta(chemistry=6, affection=1),
+        miss=RelationshipDelta(chemistry=-3, trust=-1),
+    ),
+    "deflect_with_humor": FollowUpDeltaTable(
+        success=RelationshipDelta(friendship=3, chemistry=1),
+        miss=RelationshipDelta(),
+    ),
+    "joke_back": FollowUpDeltaTable(
+        success=RelationshipDelta(friendship=2),
+        miss=RelationshipDelta(friendship=-1),
+    ),
+    "go_deeper": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=4, affection=3),
+        miss=RelationshipDelta(trust=-1),
+    ),
+    "ask_about_topic": FollowUpDeltaTable(
+        success=RelationshipDelta(affection=2, trust=1),
+        miss=RelationshipDelta(),
+    ),
+    "apologize": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=5),
+        miss=RelationshipDelta(),
+    ),
+    "defend_self": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=2),
+        miss=RelationshipDelta(trust=-2),
+    ),
+    "change_subject": FollowUpDeltaTable(
+        success=RelationshipDelta(friendship=1),
+        miss=RelationshipDelta(affection=-1),
+    ),
+    "end_softly": FollowUpDeltaTable(
+        success=RelationshipDelta(),
+        miss=RelationshipDelta(),
+    ),
+    "walk_away": FollowUpDeltaTable(
+        success=RelationshipDelta(affection=-1),
+        miss=RelationshipDelta(affection=-1),
+    ),
+}
+
+RISK_DELTA_SCALE = {
+    "safe": 0.0,
+    "low": 0.75,
+    "medium": 1.0,
+    "high": 1.5,
+}
 
 
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
@@ -109,6 +175,8 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
     chance = follow_up_success_chance(state, target, option.stat_used, option.risk)
     roll = rng.randint(1, 100)
     success = roll <= chance
+    delta = _follow_up_delta(option.intent_kind, option.risk, success)
+    _apply_relationship_delta(target, delta)
     normalized = action.model_copy(
         update={
             "target_id": target.id,
@@ -121,7 +189,7 @@ def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> 
         success=success,
         roll=roll,
         success_chance=chance,
-        relationship_deltas={target.id: RelationshipDelta()},
+        relationship_deltas={target.id: delta},
         tags=[option.intent_kind, option.risk, option.tone],
     )
 
@@ -190,8 +258,33 @@ def update_public_perception(
     delta = 0
     if "supportive" in result.tags and result.success:
         delta = 2
+    elif "honest_vulnerable" in result.tags and result.success:
+        delta = 1
+    elif "escalate_flirt" in result.tags and not result.success:
+        delta = -1
     elif "intense" in result.tags and not result.success:
         delta = -2
     elif "flirty" in result.tags and not result.success:
         delta = -1
     state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
+
+
+def _follow_up_delta(intent_kind: str, risk: str, success: bool) -> RelationshipDelta:
+    if intent_kind not in FOLLOW_UP_DELTA_TABLE:
+        raise ValueError(f"unknown follow-up intent_kind: {intent_kind}")
+    table = FOLLOW_UP_DELTA_TABLE[intent_kind]
+    base = table.success if success else table.miss
+    scale = RISK_DELTA_SCALE[risk]
+    return RelationshipDelta(
+        affection=_scale_delta(base.affection, scale),
+        chemistry=_scale_delta(base.chemistry, scale),
+        trust=_scale_delta(base.trust, scale),
+        friendship=_scale_delta(base.friendship, scale),
+    )
+
+
+def _scale_delta(value: int, scale: float) -> int:
+    if value == 0 or scale == 0:
+        return 0
+    scaled = abs(value) * scale
+    return int(math.copysign(math.floor(scaled + 0.5), value))
