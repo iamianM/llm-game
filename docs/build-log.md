@@ -122,3 +122,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: conversation close creates player/NPC memories, deterministic memory ids, ceremony memories, memory content excluded from state hash
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 55 non-LLM tests passed
 - Scenario fixture: existing fixtures regenerated for schema v7 memory metadata
+
+## Phase G4
+
+- Files added: none
+- Files changed: `src/game/engine/simulation.py`, `tests/engine/test_simulation.py`, scenario fixtures
+- Tests added: off-screen chat creates memories for both NPCs, drama memories are high-weight, chemistry can pull NPCs toward the player location
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 58 non-LLM tests passed
+- Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml` now accumulates NPC memories through day six
