@@ -204,3 +204,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: VillaUpdate interruption validation, pending interruption wheel injection, welcome/defer/ignore mechanics and memories, Orchestrator interruption contract contexts
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; Orchestrator interruption LLM subset green, 5 tests passed
 - Scenario fixture: existing fixtures regenerated for schema v10 and pending interruption state shape
+
+## Phase G8.4
+
+- Files added: `src/game/eval/__init__.py`, `src/game/eval/playthrough.py`, `tests/eval/test_playthrough.py`
+- Files changed: `src/game/cli/commands/verify.py`
+- Tests added: playthrough report assertion count, complete-trace pass, missing pull failure, memory holder coverage, interesting turn sorting
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; manual `verify --playthrough .game_traces/manual-day1.json` produced a structured report with 4/11 assertions passing for the old recording
+- Scenario fixture: unchanged
