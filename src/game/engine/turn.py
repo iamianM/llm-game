@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
+from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
 from src.game.agents.event_narrator import (
     EventNarration,
     EventNarratorFn,
@@ -21,10 +22,16 @@ from src.game.agents.event_narrator import (
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.ceremonies import CeremonyEvent, arrive_bombshell, recoupling
+from src.game.engine.conversation import (
+    append_exchange,
+    close_conversation,
+    departure_probability,
+    start_conversation,
+)
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
-from src.game.state.models import GameState
+from src.game.state.models import Conversation, FollowUpMenu, GameState
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -38,6 +45,7 @@ class TurnResult(BaseModel):
     mechanical_result: MechanicalResult
     exchange: Exchange | None = None
     event_narration: EventNarration | None = None
+    follow_up_menu: FollowUpMenu | None = None
     available_actions: list[ActionSpec]
     state_hash: str
     off_screen_events: list[OffScreenEvent] = []
@@ -49,6 +57,7 @@ def run_turn(
     action: PlayerAction,
     rng: SeededRng,
     islander_voice: IslanderVoiceFn | None = None,
+    contextual_options: ContextualOptionsFn | None = None,
     event_narrator: EventNarratorFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
@@ -78,9 +87,35 @@ def run_turn(
         )
     state.turn_index += 1
     exchange = None
+    follow_up_menu = None
     if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+        conversation: Conversation
+        if action.kind is ActionKind.START_CONVERSATION:
+            if result.action.target_id is None:
+                raise ValueError("START_CONVERSATION result missing target_id")
+            conversation = start_conversation(state, result.action.target_id, state.turn_index)
+        else:
+            active = state.active_conversation
+            if active is None:
+                raise ValueError("RESPOND_WITH requires active conversation")
+            conversation = active
+            conversation.pending_options = None
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
+        append_exchange(conversation, result, exchange, turn_index=state.turn_index)
+        probability = departure_probability(conversation, state)
+        conversation.departure_probability_last = probability
+        menu_fn = (
+            (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
+            if contextual_options is None
+            else contextual_options
+        )
+        follow_up_menu = menu_fn(state, result, exchange, probability)
+        conversation.pending_options = follow_up_menu
+        if follow_up_menu.npc_will_leave:
+            close_conversation(state, "npc_left")
+    if action.kind is ActionKind.END_CONVERSATION:
+        close_conversation(state, "player_exit")
     event_narration = None
     if ceremony_events:
         narrate_event = mock_event_narration if event_narrator is None else event_narrator
@@ -90,6 +125,7 @@ def run_turn(
         mechanical_result=result,
         exchange=exchange,
         event_narration=event_narration,
+        follow_up_menu=follow_up_menu,
         available_actions=available_actions(state),
         state_hash=state_hash(state_hash_payload(state)),
         off_screen_events=off_screen_events,

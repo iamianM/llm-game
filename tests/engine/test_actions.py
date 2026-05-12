@@ -19,7 +19,7 @@ def test_available_actions_include_visible_conversation_targets_and_advance() ->
     assert PlayerAction(kind=ActionKind.MOVE, target_id="kitchen") in actions
     assert PlayerAction(kind=ActionKind.MOVE, target_id="terrace") in actions
     assert PlayerAction(kind=ActionKind.ADVANCE_PHASE) in actions
-    assert PlayerAction(kind=ActionKind.END_CONVERSATION) in actions
+    assert PlayerAction(kind=ActionKind.END_CONVERSATION) not in actions
 
 
 def test_validate_action_rejects_hidden_target() -> None:

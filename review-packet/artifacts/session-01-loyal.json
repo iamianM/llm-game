@@ -1,7 +1,7 @@
 {
-  "schema_version": 3,
+  "schema_version": 5,
   "seed": 21,
-  "turn_index": 30,
+  "turn_index": 43,
   "day": 6,
   "phase": "text",
   "location_id": "pool",
@@ -9,11 +9,11 @@
     "id": "player",
     "name": "You",
     "stats": {
-      "charm": 6,
-      "banter": 6,
-      "eq": 6,
-      "graft": 6,
-      "loyalty": 6
+      "charm": 8,
+      "banter": 7,
+      "eq": 7,
+      "graft": 5,
+      "loyalty": 3
     },
     "public_perception": 52,
     "eliminated": false
@@ -25,13 +25,14 @@
       "archetype": "sweetheart",
       "location_id": "terrace",
       "relationship": {
-        "affection": 12,
-        "chemistry": 3,
+        "affection": 19,
+        "chemistry": 0,
         "trust": 3,
-        "friendship": 1
+        "friendship": 3
       },
       "public_perception": 50,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     },
     {
       "id": "maya",
@@ -40,12 +41,13 @@
       "location_id": "kitchen",
       "relationship": {
         "affection": 8,
-        "chemistry": 7,
+        "chemistry": 0,
         "trust": 0,
         "friendship": 0
       },
       "public_perception": 50,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     },
     {
       "id": "liam",
@@ -54,12 +56,13 @@
       "location_id": "terrace",
       "relationship": {
         "affection": 6,
-        "chemistry": 8,
+        "chemistry": 0,
         "trust": 0,
         "friendship": 0
       },
       "public_perception": 50,
-      "eliminated": true
+      "eliminated": true,
+      "mood": "content"
     },
     {
       "id": "aisha",
@@ -68,12 +71,13 @@
       "location_id": "bedroom",
       "relationship": {
         "affection": 8,
-        "chemistry": 14,
+        "chemistry": 12,
         "trust": 0,
         "friendship": 0
       },
       "public_perception": 55,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     }
   ],
   "couples": [
@@ -87,5 +91,6 @@
       "partner_b_id": "maya",
       "formed_on_day": 5
     }
-  ]
+  ],
+  "active_conversation": null
 }

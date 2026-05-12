@@ -41,8 +41,12 @@ class MechanicalResult(BaseModel):
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     """Apply one valid action and mutate ``state``."""
     validate_action(state, action)
-    if action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+    if action.kind is ActionKind.START_CONVERSATION:
         result = _apply_intent(state, action, rng)
+        update_public_perception(state, action, result)
+        return result
+    if action.kind is ActionKind.RESPOND_WITH:
+        result = _apply_follow_up(state, action, rng)
         update_public_perception(state, action, result)
         return result
     if action.kind is ActionKind.END_CONVERSATION:
@@ -95,6 +99,33 @@ def _apply_relationship_delta(target: IslanderState, delta: RelationshipDelta) -
     )
 
 
+def _apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
+    conversation = state.active_conversation
+    if conversation is None or conversation.pending_options is None:
+        raise ValueError("RESPOND_WITH requires active conversation pending options")
+    option_index = _follow_up_option_index(state, action)
+    option = conversation.pending_options.options[option_index]
+    target = _find_islander(state, conversation.target_id)
+    chance = follow_up_success_chance(state, target, option.stat_used, option.risk)
+    roll = rng.randint(1, 100)
+    success = roll <= chance
+    normalized = action.model_copy(
+        update={
+            "target_id": target.id,
+            "intent_id": option.intent_kind,
+            "option_index": option_index,
+        }
+    )
+    return MechanicalResult(
+        action=normalized,
+        success=success,
+        roll=roll,
+        success_chance=chance,
+        relationship_deltas={target.id: RelationshipDelta()},
+        tags=[option.intent_kind, option.risk, option.tone],
+    )
+
+
 def intent_success_chance(state: GameState, target: IslanderState, intent: Intent) -> int:
     """Calculate F1 intent success chance."""
     stat = getattr(state.player.stats, intent.stat_used)
@@ -102,6 +133,21 @@ def intent_success_chance(state: GameState, target: IslanderState, intent: Inten
         raise ValueError(f"unknown numeric stat for intent: {intent.stat_used}")
     mood_modifier = -10 if target.mood.value in {"upset", "angry"} else 0
     chance = 50 + (stat * 5) + (target.relationship.affection // 4) + mood_modifier
+    return max(5, min(95, chance))
+
+
+def follow_up_success_chance(
+    state: GameState,
+    target: IslanderState,
+    stat_used: str | None,
+    risk: str,
+) -> int:
+    """Calculate success chance for a freeform contextual follow-up."""
+    stat = 5 if stat_used is None else getattr(state.player.stats, stat_used)
+    if not isinstance(stat, int):
+        raise ValueError(f"unknown numeric stat for follow-up: {stat_used}")
+    risk_modifier = {"safe": 15, "low": 5, "medium": -5, "high": -20}[risk]
+    chance = 50 + (stat * 5) + (target.relationship.affection // 5) + risk_modifier
     return max(5, min(95, chance))
 
 
@@ -119,6 +165,20 @@ def _find_islander(state: GameState, target_id: str | None) -> IslanderState:
         if islander.id == target_id:
             return islander
     raise ValueError(f"unknown islander: {target_id}")
+
+
+def _follow_up_option_index(state: GameState, action: PlayerAction) -> int:
+    conversation = state.active_conversation
+    if conversation is None or conversation.pending_options is None:
+        raise ValueError("no pending options")
+    if action.option_index is not None:
+        return action.option_index
+    if action.intent_id is None:
+        raise ValueError("RESPOND_WITH requires option_index or intent_id")
+    for index, option in enumerate(conversation.pending_options.options):
+        if option.intent_kind == action.intent_id:
+            return index
+    raise ValueError(f"follow-up intent not found in pending menu: {action.intent_id}")
 
 
 def update_public_perception(

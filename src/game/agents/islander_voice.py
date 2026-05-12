@@ -130,7 +130,17 @@ def islander_voice_context(
     intent_id = result.action.intent_id
     if intent_id is None:
         raise ValueError("conversation result is missing intent_id")
-    intent = get_intent(intent_id)
+    try:
+        intent = get_intent(intent_id)
+        intent_category = intent.category.value
+        intent_label = intent.label
+        stat_used = intent.stat_used
+        tags = intent.tags
+    except ValueError:
+        intent_category = "contextual"
+        intent_label = intent_id.replace("_", " ")
+        stat_used = "contextual"
+        tags = result.tags
     index = content if content is not None else load_content()
     location_content = index.locations.get(state.location_id.value)
     archetype = index.archetypes.get(target.archetype)
@@ -151,23 +161,21 @@ def islander_voice_context(
         archetype_prose="" if archetype is None else archetype.body,
         npc_mood=target.mood,
         relationship_summary=_relationship_summary(target),
-        intent_category=intent.category.value,
-        intent_label=intent.label,
-        stat_used=intent.stat_used,
-        tags=intent.tags,
+        intent_category=intent_category,
+        intent_label=intent_label,
+        stat_used=stat_used,
+        tags=tags,
         outcome="success" if result.success else "miss",
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
-        recent_history="No prior exchanges in this conversation.",
+        recent_history=_recent_history(state),
     )
 
 
 def mock_islander_voice(state: GameState, result: MechanicalResult) -> Exchange:
     """Return deterministic mock dialogue for non-LLM tests and replays."""
     target = _target_for_result(state, result)
-    intent_label = (
-        get_intent(result.action.intent_id).label if result.action.intent_id else "chat"
-    )
+    intent_label = _intent_label(result.action.intent_id)
     if result.success:
         return Exchange(
             player_dialogue=f"I wanted to say this properly, {target.name}: {intent_label}.",
@@ -268,3 +276,22 @@ def _mechanical_change_summary(result: MechanicalResult, target_id: str) -> str:
 
 def _list_or_none(values: list[str]) -> str:
     return ", ".join(values) if values else "none"
+
+
+def _recent_history(state: GameState) -> str:
+    conversation = state.active_conversation
+    if conversation is None or not conversation.exchanges:
+        return "No prior exchanges in this conversation."
+    return "\n".join(
+        f"- You: {record.player_dialogue}\n  {record.npc_tone}: {record.npc_dialogue}"
+        for record in conversation.exchanges[-2:]
+    )
+
+
+def _intent_label(intent_id: str | None) -> str:
+    if intent_id is None:
+        return "chat"
+    try:
+        return get_intent(intent_id).label
+    except ValueError:
+        return intent_id.replace("_", " ")

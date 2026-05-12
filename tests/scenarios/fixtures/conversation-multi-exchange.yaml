@@ -1,0 +1,15 @@
+name: conversation-multi-exchange
+seed: 42
+actions:
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: respond_with
+  intent_id: joke_back
+- kind: respond_with
+  intent_id: go_deeper
+- kind: respond_with
+  intent_id: honest_vulnerable
+- kind: respond_with
+  intent_id: end_softly
+expected_hash: 9678808f6a69fc993decb3688b911fa176468607e14663ea4ccd0d7711fb1bd5

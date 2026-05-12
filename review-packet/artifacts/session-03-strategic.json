@@ -1,7 +1,7 @@
 {
-  "schema_version": 3,
+  "schema_version": 5,
   "seed": 23,
-  "turn_index": 30,
+  "turn_index": 44,
   "day": 5,
   "phase": "evening",
   "location_id": "terrace",
@@ -11,11 +11,11 @@
     "stats": {
       "charm": 6,
       "banter": 6,
-      "eq": 6,
-      "graft": 6,
+      "eq": 8,
+      "graft": 4,
       "loyalty": 6
     },
-    "public_perception": 52,
+    "public_perception": 54,
     "eliminated": false
   },
   "islanders": [
@@ -26,12 +26,13 @@
       "location_id": "terrace",
       "relationship": {
         "affection": 12,
-        "chemistry": 8,
+        "chemistry": 0,
         "trust": 0,
-        "friendship": 0
+        "friendship": 2
       },
       "public_perception": 50,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     },
     {
       "id": "maya",
@@ -39,13 +40,14 @@
       "archetype": "joker",
       "location_id": "terrace",
       "relationship": {
-        "affection": 8,
-        "chemistry": 3,
+        "affection": 13,
+        "chemistry": 0,
         "trust": 3,
-        "friendship": 1
+        "friendship": 0
       },
       "public_perception": 50,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     },
     {
       "id": "liam",
@@ -53,13 +55,14 @@
       "archetype": "friend",
       "location_id": "pool",
       "relationship": {
-        "affection": 8,
-        "chemistry": 1,
-        "trust": 0,
-        "friendship": 0
+        "affection": 10,
+        "chemistry": 0,
+        "trust": 2,
+        "friendship": 1
       },
       "public_perception": 50,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     },
     {
       "id": "aisha",
@@ -68,24 +71,26 @@
       "location_id": "bedroom",
       "relationship": {
         "affection": 8,
-        "chemistry": 13,
+        "chemistry": 12,
         "trust": 0,
         "friendship": 0
       },
       "public_perception": 55,
-      "eliminated": false
+      "eliminated": false,
+      "mood": "content"
     }
   ],
   "couples": [
     {
       "partner_a_id": "player",
-      "partner_b_id": "chloe",
+      "partner_b_id": "maya",
       "formed_on_day": 3
     },
     {
-      "partner_a_id": "maya",
+      "partner_a_id": "chloe",
       "partner_b_id": "liam",
       "formed_on_day": 3
     }
-  ]
+  ],
+  "active_conversation": null
 }

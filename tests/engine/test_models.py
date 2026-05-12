@@ -7,7 +7,15 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from src.game.state.models import GameState, PlayerStats, clamp_relationship, new_game
+from src.game.state.models import (
+    Conversation,
+    ExchangeRecord,
+    GameState,
+    Mood,
+    PlayerStats,
+    clamp_relationship,
+    new_game,
+)
 from src.game.state.snapshot import load_snapshot, save_snapshot, state_hash, state_hash_payload
 
 
@@ -42,11 +50,27 @@ def test_state_hash_is_stable_across_dumps() -> None:
 def test_dialogue_does_not_affect_hash() -> None:
     """F2 keeps prose out of the mechanical state hash."""
     state = new_game(1)
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=0,
+        started_on_day=1,
+        exchanges=[
+            ExchangeRecord(
+                turn_index=1,
+                intent_id="friendly_chat_villa",
+                player_dialogue="Original player line.",
+                npc_dialogue="Original NPC line.",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+                success=True,
+            )
+        ],
+    )
+    first = state_hash(state_hash_payload(state))
+    state.active_conversation.exchanges[0].player_dialogue = "Changed player line."
+    state.active_conversation.exchanges[0].npc_dialogue = "Changed NPC line."
 
-    payload = state_hash_payload(state)
-
-    assert "player_dialogue" not in str(payload)
-    assert "npc_dialogue" not in str(payload)
+    assert state_hash(state_hash_payload(state)) == first
 
 
 def test_save_load_roundtrip_preserves_hash(tmp_path: Path) -> None:

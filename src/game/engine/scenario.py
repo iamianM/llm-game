@@ -16,9 +16,12 @@ from typing import cast
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.game.engine.actions import PlayerAction
+from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
+from src.game.agents.islander_voice import Exchange
+from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.rules import MechanicalResult
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import GameState, PlayerStats, new_game
+from src.game.state.models import FollowUpMenu, GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -62,14 +65,50 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
     state = new_game(seed, player_stats=script.player_stats)
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
+    contextual_options = _scripted_contextual_options(script.actions)
 
     for action in script.actions:
-        turn = run_turn(state, action, rng)
+        turn = run_turn(state, action, rng, contextual_options=contextual_options)
         turns.append(turn.model_copy(deep=True))
         state = turn.state
 
     final_hash = state_hash(state_hash_payload(state))
     return ScenarioRunResult(script=script, state=state, turns=turns, final_hash=final_hash)
+
+
+def _scripted_contextual_options(actions: list[PlayerAction]) -> ContextualOptionsFn:
+    planned = _planned_follow_up_intents(actions)
+    index = 0
+
+    def contextual_options(
+        _state: GameState,
+        _result: MechanicalResult,
+        _exchange: Exchange,
+        _probability: int,
+    ) -> FollowUpMenu:
+        nonlocal index
+        intent_kind = planned[index] if index < len(planned) else None
+        index += 1
+        if intent_kind is None:
+            return mock_follow_up_menu(npc_will_leave=True)
+        return mock_follow_up_menu(intent_kind=intent_kind)
+
+    return contextual_options
+
+
+def _planned_follow_up_intents(actions: list[PlayerAction]) -> list[str | None]:
+    planned: list[str | None] = []
+    for index, action in enumerate(actions):
+        if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+            continue
+        next_action = actions[index + 1] if index + 1 < len(actions) else None
+        if next_action is not None and next_action.kind is ActionKind.RESPOND_WITH:
+            planned.append(next_action.intent_id or "joke_back")
+        elif next_action is not None and next_action.kind is ActionKind.END_CONVERSATION:
+            planned.append("end_softly")
+        else:
+            planned.append(None)
+    return planned
 
 
 def assert_expected_hash(result: ScenarioRunResult) -> None:

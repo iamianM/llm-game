@@ -5,15 +5,19 @@
     "phase": "morning",
     "location": "pool",
     "visible_state": "Chloe: affection 10, chemistry 0, trust 0",
-    "input_hash": "70c20264d4336b534ee7ee063ad48460609360de485f9bb9aacae9dc3da45133",
+    "input_hash": "2edeb698cd93b12479cab2128b7bbbb0758456cb7ac21e0846ba10e3097b6022",
     "action": {
-      "kind": "talk",
-      "target_id": "chloe"
+      "kind": "start_conversation",
+      "target_id": "chloe",
+      "intent_id": "friendly_chat_villa",
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "talk",
-        "target_id": "chloe"
+        "kind": "start_conversation",
+        "target_id": "chloe",
+        "intent_id": "friendly_chat_villa",
+        "option_index": null
       },
       "success": false,
       "roll": 100,
@@ -27,124 +31,377 @@
         }
       },
       "tags": [
-        "talk",
+        "casual",
         "friendly"
       ]
     },
-    "narration": "Morning light glistens on the pool as Chloe finds her spot on a lounger, her thoughtful eyes scanning the villa's familiar faces. She smiles warmly at a nearby islander, hoping for an easy conversation, yet somehow the moment slips away. A friendly chat, but the connection simply isn\u2019t there. Chloe's heart remains as tender as ever, longing for the spark that ignites deeper bonds in the sun-drenched chaos of the Love Island villa.",
-    "output_hash": "00bdb1e9e8d352ff7a376e9d970abae06aa9de1e4b34a092da741be2c73b99ee"
+    "exchange": {
+      "player_dialogue": "So, what do you think of the villa so far? Cozy enough for our little adventure?",
+      "npc_dialogue": "*smiles gently but looks a bit hesitant* I guess it\u2019s alright, but these big open spaces make it feel a bit exposed, don\u2019t you think? Not sure if it\u2019s just me feeling that way...",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "No, I get that \u2014 do you want to find somewhere a bit more tucked away together?",
+          "intent_kind": "reassure_and_move",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "warm"
+        },
+        {
+          "text": "That\u2019s not just you, honestly, this place can feel a bit too wide open sometimes.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "sincere"
+        },
+        {
+          "text": "We can make it less weird if I keep you entertained while we\u2019re out here.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "medium",
+          "tone": "playful"
+        },
+        {
+          "text": "Let\u2019s head somewhere calmer and stop overthinking the scenery.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "cool"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "cfe205fd850cc17823e25ef1ce7d6fd4772b207676e74d5ccf76b0ec76e2cfed"
   },
   {
     "turn": 2,
     "day": 1,
     "phase": "morning",
     "location": "pool",
-    "visible_state": "Chloe: affection 12, chemistry 5, trust 0",
-    "input_hash": "00bdb1e9e8d352ff7a376e9d970abae06aa9de1e4b34a092da741be2c73b99ee",
+    "visible_state": "Chloe: affection 10, chemistry 0, trust 0",
+    "input_hash": "cfe205fd850cc17823e25ef1ce7d6fd4772b207676e74d5ccf76b0ec76e2cfed",
     "action": {
-      "kind": "flirt",
-      "target_id": "chloe"
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
     },
     "mechanical_result": {
       "action": {
-        "kind": "flirt",
-        "target_id": "chloe"
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "reassure_and_move",
+        "option_index": 0
       },
       "success": true,
       "roll": 38,
-      "success_chance": 70,
+      "success_chance": 95,
       "relationship_deltas": {
         "chloe": {
-          "affection": 2,
-          "chemistry": 5,
+          "affection": 0,
+          "chemistry": 0,
           "trust": 0,
           "friendship": 0
         }
       },
       "tags": [
-        "flirty"
+        "reassure_and_move",
+        "safe",
+        "warm"
       ]
     },
-    "narration": "As the sun glistens over the pool, Chloe lounges in a sunlight-soaked chair, radiating warmth. An islander approaches, their flirtation flowing effortlessly. Chloe\u2019s cheeks flush a delicate pink, her heart fluttering at the attention. She smiles, sensing a spark. Chemistry blooms before her eyes, transforming the morning into something charged with possibility. Trust may take time, but today, a sweet connection begins to weave through the villa\u2019s morning air.",
-    "output_hash": "c770f4b5f35bf17b34003503c898aa77e8ecd7fd41de2a6fef913b771da6a315"
+    "exchange": {
+      "player_dialogue": "I get that, but we'll make it our own little safe space together, no matter how big it feels.",
+      "npc_dialogue": "*smiles, relaxing a bit* That really does help, knowing someone else feels the same and wants to look out for me. I like the sound of us making the villa feel more like home already.",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "I\u2019m glad, because I\u2019d love to be part of that with you and make this place feel proper cosy.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "warm"
+        },
+        {
+          "text": "What does home feel like to you in here, apart from just having people around you?",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019ve got you, honestly, and I like the idea of us being the ones people can count on in here.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "loyalty",
+          "risk": "low",
+          "tone": "sincere"
+        },
+        {
+          "text": "I\u2019m gonna leave you smiling on that note, but I\u2019m definitely coming back to this chat later.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "16ee69f5498ede167f5d08d1eec97b08376e8e302de9a9477f32ecbdf7891f15"
   },
   {
     "turn": 3,
     "day": 1,
     "phase": "morning",
-    "location": "kitchen",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 0",
-    "input_hash": "c770f4b5f35bf17b34003503c898aa77e8ecd7fd41de2a6fef913b771da6a315",
+    "location": "pool",
+    "visible_state": "Chloe: affection 10, chemistry 0, trust 0",
+    "input_hash": "16ee69f5498ede167f5d08d1eec97b08376e8e302de9a9477f32ecbdf7891f15",
     "action": {
-      "kind": "move",
-      "target_id": "kitchen"
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "move",
-        "target_id": "kitchen"
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
       "success_chance": null,
       "relationship_deltas": {},
       "tags": [
-        "move"
+        "disengaged"
       ]
     },
-    "narration": "In the cozy embrace of the kitchen, Maya sets the tone for the morning. With a playful grin, she quips about last night\u2019s shenanigans, her laughter echoing amidst the clinking of glasses. Her jokes lighten the air, but beneath the humor, a hint of vulnerability lingers. As the sun filters in, even the tiniest exchanges feel electric, casting a spark of connection amidst the late snacks and shared drinks.",
-    "output_hash": "0caabc06f3f4338223221b8039476910ea0cebccf6b52b7e85468a0c38eab85d"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "06ff239d46e1a4a20e2925ef102a394e5ea345c6adbbdab2af0891f2d9055b69"
   },
   {
     "turn": 4,
     "day": 1,
     "phase": "morning",
-    "location": "kitchen",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "0caabc06f3f4338223221b8039476910ea0cebccf6b52b7e85468a0c38eab85d",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "06ff239d46e1a4a20e2925ef102a394e5ea345c6adbbdab2af0891f2d9055b69",
     "action": {
-      "kind": "listen",
-      "target_id": "maya"
+      "kind": "start_conversation",
+      "target_id": "chloe",
+      "intent_id": "banter_tell_joke",
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "listen",
-        "target_id": "maya"
+        "kind": "start_conversation",
+        "target_id": "chloe",
+        "intent_id": "banter_tell_joke",
+        "option_index": null
       },
       "success": true,
       "roll": 11,
-      "success_chance": 76,
+      "success_chance": 82,
       "relationship_deltas": {
-        "maya": {
-          "affection": 0,
+        "chloe": {
+          "affection": 2,
           "chemistry": 0,
-          "trust": 3,
-          "friendship": 1
+          "trust": 0,
+          "friendship": 2
         }
       },
       "tags": [
-        "listen",
-        "supportive"
+        "funny",
+        "light"
       ]
     },
-    "narration": "In the cozy morning light of the kitchen, Maya leans against the counter, her laughter filling the air. You tune in, eager to hear her witty take on last night\u2019s drama. Your attentive listening earns you her trust, a little crack forming in her bubbly facade. It's a gentle reminder that beneath the humor, there's a heart yearning for genuine connection. The scent of shared warmth lingers, your friendship blossoming amidst late snacks and casual banter.",
-    "output_hash": "7cf0d11568c4f3a25088432b5013bd4871a89a37aaccd518f7e1266970175352"
+    "exchange": {
+      "player_dialogue": "Why don't scientists trust atoms? Because they make up everything!",
+      "npc_dialogue": "*laughs softly* That's a good one! I love a clever joke first thing in the morning. You definitely know how to break the ice around here.",
+      "npc_tone": "warm",
+      "npc_mood_after": "happy"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "Careful, if I keep making you laugh this early, I might get a reputation for being your favourite.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "What kind of joke would actually impress you, then, because I feel like I\u2019ve just got my opening act sorted.",
+          "intent_kind": "ask_about_topic",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m glad that landed, because I\u2019d rather make you smile than come in here trying too hard.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "warm"
+        },
+        {
+          "text": "I\u2019m going to leave that one there before I ruin my golden streak and keep the momentum alive.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "playful"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "dffc8b8ca6d49c927d24e89e4f9fc1c53ada0927dbd9c8a4a68846f2f6f1ef02"
   },
   {
     "turn": 5,
     "day": 1,
     "phase": "morning",
-    "location": "terrace",
-    "visible_state": "Liam: affection 6, chemistry 0, trust 0",
-    "input_hash": "7cf0d11568c4f3a25088432b5013bd4871a89a37aaccd518f7e1266970175352",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "dffc8b8ca6d49c927d24e89e4f9fc1c53ada0927dbd9c8a4a68846f2f6f1ef02",
+    "action": {
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "escalate_flirt",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 3,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "You know, if you were a molecule, I'd totally want to be bonded with you. Chemistry might be off, but I think we could spark something.",
+      "npc_dialogue": "*laughs and leans in slightly* That\u2019s a cute line. You might be onto something\u2014I've always had a soft spot for a good chemistry pun. Maybe you\u2019re just the kind of atom I want to stick around.",
+      "npc_tone": "playful",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "Careful, Chloe, keep talking like that and I\u2019ll start thinking we\u2019ve got real chemistry.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "So what kind of person usually makes your soft spot show up, then?",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m just saying, if we\u2019re atoms, I\u2019m definitely the one with the better bonding energy.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful"
+        },
+        {
+          "text": "I\u2019m going to leave that one there before I ruin the pun battle.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "c390b0d722208f27ca35f19fdb9973862a043ec29e5f746652200b16990c6509"
+  },
+  {
+    "turn": 6,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "c390b0d722208f27ca35f19fdb9973862a043ec29e5f746652200b16990c6509",
+    "action": {
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "disengaged"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "be7655d647d5143aadc7048da02932fe3ed5f104cc35c18ea542422a563817fb"
+  },
+  {
+    "turn": 7,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 0",
+    "input_hash": "be7655d647d5143aadc7048da02932fe3ed5f104cc35c18ea542422a563817fb",
     "action": {
       "kind": "move",
-      "target_id": "terrace"
+      "target_id": "kitchen",
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "move",
-        "target_id": "terrace"
+        "target_id": "kitchen",
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -154,410 +411,1260 @@
         "move"
       ]
     },
-    "narration": "As the morning sun breaks gently over the villa, Liam finds solace on the terrace, the cool air adding a refreshing touch to his reflective mood. Here, in this almost-private haven, he embraces the moment, ready to share honest thoughts and build the trust vital for lasting connections. With his grounded nature, he silently observes the beauty of the day and the possibilities that lie ahead, determined to forge bonds that withstand the challenges of villa life.",
-    "output_hash": "99c689d32671e58f5b57ad636897b10dae6329a9bd69cca071894584c0416098"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "b7c9defd2578e714ae9daf5a6f0d8017e89d273ada0d72dd88021d7def4af137"
   },
   {
-    "turn": 6,
+    "turn": 8,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 10, chemistry 0, trust 2",
+    "input_hash": "b7c9defd2578e714ae9daf5a6f0d8017e89d273ada0d72dd88021d7def4af137",
+    "action": {
+      "kind": "start_conversation",
+      "target_id": "maya",
+      "intent_id": "friendly_ask_feelings",
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "start_conversation",
+        "target_id": "maya",
+        "intent_id": "friendly_ask_feelings",
+        "option_index": null
+      },
+      "success": true,
+      "roll": 76,
+      "success_chance": 92,
+      "relationship_deltas": {
+        "maya": {
+          "affection": 2,
+          "chemistry": 0,
+          "trust": 2,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "supportive",
+        "sincere"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Hey Maya, you alright this morning? You seem pretty chill.",
+      "npc_dialogue": "Aww, thanks for checking in! Honestly, feeling pretty good right now. No drama, just enjoying the calm before the chaos kicks in. *smiles softly* It\u2019s nice when someone notices, you know?",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "Of course I noticed, you\u2019ve got that calm-before-the-storm glow that makes it hard not to.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "Good, because I was about to say the peace suits you way too much and I\u2019m a little jealous.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful"
+        },
+        {
+          "text": "I\u2019m glad it\u2019s peaceful for you right now, what\u2019s actually been making it feel nice lately?",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019ll leave you to enjoy the calm then, but I\u2019m glad I caught you in a good mood.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "a6112988904c130a70b4a0672e832d270788ca299d3156d73364b40984360aaa"
+  },
+  {
+    "turn": 9,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 10, chemistry 0, trust 2",
+    "input_hash": "a6112988904c130a70b4a0672e832d270788ca299d3156d73364b40984360aaa",
+    "action": {
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "maya",
+        "intent_id": "escalate_flirt",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 40,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "maya": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "You know, with a smile like that, you could make even the chaos seem pretty charming. Think you could handle a partner in crime?",
+      "npc_dialogue": "*grins, eyes sparkling* Oh, a partner in crime, huh? I like the sound of that. But be warned, I\u2019m the kind of partner who might just steal your heart and your last snack. Think you\u2019re up for the challenge?",
+      "npc_tone": "playful",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "I can handle the snack theft, but if you steal my heart you\u2019re paying rent on it.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful"
+        },
+        {
+          "text": "Honestly, that sounds like trouble I\u2019d happily sign up for if it\u2019s with you.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "warm"
+        },
+        {
+          "text": "Okay, partner in crime, what\u2019s your first mission when you\u2019re in a chaotic mood like this?",
+          "intent_kind": "ask_about_topic",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m gonna leave you to your snack heist, but I\u2019ll come find you later.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "23af931935edfcf705e4a2768627def4e559d46fe57e30c2941b78226f9023a3"
+  },
+  {
+    "turn": 10,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 10, chemistry 0, trust 2",
+    "input_hash": "23af931935edfcf705e4a2768627def4e559d46fe57e30c2941b78226f9023a3",
+    "action": {
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "disengaged"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "b7e3336f635bb2155da33b027c9adf646fc6c23bb84c556258ff064b1537254e"
+  },
+  {
+    "turn": 11,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "b7e3336f635bb2155da33b027c9adf646fc6c23bb84c556258ff064b1537254e",
+    "action": {
+      "kind": "start_conversation",
+      "target_id": "maya",
+      "intent_id": "friendly_compliment_personality",
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "start_conversation",
+        "target_id": "maya",
+        "intent_id": "friendly_compliment_personality",
+        "option_index": null
+      },
+      "success": true,
+      "roll": 55,
+      "success_chance": 82,
+      "relationship_deltas": {
+        "maya": {
+          "affection": 3,
+          "chemistry": 0,
+          "trust": 1,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "warm",
+        "sincere"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "You know, I really admire how you keep things light and fun around here. It\u2019s such a refreshing vibe.",
+      "npc_dialogue": "*laughs softly* Well, I do try to keep the mood up. It means a lot that you notice\u2014sometimes the jokes are just a cover, you know? But hearing that from you makes me feel pretty good, honestly.",
+      "npc_tone": "warm",
+      "npc_mood_after": "happy"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "I like that you can be real with me, though, because the funny side is already working for you.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "warm"
+        },
+        {
+          "text": "That\u2019s kind of sweet, actually, but now I\u2019m curious what you\u2019re covering up behind all the jokes.",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "curious"
+        },
+        {
+          "text": "So you\u2019re telling me my job here is to keep feeding your ego and laughing at your terrible jokes?",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful"
+        },
+        {
+          "text": "I\u2019m glad I could make you feel good, and I\u2019d rather stay on that note than overcomplicate it.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "sincere"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "673280b6493cf1152b6ed4b077b02334bd1a1cc5346a5ca08c886e247c9df892"
+  },
+  {
+    "turn": 12,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "673280b6493cf1152b6ed4b077b02334bd1a1cc5346a5ca08c886e247c9df892",
+    "action": {
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "maya",
+        "intent_id": "escalate_flirt",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 49,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "maya": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "warm"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "So, how about we test if your jokes are as good in private as they are in front of everyone else?",
+      "npc_dialogue": "*grins, leaning in slightly* Oh, putting me on the spot already? I like that. Maybe I\u2019ll tell you a secret joke that only you get to hear. Think you\u2019re ready for that kind of VIP treatment?",
+      "npc_tone": "flirty",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "I\u2019m ready if the joke is as good as your delivery, so hit me with your best one.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "Go on then, but if it\u2019s terrible I\u2019m absolutely judging you with love.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful"
+        },
+        {
+          "text": "What makes it a VIP joke, though, are you about to roast me or spoil me?",
+          "intent_kind": "ask_about_topic",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "Save the secret for later, I\u2019m going to let you enjoy the suspense.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "d4a13ae8c32defb482f01520543bb1eb13aa351c34da82a7d967e95c6ac1e1ab"
+  },
+  {
+    "turn": 13,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "d4a13ae8c32defb482f01520543bb1eb13aa351c34da82a7d967e95c6ac1e1ab",
+    "action": {
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "disengaged"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "ae6d0234f343ef5091327e6ee366f6974f5a262e24ecaaae161ad50a1243044d"
+  },
+  {
+    "turn": 14,
+    "day": 1,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 6, chemistry 0, trust 0",
+    "input_hash": "ae6d0234f343ef5091327e6ee366f6974f5a262e24ecaaae161ad50a1243044d",
+    "action": {
+      "kind": "move",
+      "target_id": "terrace",
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "terrace",
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "933988b5c2b6ec126ce76246f8eae71c3d79e0d26444cc11e49456d5e4d10c4d"
+  },
+  {
+    "turn": 15,
     "day": 1,
     "phase": "morning",
     "location": "terrace",
     "visible_state": "Liam: affection 8, chemistry 0, trust 0",
-    "input_hash": "99c689d32671e58f5b57ad636897b10dae6329a9bd69cca071894584c0416098",
+    "input_hash": "933988b5c2b6ec126ce76246f8eae71c3d79e0d26444cc11e49456d5e4d10c4d",
     "action": {
-      "kind": "talk",
-      "target_id": "liam"
+      "kind": "start_conversation",
+      "target_id": "liam",
+      "intent_id": "friendly_chat_villa",
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "talk",
-        "target_id": "liam"
+        "kind": "start_conversation",
+        "target_id": "liam",
+        "intent_id": "friendly_chat_villa",
+        "option_index": null
       },
       "success": true,
-      "roll": 3,
+      "roll": 68,
       "success_chance": 81,
       "relationship_deltas": {
         "liam": {
           "affection": 2,
           "chemistry": 0,
           "trust": 0,
+          "friendship": 1
+        }
+      },
+      "tags": [
+        "casual",
+        "friendly"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "This terrace might just be the best spot in the whole villa, don\u2019t you think? It feels kind of perfect for catching up or just chilling out.",
+      "npc_dialogue": "You're right, it really does have that vibe. I like how quiet it gets here in the mornings \u2014 makes it easier to be honest without distractions. Feels like a good place to actually get to know each other, you know?",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "Yeah, I like that too, because it feels easier to be real when it\u2019s just us talking like this.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "sincere"
+        },
+        {
+          "text": "So what\u2019s the real you like when you\u2019re not being all calm and philosophical in the morning light?",
+          "intent_kind": "go_deeper",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "Careful, Liam, saying stuff like that is how people end up catching feelings on this show.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "banter",
+          "risk": "medium",
+          "tone": "playful"
+        },
+        {
+          "text": "I\u2019m liking this conversation, but I\u2019m going to let you enjoy the quiet and catch you again later.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "d39315f77f50e5e6b5114ce36fef18acd294c88d23221da16dda1faf47f47dd0"
+  },
+  {
+    "turn": 16,
+    "day": 1,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 8, chemistry 0, trust 0",
+    "input_hash": "d39315f77f50e5e6b5114ce36fef18acd294c88d23221da16dda1faf47f47dd0",
+    "action": {
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "liam",
+        "intent_id": "honest_vulnerable",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 46,
+      "success_chance": 95,
+      "relationship_deltas": {
+        "liam": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
           "friendship": 0
         }
       },
       "tags": [
-        "talk",
-        "friendly"
+        "honest_vulnerable",
+        "safe",
+        "sincere"
       ]
     },
-    "narration": "As the sun spills its morning light across the terrace, Liam leans against the railing, his steady presence offering a comforting vibe. A nearby islander seizes the moment to strike up a conversation, and laughter soon fills the air. Their friendly exchange builds a rapport, bringing a sense of familiarity in the newness of villa life. Liam nods, appreciating the connection\u2014slowly but surely, trust begins to blossom on this sunny day.",
-    "output_hash": "730205f4900d780cf36b45e842912dd6f21d04384f9dfc7d0abf07d6d75e6ffa"
-  },
-  {
-    "turn": 7,
-    "day": 1,
-    "phase": "challenge",
-    "location": "terrace",
-    "visible_state": "Liam: affection 8, chemistry 0, trust 0",
-    "input_hash": "730205f4900d780cf36b45e842912dd6f21d04384f9dfc7d0abf07d6d75e6ffa",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
+    "exchange": {
+      "player_dialogue": "Honestly, Liam, I really appreciate how you seem to keep it real. It\u2019s rare to find someone you can just be yourself with, especially here.",
+      "npc_dialogue": "*He nods thoughtfully, a small smile tugging at his lips.* I\u2019m glad you feel that way. Being real with each other\u2014that\u2019s how trust starts. I\u2019m here, genuinely, not just for the fun, but to be someone you can rely on.",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
     },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "That actually means a lot, Liam, because I\u2019m trying to be real with you too.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "sincere"
+        },
+        {
+          "text": "Careful, saying things like that is how you get yourself nominated as everyone\u2019s favorite boy.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "What does being someone I can rely on look like to you in here?",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m glad we\u2019re on the same page, but I\u2019m gonna let you get back to it.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
     },
-    "narration": "On the terrace, where the evening air cools and secrets linger, Liam stands as a steadfast sentinel of honesty. The space feels charged with unspoken connections, ripe for heartfelt confessions. His grounded nature makes him a comforting presence, encouraging islanders to open up. As the first day unfolds, anticipation hangs thick, and friendships start to bloom, hinting at deeper alliances in this sun-soaked paradise.",
-    "output_hash": "60bdbf0c232906bbc79e9e4f6c2bcdfce42b3ab00d4559b91ed91ac29490d906"
-  },
-  {
-    "turn": 8,
-    "day": 1,
-    "phase": "afternoon",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "60bdbf0c232906bbc79e9e4f6c2bcdfce42b3ab00d4559b91ed91ac29490d906",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "The terrace holds a whispering breeze, inviting secrets to dance among the sun-kissed islanders. As the afternoon fades, the bright laughter softens into murmurs of hope and longing. It\u2019s the perfect spot for confessions, where hearts race and eyes glint with unspoken desires. The first day draws to a close, holding promises of connections yet to be forged in the sultry warmth of the villa.",
-    "output_hash": "72ac05a4dd115c9099b8b22d55d55882a481eaf11cea46b0225f3ffc1c0376b8"
-  },
-  {
-    "turn": 9,
-    "day": 1,
-    "phase": "text",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "72ac05a4dd115c9099b8b22d55d55882a481eaf11cea46b0225f3ffc1c0376b8",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the sun dipped low, the terrace bathed in a gentle glow, it became the sanctuary for heartfelt whispers. In this serene escape, islanders opened up about their dreams and desires, forging deeper connections amidst the calm. With the evening breeze carrying away their nervousness, it was the perfect moment to advance their journeys of love, each confession drawing them closer beneath the twinkling skies.",
-    "output_hash": "8e16d1789be5c1afc8bd983ebff4ff190581b18b2c7ce51b175de62ddb0ea68a"
-  },
-  {
-    "turn": 10,
-    "day": 1,
-    "phase": "evening",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "8e16d1789be5c1afc8bd983ebff4ff190581b18b2c7ce51b175de62ddb0ea68a",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the sun dipped below the horizon, the terrace transformed into a sanctuary of whispers and warm glances. Couples sought refuge from the villa\u2019s chaos, sharing their dreams and secrets beneath the twilight sky. With each heartfelt confession, the air thickened with anticipation. Laughter echoed softly, mingling with the gentle breeze, as bonds were forged under the stars. The night was young, and possibility hung in the air, a promise of the stories yet to unfold.",
-    "output_hash": "f399cc0f30bec2da79b47b4773e85181481db4286517c9f16151faf56625d49e"
-  },
-  {
-    "turn": 11,
-    "day": 2,
-    "phase": "morning",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "f399cc0f30bec2da79b47b4773e85181481db4286517c9f16151faf56625d49e",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the morning sun bathes the terrace in a soft glow, an invigorating breeze whispers secrets of love yet to blossom. It's the perfect spot for intimate confessions, where hearts can open up away from prying eyes. The islanders are on the cusp of new adventures, ready to navigate the delicate balance of attraction and honesty as they begin another day in paradise.",
-    "output_hash": "5942694063a48abb17e1d08e5aba8408b141c03dee0ad0e9ec6e00196193db38"
-  },
-  {
-    "turn": 12,
-    "day": 2,
-    "phase": "challenge",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "5942694063a48abb17e1d08e5aba8408b141c03dee0ad0e9ec6e00196193db38",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the sun dipped low, casting a warm glow over the terrace, the islanders gathered, drawn by the promise of quieter confessions and secret smiles. The air was charged with unspoken feelings, each heart racing at the thought of what lay ahead. With the night just beginning, they felt the thrill of possibilities, as vulnerability began to weave its magic under the stars.",
-    "output_hash": "3e6e49a098d4ae7813aae6d8a9043a44817c2eb80f564b958985d2c1686adb81"
-  },
-  {
-    "turn": 13,
-    "day": 2,
-    "phase": "afternoon",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "3e6e49a098d4ae7813aae6d8a9043a44817c2eb80f564b958985d2c1686adb81",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the afternoon sun draped the terrace in a soft glow, the cool breeze whispered promises of intimacy. This secluded spot, away from the villa's bustling energy, became the backdrop for heartfelt confessions. Here, secrets were shared, and connections deepened, setting the stage for budding romances and unexpected twists. With the day advancing, anticipation hung in the air, ready to change everything in a heartbeat. Who would take the plunge next?",
-    "output_hash": "ccfe6b817659dd3c937d6b90962d441bad4aed5e1aa244dce238d8ec871ac5d0"
-  },
-  {
-    "turn": 14,
-    "day": 2,
-    "phase": "text",
-    "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "ccfe6b817659dd3c937d6b90962d441bad4aed5e1aa244dce238d8ec871ac5d0",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the sun dips below the horizon, the terrace transforms into a sanctuary of whispered truths and shared secrets. A gentle breeze carries the fragrance of blooming flowers, creating the perfect backdrop for heart-to-heart conversations. Here, under the softening light, connections deepen, setting the stage for unexpected alliances and budding romances. The second day in paradise promises revelations that could change everything.",
-    "output_hash": "58e697e00de996595e5d7ec1112269676f66868c4dac952e0b76cbbbe280f550"
-  },
-  {
-    "turn": 15,
-    "day": 2,
-    "phase": "evening",
-    "location": "terrace",
-    "visible_state": "Liam: affection 8, chemistry 1, trust 0",
-    "input_hash": "58e697e00de996595e5d7ec1112269676f66868c4dac952e0b76cbbbe280f550",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the evening air cools on the terrace, Liam finds a moment for quiet reflection. With the soft rustle of leaves around him, he considers the bonds forming in the villa. His steady gaze reveals his understanding of the delicate dynamics at play. Here, amidst almost-private confessions, trust deepens and true intentions surface. The night stretches on, promising more revelations under the stars.",
-    "output_hash": "d3a9ea843d2fed3de7a9da4415546f56502366a1915056aa9bee542f4aada9fd"
-  },
-  {
-    "turn": 16,
-    "day": 3,
-    "phase": "morning",
-    "location": "terrace",
-    "visible_state": "Liam: affection 8, chemistry 1, trust 0",
-    "input_hash": "d3a9ea843d2fed3de7a9da4415546f56502366a1915056aa9bee542f4aada9fd",
-    "action": {
-      "kind": "advance_phase",
-      "target_id": null
-    },
-    "mechanical_result": {
-      "action": {
-        "kind": "advance_phase",
-        "target_id": null
-      },
-      "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
-      "tags": [
-        "phase"
-      ]
-    },
-    "narration": "As the sun creeps up over the horizon, the terrace breathes a cooler, calm atmosphere. Liam, steady in his observance, leans against the railing, taking a moment to reflect. Here, the quieter confessions weave through the morning air, encouraging bonds to deepen. In this sacred space, honesty feels safest, and trust begins to flourish among the islanders. The day is just beginning, yet the undercurrents of connection are ever palpable.",
-    "output_hash": "23869bd7f3c979ca07d734df6a5f95a0d6632bfabdc9dcd7a44720bb186630c2"
+    "output_hash": "e4d035c1f39e3a35db251a368651ac6518268fa9fc2f8af5dbd83d9d5fba202e"
   },
   {
     "turn": 17,
-    "day": 3,
-    "phase": "challenge",
+    "day": 1,
+    "phase": "morning",
     "location": "terrace",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "23869bd7f3c979ca07d734df6a5f95a0d6632bfabdc9dcd7a44720bb186630c2",
+    "visible_state": "Liam: affection 8, chemistry 0, trust 0",
+    "input_hash": "e4d035c1f39e3a35db251a368651ac6518268fa9fc2f8af5dbd83d9d5fba202e",
     "action": {
-      "kind": "advance_phase",
-      "target_id": null
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "advance_phase",
-        "target_id": null
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
       "success_chance": null,
       "relationship_deltas": {},
       "tags": [
-        "phase"
+        "disengaged"
       ]
     },
-    "narration": "As the sun dipped below the horizon, Maya sauntered to the terrace, laughter spilling from her lips. The cooler air invited whispered secrets, and she playfully deflected her friends\u2019 probing questions with jokes and playful banter. Yet behind her cheerful facade, a flicker of vulnerability danced in her eyes. The terrace buzzed with anticipation, a stage set for confessions\u2014both light-hearted and profound\u2014as the villa prepared to embrace the next phase of love and connection.",
-    "output_hash": "22647d1ab9b43959baf306b579f14450c34a4fdc2153fa7fc674d22d123de920"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "6136d1bd3075281e4286a3bdc916b371dbfa62f3ce4d7a2d09e7d0b466222ae8"
   },
   {
     "turn": 18,
-    "day": 3,
-    "phase": "afternoon",
+    "day": 1,
+    "phase": "morning",
     "location": "terrace",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "22647d1ab9b43959baf306b579f14450c34a4fdc2153fa7fc674d22d123de920",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "6136d1bd3075281e4286a3bdc916b371dbfa62f3ce4d7a2d09e7d0b466222ae8",
     "action": {
-      "kind": "advance_phase",
-      "target_id": null
+      "kind": "start_conversation",
+      "target_id": "liam",
+      "intent_id": "friendly_ask_feelings",
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
-        "kind": "advance_phase",
-        "target_id": null
+        "kind": "start_conversation",
+        "target_id": "liam",
+        "intent_id": "friendly_ask_feelings",
+        "option_index": null
       },
       "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
+      "roll": 17,
+      "success_chance": 92,
+      "relationship_deltas": {
+        "liam": {
+          "affection": 2,
+          "chemistry": 0,
+          "trust": 2,
+          "friendship": 0
+        }
+      },
       "tags": [
-        "phase"
+        "supportive",
+        "sincere"
       ]
     },
-    "narration": "On the terrace, the cooler breeze carried whispers of affection and the gentle rustle of leaves. Maya leaned against the railing, her laughter ringing out like music, lightening the air. Beneath her playful quips, though, a hint of vulnerability flickered. In this serene corner of the villa, quiet confessions danced in the golden afternoon light, as hearts pondered the risks of love\u2014hidden behind the mask of a joker.",
-    "output_hash": "bb8aa769a324114d024b95bec3cf423b44939136fa792dd5b7c9026cc0c1d297"
+    "exchange": {
+      "player_dialogue": "Hey Liam, how are you feeling this morning?",
+      "npc_dialogue": "Honestly, I'm feeling pretty good. Just taking everything in and ready to see where the day takes us. How about you?",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "I\u2019m good too, honestly, just enjoying this with you and seeing where it goes.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "warm"
+        },
+        {
+          "text": "You\u2019re in a nice mood, I like it, is there anything you\u2019re hoping the day throws at you?",
+          "intent_kind": "ask_about_topic",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m taking it in as well, but I think you\u2019re part of why it feels so easy to relax.",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "medium",
+          "tone": "playful"
+        },
+        {
+          "text": "I\u2019m going to let you enjoy the day and catch you later.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "846f47cffc85a38508e69ad9cafd90850f8663581501ab0edfef02264be7def5"
   },
   {
     "turn": 19,
-    "day": 3,
-    "phase": "text",
+    "day": 1,
+    "phase": "morning",
     "location": "terrace",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "bb8aa769a324114d024b95bec3cf423b44939136fa792dd5b7c9026cc0c1d297",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "846f47cffc85a38508e69ad9cafd90850f8663581501ab0edfef02264be7def5",
     "action": {
-      "kind": "advance_phase",
-      "target_id": null
+      "kind": "respond_with",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": 0
     },
     "mechanical_result": {
       "action": {
-        "kind": "advance_phase",
-        "target_id": null
+        "kind": "respond_with",
+        "target_id": "liam",
+        "intent_id": "honest_vulnerable",
+        "option_index": 0
       },
       "success": true,
-      "roll": null,
-      "success_chance": null,
-      "relationship_deltas": {},
+      "roll": 93,
+      "success_chance": 95,
+      "relationship_deltas": {
+        "liam": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
       "tags": [
-        "phase"
+        "honest_vulnerable",
+        "safe",
+        "warm"
       ]
     },
-    "narration": "As the sun dips below the horizon, Maya leans against the terrace railing, the cool air wrapping around her like a comforting embrace. \"You know,\" she teases, a playful grin on her face, \"if laughter is the best medicine, I must be a doctor by now!\" The evening hums with lighthearted energy, masking the deeper insecurities that bubble just beneath her humor. Here, in this almost-private space, truth hangs in the air\u2014waiting for the right moment to unfold.",
-    "output_hash": "84f3903440feff43aea5ddf994c9755b11290ba6dce8a3c5d0ebb033333c9b7f"
+    "exchange": {
+      "player_dialogue": "Honestly, Liam, I'm a bit nervous about opening up here, but I want you to know I value real connections above all else.",
+      "npc_dialogue": "*nods thoughtfully* I appreciate you saying that. It\u2019s not always easy to be vulnerable, but that\u2019s how trust starts. I\u2019m here to listen whenever you want to share more.",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "text": "That means a lot, honestly, and I do want to share more with you.",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "sincere"
+        },
+        {
+          "text": "You keep making this feel easy, which is dangerous because now I might actually open up.",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "low",
+          "tone": "playful"
+        },
+        {
+          "text": "What\u2019s something you\u2019ve been keeping to yourself lately?",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious"
+        },
+        {
+          "text": "I\u2019m feeling good here, so I\u2019m going to leave it on a nice note for now.",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm"
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "output_hash": "b49f20e09119448ee81320bc8e317a4dc5a9d19e67915609f8e17741a1f57b67"
   },
   {
     "turn": 20,
+    "day": 1,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "b49f20e09119448ee81320bc8e317a4dc5a9d19e67915609f8e17741a1f57b67",
+    "action": {
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "disengaged"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "3bcbc54bcc2595889249910e39a58407ac6c7f3d95d28038745cab710b0d9aea"
+  },
+  {
+    "turn": 21,
+    "day": 1,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "3bcbc54bcc2595889249910e39a58407ac6c7f3d95d28038745cab710b0d9aea",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "6418df2927cc70108217ca41df3a31a7ac3094e312fbce0d2edff39b55bad19f"
+  },
+  {
+    "turn": 22,
+    "day": 1,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "6418df2927cc70108217ca41df3a31a7ac3094e312fbce0d2edff39b55bad19f",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "6b525dc2f7e715e8079b7690870870c4bee82ce39b0930b285b215a65707e046"
+  },
+  {
+    "turn": 23,
+    "day": 1,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "6b525dc2f7e715e8079b7690870870c4bee82ce39b0930b285b215a65707e046",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "4fe594431cc0dccefb8b6033a32068499cd1bd5d51287fbd0a8c283aca2b070e"
+  },
+  {
+    "turn": 24,
+    "day": 1,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "4fe594431cc0dccefb8b6033a32068499cd1bd5d51287fbd0a8c283aca2b070e",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "63bfd6a4f8e1ba7665a770b293a35334208d313af2ce8ee6664de58cd4728c1f"
+  },
+  {
+    "turn": 25,
+    "day": 2,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "63bfd6a4f8e1ba7665a770b293a35334208d313af2ce8ee6664de58cd4728c1f",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "3dc792934d086c31556715b44aaa8f60f03e2a20ca86fd66065a6c0d41d8fc84"
+  },
+  {
+    "turn": 26,
+    "day": 2,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "3dc792934d086c31556715b44aaa8f60f03e2a20ca86fd66065a6c0d41d8fc84",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "bfa3e0d203e844141d20037f09e66236e0bd9b6523c99c89696d7ac96f125c75"
+  },
+  {
+    "turn": 27,
+    "day": 2,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "bfa3e0d203e844141d20037f09e66236e0bd9b6523c99c89696d7ac96f125c75",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "b8ad8e299d7a9e0a06fa59f9612fa941474f342a06977de63d084964e60e68a8"
+  },
+  {
+    "turn": 28,
+    "day": 2,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "b8ad8e299d7a9e0a06fa59f9612fa941474f342a06977de63d084964e60e68a8",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "04347b03db5e8611540644f1e9c5a74faff52e38c9dd58dccf72cd1cbac67873"
+  },
+  {
+    "turn": 29,
+    "day": 2,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "04347b03db5e8611540644f1e9c5a74faff52e38c9dd58dccf72cd1cbac67873",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "0b12120d1322e356516758e0155f05317e2e5f8b3cd07a0ec5ae23dbc5c45d0d"
+  },
+  {
+    "turn": 30,
+    "day": 3,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 10, chemistry 0, trust 2",
+    "input_hash": "0b12120d1322e356516758e0155f05317e2e5f8b3cd07a0ec5ae23dbc5c45d0d",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "83ec274512b4fa412d8e14d71160396ba4e19eab2890edca7fc32ad05d258e79"
+  },
+  {
+    "turn": 31,
+    "day": 3,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "83ec274512b4fa412d8e14d71160396ba4e19eab2890edca7fc32ad05d258e79",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "91219c469de05735a82a353c1b0c5348502eea38b0cf7fbdc344c29a8d1ab23a"
+  },
+  {
+    "turn": 32,
+    "day": 3,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "91219c469de05735a82a353c1b0c5348502eea38b0cf7fbdc344c29a8d1ab23a",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "6e99aa8e8e8119ac5718eeb5d0e2f04a0333d76e73e82d6284fe70eacb30216f"
+  },
+  {
+    "turn": 33,
+    "day": 3,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "6e99aa8e8e8119ac5718eeb5d0e2f04a0333d76e73e82d6284fe70eacb30216f",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "ae6db9432bcaa2f669089a47f2c8788daef5523554beee4b757204bed1671b37"
+  },
+  {
+    "turn": 34,
     "day": 3,
     "phase": "evening",
     "location": "terrace",
     "visible_state": "No visible islanders.",
-    "input_hash": "84f3903440feff43aea5ddf994c9755b11290ba6dce8a3c5d0ebb033333c9b7f",
+    "input_hash": "ae6db9432bcaa2f669089a47f2c8788daef5523554beee4b757204bed1671b37",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -567,24 +1674,30 @@
         "phase"
       ]
     },
-    "narration": "As the sun dipped below the horizon, the terrace transformed into an intimate escape, where whispers floated in the cooler evening air. Islander hearts thrummed with anticipation, ready to uncover secrets and share confessions. With the promise of honesty hanging between them, connections deepened, and the stage was set for unexpected twists as the warmth of the day melted into the enchantment of night.",
-    "output_hash": "d3d20548139eadf0b0dc7519b830e37c457bc7aa66607bd06728148a9fb123e1"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "bf93f5374157a542a282ac303ab54b976f6a5092278666e08112c67e4784ab0b"
   },
   {
-    "turn": 21,
+    "turn": 35,
     "day": 4,
     "phase": "morning",
     "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "d3d20548139eadf0b0dc7519b830e37c457bc7aa66607bd06728148a9fb123e1",
+    "visible_state": "Aisha: affection 8, chemistry 12, trust 0",
+    "input_hash": "bf93f5374157a542a282ac303ab54b976f6a5092278666e08112c67e4784ab0b",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -594,24 +1707,32 @@
         "phase"
       ]
     },
-    "narration": "As the morning sun kisses the terrace, the cool air invites whispers and secret revelations. This serene haven serves as the villa's heart for intimate confessions, where feelings simmer just beneath the surface. With the day advancing, the anticipation of what\u2019s to come hangs in the air, hinting at truths waiting to be unveiled among the islanders. Who will dare to share their heart today?",
-    "output_hash": "1c68be1223cfb23d5581a9a11e80f9b71fb2d3e0388e1e5031c9bd2bf1a9d9e9"
+    "exchange": null,
+    "event_narration": {
+      "prose": "The sun rises on the terrace as the villa's pulse quickens. The air crackles with anticipation from the recoupling ceremony's final moments, leaving hearts racing and alliances tested. Just as the dust seems to settle, Aisha storms into the villa, a dazzling bombshell whose arrival sends a thrilling shockwave through every corner of the island. The game resets, and the tension is palpable\u2014love's battlefield just got a whole lot more dangerous."
+    },
+    "follow_up_menu": null,
+    "output_hash": "239d0e6c3c6664ab74f23cead3b202cc498cc88ff7f4d655ce615a4e63b43297"
   },
   {
-    "turn": 22,
+    "turn": 36,
     "day": 4,
     "phase": "challenge",
     "location": "terrace",
-    "visible_state": "No visible islanders.",
-    "input_hash": "1c68be1223cfb23d5581a9a11e80f9b71fb2d3e0388e1e5031c9bd2bf1a9d9e9",
+    "visible_state": "Aisha: affection 8, chemistry 12, trust 0",
+    "input_hash": "239d0e6c3c6664ab74f23cead3b202cc498cc88ff7f4d655ce615a4e63b43297",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -621,24 +1742,30 @@
         "phase"
       ]
     },
-    "narration": "As the sun begins to dip beyond the horizon, the terrace transforms into the villa's intimate haven. With its cooler air and hushed whispers, it\u2019s the perfect spot for lingering confessions and stolen glances. Tonight, the Islanders gather, ready to embrace the challenge ahead, as anticipation hangs thick in the air, promising twists and turns in their budding romances. The night is young, and secrets are ripe for the sharing.",
-    "output_hash": "c621b8b89eb5b39a66a21c2f91fce4c09cbe3c74ba9010301a4c8979e9e3d069"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "263b225caca73b99d4c2f0def50b4a43800903e959fc728478bd2c2766b13e62"
   },
   {
-    "turn": 23,
+    "turn": 37,
     "day": 4,
     "phase": "afternoon",
     "location": "terrace",
-    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "c621b8b89eb5b39a66a21c2f91fce4c09cbe3c74ba9010301a4c8979e9e3d069",
+    "visible_state": "Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "263b225caca73b99d4c2f0def50b4a43800903e959fc728478bd2c2766b13e62",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -648,24 +1775,30 @@
         "phase"
       ]
     },
-    "narration": "On the terrace, the cool air breezes in, inviting quiet confessions amidst the vibrant laughter. Maya, ever the jokester, deflects any hint of seriousness with a quick quip, her smile shimmering like sunlight on the waves. Though her humor cloaks deeper insecurities, the villa feels lighter in her presence, where flirty banter reigns and unexpected moments spark with potential. As afternoon drapes over the island, the laughter harmonizes with the gentle rustle of palm leaves, hinting at deeper truths yet to surface.",
-    "output_hash": "440a117fcf2f7854531b86a5ebd36236671f8c0a5c463e9ff92c6709d5cc1f7d"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "0fc2dda52cea75cc4ff4ac646dde54fddc78220f68fcd9133b18178780cdab85"
   },
   {
-    "turn": 24,
+    "turn": 38,
     "day": 4,
     "phase": "text",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 6, trust 0",
-    "input_hash": "440a117fcf2f7854531b86a5ebd36236671f8c0a5c463e9ff92c6709d5cc1f7d",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "0fc2dda52cea75cc4ff4ac646dde54fddc78220f68fcd9133b18178780cdab85",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -675,24 +1808,30 @@
         "phase"
       ]
     },
-    "narration": "As the sun dips low, Chloe finds solace on the terrace, where cool air invites whispered secrets. Her warm gaze scans the horizon, thoughtful. A place of truth, she cherishes this moment\u2014an oasis where the island\u2019s heat gives way to heartfelt connections. Ready for honest dialogue, Chloe hopes the villa will breathe kindness, longing for warmth in her own heart amidst the rising tensions. With delicate sincerity, she prepares to reach out, searching for those small emotional sparks.",
-    "output_hash": "f867bd57b09bc67d13502eb03d79816099b6e036181f28d3b72fc4ac96c4fbe6"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "023e35935f31db15a176ad5c53a46d382d3389fd83392d704e21510b92189fcd"
   },
   {
-    "turn": 25,
+    "turn": 39,
     "day": 4,
     "phase": "evening",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 6, trust 0; Maya: affection 8, chemistry 0, trust 3",
-    "input_hash": "f867bd57b09bc67d13502eb03d79816099b6e036181f28d3b72fc4ac96c4fbe6",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0; Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "023e35935f31db15a176ad5c53a46d382d3389fd83392d704e21510b92189fcd",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -702,24 +1841,30 @@
         "phase"
       ]
     },
-    "narration": "As the sun dipped lower, the terrace welcomed Chloe and Maya, cooler air stirring a sense of intimacy. Chloe, ever the Sweetheart, leaned into the moment, her sincerity wrapping around Maya like a warm hug. Maya, quick with a joke, chuckled nervously, deflecting, but the playful banter masked a flicker of vulnerability. In the gentle twilight, they shared secrets that deepened their bond, the villa\u2019s energy vibrant with whispered honesty.",
-    "output_hash": "671555d1f99599e80b823f4528cc5d0ad6e80368638220548173631730acf8ee"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "de600cd92cf5d8127ce775c28bf5a8554a0ff9c83789290e534a0bf779fa11ec"
   },
   {
-    "turn": 26,
+    "turn": 40,
     "day": 5,
     "phase": "morning",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 7, trust 0; Maya: affection 8, chemistry 1, trust 3",
-    "input_hash": "671555d1f99599e80b823f4528cc5d0ad6e80368638220548173631730acf8ee",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0; Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "de600cd92cf5d8127ce775c28bf5a8554a0ff9c83789290e534a0bf779fa11ec",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -729,24 +1874,30 @@
         "phase"
       ]
     },
-    "narration": "As dawn breaks over the terrace, the air is refreshingly cool, beckoning quiet revelations. Chloe leans against the railing, her warm sincerity inviting a deeper conversation. \u201cI just want everyone to feel valued,\u201d she says, her eyes scanning the horizon. Maya, ever the jester, chuckles, \u201cWell, I\u2019m definitely valued for my comedic timing!\u201d Despite the laughter, there's a flicker of something deeper in her eyes, a hint of vulnerability masked by humor. In this serene moment, honesty tugs at the heartstrings.",
-    "output_hash": "dcb8800fec96e80cf1380a7a1d8997820695b6f5eb72ef59e0ace87ebb261a4c"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "9b7b2eeca42dfa6c9d56f5323c73d041d0999cb138c1fa3a0ab2b2b75cf2556e"
   },
   {
-    "turn": 27,
+    "turn": 41,
     "day": 5,
     "phase": "challenge",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
-    "input_hash": "dcb8800fec96e80cf1380a7a1d8997820695b6f5eb72ef59e0ace87ebb261a4c",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "9b7b2eeca42dfa6c9d56f5323c73d041d0999cb138c1fa3a0ab2b2b75cf2556e",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -756,24 +1907,30 @@
         "phase"
       ]
     },
-    "narration": "On the terrace, the cool air cradled Chloe's heart as she savored a moment of solitude. Waves of honesty washed over her, mingling with whispered hopes beneath the twinkling stars. She noticed subtle shifts in her fellow islanders, reminding her that vulnerability could lay the groundwork for deeper bonds. As the sun dipped below the horizon, Chloe was determined to ensure that kindness prevailed in their sun-soaked world, all while secretly yearning to be wanted in return.",
-    "output_hash": "ec360ef3db66c1c827f460114731838c5bf46d1b16f859aab6fdfc9d3409fc4a"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "2591ab7ec9d745fd8623c6f2ebc5def175ade295c1caa1e2e9e959a4ebe32075"
   },
   {
-    "turn": 28,
+    "turn": 42,
     "day": 5,
     "phase": "afternoon",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
-    "input_hash": "ec360ef3db66c1c827f460114731838c5bf46d1b16f859aab6fdfc9d3409fc4a",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "2591ab7ec9d745fd8623c6f2ebc5def175ade295c1caa1e2e9e959a4ebe32075",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -783,24 +1940,30 @@
         "phase"
       ]
     },
-    "narration": "On the terrace, where the afternoon sun weaves shadows through the swaying palms, Chloe takes a moment to gather her thoughts. The air is ripe for honesty, and she watches with a keen eye, sensing each subtle shift in her fellow islanders. Her warm heart yearns for connection, yet she remains a guardian of their emotions, hoping to nurture bonds without adding unnecessary drama. As the day unfolds, the villa breathes in anticipation, ready for the next chapter of romance and revelations.",
-    "output_hash": "db50f0129a8fb7cb6aad3544ab31afe89a8e7c877d4e95bf2d5935d98bfba438"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "4725c7d52d85548d02d3cb56838d1a99448b91f3680d0850492d60547150bf34"
   },
   {
-    "turn": 29,
+    "turn": 43,
     "day": 5,
     "phase": "text",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
-    "input_hash": "db50f0129a8fb7cb6aad3544ab31afe89a8e7c877d4e95bf2d5935d98bfba438",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0",
+    "input_hash": "4725c7d52d85548d02d3cb56838d1a99448b91f3680d0850492d60547150bf34",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -810,24 +1973,30 @@
         "phase"
       ]
     },
-    "narration": "On the terrace, where the evening air whispers secrets, Chloe takes a moment to reflect. With a heart full of warmth, she observes the subtle emotional shifts among the islanders. Her sincere nature compels her to keep the villa harmonious, but beneath her careful exterior, she yearns to feel cherished. Each gentle breeze carries the weight of unspoken words, and tonight, she hopes that honesty blooms in the quiet.",
-    "output_hash": "3aa248210805188be3643444d54c600f8a026921805ddd6dc9d61ef72389108b"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "375c69447469e6a4023f2f015d9ccf7d1785647c9456113af6e44b154bfeee40"
   },
   {
-    "turn": 30,
+    "turn": 44,
     "day": 5,
     "phase": "evening",
     "location": "terrace",
-    "visible_state": "Chloe: affection 12, chemistry 8, trust 0; Maya: affection 8, chemistry 3, trust 3",
-    "input_hash": "3aa248210805188be3643444d54c600f8a026921805ddd6dc9d61ef72389108b",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0; Maya: affection 13, chemistry 0, trust 3",
+    "input_hash": "375c69447469e6a4023f2f015d9ccf7d1785647c9456113af6e44b154bfeee40",
     "action": {
       "kind": "advance_phase",
-      "target_id": null
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "advance_phase",
-        "target_id": null
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
       },
       "success": true,
       "roll": null,
@@ -837,7 +2006,9 @@
         "phase"
       ]
     },
-    "narration": "As the cooler evening air wrapped around the terrace, Chloe and Maya found solace in the quiet moments. Chloe's warmth shone through as she encouraged a more heartfelt conversation, while Maya, ever the jester, lightened the mood with playful quips. It was a delicate dance of sincerity and humor, where both islanders balanced vulnerability with their usual charm. In this sanctuary of whispers, deeper connections began to shimmer under the starlit sky.",
-    "output_hash": "1c4a59ffbde15b6f24523d25600a28a7d2d8cb494933d2591a7d09d924fcb3ec"
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "output_hash": "91d290059addc0da9550e2d7427200bcd5d1844e1091c747057ab79d48adcf50"
   }
 ]

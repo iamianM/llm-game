@@ -8,6 +8,7 @@ Design sources:
 from __future__ import annotations
 
 from enum import StrEnum
+from functools import lru_cache
 from pathlib import Path
 from typing import cast
 
@@ -57,6 +58,7 @@ class IntentCatalog(BaseModel):
     intents: list[Intent]
 
 
+@lru_cache(maxsize=8)
 def load_intents(path: Path = Path("content/intents.yaml")) -> list[Intent]:
     """Load and validate the intent catalog."""
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))

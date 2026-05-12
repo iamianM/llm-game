@@ -27,11 +27,19 @@ def state_hash(payload: JsonValue) -> str:
 def state_hash_payload(state: GameState) -> dict[str, object]:
     """Return the mechanical payload used for deterministic state hashes.
 
-    Dialogue prose is intentionally not part of GameState in F2. When F3 adds
-    active conversation history, this function remains the single place that
-    strips non-mechanical dialogue text before hashing.
+    Dialogue prose is intentionally excluded so the same seed and intent
+    sequence hashes identically regardless of LLM wording.
     """
-    return state.model_dump(mode="json")
+    payload = state.model_dump(mode="json")
+    conversation = payload.get("active_conversation")
+    if isinstance(conversation, dict):
+        exchanges = conversation.get("exchanges")
+        if isinstance(exchanges, list):
+            for exchange in exchanges:
+                if isinstance(exchange, dict):
+                    exchange.pop("player_dialogue", None)
+                    exchange.pop("npc_dialogue", None)
+    return payload
 
 
 def save_snapshot(path: Path, payload: dict[str, object]) -> None:

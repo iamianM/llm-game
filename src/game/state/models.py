@@ -12,10 +12,11 @@ canonical game state.
 from __future__ import annotations
 
 from enum import StrEnum
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 class Phase(StrEnum):
@@ -128,6 +129,59 @@ class Couple(BaseModel):
     formed_on_day: int
 
 
+class FollowUpOption(BaseModel):
+    """One contextual follow-up choice in an open conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    text: str
+    intent_kind: str
+    stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
+    risk: Literal["safe", "low", "medium", "high"]
+    tone: str
+
+
+class FollowUpMenu(BaseModel):
+    """Contextual menu generated after an NPC reply."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    options: list[FollowUpOption] = Field(min_length=2, max_length=4)
+    npc_will_leave: bool
+    npc_exit_line: str | None = None
+
+
+class ExchangeRecord(BaseModel):
+    """One exchange retained inside an active conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    turn_index: int
+    intent_id: str
+    player_dialogue: str
+    npc_dialogue: str
+    npc_tone: str
+    npc_mood_after: Mood
+    success: bool
+    tags: list[str] = Field(default_factory=list)
+    relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
+
+
+class Conversation(BaseModel):
+    """A single active one-on-one conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    target_id: str
+    started_on_turn: int
+    started_on_day: int
+    exchanges: list[ExchangeRecord] = Field(default_factory=list)
+    accumulated_tags: list[str] = Field(default_factory=list)
+    status: Literal["open", "closing", "closed"] = "open"
+    departure_probability_last: int = 0
+    pending_options: FollowUpMenu | None = None
+
+
 class GameState(BaseModel):
     """Canonical deterministic game state."""
 
@@ -142,6 +196,7 @@ class GameState(BaseModel):
     player: PlayerState
     islanders: list[IslanderState]
     couples: list[Couple] = Field(default_factory=list)
+    active_conversation: Conversation | None = None
 
     @property
     def is_terminal(self) -> bool:

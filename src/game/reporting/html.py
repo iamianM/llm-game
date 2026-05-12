@@ -51,6 +51,7 @@ def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -
             f"{escape(str(action.get('intent_id') or ''))}</p>"
             f"{_exchange_block(record.get('exchange'))}"
             f"{_event_block(record.get('event_narration'))}"
+            f"{_follow_up_block(record.get('follow_up_menu'))}"
             f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs "
             f"{escape(str(result.get('success_chance')))} "
             f"<span class='{outcome_class}'>{'Success' if result['success'] else 'Miss'}</span></p>"
@@ -104,6 +105,30 @@ def _event_block(event_narration: object) -> str:
     return (
         "<div class='card'>"
         f"<p><b>Event:</b> {escape(event_narration.get('prose', ''))}</p>"
+        "</div>"
+    )
+
+
+def _follow_up_block(menu: object) -> str:
+    if not isinstance(menu, dict):
+        return ""
+    options = menu.get("options")
+    option_items = ""
+    if isinstance(options, list):
+        option_items = "".join(
+            f"<li>{escape(option.get('text', ''))} "
+            f"<span class='meta'>({escape(option.get('intent_kind', ''))}, "
+            f"{escape(option.get('risk', ''))})</span></li>"
+            for option in options
+            if isinstance(option, dict)
+        )
+    exit_line = menu.get("npc_exit_line")
+    exit_text = f"<p><b>Exit:</b> {escape(exit_line)}</p>" if exit_line else ""
+    return (
+        "<div class='card'>"
+        "<p><b>Follow-up menu</b></p>"
+        f"<ol>{option_items}</ol>"
+        f"{exit_text}"
         "</div>"
     )
 

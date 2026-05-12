@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 
+from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.event_narrator import OpenAIEventNarrator
 from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
@@ -34,6 +35,7 @@ def run(args: argparse.Namespace) -> int:
     state = new_game(seed)
     rng = SeededRng(seed)
     islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
+    contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
     event_narrator = None if args.mock_llm else OpenAIEventNarrator().narrate
     print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
 
@@ -68,6 +70,7 @@ def run(args: argparse.Namespace) -> int:
             action,
             rng,
             islander_voice=islander_voice,
+            contextual_options=contextual_options,
             event_narrator=event_narrator,
         )
         state = turn.state
@@ -98,6 +101,8 @@ def _print_turn(turn: TurnResult) -> None:
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
     if turn.event_narration is not None:
         print(turn.event_narration.prose)
+    if turn.follow_up_menu is not None and turn.follow_up_menu.npc_will_leave:
+        print(turn.follow_up_menu.npc_exit_line)
     if result.roll is not None and result.success_chance is not None:
         outcome = "success" if result.success else "miss"
         print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")

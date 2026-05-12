@@ -7,14 +7,16 @@ import json
 from pathlib import Path
 from typing import Any
 
+from src.game.agents.contextual_options import ContextualOptionsAgent, mock_follow_up_menu
 from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.agents.islander_voice import Exchange, OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.rules import MechanicalResult
 from src.game.engine.scenario import load_action_script
 from src.game.engine.turn import run_turn
 from src.game.reporting.balance import run_balance
 from src.game.reporting.html import index_page, session_page, table_page
-from src.game.state.models import GameState, Location, PlayerStats, new_game
+from src.game.state.models import FollowUpMenu, GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -92,13 +94,13 @@ def packet_cmd(args: argparse.Namespace) -> int:
 
     outcomes, actions = run_balance(1000, Path("tests/scenarios/fixtures/day6-full-run.yaml"))
     _write_balance_pages(out / "balance", outcomes, actions)
-    sample = all_records[:20]
+    sample = [record for record in all_records if record["exchange"] is not None][:20]
     (out / "narration-quality" / "sample-20-turns.html").write_text(
         session_page("Narration Sample", sample),
         encoding="utf-8",
     )
     (out / "narration-quality" / "flagged.md").write_text(
-        "# Flagged Turns\n\nNo automatic flags in this packet.\n",
+        _flagged_turns(all_records),
         encoding="utf-8",
     )
     (out / "notes.md").write_text(_notes(), encoding="utf-8")
@@ -127,6 +129,7 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
         islander.location_id = Location.POOL
     rng = SeededRng(42)
     islander_voice = OpenAIIslanderVoice().generate
+    contextual_options = ContextualOptionsAgent().generate
     actions = [
         ("chloe", "friendly_ask_feelings", 10),
         ("chloe", "friendly_chat_villa", 10),
@@ -148,7 +151,13 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
             intent_id=intent_id,
         )
         input_hash = state_hash(state_hash_payload(state))
-        turn = run_turn(state, action, rng, islander_voice=islander_voice)
+        turn = run_turn(
+            state,
+            action,
+            rng,
+            islander_voice=islander_voice,
+            contextual_options=contextual_options,
+        )
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
 
@@ -172,6 +181,9 @@ def _run_session(path: Path, *, use_llm: bool) -> tuple[list[dict[str, Any]], Ga
     state = new_game(script.seed, player_stats=script.player_stats)
     rng = SeededRng(script.seed)
     islander_voice = OpenAIIslanderVoice().generate if use_llm else None
+    contextual_options = (
+        ContextualOptionsAgent().generate if use_llm else _scripted_contextual_options(script.actions)
+    )
     event_narrator = OpenAIEventNarrator().narrate if use_llm else None
     records: list[dict[str, Any]] = []
     for action in script.actions:
@@ -181,11 +193,47 @@ def _run_session(path: Path, *, use_llm: bool) -> tuple[list[dict[str, Any]], Ga
             action,
             rng,
             islander_voice=islander_voice,
+            contextual_options=contextual_options,
             event_narrator=event_narrator,
         )
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
     return records, state
+
+
+def _scripted_contextual_options(actions: list[PlayerAction]):
+    planned = _planned_follow_up_intents(actions)
+    index = 0
+
+    def contextual_options(
+        _state: GameState,
+        _result: MechanicalResult,
+        _exchange: Exchange,
+        _probability: int,
+    ) -> FollowUpMenu:
+        nonlocal index
+        intent_kind = planned[index] if index < len(planned) else None
+        index += 1
+        if intent_kind is None:
+            return mock_follow_up_menu(npc_will_leave=True)
+        return mock_follow_up_menu(intent_kind=intent_kind)
+
+    return contextual_options
+
+
+def _planned_follow_up_intents(actions: list[PlayerAction]) -> list[str | None]:
+    planned: list[str | None] = []
+    for index, action in enumerate(actions):
+        if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+            continue
+        next_action = actions[index + 1] if index + 1 < len(actions) else None
+        if next_action is not None and next_action.kind is ActionKind.RESPOND_WITH:
+            planned.append(next_action.intent_id or "joke_back")
+        elif next_action is not None and next_action.kind is ActionKind.END_CONVERSATION:
+            planned.append("end_softly")
+        else:
+            planned.append(None)
+    return planned
 
 
 def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> dict[str, Any]:
@@ -208,6 +256,9 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
             None
             if turn.event_narration is None
             else turn.event_narration.model_dump(mode="json")
+        ),
+        "follow_up_menu": (
+            None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
         ),
         "output_hash": turn.state_hash,
     }
@@ -247,26 +298,48 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     )
 
 
+def _flagged_turns(records: list[dict[str, Any]]) -> str:
+    flags: list[str] = []
+    for record in records:
+        exchange = record.get("exchange")
+        result = record.get("mechanical_result")
+        if not isinstance(exchange, dict) or not isinstance(result, dict):
+            continue
+        if result.get("success") is False and exchange.get("npc_tone") == "warm":
+            flags.append(
+                f"- Turn {record['turn']} ({record['day']}/{record['phase']}): miss with warm tone."
+            )
+    if not flags:
+        return "# Flagged Turns\n\nNo automatic flags in this packet.\n"
+    return "# Flagged Turns\n\n" + "\n".join(flags) + "\n"
+
+
 def _notes() -> str:
     return """# Notes
 
 ## What I noticed
 
-The v0 loop is deterministic and reviewable. Most drama currently comes from
-mechanical state changes rather than authored events.
+The F3 loop now shows multi-exchange conversations: each session opens with
+several one-on-one chats, generated player lines, Islander responses, and
+contextual follow-up menus. Ceremony and bombshell events are visible in the
+turn cards instead of being hidden in final state.
 
 ## What felt good
 
-The report makes every roll, delta, hash, and narration inspectable in one pass.
+The report makes every roll, delta, hash, exchange, follow-up menu, and event
+callout inspectable in one pass. The policy scripts now spend meaningful time in
+conversation before the day clock starts moving.
 
 ## What felt off
 
-The cast is still intentionally tiny and the policy scripts are simple. The next
-game-feel pass should tune event variety, not architecture.
+Follow-up responses are mechanically neutral in this slice, so the conversation
+feels alive in prose before it fully changes relationship state. The next
+game-feel pass should decide which contextual follow-up tags produce real deltas.
 
 ## Open questions
 
-- Should bold flirting damage public perception more aggressively?
+- Which contextual follow-up tags should affect affection, trust, chemistry, or friendship?
+- Should the report policies push harder into flirty/deep content once more unlock paths exist?
 - Should recouplings give the player an explicit choice in the CLI?
 """
 
@@ -276,6 +349,7 @@ def _repro() -> str:
 
 ```bash
 uv run python -m src.game.cli report packet --out review-packet/
+uv run python -m src.game.cli report packet --out review-packet/ --mock-llm
 uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day6-full-run.yaml --mock-llm
 uv run python -m src.game.cli verify --all
 ```

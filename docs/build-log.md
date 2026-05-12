@@ -89,3 +89,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: none; existing agent and engine contracts still cover the behavior
 - QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
 - Mid-phase gate: F2 preview regenerated at `review-packet-preview/session-phaseF2.html`
+
+## Phase F3
+
+- Files added: `src/game/agents/contextual_options.py`, `src/game/engine/conversation.py`, `tests/agents/test_contextual_options.py`, `tests/engine/test_conversation.py`, `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
+- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/engine/actions.py`, `src/game/engine/intents.py`, `src/game/engine/rules.py`, `src/game/engine/scenario.py`, `src/game/engine/turn.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `src/game/reporting/balance.py`, `src/game/reporting/html.py`, policy scripts, scenario fixtures, `review-packet/`
+- Tests added: conversation lifecycle, departure probability, hash exclusion for dialogue text, active-conversation action validation, real Contextual Options contract tests, multi-exchange scenario replay
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; `make test-llm` equivalent green, 25 LLM tests passed
+- Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
+- Packet: regenerated with real LLM calls at `review-packet/index.html` and inspected locally at `http://127.0.0.1:8771/index.html`
