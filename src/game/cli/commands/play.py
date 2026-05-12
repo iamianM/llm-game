@@ -19,7 +19,7 @@ from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, availa
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import GameState, new_game
+from src.game.state.models import GameState, Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -111,10 +111,40 @@ def run(args: argparse.Namespace) -> int:
 
 def _print_state(state: GameState, *, debug: bool = False) -> None:
     print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
-    print(f"Location: {state.location_id}")
+    print(f"You are at the {state.location_id.value.upper()}.")
+    print("\nVilla:")
+    for location in Location:
+        occupants = ["you"] if location is state.location_id else []
+        occupants.extend(
+            islander.name
+            for islander in state.islanders
+            if islander.location_id is location and not islander.eliminated
+        )
+        line = f"  {location.value.title():<9} -> {', '.join(occupants) if occupants else '(empty)'}"
+        conversations = [
+            conversation
+            for conversation in state.npc_conversations
+            if conversation.location_id is location and conversation.status == "active"
+        ]
+        if conversations:
+            summaries = "; ".join(
+                f"{_names_for(state, conversation.participants)} chatting about \"{conversation.topic}\""
+                for conversation in conversations
+            )
+            line = f"{line} -- {summaries}"
+        print(line)
+
+    print("\nYour relationships:")
     for islander in state.islanders:
-        detail = f" affection={islander.relationship.affection}" if debug else ""
-        print(f"- {islander.name} ({islander.archetype}){detail}")
+        if islander.eliminated:
+            continue
+        rel = islander.relationship
+        print(
+            f"  {islander.name:<7} affection {rel.affection:<3} chemistry {rel.chemistry:<3} "
+            f"trust {rel.trust:<3} friendship {rel.friendship:<3}"
+        )
+        if debug and islander.memories:
+            print(f"    memories: {len(islander.memories)}")
 
 
 def _print_actions(actions: list[ActionSpec]) -> None:
@@ -146,17 +176,34 @@ def _print_villa_update(turn: TurnResult) -> None:
     update = turn.agent_commits.villa_update
     if update is None:
         return
-    parts: list[str] = []
-    if update.npc_movements:
-        parts.append(f"{len(update.npc_movements)} move")
-    if update.conversation_starts:
-        parts.append(f"{len(update.conversation_starts)} start")
-    if update.conversation_continues:
-        parts.append(f"{len(update.conversation_continues)} continue")
-    if update.conversation_ends:
-        parts.append(f"{len(update.conversation_ends)} end")
-    if parts:
-        print(f"Villa: {', '.join(parts)}")
+    lines: list[str] = []
+    for movement in update.npc_movements:
+        name = _name_for(turn.state, movement.npc_id)
+        if movement.target_location is turn.state.location_id:
+            lines.append(f"{name} joined you at the {movement.target_location.value} ({movement.reason})")
+        else:
+            lines.append(f"{name} moved to the {movement.target_location.value} ({movement.reason})")
+    for start in update.conversation_starts:
+        lines.append(
+            f"{_names_for(turn.state, start.participants)} started chatting at the "
+            f"{start.location.value}: \"{start.topic}\""
+        )
+    for continuation in update.conversation_continues:
+        conversation = _npc_conversation(turn.state, continuation.conversation_id)
+        label = continuation.conversation_id
+        if conversation is not None:
+            label = f"{_names_for(turn.state, conversation.participants)} at the {conversation.location_id.value}"
+        nudge = f": \"{continuation.nudge}\"" if continuation.nudge else ""
+        lines.append(f"{label} kept talking{nudge}")
+    for ended in update.conversation_ends:
+        lines.append(f"Conversation ended ({ended.conversation_id}): {ended.reason}")
+    for exchange in turn.agent_commits.background_dialogues:
+        lines.append(f"Background ({exchange.tone}): {_short_line(exchange.speaker_a_line)}")
+    if not lines:
+        return
+    print("While you talked:")
+    for line in lines:
+        print(f"  - {line}")
 
 
 def _print_follow_up_actions(actions: list[ActionSpec]) -> None:
@@ -182,6 +229,33 @@ def _target_name(turn: TurnResult) -> str:
         if islander.id == target_id:
             return islander.name
     return "Islander"
+
+
+def _name_for(state: GameState, islander_id: str) -> str:
+    if islander_id == "player":
+        return "you"
+    for islander in state.islanders:
+        if islander.id == islander_id:
+            return islander.name
+    return islander_id
+
+
+def _names_for(state: GameState, islander_ids: list[str]) -> str:
+    return " & ".join(_name_for(state, islander_id) for islander_id in islander_ids)
+
+
+def _npc_conversation(state: GameState, conversation_id: str) -> NPCNPCConversation | None:
+    for conversation in state.npc_conversations:
+        if conversation.id == conversation_id:
+            return conversation
+    return None
+
+
+def _short_line(line: str, *, limit: int = 120) -> str:
+    compact = " ".join(line.split())
+    if len(compact) <= limit:
+        return f'"{compact}"'
+    return f'"{compact[: limit - 1].rstrip()}..."'
 
 
 def _choose_intent(state: GameState, target_id: str) -> PlayerAction:

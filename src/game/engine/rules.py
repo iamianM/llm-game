@@ -104,6 +104,13 @@ RISK_DELTA_SCALE = {
     "high": 1.5,
 }
 
+RISK_SUCCESS_CAP = {
+    "safe": 90,
+    "low": 80,
+    "medium": 65,
+    "high": 50,
+}
+
 
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     """Apply one valid action and mutate ``state``."""
@@ -220,7 +227,7 @@ def follow_up_success_chance(
         raise ValueError(f"unknown numeric stat for follow-up: {stat_used}")
     risk_modifier = {"safe": 15, "low": 5, "medium": -5, "high": -20}[risk]
     chance = 50 + (stat * 5) + (target.relationship.affection // 5) + risk_modifier
-    return max(5, min(95, chance))
+    return max(5, min(RISK_SUCCESS_CAP[risk], chance))
 
 
 def _apply_move(state: GameState, action: PlayerAction) -> MechanicalResult:

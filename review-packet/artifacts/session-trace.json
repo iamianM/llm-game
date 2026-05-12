@@ -4,19 +4,19 @@
     "day": 1,
     "phase": "morning",
     "location": "pool",
-    "visible_state": "Chloe: affection 12, chemistry 0, trust 2, friendship 0; Maya: affection 8, chemistry 0, trust 0, friendship 0",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0, friendship 2",
     "input_hash": "afb03fcf83f25ccde09503302d4365e58dd80d728743a734951f6d34c4092139",
     "action": {
       "kind": "start_conversation",
       "target_id": "chloe",
-      "intent_id": "friendly_ask_feelings",
+      "intent_id": "banter_tell_joke",
       "option_index": null
     },
     "mechanical_result": {
       "action": {
         "kind": "start_conversation",
         "target_id": "chloe",
-        "intent_id": "friendly_ask_feelings",
+        "intent_id": "banter_tell_joke",
         "option_index": null
       },
       "success": true,
@@ -26,44 +26,46 @@
         "chloe": {
           "affection": 2,
           "chemistry": 0,
-          "trust": 2,
-          "friendship": 0
+          "trust": 0,
+          "friendship": 2
         }
       },
       "tags": [
-        "supportive",
-        "sincere"
+        "funny",
+        "light"
       ]
     },
     "exchange": {
-      "player_dialogue": "Hey Chloe, how are you feeling this morning?",
-      "npc_dialogue": "Oh, thanks for asking! I'm feeling pretty good, actually. Just enjoying the sunshine and a little calm before the chaos of the day kicks in. How about you?",
-      "npc_tone": "warm",
-      "npc_mood_after": "content"
+      "player_dialogue": "Why did the tomato turn red? Because it saw the salad dressing!",
+      "npc_dialogue": "*Laughs softly, covering her mouth* Oh, that\u2019s a good one! I didn\u2019t see that coming. You definitely know how to lighten the mood around here.",
+      "npc_tone": "amused",
+      "npc_mood_after": "happy"
     },
     "event_narration": null,
     "follow_up_menu": {
       "options": [
         {
-          "label": "Match her calm vibe",
-          "category": "friendly",
-          "intent_kind": "change_subject",
-          "stat_used": "eq",
+          "label": "Tease her back",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
           "risk": "safe",
-          "tone": "warm",
+          "tone": "playful",
           "unlock_threshold": null
         },
         {
-          "label": "Turn it flirtier",
+          "label": "Push the flirt",
           "category": "flirty",
           "intent_kind": "escalate_flirt",
           "stat_used": "charm",
           "risk": "low",
           "tone": "playful",
-          "unlock_threshold": null
+          "unlock_threshold": {
+            "affection": 20
+          }
         },
         {
-          "label": "Dig into her mood",
+          "label": "Get a bit deeper",
           "category": "deep",
           "intent_kind": "go_deeper",
           "stat_used": "eq",
@@ -72,7 +74,7 @@
           "unlock_threshold": null
         },
         {
-          "label": "Leave it nicely",
+          "label": "End on a high note",
           "category": "exit",
           "intent_kind": "end_softly",
           "stat_used": null,
@@ -90,22 +92,1248 @@
         "npc_movements": [
           {
             "npc_id": "maya",
-            "target_location": "pool",
+            "target_location": "terrace",
             "reason": "joining_friends"
-          },
-          {
-            "npc_id": "liam",
-            "target_location": "kitchen",
-            "reason": "passive_drift"
           }
         ],
-        "conversation_starts": [],
+        "conversation_starts": [
+          {
+            "participants": [
+              "maya",
+              "liam"
+            ],
+            "location": "terrace",
+            "topic": "morning banter about first impressions"
+          }
+        ],
         "conversation_continues": [],
         "conversation_ends": []
       },
-      "background_dialogues": [],
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*laughs softly* I did not expect Liam to be so... competitive about breakfast choices. Thought you'd be all zen vibes.",
+          "speaker_b_line": "*grins* Can't let you think you've got the calm corner all to yourself, Maya. Early bird gets the avocado toast, right?",
+          "tone": "playful"
+        }
+      ],
       "curator_batches": []
     },
-    "output_hash": "4bc1afa333f8d444b84af8508a710d419efbf68044aa992fc653c5023772eb8f"
+    "output_hash": "1854fd22ea27aa3be73be5eb91d662e4ade099d811f60a175d8d729db7051d67"
+  },
+  {
+    "turn": 2,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0, friendship 2",
+    "input_hash": "1854fd22ea27aa3be73be5eb91d662e4ade099d811f60a175d8d729db7051d67",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "joke_back",
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "joke_back",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 73,
+      "success_chance": 95,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "joke_back",
+        "safe",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Alright, here's one for you\u2014Why did the scarecrow win an award? Because he was outstanding in his field!",
+      "npc_dialogue": "*Giggles, shaking her head* You're full of these, huh? I might have to watch out or you'll have all of us cracking up before breakfast. Keep them coming, I like where this is going!",
+      "npc_tone": "playful",
+      "npc_mood_after": "happy"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Keep teasing her",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Push the flirt",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": {
+            "affection": 15
+          }
+        },
+        {
+          "label": "Ask what she likes",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "End on a high note",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_73dbe6769b93",
+            "nudge": "keeping it light and playful"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*smirks* True, but I\u2019m watching you closely. I already see the poker face you\u2019ll bring to game night.",
+          "speaker_b_line": "*laughs* Poker face? You\u2019ve got me pegged. Just wait, I\u2019m full of surprises beyond breakfast battles.",
+          "tone": "playful"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "ddc886e2ea7ea1b7dc7ff48b4087244ab3e5b1bba823a1fc8b6def9f3ea043fa"
+  },
+  {
+    "turn": 3,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 0, trust 0, friendship 2",
+    "input_hash": "ddc886e2ea7ea1b7dc7ff48b4087244ab3e5b1bba823a1fc8b6def9f3ea043fa",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "joke_back",
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "joke_back",
+        "option_index": 0
+      },
+      "success": false,
+      "roll": 98,
+      "success_chance": 95,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "joke_back",
+        "safe",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Okay, how about this one\u2014Why don't eggs tell jokes? They'd crack each other up!",
+      "npc_dialogue": "*Chuckles but shakes her head* Not bad, but you might have to step up your game to keep me laughing all morning! Don't give up just yet, though\u2014I\u2019m curious what you've got next.",
+      "npc_tone": "playful",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Tease her back",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Step up the flirting",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Ask what she likes",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Wrap it up nicely",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_73dbe6769b93",
+            "nudge": "gently turning toward teasing first impressions"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*teasingly* So, Liam, do you always come in this strong or am I just lucky on Day One?",
+          "speaker_b_line": "*mock offended* Lucky? More like unfortunate to have me setting the bar this high from the start. You better keep up, Maya.",
+          "tone": "playful"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "ddaadf854f6b1831b504f9dea55ab6bdfeda1d377b35e200f89cf32c8833e129"
+  },
+  {
+    "turn": 4,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 13, chemistry 5, trust 0, friendship 2",
+    "input_hash": "ddaadf854f6b1831b504f9dea55ab6bdfeda1d377b35e200f89cf32c8833e129",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "escalate_flirt",
+      "option_index": 1
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "escalate_flirt",
+        "option_index": 1
+      },
+      "success": true,
+      "roll": 9,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 1,
+          "chemistry": 5,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Well, if you keep smiling like that, I might just have to start telling you all my best jokes in person. How about we make a deal? I bring the laughs, you bring that smile, and we'll call it a perfect morning.",
+      "npc_dialogue": "*Bites her lip, eyes sparkling with amusement* Oh, is that your smooth way of saying you want to spend more time with me? I\u2019m definitely intrigued\u2014your jokes are fun, but I think I\u2019m more interested in the company.",
+      "npc_tone": "flirty",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Push the flirt",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": {
+            "affection": 10
+          }
+        },
+        {
+          "label": "Tease her back",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Get a bit vulnerable",
+          "category": "deep",
+          "intent_kind": "honest_vulnerable",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "vulnerable",
+          "unlock_threshold": {
+            "trust": 5
+          }
+        },
+        {
+          "label": "End on a high note",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_73dbe6769b93",
+            "nudge": "settling_into_comfortable_flirty_banter"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*leans forward with a teasing glint* Guess I better bring my A-game then. But if you\u2019re this confident now, I\u2019m curious to see what happens when the stakes get higher.",
+          "speaker_b_line": "*grins, eyes sparkling* Stakes rising just means I get to see you in action, Maya. Something tells me you\u2019re full of your own surprises too.",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "3038531ebb390e93e488ec6d168a07f50b04b4dc613b5d26c1a7aee86012764b"
+  },
+  {
+    "turn": 5,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 14, chemistry 10, trust 0, friendship 2",
+    "input_hash": "3038531ebb390e93e488ec6d168a07f50b04b4dc613b5d26c1a7aee86012764b",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "escalate_flirt",
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "escalate_flirt",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 33,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 1,
+          "chemistry": 5,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "So, what do you say we skip the jokes for a bit and see if we can make the rest of today just as fun together?",
+      "npc_dialogue": "*Smiles, a little shy but clearly pleased* I\u2019d like that. There\u2019s something about your energy that just lights up this place \u2014 I\u2019m curious to see where this could go.",
+      "npc_tone": "warm",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Flirt a little harder",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Ask what she feels",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Make her laugh",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave it on a high",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [],
+        "conversation_ends": [
+          {
+            "conversation_id": "npcconv_73dbe6769b93",
+            "reason": "natural_end"
+          }
+        ]
+      },
+      "background_dialogues": [],
+      "curator_batches": [
+        {
+          "memories": [
+            {
+              "holder_id": "maya",
+              "subject_id": "liam",
+              "content": "Liam\u2019s playful competitiveness about breakfast caught me off guard, making the morning instantly fun and sparking my curiosity about what he\u2019s really like.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 5,
+              "tags": [
+                "playful",
+                "competitive",
+                "morning_banter",
+                "felt_engaged"
+              ],
+              "durable": true
+            },
+            {
+              "holder_id": "liam",
+              "subject_id": "maya",
+              "content": "Maya\u2019s teasing about my poker face and her confident glint made me hope she\u2019s as sharp as she seems, and I\u2019m excited to see how she handles the real challenges.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 6,
+              "tags": [
+                "flirty",
+                "teasing",
+                "confident",
+                "anticipated_challenge"
+              ],
+              "durable": true
+            }
+          ]
+        }
+      ]
+    },
+    "output_hash": "cd0987d5776cd55762891b884b3056c73f16662a03c39660dce3821cd64dcd25"
+  },
+  {
+    "turn": 6,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 2",
+    "input_hash": "cd0987d5776cd55762891b884b3056c73f16662a03c39660dce3821cd64dcd25",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "escalate_flirt",
+      "option_index": 0
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "escalate_flirt",
+        "option_index": 0
+      },
+      "success": true,
+      "roll": 16,
+      "success_chance": 87,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 1,
+          "chemistry": 5,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "escalate_flirt",
+        "low",
+        "playful"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "I think we might be onto something here\u2014how about we make this a duo act and see if we can make everyone else jealous of our vibe?",
+      "npc_dialogue": "*Laughs softly, leaning in just a bit* Oh, I like the sound of that. A duo act with you? Sounds like the perfect recipe for some unforgettable moments. Just don\u2019t be surprised if I steal the spotlight sometimes!",
+      "npc_tone": "playful",
+      "npc_mood_after": "flirty"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Play along flirtatiously",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Tease her spotlight habit",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "low",
+          "tone": "sharp",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Ask what she means",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Wrap it up nicely",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [
+          {
+            "participants": [
+              "maya",
+              "liam"
+            ],
+            "location": "terrace",
+            "topic": "playful morning banter about competitiveness"
+          }
+        ],
+        "conversation_continues": [],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*flashes a sly grin* I hope you brought your A-game today, Liam. Can't let you off easy on day one.",
+          "speaker_b_line": "*smirks back* Oh, Maya, you\u2019re going down before lunch. I\u2019m ready to win this little island showdown.",
+          "tone": "playful"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "8fe2bb495c105c5f5537fa247e58066e4fe9061b219f4bc8a8de8045b5d61f58"
+  },
+  {
+    "turn": 7,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 4",
+    "input_hash": "8fe2bb495c105c5f5537fa247e58066e4fe9061b219f4bc8a8de8045b5d61f58",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "joke_back",
+      "option_index": 1
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "joke_back",
+        "option_index": 1
+      },
+      "success": true,
+      "roll": 64,
+      "success_chance": 88,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 2
+        }
+      },
+      "tags": [
+        "joke_back",
+        "low",
+        "sharp"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Well, if you steal the spotlight, I better start practicing my dramatic exits then!",
+      "npc_dialogue": "*Laughs, eyes sparkling* Oh, I\u2019ll let you have your moments too. But be warned, on this island, the spotlight\u2019s a hot commodity! Let\u2019s see who really owns it by sunset.",
+      "npc_tone": "playful",
+      "npc_mood_after": "happy"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Push the flirt",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Fire back playfully",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "sharp",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Get a little deeper",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "medium",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave on a high note",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_70786366e20f",
+            "nudge": "getting a little more flirty and competitive"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*arches an eyebrow* Is that a challenge, Liam? Because I\u2019m warning you\u2014I play dirty when I\u2019m this competitive.",
+          "speaker_b_line": "*laughs* Bring it on, Maya. Just don\u2019t cry when I\u2019m handing you your first loss, and maybe I\u2019ll go easy on you.",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "acf7e8828d9cee9144d49b47854f459241f648936e7f0e06f58fbc0ad0175fcd"
+  },
+  {
+    "turn": 8,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 4",
+    "input_hash": "acf7e8828d9cee9144d49b47854f459241f648936e7f0e06f58fbc0ad0175fcd",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "end_softly",
+      "option_index": 3
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "end_softly",
+        "option_index": 3
+      },
+      "success": false,
+      "roll": 98,
+      "success_chance": 93,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "end_softly",
+        "safe",
+        "warm"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "Alright, let's call it a truce for now and just enjoy the morning by the pool together.",
+      "npc_dialogue": "*Smiles softly, nodding* That sounds really nice. No need for competition when moments like this feel so easy and good. I\u2019m glad we can just be here, no pressure.",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Lean into the moment",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "warm",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Keep the banter going",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Get a little deeper",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "low",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Leave it there",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_70786366e20f",
+            "nudge": "warming into flirtier teasing"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*twirls a strand of hair* If you think I'm going easy, you clearly haven\u2019t seen my secret weapon yet.",
+          "speaker_b_line": "*leans in with a grin* Now I'm really intrigued\u2014does this secret weapon include stealing kisses as a distraction?",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "39e574207b478357b3b42fa60197498abe8a7e43f4cebf77e52eafe5cc70dd14"
+  },
+  {
+    "turn": 9,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 4",
+    "input_hash": "39e574207b478357b3b42fa60197498abe8a7e43f4cebf77e52eafe5cc70dd14",
+    "action": {
+      "kind": "respond_with",
+      "target_id": "chloe",
+      "intent_id": "end_softly",
+      "option_index": 3
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "respond_with",
+        "target_id": "chloe",
+        "intent_id": "end_softly",
+        "option_index": 3
+      },
+      "success": true,
+      "roll": 58,
+      "success_chance": 93,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "end_softly",
+        "safe",
+        "warm"
+      ]
+    },
+    "exchange": {
+      "player_dialogue": "I'm really enjoying this calm moment with you. Let's keep it simple and just see where this day takes us, no rush.",
+      "npc_dialogue": "*Smiles, a gentle warmth in her eyes* I love that. Taking things slow feels so refreshing, especially here. It\u2019s nice to share this peace with someone who gets it.",
+      "npc_tone": "warm",
+      "npc_mood_after": "content"
+    },
+    "event_narration": null,
+    "follow_up_menu": {
+      "options": [
+        {
+          "label": "Get a little deeper",
+          "category": "deep",
+          "intent_kind": "go_deeper",
+          "stat_used": "eq",
+          "risk": "safe",
+          "tone": "curious",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Lean into the moment",
+          "category": "flirty",
+          "intent_kind": "escalate_flirt",
+          "stat_used": "charm",
+          "risk": "low",
+          "tone": "warm",
+          "unlock_threshold": {
+            "affection": 20
+          }
+        },
+        {
+          "label": "Make it a sweet joke",
+          "category": "banter",
+          "intent_kind": "joke_back",
+          "stat_used": "banter",
+          "risk": "safe",
+          "tone": "playful",
+          "unlock_threshold": null
+        },
+        {
+          "label": "Wrap it up softly",
+          "category": "exit",
+          "intent_kind": "end_softly",
+          "stat_used": null,
+          "risk": "safe",
+          "tone": "warm",
+          "unlock_threshold": null
+        }
+      ],
+      "npc_will_leave": false,
+      "npc_exit_line": null
+    },
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_70786366e20f",
+            "nudge": "getting a little more flirtatious"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*smirks, stepping closer* Maybe it does. You\u2019ll have to keep up to find out if I\u2019m bluffing or not.",
+          "speaker_b_line": "*grins, matching her step* Oh, I plan to keep pace\u2014and sneak a few distractions of my own along the way.",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "8c14cbd63c65d4081efe7d1f4567cb09d25357fb37cda318087f71769a3b8f39"
+  },
+  {
+    "turn": 10,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 4",
+    "input_hash": "8c14cbd63c65d4081efe7d1f4567cb09d25357fb37cda318087f71769a3b8f39",
+    "action": {
+      "kind": "end_conversation",
+      "target_id": null,
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "end_conversation",
+        "target_id": null,
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "disengaged"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [],
+        "conversation_ends": [
+          {
+            "conversation_id": "npcconv_70786366e20f",
+            "reason": "natural_end"
+          }
+        ]
+      },
+      "background_dialogues": [],
+      "curator_batches": [
+        {
+          "memories": [
+            {
+              "holder_id": "player",
+              "subject_id": "chloe",
+              "content": "Chloe\u2019s laughter and how her eyes sparkled when she shyly admitted she liked my company more than just the jokes made me feel a real connection.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 6,
+              "tags": [
+                "flirty",
+                "felt_seen",
+                "warm",
+                "chemistry",
+                "playful"
+              ],
+              "durable": true
+            },
+            {
+              "holder_id": "chloe",
+              "subject_id": "player",
+              "content": "When he suggested making today fun together beyond jokes, I felt a spark of curiosity and warmth that made me want to spend more time with him.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 6,
+              "tags": [
+                "flirty",
+                "warm",
+                "curious",
+                "felt_seen",
+                "playful"
+              ],
+              "durable": true
+            }
+          ]
+        },
+        {
+          "memories": [
+            {
+              "holder_id": "maya",
+              "subject_id": "liam",
+              "content": "I caught Liam flirting with me under the guise of a playful competition, and it made me smile more than I expected.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 6,
+              "tags": [
+                "playful",
+                "flirty",
+                "competitive_edge",
+                "felt_charmed"
+              ],
+              "durable": true
+            },
+            {
+              "holder_id": "liam",
+              "subject_id": "maya",
+              "content": "Maya didn\u2019t just play competitive\u2014she hinted at using distractions, maybe even kisses, which definitely caught my attention.",
+              "source": "direct",
+              "source_id": null,
+              "emotional_weight": 6,
+              "tags": [
+                "flirty",
+                "competitive",
+                "secret_weapon",
+                "felt_intrigued"
+              ],
+              "durable": true
+            }
+          ]
+        }
+      ]
+    },
+    "output_hash": "cc49e0aef09acaa6602a7d0e58c3bc94f92bc9e2f19d197be0549dd098bb04fc"
+  },
+  {
+    "turn": 11,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Chloe: affection 15, chemistry 15, trust 0, friendship 4",
+    "input_hash": "cc49e0aef09acaa6602a7d0e58c3bc94f92bc9e2f19d197be0549dd098bb04fc",
+    "action": {
+      "kind": "move",
+      "target_id": "kitchen",
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "kitchen",
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [
+          {
+            "npc_id": "chloe",
+            "target_location": "kitchen",
+            "reason": "drawn_to_player"
+          }
+        ],
+        "conversation_starts": [
+          {
+            "participants": [
+              "maya",
+              "liam"
+            ],
+            "location": "terrace",
+            "topic": "playful breakfast competition and flirting"
+          }
+        ],
+        "conversation_continues": [],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*grinning as she grabs the last croissant* Bet you didn't think I'd beat you at breakfast already, Liam!",
+          "speaker_b_line": "*laughs, raising an eyebrow* Oh, the game just started, Maya. Wait until you see my pancake flipping skills\u2014it's a knockout!",
+          "tone": "playful"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "fcf89158a796af55b7bef2d3de69e5057d7f04ba3c7a45988e50d465c6da5443"
+  },
+  {
+    "turn": 12,
+    "day": 1,
+    "phase": "morning",
+    "location": "bedroom",
+    "visible_state": "No visible islanders.",
+    "input_hash": "fcf89158a796af55b7bef2d3de69e5057d7f04ba3c7a45988e50d465c6da5443",
+    "action": {
+      "kind": "move",
+      "target_id": "bedroom",
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "bedroom",
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_133acfe6a297",
+            "nudge": "getting a little more flirtatious"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*playfully twirling a strand of hair* If your pancake game is as smooth as your smile, Liam, maybe I\u2019m in trouble already.",
+          "speaker_b_line": "*smirking, handing her a glass of orange juice* Only one way to find out\u2014want to make breakfast a date?",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "e091e545b3b3ede6ed21b9edeeec81fc79d5490b6ede0a0c9d9bd85a09676c7d"
+  },
+  {
+    "turn": 13,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "No visible islanders.",
+    "input_hash": "e091e545b3b3ede6ed21b9edeeec81fc79d5490b6ede0a0c9d9bd85a09676c7d",
+    "action": {
+      "kind": "move",
+      "target_id": "pool",
+      "intent_id": null,
+      "option_index": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "pool",
+        "intent_id": null,
+        "option_index": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "exchange": null,
+    "event_narration": null,
+    "follow_up_menu": null,
+    "ceremony_events": [],
+    "agent_commits": {
+      "villa_update": {
+        "npc_movements": [],
+        "conversation_starts": [],
+        "conversation_continues": [
+          {
+            "conversation_id": "npcconv_133acfe6a297",
+            "nudge": "getting a bit more flirty and competitive"
+          }
+        ],
+        "conversation_ends": []
+      },
+      "background_dialogues": [
+        {
+          "speaker_a_line": "*leans in with a sly smile* Deal, but be warned\u2014I\u2019m undefeated when it comes to sweet moves in the kitchen and out of it.",
+          "speaker_b_line": "*grinning, taking her hand gently* Then I guess I\u2019ll have to bring my A-game\u2014to keep up with you, both on the stove and off.",
+          "tone": "flirty"
+        }
+      ],
+      "curator_batches": []
+    },
+    "output_hash": "69812862d2328c1a2e6d63de87c907d0f0e3ff4359d47a139db6eb7b780575c2"
   }
 ]

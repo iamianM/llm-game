@@ -1,7 +1,7 @@
 {
   "schema_version": 9,
   "seed": 1,
-  "turn_index": 1,
+  "turn_index": 13,
   "day": 1,
   "phase": "morning",
   "location_id": "pool",
@@ -15,32 +15,72 @@
       "graft": 6,
       "loyalty": 6
     },
-    "public_perception": 52,
+    "public_perception": 50,
     "eliminated": false,
-    "memories": []
+    "memories": [
+      {
+        "id": "mem_e167480d72404f7a",
+        "holder_id": "player",
+        "subject_id": "chloe",
+        "content": "Chloe\u2019s laughter and how her eyes sparkled when she shyly admitted she liked my company more than just the jokes made me feel a real connection.",
+        "source": "direct",
+        "source_id": null,
+        "formed_on_day": 1,
+        "formed_on_turn": 10,
+        "emotional_weight": 6,
+        "tags": [
+          "chemistry",
+          "felt_seen",
+          "flirty",
+          "playful",
+          "warm"
+        ],
+        "durable": true
+      }
+    ]
   },
   "islanders": [
     {
       "id": "chloe",
       "name": "Chloe",
       "archetype": "sweetheart",
-      "location_id": "pool",
+      "location_id": "kitchen",
       "relationship": {
-        "affection": 12,
-        "chemistry": 0,
-        "trust": 2,
-        "friendship": 0
+        "affection": 15,
+        "chemistry": 15,
+        "trust": 0,
+        "friendship": 4
       },
       "public_perception": 50,
       "eliminated": false,
       "mood": "content",
-      "memories": []
+      "memories": [
+        {
+          "id": "mem_b9294d63906ac2e6",
+          "holder_id": "chloe",
+          "subject_id": "player",
+          "content": "When he suggested making today fun together beyond jokes, I felt a spark of curiosity and warmth that made me want to spend more time with him.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 6,
+          "tags": [
+            "curious",
+            "felt_seen",
+            "flirty",
+            "playful",
+            "warm"
+          ],
+          "durable": true
+        }
+      ]
     },
     {
       "id": "maya",
       "name": "Maya",
       "archetype": "joker",
-      "location_id": "pool",
+      "location_id": "terrace",
       "relationship": {
         "affection": 8,
         "chemistry": 0,
@@ -50,13 +90,50 @@
       "public_perception": 50,
       "eliminated": false,
       "mood": "content",
-      "memories": []
+      "memories": [
+        {
+          "id": "mem_6aea11601d9c7a7d",
+          "holder_id": "maya",
+          "subject_id": "liam",
+          "content": "Liam\u2019s playful competitiveness about breakfast caught me off guard, making the morning instantly fun and sparking my curiosity about what he\u2019s really like.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 5,
+          "emotional_weight": 5,
+          "tags": [
+            "competitive",
+            "felt_engaged",
+            "morning_banter",
+            "playful"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_7d4ed03e26f8bf7b",
+          "holder_id": "maya",
+          "subject_id": "liam",
+          "content": "I caught Liam flirting with me under the guise of a playful competition, and it made me smile more than I expected.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 6,
+          "tags": [
+            "competitive_edge",
+            "felt_charmed",
+            "flirty",
+            "playful"
+          ],
+          "durable": true
+        }
+      ]
     },
     {
       "id": "liam",
       "name": "Liam",
       "archetype": "friend",
-      "location_id": "kitchen",
+      "location_id": "terrace",
       "relationship": {
         "affection": 6,
         "chemistry": 0,
@@ -66,86 +143,85 @@
       "public_perception": 50,
       "eliminated": false,
       "mood": "content",
-      "memories": []
+      "memories": [
+        {
+          "id": "mem_31143441de8315dc",
+          "holder_id": "liam",
+          "subject_id": "maya",
+          "content": "Maya\u2019s teasing about my poker face and her confident glint made me hope she\u2019s as sharp as she seems, and I\u2019m excited to see how she handles the real challenges.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 5,
+          "emotional_weight": 6,
+          "tags": [
+            "anticipated_challenge",
+            "confident",
+            "flirty",
+            "teasing"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_d57df440bbe222a9",
+          "holder_id": "liam",
+          "subject_id": "maya",
+          "content": "Maya didn\u2019t just play competitive\u2014she hinted at using distractions, maybe even kisses, which definitely caught my attention.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 10,
+          "emotional_weight": 6,
+          "tags": [
+            "competitive",
+            "felt_intrigued",
+            "flirty",
+            "secret_weapon"
+          ],
+          "durable": true
+        }
+      ]
     }
   ],
   "couples": [],
-  "active_conversation": {
-    "target_id": "chloe",
-    "started_on_turn": 1,
-    "started_on_day": 1,
-    "exchanges": [
-      {
-        "turn_index": 1,
-        "intent_id": "friendly_ask_feelings",
-        "player_dialogue": "Hey Chloe, how are you feeling this morning?",
-        "npc_dialogue": "Oh, thanks for asking! I'm feeling pretty good, actually. Just enjoying the sunshine and a little calm before the chaos of the day kicks in. How about you?",
-        "npc_tone": "warm",
-        "npc_mood_after": "content",
-        "success": true,
-        "tags": [
-          "supportive",
-          "sincere"
-        ],
-        "relationship_deltas": {
-          "chloe": {
-            "affection": 2,
-            "chemistry": 0,
-            "trust": 2,
-            "friendship": 0
-          }
-        }
-      }
-    ],
-    "accumulated_tags": [
-      "supportive",
-      "sincere"
-    ],
-    "status": "open",
-    "departure_probability_last": 10,
-    "pending_options": {
-      "options": [
+  "active_conversation": null,
+  "npc_conversations": [
+    {
+      "id": "npcconv_133acfe6a297",
+      "participants": [
+        "maya",
+        "liam"
+      ],
+      "location_id": "terrace",
+      "topic": "playful breakfast competition and flirting",
+      "started_on_turn": 11,
+      "exchanges": [
         {
-          "label": "Match her calm vibe",
-          "category": "friendly",
-          "intent_kind": "change_subject",
-          "stat_used": "eq",
-          "risk": "safe",
-          "tone": "warm",
-          "unlock_threshold": null
+          "turn_index": 11,
+          "speaker_a_id": "maya",
+          "speaker_b_id": "liam",
+          "speaker_a_line": "*grinning as she grabs the last croissant* Bet you didn't think I'd beat you at breakfast already, Liam!",
+          "speaker_b_line": "*laughs, raising an eyebrow* Oh, the game just started, Maya. Wait until you see my pancake flipping skills\u2014it's a knockout!",
+          "tone": "playful"
         },
         {
-          "label": "Turn it flirtier",
-          "category": "flirty",
-          "intent_kind": "escalate_flirt",
-          "stat_used": "charm",
-          "risk": "low",
-          "tone": "playful",
-          "unlock_threshold": null
+          "turn_index": 12,
+          "speaker_a_id": "maya",
+          "speaker_b_id": "liam",
+          "speaker_a_line": "*playfully twirling a strand of hair* If your pancake game is as smooth as your smile, Liam, maybe I\u2019m in trouble already.",
+          "speaker_b_line": "*smirking, handing her a glass of orange juice* Only one way to find out\u2014want to make breakfast a date?",
+          "tone": "flirty"
         },
         {
-          "label": "Dig into her mood",
-          "category": "deep",
-          "intent_kind": "go_deeper",
-          "stat_used": "eq",
-          "risk": "low",
-          "tone": "curious",
-          "unlock_threshold": null
-        },
-        {
-          "label": "Leave it nicely",
-          "category": "exit",
-          "intent_kind": "end_softly",
-          "stat_used": null,
-          "risk": "safe",
-          "tone": "warm",
-          "unlock_threshold": null
+          "turn_index": 13,
+          "speaker_a_id": "maya",
+          "speaker_b_id": "liam",
+          "speaker_a_line": "*leans in with a sly smile* Deal, but be warned\u2014I\u2019m undefeated when it comes to sweet moves in the kitchen and out of it.",
+          "speaker_b_line": "*grinning, taking her hand gently* Then I guess I\u2019ll have to bring my A-game\u2014to keep up with you, both on the stove and off.",
+          "tone": "flirty"
         }
       ],
-      "npc_will_leave": false,
-      "npc_exit_line": null
-    },
-    "gossip_offers": []
-  },
-  "npc_conversations": []
+      "status": "active"
+    }
+  ]
 }

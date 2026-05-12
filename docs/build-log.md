@@ -172,3 +172,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: non-LLM test proving the Contextual Options runtime preserves exactly one exit wheel option; manual CLI smoke for `report packet --trace` and `report from-trace`; trace replay confirmed the generated live recording reproduces the same final hash
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, smoke replay, fixture determinism all green; full LLM suite green, 28 tests passed
 - Packet: regenerated from `.game_traces/live-recording.json` at `review-packet/index.html`
+
+## Phase G7
+
+- Files added: `tests/cli/test_play.py`
+- Files changed: `src/game/cli/commands/play.py`, `src/game/engine/rules.py`, `src/game/reporting/html.py`, `tests/engine/test_rules.py`, `tests/engine/test_gossip.py`, `review-packet/`
+- Tests added: CLI villa map rendering, detailed villa update rendering, risk-based follow-up success caps
+- QA result: `ruff`, `mypy`, non-LLM pytest green; manual trace replay still reproduces the same final hash after the balance change
+- Packet: regenerated from `.game_traces/manual-day1.json` at `review-packet/index.html`

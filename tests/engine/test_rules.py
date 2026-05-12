@@ -7,7 +7,7 @@ from pydantic import ValidationError
 
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import get_intent
-from src.game.engine.rules import apply_action, intent_success_chance
+from src.game.engine.rules import apply_action, follow_up_success_chance, intent_success_chance
 from src.game.state.models import (
     Conversation,
     FollowUpMenu,
@@ -134,6 +134,19 @@ def test_follow_up_high_risk_scales_deltas() -> None:
     assert result.relationship_deltas == {
         "chloe": RelationshipDelta(affection=5, trust=6)
     }
+
+
+def test_follow_up_success_chance_is_capped_by_risk() -> None:
+    """Risk labels remain meaningful even with high stats and affection."""
+    state = new_game(1)
+    target = state.islanders[0]
+    target.relationship.affection = 100
+    state.player.stats.banter = 9
+
+    assert follow_up_success_chance(state, target, "banter", "safe") == 90
+    assert follow_up_success_chance(state, target, "banter", "low") == 80
+    assert follow_up_success_chance(state, target, "banter", "medium") == 65
+    assert follow_up_success_chance(state, target, "banter", "high") == 50
 
 
 def _state_with_follow_up(

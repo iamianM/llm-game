@@ -29,7 +29,7 @@ def test_gossip_appears_when_target_has_witnessed_memory() -> None:
 def test_gossip_pick_transfers_memory_to_player() -> None:
     """Choosing gossip records the heard memory and builds trust with the source."""
     state = _state_with_chloe_gossip(affection=25)
-    rng = SeededRng(1)
+    rng = SeededRng(2)
     first_turn = run_turn(
         state,
         PlayerAction(

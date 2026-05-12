@@ -3,8 +3,8 @@
 ## What I noticed
 
 This packet renders one recorded playthrough from trace data. It contains
-1 turn(s), 1 player conversation turn(s), and
-1 turn(s) with recorded villa agent commits.
+13 turn(s), 9 player conversation turn(s), and
+13 turn(s) with recorded villa agent commits.
 
 ## What felt good
 
@@ -23,4 +23,4 @@ memories, and gossip surfacing rather than aggregate win-rate conclusions.
 - Did off-screen villa commits make the world feel alive?
 - Did memories and gossip surface at the right level of specificity?
 
-Final hash: `4bc1afa333f8d444b84af8508a710d419efbf68044aa992fc653c5023772eb8f`
+Final hash: `69812862d2328c1a2e6d63de87c907d0f0e3ff4359d47a139db6eb7b780575c2`

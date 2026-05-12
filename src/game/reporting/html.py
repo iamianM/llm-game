@@ -160,12 +160,69 @@ def _agent_commit_block(agent_commits: object) -> str:
         f"<li>Background dialogue commits: {len(background) if isinstance(background, list) else 0}</li>",
         f"<li>Curator batches: {len(batches) if isinstance(batches, list) else 0}</li>",
     ]
+    details = _agent_commit_details(update, background)
     return (
         "<div class='card'>"
         "<p><b>Villa agent commits</b></p>"
         f"<ul>{''.join(rows)}</ul>"
+        f"{details}"
         "</div>"
     )
+
+
+def _agent_commit_details(update: dict[str, object], background: object) -> str:
+    lines: list[str] = []
+    movements = update.get("npc_movements")
+    if isinstance(movements, list):
+        for item in movements:
+            if isinstance(item, dict):
+                lines.append(
+                    f"{escape(str(item.get('npc_id', 'npc')))} moved to "
+                    f"{escape(str(item.get('target_location', 'unknown')))} "
+                    f"({escape(str(item.get('reason', '')))})."
+                )
+    starts = update.get("conversation_starts")
+    if isinstance(starts, list):
+        for item in starts:
+            if isinstance(item, dict):
+                participants = item.get("participants")
+                label = " & ".join(str(value) for value in participants) if isinstance(participants, list) else "NPCs"
+                lines.append(
+                    f"{escape(label)} started at {escape(str(item.get('location', 'unknown')))}: "
+                    f"\"{escape(str(item.get('topic', '')))}\"."
+                )
+    continues = update.get("conversation_continues")
+    if isinstance(continues, list):
+        for item in continues:
+            if isinstance(item, dict):
+                nudge = str(item.get("nudge", ""))
+                suffix = f": \"{escape(nudge)}\"" if nudge else ""
+                lines.append(f"{escape(str(item.get('conversation_id', 'conversation')))} continued{suffix}.")
+    ends = update.get("conversation_ends")
+    if isinstance(ends, list):
+        for item in ends:
+            if isinstance(item, dict):
+                lines.append(
+                    f"{escape(str(item.get('conversation_id', 'conversation')))} ended: "
+                    f"{escape(str(item.get('reason', '')))}."
+                )
+    if isinstance(background, list):
+        for item in background:
+            if isinstance(item, dict):
+                lines.append(
+                    f"Background ({escape(str(item.get('tone', 'unknown')))}): "
+                    f"\"{escape(_short_text(str(item.get('speaker_a_line', ''))))}\""
+                )
+    if not lines:
+        return ""
+    return f"<p><b>Details</b></p><ul>{''.join(f'<li>{line}</li>' for line in lines)}</ul>"
+
+
+def _short_text(value: str, *, limit: int = 140) -> str:
+    compact = " ".join(value.split())
+    if len(compact) <= limit:
+        return compact
+    return compact[: limit - 1].rstrip() + "..."
 
 
 def _delta_text(result: dict[str, Any]) -> str:
