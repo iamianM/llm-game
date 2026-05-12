@@ -59,6 +59,45 @@ class Memory(BaseModel):
 
 `IslanderState.memories: list[Memory] = Field(default_factory=list)` and `PlayerState.memories: list[Memory]`. Hash-included: `id`, `holder_id`, `subject_id`, `source`, `formed_on_day`, `formed_on_turn`, `emotional_weight`, `tags`, `durable`. Hash-excluded: `content` (LLM prose). Update `state_hash_payload()` accordingly. Add `test_memory_content_does_not_affect_hash`.
 
+### Determinism via recorded agent commits
+
+LLM agents (Villa Orchestrator, Background Dialogue, Conversation Curator) produce structured Pydantic outputs — `VillaUpdate`, `BackgroundExchange`, `MemoryBatch` — that are first-class state-commit producers, not invisible helpers. Every commit is recorded in the per-turn trace.
+
+The deterministic contract is:
+
+> **same seed + same player actions + same recorded agent commits → same final mechanical state hash.**
+
+Live play calls real LLMs and writes each commit to the trace. Replay reads the recorded commits and applies them — no LLM calls. Scenario fixtures pin both the player action sequence and the expected agent commits per turn, alongside the expected final hash.
+
+This is the steno pattern: agents commit typed intent, the runtime is a compiler/VM that applies the commits, and the trace is the audit log that makes replay possible. Without recorded commits, replay is impossible because Orchestrator's structural decisions (who moves, which convo ends) can change between runs.
+
+Three operating modes:
+
+- **Live** — real LLM agents, commits recorded. Default for `make play`.
+- **Replay** — recorded commits replayed via a `RecordedAgents` shim. Single `--replay TRACE_PATH` flag. Used for verifying a recorded session reproduces, and for scenario fixtures that pin agent commits.
+- **Mock** — empty/deterministic agent outputs (orchestrator returns empty `VillaUpdate`, dialogue returns a fixed stub, curator returns a deterministic single memory). Used for engine unit tests that need a player path without recording a real run.
+
+Scenario YAML grows an optional `agent_commits` block per turn:
+
+```yaml
+actions:
+  - kind: start_conversation
+    target_id: chloe
+    intent_id: friendly_chat_villa
+    agent_commits:
+      villa_update:
+        npc_movements: []
+        conversation_starts: [...]
+        conversation_continues: []
+        conversation_ends: []
+      background_dialogues: []
+      curator_batches: []
+```
+
+A scenario without `agent_commits` blocks runs in mock mode (empty outputs) — keeps existing fixtures working. A scenario with them runs in replay mode and asserts byte-identical reproduction.
+
+---
+
 ### Gossip data flow (G5)
 
 When player starts a conversation with NPC `X`, the wheel can include a `gossip` category. Each gossip option corresponds to one of `X`'s memories whose `subject_id != "player"` AND `emotional_weight >= 4`. Picking the gossip option:
@@ -140,47 +179,143 @@ The Contextual Options agent never invents gossip — it surfaces from the engin
 
 ---
 
-## Phase G3 — Memory Model
+## Phase G3 — Memory Model + Conversation Curator
 
-**Design source:** [07-Gossip-And-Information.md § The Gossip System](../07-Gossip-And-Information.md). Pattern reference: [steno-livekit-agent/src/runtime/memory.py](C:/Users/Mcian/projects/steno-livekit-agent/src/runtime/memory.py).
+**Design source:** [07-Gossip-And-Information.md § The Gossip System](../07-Gossip-And-Information.md). Pattern reference: [steno-livekit-agent/src/runtime/memory.py](C:/Users/Mcian/projects/steno-livekit-agent/src/runtime/memory.py) and the Curator agent pattern that runs at frame close.
 
-**Scope.** Add the structured memory layer to canonical state. Conversations and ceremonies create memories. No gossip transfer yet (G5).
+**Scope.** Add the structured memory layer to canonical state. Add the Conversation Curator agent — runs at `END_CONVERSATION` and produces LLM-authored memories from the conversation history. Memories carry character voice, not templated strings. They are the substrate gossip propagates over in G5.
 
 **Changes.**
+
 - [`src/game/state/models.py`](../src/game/state/models.py): add `Memory` Pydantic model per the Architectural Decisions section. Add `memories: list[Memory]` to both `IslanderState` and `PlayerState`. Bump `SCHEMA_VERSION` to 6.
-- [`src/game/state/snapshot.py`](../src/game/state/snapshot.py): `state_hash_payload` strips `memories[*].content` (LLM prose, like dialogue). Add `test_memory_content_does_not_affect_hash`.
-- [`src/game/engine/memory.py`](../src/game/engine/memory.py) (new): `create_memory(holder_id, subject_id, source, day, turn, weight, tags, content) -> Memory` with deterministic id generation via `rng.fork(f"memory-{holder}-{day}-{turn}")`. `add_memory(state, memory)` writes to the right holder.
-- [`src/game/engine/turn.py`](../src/game/engine/turn.py): on `END_CONVERSATION`, derive one or two memories per participant from the closed conversation's exchanges. Algorithmic for now — content is templated: `"{player} {category}-talked with me at the {location} on day {day}"`. Tags include the conversation's accumulated_tags. Emotional weight = `min(10, max(1, accumulated_affection_delta // 2 + 3))`.
-- Ceremony events generate memories for participants (witnessed) and bystanders at the same location (direct via spectator).
+- [`src/game/state/snapshot.py`](../src/game/state/snapshot.py): `state_hash_payload` strips `memories[*].content` (LLM prose, like dialogue text). Hash-included: `id`, `holder_id`, `subject_id`, `source`, `source_id`, `formed_on_day`, `formed_on_turn`, `emotional_weight`, `tags`, `durable`. Add `test_memory_content_does_not_affect_hash`.
+- [`src/game/engine/memory.py`](../src/game/engine/memory.py) (new): `make_memory_id(holder_id, day, turn, rng_fork) -> str` (deterministic id from seeded RNG). `add_memory(state, memory)` writes to the right holder. `recent_memories_for(state, holder_id, limit=5)` for context lookups (used by gossip in G5).
+- [`src/game/agents/conversation_curator.py`](../src/game/agents/conversation_curator.py) (new): `ConversationCuratorAgent` with model `gpt-4.1-mini`. Prompt at `src/game/agents/prompts/conversation_curator.md` (Claude writes; Codex installs verbatim per R17). Input: the closed `Conversation` with its `ExchangeRecord` list + both participants' profiles + final relationship state + day/location. Output: a `MemoryBatch` Pydantic model with 1-2 memories per participant. Mock curator (`mock_conversation_curator`) returns one deterministic memory per participant for non-LLM tests.
+- [`src/game/engine/turn.py`](../src/game/engine/turn.py): on `END_CONVERSATION`, invoke the Curator. Add returned memories to player and target via `add_memory`. The mechanical state hash does not change because `content` is hash-excluded.
+- Ceremony events (recoupling, bombshell, elimination) generate memories for participants and same-location bystanders. G3 keeps these algorithmic — one templated memory per ceremony per witness, low weight, tagged appropriately. G4 enriches drama events through Background Witness; ceremony memories stay algorithmic since the ceremony itself produces narrated prose already.
+
+**Memory content shape.** Each memory's `content` is one sentence written in the holder's first-person voice. The Curator writes character-specific summaries the LLM can later cite when gossiping. Example outputs the Curator should produce from a deep conversation where the player asked Chloe about her past:
+
+- Holder: `chloe`. Subject: `player`. Content: `"Player asked about my past and actually listened — that doesn't happen often here."` Weight 6. Tags: `["deep", "vulnerable", "trust_built"]`. Source: `direct`.
+- Holder: `player`. Subject: `chloe`. Content: `"Chloe opened up about being afraid of being lied to. I want to be careful with her."` Weight 7. Tags: `["deep", "vulnerable", "she_trusts_me"]`. Source: `direct`.
 
 **Acceptance criteria.**
 - `make qa` green.
-- After a played conversation, both player and NPC have a memory of it in `state.player.memories` and `state.islanders[i].memories`.
-- New tests in `tests/engine/test_memory.py`: `test_conversation_close_creates_memories`, `test_memory_id_deterministic_from_seed`, `test_memory_hash_excludes_content`.
+- `make test-llm` green: new `tests/agents/test_conversation_curator.py` with 3-5 parametrized scenarios. Each asserts structural contract: 1-2 memories per participant, correct `holder_id` and `subject_id`, non-empty content, weight in 1-10, no digits in content, source ∈ enum.
+- After a played conversation in `make play`, both player and target have one or two LLM-authored memories about each other, visible via `/state --debug` or in the trace JSON.
+- `test_memory_content_does_not_affect_hash` proves replay determinism: same seed + same action script → same state hash regardless of LLM memory content.
 
-**Anti-goals.** No Curator LLM agent yet — keep memory content templated, deterministic. No gossip transfer yet. No memory-driven NPC behavior yet (G5 wires that).
+**Anti-goals.** No Background Witness yet (G4). No gossip transfer yet (G5). No memory-driven NPC action selection yet — memories exist but don't change NPC behavior until G5 wires gossip eligibility.
 
 ---
 
-## Phase G4 — Background Villa Life
+## Phase G4 — Villa Orchestrator + Background Conversations
 
-**Design source:** [09-Social-Dynamics.md](../09-Social-Dynamics.md), [08-Daily-Loop.md § Off-screen progression](../08-Daily-Loop.md).
+**Design source:** [09-Social-Dynamics.md](../09-Social-Dynamics.md), [08-Daily-Loop.md § Off-screen progression](../08-Daily-Loop.md), [07-Gossip-And-Information.md](../07-Gossip-And-Information.md).
 
-**Scope.** NPCs autonomously interact off-screen during phase advances. Each interaction produces memories for both participants. Algorithmic. No LLM cost.
+**Scope.** Off-screen NPC behavior is LLM-driven, every turn. A new **Villa Orchestrator** agent runs after each player action and decides who moves, what conversations start, what conversations continue, what conversations end. Background NPC-NPC conversations are **persistent state** that span turns. The villa feels alive because every turn, someone moves, someone starts a chat, someone ends one. The deterministic `simulate_off_screen` algorithm goes away.
+
+**Architecture.**
+
+```
+player turn flow:
+  player_action -> MechanicalResult
+  -> VillaOrchestrator.decide(state)  -> VillaUpdate
+  -> validate + apply movements
+  -> for each new conversation in update:
+       BackgroundDialogue.generate(participants, topic) -> exchange
+  -> for each continuing conversation:
+       BackgroundDialogue.generate(participants, topic, nudge) -> next exchange
+  -> for each ending conversation:
+       ConversationCurator.curate(conv, witnesses) -> memories
+  -> IslanderVoice.generate(...) -> player's exchange (existing flow)
+  -> TurnResult includes VillaUpdate + applied changes for trace visibility
+```
 
 **Changes.**
-- [`src/game/engine/simulation.py`](../src/game/engine/simulation.py): keep deterministic NPC movement. Pairwise NPC-NPC events now produce a `Memory` for both participants (algorithmic content: `"{actor} {kind}-chatted with me at the {location} on day {day}"`). Event kinds expand: `chat`, `flirt`, `argue`, `bond`. Each kind has fixed tags and weight.
-- Drama threshold: when two NPCs both roll above 80 on their interaction, mark the event `kind="drama"` (e.g. a real kiss off-screen) — these memories get weight 7-9 and are eligible for gossip in G5.
-- Movement: NPCs can move *to* the player's location (drawn in by chemistry with player), making encounters more likely. Currently they move randomly; G4 makes movement weighted by relationship + archetype.
-- Public perception: NPCs who witness a flirt or drama event update their own public_perception of the subject.
+
+- **State.** New Pydantic models in `state/models.py`:
+  ```python
+  class BackgroundExchangeRecord(BaseModel):
+      turn_index: int
+      speaker_a_id: str
+      speaker_b_id: str
+      speaker_a_line: str
+      speaker_b_line: str
+      tone: str
+
+  class NPCNPCConversation(BaseModel):
+      id: str                                    # deterministic via RNG fork
+      participants: list[str]                    # exactly two NPC ids
+      location_id: Location
+      topic: str
+      started_on_turn: int
+      exchanges: list[BackgroundExchangeRecord]
+      status: Literal["active", "ending", "closed"]
+  ```
+  Add `npc_conversations: list[NPCNPCConversation] = []` to `GameState`. Bump `SCHEMA_VERSION` to 7.
+
+- **Hash payload.** `state_hash_payload` excludes `npc_conversations[*].exchanges[*].speaker_a_line`, `speaker_b_line`, and `topic`. Hash-included: `id`, `participants`, `location_id`, `started_on_turn`, exchange count, `status`. Add `test_background_dialogue_does_not_affect_hash`.
+
+- **`src/game/agents/villa_orchestrator.py`** (new): `VillaOrchestratorAgent` with model `gpt-5.4-mini`, `reasoning_effort: "low"`. Prompt at `src/game/agents/prompts/villa_orchestrator.md` (Claude wrote it; install verbatim per R17). Input: villa state summary (every non-eliminated NPC with location/mood/top-3-memories/relationship-with-player, active NPC-NPC conversations with id/participants/topic/exchange-count, player's location and active conversation status, recent player actions, upcoming ceremonies). Output: `VillaUpdate` Pydantic model with `npc_movements`, `conversation_starts`, `conversation_continues`, `conversation_ends`.
+
+- **`src/game/engine/villa.py`** (new): pure validation + apply layer. `validate_villa_update(state, update) -> None` enforces: only known NPC ids, no eliminated NPCs, player not in NPC conversations, no continue-and-end on same conv, start participants will be co-located after movements apply, no NPC in two new conversations simultaneously, no convo continued after ending. Failures raise (R2). Then `apply_villa_update(state, update, dialogue_agent, curator_agent, rng) -> AppliedVillaChanges` mutates state and returns the list of memories created.
+
+- **`src/game/agents/background_dialogue.py`** (new): `BackgroundDialogueAgent` with model `gpt-4.1-mini`. Prompt at `src/game/agents/prompts/background_dialogue.md`. Input: both participants' profiles, location, topic, nudge (optional), conversation history so far, bystanders, recent memories per participant. Output: `BackgroundExchange` (speaker_a_line, speaker_b_line, tone). Runtime validation: combined word count 20-120, no digits, third-person body language only.
+
+- **Conversation Curator** (from G3) now handles NPC-NPC conversations on `conversation_ends`. The prompt is already general. Bystanders at the conversation's location are passed in; they get `source="witnessed"` memories. Player can be a bystander too if they're at the same location (witnessing NPCs gossip nearby).
+
+- **`src/game/engine/turn.py`**: `run_turn` accepts optional `villa_orchestrator: VillaOrchestratorFn` and `background_dialogue: BackgroundDialogueFn`. After MechanicalResult applies, before player's IslanderVoice exchange: orchestrator runs, update validates, movements apply, background dialogue and curator fire as appropriate. `TurnResult.villa_update: VillaUpdate | None` and `TurnResult.background_memories: list[Memory]` give trace visibility.
+
+- **Delete `simulate_off_screen` and `ArchetypeBehavior`** from `engine/simulation.py`. The module either gets deleted entirely or stripped to a single function for ceremony-adjacent helpers. R3: no parallel mechanisms.
+
+- **Three agent modes (per the Architectural Decisions section).**
+  - **Live mode.** `OpenAIVillaOrchestrator`, `OpenAIBackgroundDialogue`, `OpenAIConversationCurator`. Real LLM calls. Each commit is written to the per-turn trace under `agent_commits`.
+  - **Replay mode.** `RecordedVillaOrchestrator`, `RecordedBackgroundDialogue`, `RecordedConversationCurator` read from a trace file and return the recorded commits in order. Engine validation still runs — recorded commits must still pass validation against current state. The `--replay TRACE_PATH` CLI flag swaps all agents to recorded shims for that session.
+  - **Mock mode.** `mock_villa_orchestrator(state) -> VillaUpdate` returns an empty update. `mock_background_dialogue(...)` returns a fixed deterministic exchange. `mock_conversation_curator(...)` returns one deterministic memory per participant. Used for unit tests that need a player path without recording a real run, and for scenario fixtures without `agent_commits` blocks.
+
+- **Trace shape.** `TurnTrace` (the per-turn record written to the trace file) gains:
+  ```python
+  class AgentCommits(BaseModel):
+      villa_update: VillaUpdate | None = None
+      background_dialogues: list[BackgroundExchange] = []
+      curator_batches: list[MemoryBatch] = []
+
+  class TurnTrace(BaseModel):
+      ...                                              # existing fields
+      agent_commits: AgentCommits = AgentCommits()
+  ```
+  The HTML report shows agent_commits in a per-turn sidebar so reviewers can see what the world did.
+
+- **Scenario YAML extension.** Each action entry can carry an optional `agent_commits` block per the Architectural Decisions section. Fixtures without the block run in mock mode (backward-compatible). Fixtures with the block run in replay mode and assert exact reproduction. The runner detects which mode to use per-scenario from the YAML shape.
 
 **Acceptance criteria.**
-- `make qa` green.
-- After advancing 5 phases on an empty CLI session (no player conversations), NPCs have 5-15 memories each from off-screen interactions.
-- The 6-day full-run fixture has visible NPC memory accumulation by day 6.
-- New tests: `test_off_screen_chat_creates_memories_for_both`, `test_drama_events_have_high_weight`, `test_npcs_move_toward_chemistry_partners`.
 
-**Anti-goals.** No LLM in background sim — purely algorithmic. No Orchestrator agent. No player-visible prose for off-screen events (player learns through gossip in G5).
+- `make qa` green.
+- `make test-llm` green with new tests:
+  - `tests/agents/test_villa_orchestrator.py`: 4-5 parametrized scenarios (empty villa, drama brewing, ceremony imminent, gossip-laden NPCs, player in active conversation). Each asserts `VillaUpdate` structural validity.
+  - `tests/agents/test_background_dialogue.py`: 4 parametrized scenarios. Word count, no digits, third-person body language, in-voice.
+- `make play`: every turn, the TurnResult shows `villa_update` with movements and conversation changes. Reading the trace, NPC-NPC conversations span multiple turns and close with extracted memories.
+- After a full 6-day session in `make play`, NPCs have 15-30 LLM-authored memories each — a mix of direct (their own conversations), witnessed (conversations they overheard), and player-conversation memories.
+- New engine tests in `tests/engine/test_villa.py`:
+  - `test_villa_update_rejects_eliminated_npc`
+  - `test_villa_update_rejects_player_in_npc_conv`
+  - `test_villa_update_rejects_start_at_wrong_location`
+  - `test_villa_update_rejects_end_and_continue_same_conv`
+  - `test_npc_conversation_close_invokes_curator`
+  - `test_apply_movements_updates_locations`
+- Mock-mode replay of the existing `conversation-multi-exchange.yaml` fixture produces the same hash as before (since mock returns empty updates).
+- A new `conversation-multi-exchange-with-background.yaml` fixture pins recorded agent commits and asserts byte-identical reproduction in replay mode.
+- `make play --record TRACE_PATH` writes a full trace including agent commits. `make play --replay TRACE_PATH` reproduces the same session byte-identically without LLM calls.
+
+**Anti-goals.**
+
+- No Producer AI / event scheduler beyond what ceremonies already do. The orchestrator handles NPC-NPC convos; ceremonies remain on their fixed schedule.
+- No "high-stakes filter." Every NPC-NPC conversation runs through the agent pipeline. The Orchestrator decides what's worth having happen; we don't second-guess with a filter.
+- No algorithmic NPC movement table. Movement is Orchestrator-driven.
+- No player-visible prose for off-screen exchanges directly in the main flow — the player encounters them through gossip in G5. The trace shows them for debugging; the HTML report shows them in a sidebar so reviewers can see what was happening off-screen.
+- No NPC-NPC conversations involving the player. The player has their own conversation lane.
+- No cost optimization. Every turn calls the orchestrator. Every active background conversation produces one Background Dialogue call per turn. Cost is not the constraint.
 
 ---
 
@@ -245,9 +380,12 @@ The prompts are user-owned per ENGINEERING R17. Living in:
 
 - [`src/game/agents/prompts/islander_voice.md`](../src/game/agents/prompts/islander_voice.md) — already installed.
 - [`src/game/agents/prompts/event_narrator.md`](../src/game/agents/prompts/event_narrator.md) — already installed.
-- [`src/game/agents/prompts/contextual_options.md`](../src/game/agents/prompts/contextual_options.md) — **Claude rewrites for G1** so options return short labels with category metadata. Codex installs verbatim once delivered.
+- [`src/game/agents/prompts/contextual_options.md`](../src/game/agents/prompts/contextual_options.md) — rewritten by Claude for G1 (short labels, categories, unlock thresholds). Install verbatim.
+- [`src/game/agents/prompts/conversation_curator.md`](../src/game/agents/prompts/conversation_curator.md) — **G3.** Generalized to handle player+NPC, NPC+NPC, and bystander witnesses. Already written.
+- [`src/game/agents/prompts/villa_orchestrator.md`](../src/game/agents/prompts/villa_orchestrator.md) — **G4.** The world brain. Decides movements, conversation starts/continues/ends. Already written.
+- [`src/game/agents/prompts/background_dialogue.md`](../src/game/agents/prompts/background_dialogue.md) — **G4.** Writes NPC-NPC dialogue exchanges. Already written.
 
-No new prompts in G2-G6. Memory generation in G3 and G4 is templated/algorithmic — no LLM cost, no prompt. Gossip dialogue in G5 reuses IslanderVoice (the existing prompt handles in-character delivery of memory content). The Curator agent and Orchestrator agent are explicitly deferred beyond G.
+Gossip dialogue in G5 reuses IslanderVoice — the existing prompt handles in-character delivery of memory content when the IslanderVoice context includes a `gossip_about` memory. No new prompt needed for G5.
 
 ---
 
@@ -255,8 +393,7 @@ No new prompts in G2-G6. Memory generation in G3 and G4 is templated/algorithmic
 
 Hold these across all sub-phases:
 
-- ❌ No Curator LLM agent. Memory content is templated in G3-G4.
-- ❌ No Orchestrator LLM agent. NPC off-screen behavior is algorithmic in G4.
+- ❌ No cost-saving filters on memory or background dialogue generation. The Orchestrator decides what happens; every conversation it spawns runs through Background Dialogue and the Curator. No "high-stakes only" gates.
 - ❌ No Producer AI. Event scheduling stays deterministic.
 - ❌ No new content authoring beyond what each phase needs. Cast stays at 3 + Aisha bombshell.
 - ❌ No Vite UI. CLI remains the surface.
