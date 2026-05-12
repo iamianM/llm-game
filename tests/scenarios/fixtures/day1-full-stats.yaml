@@ -2,7 +2,7 @@
 # uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day1-full-stats.yaml --mock-llm
 name: day1-full-stats
 seed: 3
-expected_hash: 0c3e334fc20fc86668146172edcca91444db191db2844a438f6ddd834e73cd7b
+expected_hash: 5ca6d2e54626f7f0f240bce547130c1d897ee8d2a5593c2597c3f6d7ec62af57
 actions:
   - kind: listen
     target_id: chloe

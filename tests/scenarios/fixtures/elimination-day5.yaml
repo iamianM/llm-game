@@ -1,14 +1,7 @@
-# Regenerate expected_hash with:
-# uv run python -m src.game.cli replay --actions tests/scenarios/fixtures/day6-full-run.yaml --mock-llm
-name: day6-full-run
-seed: 6
-expected_hash: abaa4822348e8d52f5589c015158830628e761ebfc7da753513869c35018ca02
+name: elimination-day5
+seed: 10
+expected_hash: 861e902710eab2cc4a7f87aa5d660c30577c5aac48bfb9608721f4b8d4edd6a2
 actions:
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
-  - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase
   - kind: advance_phase

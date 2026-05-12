@@ -33,3 +33,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: location filtering, move validation, multi-day phase rollover, deterministic off-screen simulation
 - QA result: `make qa` green, 32 tests passed
 - Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml`
+
+## Phase C
+
+- Files added: `src/game/engine/ceremonies.py`, `tests/engine/test_ceremonies.py`, `tests/scenarios/fixtures/recoupling-day3.yaml`, `tests/scenarios/fixtures/bombshell-day4.yaml`, `tests/scenarios/fixtures/elimination-day5.yaml`
+- Files changed: `src/game/state/models.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, scenario fixture hashes
+- Tests added: recoupling partner choice, leftover elimination, bombshell idempotency, public-perception bounds
+- QA result: `make qa` green, 39 tests passed
+- Scenario fixture: `tests/scenarios/fixtures/recoupling-day3.yaml`

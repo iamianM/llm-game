@@ -15,6 +15,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.narrator import mock_narration
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
+from src.game.engine.ceremonies import arrive_bombshell, recoupling
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
@@ -41,7 +42,11 @@ def run_turn(state: GameState, action: PlayerAction, rng: SeededRng) -> TurnResu
     result = apply_action(state, action, rng)
     off_screen_events: list[OffScreenEvent] = []
     if action.kind is ActionKind.ADVANCE_PHASE:
+        if state.phase.value == "evening" and state.day in {3, 5}:
+            recoupling(state, rng.fork(f"day-{state.day}-recoupling"))
         advance_phase(state)
+        if state.day == 4 and state.phase.value == "morning":
+            arrive_bombshell(state, rng.fork("day-4-bombshell"))
         off_screen_events = simulate_off_screen(
             state,
             rng.fork(f"day-{state.day}-phase-{state.phase.value}"),

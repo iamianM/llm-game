@@ -66,6 +66,8 @@ class PlayerState(BaseModel):
     id: str = "player"
     name: str = "You"
     stats: PlayerStats
+    public_perception: int = Field(default=50, ge=0, le=100)
+    eliminated: bool = False
 
 
 class RelationshipState(BaseModel):
@@ -89,6 +91,18 @@ class IslanderState(BaseModel):
     archetype: str
     location_id: Location
     relationship: RelationshipState = Field(default_factory=RelationshipState)
+    public_perception: int = Field(default=50, ge=0, le=100)
+    eliminated: bool = False
+
+
+class Couple(BaseModel):
+    """Two islanders paired by the deterministic ceremony rules."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    partner_a_id: str
+    partner_b_id: str
+    formed_on_day: int
 
 
 class GameState(BaseModel):
@@ -104,6 +118,7 @@ class GameState(BaseModel):
     location_id: Location = Location.POOL
     player: PlayerState
     islanders: list[IslanderState]
+    couples: list[Couple] = Field(default_factory=list)
 
     @property
     def is_terminal(self) -> bool:

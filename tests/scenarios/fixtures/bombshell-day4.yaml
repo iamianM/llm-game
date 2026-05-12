@@ -1,0 +1,20 @@
+name: bombshell-day4
+seed: 9
+expected_hash: 84a17c721f4118693690ab9471d83fa260b5779d3ee9f4f8eacc38ac838ecdf0
+actions:
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase

@@ -56,13 +56,21 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
     """Apply one valid action and mutate ``state``."""
     validate_action(state, action)
     if action.kind is ActionKind.TALK:
-        return _apply_talk(state, action, rng)
+        result = _apply_talk(state, action, rng)
+        update_public_perception(state, action, result)
+        return result
     if action.kind is ActionKind.FLIRT:
-        return _apply_flirt(state, action, rng)
+        result = _apply_flirt(state, action, rng)
+        update_public_perception(state, action, result)
+        return result
     if action.kind is ActionKind.BOLD_FLIRT:
-        return _apply_bold_flirt(state, action, rng)
+        result = _apply_bold_flirt(state, action, rng)
+        update_public_perception(state, action, result)
+        return result
     if action.kind is ActionKind.LISTEN:
-        return _apply_listen(state, action, rng)
+        result = _apply_listen(state, action, rng)
+        update_public_perception(state, action, result)
+        return result
     if action.kind is ActionKind.LEAVE:
         return MechanicalResult(action=action, success=True, tags=["disengaged"])
     if action.kind is ActionKind.MOVE:
@@ -211,3 +219,19 @@ def _find_islander(state: GameState, target_id: str | None) -> IslanderState:
         if islander.id == target_id:
             return islander
     raise ValueError(f"unknown islander: {target_id}")
+
+
+def update_public_perception(
+    state: GameState,
+    action: PlayerAction,
+    result: MechanicalResult,
+) -> None:
+    """Apply small deterministic public-perception movement."""
+    delta = 0
+    if action.kind is ActionKind.LISTEN and result.success:
+        delta = 2
+    elif action.kind is ActionKind.BOLD_FLIRT and not result.success:
+        delta = -2
+    elif action.kind is ActionKind.FLIRT and not result.success:
+        delta = -1
+    state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
