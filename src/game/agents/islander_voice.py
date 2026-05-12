@@ -27,8 +27,6 @@ from src.game.engine.rules import MechanicalResult
 from src.game.state.models import GameState, IslanderState, Mood
 
 ISLANDER_VOICE_MODEL = "gpt-4.1-mini"
-DEFAULT_BUDGET_USD = 50.0
-ESTIMATED_COST_PER_CALL_USD = 0.002
 VALID_TONES = {
     "warm",
     "flirty",
@@ -96,28 +94,15 @@ class OpenAIIslanderVoice:
         self,
         *,
         model: str = ISLANDER_VOICE_MODEL,
-        budget_usd: float | None = None,
         content: ContentIndex | None = None,
     ) -> None:
         load_dotenv_local()
         self._client = OpenAI()
         self._model = model
-        self._budget_usd = (
-            float(os.environ.get("LLM_BUDGET_USD", DEFAULT_BUDGET_USD))
-            if budget_usd is None
-            else budget_usd
-        )
-        self._spent_usd = 0.0
         self._content = content if content is not None else load_content()
-
-    @property
-    def spent_usd(self) -> float:
-        """Return estimated spend for this process."""
-        return self._spent_usd
 
     def generate(self, state: GameState, result: MechanicalResult) -> Exchange:
         """Generate one structured exchange for a resolved mechanical result."""
-        self._reserve_budget()
         context = islander_voice_context(state, result, self._content)
         response = self._client.responses.parse(
             model=self._model,
@@ -133,12 +118,6 @@ class OpenAIIslanderVoice:
             raise ValueError("Islander Voice returned no parsed Exchange")
         validate_exchange(exchange, context)
         return exchange
-
-    def _reserve_budget(self) -> None:
-        projected = self._spent_usd + ESTIMATED_COST_PER_CALL_USD
-        if projected > self._budget_usd:
-            raise RuntimeError("LLM budget exceeded")
-        self._spent_usd = projected
 
 
 def islander_voice_context(

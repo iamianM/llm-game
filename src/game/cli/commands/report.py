@@ -126,7 +126,7 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
     for islander in state.islanders:
         islander.location_id = Location.POOL
     rng = SeededRng(42)
-    islander_voice = OpenAIIslanderVoice(budget_usd=10.0).generate
+    islander_voice = OpenAIIslanderVoice().generate
     actions = [
         ("chloe", "friendly_ask_feelings", 10),
         ("chloe", "friendly_chat_villa", 10),
@@ -152,7 +152,17 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
 
-    out.write_text(session_page("Phase F2 Voice Preview", records), encoding="utf-8")
+    preface = (
+        "<p><b>About this preview.</b> This page demonstrates the Islander Voice agent across "
+        "all four conversation categories. Affection is pre-warmed before each turn to the intent's "
+        "unlock threshold so every tier is visible — a real session evolves these values gradually. "
+        "Player stats are deliberately set to the minimum (3 across all five stats) so misses are "
+        "plausible. Read each turn as a voice-quality sample, not as a continuous narrative.</p>"
+    )
+    out.write_text(
+        session_page("Phase F2 Voice Preview", records, preface=preface),
+        encoding="utf-8",
+    )
     print(out)
     return 0
 
@@ -161,8 +171,8 @@ def _run_session(path: Path, *, use_llm: bool) -> tuple[list[dict[str, Any]], Ga
     script = load_action_script(path)
     state = new_game(script.seed, player_stats=script.player_stats)
     rng = SeededRng(script.seed)
-    islander_voice = OpenAIIslanderVoice(budget_usd=10.0).generate if use_llm else None
-    event_narrator = OpenAIEventNarrator(budget_usd=10.0).narrate if use_llm else None
+    islander_voice = OpenAIIslanderVoice().generate if use_llm else None
+    event_narrator = OpenAIEventNarrator().narrate if use_llm else None
     records: list[dict[str, Any]] = []
     for action in script.actions:
         input_hash = state_hash(state_hash_payload(state))

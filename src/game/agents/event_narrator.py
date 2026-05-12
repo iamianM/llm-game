@@ -11,7 +11,6 @@ who arrives, couples, or leaves.
 
 from __future__ import annotations
 
-import os
 import re
 from collections.abc import Callable
 from pathlib import Path
@@ -24,8 +23,6 @@ from src.game.engine.ceremonies import CeremonyEvent
 from src.game.state.models import GameState
 
 EVENT_NARRATOR_MODEL = "gpt-4.1-mini"
-DEFAULT_BUDGET_USD = 50.0
-ESTIMATED_COST_PER_CALL_USD = 0.002
 
 
 class EventNarration(BaseModel):
@@ -42,22 +39,15 @@ EventNarratorFn = Callable[[GameState, list[CeremonyEvent]], EventNarration]
 class OpenAIEventNarrator:
     """Single event narrator backed by the OpenAI Responses API."""
 
-    def __init__(self, *, model: str = EVENT_NARRATOR_MODEL, budget_usd: float | None = None) -> None:
+    def __init__(self, *, model: str = EVENT_NARRATOR_MODEL) -> None:
         load_dotenv_local()
         self._client = OpenAI()
         self._model = model
-        self._budget_usd = (
-            float(os.environ.get("LLM_BUDGET_USD", DEFAULT_BUDGET_USD))
-            if budget_usd is None
-            else budget_usd
-        )
-        self._spent_usd = 0.0
 
     def narrate(self, state: GameState, events: list[CeremonyEvent]) -> EventNarration:
         """Generate narration for resolved ceremony events."""
         if not events:
             raise ValueError("event narration requires at least one ceremony event")
-        self._reserve_budget()
         response = self._client.responses.parse(
             model=self._model,
             instructions=Path("src/game/agents/prompts/event_narrator.md").read_text(
@@ -72,12 +62,6 @@ class OpenAIEventNarrator:
             raise ValueError("Event Narrator returned no parsed EventNarration")
         validate_event_narration(narration, events)
         return narration
-
-    def _reserve_budget(self) -> None:
-        projected = self._spent_usd + ESTIMATED_COST_PER_CALL_USD
-        if projected > self._budget_usd:
-            raise RuntimeError("LLM budget exceeded")
-        self._spent_usd = projected
 
 
 def mock_event_narration(state: GameState, events: list[CeremonyEvent]) -> EventNarration:

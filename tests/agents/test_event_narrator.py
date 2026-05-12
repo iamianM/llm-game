@@ -21,7 +21,7 @@ from src.game.state.models import new_game
 def test_event_narrator_output_contract(events: list[CeremonyEvent]) -> None:
     """Event Narrator prose stays bounded and references supplied participants."""
     state = new_game(1)
-    agent = OpenAIEventNarrator(budget_usd=1.0)
+    agent = OpenAIEventNarrator()
 
     narration = agent.narrate(state, events)
 

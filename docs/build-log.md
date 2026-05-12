@@ -81,3 +81,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: real Islander Voice contract coverage across all 12 intents; real Event Narrator coverage for bombshell, recoupling, and elimination; state hash excludes dialogue text
 - QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
 - Scenario fixture: existing deterministic fixtures unchanged; F2 preview generated at `review-packet-preview/session-phaseF2.html`
+
+## Phase F2.1
+
+- Files added: `src/game/agents/prompts/contextual_options.md` for the Phase F3 follow-up menu agent
+- Files changed: `src/game/agents/prompts/islander_voice.md`, `src/game/agents/prompts/event_narrator.md`, `src/game/agents/islander_voice.py`, `src/game/agents/event_narrator.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`, `ENGINEERING.md`, `docs/build-plan-F.md`, `docs/build-plan-A2-E.md`
+- Tests added: none; existing agent and engine contracts still cover the behavior
+- QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
+- Mid-phase gate: F2 preview regenerated at `review-packet-preview/session-phaseF2.html`

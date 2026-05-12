@@ -73,3 +73,9 @@ Reject changes that add:
 - swallowed LLM/tool/content errors
 - fallback narration strings in code
 - content frontmatter fields that encode gameplay logic
+
+## R17. Prompts Are User-Owned
+
+Prompt files under `src/game/agents/prompts/` are authored and edited only by the user (Claude in this collaboration drafts them; the user approves). When a build plan installs a prompt, it installs verbatim. Codex does not soften, shorten, restructure, or "improve" prompt wording without an explicit user request.
+
+If a prompt produces bad output, the response is to flag the problem and propose an edit — not to silently rewrite the prompt. Prompt drift is a content-quality heuristic in the same family as R7 and gets the same answer: the prompt is the heuristic; edits go through the prompt owner.

@@ -33,7 +33,7 @@ def test_islander_voice_output_contract(intent: Intent) -> None:
         ),
         SeededRng(1),
     )
-    agent = OpenAIIslanderVoice(budget_usd=1.0)
+    agent = OpenAIIslanderVoice()
 
     exchange = agent.generate(state, result)
     context = islander_voice_context(state, result)

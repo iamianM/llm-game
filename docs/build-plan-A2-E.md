@@ -144,7 +144,7 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 - Content authoring: `content/archetypes/{sweetheart,joker,friend}.md` and `content/locations/{pool,kitchen,terrace,bedroom}.md` with frontmatter (id, archetype/location label) and 80-150 words of prose flavor each. Loaded by [`src/game/content/loader.py`](../src/game/content/loader.py) into Pydantic models. `make content-lint` now validates these references.
 - [`engine/turn.py`](../src/game/engine/turn.py): `run_turn` takes a `narrator: Narrator | None` parameter. If provided, use it; if not, use `mock_narration`. Default for tests: not provided. Default for CLI: provided. `--mock-llm` flag in `play` skips the real Narrator.
 - [`cli/commands/play.py`](../src/game/cli/commands/play.py): construct the Narrator on startup unless `--mock-llm`. Pass to `run_turn`.
-- Cost cap: `LLM_BUDGET_USD = 5.0` env var, narrator increments a per-process counter, raises if exceeded. Counter stored in a singleton in `agents/narrator.py`.
+- Cost stance superseded by `docs/build-plan-F.md`: no per-call budget cap, no spend tracker, no `LLM_BUDGET_USD` env var. Game feel is the constraint.
 - Tests: `tests/agents/test_narrator_quality.py`, marked `@pytest.mark.llm`. Five fixed `MechanicalResult` inputs. Hard structural checks per output: no digits in prose, no NPC names not in visible context, prose length 20-150 words, tone in allowed set. `make test-llm` runs them. Cost cap on the test run: 5 calls.
 
 **Acceptance criteria.**

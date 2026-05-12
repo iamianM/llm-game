@@ -27,9 +27,15 @@ def page(title: str, body: str) -> str:
     )
 
 
-def session_page(title: str, records: list[dict[str, Any]]) -> str:
-    """Render one session trace as turn cards."""
+def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
+    """Render one session trace as turn cards.
+
+    ``preface`` is optional self-contained HTML inserted above the first turn —
+    useful for previews that pre-warm state and need to disclose that to readers.
+    """
     cards = []
+    if preface:
+        cards.append(f"<section class='card'>{preface}</section>")
     for record in records:
         result = record["mechanical_result"]
         action = result["action"]

@@ -102,7 +102,7 @@ This means real LLM is required to fully replay a real session, but mock LLM is 
 
 Hardcoded in module constants. No abstraction layer. If a model ID is invalid for the available API key, **fail loud and stop**. Do not silently substitute. See [twins/tony-robbins-rri/config.yaml](C:/Users/Mcian/projects/steno-livekit-agent/twins/tony-robbins-rri/config.yaml) for the steno precedent on `gpt-5.4-mini`.
 
-Per-call cost cap: `LLM_BUDGET_USD = 50.0` env-var default for development. The cost is no longer the binding constraint — game feel is. Track spend per call; raise loud if exceeded.
+No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is not a constraint for v0 — game feel is. Do not add a budget enforcement layer.
 
 ---
 
@@ -301,8 +301,7 @@ Per-call cost cap: `LLM_BUDGET_USD = 50.0` env-var default for development. The 
     - No digits in either dialogue field.
     - No name of any eliminated or off-scene islander appears in `npc_dialogue`.
     - `npc_mood_after` is in the `Mood` enum.
-  - Budget tracking with `LLM_BUDGET_USD` env var, raise on exceeded.
-- Move the prompt to `src/game/agents/prompts/islander_voice.md`. Use the text from the **Prompts** section below verbatim as the starting version.
+- Move the prompt to `src/game/agents/prompts/islander_voice.md`. Use the text from the **Prompts** section below verbatim. Prompts are user-owned (ENGINEERING R17).
 - Modify [`src/game/engine/turn.py`](../src/game/engine/turn.py):
   - `TurnResult.narration: str` is replaced with:
     - `exchange: Exchange | None` — set for `START_CONVERSATION` and `RESPOND_WITH`.
@@ -459,152 +458,14 @@ Per-call cost cap: `LLM_BUDGET_USD = 50.0` env-var default for development. The 
 
 ## Prompts
 
-These are the prompts Codex installs verbatim at the start of F2 (Islander Voice, Event Narrator) and F3 (Contextual Options). Codex does not modify them without explicit user direction.
+The prompts are user-owned per ENGINEERING R17. They live in the repo at:
 
-### `src/game/agents/prompts/islander_voice.md`
+- [`src/game/agents/prompts/islander_voice.md`](../src/game/agents/prompts/islander_voice.md) — Islander voice for single-exchange dialogue (F2).
+- [`src/game/agents/prompts/event_narrator.md`](../src/game/agents/prompts/event_narrator.md) — Reality TV narrator for ceremonies (F2).
+- [`src/game/agents/prompts/contextual_options.md`](../src/game/agents/prompts/contextual_options.md) — Follow-up menu generator (F3).
 
-```markdown
-# Islander Voice
+Codex installs them by reading these files at runtime. Codex does not modify them in source or in code. If a prompt produces poor output, flag the problem and propose an edit to the user; do not soften, shorten, or restructure on Codex's own initiative.
 
-You are the voice of an Islander on a Love Island-style reality show. You speak in their personality, first-person, in dialogue. You also write what the player says aloud when they pick an intent — translate the intent into a natural line.
-
-## Output
-
-Return an `Exchange`:
-
-- `player_dialogue` — what the player actually says. 1-2 sentences. No stage directions, no italics.
-- `npc_dialogue` — the Islander's reply in their voice. 1-3 sentences. May include short italic body language: *bites her lip*, *leans in*, *glances toward the door*. Use sparingly.
-- `npc_tone` — exactly one of: warm, flirty, suspicious, amused, cold, vulnerable, playful, defensive.
-- `npc_mood_after` — exactly one of: happy, flirty, upset, anxious, angry, content.
-
-## Hard rules
-
-- The Islander is **{NPC_NAME}**. Speak only in their voice.
-- Do not invent characters or events that aren't in the context below.
-- Do not write numerical stats or game mechanics into the dialogue.
-- Stay in the present scene. No flashbacks. No future plans.
-- If the intent **succeeded** mechanically, the Islander reacts with the positive side of their personality — receptive, charmed, intrigued, depending on the category. Even success can be cautious or testing; it does not have to be glowing.
-- If the intent **failed** mechanically, the Islander pushes back — politely, with deflection, irony, distance, or genuine displeasure depending on the situation. Failure is never warm acceptance.
-- Reference at most one specific moment from the conversation history. Less is more.
-- Keep the combined word count between 20 and 150 words.
-- Do not use digits anywhere in either dialogue field.
-
-## The Islander
-
-Name: **{NPC_NAME}**
-Archetype voice: {ARCHETYPE_PROSE}
-Current mood (before this exchange): **{NPC_MOOD}**
-How they feel about the player right now: {RELATIONSHIP_SUMMARY}
-
-## What the player picked
-
-Category: **{INTENT_CATEGORY}** (Friendly | Flirty | Deep | Banter)
-Specific intent: **{INTENT_LABEL}**
-The player is leaning on their **{STAT_USED}** stat.
-Tags: {TAGS}
-
-## Mechanical outcome (already decided — write to match it)
-
-Success: **{SUCCESS}**
-
-## Scene
-
-Location: {LOCATION}
-Phase: {PHASE}
-Others present: {OTHERS}
-
-## Recent exchange history in this conversation
-
-{RECENT_HISTORY}
-
-## Write the exchange.
-```
-
-### `src/game/agents/prompts/contextual_options.md`
-
-```markdown
-# Contextual Options
-
-You watch a conversation between a player and an Islander on a Love Island-style reality show. After the Islander speaks, you propose 2-4 ways the player could respond, plus your judgment on whether the Islander would naturally walk away now.
-
-## Output
-
-Return a `FollowUpMenu`:
-
-- `options` — 2-4 items. Each:
-  - `text` — the line the player would say. 1 sentence, natural and specific. No stage directions.
-  - `intent_kind` — short snake_case tag for what the player is *trying* to do. Use common ones like `deny`, `deflect_with_humor`, `honest_vulnerable`, `escalate_flirt`, `change_subject`, `ask_about_topic`, `defend_self`, `apologize`, `joke_back`, `go_deeper`, `end_softly`. You may coin a new short tag if needed.
-  - `stat_used` — one of: charm, banter, eq, graft, loyalty, or null for pure exit options.
-  - `risk` — safe | low | medium | high. Calibrate against the Islander's mood and the conversation arc.
-  - `tone` — one short adjective: playful, sincere, defensive, vulnerable, sharp, evasive, warm.
-- `npc_will_leave` — true if the Islander would naturally walk away right now. The departure probability below is a strong hint: above 70 they likely leave, below 30 they likely stay. Use judgment for the middle.
-- `npc_exit_line` — if `npc_will_leave` is true, one short in-character line they say as they leave. Otherwise null.
-
-## Hard rules
-
-- At least one option must be a clean exit (`intent_kind` like `end_softly`, `walk_away`, `change_subject_and_drift`). The player always has agency to leave.
-- Spread the risk and tone across options — don't make all four safe or all four sharp.
-- No digits in any option text.
-- Don't invent characters or events not in context.
-- If `npc_will_leave` is true, `npc_exit_line` is 1 sentence, ≤ 40 words, in the Islander's voice.
-
-## The Islander
-
-Name: **{NPC_NAME}**
-Archetype voice: {ARCHETYPE_PROSE}
-Mood right now: **{NPC_MOOD}**
-Relationship with player: {RELATIONSHIP_SUMMARY}
-
-## What the Islander just said
-
-{LAST_NPC_LINE}
-(tone: **{LAST_NPC_TONE}**)
-
-## Recent exchange history
-
-{RECENT_HISTORY}
-
-## Player stats
-
-charm {CHARM}, banter {BANTER}, eq {EQ}, graft {GRAFT}, loyalty {LOYALTY}
-
-## Departure probability
-
-**{DEPARTURE_PROBABILITY}** (0-100; higher = more likely the Islander walks away)
-
-## Write the menu.
-```
-
-### `src/game/agents/prompts/event_narrator.md`
-
-```markdown
-# Event Narrator
-
-You narrate dramatic Love Island ceremonies in the voice of a reality TV narrator. Punchy, present-tense, theatrical but grounded. No dialogue — you describe the moment, the camera captures it.
-
-## Output
-
-Return one field, `prose`: 2-4 sentences. No more.
-
-## Hard rules
-
-- Third person, present tense.
-- Reference specific named participants from the payload. No invented characters.
-- One emotional beat: the shock, the relief, the dread, the gloat — whichever fits.
-- No numerical stats. No game mechanics.
-- No spoken dialogue. The narrator describes; characters do not speak.
-- 2-4 sentences. Not more, not less.
-
-## The event
-
-Type: **{EVENT_TYPE}** (bombshell_arrival | recoupling | elimination)
-Day: **{DAY}**
-Participants and roles: {PARTICIPANTS}
-Outcome (in plain language): {OUTCOME_SUMMARY}
-Drama context — recent dynamics that make this land: {DRAMA_CONTEXT}
-
-## Write the narration.
-```
 
 ---
 
@@ -635,15 +496,9 @@ In addition to the [build-plan-A2-E.md global anti-goals](build-plan-A2-E.md):
 
 ---
 
-## Budget Note
+## Cost Stance
 
-The user has waived the hard token cap for this phase: the binding constraint is game feel, not cost. That said, project the spend so we are not surprised:
-
-- F2: ~15 Islander Voice + ~3 Event Narrator tests under `pytest -m llm` = ~18 calls at `gpt-4.1-mini` (~$0.001 each) = ~$0.02. F2 mid-phase preview: 10 calls = ~$0.01.
-- F3: regenerated review packet = 3 sessions × ~8 conversations × ~4 exchanges × 2 LLM calls per exchange (voice + options) ≈ 192 calls × ~$0.001 = ~$0.20. Balance simulation uses mock LLM ≈ $0.
-- **Estimated total F2 + F3 LLM cost: under $0.50.** Conservatively budget $5 against per-call mistakes during development.
-
-If at any point projected spend exceeds `LLM_BUDGET_USD = 50.0`, stop and report (R2 / R11).
+There is no per-call budget cap, no spend tracker, no `LLM_BUDGET_USD` env var, no cost telemetry. Cost is not a constraint for v0. Game feel is the binding constraint. Do not add a budget enforcement layer in any phase.
 
 ---
 
