@@ -1,0 +1,843 @@
+[
+  {
+    "turn": 1,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 10, chemistry 0, trust 0",
+    "input_hash": "70c20264d4336b534ee7ee063ad48460609360de485f9bb9aacae9dc3da45133",
+    "action": {
+      "kind": "talk",
+      "target_id": "chloe"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "talk",
+        "target_id": "chloe"
+      },
+      "success": false,
+      "roll": 100,
+      "success_chance": 82,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "talk",
+        "friendly"
+      ]
+    },
+    "narration": "Morning light glistens on the pool as Chloe finds her spot on a lounger, her thoughtful eyes scanning the villa's familiar faces. She smiles warmly at a nearby islander, hoping for an easy conversation, yet somehow the moment slips away. A friendly chat, but the connection simply isn\u2019t there. Chloe's heart remains as tender as ever, longing for the spark that ignites deeper bonds in the sun-drenched chaos of the Love Island villa.",
+    "output_hash": "00bdb1e9e8d352ff7a376e9d970abae06aa9de1e4b34a092da741be2c73b99ee"
+  },
+  {
+    "turn": 2,
+    "day": 1,
+    "phase": "morning",
+    "location": "pool",
+    "visible_state": "Chloe: affection 12, chemistry 5, trust 0",
+    "input_hash": "00bdb1e9e8d352ff7a376e9d970abae06aa9de1e4b34a092da741be2c73b99ee",
+    "action": {
+      "kind": "flirt",
+      "target_id": "chloe"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "flirt",
+        "target_id": "chloe"
+      },
+      "success": true,
+      "roll": 38,
+      "success_chance": 70,
+      "relationship_deltas": {
+        "chloe": {
+          "affection": 2,
+          "chemistry": 5,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "flirty"
+      ]
+    },
+    "narration": "As the sun glistens over the pool, Chloe lounges in a sunlight-soaked chair, radiating warmth. An islander approaches, their flirtation flowing effortlessly. Chloe\u2019s cheeks flush a delicate pink, her heart fluttering at the attention. She smiles, sensing a spark. Chemistry blooms before her eyes, transforming the morning into something charged with possibility. Trust may take time, but today, a sweet connection begins to weave through the villa\u2019s morning air.",
+    "output_hash": "c770f4b5f35bf17b34003503c898aa77e8ecd7fd41de2a6fef913b771da6a315"
+  },
+  {
+    "turn": 3,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 0",
+    "input_hash": "c770f4b5f35bf17b34003503c898aa77e8ecd7fd41de2a6fef913b771da6a315",
+    "action": {
+      "kind": "move",
+      "target_id": "kitchen"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "kitchen"
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "narration": "In the cozy embrace of the kitchen, Maya sets the tone for the morning. With a playful grin, she quips about last night\u2019s shenanigans, her laughter echoing amidst the clinking of glasses. Her jokes lighten the air, but beneath the humor, a hint of vulnerability lingers. As the sun filters in, even the tiniest exchanges feel electric, casting a spark of connection amidst the late snacks and shared drinks.",
+    "output_hash": "0caabc06f3f4338223221b8039476910ea0cebccf6b52b7e85468a0c38eab85d"
+  },
+  {
+    "turn": 4,
+    "day": 1,
+    "phase": "morning",
+    "location": "kitchen",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "0caabc06f3f4338223221b8039476910ea0cebccf6b52b7e85468a0c38eab85d",
+    "action": {
+      "kind": "listen",
+      "target_id": "maya"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "listen",
+        "target_id": "maya"
+      },
+      "success": true,
+      "roll": 11,
+      "success_chance": 76,
+      "relationship_deltas": {
+        "maya": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 3,
+          "friendship": 1
+        }
+      },
+      "tags": [
+        "listen",
+        "supportive"
+      ]
+    },
+    "narration": "In the cozy morning light of the kitchen, Maya leans against the counter, her laughter filling the air. You tune in, eager to hear her witty take on last night\u2019s drama. Your attentive listening earns you her trust, a little crack forming in her bubbly facade. It's a gentle reminder that beneath the humor, there's a heart yearning for genuine connection. The scent of shared warmth lingers, your friendship blossoming amidst late snacks and casual banter.",
+    "output_hash": "7cf0d11568c4f3a25088432b5013bd4871a89a37aaccd518f7e1266970175352"
+  },
+  {
+    "turn": 5,
+    "day": 1,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 6, chemistry 0, trust 0",
+    "input_hash": "7cf0d11568c4f3a25088432b5013bd4871a89a37aaccd518f7e1266970175352",
+    "action": {
+      "kind": "move",
+      "target_id": "terrace"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "move",
+        "target_id": "terrace"
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "move"
+      ]
+    },
+    "narration": "As the morning sun breaks gently over the villa, Liam finds solace on the terrace, the cool air adding a refreshing touch to his reflective mood. Here, in this almost-private haven, he embraces the moment, ready to share honest thoughts and build the trust vital for lasting connections. With his grounded nature, he silently observes the beauty of the day and the possibilities that lie ahead, determined to forge bonds that withstand the challenges of villa life.",
+    "output_hash": "99c689d32671e58f5b57ad636897b10dae6329a9bd69cca071894584c0416098"
+  },
+  {
+    "turn": 6,
+    "day": 1,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 8, chemistry 0, trust 0",
+    "input_hash": "99c689d32671e58f5b57ad636897b10dae6329a9bd69cca071894584c0416098",
+    "action": {
+      "kind": "talk",
+      "target_id": "liam"
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "talk",
+        "target_id": "liam"
+      },
+      "success": true,
+      "roll": 3,
+      "success_chance": 81,
+      "relationship_deltas": {
+        "liam": {
+          "affection": 2,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": 0
+        }
+      },
+      "tags": [
+        "talk",
+        "friendly"
+      ]
+    },
+    "narration": "As the sun spills its morning light across the terrace, Liam leans against the railing, his steady presence offering a comforting vibe. A nearby islander seizes the moment to strike up a conversation, and laughter soon fills the air. Their friendly exchange builds a rapport, bringing a sense of familiarity in the newness of villa life. Liam nods, appreciating the connection\u2014slowly but surely, trust begins to blossom on this sunny day.",
+    "output_hash": "730205f4900d780cf36b45e842912dd6f21d04384f9dfc7d0abf07d6d75e6ffa"
+  },
+  {
+    "turn": 7,
+    "day": 1,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "Liam: affection 8, chemistry 0, trust 0",
+    "input_hash": "730205f4900d780cf36b45e842912dd6f21d04384f9dfc7d0abf07d6d75e6ffa",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, where the evening air cools and secrets linger, Liam stands as a steadfast sentinel of honesty. The space feels charged with unspoken connections, ripe for heartfelt confessions. His grounded nature makes him a comforting presence, encouraging islanders to open up. As the first day unfolds, anticipation hangs thick, and friendships start to bloom, hinting at deeper alliances in this sun-soaked paradise.",
+    "output_hash": "60bdbf0c232906bbc79e9e4f6c2bcdfce42b3ab00d4559b91ed91ac29490d906"
+  },
+  {
+    "turn": 8,
+    "day": 1,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "60bdbf0c232906bbc79e9e4f6c2bcdfce42b3ab00d4559b91ed91ac29490d906",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "The terrace holds a whispering breeze, inviting secrets to dance among the sun-kissed islanders. As the afternoon fades, the bright laughter softens into murmurs of hope and longing. It\u2019s the perfect spot for confessions, where hearts race and eyes glint with unspoken desires. The first day draws to a close, holding promises of connections yet to be forged in the sultry warmth of the villa.",
+    "output_hash": "72ac05a4dd115c9099b8b22d55d55882a481eaf11cea46b0225f3ffc1c0376b8"
+  },
+  {
+    "turn": 9,
+    "day": 1,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "72ac05a4dd115c9099b8b22d55d55882a481eaf11cea46b0225f3ffc1c0376b8",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped low, the terrace bathed in a gentle glow, it became the sanctuary for heartfelt whispers. In this serene escape, islanders opened up about their dreams and desires, forging deeper connections amidst the calm. With the evening breeze carrying away their nervousness, it was the perfect moment to advance their journeys of love, each confession drawing them closer beneath the twinkling skies.",
+    "output_hash": "8e16d1789be5c1afc8bd983ebff4ff190581b18b2c7ce51b175de62ddb0ea68a"
+  },
+  {
+    "turn": 10,
+    "day": 1,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "8e16d1789be5c1afc8bd983ebff4ff190581b18b2c7ce51b175de62ddb0ea68a",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped below the horizon, the terrace transformed into a sanctuary of whispers and warm glances. Couples sought refuge from the villa\u2019s chaos, sharing their dreams and secrets beneath the twilight sky. With each heartfelt confession, the air thickened with anticipation. Laughter echoed softly, mingling with the gentle breeze, as bonds were forged under the stars. The night was young, and possibility hung in the air, a promise of the stories yet to unfold.",
+    "output_hash": "f399cc0f30bec2da79b47b4773e85181481db4286517c9f16151faf56625d49e"
+  },
+  {
+    "turn": 11,
+    "day": 2,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "f399cc0f30bec2da79b47b4773e85181481db4286517c9f16151faf56625d49e",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the morning sun bathes the terrace in a soft glow, an invigorating breeze whispers secrets of love yet to blossom. It's the perfect spot for intimate confessions, where hearts can open up away from prying eyes. The islanders are on the cusp of new adventures, ready to navigate the delicate balance of attraction and honesty as they begin another day in paradise.",
+    "output_hash": "5942694063a48abb17e1d08e5aba8408b141c03dee0ad0e9ec6e00196193db38"
+  },
+  {
+    "turn": 12,
+    "day": 2,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "5942694063a48abb17e1d08e5aba8408b141c03dee0ad0e9ec6e00196193db38",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped low, casting a warm glow over the terrace, the islanders gathered, drawn by the promise of quieter confessions and secret smiles. The air was charged with unspoken feelings, each heart racing at the thought of what lay ahead. With the night just beginning, they felt the thrill of possibilities, as vulnerability began to weave its magic under the stars.",
+    "output_hash": "3e6e49a098d4ae7813aae6d8a9043a44817c2eb80f564b958985d2c1686adb81"
+  },
+  {
+    "turn": 13,
+    "day": 2,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "3e6e49a098d4ae7813aae6d8a9043a44817c2eb80f564b958985d2c1686adb81",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the afternoon sun draped the terrace in a soft glow, the cool breeze whispered promises of intimacy. This secluded spot, away from the villa's bustling energy, became the backdrop for heartfelt confessions. Here, secrets were shared, and connections deepened, setting the stage for budding romances and unexpected twists. With the day advancing, anticipation hung in the air, ready to change everything in a heartbeat. Who would take the plunge next?",
+    "output_hash": "ccfe6b817659dd3c937d6b90962d441bad4aed5e1aa244dce238d8ec871ac5d0"
+  },
+  {
+    "turn": 14,
+    "day": 2,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "ccfe6b817659dd3c937d6b90962d441bad4aed5e1aa244dce238d8ec871ac5d0",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dips below the horizon, the terrace transforms into a sanctuary of whispered truths and shared secrets. A gentle breeze carries the fragrance of blooming flowers, creating the perfect backdrop for heart-to-heart conversations. Here, under the softening light, connections deepen, setting the stage for unexpected alliances and budding romances. The second day in paradise promises revelations that could change everything.",
+    "output_hash": "58e697e00de996595e5d7ec1112269676f66868c4dac952e0b76cbbbe280f550"
+  },
+  {
+    "turn": 15,
+    "day": 2,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "Liam: affection 8, chemistry 1, trust 0",
+    "input_hash": "58e697e00de996595e5d7ec1112269676f66868c4dac952e0b76cbbbe280f550",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the evening air cools on the terrace, Liam finds a moment for quiet reflection. With the soft rustle of leaves around him, he considers the bonds forming in the villa. His steady gaze reveals his understanding of the delicate dynamics at play. Here, amidst almost-private confessions, trust deepens and true intentions surface. The night stretches on, promising more revelations under the stars.",
+    "output_hash": "d3a9ea843d2fed3de7a9da4415546f56502366a1915056aa9bee542f4aada9fd"
+  },
+  {
+    "turn": 16,
+    "day": 3,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Liam: affection 8, chemistry 1, trust 0",
+    "input_hash": "d3a9ea843d2fed3de7a9da4415546f56502366a1915056aa9bee542f4aada9fd",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun creeps up over the horizon, the terrace breathes a cooler, calm atmosphere. Liam, steady in his observance, leans against the railing, taking a moment to reflect. Here, the quieter confessions weave through the morning air, encouraging bonds to deepen. In this sacred space, honesty feels safest, and trust begins to flourish among the islanders. The day is just beginning, yet the undercurrents of connection are ever palpable.",
+    "output_hash": "23869bd7f3c979ca07d734df6a5f95a0d6632bfabdc9dcd7a44720bb186630c2"
+  },
+  {
+    "turn": 17,
+    "day": 3,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "23869bd7f3c979ca07d734df6a5f95a0d6632bfabdc9dcd7a44720bb186630c2",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped below the horizon, Maya sauntered to the terrace, laughter spilling from her lips. The cooler air invited whispered secrets, and she playfully deflected her friends\u2019 probing questions with jokes and playful banter. Yet behind her cheerful facade, a flicker of vulnerability danced in her eyes. The terrace buzzed with anticipation, a stage set for confessions\u2014both light-hearted and profound\u2014as the villa prepared to embrace the next phase of love and connection.",
+    "output_hash": "22647d1ab9b43959baf306b579f14450c34a4fdc2153fa7fc674d22d123de920"
+  },
+  {
+    "turn": 18,
+    "day": 3,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "22647d1ab9b43959baf306b579f14450c34a4fdc2153fa7fc674d22d123de920",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, the cooler breeze carried whispers of affection and the gentle rustle of leaves. Maya leaned against the railing, her laughter ringing out like music, lightening the air. Beneath her playful quips, though, a hint of vulnerability flickered. In this serene corner of the villa, quiet confessions danced in the golden afternoon light, as hearts pondered the risks of love\u2014hidden behind the mask of a joker.",
+    "output_hash": "bb8aa769a324114d024b95bec3cf423b44939136fa792dd5b7c9026cc0c1d297"
+  },
+  {
+    "turn": 19,
+    "day": 3,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "bb8aa769a324114d024b95bec3cf423b44939136fa792dd5b7c9026cc0c1d297",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dips below the horizon, Maya leans against the terrace railing, the cool air wrapping around her like a comforting embrace. \"You know,\" she teases, a playful grin on her face, \"if laughter is the best medicine, I must be a doctor by now!\" The evening hums with lighthearted energy, masking the deeper insecurities that bubble just beneath her humor. Here, in this almost-private space, truth hangs in the air\u2014waiting for the right moment to unfold.",
+    "output_hash": "84f3903440feff43aea5ddf994c9755b11290ba6dce8a3c5d0ebb033333c9b7f"
+  },
+  {
+    "turn": 20,
+    "day": 3,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "84f3903440feff43aea5ddf994c9755b11290ba6dce8a3c5d0ebb033333c9b7f",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped below the horizon, the terrace transformed into an intimate escape, where whispers floated in the cooler evening air. Islander hearts thrummed with anticipation, ready to uncover secrets and share confessions. With the promise of honesty hanging between them, connections deepened, and the stage was set for unexpected twists as the warmth of the day melted into the enchantment of night.",
+    "output_hash": "d3d20548139eadf0b0dc7519b830e37c457bc7aa66607bd06728148a9fb123e1"
+  },
+  {
+    "turn": 21,
+    "day": 4,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "d3d20548139eadf0b0dc7519b830e37c457bc7aa66607bd06728148a9fb123e1",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the morning sun kisses the terrace, the cool air invites whispers and secret revelations. This serene haven serves as the villa's heart for intimate confessions, where feelings simmer just beneath the surface. With the day advancing, the anticipation of what\u2019s to come hangs in the air, hinting at truths waiting to be unveiled among the islanders. Who will dare to share their heart today?",
+    "output_hash": "1c68be1223cfb23d5581a9a11e80f9b71fb2d3e0388e1e5031c9bd2bf1a9d9e9"
+  },
+  {
+    "turn": 22,
+    "day": 4,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "No visible islanders.",
+    "input_hash": "1c68be1223cfb23d5581a9a11e80f9b71fb2d3e0388e1e5031c9bd2bf1a9d9e9",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun begins to dip beyond the horizon, the terrace transforms into the villa's intimate haven. With its cooler air and hushed whispers, it\u2019s the perfect spot for lingering confessions and stolen glances. Tonight, the Islanders gather, ready to embrace the challenge ahead, as anticipation hangs thick in the air, promising twists and turns in their budding romances. The night is young, and secrets are ripe for the sharing.",
+    "output_hash": "c621b8b89eb5b39a66a21c2f91fce4c09cbe3c74ba9010301a4c8979e9e3d069"
+  },
+  {
+    "turn": 23,
+    "day": 4,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "c621b8b89eb5b39a66a21c2f91fce4c09cbe3c74ba9010301a4c8979e9e3d069",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, the cool air breezes in, inviting quiet confessions amidst the vibrant laughter. Maya, ever the jokester, deflects any hint of seriousness with a quick quip, her smile shimmering like sunlight on the waves. Though her humor cloaks deeper insecurities, the villa feels lighter in her presence, where flirty banter reigns and unexpected moments spark with potential. As afternoon drapes over the island, the laughter harmonizes with the gentle rustle of palm leaves, hinting at deeper truths yet to surface.",
+    "output_hash": "440a117fcf2f7854531b86a5ebd36236671f8c0a5c463e9ff92c6709d5cc1f7d"
+  },
+  {
+    "turn": 24,
+    "day": 4,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 6, trust 0",
+    "input_hash": "440a117fcf2f7854531b86a5ebd36236671f8c0a5c463e9ff92c6709d5cc1f7d",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dips low, Chloe finds solace on the terrace, where cool air invites whispered secrets. Her warm gaze scans the horizon, thoughtful. A place of truth, she cherishes this moment\u2014an oasis where the island\u2019s heat gives way to heartfelt connections. Ready for honest dialogue, Chloe hopes the villa will breathe kindness, longing for warmth in her own heart amidst the rising tensions. With delicate sincerity, she prepares to reach out, searching for those small emotional sparks.",
+    "output_hash": "f867bd57b09bc67d13502eb03d79816099b6e036181f28d3b72fc4ac96c4fbe6"
+  },
+  {
+    "turn": 25,
+    "day": 4,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 6, trust 0; Maya: affection 8, chemistry 0, trust 3",
+    "input_hash": "f867bd57b09bc67d13502eb03d79816099b6e036181f28d3b72fc4ac96c4fbe6",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the sun dipped lower, the terrace welcomed Chloe and Maya, cooler air stirring a sense of intimacy. Chloe, ever the Sweetheart, leaned into the moment, her sincerity wrapping around Maya like a warm hug. Maya, quick with a joke, chuckled nervously, deflecting, but the playful banter masked a flicker of vulnerability. In the gentle twilight, they shared secrets that deepened their bond, the villa\u2019s energy vibrant with whispered honesty.",
+    "output_hash": "671555d1f99599e80b823f4528cc5d0ad6e80368638220548173631730acf8ee"
+  },
+  {
+    "turn": 26,
+    "day": 5,
+    "phase": "morning",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 7, trust 0; Maya: affection 8, chemistry 1, trust 3",
+    "input_hash": "671555d1f99599e80b823f4528cc5d0ad6e80368638220548173631730acf8ee",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As dawn breaks over the terrace, the air is refreshingly cool, beckoning quiet revelations. Chloe leans against the railing, her warm sincerity inviting a deeper conversation. \u201cI just want everyone to feel valued,\u201d she says, her eyes scanning the horizon. Maya, ever the jester, chuckles, \u201cWell, I\u2019m definitely valued for my comedic timing!\u201d Despite the laughter, there's a flicker of something deeper in her eyes, a hint of vulnerability masked by humor. In this serene moment, honesty tugs at the heartstrings.",
+    "output_hash": "dcb8800fec96e80cf1380a7a1d8997820695b6f5eb72ef59e0ace87ebb261a4c"
+  },
+  {
+    "turn": 27,
+    "day": 5,
+    "phase": "challenge",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
+    "input_hash": "dcb8800fec96e80cf1380a7a1d8997820695b6f5eb72ef59e0ace87ebb261a4c",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, the cool air cradled Chloe's heart as she savored a moment of solitude. Waves of honesty washed over her, mingling with whispered hopes beneath the twinkling stars. She noticed subtle shifts in her fellow islanders, reminding her that vulnerability could lay the groundwork for deeper bonds. As the sun dipped below the horizon, Chloe was determined to ensure that kindness prevailed in their sun-soaked world, all while secretly yearning to be wanted in return.",
+    "output_hash": "ec360ef3db66c1c827f460114731838c5bf46d1b16f859aab6fdfc9d3409fc4a"
+  },
+  {
+    "turn": 28,
+    "day": 5,
+    "phase": "afternoon",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
+    "input_hash": "ec360ef3db66c1c827f460114731838c5bf46d1b16f859aab6fdfc9d3409fc4a",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, where the afternoon sun weaves shadows through the swaying palms, Chloe takes a moment to gather her thoughts. The air is ripe for honesty, and she watches with a keen eye, sensing each subtle shift in her fellow islanders. Her warm heart yearns for connection, yet she remains a guardian of their emotions, hoping to nurture bonds without adding unnecessary drama. As the day unfolds, the villa breathes in anticipation, ready for the next chapter of romance and revelations.",
+    "output_hash": "db50f0129a8fb7cb6aad3544ab31afe89a8e7c877d4e95bf2d5935d98bfba438"
+  },
+  {
+    "turn": 29,
+    "day": 5,
+    "phase": "text",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 7, trust 0",
+    "input_hash": "db50f0129a8fb7cb6aad3544ab31afe89a8e7c877d4e95bf2d5935d98bfba438",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "On the terrace, where the evening air whispers secrets, Chloe takes a moment to reflect. With a heart full of warmth, she observes the subtle emotional shifts among the islanders. Her sincere nature compels her to keep the villa harmonious, but beneath her careful exterior, she yearns to feel cherished. Each gentle breeze carries the weight of unspoken words, and tonight, she hopes that honesty blooms in the quiet.",
+    "output_hash": "3aa248210805188be3643444d54c600f8a026921805ddd6dc9d61ef72389108b"
+  },
+  {
+    "turn": 30,
+    "day": 5,
+    "phase": "evening",
+    "location": "terrace",
+    "visible_state": "Chloe: affection 12, chemistry 8, trust 0; Maya: affection 8, chemistry 3, trust 3",
+    "input_hash": "3aa248210805188be3643444d54c600f8a026921805ddd6dc9d61ef72389108b",
+    "action": {
+      "kind": "advance_phase",
+      "target_id": null
+    },
+    "mechanical_result": {
+      "action": {
+        "kind": "advance_phase",
+        "target_id": null
+      },
+      "success": true,
+      "roll": null,
+      "success_chance": null,
+      "relationship_deltas": {},
+      "tags": [
+        "phase"
+      ]
+    },
+    "narration": "As the cooler evening air wrapped around the terrace, Chloe and Maya found solace in the quiet moments. Chloe's warmth shone through as she encouraged a more heartfelt conversation, while Maya, ever the jester, lightened the mood with playful quips. It was a delicate dance of sincerity and humor, where both islanders balanced vulnerability with their usual charm. In this sanctuary of whispers, deeper connections began to shimmer under the starlit sky.",
+    "output_hash": "1c4a59ffbde15b6f24523d25600a28a7d2d8cb494933d2591a7d09d924fcb3ec"
+  }
+]

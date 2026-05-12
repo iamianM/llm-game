@@ -1,0 +1,91 @@
+{
+  "schema_version": 3,
+  "seed": 22,
+  "turn_index": 30,
+  "day": 6,
+  "phase": "morning",
+  "location_id": "terrace",
+  "player": {
+    "id": "player",
+    "name": "You",
+    "stats": {
+      "charm": 6,
+      "banter": 6,
+      "eq": 6,
+      "graft": 6,
+      "loyalty": 6
+    },
+    "public_perception": 50,
+    "eliminated": false
+  },
+  "islanders": [
+    {
+      "id": "chloe",
+      "name": "Chloe",
+      "archetype": "sweetheart",
+      "location_id": "kitchen",
+      "relationship": {
+        "affection": 13,
+        "chemistry": 13,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false
+    },
+    {
+      "id": "maya",
+      "name": "Maya",
+      "archetype": "joker",
+      "location_id": "terrace",
+      "relationship": {
+        "affection": 11,
+        "chemistry": 14,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": false
+    },
+    {
+      "id": "liam",
+      "name": "Liam",
+      "archetype": "friend",
+      "location_id": "pool",
+      "relationship": {
+        "affection": 8,
+        "chemistry": 11,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 50,
+      "eliminated": true
+    },
+    {
+      "id": "aisha",
+      "name": "Aisha",
+      "archetype": "joker",
+      "location_id": "pool",
+      "relationship": {
+        "affection": 8,
+        "chemistry": 13,
+        "trust": 0,
+        "friendship": 0
+      },
+      "public_perception": 55,
+      "eliminated": false
+    }
+  ],
+  "couples": [
+    {
+      "partner_a_id": "player",
+      "partner_b_id": "chloe",
+      "formed_on_day": 5
+    },
+    {
+      "partner_a_id": "maya",
+      "partner_b_id": "aisha",
+      "formed_on_day": 5
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+name: policy-strategic
+seed: 23
+actions:
+  - kind: talk
+    target_id: chloe
+  - kind: flirt
+    target_id: chloe
+  - kind: move
+    target_id: kitchen
+  - kind: listen
+    target_id: maya
+  - kind: move
+    target_id: terrace
+  - kind: talk
+    target_id: liam
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase

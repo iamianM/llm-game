@@ -10,6 +10,7 @@ from src.game.cli.commands import (
     content,
     play,
     replay,
+    report,
     scenario,
     simulate,
     snapshot,
@@ -25,6 +26,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for module in (
         play,
+        report,
         replay,
         verify,
         snapshot,

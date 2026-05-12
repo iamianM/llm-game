@@ -49,3 +49,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: opt-in real Narrator contract tests for bounded prose and visible-context safety
 - QA result: `make qa` green, 39 tests passed; `uv run pytest -m llm` green, 5 tests passed
 - Scenario fixture: `tests/scenarios/fixtures/day6-full-run.yaml`; model used: `gpt-4o-mini` via verified `OPENAI_API_KEY`
+
+## Phase E
+
+- Files added: `src/game/reporting/*`, `src/game/cli/commands/report.py`, policy scripts, `review-packet/`
+- Files changed: `src/game/cli/__main__.py`
+- Tests added: command-level packet generation and link validation via local run; no new pytest module
+- QA result: `make qa` green, 39 tests passed; packet generated with real narration and opened locally at `http://127.0.0.1:8766/index.html`
+- Scenario fixture: `scripts/fixtures/policy-loyal.yaml`, `scripts/fixtures/policy-chaotic.yaml`, `scripts/fixtures/policy-strategic.yaml`

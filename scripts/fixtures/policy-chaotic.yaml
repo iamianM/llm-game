@@ -1,0 +1,38 @@
+name: policy-chaotic
+seed: 22
+actions:
+  - kind: bold_flirt
+    target_id: chloe
+  - kind: move
+    target_id: kitchen
+  - kind: bold_flirt
+    target_id: maya
+  - kind: move
+    target_id: terrace
+  - kind: flirt
+    target_id: liam
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
+  - kind: advance_phase
