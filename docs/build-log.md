@@ -155,3 +155,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: VillaUpdate validation, movement application, background conversation start/close, hash exclusion for NPC-NPC dialogue, mock and live agent contract tests
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 68 non-LLM tests passed; Orchestrator and Background Dialogue LLM subsets green, 2 LLM tests passed
 - Scenario fixture: existing fixtures regenerated for schema v9 and empty mock VillaUpdate commits
+
+## Phase G4 replay wiring
+
+- Files added: `src/game/engine/recorded_agents.py`
+- Files changed: `src/game/cli/commands/play.py`, `src/game/agents/conversation_curator.py`
+- Tests added: manual CLI smoke for `play --mock-llm --record` followed by `play --replay` on the generated trace
+- QA result: `ruff`, `mypy`, non-LLM pytest, content lint green; recorded mock playthrough replayed to the same final hash; full LLM suite green, 28 tests passed
+- Scenario fixture: unchanged

@@ -47,19 +47,44 @@ class OpenAIConversationCurator:
         bystander_ids: Sequence[str] = (),
     ) -> MemoryBatch:
         """Generate a validated memory batch for a closed conversation."""
+        rendered = _render_context(state, conversation, bystander_ids)
+        participant_ids = _participant_ids(conversation)
+        bystander_set = set(bystander_ids)
+        last_error: ValueError | None = None
+        for attempt in range(3):
+            retry_context = rendered
+            if last_error is not None:
+                retry_context = (
+                    f"{rendered}\n\n"
+                    "The previous MemoryBatch failed validation. "
+                    f"Validation error: {last_error}. "
+                    "Return a corrected MemoryBatch using exact ids from the context, "
+                    "not display names."
+                )
+            batch = self._generate_batch(retry_context)
+            try:
+                validate_memory_batch(batch, state, participant_ids, bystander_set)
+                return batch
+            except ValueError as exc:
+                last_error = exc
+                if attempt == 2:
+                    raise
+        raise AssertionError("unreachable curator retry state")
+
+    def _generate_batch(self, rendered_context: str) -> MemoryBatch:
+        """Request one parsed memory batch from the model."""
         response = self._client.responses.parse(
             model=self._model,
             instructions=Path("src/game/agents/prompts/conversation_curator.md").read_text(
                 encoding="utf-8"
             ),
-            input=_render_context(state, conversation, bystander_ids),
+            input=rendered_context,
             text_format=MemoryBatch,
             max_output_tokens=900,
         )
         batch = response.output_parsed
         if batch is None:
             raise ValueError("Conversation Curator returned no parsed MemoryBatch")
-        validate_memory_batch(batch, state, _participant_ids(conversation), set(bystander_ids))
         return batch
 
 
