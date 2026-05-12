@@ -28,6 +28,7 @@ from src.game.engine.conversation import (
     departure_probability,
     start_conversation,
 )
+from src.game.engine.memory import remember_ceremony_events, remember_conversation_close
 from src.game.engine.phases import advance_phase
 from src.game.engine.rules import MechanicalResult, apply_action
 from src.game.engine.simulation import OffScreenEvent, simulate_off_screen
@@ -113,11 +114,15 @@ def run_turn(
         follow_up_menu = menu_fn(state, result, exchange, probability)
         conversation.pending_options = follow_up_menu
         if follow_up_menu.npc_will_leave:
+            remember_conversation_close(state, conversation)
             close_conversation(state, "npc_left")
     if action.kind is ActionKind.END_CONVERSATION:
+        if state.active_conversation is not None:
+            remember_conversation_close(state, state.active_conversation)
         close_conversation(state, "player_exit")
     event_narration = None
     if ceremony_events:
+        remember_ceremony_events(state, ceremony_events)
         narrate_event = mock_event_narration if event_narrator is None else event_narrator
         event_narration = narrate_event(state, ceremony_events)
     return TurnResult(

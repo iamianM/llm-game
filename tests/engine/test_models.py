@@ -11,6 +11,7 @@ from src.game.state.models import (
     Conversation,
     ExchangeRecord,
     GameState,
+    Memory,
     Mood,
     PlayerStats,
     clamp_relationship,
@@ -69,6 +70,28 @@ def test_dialogue_does_not_affect_hash() -> None:
     first = state_hash(state_hash_payload(state))
     state.active_conversation.exchanges[0].player_dialogue = "Changed player line."
     state.active_conversation.exchanges[0].npc_dialogue = "Changed NPC line."
+
+    assert state_hash(state_hash_payload(state)) == first
+
+
+def test_memory_content_does_not_affect_hash() -> None:
+    """Memory prose stays out of the deterministic state hash."""
+    state = new_game(1)
+    state.player.memories.append(
+        Memory(
+            id="mem_test",
+            holder_id="player",
+            subject_id="chloe",
+            content="Original memory text.",
+            source="direct",
+            formed_on_day=1,
+            formed_on_turn=1,
+            emotional_weight=4,
+            tags=["friendly"],
+        )
+    )
+    first = state_hash(state_hash_payload(state))
+    state.player.memories[0].content = "Changed memory text."
 
     assert state_hash(state_hash_payload(state)) == first
 

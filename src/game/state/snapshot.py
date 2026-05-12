@@ -39,7 +39,23 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
                 if isinstance(exchange, dict):
                     exchange.pop("player_dialogue", None)
                     exchange.pop("npc_dialogue", None)
+    player = payload.get("player")
+    if isinstance(player, dict):
+        _strip_memory_content(player.get("memories"))
+    islanders = payload.get("islanders")
+    if isinstance(islanders, list):
+        for islander in islanders:
+            if isinstance(islander, dict):
+                _strip_memory_content(islander.get("memories"))
     return payload
+
+
+def _strip_memory_content(memories: object) -> None:
+    if not isinstance(memories, list):
+        return
+    for memory in memories:
+        if isinstance(memory, dict):
+            memory.pop("content", None)
 
 
 def save_snapshot(path: Path, payload: dict[str, object]) -> None:

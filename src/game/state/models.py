@@ -16,7 +16,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 7
 
 
 class Phase(StrEnum):
@@ -70,6 +70,24 @@ class PlayerStats(BaseModel):
         return self
 
 
+class Memory(BaseModel):
+    """One fact remembered by the player or an islander."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    holder_id: str
+    subject_id: str
+    content: str
+    source: Literal["direct", "witnessed", "told_by"]
+    source_id: str | None = None
+    formed_on_day: int
+    formed_on_turn: int
+    emotional_weight: int = Field(ge=1, le=10)
+    tags: list[str] = Field(default_factory=list)
+    durable: bool = True
+
+
 class PlayerState(BaseModel):
     """Player identity and stats."""
 
@@ -80,6 +98,7 @@ class PlayerState(BaseModel):
     stats: PlayerStats
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
+    memories: list[Memory] = Field(default_factory=list)
 
 
 class RelationshipState(BaseModel):
@@ -117,6 +136,7 @@ class IslanderState(BaseModel):
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
     mood: Mood = Mood.CONTENT
+    memories: list[Memory] = Field(default_factory=list)
 
 
 class Couple(BaseModel):

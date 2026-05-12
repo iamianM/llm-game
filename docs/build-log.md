@@ -114,3 +114,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: vulnerable follow-up trust gain, missed flirt chemistry loss, unknown follow-up intent failure, high-risk delta scaling
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 51 non-LLM tests passed
 - Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml` regenerated after follow-up deltas became mechanical
+
+## Phase G3
+
+- Files added: `src/game/engine/memory.py`, `tests/engine/test_memory.py`
+- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/engine/turn.py`, `tests/engine/test_models.py`, scenario fixtures
+- Tests added: conversation close creates player/NPC memories, deterministic memory ids, ceremony memories, memory content excluded from state hash
+- QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 55 non-LLM tests passed
+- Scenario fixture: existing fixtures regenerated for schema v7 memory metadata
