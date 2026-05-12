@@ -6,16 +6,13 @@ import argparse
 import sys
 
 from src.game.cli.commands import (
-    codegen,
     content,
     play,
-    replay,
     report,
-    scenario,
-    simulate,
     snapshot,
     trace,
     verify,
+    verify_script,
 )
 
 
@@ -27,14 +24,11 @@ def main(argv: list[str] | None = None) -> int:
     for module in (
         play,
         report,
-        replay,
+        verify_script,
         verify,
         snapshot,
         content,
-        scenario,
         trace,
-        simulate,
-        codegen,
     ):
         module.add_parser(subparsers)
 

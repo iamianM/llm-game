@@ -957,7 +957,7 @@ function calculateCoupleStrength(player, partner) {
 
 ## Public Perception
 
-The simulated "audience" has an opinion of you (see 10-Ceremonies-And-Events.md for full audience ranking system):
+The simulated "audience" has an opinion of you (see 10-Elimination-System.md for full audience ranking system):
 
 ```javascript
 function calculatePublicPerception(player) {

@@ -228,3 +228,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: chance breakdown formula terms, idempotent recorded gossip menu replay, ceremony assertion coverage, stricter interruption response-kind coverage, rendered formula breakdown text
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism, trace replay, and full LLM suite all green; fresh G8 trace passes 11/11 playthrough assertions
 - Packet: regenerated from `.game_traces/manual-g8.json`; in-app browser verified `session.html` includes formula breakdowns and `playthrough-eval.html` shows 11 passed / 0 failed
+
+## Phase G9 cleanup
+
+- Files added: focused rule/render helper modules for chance math, follow-ups, gossip, interruptions, perception, results, state access, CLI play rendering, and HTML rendering
+- Files changed: `src/game/engine/rules.py`, `src/game/cli/commands/play.py`, `src/game/reporting/html.py`, CLI dispatch, Makefile, QA/docs references, and review-packet notes/session disclosure
+- Files removed: abandoned tool-boundary stub, unused CLI scaffold commands, stale snapshot/trace fixtures, hollow `scripts/fixtures/`, and duplicate ceremony design doc
+- Tests added: none; cleanup keeps existing behavior and coverage
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest, content lint, smoke `verify-script`, fixture determinism, trace replay, playthrough eval, packet regeneration, and full LLM suite all green
+- Packet: regenerated from `.game_traces/manual-g8.json`; session report now discloses mock-LLM mode and in-app browser verified review surfaces

@@ -6,6 +6,8 @@ This packet renders one recorded playthrough from trace data. It contains
 28 turn(s), 10 player conversation turn(s), and
 28 turn(s) with recorded villa agent commits.
 
+LLM mode: `mock`. Use this packet to verify mechanics and dashboard coverage, not final dialogue quality.
+
 ## What felt good
 
 The report keeps player dialogue, follow-up wheel options, relationship deltas,

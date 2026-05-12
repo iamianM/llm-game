@@ -1,5 +1,7 @@
 # Build Plan: Phases A2 through E
 
+Superseded by later Phase G and G8 work. This file is historical context only; use current Makefile targets, `docs/build-plan-G.md`, and `docs/build-plan-G8.md` for active implementation details.
+
 This is the hand-off document Codex executes against to take the game from the Phase A1 starting slice to a reviewable v0. Read [`ENGINEERING.md`](../ENGINEERING.md), [`docs/qa-strategy.md`](qa-strategy.md), and every ADR in [`docs/decisions/`](decisions/) before each phase.
 
 The phases ship in order. Each ends with `make qa` green, new tests, a checked-in scenario fixture with `expected_hash`, and a single git commit. The user reviews the final packet at the end of Phase E; the rest is autonomous.

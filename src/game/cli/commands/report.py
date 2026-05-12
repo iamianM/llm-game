@@ -58,12 +58,12 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
-    records, final_state, _final_hash = _load_recording(Path(args.trace_path))
+    records, final_state, _final_hash, llm_mode = _load_recording(Path(args.trace_path))
     Path(args.out).write_text(
         session_page(
             Path(args.trace_path).stem,
             records,
-            preface=_final_state_summary(final_state) if final_state is not None else "",
+            preface=_final_state_summary(final_state, llm_mode) if final_state is not None else "",
         ),
         encoding="utf-8",
     )
@@ -82,7 +82,7 @@ def balance_cmd(args: argparse.Namespace) -> int:
 def packet_cmd(args: argparse.Namespace) -> int:
     """Build a single-session review packet from a recorded trace."""
     trace_path = Path(args.trace)
-    records, final_state, final_hash = _load_recording(trace_path)
+    records, final_state, final_hash, llm_mode = _load_recording(trace_path)
     if final_state is None:
         raise ValueError("packet requires a recorded trace package with final_state")
     out = Path(args.out)
@@ -93,7 +93,7 @@ def packet_cmd(args: argparse.Namespace) -> int:
         trace_path=str(trace_path),
     )
     (out / "session.html").write_text(
-        session_page("Recorded Playthrough", records, preface=_final_state_summary(final_state)),
+        session_page("Recorded Playthrough", records, preface=_final_state_summary(final_state, llm_mode)),
         encoding="utf-8",
     )
     (out / "playthrough-eval.html").write_text(
@@ -108,7 +108,7 @@ def packet_cmd(args: argparse.Namespace) -> int:
         json.dumps(records, indent=2),
         encoding="utf-8",
     )
-    (out / "notes.md").write_text(_notes(records, final_hash), encoding="utf-8")
+    (out / "notes.md").write_text(_notes(records, final_hash, llm_mode), encoding="utf-8")
     (out / "how-to-reproduce.md").write_text(_repro(trace_path, out), encoding="utf-8")
     links = [
         ("Recorded playthrough", "session.html"),
@@ -124,7 +124,7 @@ def packet_cmd(args: argparse.Namespace) -> int:
 
 def eval_dashboard_cmd(args: argparse.Namespace) -> int:
     """Render only the playthrough eval dashboard for one trace."""
-    records, final_state, final_hash = _load_recording(Path(args.trace_path))
+    records, final_state, final_hash, _llm_mode = _load_recording(Path(args.trace_path))
     report = evaluate_trace(
         {"records": records, "final_state": final_state, "final_hash": final_hash},
         trace_path=args.trace_path,
@@ -267,10 +267,10 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     )
 
 
-def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None]:
+def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(raw, list):
-        return raw, None, None
+        return raw, None, None, _infer_llm_mode(raw)
     if not isinstance(raw, dict):
         raise ValueError(f"recording must be a JSON object or list: {path}")
     records = raw.get("records")
@@ -282,7 +282,10 @@ def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | 
     final_hash = raw.get("final_hash")
     if final_hash is not None and not isinstance(final_hash, str):
         raise ValueError(f"recording final_hash must be a string: {path}")
-    return records, final_state, final_hash
+    llm_mode = raw.get("llm_mode")
+    if not isinstance(llm_mode, str):
+        llm_mode = _infer_llm_mode(records)
+    return records, final_state, final_hash, llm_mode
 
 
 def _clean_packet_output(out: Path) -> None:
@@ -292,7 +295,7 @@ def _clean_packet_output(out: Path) -> None:
         (out / file_name).unlink(missing_ok=True)
 
 
-def _final_state_summary(final_state: dict[str, Any]) -> str:
+def _final_state_summary(final_state: dict[str, Any], llm_mode: str) -> str:
     player = final_state.get("player")
     islanders = final_state.get("islanders")
     memory_lines: list[str] = []
@@ -311,11 +314,13 @@ def _final_state_summary(final_state: dict[str, Any]) -> str:
     return (
         "<p><b>Recorded playthrough.</b> This report is rendered from a trace package; "
         "agent commits are replayable and no new LLM calls are needed to inspect it.</p>"
+        f"<p><b>LLM mode:</b> {llm_mode}. "
+        f"{_llm_mode_note(llm_mode)}</p>"
         f"<ul>{''.join(memory_lines)}</ul>"
     )
 
 
-def _notes(records: list[dict[str, Any]], final_hash: str | None) -> str:
+def _notes(records: list[dict[str, Any]], final_hash: str | None, llm_mode: str) -> str:
     conversation_turns = sum(1 for record in records if record.get("exchange") is not None)
     villa_turns = sum(
         1
@@ -330,6 +335,8 @@ def _notes(records: list[dict[str, Any]], final_hash: str | None) -> str:
 This packet renders one recorded playthrough from trace data. It contains
 {len(records)} turn(s), {conversation_turns} player conversation turn(s), and
 {villa_turns} turn(s) with recorded villa agent commits.
+
+LLM mode: `{llm_mode}`. {_plain_llm_mode_note(llm_mode)}
 
 ## What felt good
 
@@ -350,6 +357,34 @@ memories, and gossip surfacing rather than aggregate win-rate conclusions.
 
 Final hash: `{final_hash or "unknown"}`
 """
+
+
+def _infer_llm_mode(records: list[dict[str, Any]]) -> str:
+    for record in records:
+        exchange = record.get("exchange")
+        if not isinstance(exchange, dict):
+            continue
+        player_line = str(exchange.get("player_dialogue", ""))
+        npc_line = str(exchange.get("npc_dialogue", ""))
+        if "I wanted to say this properly" in player_line and "*smiles* I hear you" in npc_line:
+            return "mock"
+    return "unknown"
+
+
+def _llm_mode_note(llm_mode: str) -> str:
+    if llm_mode == "mock":
+        return "Dialogue was generated by deterministic mock agents for coverage, not by the real LLM voice."
+    if llm_mode == "real":
+        return "Dialogue and agent commits came from live LLM calls recorded into this trace."
+    return "This older trace does not declare whether dialogue came from mock or real LLM agents."
+
+
+def _plain_llm_mode_note(llm_mode: str) -> str:
+    if llm_mode == "mock":
+        return "Use this packet to verify mechanics and dashboard coverage, not final dialogue quality."
+    if llm_mode == "real":
+        return "Use this packet to judge both mechanics and dialogue feel."
+    return "Mode is unknown because the trace predates explicit `llm_mode` metadata."
 
 
 def _repro(trace_path: Path, out: Path) -> str:

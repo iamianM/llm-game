@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
-from itertools import groupby
 from pathlib import Path
 from typing import Any
 
@@ -15,11 +13,23 @@ from src.game.agents.conversation_curator import OpenAIConversationCurator
 from src.game.agents.event_narrator import OpenAIEventNarrator
 from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator
-from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
+from src.game.cli.commands.play_render import (
+    print_actions as _print_actions,
+)
+from src.game.cli.commands.play_render import (
+    print_state as _print_state,
+)
+from src.game.cli.commands.play_render import (
+    print_turn as _print_turn,
+)
+from src.game.cli.commands.play_render import (
+    print_villa_update as _print_villa_update,
+)
+from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import GameState, Location, NPCNPCConversation, new_game
+from src.game.state.models import GameState, Location, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -27,7 +37,6 @@ from src.game.state.snapshot import state_hash, state_hash_payload
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
     """Register the play command."""
     parser = subparsers.add_parser("play", help="start an interactive CLI game")
-    parser.add_argument("--snapshot", help="snapshot to load")
     parser.add_argument("--seed", type=int, help="seed for a new run")
     parser.add_argument("--mock-llm", action="store_true", help="use deterministic mock narration")
     parser.add_argument("--trace", action="store_true", help="write turn traces")
@@ -37,11 +46,8 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 
 def run(args: argparse.Namespace) -> int:
-    if args.snapshot:
-        print("play --snapshot is not implemented yet", file=sys.stderr)
-        return 2
     if args.record and args.replay:
-        print("choose either --record or --replay, not both", file=sys.stderr)
+        print("choose either --record or --replay, not both")
         return 2
     if args.replay:
         return _replay_recording(Path(args.replay))
@@ -65,7 +71,7 @@ def run(args: argparse.Namespace) -> int:
         _print_actions(actions)
         raw = input("> ").strip()
         if raw in {"/quit", "quit", "q"}:
-            _write_recording(record_path, seed, state, records)
+            _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
             return 0
         if raw == "/help":
             print(
@@ -103,176 +109,13 @@ def run(args: argparse.Namespace) -> int:
         )
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
-        _write_recording(record_path, seed, state, records)
+        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
         _print_turn(turn)
 
     print("Day complete.")
     print(f"final hash: {state_hash(state_hash_payload(state))}")
-    _write_recording(record_path, seed, state, records)
+    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
     return 0
-
-
-def _print_state(state: GameState, *, debug: bool = False) -> None:
-    print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
-    print(f"You are at the {state.location_id.value.upper()}.")
-    print("\nVilla:")
-    for location in Location:
-        occupants = ["you"] if location is state.location_id else []
-        occupants.extend(
-            islander.name
-            for islander in state.islanders
-            if islander.location_id is location and not islander.eliminated
-        )
-        line = f"  {location.value.title():<9} -> {', '.join(occupants) if occupants else '(empty)'}"
-        conversations = [
-            conversation
-            for conversation in state.npc_conversations
-            if conversation.location_id is location and conversation.status == "active"
-        ]
-        if conversations:
-            summaries = "; ".join(
-                f"{_names_for(state, conversation.participants)} chatting about \"{conversation.topic}\""
-                for conversation in conversations
-            )
-            line = f"{line} -- {summaries}"
-        print(line)
-
-    print("\nYour relationships:")
-    for islander in state.islanders:
-        if islander.eliminated:
-            continue
-        rel = islander.relationship
-        print(
-            f"  {islander.name:<7} affection {rel.affection:<3} chemistry {rel.chemistry:<3} "
-            f"trust {rel.trust:<3} friendship {rel.friendship:<3}"
-        )
-        if debug and islander.memories:
-            print(f"    memories: {len(islander.memories)}")
-    if state.active_conversation is not None and state.active_conversation.pending_interruption is not None:
-        interruption = state.active_conversation.pending_interruption
-        print(
-            f"\n*** Interruption: {_name_for(state, interruption.interrupter_id)} wants to talk "
-            f"({interruption.urgency}, {interruption.reason}) ***"
-        )
-
-
-def _print_actions(actions: list[ActionSpec]) -> None:
-    if any(spec.action.kind is ActionKind.RESPOND_WITH for spec in actions):
-        _print_follow_up_actions(actions)
-        return
-    for index, spec in enumerate(actions, start=1):
-        print(f"{index}. {spec.label}")
-
-
-def _print_turn(turn: TurnResult) -> None:
-    result = turn.mechanical_result
-    if result.pull_attempt is not None:
-        outcome = "succeeded" if result.pull_attempt.success else "missed"
-        print(
-            f"Pull attempt: {result.pull_attempt.target_id} "
-            f"({result.pull_attempt.chance}% chance, rolled {result.pull_attempt.roll}) -- {outcome}"
-        )
-        if result.pull_attempt.deflection_line:
-            print(result.pull_attempt.deflection_line)
-    if turn.exchange is not None:
-        print(f'You: "{turn.exchange.player_dialogue}"')
-        print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
-    if turn.event_narration is not None:
-        print(turn.event_narration.prose)
-    if turn.agent_commits.villa_update is not None:
-        _print_villa_update(turn)
-    if turn.follow_up_menu is not None and turn.follow_up_menu.npc_will_leave:
-        print(turn.follow_up_menu.npc_exit_line)
-    if result.roll is not None and result.success_chance is not None:
-        outcome = "success" if result.success else "miss"
-        print(f"{outcome}: rolled {result.roll} vs {result.success_chance}")
-    print(f"hash: {turn.state_hash}")
-
-
-def _print_villa_update(turn: TurnResult) -> None:
-    update = turn.agent_commits.villa_update
-    if update is None:
-        return
-    lines: list[str] = []
-    for movement in update.npc_movements:
-        name = _name_for(turn.state, movement.npc_id)
-        if movement.target_location is turn.state.location_id:
-            lines.append(f"{name} joined you at the {movement.target_location.value} ({movement.reason})")
-        else:
-            lines.append(f"{name} moved to the {movement.target_location.value} ({movement.reason})")
-    for start in update.conversation_starts:
-        lines.append(
-            f"{_names_for(turn.state, start.participants)} started chatting at the "
-            f"{start.location.value}: \"{start.topic}\""
-        )
-    for continuation in update.conversation_continues:
-        conversation = _npc_conversation(turn.state, continuation.conversation_id)
-        label = continuation.conversation_id
-        if conversation is not None:
-            label = f"{_names_for(turn.state, conversation.participants)} at the {conversation.location_id.value}"
-        nudge = f": \"{continuation.nudge}\"" if continuation.nudge else ""
-        lines.append(f"{label} kept talking{nudge}")
-    for ended in update.conversation_ends:
-        lines.append(f"Conversation ended ({ended.conversation_id}): {ended.reason}")
-    for exchange in turn.agent_commits.background_dialogues:
-        lines.append(f"Background ({exchange.tone}): {_short_line(exchange.speaker_a_line)}")
-    if not lines:
-        return
-    print("While you talked:")
-    for line in lines:
-        print(f"  - {line}")
-
-
-def _print_follow_up_actions(actions: list[ActionSpec]) -> None:
-    numbered = list(enumerate(actions, start=1))
-    followups = [
-        (index, spec)
-        for index, spec in numbered
-        if spec.action.kind is ActionKind.RESPOND_WITH
-    ]
-    for category, category_specs in groupby(followups, key=lambda item: item[1].label.split(":", 1)[0]):
-        print(f"{category}:")
-        for index, spec in category_specs:
-            label = spec.label.split(":", 1)[1].strip() if ":" in spec.label else spec.label
-            print(f"  {index}. {label}")
-    for index, spec in numbered:
-        if spec.action.kind is not ActionKind.RESPOND_WITH:
-            print(f"{index}. {spec.label}")
-
-
-def _target_name(turn: TurnResult) -> str:
-    target_id = turn.mechanical_result.action.target_id
-    for islander in turn.state.islanders:
-        if islander.id == target_id:
-            return islander.name
-    return "Islander"
-
-
-def _name_for(state: GameState, islander_id: str) -> str:
-    if islander_id == "player":
-        return "you"
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
-
-
-def _names_for(state: GameState, islander_ids: list[str]) -> str:
-    return " & ".join(_name_for(state, islander_id) for islander_id in islander_ids)
-
-
-def _npc_conversation(state: GameState, conversation_id: str) -> NPCNPCConversation | None:
-    for conversation in state.npc_conversations:
-        if conversation.id == conversation_id:
-            return conversation
-    return None
-
-
-def _short_line(line: str, *, limit: int = 120) -> str:
-    compact = " ".join(line.split())
-    if len(compact) <= limit:
-        return f'"{compact}"'
-    return f'"{compact[: limit - 1].rstrip()}..."'
 
 
 def _choose_intent(state: GameState, target_id: str) -> PlayerAction:
@@ -415,14 +258,24 @@ def _write_recording(
     seed: int,
     state: GameState,
     records: list[dict[str, Any]],
+    *,
+    llm_mode: str,
 ) -> None:
     if path is None:
         return
     path.parent.mkdir(parents=True, exist_ok=True)
     package = {
         "seed": seed,
+        "llm_mode": llm_mode,
         "final_hash": state_hash(state_hash_payload(state)),
         "records": records,
         "final_state": state.model_dump(mode="json"),
     }
     path.write_text(json.dumps(package, indent=2), encoding="utf-8")
+
+
+def _llm_mode(args: argparse.Namespace) -> str:
+    return "mock" if args.mock_llm else "real"
+
+
+__all__ = ["_print_state", "_print_villa_update", "add_parser", "run"]

@@ -21,7 +21,7 @@ The goal is for the CLI, browser, and tests to exercise the same engine with the
 | L5 E2E | `tests/scenarios/e2e/` | Full no-LLM day, save/load, API parity | yes | no |
 | L6 Narrator | `tests/agents/` | Narration quality and contract compliance | opt-in | yes |
 
-L1-L5 are the current non-LLM gate. L6 is marked `llm`, opt-in, and cost-capped.
+L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 
 ## Required Gates
 
@@ -34,11 +34,11 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm`, opt-in, and cost-capped.
 5. `make smoke`
 6. `make determinism`
 
-`make smoke` replays `scripts/fixtures/day1-happy-path.yaml`. `make determinism` verifies checked-in scenario fixtures and expected hashes.
+`make smoke` verifies `tests/scenarios/fixtures/day1-happy-path.yaml`. `make determinism` verifies checked-in scenario fixtures and expected hashes.
 
 If a change touches Pydantic state models, also verify checked-in snapshots still load or regenerate them intentionally.
 
-If a change touches prompts or agents, run mock narration tests. Run `make test-llm` only when real narrator behavior changed and budget allows.
+If a change touches prompts or agents, run mock agent tests. Run `make test-llm` when real agent behavior changed.
 
 ## Snapshot Contract
 

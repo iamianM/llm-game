@@ -35,9 +35,9 @@ The previous Next.js/Vercel AI SDK plan has been superseded. See `docs/decisions
 - SQLite for local saves and deterministic replay
 
 **LLM Integration**: Python agents
-- `openai-agents` style tool-gated calls, following the useful patterns from `C:\Users\Mcian\projects\steno-livekit-agent`
-- One v0 Narrator agent: `MechanicalResult + visible context -> narration`
-- No Director, Producer, or Curator agent until the deterministic loop is playable
+- OpenAI Responses structured output behind typed Python agent wrappers
+- Islander Voice, Contextual Options, Event Narrator, Conversation Curator, Villa Orchestrator, and Background Dialogue agents
+- Prompts live under `src/game/agents/prompts/` and are user-owned per `ENGINEERING.md` R17
 - The LLM never calculates success, relationship deltas, eliminations, votes, or phase movement
 
 **Frontend**: Vite + React + TypeScript
@@ -49,7 +49,8 @@ The previous Next.js/Vercel AI SDK plan has been superseded. See `docs/decisions
 **CLI**: Python argparse
 - First-class development interface
 - `play` for interactive local runs
-- `replay` for deterministic seed/action replays
+- `verify-script` for deterministic seed/action script checks
+- `play --replay` for recorded trace replay
 - Debug/trace output should start as flags before becoming separate commands
 
 **Testing**: pytest
@@ -65,7 +66,7 @@ CLI or Browser
   -> FastAPI / direct Python call
   -> Game engine validates available actions
   -> Seeded RNG + deterministic rules calculate MechanicalResult
-  -> Narrator agent writes prose from the resolved result
+  -> Agent layer writes dialogue, event prose, options, and recorded villa commits
   -> Engine persists state and trace
   -> UI renders visible state, narration, and next actions
 ```
@@ -134,7 +135,7 @@ make qa
 
 If the gate cannot run, report the exact blocker. Do not replace the gate with "looks right."
 
-Use `make test-llm` only for opt-in Narrator quality tests. LLM tests are excluded from the default QA gate and must remain cost-capped.
+Use `make test-llm` only for opt-in agent quality tests. LLM tests are excluded from the default QA gate.
 
 ### CLI And Makefile Split
 
@@ -149,15 +150,15 @@ Current planned CLI surface:
 
 ```bash
 python -m src.game.cli play
-python -m src.game.cli replay
+python -m src.game.cli verify-script --actions tests/scenarios/fixtures/day1-happy-path.yaml
+python -m src.game.cli play --replay .game_traces/<trace>.json
 python -m src.game.cli verify --all
+python -m src.game.cli verify --playthrough .game_traces/<trace>.json
 python -m src.game.cli snapshot inspect <file>
 python -m src.game.cli snapshot hash <file>
 python -m src.game.cli content lint
-python -m src.game.cli scenario run <file>
 python -m src.game.cli trace inspect <file>
-python -m src.game.cli simulate --seeds 1000
-python -m src.game.cli codegen --out web/src/types/generated.ts
+python -m src.game.cli report packet --trace .game_traces/<trace>.json --out review-packet
 ```
 
 ### Action Vocabulary
@@ -173,7 +174,7 @@ Snapshots and action scripts are first-class debugging tools:
 - local saves live under `.game_saves/`
 - local traces live under `.game_traces/`
 - checked-in snapshot fixtures live under `fixtures/snapshots/`
-- checked-in action scripts live under `scripts/fixtures/`
+- checked-in action scripts live under `tests/scenarios/fixtures/`
 
 The CLI, browser, and tests must be able to start from the same snapshot and produce the same state hash after the same action script.
 
@@ -429,7 +430,8 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 3. **CLI first**
    - `play` runs an interactive local session
-   - `replay` reproduces a run from seed + action log
+   - `verify-script` checks seed + action scripts
+   - `play --replay` reproduces recorded trace packages
    - Debug output shows rolls, deltas, and current state
 
 4. **Tests before agents**

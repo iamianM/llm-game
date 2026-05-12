@@ -396,7 +396,7 @@ Villa dynamics have shifted:
 
 **Frequency:** Triggered when no major ceremony scheduled (~every 3 days)
 
-**Event Types** (see 10-Ceremonies-And-Events.md for full details):
+**Event Types** (see 10-Elimination-System.md for full details):
 1. **Never Have I Ever** - Expose secrets
 2. **Most Embarrassing Story** - Character depth, humor
 3. **Worst Breakup Story** - Vulnerability, relationship history
