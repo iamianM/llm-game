@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from src.game.eval.playthrough import PlaythroughReport
-from src.game.reporting.html import escape, page
+from src.game.reporting.html import escape
+from src.game.reporting.stylish.css import STYLISH_CSS
 
 
 def playthrough_eval_page(report: PlaythroughReport) -> str:
@@ -63,7 +64,11 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         f"<section class='card'><h2>Interesting Turns</h2>{_turn_links(report.interesting_turns)}</section>"
         f"<div class='grid'>{assertion_cards}</div>"
     )
-    return page("Playthrough Eval", body)
+    return (
+        "<!doctype html><html><head><meta charset='utf-8'>"
+        f"<title>Playthrough Eval</title><style>{STYLISH_CSS}</style></head>"
+        f"<body><main class='shell'><header class='hero'><h1>Playthrough Eval</h1></header>{body}</main></body></html>"
+    )
 
 
 def _turn_links(turns: list[int]) -> str:

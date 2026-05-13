@@ -25,9 +25,15 @@ from src.game.reporting.html_events import (
     producer_text_block,
     revealed_preferences_block,
 )
+from src.game.reporting.stylish.session import stylish_session_page
 
 
 def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
+    """Render one session trace using the default stylish renderer."""
+    return stylish_session_page(title, records, preface=preface)
+
+
+def session_page_minimal(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
     """Render one session trace as turn cards.
 
     ``preface`` is optional self-contained HTML inserted above the first turn.
@@ -82,4 +88,4 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
     )
 
 
-__all__ = ["escape", "index_page", "page", "session_page", "table_page"]
+__all__ = ["escape", "index_page", "page", "session_page", "session_page_minimal", "table_page"]

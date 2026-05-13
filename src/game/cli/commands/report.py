@@ -17,7 +17,7 @@ from src.game.engine.turn import run_turn
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
 from src.game.reporting.eval_dashboard import playthrough_eval_page
-from src.game.reporting.html import index_page, session_page, table_page
+from src.game.reporting.html import index_page, session_page, session_page_minimal, table_page
 from src.game.reporting.packet_text import infer_llm_mode, llm_mode_note, notes, repro
 from src.game.state.models import GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
@@ -32,11 +32,13 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     session = nested.add_parser("session", help="render one trace JSON file")
     session.add_argument("trace_path")
     session.add_argument("--out", required=True)
+    session.add_argument("--minimal", action="store_true")
     session.set_defaults(func=session_cmd)
 
     from_trace = nested.add_parser("from-trace", help="render one recorded playthrough trace")
     from_trace.add_argument("trace_path")
     from_trace.add_argument("--out", required=True)
+    from_trace.add_argument("--minimal", action="store_true")
     from_trace.set_defaults(func=session_cmd)
 
     balance = nested.add_parser("balance", help="render balance simulation")
@@ -47,6 +49,7 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     packet = nested.add_parser("packet", help="build the full review packet")
     packet.add_argument("--trace", required=True)
     packet.add_argument("--out", default="review-packet")
+    packet.add_argument("--minimal", action="store_true")
     packet.set_defaults(func=packet_cmd)
 
     eval_dashboard = nested.add_parser("eval-dashboard", help="render playthrough eval dashboard")
@@ -63,7 +66,7 @@ def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
     records, final_state, _final_hash, llm_mode = _load_recording(Path(args.trace_path))
     Path(args.out).write_text(
-        session_page(
+        _session_renderer(args)(
             Path(args.trace_path).stem,
             records,
             preface=_final_state_summary(final_state, llm_mode) if final_state is not None else "",
@@ -96,7 +99,7 @@ def packet_cmd(args: argparse.Namespace) -> int:
         trace_path=str(trace_path),
     )
     (out / "session.html").write_text(
-        session_page("Recorded Playthrough", records, preface=_final_state_summary(final_state, llm_mode)),
+        _session_renderer(args)("Recorded Playthrough", records, preface=_final_state_summary(final_state, llm_mode)),
         encoding="utf-8",
     )
     (out / "playthrough-eval.html").write_text(
@@ -286,6 +289,10 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
         table_page("Action Coverage", ["Action", "Count"], action_rows),
         encoding="utf-8",
     )
+
+
+def _session_renderer(args: argparse.Namespace):
+    return session_page_minimal if getattr(args, "minimal", False) else session_page
 
 
 def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str]:

@@ -269,3 +269,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: couple strength/ranking/steal math, Hideaway eligibility/consumption/deltas/memories, H4 eval assertions, and the Hideaway night fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (176 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 14`; `hideaway-night.yaml` pins the once-per-run Hideaway reward
+
+## Phase H6
+
+- Files added: stylish reporting package (`css.py`, `avatars.py`, `timeline.py`, `couple_status.py`, `perception_graph.py`), `src/game/reporting/memory_web.py`, and `tests/reporting/test_stylish.py`
+- Files changed: session report rendering, packet/report CLI minimal fallback flag, eval dashboard styling, and regenerated review packet HTML
+- Tests added: stylish session self-containment, deterministic avatars, day timeline markers, couple status panel, perception graph, memory web edge filtering/styles, final-outcome preface, and collapsed math details
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (189 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
+- Packet: regenerated from `.game_traces/manual-g8.json`; in-app browser verified `session.html` exposes the H6 layout, day nav, couple panel, public perception graph, memory web, turn cards, and math details
