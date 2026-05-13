@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_thirty_assertions() -> None:
+def test_playthrough_report_has_thirty_one_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 30
+    assert len(report.assertions) == 31
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 30
+    assert report.passed == 31
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -69,6 +69,19 @@ def test_playthrough_report_flags_missing_autopilot_rationale() -> None:
     report = evaluate_trace(package)
 
     failure = next(assertion for assertion in report.assertions if assertion.id == "autopilot_rationale_present")
+    assert failure.passed is False
+
+
+def test_playthrough_report_flags_stalled_day_progression() -> None:
+    package = _complete_package()
+    package["final_state"]["outcome"] = None
+    package["final_state"]["day"] = 2
+    for record in package["records"]:
+        record["day"] = 2
+
+    report = evaluate_trace(package)
+
+    failure = next(assertion for assertion in report.assertions if assertion.id == "day_progression_reasonable")
     assert failure.passed is False
 
 
@@ -143,6 +156,7 @@ def _complete_package():
             _record(20, "start_conversation", chance=55, auto_advance=True),
         ],
         "final_state": {
+            "day": 6,
             "outcome": "won_as_couple",
             "islanders": [{"id": "chloe", "familiarity_with_player": 50}],
         },

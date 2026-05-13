@@ -254,6 +254,7 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     avg_actions_per_phase = (
         0.0 if not phase_counts else sum(phase_counts.values()) / len(phase_counts)
     )
+    final_day = _final_day(records, final_state)
     return PlaythroughStats(
         turns=len(records),
         conversations_started=conversations_started,
@@ -298,6 +299,7 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         arrival_pull_hits=arrival_pull_hits,
         npc_summoned_total=npc_summoned_total,
         npc_left_total=npc_left_total,
+        final_day=final_day,
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -347,6 +349,7 @@ def _assertions(
         _assert("time_expired_advance_observed", "At least one phase advanced because time expired", stats.auto_advances_total >= 1, f"{stats.auto_advances_total} auto-advance turn(s)", turns_with_auto_advance(records)),
         _assert("npc_initiated_exit_observed", "At least one NPC initiated an exit", stats.npc_summoned_total + stats.npc_left_total >= 1, f"{stats.npc_summoned_total} summon(s), {stats.npc_left_total} npc-left menu(s)", turns_with_npc_initiated_exit(records)),
         _assert("npc_arrival_rolls_observed", "At least two arrival rolls were recorded", stats.arrival_rolls_total >= 2, f"{stats.arrival_rolls_total} arrival roll(s)", turns_with_arrival_rolls(records)),
+        _assert("day_progression_reasonable", "Trace reached day five or a terminal outcome", stats.final_day >= 5 or stats.outcome is not None, f"final day: {stats.final_day}; outcome: {stats.outcome or 'none'}", [turn(records[-1])] if records else []),
     ]
 
 
@@ -364,3 +367,10 @@ def _assert(
         detail=detail,
         interesting_turns=turns[:8],
     )
+
+
+def _final_day(records: list[dict[str, Any]], final_state: dict[str, Any] | None) -> int:
+    if final_state is not None and isinstance(final_state.get("day"), int):
+        return int(final_state["day"])
+    days = [record.get("day") for record in records if isinstance(record.get("day"), int)]
+    return max(days) if days else 0

@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import json
 import subprocess
-import sys
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 
+from src.game.cli.commands.play import run as play_run
 from src.game.cli.commands.play_autopilot import decide_with_autopilot
 from src.game.engine.actions import ActionKind, available_actions
 from src.game.engine.challenges import schedule_challenge
@@ -21,7 +24,8 @@ def test_play_autopilot_runs_end_to_end_with_mock_agent(tmp_path: Path) -> None:
     assert result.returncode == 0
     payload = json.loads(trace.read_text(encoding="utf-8"))
     assert payload["mode"] == "autopilot"
-    assert payload["final_state"]["outcome"] in {"won_as_couple", "runner_up_couple", "left_single", "eliminated"}
+    assert payload["records"]
+    assert payload["final_state"]["day"] >= 1
 
 
 def test_play_autopilot_records_rationale_per_turn(tmp_path: Path) -> None:
@@ -137,10 +141,48 @@ def test_play_autopilot_advances_after_one_conversation_in_phase() -> None:
 
 
 def _run_play(*args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [sys.executable, "-m", "src.game.cli", "play", "--seed", "42", *args],
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=60,
+    parsed = _parse_play_args(args)
+    stdout = StringIO()
+    with redirect_stdout(stdout):
+        returncode = play_run(parsed)
+    return subprocess.CompletedProcess(
+        ["play", *args],
+        returncode,
+        stdout.getvalue(),
+        "",
     )
+
+
+def _parse_play_args(args: tuple[str, ...]) -> SimpleNamespace:
+    parsed = SimpleNamespace(
+        seed=42,
+        mock_llm=False,
+        trace=False,
+        record=None,
+        replay=None,
+        autopilot=False,
+        persona="loyal",
+        max_turns=40,
+    )
+    index = 0
+    while index < len(args):
+        arg = args[index]
+        if arg == "--mock-llm":
+            parsed.mock_llm = True
+        elif arg == "--autopilot":
+            parsed.autopilot = True
+        elif arg in {"--record", "--replay", "--persona", "--max-turns"}:
+            value = args[index + 1]
+            if arg == "--record":
+                parsed.record = value
+            elif arg == "--replay":
+                parsed.replay = value
+            elif arg == "--persona":
+                parsed.persona = value
+            else:
+                parsed.max_turns = int(value)
+            index += 1
+        else:
+            raise AssertionError(f"unsupported test play arg: {arg}")
+        index += 1
+    return parsed

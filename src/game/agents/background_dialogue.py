@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable
+from functools import cached_property
 from pathlib import Path
 from typing import Literal
 
@@ -53,8 +54,11 @@ class OpenAIBackgroundDialogue:
 
     def __init__(self, *, model: str = BACKGROUND_DIALOGUE_MODEL) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def generate(
         self,

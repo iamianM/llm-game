@@ -59,6 +59,7 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Arrival pull hits", stats.arrival_pull_hits),
         ("NPC summons", stats.npc_summoned_total),
         ("NPC left menus", stats.npc_left_total),
+        ("Final day", stats.final_day),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

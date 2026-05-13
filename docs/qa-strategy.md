@@ -30,7 +30,7 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 1. `make lint`
 2. `make type-check`
 3. `make content-lint`
-4. `make test`
+4. `make test` (parallel non-LLM pytest via `pytest-xdist`)
 5. `make smoke`
 6. `make determinism`
 
@@ -39,6 +39,8 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 If a change touches Pydantic state models, also verify checked-in snapshots still load or regenerate them intentionally.
 
 If a change touches prompts or agents, run mock agent tests. Run `make test-llm` when real agent behavior changed.
+
+Recorded playthroughs also run structural pacing checks: average actions per phase, day progression, time-expired advances, NPC-initiated exits, and NPC arrival rolls. These stay deterministic and do not use an LLM judge.
 
 ## Snapshot Contract
 

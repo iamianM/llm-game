@@ -310,3 +310,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: arrival roll formulas/clamps/breakdown, NPC summon validation/application/curation/movement, attachment-driven departure modifiers, H8 autonomy eval assertions, scripted VillaUpdate replay, `arrival-roll-interrupt.yaml`, and `npc-summoned-exit.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (235 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
 - Prompt note: installed Claude's `villa_orchestrator.md` NPC summoning section verbatim after `## Hard rules`; no other prompt edits made
+
+## Phase H8.3
+
+- Files added: `tests/conftest_test.py` for test infrastructure checks and `pytest-xdist` / `execnet` in the lockfile
+- Files changed: `Makefile`, `pyproject.toml`, `uv.lock`, `tests/conftest.py`, OpenAI-backed agent classes, CLI autopilot tests, playthrough eval/dashboard, and QA docs
+- Tests added: session-scoped content-index fixture coverage, lazy OpenAI client construction check, pytest-xdist availability check, stalled day-progression assertion coverage, and faster in-process CLI autopilot replay tests
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (239 passed in 8.41s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, `pytest --durations=20` max test 0.13s, and full LLM suite (43 passed)
+- Performance note: `make test` now runs `pytest -m "not llm" -n auto`; `test-fast` runs engine tests in parallel; OpenAI clients are constructed lazily on first real agent call

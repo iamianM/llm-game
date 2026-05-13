@@ -1,10 +1,13 @@
-.PHONY: install test lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm autopilot-check
+.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm autopilot-check
 
 install:
 	uv sync --extra dev
 
 test:
-	uv run pytest -m "not llm"
+	uv run pytest -m "not llm" -n auto
+
+test-fast:
+	uv run pytest tests/engine -m "not llm" -n auto
 
 lint:
 	uv run ruff check .

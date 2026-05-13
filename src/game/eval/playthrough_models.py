@@ -57,6 +57,7 @@ class PlaythroughStats(BaseModel):
     arrival_pull_hits: int = 0
     npc_summoned_total: int = 0
     npc_left_total: int = 0
+    final_day: int = 0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 

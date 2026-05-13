@@ -14,6 +14,7 @@ from __future__ import annotations
 import os
 import re
 from collections.abc import Callable
+from functools import cached_property
 from pathlib import Path
 from typing import Literal
 
@@ -101,9 +102,12 @@ class OpenAIIslanderVoice:
         content: ContentIndex | None = None,
     ) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
         self._content = content if content is not None else load_content()
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def generate(self, state: GameState, result: MechanicalResult) -> Exchange:
         """Generate one structured exchange for a resolved mechanical result."""

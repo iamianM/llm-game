@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable
+from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
@@ -41,8 +42,11 @@ class OpenAIEventNarrator:
 
     def __init__(self, *, model: str = EVENT_NARRATOR_MODEL) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def narrate(self, state: GameState, events: list[CeremonyEvent]) -> EventNarration:
         """Generate narration for resolved ceremony events."""

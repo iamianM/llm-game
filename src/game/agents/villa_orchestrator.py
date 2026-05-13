@@ -12,6 +12,7 @@ not mutate GameState; engine/villa.py validates and applies the commit.
 from __future__ import annotations
 
 from collections.abc import Callable
+from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
@@ -95,8 +96,11 @@ class OpenAIVillaOrchestrator:
 
     def __init__(self, *, model: str = VILLA_ORCHESTRATOR_MODEL) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def decide(self, state: GameState) -> VillaUpdate:
         """Generate one VillaUpdate commit."""

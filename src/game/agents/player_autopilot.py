@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from functools import cached_property
 from pathlib import Path
 from typing import Literal
 
@@ -44,8 +45,11 @@ class OpenAIPlayerAutopilot:
 
     def __init__(self, *, model: str = PLAYER_AUTOPILOT_MODEL) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def decide(
         self,

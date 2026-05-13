@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable, Sequence
+from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
@@ -37,8 +38,11 @@ class OpenAIConversationCurator:
 
     def __init__(self, *, model: str = CONVERSATION_CURATOR_MODEL) -> None:
         load_dotenv_local()
-        self._client = OpenAI()
         self._model = model
+
+    @cached_property
+    def _client(self) -> OpenAI:
+        return OpenAI()
 
     def curate(
         self,
