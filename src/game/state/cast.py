@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.content.loader import load_backstories
 from src.game.state.models import (
     AttachmentStyle,
     Big5,
@@ -15,15 +16,16 @@ from src.game.state.models import (
 
 def starting_islanders() -> list[IslanderState]:
     """Return the H9 eight-islander starting cast."""
+    backstories = load_backstories()
     return [
-        _islander("chloe", "Chloe", Gender.WOMAN, "sweetheart", Location.POOL, 10, (7, 6, 9, 8, 4), AttachmentStyle.SECURE, "warm smiles and kind eyes", ["warm", "confident"], ["loyalty", "honesty"], ["arrogance"]),
-        _islander("maya", "Maya", Gender.WOMAN, "joker", Location.KITCHEN, 8, (8, 5, 9, 5, 6), AttachmentStyle.ANXIOUS, "expressive people with bright energy", ["funny", "attentive"], ["humor", "attention"], ["neglect"]),
-        _islander("liam", "Liam", Gender.MAN, "friend", Location.TERRACE, 6, (5, 8, 6, 7, 3), AttachmentStyle.SECURE, "grounded and easygoing", ["steady", "thoughtful"], ["steadiness", "depth"], ["flakiness"]),
-        _islander("sophie_start", "Sophie", Gender.WOMAN, "alpha", Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
-        _islander("nia_start", "Nia", Gender.WOMAN, "sweetheart", Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
-        _islander("marcus_start", "Marcus", Gender.MAN, "alpha", Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
-        _islander("blake_start", "Blake", Gender.MAN, "friend", Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
-        _islander("jordan_start", "Jordan", Gender.MAN, "joker", Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
+        _islander("chloe", "Chloe", Gender.WOMAN, "sweetheart", backstories, Location.POOL, 10, (7, 6, 9, 8, 4), AttachmentStyle.SECURE, "warm smiles and kind eyes", ["warm", "confident"], ["loyalty", "honesty"], ["arrogance"]),
+        _islander("maya", "Maya", Gender.WOMAN, "joker", backstories, Location.KITCHEN, 8, (8, 5, 9, 5, 6), AttachmentStyle.ANXIOUS, "expressive people with bright energy", ["funny", "attentive"], ["humor", "attention"], ["neglect"]),
+        _islander("liam", "Liam", Gender.MAN, "friend", backstories, Location.TERRACE, 6, (5, 8, 6, 7, 3), AttachmentStyle.SECURE, "grounded and easygoing", ["steady", "thoughtful"], ["steadiness", "depth"], ["flakiness"]),
+        _islander("sophie_start", "Sophie", Gender.WOMAN, "alpha", backstories, Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
+        _islander("nia_start", "Nia", Gender.WOMAN, "sweetheart", backstories, Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
+        _islander("marcus_start", "Marcus", Gender.MAN, "alpha", backstories, Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
+        _islander("blake_start", "Blake", Gender.MAN, "friend", backstories, Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
+        _islander("jordan_start", "Jordan", Gender.MAN, "joker", backstories, Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
     ]
 
 
@@ -32,6 +34,7 @@ def _islander(
     name: str,
     gender: Gender,
     archetype: str,
+    backstories: dict[str, str],
     location: Location,
     affection: int,
     big5: tuple[int, int, int, int, int],
@@ -47,6 +50,7 @@ def _islander(
         name=name,
         gender=gender,
         archetype=archetype,
+        backstory=backstories[islander_id],
         location_id=location,
         relationship=RelationshipState(affection=affection),
         big5=Big5(

@@ -37,7 +37,7 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 17
+SCHEMA_VERSION = 18
 
 
 class Phase(StrEnum):
@@ -153,6 +153,7 @@ class IslanderState(BaseModel):
     name: str
     gender: Gender
     archetype: str
+    backstory: str
     location_id: Location
     relationship: RelationshipState = Field(default_factory=RelationshipState)
     public_perception: int = Field(default=50, ge=0, le=100)

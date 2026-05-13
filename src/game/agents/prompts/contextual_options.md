@@ -20,11 +20,28 @@ Return a `FollowUpMenu`:
 ## Hard rules
 
 - **Labels are short.** Three to six words. No full sentences. No dialogue the player would say verbatim. The label tells the player what their character will *attempt*; the actual line gets written downstream.
+- **Labels must be specific.** Reference something specific from the last NPC line, the conversation history, the islander's revealed Type on Paper, or their backstory. Generic labels ("Ask something deeper", "Tell a joke") are wrong. Specific labels ("Ask why she really came on the show", "Joke about his Cardiff accent") are right.
 - **Exactly one option must have `category="exit"`.** Use intent_kind `end_softly` or `walk_away`. The player always has agency to leave a conversation.
 - **Spread risk and tone across options.** Do not produce four safe or four sharp. Make the choice meaningful.
 - No digits in labels.
 - Do not invent characters or events not in context. If the context includes a gossip subject, you may reference that person by name.
 - If `npc_will_leave` is true, `npc_exit_line` is one sentence, at most forty words, in the Islander's voice.
+
+## Label examples
+
+Bad labels:
+
+- "Ask something deeper"
+- "Tell a joke"
+- "Keep flirting"
+- "Change the subject"
+
+Good labels:
+
+- "Ask why she came here"
+- "Joke about Cardiff"
+- "Tease his pancake confidence"
+- "Ask about her sister"
 
 ## Honoring the last exchange
 
@@ -41,6 +58,7 @@ The user message contains:
 
 - The Islander's name, archetype voice, current mood, and relationship summary.
 - The Islander's last line of dialogue and its tone.
+- The Islander's concrete backstory.
 - Recent exchange history in this conversation.
 - The player's stats (so options can lean on real strengths).
 - Departure probability.

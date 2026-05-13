@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.content.loader import load_backstories
 from src.game.engine.couples import StealAttempt, resolve_steal_attempt
 from src.game.engine.final_vote import final_vote, final_vote_message
 from src.game.state.models import (
@@ -116,6 +117,7 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
         name="Aisha",
         gender=Gender.WOMAN,
         archetype="joker",
+        backstory=load_backstories()["aisha"],
         location_id=location,
         relationship=RelationshipState(affection=8, chemistry=12),
         public_perception=55,

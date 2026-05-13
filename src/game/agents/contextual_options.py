@@ -37,6 +37,7 @@ class ContextualOptionsContext(BaseModel):
 
     npc_name: str
     npc_archetype: str
+    npc_backstory: str
     npc_mood: str
     relationship_summary: str
     last_npc_dialogue: str
@@ -137,6 +138,7 @@ def contextual_options_context(
     return ContextualOptionsContext(
         npc_name=target.name,
         npc_archetype=target.archetype,
+        npc_backstory=target.backstory,
         npc_mood=target.mood.value,
         relationship_summary=(
             f"affection {rel.affection}, chemistry {rel.chemistry}, "
@@ -296,6 +298,7 @@ def _render_context(context: ContextualOptionsContext) -> str:
         [
             f"NPC name: {context.npc_name}",
             f"Archetype voice: {context.npc_archetype}",
+            f"Backstory: {context.npc_backstory}",
             f"Current mood: {context.npc_mood}",
             f"Relationship summary: {context.relationship_summary}",
             f"Last NPC line: {context.last_npc_dialogue}",

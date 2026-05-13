@@ -46,3 +46,42 @@ def test_islander_voice_output_contract(intent: Intent) -> None:
 
     validate_exchange(exchange, context)
     assert context.npc_name in {"Chloe", "Liam"}
+
+
+def test_islander_voice_context_includes_backstory() -> None:
+    state = new_game(1)
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    context = islander_voice_context(state, result)
+
+    assert "primary school teacher" in context.npc_backstory
+
+
+@pytest.mark.llm
+def test_islander_voice_avoids_meta_talk() -> None:
+    state = new_game(1)
+    state.islanders[0].relationship.affection = 80
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="deep_ask_life",
+        ),
+        SeededRng(1),
+    )
+
+    exchange = OpenAIIslanderVoice().generate(state, result)
+    joined = f"{exchange.player_dialogue} {exchange.npc_dialogue}".lower()
+
+    assert "our conversation" not in joined
+    assert "talking with you" not in joined
+    assert "this chat" not in joined

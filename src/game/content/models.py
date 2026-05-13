@@ -86,3 +86,4 @@ class ContentIndex(BaseModel):
     challenges: dict[str, ChallengeContent]
     producer_texts: dict[str, ProducerTextContent]
     casa_amor_cast: dict[str, CasaAmorCastContent]
+    backstories: dict[str, str]

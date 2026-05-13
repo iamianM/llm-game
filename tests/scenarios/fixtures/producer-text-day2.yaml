@@ -1,6 +1,6 @@
 name: producer-text-day2
 seed: 22
-expected_hash: 7e2cfde2ac3598aee5334daefb574e114a3d74f6e87280e87da6a6ec414ed263
+expected_hash: b1a31e7405faf60596c4e1c97c6fdc4127f6b6daac162fdd28bd20e96e97f251
 actions:
 - kind: advance_phase
 - kind: advance_phase

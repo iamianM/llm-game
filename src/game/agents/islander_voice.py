@@ -75,6 +75,7 @@ class IslanderVoiceContext(BaseModel):
     npc_gender: str
     npc_name: str
     npc_archetype: str
+    npc_backstory: str
     archetype_prose: str
     big5_summary: str
     attachment_style: str
@@ -88,6 +89,7 @@ class IslanderVoiceContext(BaseModel):
     outcome: str
     mechanical_change_summary: str
     others_present: list[str]
+    recent_exchange_topics: list[str]
     recent_history: str
 
 
@@ -183,6 +185,7 @@ def islander_voice_context(
         npc_gender=target.gender.value,
         npc_name=target.name,
         npc_archetype=target.archetype,
+        npc_backstory=target.backstory,
         archetype_prose="" if archetype is None else archetype.body,
         big5_summary=_big5_summary(target),
         attachment_style=target.attachment.value,
@@ -196,6 +199,7 @@ def islander_voice_context(
         outcome="success" if result.success else "miss",
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
+        recent_exchange_topics=_recent_exchange_topics(state),
         recent_history=_recent_history(state),
     )
 
@@ -260,6 +264,7 @@ def _render_context(context: IslanderVoiceContext) -> str:
             f"Player gender: {context.player_gender}",
             f"Islander gender: {context.npc_gender}",
             f"Name: {context.npc_name}",
+            f"Backstory: {context.npc_backstory}",
             f"Archetype voice: {context.archetype_prose}",
             f"Big Five: {context.big5_summary}",
             f"Attachment style: {context.attachment_style}",
@@ -273,6 +278,7 @@ def _render_context(context: IslanderVoiceContext) -> str:
             f"Mechanical outcome: {context.outcome}",
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
+            f"Recent exchange topics: {_list_or_none(context.recent_exchange_topics)}",
             f"Recent exchange history: {context.recent_history}",
             "Write the exchange now.",
         ]
@@ -328,6 +334,13 @@ def _recent_history(state: GameState) -> str:
         f"- You: {record.player_dialogue}\n  {record.npc_tone}: {record.npc_dialogue}"
         for record in conversation.exchanges[-2:]
     )
+
+
+def _recent_exchange_topics(state: GameState) -> list[str]:
+    conversation = state.active_conversation
+    if conversation is None:
+        return []
+    return conversation.accumulated_tags[-6:]
 
 
 def _intent_label(intent_id: str | None) -> str:

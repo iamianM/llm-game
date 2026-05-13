@@ -14,6 +14,7 @@ from src.game.content.loader import load_content
 from src.game.engine.challenges import DAILY_CHALLENGE_SCHEDULE
 from src.game.engine.intents import load_intents
 from src.game.engine.producer_events import PRODUCER_TEXT_SCHEDULE
+from src.game.state.cast import starting_islanders
 from src.game.state.models import Location
 
 
@@ -49,11 +50,18 @@ def run_lint() -> None:
     genders = [member.gender for member in index.casa_amor_cast.values()]
     if genders.count("m") != 3 or genders.count("f") != 3:
         raise ValueError("Casa Amor cast must contain 3 men and 3 women")
+    expected_backstories = {
+        islander.id for islander in starting_islanders()
+    } | {"aisha", *set(index.casa_amor_cast)}
+    missing_backstories = expected_backstories - set(index.backstories)
+    if missing_backstories:
+        raise ValueError(f"missing islander backstories: {sorted(missing_backstories)}")
     print(
         "content lint: "
         f"{len(index.archetypes)} archetype(s), {len(index.locations)} location(s), "
         f"{len(index.player_archetypes)} player archetype(s), "
         f"{len(index.challenges)} challenge(s), {len(index.producer_texts)} producer text(s), "
         f"{len(index.casa_amor_cast)} casa islander(s), "
+        f"{len(index.backstories)} backstory item(s), "
         f"{len(intents)} intent(s)"
     )

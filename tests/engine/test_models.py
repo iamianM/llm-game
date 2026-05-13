@@ -72,6 +72,15 @@ def test_new_game_has_8_starting_islanders() -> None:
     assert len(state.islanders) == 8
 
 
+def test_backstory_loaded_per_islander() -> None:
+    state = new_game(1)
+
+    assert all(islander.backstory for islander in state.islanders)
+    assert "primary school teacher" in next(
+        islander.backstory for islander in state.islanders if islander.id == "chloe"
+    )
+
+
 def test_new_game_gender_balance_4_men_4_women() -> None:
     state = new_game(1)
 

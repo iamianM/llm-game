@@ -42,7 +42,18 @@ def load_content(root: Path = Path("content")) -> ContentIndex:
         challenges=_load_collection(root / "challenges", ChallengeContent),
         producer_texts=_load_collection(root / "producer_texts", ProducerTextContent),
         casa_amor_cast=_load_collection(root / "casa_amor_cast", CasaAmorCastContent),
+        backstories=load_backstories(root / "backstories.yaml"),
     )
+
+
+def load_backstories(path: Path = Path("content/backstories.yaml")) -> dict[str, str]:
+    """Load deterministic islander backstories keyed by islander id."""
+    if not path.is_file():
+        raise ValueError(f"missing backstory catalog: {path}")
+    raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict) or not isinstance(raw.get("backstories"), dict):
+        raise ValueError(f"backstory catalog must contain a backstories mapping: {path}")
+    return {str(key): str(value) for key, value in raw["backstories"].items()}
 
 
 def _load_collection(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.content.loader import load_backstories
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import partner_for, player_couple
 from src.game.engine.memory import add_memory, create_memory, remember_ceremony_events
@@ -144,13 +145,14 @@ def _ensure_casa_cast(state: GameState) -> list[IslanderState]:
 
 
 def _casa_cast() -> list[IslanderState]:
+    backstories = load_backstories()
     return [
-        _casa("blake", "Blake", Gender.MAN, "smooth", 9, "secure", Location.CASA_POOL),
-        _casa("jordan", "Jordan", Gender.MAN, "sweetheart", 7, "anxious", Location.CASA_KITCHEN),
-        _casa("marcus", "Marcus", Gender.MAN, "heartthrob", 10, "avoidant", Location.CASA_TERRACE),
-        _casa("sophie", "Sophie", Gender.WOMAN, "joker", 8, "secure", Location.CASA_POOL),
-        _casa("zara", "Zara", Gender.WOMAN, "bombshell", 12, "avoidant", Location.CASA_KITCHEN),
-        _casa("nia", "Nia", Gender.WOMAN, "friend", 6, "anxious", Location.CASA_TERRACE),
+        _casa("blake", "Blake", Gender.MAN, "smooth", backstories, 9, "secure", Location.CASA_POOL),
+        _casa("jordan", "Jordan", Gender.MAN, "sweetheart", backstories, 7, "anxious", Location.CASA_KITCHEN),
+        _casa("marcus", "Marcus", Gender.MAN, "heartthrob", backstories, 10, "avoidant", Location.CASA_TERRACE),
+        _casa("sophie", "Sophie", Gender.WOMAN, "joker", backstories, 8, "secure", Location.CASA_POOL),
+        _casa("zara", "Zara", Gender.WOMAN, "bombshell", backstories, 12, "avoidant", Location.CASA_KITCHEN),
+        _casa("nia", "Nia", Gender.WOMAN, "friend", backstories, 6, "anxious", Location.CASA_TERRACE),
     ]
 
 
@@ -159,6 +161,7 @@ def _casa(
     name: str,
     gender: Gender,
     archetype: str,
+    backstories: dict[str, str],
     chemistry: int,
     attachment: str,
     location: Location,
@@ -168,6 +171,7 @@ def _casa(
         name=name,
         gender=gender,
         archetype=archetype,
+        backstory=backstories[islander_id],
         location_id=location,
         relationship=RelationshipState(affection=12, chemistry=chemistry),
         public_perception=52,

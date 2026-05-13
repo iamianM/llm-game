@@ -47,6 +47,7 @@ def test_islander_voice_pull_rejected_deflects_busy_target(
                 name=name,
                 gender=Gender.WOMAN,
                 archetype=archetype,
+                backstory="Aisha is a bold bombshell who tests whether stable couples can survive pressure.",
                 location_id=Location.POOL,
                 relationship=RelationshipState(affection=15),
                 big5=Big5(openness=9, conscientiousness=4, extraversion=9, agreeableness=5, neuroticism=5),

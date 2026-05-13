@@ -349,3 +349,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: eight-islander starting cast, four-men/four-women gender balance, day-one initial coupling options, initial coupling without day-one dumping, and four-couple audience rankings
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (258 passed in 10.96s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
 - Scenario fixture: all fixtures regenerated after the cast expansion; pre-created-character fixtures now pin initial couples so they do not block on the new day-one coupling menu
+
+## Phase H9.3
+
+- Files added: `content/backstories.yaml`
+- Files changed: Islander state schema, content loading/linting, starting/Casa/bombshell cast factories, Islander Voice context/prompt, Contextual Options context/prompt, and all scenario hashes for `SCHEMA_VERSION = 18`
+- Tests added: per-islander backstory loading, Islander Voice backstory context coverage, Islander Voice meta-talk rejection, and Contextual Options specificity checks
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (260 passed in 9.61s), content lint, fixture determinism, line-cap audit, and full LLM suite (53 passed)
+- Scenario fixture: all fixtures regenerated for backstory-bearing islander state

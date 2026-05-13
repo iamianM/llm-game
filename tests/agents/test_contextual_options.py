@@ -113,3 +113,38 @@ def test_contextual_options_repairs_missing_exit_affordance() -> None:
 
     validate_follow_up_menu(menu)
     assert sum(option.category == "exit" for option in menu.options) == 1
+
+
+@pytest.mark.llm
+def test_contextual_options_labels_are_specific() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        success=True,
+        relationship_deltas={"chloe": RelationshipDelta(affection=2)},
+        tags=["friendly"],
+    )
+    exchange = Exchange(
+        player_dialogue="What made you want to come here?",
+        npc_dialogue=(
+            "Teaching in Liverpool made me realize I keep helping everyone else grow up, "
+            "but I never ask what I want for myself."
+        ),
+        npc_tone="vulnerable",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    menu = ContextualOptionsAgent().generate(state, result, exchange, 20)
+    generic = {
+        "ask something deeper",
+        "tell a joke",
+        "keep flirting",
+        "change the subject",
+        "make a joke",
+    }
+
+    assert all(option.label.lower() not in generic for option in menu.options)
