@@ -461,3 +461,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: slide session coverage for state popout markup and click targets
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (300 passed), fixture determinism, and line-cap audit
 - UI note: popouts use native browser dialogs and delegated vanilla JavaScript; no raw JSON is exposed in the rendered session page
+
+## Phase H11.3
+
+- Files added: `src/game/state/bookmarks.py`, `src/game/engine/bookmarks.py`, `src/game/cli/commands/review.py`, `tests/engine/test_bookmarks.py`, and `tests/cli/test_review_notes.py`
+- Files changed: recorded trace turns now include deterministic auto-bookmarks, packet session rendering ingests reviewer notes from a sibling `*-review-notes.json` file, and slide reports render auto/reviewer bookmark chips in the top navigation
+- Tests added: auto-advance bookmark generation, reviewer note add/clear helpers, and slide rendering for auto plus reviewer bookmarks
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (303 passed), fixture determinism, and line-cap audit
+- Review workflow note: reviewer notes are explicit CLI-authored artifacts; no LLM judge or automatic qualitative reviewer was added

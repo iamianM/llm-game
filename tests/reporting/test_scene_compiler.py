@@ -41,6 +41,23 @@ def test_slide_session_page_contains_state_popouts() -> None:
     assert "Chloe" in html
 
 
+def test_slide_session_page_renders_auto_and_reviewer_bookmarks() -> None:
+    record = _record(1, "advance_phase")
+    record["bookmarks"] = [
+        {"turn": 1, "kind": "auto_advance", "category": "event", "title": "Time expired"}
+    ]
+    html = slide_session_page(
+        "Test Session",
+        [record],
+        reviewer_notes=[
+            {"turn": 1, "kind": "review_note", "category": "note", "title": "Review this"}
+        ],
+    )
+
+    assert "Time expired" in html
+    assert "Review this" in html
+
+
 def _record(turn: int, action_kind: str) -> dict[str, object]:
     return {
         "turn": turn,

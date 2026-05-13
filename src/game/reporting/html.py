@@ -33,9 +33,14 @@ from src.game.reporting.html_math import math_block
 from src.game.reporting.stylish.session import stylish_session_page
 
 
-def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
+def session_page(
+    title: str,
+    records: list[dict[str, Any]],
+    preface: str = "",
+    reviewer_notes: list[dict[str, object]] | None = None,
+) -> str:
     """Render one session trace using the default stylish renderer."""
-    return stylish_session_page(title, records, preface=preface)
+    return stylish_session_page(title, records, preface=preface, reviewer_notes=reviewer_notes)
 
 
 def session_page_minimal(title: str, records: list[dict[str, Any]], preface: str = "") -> str:

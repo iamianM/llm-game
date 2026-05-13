@@ -10,7 +10,9 @@ from typing import Any
 
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.cli.commands.review import review_notes_for_trace
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.bookmarks import bookmarks_for_turn
 from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
@@ -106,7 +108,12 @@ def packet_cmd(args: argparse.Namespace) -> int:
         trace_path=str(trace_path),
     )
     (out / "session.html").write_text(
-        _session_renderer(args)("Recorded Playthrough", records, preface=_final_state_summary(final_state, llm_mode, mode, persona)),
+        session_page(
+            "Recorded Playthrough",
+            records,
+            preface=_final_state_summary(final_state, llm_mode, mode, persona),
+            reviewer_notes=review_notes_for_trace(trace_path),
+        ),
         encoding="utf-8",
     )
     (out / "playthrough-eval.html").write_text(
@@ -257,6 +264,7 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
             if (revealed := revealed_preferences(islander))
         },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
+        "bookmarks": [bookmark.model_dump(mode="json") for bookmark in bookmarks_for_turn(turn)],
         "output_hash": turn.state_hash,
     }
 

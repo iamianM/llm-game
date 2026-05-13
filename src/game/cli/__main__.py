@@ -9,6 +9,7 @@ from src.game.cli.commands import (
     content,
     play,
     report,
+    review,
     snapshot,
     trace,
     verify,
@@ -24,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     for module in (
         play,
         report,
+        review,
         verify_script,
         verify,
         snapshot,

@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from src.game.engine.actions import PlayerAction
+from src.game.engine.bookmarks import bookmarks_for_turn
 from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
@@ -55,6 +56,7 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
             if (revealed := revealed_preferences(islander))
         },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
+        "bookmarks": [bookmark.model_dump(mode="json") for bookmark in bookmarks_for_turn(turn)],
         "output_hash": turn.state_hash,
     }
 
