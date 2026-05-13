@@ -48,8 +48,11 @@ def pull_chance(state: GameState, target_id: str) -> int:
     privacy_modifier = {
         Location.BEDROOM: 10,
         Location.TERRACE: 5,
+        Location.CASA_TERRACE: 5,
         Location.POOL: 0,
+        Location.CASA_POOL: 0,
         Location.KITCHEN: -5,
+        Location.CASA_KITCHEN: -5,
     }[state.location_id]
     chance = (
         50

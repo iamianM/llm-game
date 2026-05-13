@@ -15,6 +15,7 @@ from src.game.agents.background_dialogue import BackgroundExchange
 from src.game.agents.conversation_curator import CuratableConversation
 from src.game.agents.event_narrator import EventNarration
 from src.game.agents.islander_voice import Exchange
+from src.game.agents.player_autopilot import PolicyDecision
 from src.game.agents.villa_orchestrator import VillaUpdate
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.rules import MechanicalResult
@@ -72,6 +73,15 @@ class RecordedAgents:
         if not isinstance(value, dict):
             raise ValueError("recorded agent_commits.villa_update must be an object")
         return VillaUpdate.model_validate(value)
+
+    def player_autopilot(self) -> PolicyDecision | None:
+        """Replay recorded Player Autopilot commit when present."""
+        value = self._agent_commits().get("player_autopilot")
+        if value is None:
+            return None
+        if not isinstance(value, dict):
+            raise ValueError("recorded agent_commits.player_autopilot must be an object")
+        return PolicyDecision.model_validate(value)
 
     def background_dialogue(
         self,

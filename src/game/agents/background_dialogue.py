@@ -63,20 +63,36 @@ class OpenAIBackgroundDialogue:
         nudge: str = "",
     ) -> BackgroundExchange:
         """Generate and validate one NPC-NPC exchange."""
-        response = self._client.responses.parse(
-            model=self._model,
-            instructions=Path("src/game/agents/prompts/background_dialogue.md").read_text(
-                encoding="utf-8"
-            ),
-            input=_render_context(state, conversation, nudge),
-            text_format=BackgroundExchange,
-            max_output_tokens=320,
-        )
-        exchange = response.output_parsed
-        if exchange is None:
-            raise ValueError("Background Dialogue returned no parsed BackgroundExchange")
-        validate_background_exchange(exchange)
-        return exchange
+        rendered = _render_context(state, conversation, nudge)
+        last_error: ValueError | None = None
+        for attempt in range(2):
+            context = rendered
+            if last_error is not None:
+                context = (
+                    f"{rendered}\n\nPrevious BackgroundExchange failed validation: "
+                    f"{last_error}. Return a corrected BackgroundExchange."
+                )
+            response = self._client.responses.parse(
+                model=self._model,
+                instructions=Path("src/game/agents/prompts/background_dialogue.md").read_text(
+                    encoding="utf-8"
+                ),
+                input=context,
+                text_format=BackgroundExchange,
+                max_output_tokens=320,
+            )
+            exchange = response.output_parsed
+            if exchange is None:
+                last_error = ValueError("Background Dialogue returned no parsed BackgroundExchange")
+            else:
+                try:
+                    validate_background_exchange(exchange)
+                    return exchange
+                except ValueError as exc:
+                    last_error = exc
+            if attempt == 1 and last_error is not None:
+                raise last_error
+        raise AssertionError("unreachable background dialogue retry state")
 
 
 def mock_background_dialogue(
@@ -104,7 +120,8 @@ def validate_background_exchange(exchange: BackgroundExchange) -> None:
         raise ValueError(f"background exchange word count out of bounds: {word_count}")
     if re.search(r"\d", joined):
         raise ValueError(f"background exchange contains digits: {exchange!r}")
-    if re.search(r"\bmy (lips|eyes|hands|shoulder|arm|face)\b", joined, re.IGNORECASE):
+    body_language = " ".join(re.findall(r"\*([^*]+)\*", joined))
+    if re.search(r"\bmy (lips|eyes|hands|shoulder|arm|face)\b", body_language, re.IGNORECASE):
         raise ValueError(f"background exchange uses first-person body language: {exchange!r}")
 
 

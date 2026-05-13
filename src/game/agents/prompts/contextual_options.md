@@ -9,7 +9,7 @@ Return a `FollowUpMenu`:
 - `options` — two to four items. Each:
   - `label` — a short action label, three to six words. Imperative or descriptive of intent. Examples: "Tease back", "Ask something deeper", "Apologize honestly", "Change the subject", "Push the flirt", "End on a high note", "Defend yourself", "Make a joke", "Get vulnerable", "Ask about Maya". **Not a full sentence the player would say.**
   - `category` — exactly one of: `friendly`, `flirty`, `deep`, `banter`, `gossip`, `supportive`, `exit`. Use `exit` for any walk-away/end-the-chat option.
-  - `intent_kind` — short snake_case tag for what the player is *trying* to do. Use these by default: `honest_vulnerable`, `escalate_flirt`, `deflect_with_humor`, `joke_back`, `go_deeper`, `ask_about_topic`, `apologize`, `defend_self`, `change_subject`, `end_softly`, `walk_away`. Coin a new short snake_case tag only if the situation truly demands it.
+  - `intent_kind` — short snake_case tag for what the player is *trying* to do. **Use only these values:** `honest_vulnerable`, `escalate_flirt`, `deflect_with_humor`, `joke_back`, `go_deeper`, `ask_about_topic`, `apologize`, `defend_self`, `change_subject`, `supportive_listen`, `supportive_comfort`, `supportive_reassure`, `supportive_validate`, `end_softly`, `walk_away`. Do not invent new intent_kind values — the engine has mechanics only for these.
   - `stat_used` — one of `charm`, `banter`, `eq`, `graft`, `loyalty`, or `null` for `exit` options.
   - `risk` — `safe`, `low`, `medium`, or `high`. Calibrate against the Islander's mood and the conversation arc.
   - `tone` — one short adjective: `playful`, `sincere`, `defensive`, `vulnerable`, `sharp`, `evasive`, `warm`, `cool`, `curious`, `apologetic`.

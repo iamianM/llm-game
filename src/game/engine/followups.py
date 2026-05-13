@@ -78,6 +78,22 @@ FOLLOW_UP_DELTA_TABLE: dict[str, FollowUpDeltaTable] = {
         success=RelationshipDelta(trust=1),
         miss=RelationshipDelta(trust=1),
     ),
+    "supportive_listen": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=3, friendship=1),
+        miss=RelationshipDelta(),
+    ),
+    "supportive_comfort": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=4, friendship=2),
+        miss=RelationshipDelta(),
+    ),
+    "supportive_reassure": FollowUpDeltaTable(
+        success=RelationshipDelta(trust=3, friendship=1),
+        miss=RelationshipDelta(),
+    ),
+    "supportive_validate": FollowUpDeltaTable(
+        success=RelationshipDelta(affection=1, trust=4),
+        miss=RelationshipDelta(),
+    ),
 }
 
 RISK_DELTA_SCALE = {

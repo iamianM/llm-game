@@ -18,6 +18,7 @@ from src.game.eval.playthrough_trace import (
     turn,
     turns_with_action,
     turns_with_audience,
+    turns_with_autopilot,
     turns_with_background,
     turns_with_casa_amor,
     turns_with_casa_return,
@@ -42,8 +43,6 @@ from src.game.eval.playthrough_trace import (
 
 
 class PlaythroughAssertion(BaseModel):
-    """One binary feature-coverage assertion."""
-
     model_config = ConfigDict(extra="forbid")
 
     id: str
@@ -54,8 +53,6 @@ class PlaythroughAssertion(BaseModel):
 
 
 class PlaythroughStats(BaseModel):
-    """Aggregate numbers used by the review dashboard."""
-
     model_config = ConfigDict(extra="forbid")
 
     turns: int
@@ -87,13 +84,14 @@ class PlaythroughStats(BaseModel):
     casa_amor_player_decision: str | None = None
     casa_amor_partners_swapped: bool = False
     casa_amor_perception_swing: int = 0
+    autopilot_actions_total: int = 0
+    autopilot_rationales_present: int = 0
+    autopilot_confidence_counts: dict[str, int] = Field(default_factory=dict)
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
 
 class PlaythroughReport(BaseModel):
-    """Structured report for a recorded playthrough."""
-
     model_config = ConfigDict(extra="forbid")
 
     trace_path: str
@@ -120,7 +118,9 @@ def evaluate_trace(package: dict[str, Any], *, trace_path: str = "<memory>") -> 
     typed_records = [record for record in records if isinstance(record, dict)]
     final_state = package.get("final_state")
     stats = _stats(typed_records, final_state if isinstance(final_state, dict) else None)
-    assertions = _assertions(typed_records, stats)
+    mode = package.get("mode")
+    trace_mode = mode if isinstance(mode, str) else "manual"
+    assertions = _assertions(typed_records, stats, trace_mode=trace_mode)
     interesting = sorted(
         {
             turn
@@ -170,6 +170,9 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     casa_amor_partners_swapped = False
     casa_perception_before: int | None = None
     casa_perception_after: int | None = None
+    autopilot_actions_total = 0
+    autopilot_rationales_present = 0
+    autopilot_confidence: Counter[str] = Counter()
 
     for record in records:
         action = as_dict(record.get("action"))
@@ -244,6 +247,15 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             max_couple_strength_reached = max(max_couple_strength_reached, strength)
         if kind == "hideaway":
             hideaway_used = True
+        autopilot = as_dict(commits.get("player_autopilot"))
+        if autopilot:
+            autopilot_actions_total += 1
+            rationale = autopilot.get("rationale")
+            if isinstance(rationale, str) and rationale.strip():
+                autopilot_rationales_present += 1
+            confidence = autopilot.get("confidence")
+            if isinstance(confidence, str):
+                autopilot_confidence[confidence] += 1
         if record.get("villa") == "casa_amor":
             casa_amor_visited = True
         casa = record.get("casa_amor")
@@ -299,6 +311,9 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             if casa_perception_before is None or casa_perception_after is None
             else casa_perception_after - casa_perception_before
         ),
+        autopilot_actions_total=autopilot_actions_total,
+        autopilot_rationales_present=autopilot_rationales_present,
+        autopilot_confidence_counts=dict(autopilot_confidence),
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -307,6 +322,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
 def _assertions(
     records: list[dict[str, Any]],
     stats: PlaythroughStats,
+    *,
+    trace_mode: str,
 ) -> list[PlaythroughAssertion]:
     memory_holders = _memory_holder_counts(records)
     return [
@@ -340,6 +357,8 @@ def _assertions(
         _assert("casa_amor_phase_observed", "Casa Amor phase was observed", stats.casa_amor_visited, f"visited: {stats.casa_amor_visited}", turns_with_casa_amor(records)),
         _assert("casa_amor_return_resolved", "Casa Amor return was resolved", stats.casa_amor_player_decision is not None, f"decision: {stats.casa_amor_player_decision or 'none'}", turns_with_casa_return(records)),
         _assert("casa_amor_perception_swing", "Casa Amor created a major perception swing", abs(stats.casa_amor_perception_swing) >= 6, f"swing: {stats.casa_amor_perception_swing}", turns_with_casa_swing(records)),
+        _assert("autopilot_outcome_assigned", "Autopilot run reached a terminal outcome", trace_mode != "autopilot" or stats.outcome is not None, f"mode: {trace_mode}; outcome: {stats.outcome or 'none'}", turns_with_outcome(records)),
+        _assert("autopilot_rationale_present", "Autopilot turns include rationales", trace_mode != "autopilot" or (stats.autopilot_actions_total > 0 and stats.autopilot_actions_total == stats.autopilot_rationales_present), f"{stats.autopilot_rationales_present}/{stats.autopilot_actions_total} rationale(s)", turns_with_autopilot(records)),
     ]
 
 

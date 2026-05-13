@@ -23,6 +23,7 @@ from src.game.agents.conversation_curator import (
     ConversationCuratorFn,
     mock_conversation_curator,
 )
+from src.game.agents.player_autopilot import PolicyDecision
 from src.game.agents.villa_orchestrator import VillaUpdate
 from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.memory import add_memory_batch
@@ -45,6 +46,7 @@ class AgentCommits(BaseModel):
     villa_update: VillaUpdate | None = None
     background_dialogues: list[BackgroundExchange] = Field(default_factory=list)
     curator_batches: list[MemoryBatch] = Field(default_factory=list)
+    player_autopilot: PolicyDecision | None = None
 
 
 class AppliedVillaChanges(BaseModel):

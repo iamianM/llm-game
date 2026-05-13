@@ -1,0 +1,64 @@
+name: autopilot-day1
+seed: 42
+character_creation:
+  archetype_id: loyal_friend
+  stats:
+    charm: 5
+    banter: 5
+    eq: 8
+    graft: 4
+    loyalty: 8
+  rerolled: false
+autopilot_decisions:
+- chosen_action_index: 0
+  rationale: 'loyal autopilot chose Talk to Chloe / Friendly: Ask how she''s feeling
+    (eq) for the current situation.'
+  confidence: high
+- chosen_action_index: 0
+  rationale: 'loyal autopilot chose Talk to Chloe / Friendly: Ask how she''s feeling
+    (eq) for the current situation.'
+  confidence: high
+- chosen_action_index: 9
+  rationale: loyal autopilot chose Advance phase for the current situation.
+  confidence: high
+- chosen_action_index: 6
+  rationale: loyal autopilot chose Advance phase for the current situation.
+  confidence: high
+- chosen_action_index: 9
+  rationale: loyal autopilot chose Advance phase for the current situation.
+  confidence: high
+- chosen_action_index: 6
+  rationale: loyal autopilot chose Advance phase for the current situation.
+  confidence: high
+actions:
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_ask_feelings
+  option_index: null
+  payload: null
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_ask_feelings
+  option_index: null
+  payload: null
+- kind: advance_phase
+  target_id: null
+  intent_id: null
+  option_index: null
+  payload: null
+- kind: advance_phase
+  target_id: null
+  intent_id: null
+  option_index: null
+  payload: null
+- kind: advance_phase
+  target_id: null
+  intent_id: null
+  option_index: null
+  payload: null
+- kind: advance_phase
+  target_id: null
+  intent_id: null
+  option_index: null
+  payload: null
+expected_hash: 946ea128ea4c21796355843d12bd7ebc6a1fb4484a0db4ac1d123167d9815ad2

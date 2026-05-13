@@ -7,6 +7,7 @@ from typing import Any
 from src.game.reporting.html_base import escape
 from src.game.reporting.html_blocks import (
     agent_commit_block,
+    autopilot_block,
     casa_amor_block,
     couple_status_block,
     delta_text,
@@ -70,6 +71,7 @@ def _turn_card(record: dict[str, Any]) -> str:
         f"{villa_snapshot_block(record.get('villa_snapshot'))}{casa_amor_block(record)}{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}{producer_text_block(record.get('producer_text'))}{group_date_block(record.get('group_date'))}"
         f"<p><b>You chose:</b> {escape(action['kind'])} {escape(str(action.get('target_id') or ''))} {escape(str(action.get('intent_id') or ''))}</p>"
+        f"{autopilot_block(record.get('agent_commits'))}"
         f"<div class='math'><details><summary>Success math</summary>{math_block(result)}</details></div>"
         f"{pull_attempt_block(result.get('pull_attempt'))}<div class='dialogue'>{exchange_block(record.get('exchange'))}</div>"
         f"{event_block(record.get('event_narration'))}{follow_up_block(record.get('follow_up_menu'))}"

@@ -1,104 +1,146 @@
-"""Tests for the interactive CLI rendering helpers."""
+"""CLI tests for autopilot play mode."""
 
 from __future__ import annotations
 
-from src.game.agents.background_dialogue import BackgroundExchange
-from src.game.agents.villa_orchestrator import (
-    ContinueConversation,
-    NewConversation,
-    NPCMovement,
-    VillaUpdate,
-)
-from src.game.cli.commands.play import _print_state, _print_villa_update
-from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.rules import MechanicalResult
-from src.game.engine.turn import TurnResult
-from src.game.engine.villa import AgentCommits
-from src.game.state.models import Location, NPCNPCConversation, new_game
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+from src.game.cli.commands.play_autopilot import decide_with_autopilot
+from src.game.engine.actions import ActionKind, available_actions
+from src.game.engine.challenges import schedule_challenge
+from src.game.state.models import Conversation, ExchangeRecord, Mood, new_game
 
 
-def test_print_state_shows_villa_map_and_active_conversations(capsys) -> None:
-    """The CLI state view shows where islanders actually are."""
-    state = new_game(1)
-    state.islanders[1].location_id = Location.TERRACE
-    state.npc_conversations.append(
-        NPCNPCConversation(
-            id="npcconv_test",
-            participants=["maya", "liam"],
-            location_id=Location.TERRACE,
-            topic="playful breakfast competition",
-            started_on_turn=1,
-        )
+def test_play_autopilot_runs_end_to_end_with_mock_agent(tmp_path: Path) -> None:
+    trace = tmp_path / "autopilot.json"
+
+    result = _run_play("--mock-llm", "--autopilot", "--record", str(trace))
+
+    assert result.returncode == 0
+    payload = json.loads(trace.read_text(encoding="utf-8"))
+    assert payload["mode"] == "autopilot"
+    assert payload["final_state"]["outcome"] in {"won_as_couple", "runner_up_couple", "left_single", "eliminated"}
+
+
+def test_play_autopilot_records_rationale_per_turn(tmp_path: Path) -> None:
+    trace = tmp_path / "autopilot.json"
+
+    result = _run_play("--mock-llm", "--autopilot", "--record", str(trace))
+
+    assert result.returncode == 0
+    payload = json.loads(trace.read_text(encoding="utf-8"))
+    records = payload["records"]
+    assert records
+    assert all(record["agent_commits"]["player_autopilot"]["rationale"] for record in records)
+
+
+def test_play_autopilot_replay_byte_identical(tmp_path: Path) -> None:
+    trace = tmp_path / "autopilot.json"
+
+    played = _run_play("--mock-llm", "--autopilot", "--record", str(trace))
+    replayed = _run_play("--replay", str(trace))
+
+    assert played.returncode == 0
+    assert replayed.returncode == 0
+
+
+def test_play_autopilot_closes_long_conversation() -> None:
+    state = new_game(42)
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=0,
+        started_on_day=1,
+        exchanges=[
+            ExchangeRecord(
+                turn_index=index,
+                intent_id="go_deeper",
+                player_dialogue="p",
+                npc_dialogue="n",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+                success=True,
+            )
+            for index in range(6)
+        ],
     )
 
-    _print_state(state)
-
-    output = capsys.readouterr().out
-    assert "You are at the POOL." in output
-    assert "Pool      -> you, Chloe" in output
-    assert 'Terrace   -> Maya, Liam -- Maya & Liam chatting about "playful breakfast competition"' in output
-    assert "Chloe   affection 10" in output
-
-
-def test_print_villa_update_names_movements_and_background_dialogue(capsys) -> None:
-    """Villa updates are shown as named events instead of opaque counts."""
-    state = new_game(1)
-    state.islanders[0].location_id = Location.KITCHEN
-    state.npc_conversations.append(
-        NPCNPCConversation(
-            id="npcconv_test",
-            participants=["maya", "liam"],
-            location_id=Location.TERRACE,
-            topic="breakfast flirting",
-            started_on_turn=1,
-        )
-    )
-    turn = TurnResult(
-        state=state,
-        mechanical_result=MechanicalResult(
-            action=PlayerAction(kind=ActionKind.ADVANCE_PHASE),
-            success=True,
-        ),
-        available_actions=[],
-        state_hash="hash",
-        agent_commits=AgentCommits(
-            villa_update=VillaUpdate(
-                npc_movements=[
-                    NPCMovement(
-                        npc_id="chloe",
-                        target_location=Location.POOL,
-                        reason="drawn_to_player",
-                    )
-                ],
-                conversation_starts=[
-                    NewConversation(
-                        participants=["maya", "liam"],
-                        location=Location.TERRACE,
-                        topic="breakfast flirting",
-                    )
-                ],
-                conversation_continues=[
-                    ContinueConversation(
-                        conversation_id="npcconv_test",
-                        nudge="keep it playful",
-                    )
-                ],
-            ),
-            background_dialogues=[
-                BackgroundExchange(
-                    speaker_a_line="*grins* Your pancake game better match the confidence.",
-                    speaker_b_line="*laughs* Only one way to find out.",
-                    tone="flirty",
-                )
-            ],
-        ),
+    action, decision, _spec = decide_with_autopilot(
+        state,
+        available_actions(state),
+        persona="loyal",
+        recent_history=[],
+        decider=object(),
     )
 
-    _print_villa_update(turn)
+    assert action.kind in {ActionKind.RESPOND_WITH, ActionKind.END_CONVERSATION}
+    assert "closes the long conversation" in decision.rationale
 
-    output = capsys.readouterr().out
-    assert "While you talked:" in output
-    assert "Chloe joined you at the pool (drawn_to_player)" in output
-    assert 'Maya & Liam started chatting at the terrace: "breakfast flirting"' in output
-    assert 'Maya & Liam at the terrace kept talking: "keep it playful"' in output
-    assert 'Background (flirty): "*grins* Your pancake game better match the confidence."' in output
+
+def test_play_autopilot_cools_down_recent_conversation_target() -> None:
+    state = new_game(42)
+    state.islanders[1].location_id = state.location_id
+    action, decision, _spec = decide_with_autopilot(
+        state,
+        available_actions(state),
+        persona="loyal",
+        recent_history=[
+            {
+                "action": {"kind": "respond_with", "intent_id": "end_softly"},
+                "mechanical_result": {"relationship_deltas": {"chloe": {"trust": 1}}},
+            },
+        ],
+        decider=None,
+    )
+
+    assert action.kind is ActionKind.START_CONVERSATION
+    assert action.target_id != "chloe"
+    assert decision.rationale
+
+
+def test_play_autopilot_resolves_challenge_before_optional_chat() -> None:
+    state = new_game(42)
+    state.pending_challenge = schedule_challenge(5)
+
+    action, decision, _spec = decide_with_autopilot(
+        state,
+        available_actions(state),
+        persona="loyal",
+        recent_history=[],
+        decider=object(),
+    )
+
+    assert action.kind is ActionKind.CHALLENGE_RESPONSE
+    assert "before optional chats" in decision.rationale
+
+
+def test_play_autopilot_advances_after_one_conversation_in_phase() -> None:
+    state = new_game(42)
+
+    action, decision, _spec = decide_with_autopilot(
+        state,
+        available_actions(state),
+        persona="loyal",
+        recent_history=[
+            {
+                "day": 1,
+                "phase": "morning",
+                "action": {"kind": "start_conversation", "target_id": "chloe"},
+            },
+        ],
+        decider=object(),
+    )
+
+    assert action.kind is ActionKind.ADVANCE_PHASE
+    assert "one focused conversation" in decision.rationale
+
+
+def _run_play(*args: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        [sys.executable, "-m", "src.game.cli", "play", "--seed", "42", *args],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )

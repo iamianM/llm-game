@@ -12,7 +12,24 @@ from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.conversation_curator import OpenAIConversationCurator
 from src.game.agents.event_narrator import OpenAIEventNarrator
 from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.agents.player_autopilot import AUTOPILOT_PERSONAS, OpenAIPlayerAutopilot
 from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator
+from src.game.cli.commands.play_autopilot import (
+    apply_autopilot_character,
+    decide_with_autopilot,
+)
+from src.game.cli.commands.play_recording import (
+    llm_mode as _llm_mode,
+)
+from src.game.cli.commands.play_recording import (
+    record_from_turn as _record_from_turn,
+)
+from src.game.cli.commands.play_recording import (
+    trace_mode as _trace_mode,
+)
+from src.game.cli.commands.play_recording import (
+    write_recording as _write_recording,
+)
 from src.game.cli.commands.play_render import (
     print_actions as _print_actions,
 )
@@ -29,17 +46,14 @@ from src.game.cli.commands.play_render import (
     print_villa_update as _print_villa_update,
 )
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
-from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.character_creation import (
     DEFAULT_ARCHETYPE_STATS,
     PLAYER_ARCHETYPES,
     create_character,
 )
-from src.game.engine.compatibility import revealed_preferences
-from src.game.engine.couples import couple_strength, player_couple
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
-from src.game.engine.turn import TurnResult, run_turn
+from src.game.engine.turn import run_turn
 from src.game.state.models import CharacterCreation, GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -53,6 +67,9 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     parser.add_argument("--trace", action="store_true", help="write turn traces")
     parser.add_argument("--record", help="record this live session to a trace package")
     parser.add_argument("--replay", help="replay a recorded trace package without LLM calls")
+    parser.add_argument("--autopilot", action="store_true", help="let the Player Autopilot play end-to-end")
+    parser.add_argument("--persona", choices=sorted(AUTOPILOT_PERSONAS), default="loyal")
+    parser.add_argument("--max-turns", type=int, default=120, help="autopilot safety cap")
     parser.set_defaults(func=run)
 
 
@@ -72,40 +89,62 @@ def run(args: argparse.Namespace) -> int:
     conversation_curator = None if args.mock_llm else OpenAIConversationCurator().curate
     villa_orchestrator = None if args.mock_llm else OpenAIVillaOrchestrator().decide
     background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
+    player_autopilot = None if args.mock_llm else OpenAIPlayerAutopilot()
     record_path = None if args.record is None else Path(args.record)
     records: list[dict[str, Any]] = []
-    _run_character_creation_flow(state)
+    if args.autopilot:
+        apply_autopilot_character(state, args.persona)
+        _print_character_card(state)
+        print(f"Autopilot persona: {args.persona}")
+    else:
+        _run_character_creation_flow(state)
     print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
 
     while not state.is_terminal:
         _print_state(state)
         actions = available_actions(state)
-        _print_actions(actions)
-        raw = input("> ").strip()
-        if raw in {"/quit", "quit", "q"}:
-            _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
-            return 0
-        if raw == "/help":
-            print(
-                "Commands: /state, /hash, /help, /quit. Choose actions by number. "
-                "Wheel exit options close gracefully; Walk away is curt."
+        decision = None
+        if args.autopilot:
+            if state.turn_index >= args.max_turns:
+                _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
+                print(f"autopilot exceeded max turns: {args.max_turns}")
+                return 2
+            action, decision, chosen_spec = decide_with_autopilot(
+                state,
+                actions,
+                persona=args.persona,
+                recent_history=records[-12:],
+                decider=player_autopilot,
             )
-            continue
-        if raw == "/state":
-            _print_state(state, debug=True)
-            continue
-        if raw == "/hash":
-            print(state_hash(state_hash_payload(state)))
-            continue
+            print(f"Autopilot chose: {chosen_spec.label}")
+            print(f"Reason: {decision.rationale} ({decision.confidence})")
+        else:
+            _print_actions(actions)
+            raw = input("> ").strip()
+            if raw in {"/quit", "quit", "q"}:
+                _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
+                return 0
+            if raw == "/help":
+                print(
+                    "Commands: /state, /hash, /help, /quit. Choose actions by number. "
+                    "Wheel exit options close gracefully; Walk away is curt."
+                )
+                continue
+            if raw == "/state":
+                _print_state(state, debug=True)
+                continue
+            if raw == "/hash":
+                print(state_hash(state_hash_payload(state)))
+                continue
 
-        try:
-            index = int(raw) - 1
-            action = actions[index].action
-        except (ValueError, IndexError):
-            print("choose a listed action number or slash command")
-            continue
-        if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
-            action = _choose_intent(state, action.target_id)
+            try:
+                index = int(raw) - 1
+                action = actions[index].action
+            except (ValueError, IndexError):
+                print("choose a listed action number or slash command")
+                continue
+            if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
+                action = _choose_intent(state, action.target_id)
 
         input_hash = state_hash(state_hash_payload(state))
         turn = run_turn(
@@ -120,13 +159,15 @@ def run(args: argparse.Namespace) -> int:
             background_dialogue=background_dialogue,
         )
         state = turn.state
+        if decision is not None:
+            turn.agent_commits.player_autopilot = decision
         records.append(_record_from_turn(input_hash, action, turn))
-        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
+        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
         _print_turn(turn)
 
     print("Day complete.")
     print(f"final hash: {state_hash(state_hash_payload(state))}")
-    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args))
+    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
     return 0
 
 
@@ -241,6 +282,7 @@ def _replay_recording(path: Path) -> int:
         if not isinstance(raw_record, dict):
             raise ValueError("each recorded turn must be an object")
         agents.begin_turn(raw_record)
+        agents.player_autopilot()
         action = PlayerAction.model_validate(raw_record.get("action"))
         input_hash = state_hash(state_hash_payload(state))
         if raw_record.get("input_hash") != input_hash:
@@ -275,111 +317,6 @@ def _replay_recording(path: Path) -> int:
     print(f"replayed {len(records)} turn(s)")
     print(f"final hash: {final_hash}")
     return 0
-
-
-def _record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) -> dict[str, Any]:
-    state = turn.state
-    return {
-        "turn": state.turn_index,
-        "day": state.day,
-        "phase": state.phase.value,
-        "villa": state.villa.value,
-        "location": state.location_id.value,
-        "player_public_perception": state.player.public_perception,
-        "visible_state": _visible_state(state),
-        "villa_snapshot": _villa_snapshot(state),
-        "couple_strength": _player_couple_strength(state),
-        "hideaway": state.hideaway.model_dump(mode="json"),
-        "casa_amor": (
-            None
-            if state.casa_amor_state is None
-            else state.casa_amor_state.model_dump(mode="json")
-        ),
-        "input_hash": input_hash,
-        "action": action.model_dump(mode="json"),
-        "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
-        "exchange": None if turn.exchange is None else turn.exchange.model_dump(mode="json"),
-        "event_narration": (
-            None
-            if turn.event_narration is None
-            else turn.event_narration.model_dump(mode="json")
-        ),
-        "follow_up_menu": (
-            None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
-        ),
-        "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
-        "audience_snapshot": (
-            None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json")
-        ),
-        "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
-        "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
-        "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
-        "revealed_preferences": {
-            islander.id: revealed
-            for islander in state.islanders
-            if (revealed := revealed_preferences(islander))
-        },
-        "agent_commits": turn.agent_commits.model_dump(mode="json"),
-        "output_hash": turn.state_hash,
-    }
-
-
-def _visible_state(state: GameState) -> str:
-    parts = []
-    for islander in state.islanders:
-        if islander.location_id == state.location_id and not islander.eliminated:
-            rel = islander.relationship
-            parts.append(
-                f"{islander.name}: affection {rel.affection}, chemistry {rel.chemistry}, "
-                f"trust {rel.trust}, friendship {rel.friendship}"
-            )
-    return "; ".join(parts) if parts else "No visible islanders."
-
-
-def _player_couple_strength(state: GameState) -> int | None:
-    couple = player_couple(state)
-    return None if couple is None else couple_strength(state, couple)
-
-
-def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
-    snapshot: dict[str, list[str]] = {}
-    for location in locations_for_villa(state.villa):
-        occupants = ["you"] if location is state.location_id else []
-        occupants.extend(
-            islander.name
-            for islander in state.islanders
-            if islander.location_id is location and not islander.eliminated
-        )
-        snapshot[location.value] = occupants
-    return snapshot
-
-
-def _write_recording(
-    path: Path | None,
-    seed: int,
-    state: GameState,
-    records: list[dict[str, Any]],
-    *,
-    llm_mode: str,
-) -> None:
-    if path is None:
-        return
-    path.parent.mkdir(parents=True, exist_ok=True)
-    package = {
-        "seed": seed,
-        "llm_mode": llm_mode,
-        "character_creation": (
-            None if state.character_creation is None else state.character_creation.model_dump(mode="json")
-        ),
-        "final_hash": state_hash(state_hash_payload(state)),
-        "records": records,
-        "final_state": state.model_dump(mode="json"),
-    }
-    path.write_text(json.dumps(package, indent=2), encoding="utf-8")
-
-
-def _llm_mode(args: argparse.Namespace) -> str:
-    return "mock" if args.mock_llm else "real"
 
 
 __all__ = ["_print_state", "_print_villa_update", "add_parser", "run"]

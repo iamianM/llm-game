@@ -96,6 +96,23 @@ def agent_commit_block(agent_commits: object) -> str:
     )
 
 
+def autopilot_block(agent_commits: object) -> str:
+    """Render Player Autopilot rationale when present."""
+    if not isinstance(agent_commits, dict):
+        return ""
+    decision = agent_commits.get("player_autopilot")
+    if not isinstance(decision, dict):
+        return ""
+    return (
+        "<div class='card autopilot'>"
+        "<p><b>Autopilot rationale</b></p>"
+        f"<p><i>{escape(decision.get('rationale', ''))}</i></p>"
+        f"<p class='meta'>Confidence: {escape(decision.get('confidence', ''))}; "
+        f"action index: {escape(decision.get('chosen_action_index', ''))}</p>"
+        "</div>"
+    )
+
+
 def pull_attempt_block(pull_attempt: object) -> str:
     """Render a pull-for-chat result."""
     if not isinstance(pull_attempt, dict):

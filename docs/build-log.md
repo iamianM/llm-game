@@ -286,3 +286,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: Casa entry/cast/location/menu/decision/return/perception/orchestrator-visibility checks, Casa eval assertions, and `casa-amor-arrive.yaml` / `casa-amor-return.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (203 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 15`; day-five-plus fixtures now include the required Casa Amor decision before the day-six return
+
+## Phase H7
+
+- Files added: `src/game/agents/player_autopilot.py`, `src/game/agents/prompts/player_autopilot.md`, `src/game/cli/commands/play_autopilot.py`, `src/game/cli/commands/play_recording.py`, `tests/agents/test_player_autopilot.py`, and `tests/scenarios/fixtures/autopilot-day1.yaml`
+- Files changed: CLI play/report recording surfaces, agent commit schema, scenario replay, playthrough eval/dashboard, contextual follow-up mechanics, background dialogue validation, pull-for-chat Casa location support, and Makefile `autopilot-check`
+- Tests added: Player Autopilot LLM contract tests, mock autopilot end-to-end/replay/rationale tests, supportive follow-up delta coverage, background-dialogue validator retry coverage, Casa pull-location coverage, and autopilot scenario fixture
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (218 passed), content lint, fixture determinism, line-cap audit, and full LLM suite (43 passed)
+- Validation note: fast deterministic `autopilot-check` completes and replays byte-identically; bounded real-LLM validation exposed phase-pacing gaps that are addressed by Phase H8 time budgets and NPC autonomy

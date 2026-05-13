@@ -9,6 +9,7 @@ from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import Intent, IntentCategory, IntentDeltaTable, get_intent
 from src.game.engine.rules import (
     apply_action,
+    follow_up_delta,
     follow_up_success_chance,
     intent_success_breakdown,
     intent_success_chance,
@@ -212,6 +213,38 @@ def test_follow_up_high_risk_scales_deltas() -> None:
 
     assert result.success is True
     assert result.relationship_deltas == {"chloe": RelationshipDelta(affection=5, trust=7)}
+
+
+def test_follow_up_supportive_reassure_is_mapped() -> None:
+    """Supportive live-generated follow-up tags have mechanical meaning."""
+    state = _state_with_follow_up("supportive_reassure", risk="low", stat_used="loyalty")
+
+    result = apply_action(
+        state,
+        PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="supportive_reassure"),
+        SeededRng(1),
+    )
+
+    assert result.success is True
+    assert result.relationship_deltas == {"chloe": RelationshipDelta(trust=2, friendship=1)}
+
+
+@pytest.mark.parametrize(
+    ("intent_kind", "expected_success"),
+    [
+        ("supportive_listen", RelationshipDelta(trust=2, friendship=1)),
+        ("supportive_comfort", RelationshipDelta(trust=3, friendship=2)),
+        ("supportive_reassure", RelationshipDelta(trust=2, friendship=1)),
+        ("supportive_validate", RelationshipDelta(affection=1, trust=3)),
+    ],
+)
+def test_supportive_follow_up_deltas_are_closed_set(
+    intent_kind: str,
+    expected_success: RelationshipDelta,
+) -> None:
+    """Closed-set supportive follow-ups map to mechanics and empty miss deltas."""
+    assert follow_up_delta(intent_kind, "low", success=True) == expected_success
+    assert follow_up_delta(intent_kind, "low", success=False) == RelationshipDelta()
 
 
 def test_follow_up_success_chance_is_capped_by_risk() -> None:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.background_dialogue import (
+    BackgroundExchange,
     OpenAIBackgroundDialogue,
     mock_background_dialogue,
     validate_background_exchange,
@@ -20,6 +21,29 @@ def test_mock_background_dialogue_contract() -> None:
     exchange = mock_background_dialogue(state, conversation)
 
     validate_background_exchange(exchange)
+
+
+def test_background_dialogue_allows_first_person_dialogue_idioms() -> None:
+    """Validator only bans first-person body language, not normal dialogue idioms."""
+    validate_background_exchange(
+        BackgroundExchange(
+            speaker_a_line="*grins* You better watch out, Liam. I keep my eyes peeled in here.",
+            speaker_b_line="*laughs softly* Good, Maya, because nothing gets past you when snacks are involved.",
+            tone="playful",
+        )
+    )
+
+
+def test_background_dialogue_rejects_first_person_body_language() -> None:
+    """Italic body language remains third-person observable."""
+    with pytest.raises(ValueError, match="first-person body language"):
+        validate_background_exchange(
+            BackgroundExchange(
+                speaker_a_line="*my eyes widen* You better watch out, Liam, because I notice everything.",
+                speaker_b_line="*laughs softly* Good, Maya, because nothing gets past you when snacks are involved.",
+                tone="playful",
+            )
+        )
 
 
 @pytest.mark.llm

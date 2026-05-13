@@ -39,6 +39,15 @@ def test_pull_chance_privacy_modifier_applied() -> None:
     assert pull_chance(bedroom, "chloe") > pull_chance(pool, "chloe") > pull_chance(kitchen, "chloe")
 
 
+def test_pull_chance_supports_casa_locations() -> None:
+    """Casa Amor locations use the same privacy bands as the main villa."""
+    pool = _state_with_busy_chloe(location=Location.CASA_POOL)
+    terrace = _state_with_busy_chloe(location=Location.CASA_TERRACE)
+    kitchen = _state_with_busy_chloe(location=Location.CASA_KITCHEN)
+
+    assert pull_chance(terrace, "chloe") > pull_chance(pool, "chloe") > pull_chance(kitchen, "chloe")
+
+
 def test_pull_chance_clamped_to_10_90() -> None:
     """Extreme inputs stay inside the pull chance clamp."""
     low = _state_with_busy_chloe(location=Location.KITCHEN)

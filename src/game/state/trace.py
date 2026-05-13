@@ -11,8 +11,15 @@ and AI assistants.
 from __future__ import annotations
 
 import json
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
+
+
+class TraceMode(StrEnum):
+    MANUAL = "manual"
+    AUTOPILOT = "autopilot"
+    MOCKED = "mocked"
 
 
 def write_turn_trace(path: Path, payload: dict[str, Any]) -> None:
