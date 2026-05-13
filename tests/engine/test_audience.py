@@ -55,3 +55,18 @@ def test_audience_snapshot_excludes_eliminated_islanders() -> None:
     snapshot = audience_snapshot(state)
 
     assert snapshot.entries == []
+
+
+def test_audience_ranking_displays_1_of_4() -> None:
+    """The H9 starting cast supports four ranked couples."""
+    state = new_game(1)
+    state.couples = [
+        Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1),
+        Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=1),
+        Couple(partner_a_id="sophie_start", partner_b_id="marcus_start", formed_on_day=1),
+        Couple(partner_a_id="nia_start", partner_b_id="blake_start", formed_on_day=1),
+    ]
+
+    snapshot = audience_snapshot(state)
+
+    assert [entry.rank for entry in snapshot.entries] == [1, 2, 3, 4]

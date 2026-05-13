@@ -58,7 +58,25 @@ def test_new_game_assigns_canonical_gender_per_islander() -> None:
         "chloe": Gender.WOMAN,
         "maya": Gender.WOMAN,
         "liam": Gender.MAN,
+        "sophie_start": Gender.WOMAN,
+        "nia_start": Gender.WOMAN,
+        "marcus_start": Gender.MAN,
+        "blake_start": Gender.MAN,
+        "jordan_start": Gender.MAN,
     }
+
+
+def test_new_game_has_8_starting_islanders() -> None:
+    state = new_game(1)
+
+    assert len(state.islanders) == 8
+
+
+def test_new_game_gender_balance_4_men_4_women() -> None:
+    state = new_game(1)
+
+    assert [islander.gender for islander in state.islanders].count(Gender.MAN) == 4
+    assert [islander.gender for islander in state.islanders].count(Gender.WOMAN) == 4
 
 
 def test_clamp_relationship_boundaries() -> None:

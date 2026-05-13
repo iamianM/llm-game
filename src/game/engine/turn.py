@@ -26,7 +26,7 @@ from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islan
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.arrival_rolls import ArrivalRoll
-from src.game.engine.ceremonies import CeremonyEvent, recoupling
+from src.game.engine.ceremonies import CeremonyEvent, initial_coupling, recoupling
 from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.conversation import (
     append_exchange,
@@ -158,7 +158,11 @@ def run_turn(
         result.pull_attempt = pull_attempt
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
-        ceremony = recoupling(state, action.target_id)
+        ceremony = (
+            initial_coupling(state, action.target_id)
+            if state.day == 1 and not state.couples and action.target_id is not None
+            else recoupling(state, action.target_id)
+        )
         ceremony_events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED

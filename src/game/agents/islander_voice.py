@@ -39,7 +39,7 @@ VALID_TONES = {
     "playful",
     "defensive",
 }
-KNOWN_NAMES = {"Chloe", "Maya", "Liam", "Aisha"}
+KNOWN_NAMES = {"Chloe", "Maya", "Liam", "Sophie", "Nia", "Marcus", "Blake", "Jordan", "Aisha", "Zara"}
 
 
 class Exchange(BaseModel):

@@ -10,6 +10,27 @@ character_creation:
     graft: 4
     loyalty: 8
   rerolled: false
+initial_couples:
+- partner_a_id: player
+  partner_b_id: chloe
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: maya
+  partner_b_id: liam
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: sophie_start
+  partner_b_id: marcus_start
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: nia_start
+  partner_b_id: blake_start
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
 autopilot_decisions:
 - chosen_action_index: 0
   rationale: 'loyal autopilot chose Talk to Chloe / Friendly: Ask how she''s feeling
@@ -62,4 +83,4 @@ actions:
   intent_id: null
   option_index: null
   payload: null
-expected_hash: 8ae8020e76ae27f3014eaa8a924c6ee84788013ba1c4452e90c295c94309c657
+expected_hash: 037132668625818d91126a429944e9fc73e09fd31236c8ef4f382f016a467d3c

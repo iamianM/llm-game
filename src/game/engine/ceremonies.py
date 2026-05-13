@@ -45,6 +45,33 @@ class CeremonyEvent(BaseModel):
     islander_id: str | None = None
 
 
+def initial_coupling(state: GameState, player_choice_id: str) -> RecouplingResult:
+    """Form the day-one starting couples without dumping the leftover single."""
+    choice = _find_active_islander(state, player_choice_id)
+    if choice.gender == state.player.gender:
+        raise ValueError("initial coupling target must be opposite sex")
+    available = [
+        islander
+        for islander in state.islanders
+        if not islander.eliminated and islander.id != choice.id
+    ]
+    opposite = [islander for islander in available if islander.gender != state.player.gender]
+    same = [islander for islander in available if islander.gender == state.player.gender]
+    opposite.sort(key=lambda islander: _partner_score(islander), reverse=True)
+    same.sort(key=lambda islander: _partner_score(islander), reverse=True)
+    couples = [Couple(partner_a_id=state.player.id, partner_b_id=choice.id, formed_on_day=state.day)]
+    while opposite and same:
+        couples.append(
+            Couple(
+                partner_a_id=opposite.pop(0).id,
+                partner_b_id=same.pop(0).id,
+                formed_on_day=state.day,
+            )
+        )
+    state.couples = couples
+    return RecouplingResult(couples=couples)
+
+
 def recoupling(state: GameState, player_choice_id: str | None = None) -> RecouplingResult:
     """Pair active players and eliminate one leftover contestant if needed."""
     active = [islander for islander in state.islanders if not islander.eliminated]
@@ -123,6 +150,13 @@ def _partner_index(active: list[IslanderState], player_choice_id: str | None) ->
         if islander.id == player_choice_id:
             return index
     raise ValueError(f"recoupling target is not available: {player_choice_id}")
+
+
+def _find_active_islander(state: GameState, islander_id: str) -> IslanderState:
+    for islander in state.islanders:
+        if islander.id == islander_id and not islander.eliminated:
+            return islander
+    raise ValueError(f"initial coupling target is not available: {islander_id}")
 
 
 def _resolve_bombshell_steals(state: GameState) -> list[StealAttempt]:

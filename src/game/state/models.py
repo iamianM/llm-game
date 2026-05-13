@@ -325,6 +325,8 @@ def clamp_relationship(value: int) -> int:
 
 
 def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState:
+    from src.game.state.cast import starting_islanders
+
     return GameState(
         seed=seed,
         player=PlayerState(
@@ -332,54 +334,5 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
             if player_stats is not None
             else PlayerStats(charm=6, banter=6, eq=6, graft=6, loyalty=6)
         ),
-        islanders=[
-            IslanderState(
-                id="chloe",
-                name="Chloe",
-                gender=Gender.WOMAN,
-                archetype="sweetheart",
-                location_id=Location.POOL,
-                relationship=RelationshipState(affection=10),
-                big5=Big5(openness=7, conscientiousness=6, extraversion=9, agreeableness=8, neuroticism=4),
-                attachment=AttachmentStyle.SECURE,
-                type_on_paper=TypeOnPaper(
-                    physical_type="warm smiles and kind eyes",
-                    personality_type=["warm", "confident"],
-                    values=["loyalty", "honesty"],
-                    dealbreakers=["arrogance"],
-                ),
-            ),
-            IslanderState(
-                id="maya",
-                name="Maya",
-                gender=Gender.WOMAN,
-                archetype="joker",
-                location_id=Location.KITCHEN,
-                relationship=RelationshipState(affection=8),
-                big5=Big5(openness=8, conscientiousness=5, extraversion=9, agreeableness=5, neuroticism=6),
-                attachment=AttachmentStyle.ANXIOUS,
-                type_on_paper=TypeOnPaper(
-                    physical_type="expressive people with bright energy",
-                    personality_type=["funny", "attentive"],
-                    values=["humor", "attention"],
-                    dealbreakers=["neglect"],
-                ),
-            ),
-            IslanderState(
-                id="liam",
-                name="Liam",
-                gender=Gender.MAN,
-                archetype="friend",
-                location_id=Location.TERRACE,
-                relationship=RelationshipState(affection=6),
-                big5=Big5(openness=5, conscientiousness=8, extraversion=6, agreeableness=7, neuroticism=3),
-                attachment=AttachmentStyle.SECURE,
-                type_on_paper=TypeOnPaper(
-                    physical_type="grounded and easygoing",
-                    personality_type=["steady", "thoughtful"],
-                    values=["steadiness", "depth"],
-                    dealbreakers=["flakiness"],
-                ),
-            ),
-        ],
+        islanders=starting_islanders(),
     )

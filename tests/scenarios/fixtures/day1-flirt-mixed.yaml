@@ -1,6 +1,6 @@
 name: day1-flirt-mixed
 seed: 2
-expected_hash: 9f32b8d7c827a265ebcea0394612d9ca9e59f12ef29a108b07a934a65cf10f5e
+expected_hash: 7e21a164c973cc2bd184769c9bcb6581f7adbbdf59e93c73780e4266a48208ab
 actions:
 - kind: start_conversation
   target_id: chloe

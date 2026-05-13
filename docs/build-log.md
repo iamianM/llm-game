@@ -341,3 +341,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: required character-creation gender, canonical cast gender assignment, same/opposite-sex intent filtering, bromance/gossip-ring mechanical deltas, and Islander Voice LLM coverage for the expanded intent catalog
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (253 passed in 10.53s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 17`; `character_creation` and `CREATE_CHARACTER` payloads now include the required gender field
+
+## Phase H9.2
+
+- Files added: `content/archetypes/alpha.md`, `src/game/state/cast.py`, and `tests/engine/test_initial_coupling.py`
+- Files changed: starting cast factory, initial coupling action flow, recoupling ceremony handling, content lint expectations, Islander Voice known-name set, audience/model tests, and all scenario hashes for the expanded starting cast
+- Tests added: eight-islander starting cast, four-men/four-women gender balance, day-one initial coupling options, initial coupling without day-one dumping, and four-couple audience rankings
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (258 passed in 10.96s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
+- Scenario fixture: all fixtures regenerated after the cast expansion; pre-created-character fixtures now pin initial couples so they do not block on the new day-one coupling menu

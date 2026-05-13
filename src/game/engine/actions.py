@@ -92,6 +92,14 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                         )
                     )
             return actions
+    if _needs_initial_coupling(state):
+        return [
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.RECOUPLE, target_id=islander.id),
+                label=f"Initial couple with {islander.name}",
+            )
+            for islander in _initial_coupling_targets(state)
+        ]
 
     if state.active_conversation is not None:
         interruption = state.active_conversation.pending_interruption
@@ -282,6 +290,26 @@ def _meets_unlock_threshold(option: FollowUpOption, target: IslanderState) -> bo
         if not isinstance(value, int) or value < required:
             return False
     return True
+
+
+def _needs_initial_coupling(state: GameState) -> bool:
+    return (
+        state.day == 1
+        and state.phase is Phase.MORNING
+        and not state.couples
+        and state.character_creation is not None
+    )
+
+
+def _initial_coupling_targets(state: GameState) -> list[IslanderState]:
+    targets = [
+        islander
+        for islander in state.islanders
+        if not islander.eliminated
+        and islander.gender != state.player.gender
+        and location_villa(islander.location_id) is state.villa
+    ]
+    return sorted(targets, key=lambda islander: (islander.name, islander.id))
 
 
 def _find_islander(state: GameState, target_id: str) -> IslanderState:

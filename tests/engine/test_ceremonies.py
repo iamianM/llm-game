@@ -23,6 +23,7 @@ def test_recoupling_pairs_player_with_top_relationship() -> None:
 def test_recoupling_eliminates_leftover_islander() -> None:
     """An odd active cast leaves one islander dumped."""
     state = new_game(1)
+    state.islanders[-1].eliminated = True
     arrive_bombshell(state)
 
     result = recoupling(state)

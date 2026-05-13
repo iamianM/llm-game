@@ -20,7 +20,7 @@ from src.game.state.models import Location
 def run_lint() -> None:
     """Validate runtime content references."""
     index = load_content(Path("content"))
-    expected_archetypes = {"sweetheart", "joker", "friend"}
+    expected_archetypes = {"sweetheart", "joker", "friend", "alpha"}
     missing_archetypes = expected_archetypes - set(index.archetypes)
     if missing_archetypes:
         raise ValueError(f"missing archetype content: {sorted(missing_archetypes)}")

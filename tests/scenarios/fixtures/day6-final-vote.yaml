@@ -10,7 +10,28 @@ character_creation:
     eq: 5
     graft: 5
     loyalty: 9
-expected_hash: 4020b99bea440a6a3f24eeb8bdde24635ae651a58045bfb7c9ed9478d291be36
+initial_couples:
+- partner_a_id: player
+  partner_b_id: chloe
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: maya
+  partner_b_id: liam
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: sophie_start
+  partner_b_id: marcus_start
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+- partner_a_id: nia_start
+  partner_b_id: blake_start
+  formed_on_day: 1
+  has_used_hideaway: false
+  last_steal_attempt_chance: null
+expected_hash: b8edcf347e75b1bdff0dd81af5a8462ccbc3bec9ee0ebbca5b57c2e4a657b631
 actions:
 - kind: advance_phase
 - kind: advance_phase

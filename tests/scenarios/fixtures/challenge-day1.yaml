@@ -1,5 +1,5 @@
 name: challenge-day1
 seed: 21
-expected_hash: 55359c8cf55ebc76d6d7cd413f2c20c93265827250859b9a13954dad44b52689
+expected_hash: ad9f949ab690596c5a4a7d269665cf0a0775eccb94372e0553d1a9d4b944aa4e
 actions:
 - kind: advance_phase
