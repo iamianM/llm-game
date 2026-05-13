@@ -445,3 +445,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: default exit option, repair options after misses, affection-gated escalation, gender filtering for flirty follow-ups, player share-gossip defaults, tone reactions, assembly dedupe/cap/exit validation, bespoke-plus-default bridge, and share-gossip memory transfer
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (296 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused Contextual Options LLM suite (11 passed), and full LLM suite (55 passed)
 - Prompt note: installed Claude's H10.4 slim Contextual Options scope; Codex did not modify other prompts
+
+## Phase H11.1
+
+- Files added: `src/game/reporting/scenes.py`, `src/game/reporting/slides/`, and `tests/reporting/test_scene_compiler.py`
+- Files changed: default stylish session reports now render as a slide deck with scene grouping, keyboard/arrow navigation, timeline buttons, and a placeholder sticky state panel; the minimal turn-card renderer remains available via `--minimal`
+- Tests added: scene-kind classification, adjacent conversation scene grouping, and slide deck control rendering; existing report tests updated for the slide-deck shape and inline vanilla JavaScript
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (299 passed), content lint, smoke `verify-script`, fixture determinism, and line-cap audit
+- UI note: generated session HTML is still self-contained and uses vanilla JavaScript only; no framework or external assets added

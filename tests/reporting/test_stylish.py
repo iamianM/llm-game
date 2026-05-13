@@ -14,9 +14,9 @@ from tests.reporting.test_html import _record
 def test_stylish_session_html_renders_with_minimal_trace() -> None:
     html = stylish_session_page("Session", [_record()])
 
-    assert "class='layout'" in html
+    assert "class='deck-layout'" in html
     assert "Day 1" in html
-    assert "Memory Web" in html
+    assert "data-scene-target" in html
 
 
 def test_stylish_session_html_self_contained_no_external_refs() -> None:
@@ -24,7 +24,7 @@ def test_stylish_session_html_self_contained_no_external_refs() -> None:
 
     assert "http://" not in html
     assert "https://" not in html
-    assert "<script" not in html
+    assert "document.querySelectorAll" in html
 
 
 def test_avatar_svg_color_deterministic_from_id() -> None:
