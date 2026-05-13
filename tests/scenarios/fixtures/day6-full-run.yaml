@@ -1,6 +1,6 @@
 name: day6-full-run
 seed: 6
-expected_hash: 77cdcf383edbf41edad33281adcc651229c10e70c822bcbc0721df871bee1838
+expected_hash: b3cef669927a61c2328f4415fd0aaf89b504f884ba7bb9a16de3150cf2e2b113
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -30,6 +30,9 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: casa_decision
+  target_id: blake
+  intent_id: return_with_new
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase

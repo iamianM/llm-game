@@ -19,6 +19,9 @@ from src.game.eval.playthrough_trace import (
     turns_with_action,
     turns_with_audience,
     turns_with_background,
+    turns_with_casa_amor,
+    turns_with_casa_return,
+    turns_with_casa_swing,
     turns_with_category,
     turns_with_ceremony,
     turns_with_challenge,
@@ -80,6 +83,10 @@ class PlaythroughStats(BaseModel):
     hideaway_used: bool = False
     steal_attempts_total: int = 0
     steal_successes: int = 0
+    casa_amor_visited: bool = False
+    casa_amor_player_decision: str | None = None
+    casa_amor_partners_swapped: bool = False
+    casa_amor_perception_swing: int = 0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
@@ -158,6 +165,11 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     hideaway_used = False
     steal_attempts_total = 0
     steal_successes = 0
+    casa_amor_visited = False
+    casa_amor_player_decision: str | None = None
+    casa_amor_partners_swapped = False
+    casa_perception_before: int | None = None
+    casa_perception_after: int | None = None
 
     for record in records:
         action = as_dict(record.get("action"))
@@ -232,6 +244,20 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             max_couple_strength_reached = max(max_couple_strength_reached, strength)
         if kind == "hideaway":
             hideaway_used = True
+        if record.get("villa") == "casa_amor":
+            casa_amor_visited = True
+        casa = record.get("casa_amor")
+        if isinstance(casa, dict):
+            decision = casa.get("player_decision")
+            if isinstance(decision, str):
+                casa_amor_player_decision = decision
+            casa_amor_partners_swapped = casa_amor_partners_swapped or casa.get("partners_swapped") is True
+            before = casa.get("player_perception_before")
+            after = casa.get("player_perception_after")
+            if isinstance(before, int):
+                casa_perception_before = before
+            if isinstance(after, int):
+                casa_perception_after = after
         if turn_number < 0:
             raise ValueError("recorded turn must be non-negative")
 
@@ -265,6 +291,14 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         hideaway_used=hideaway_used,
         steal_attempts_total=steal_attempts_total,
         steal_successes=steal_successes,
+        casa_amor_visited=casa_amor_visited,
+        casa_amor_player_decision=casa_amor_player_decision,
+        casa_amor_partners_swapped=casa_amor_partners_swapped,
+        casa_amor_perception_swing=(
+            0
+            if casa_perception_before is None or casa_perception_after is None
+            else casa_perception_after - casa_perception_before
+        ),
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -303,6 +337,9 @@ def _assertions(
         _assert("couple_strength_visible", "Couple strength surfaced in the trace", stats.max_couple_strength_reached >= 1, f"max couple strength {stats.max_couple_strength_reached}", turns_with_couple_strength(records)),
         _assert("hideaway_used_when_eligible", "Hideaway was used after reaching high couple strength", stats.max_couple_strength_reached < 70 or stats.hideaway_used, f"hideaway used: {stats.hideaway_used}", turns_with_hideaway(records)),
         _assert("steal_attempt_observed", "At least one bombshell steal attempt occurred", stats.steal_attempts_total >= 1, f"{stats.steal_attempts_total} steal attempt(s), {stats.steal_successes} success(es)", turns_with_steal_attempt(records)),
+        _assert("casa_amor_phase_observed", "Casa Amor phase was observed", stats.casa_amor_visited, f"visited: {stats.casa_amor_visited}", turns_with_casa_amor(records)),
+        _assert("casa_amor_return_resolved", "Casa Amor return was resolved", stats.casa_amor_player_decision is not None, f"decision: {stats.casa_amor_player_decision or 'none'}", turns_with_casa_return(records)),
+        _assert("casa_amor_perception_swing", "Casa Amor created a major perception swing", abs(stats.casa_amor_perception_swing) >= 6, f"swing: {stats.casa_amor_perception_swing}", turns_with_casa_swing(records)),
     ]
 
 

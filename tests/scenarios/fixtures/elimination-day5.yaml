@@ -1,6 +1,6 @@
 name: elimination-day5
 seed: 10
-expected_hash: 32df0249e5fd81b61c56342109ffa2dccb26c2331bb523580ce8e083a02f35a9
+expected_hash: 159fdebfe35644c03664ffd4b5857ab411f105d47b0a37f6a661fcd68938dad8
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -30,4 +30,7 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: casa_decision
+  target_id: blake
+  intent_id: return_with_new
 - kind: advance_phase

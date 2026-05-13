@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_twenty_one_assertions() -> None:
+def test_playthrough_report_has_twenty_four_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 21
+    assert len(report.assertions) == 24
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 21
+    assert report.passed == 24
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -97,6 +97,32 @@ def _complete_package():
             _record(14, "advance_phase", producer_text=True, group_date=True),
             _record(15, "advance_phase", producer_text=True),
             _record(16, "advance_phase", producer_text=True, steal=True),
+            _record(17, "advance_phase", villa="casa_amor", casa={"started_on_day": 4}),
+            _record(
+                18,
+                "casa_decision",
+                chance=None,
+                casa={
+                    "started_on_day": 4,
+                    "player_decision": "return_with_new",
+                    "partners_swapped": True,
+                    "player_perception_before": 50,
+                    "player_perception_after": 38,
+                },
+                ceremony_events=[{"kind": "casa_amor_decision"}],
+            ),
+            _record(
+                19,
+                "advance_phase",
+                casa={
+                    "started_on_day": 4,
+                    "player_decision": "return_with_new",
+                    "partners_swapped": True,
+                    "player_perception_before": 50,
+                    "player_perception_after": 38,
+                },
+                ceremony_events=[{"kind": "casa_amor_return_reveal"}],
+            ),
         ],
         "final_state": {
             "outcome": "won_as_couple",
@@ -121,6 +147,9 @@ def _record(
     group_date: bool = False,
     couple_strength: int | None = 50,
     steal: bool = False,
+    villa: str = "main",
+    casa: dict[str, object] | None = None,
+    ceremony_events: list[dict[str, object]] | None = None,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -143,6 +172,7 @@ def _record(
         curator_batches.append({"memories": curator_memories})
     return {
         "turn": turn,
+        "villa": villa,
         "action": action,
         "mechanical_result": result,
         "audience_snapshot": (
@@ -171,11 +201,10 @@ def _record(
             if kind == "hideaway"
             else {"used_on_day": None, "partner_id": None, "deltas_applied": False}
         ),
-        "ceremony_events": (
-            [{"kind": "steal_attempt", "message": "Steal attempt fails."}]
-            if steal
-            else ([{"kind": "bombshell"}] if turn == 6 else [])
-        ),
+        "casa_amor": casa,
+        "ceremony_events": ceremony_events
+        if ceremony_events is not None
+        else ([{"kind": "steal_attempt", "message": "Steal attempt fails."}] if steal else ([{"kind": "bombshell"}] if turn == 6 else [])),
         "agent_commits": {
             "villa_update": (
                 {"npc_interruptions": [interruption]}

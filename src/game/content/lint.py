@@ -44,10 +44,16 @@ def run_lint() -> None:
     bad_stats = sorted({intent.stat_used for intent in intents} - valid_stats)
     if bad_stats:
         raise ValueError(f"invalid intent stat references: {bad_stats}")
+    if len(index.casa_amor_cast) != 6:
+        raise ValueError("Casa Amor cast must contain exactly 6 islanders")
+    genders = [member.gender for member in index.casa_amor_cast.values()]
+    if genders.count("m") != 3 or genders.count("f") != 3:
+        raise ValueError("Casa Amor cast must contain 3 men and 3 women")
     print(
         "content lint: "
         f"{len(index.archetypes)} archetype(s), {len(index.locations)} location(s), "
         f"{len(index.player_archetypes)} player archetype(s), "
         f"{len(index.challenges)} challenge(s), {len(index.producer_texts)} producer text(s), "
+        f"{len(index.casa_amor_cast)} casa islander(s), "
         f"{len(intents)} intent(s)"
     )

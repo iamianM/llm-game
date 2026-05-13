@@ -7,18 +7,19 @@ from typing import Any
 from src.game.reporting.html_base import escape
 from src.game.reporting.html_blocks import (
     agent_commit_block,
+    casa_amor_block,
     couple_status_block,
     delta_text,
     event_block,
     exchange_block,
     follow_up_block,
     interruption_block,
-    math_block,
     memory_block,
     pull_attempt_block,
     villa_snapshot_block,
 )
 from src.game.reporting.html_events import challenge_block, group_date_block, producer_text_block
+from src.game.reporting.html_math import math_block
 from src.game.reporting.memory_web import memory_web_svg
 from src.game.reporting.stylish.avatars import avatar_svg
 from src.game.reporting.stylish.couple_status import couple_status_panel
@@ -66,7 +67,7 @@ def _turn_card(record: dict[str, Any]) -> str:
         f"<details class='turn{hideaway_class}' id='turn-{escape(record['turn'])}' open>"
         f"<summary>{avatar_svg('player', 'Player', size=26)} {avatar_svg(target_id, target_id.title(), size=26)} {header}</summary>"
         f"<p class='meta'>{escape(record.get('visible_state', ''))}</p>"
-        f"{villa_snapshot_block(record.get('villa_snapshot'))}{couple_status_block(record)}"
+        f"{villa_snapshot_block(record.get('villa_snapshot'))}{casa_amor_block(record)}{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}{producer_text_block(record.get('producer_text'))}{group_date_block(record.get('group_date'))}"
         f"<p><b>You chose:</b> {escape(action['kind'])} {escape(str(action.get('target_id') or ''))} {escape(str(action.get('intent_id') or ''))}</p>"
         f"<div class='math'><details><summary>Success math</summary>{math_block(result)}</details></div>"

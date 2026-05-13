@@ -34,13 +34,13 @@ def test_coupling_warning_text_sets_anxious_moods() -> None:
     assert all(islander.mood is Mood.ANXIOUS for islander in state.islanders)
 
 
-def test_bombshell_arrival_tease_precedes_aisha() -> None:
+def test_casa_amor_announce_text_day_four() -> None:
     state = new_game(1)
 
     text = schedule_producer_text(4, state)
 
     assert text is not None
-    assert text.kind == "bombshell_arrival_tease"
+    assert text.kind == "casa_amor_announce"
 
 
 def test_final_vote_announce_text_day_six() -> None:

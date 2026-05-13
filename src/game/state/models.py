@@ -1,13 +1,4 @@
-"""Pydantic models for canonical game state.
-
-Design sources:
-- 04-State-Management.md: Islander State, Player State, Villa State
-- 02-Core-Mechanics.md: Player stats and relationship stats
-
-Implementation rule:
-The browser may render a filtered view of these models, but it does not own
-canonical game state.
-"""
+"""Pydantic models for canonical game state."""
 
 from __future__ import annotations
 
@@ -16,6 +7,9 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from src.game.state.casa import CasaAmorState as CasaAmorState
+from src.game.state.casa import CasaDecision as CasaDecision
+from src.game.state.casa import VillaName as VillaName
 from src.game.state.event_models import (
     AudienceEntry as AudienceEntry,
 )
@@ -38,7 +32,7 @@ from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 15
 
 
 class Phase(StrEnum):
@@ -65,6 +59,9 @@ class Location(StrEnum):
     TERRACE = "terrace"
     BEDROOM = "bedroom"
     HIDEAWAY = "hideaway"
+    CASA_POOL = "casa_pool"
+    CASA_KITCHEN = "casa_kitchen"
+    CASA_TERRACE = "casa_terrace"
 
 
 class Mood(StrEnum):
@@ -317,6 +314,7 @@ class GameState(BaseModel):
     day: int = 1
     phase: Phase = Phase.MORNING
     location_id: Location = Location.POOL
+    villa: VillaName = VillaName.MAIN
     player: PlayerState
     islanders: list[IslanderState]
     couples: list[Couple] = Field(default_factory=list)
@@ -328,6 +326,7 @@ class GameState(BaseModel):
     pending_text: ProducerText | None = None
     pending_group_date: GroupDate | None = None
     hideaway: HideawayState = Field(default_factory=HideawayState)
+    casa_amor_state: CasaAmorState | None = None
     outcome: RunOutcome | None = None
 
     @property

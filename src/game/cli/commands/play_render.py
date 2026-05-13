@@ -5,10 +5,11 @@ from __future__ import annotations
 from itertools import groupby
 
 from src.game.engine.actions import ActionKind, ActionSpec
+from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, partner_for, player_couple
 from src.game.engine.turn import TurnResult
-from src.game.state.models import GameState, Location, NPCNPCConversation
+from src.game.state.models import GameState, NPCNPCConversation
 
 
 def print_character_card(state: GameState) -> None:
@@ -26,9 +27,9 @@ def print_character_card(state: GameState) -> None:
 def print_state(state: GameState, *, debug: bool = False) -> None:
     """Print the current villa map and player relationship state."""
     print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
-    print(f"You are at the {state.location_id.value.upper()}.")
+    print(f"Current villa: {state.villa.value}. You are at the {state.location_id.value.upper()}.")
     print("\nVilla:")
-    for location in Location:
+    for location in locations_for_villa(state.villa):
         occupants = ["you"] if location is state.location_id else []
         occupants.extend(
             islander.name
@@ -87,6 +88,10 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
     if state.hideaway.used_on_day is not None:
         partner = state.hideaway.partner_id or "unknown"
         print(f"Hideaway used day {state.hideaway.used_on_day} with {name_for(state, partner)}")
+    if state.casa_amor_state is not None:
+        casa = state.casa_amor_state
+        decision = casa.player_decision.value if casa.player_decision is not None else "pending"
+        print(f"Casa Amor: started day {casa.started_on_day}, return day {casa.return_day}, decision {decision}")
 
 
 def print_actions(actions: list[ActionSpec]) -> None:

@@ -15,6 +15,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
+from src.game.engine.casa_amor import casa_decision_options, location_villa, locations_for_villa
 from src.game.engine.couples import player_couple
 from src.game.engine.hideaway import hideaway_eligible, hideaway_partner_id
 from src.game.engine.intents import available_intents_for, get_intent
@@ -30,6 +31,7 @@ class ActionKind(StrEnum):
     END_CONVERSATION = "end_conversation"
     CHALLENGE_RESPONSE = "challenge_response"
     HIDEAWAY = "hideaway"
+    CASA_DECISION = "casa_decision"
     MOVE = "move"
     RECOUPLE = "recouple"
     ADVANCE_PHASE = "advance_phase"
@@ -62,6 +64,19 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         return []
 
     actions: list[ActionSpec] = []
+    casa_options = casa_decision_options(state)
+    if casa_options:
+        return [
+            ActionSpec(
+                action=PlayerAction(
+                    kind=ActionKind.CASA_DECISION,
+                    target_id=target_id,
+                    intent_id=decision.value,
+                ),
+                label=label,
+            )
+            for decision, target_id, label in casa_options
+        ]
     if state.pending_challenge is not None and state.pending_challenge.result is None:
         if state.pending_challenge.kind == "snog_marry_pie":
             for islander in state.islanders:
@@ -139,6 +154,8 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     for islander in state.islanders:
         if islander.location_id != state.location_id or islander.eliminated:
             continue
+        if location_villa(islander.location_id) is not state.villa:
+            continue
         actions.append(
             ActionSpec(
                 action=PlayerAction(kind=ActionKind.START_CONVERSATION, target_id=islander.id),
@@ -153,7 +170,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             label = f"Spend the night in the Hideaway with {partner.name}"
         actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.HIDEAWAY), label=label))
     if state.phase in {Phase.MORNING, Phase.AFTERNOON}:
-        for location in Location:
+        for location in locations_for_villa(state.villa):
             if location != state.location_id and location is not Location.HIDEAWAY:
                 actions.append(
                     ActionSpec(
@@ -183,6 +200,12 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
             raise ValueError("cannot start a conversation while one is active")
         if action.target_id is None or action.intent_id is None:
             raise ValueError("START_CONVERSATION requires target_id and intent_id")
+        try:
+            target = _find_islander(state, action.target_id)
+        except ValueError as exc:
+            raise ValueError(f"target is not visible in the current villa: {action.model_dump()}") from exc
+        if target.location_id != state.location_id or location_villa(target.location_id) is not state.villa:
+            raise ValueError(f"target is not visible in the current villa: {action.model_dump()}")
         valid_intents = {intent.id for intent in available_intents_for(state, action.target_id)}
         if action.intent_id not in valid_intents:
             get_intent(action.intent_id)
@@ -228,6 +251,11 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
             raise ValueError("Hideaway requires a player couple")
         if not hideaway_eligible(state):
             raise ValueError("Hideaway is not available")
+        return
+    if action.kind is ActionKind.CASA_DECISION:
+        valid = [spec.action for spec in available_actions(state)]
+        if action not in valid:
+            raise ValueError(f"invalid Casa Amor decision: {action.model_dump()}")
         return
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:

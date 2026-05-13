@@ -34,10 +34,10 @@ PRODUCER_TEXT_SCHEDULE: dict[int, ProducerTextDef] = {
         "Islanders, tonight there will be a recoupling. Choose wisely.",
     ),
     4: ProducerTextDef(
-        "bombshell_arrival_tease",
+        "casa_amor_announce",
         4,
-        "bombshell_arrival_tease",
-        "Islanders, a new bombshell is ready to turn heads.",
+        "casa_amor_announce",
+        "Islanders, pack a bag. Casa Amor is open, and every connection is about to be tested.",
     ),
     6: ProducerTextDef(
         "final_vote_announce",

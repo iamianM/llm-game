@@ -45,6 +45,10 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Hideaway used", stats.hideaway_used),
         ("Steal attempts", stats.steal_attempts_total),
         ("Steal successes", stats.steal_successes),
+        ("Casa Amor visited", stats.casa_amor_visited),
+        ("Casa Amor decision", stats.casa_amor_player_decision or "none"),
+        ("Casa Amor partners swapped", stats.casa_amor_partners_swapped),
+        ("Casa Amor perception swing", stats.casa_amor_perception_swing),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

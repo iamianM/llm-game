@@ -8,13 +8,13 @@ from src.game.reporting.html_audience import audience_block
 from src.game.reporting.html_base import escape, index_page, page, table_page
 from src.game.reporting.html_blocks import (
     agent_commit_block,
+    casa_amor_block,
     couple_status_block,
     delta_text,
     event_block,
     exchange_block,
     follow_up_block,
     interruption_block,
-    math_block,
     memory_block,
     pull_attempt_block,
     villa_snapshot_block,
@@ -25,6 +25,7 @@ from src.game.reporting.html_events import (
     producer_text_block,
     revealed_preferences_block,
 )
+from src.game.reporting.html_math import math_block
 from src.game.reporting.stylish.session import stylish_session_page
 
 
@@ -62,6 +63,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"<summary>{header}</summary>"
         f"<p class='meta'>{escape(record.get('visible_state', ''))}</p>"
         f"{villa_snapshot_block(record.get('villa_snapshot'))}"
+        f"{casa_amor_block(record)}"
         f"{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}"
         f"{producer_text_block(record.get('producer_text'))}"

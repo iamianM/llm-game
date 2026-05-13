@@ -236,7 +236,6 @@ llm-game/
     │   └── test_stylish.py                 (H6)
     └── scenarios/
         ├── fixtures/
-        │   ├── bombshell-day4.yaml
         │   ├── casa-amor-arrive.yaml        (H5)
         │   ├── casa-amor-return.yaml        (H5)
         │   ├── challenge-day1.yaml          (H2)

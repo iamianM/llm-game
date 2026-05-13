@@ -147,25 +147,19 @@ def couple_status_block(record: dict[str, Any]) -> str:
     return "" if not rows else f"<div class='card hideaway'><p><b>Couple status</b></p><ul>{''.join(rows)}</ul></div>"
 
 
-def math_block(result: dict[str, Any]) -> str:
-    """Render the chance formula and roll result."""
-    roll = result.get("roll")
-    chance = result.get("success_chance")
-    if not isinstance(roll, int) or not isinstance(chance, int):
+def casa_amor_block(record: dict[str, Any]) -> str:
+    """Render Casa Amor state when present."""
+    villa = record.get("villa")
+    casa = record.get("casa_amor")
+    if villa != "casa_amor" and not isinstance(casa, dict):
         return ""
-    outcome = "success" if result.get("success") else "miss"
-    tags = result.get("tags")
-    tag_text = ", ".join(str(tag) for tag in tags) if isinstance(tags, list) else "none"
-    breakdown = _chance_breakdown_text(result.get("chance_breakdown"), chance)
-    return (
-        "<div class='card math'>"
-        "<p><b>Success math</b></p>"
-        f"<p>{breakdown}</p>"
-        f"<p>Rolled {roll}. Outcome: "
-        f"<span class='{'success' if outcome == 'success' else 'miss'}'>{escape(outcome)}</span>.</p>"
-        f"<p class='meta'>Tags: {escape(tag_text)}</p>"
-        "</div>"
-    )
+    rows = [f"<li>Current villa: {escape(villa or 'main')}</li>"]
+    if isinstance(casa, dict):
+        rows.append(f"<li>Started day: {escape(casa.get('started_on_day', 'unknown'))}</li>")
+        rows.append(f"<li>Return day: {escape(casa.get('return_day', 'unknown'))}</li>")
+        rows.append(f"<li>Decision: {escape(casa.get('player_decision') or 'pending')}</li>")
+        rows.append(f"<li>Partners swapped: {escape(casa.get('partners_swapped', False))}</li>")
+    return f"<div class='card casa-amor'><p><b>Casa Amor</b></p><ul>{''.join(rows)}</ul></div>"
 
 
 def interruption_block(record: dict[str, Any]) -> str:
@@ -328,52 +322,6 @@ def _background_lines(background: object) -> list[str]:
     return lines
 
 
-def _chance_breakdown_text(breakdown: object, fallback_chance: int) -> str:
-    if not isinstance(breakdown, dict):
-        return f"Final chance {fallback_chance}%."
-    stat_name = breakdown.get("stat_name") or "stat"
-    parts = [
-        f"base {escape(breakdown.get('base', 0))}",
-        (
-            f"{escape(stat_name)} {escape(breakdown.get('stat_value'))} x "
-            f"{escape(breakdown.get('stat_multiplier'))} = "
-            f"{escape(breakdown.get('stat_contribution'))}"
-        ),
-        (
-            f"affection {escape(breakdown.get('affection_value'))} / "
-            f"{escape(breakdown.get('affection_divisor'))} = "
-            f"{escape(breakdown.get('affection_contribution'))}"
-        ),
-    ]
-    risk = breakdown.get("risk")
-    if risk is not None:
-        parts.append(f"risk {escape(risk)}: {escape(_signed(breakdown.get('risk_modifier')))}")
-    mood_modifier = breakdown.get("mood_modifier")
-    if isinstance(mood_modifier, int) and mood_modifier != 0:
-        parts.append(f"mood {escape(_signed(mood_modifier))}")
-    compatibility = breakdown.get("compatibility_bonus")
-    if isinstance(compatibility, int) and compatibility:
-        parts.append(f"compatibility {escape(_signed(compatibility))}")
-    penalty = breakdown.get("dealbreaker_penalty")
-    if isinstance(penalty, int) and penalty:
-        parts.append(f"dealbreaker -{escape(penalty)}")
-    return (
-        f"{' + '.join(parts)} = {escape(breakdown.get('pre_cap'))}"
-        f"{_cap_text(breakdown)}. Final chance {escape(breakdown.get('final_chance', fallback_chance))}%."
-    )
-
-
-def _cap_text(breakdown: dict[str, object]) -> str:
-    pre_cap = breakdown.get("pre_cap")
-    cap = breakdown.get("cap")
-    floor = breakdown.get("floor")
-    if isinstance(pre_cap, int) and isinstance(cap, int) and pre_cap > cap:
-        return f", capped at {cap}"
-    if isinstance(pre_cap, int) and isinstance(floor, int) and pre_cap < floor:
-        return f", floored at {floor}"
-    return ""
-
-
 def _memory_row(memory: dict[str, object]) -> str:
     tags = memory.get("tags")
     tag_text = ", ".join(str(tag) for tag in tags) if isinstance(tags, list) else ""
@@ -385,12 +333,6 @@ def _memory_row(memory: dict[str, object]) -> str:
         f"<span class='meta'>weight {escape(memory.get('emotional_weight', ''))}; "
         f"{escape(tag_text)}</span></li>"
     )
-
-
-def _signed(value: object) -> str:
-    if not isinstance(value, int):
-        return str(value)
-    return f"+{value}" if value >= 0 else str(value)
 
 
 def _short_text(value: str, *, limit: int = 140) -> str:

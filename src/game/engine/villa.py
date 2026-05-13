@@ -24,6 +24,7 @@ from src.game.agents.conversation_curator import (
     mock_conversation_curator,
 )
 from src.game.agents.villa_orchestrator import VillaUpdate
+from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.memory import add_memory_batch
 from src.game.state.models import (
     BackgroundExchangeRecord,
@@ -129,6 +130,8 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
         raise ValueError("duplicate NPC movement in VillaUpdate")
     for movement in update.npc_movements:
         _ensure_known_npc(movement.npc_id, known)
+        if movement.target_location not in locations_for_villa(state.villa):
+            raise ValueError("NPC movement crosses out of the current villa")
 
     ended = {end.conversation_id for end in update.conversation_ends}
     continued = {cont.conversation_id for cont in update.conversation_continues}
@@ -165,8 +168,12 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
     for start in update.conversation_starts:
         if len(set(start.participants)) != 2:
             raise ValueError(f"conversation start requires two unique participants: {start}")
+        if start.location not in locations_for_villa(state.villa):
+            raise ValueError("NPC conversation start crosses out of the current villa")
         for participant in start.participants:
             _ensure_known_npc(participant, known)
+            if location_villa(projected_locations[participant]) is not state.villa:
+                raise ValueError(f"NPC conversation participant is not in current villa: {participant}")
             if participant in locked:
                 raise ValueError(f"NPC is in player conversation and cannot start NPC chat: {participant}")
             if participant in used_in_new:

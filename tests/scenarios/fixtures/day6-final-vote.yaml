@@ -9,7 +9,7 @@ character_creation:
     eq: 5
     graft: 5
     loyalty: 9
-expected_hash: f0c51cd2608c16237c561e2097d1855734852cdc90419953c2ca5e23b59e5b6d
+expected_hash: 3ef773822e110f8ed63ccee3a4d8e798fc3eb85483e58d18ccaefa8d2ff205ff
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -39,6 +39,9 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: casa_decision
+  target_id: blake
+  intent_id: return_with_new
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase

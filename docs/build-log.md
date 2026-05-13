@@ -277,3 +277,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: stylish session self-containment, deterministic avatars, day timeline markers, couple status panel, perception graph, memory web edge filtering/styles, final-outcome preface, and collapsed math details
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (189 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Packet: regenerated from `.game_traces/manual-g8.json`; in-app browser verified `session.html` exposes the H6 layout, day nav, couple panel, public perception graph, memory web, turn cards, and math details
+
+## Phase H5
+
+- Files added: `src/game/state/casa.py`, `src/game/engine/casa_amor.py`, Casa Amor locations, six Casa Amor cast content files, `content/producer_texts/casa_amor_announce.md`, `src/game/reporting/html_math.py`, `tests/engine/test_casa_amor.py`, and two Casa scenario fixtures
+- Files changed: state schema, action/rule/turn-event pipelines, villa orchestration validation/context, CLI/report recording/rendering, content loading/linting, playthrough eval/dashboard, H-index fixture list, and all scenario hashes for schema v15
+- Files removed: stale day-four bombshell producer text and `bombshell-day4.yaml` fixture now superseded by Casa Amor arrival
+- Tests added: Casa entry/cast/location/menu/decision/return/perception/orchestrator-visibility checks, Casa eval assertions, and `casa-amor-arrive.yaml` / `casa-amor-return.yaml`
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (203 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (37 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 15`; day-five-plus fixtures now include the required Casa Amor decision before the day-six return

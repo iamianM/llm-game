@@ -14,6 +14,7 @@ import yaml
 
 from src.game.content.models import (
     ArchetypeContent,
+    CasaAmorCastContent,
     ChallengeContent,
     ContentIndex,
     LocationContent,
@@ -28,6 +29,7 @@ ContentT = TypeVar(
     PlayerArchetypeContent,
     ChallengeContent,
     ProducerTextContent,
+    CasaAmorCastContent,
 )
 
 
@@ -39,6 +41,7 @@ def load_content(root: Path = Path("content")) -> ContentIndex:
         player_archetypes=_load_collection(root / "player_archetypes", PlayerArchetypeContent),
         challenges=_load_collection(root / "challenges", ChallengeContent),
         producer_texts=_load_collection(root / "producer_texts", ProducerTextContent),
+        casa_amor_cast=_load_collection(root / "casa_amor_cast", CasaAmorCastContent),
     )
 
 

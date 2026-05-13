@@ -29,6 +29,7 @@ from src.game.cli.commands.play_render import (
     print_villa_update as _print_villa_update,
 )
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
+from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.character_creation import (
     DEFAULT_ARCHETYPE_STATS,
     PLAYER_ARCHETYPES,
@@ -39,7 +40,7 @@ from src.game.engine.couples import couple_strength, player_couple
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import CharacterCreation, GameState, Location, PlayerStats, new_game
+from src.game.state.models import CharacterCreation, GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -282,11 +283,18 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) -
         "turn": state.turn_index,
         "day": state.day,
         "phase": state.phase.value,
+        "villa": state.villa.value,
         "location": state.location_id.value,
+        "player_public_perception": state.player.public_perception,
         "visible_state": _visible_state(state),
         "villa_snapshot": _villa_snapshot(state),
         "couple_strength": _player_couple_strength(state),
         "hideaway": state.hideaway.model_dump(mode="json"),
+        "casa_amor": (
+            None
+            if state.casa_amor_state is None
+            else state.casa_amor_state.model_dump(mode="json")
+        ),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
@@ -335,7 +343,7 @@ def _player_couple_strength(state: GameState) -> int | None:
 
 def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
     snapshot: dict[str, list[str]] = {}
-    for location in Location:
+    for location in locations_for_villa(state.villa):
         occupants = ["you"] if location is state.location_id else []
         occupants.extend(
             islander.name

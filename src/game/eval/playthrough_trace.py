@@ -112,6 +112,32 @@ def turns_with_steal_attempt(records: list[dict[str, Any]]) -> list[int]:
     ]
 
 
+def turns_with_casa_amor(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if record.get("villa") == "casa_amor"]
+
+
+def turns_with_casa_return(records: list[dict[str, Any]]) -> list[int]:
+    return [
+        turn(record)
+        for record in records
+        if any(
+            as_dict(event).get("kind") == "casa_amor_return_reveal"
+            for event in as_list(record.get("ceremony_events"))
+        )
+    ]
+
+
+def turns_with_casa_swing(records: list[dict[str, Any]]) -> list[int]:
+    return [
+        turn(record)
+        for record in records
+        if any(
+            as_dict(event).get("kind") in {"casa_amor_decision", "casa_amor_return_reveal"}
+            for event in as_list(record.get("ceremony_events"))
+        )
+    ]
+
+
 def turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
     return [
         turn(record)

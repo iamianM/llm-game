@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
+from src.game.engine.casa_amor import apply_casa_decision
 from src.game.engine.challenges import resolve_challenge
 from src.game.engine.chance import (
     follow_up_success_breakdown,
@@ -29,6 +30,7 @@ from src.game.engine.interruptions import (
 from src.game.engine.perception import update_public_perception
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.state.casa import CasaDecision
 from src.game.state.models import GameState, Location, PlayerStats, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -53,6 +55,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_challenge_response(state, action, rng)
     if action.kind is ActionKind.HIDEAWAY:
         return _apply_hideaway(state, action)
+    if action.kind is ActionKind.CASA_DECISION:
+        return _apply_casa_decision(state, action)
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:
@@ -154,6 +158,18 @@ def _apply_hideaway(state: GameState, action: PlayerAction) -> MechanicalResult:
         success=True,
         relationship_deltas={} if partner_id is None else {partner_id: delta},
         tags=HIDEAWAY_TAGS,
+    )
+
+
+def _apply_casa_decision(state: GameState, action: PlayerAction) -> MechanicalResult:
+    if action.intent_id is None:
+        raise ValueError("CASA_DECISION requires intent_id")
+    decision = CasaDecision(action.intent_id)
+    apply_casa_decision(state, decision, action.target_id)
+    return MechanicalResult(
+        action=action,
+        success=True,
+        tags=["casa_amor", decision.value],
     )
 
 

@@ -18,6 +18,7 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.engine.casa_amor import location_villa
 from src.game.state.models import GameState, Location, NPCInterruption
 
 VILLA_ORCHESTRATOR_MODEL = "gpt-5.4-mini"
@@ -143,7 +144,7 @@ def _render_context(state: GameState) -> str:
             f"recent memories: {_recent_memories(islander.memories)}"
         )
         for islander in state.islanders
-        if not islander.eliminated
+        if not islander.eliminated and location_villa(islander.location_id) is state.villa
     )
     conversations = "\n".join(
         (
@@ -152,7 +153,7 @@ def _render_context(state: GameState) -> str:
             f"exchange_count {len(conversation.exchanges)}, status {conversation.status}"
         )
         for conversation in state.npc_conversations
-        if conversation.status == "active"
+        if conversation.status == "active" and location_villa(conversation.location_id) is state.villa
     )
     active_target = (
         "none"
@@ -170,6 +171,7 @@ def _render_context(state: GameState) -> str:
             f"Phase: {state.phase.value}",
             f"Turn: {state.turn_index}",
             f"Player location: {state.location_id.value}",
+            f"Current villa: {state.villa.value}",
             f"Player active conversation target: {active_target}",
             f"Player active conversation pending_interruption: {pending_interruption}",
             "Islanders:",

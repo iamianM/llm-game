@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from src.game.engine.audience import record_audience_snapshot
+from src.game.engine.casa_amor import enter_casa_amor, return_ceremony
 from src.game.engine.ceremonies import (
     CeremonyEvent,
     RecouplingResult,
-    arrive_bombshell,
     final_vote_ceremony,
     recoupling,
 )
@@ -17,7 +17,8 @@ from src.game.engine.challenges import (
 )
 from src.game.engine.phases import advance_phase
 from src.game.engine.producer_events import producer_text_event_message, schedule_producer_text
-from src.game.state.models import AudienceSnapshot, GameState, RunOutcome
+from src.game.state.casa import VillaName
+from src.game.state.models import AudienceSnapshot, GameState, Phase, RunOutcome
 from src.game.state.rng import SeededRng
 
 
@@ -28,7 +29,8 @@ def advance_phase_with_events(
     """Advance the clock and return any events created by the transition."""
     events: list[CeremonyEvent] = []
     audience_snapshot: AudienceSnapshot | None = None
-    if state.phase.value == "evening" and state.day in {3, 5}:
+    casa_active = state.casa_amor_state is not None and not state.casa_amor_state.returned
+    if state.phase.value == "evening" and state.day in {3, 5} and not (state.day == 5 and casa_active):
         ceremony = recoupling(state)
         events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
@@ -37,7 +39,13 @@ def advance_phase_with_events(
         audience_snapshot = record_audience_snapshot(state)
     if state.phase.value == "evening" and state.day >= 6:
         events.append(final_vote_ceremony(state))
+    if state.phase is Phase.TEXT and state.day == 4 and state.villa is VillaName.MAIN:
+        events.append(enter_casa_amor(state))
     advance_phase(state)
+    if state.day == 6 and state.phase is Phase.MORNING:
+        casa_return = return_ceremony(state)
+        if casa_return is not None:
+            events.append(casa_return)
     events.extend(_scheduled_phase_events(state, rng))
     return events, audience_snapshot
 
@@ -97,13 +105,4 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
         state.pending_text = schedule_producer_text(state.day, state)
         if state.pending_text is not None:
             events.append(CeremonyEvent(kind="producer_text", message=producer_text_event_message(state.pending_text)))
-    if state.day == 4 and state.phase.value == "morning":
-        bombshell = arrive_bombshell(state)
-        events.append(
-            CeremonyEvent(
-                kind="bombshell",
-                message=f"Bombshell arrived: {bombshell.name} enters the villa.",
-                islander_id=bombshell.id,
-            )
-        )
     return events

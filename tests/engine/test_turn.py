@@ -42,15 +42,15 @@ def test_run_turn_advances_phase() -> None:
     assert result.state.turn_index == 1
 
 
-def test_run_turn_surfaces_bombshell_event() -> None:
+def test_run_turn_surfaces_casa_amor_arrival_event() -> None:
     """Ceremony events are visible in TurnResult instead of hidden state changes."""
     state = new_game(1)
-    state.day = 3
-    state.phase = Phase.EVENING
+    state.day = 4
+    state.phase = Phase.TEXT
 
     result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
 
-    assert any(event.kind == "bombshell" for event in result.ceremony_events)
+    assert any(event.kind == "casa_amor_arrival" for event in result.ceremony_events)
     assert result.event_narration is not None
 
 

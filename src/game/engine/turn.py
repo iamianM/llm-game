@@ -58,6 +58,7 @@ from src.game.engine.turn_events import (
     recoupling_events,
 )
 from src.game.engine.villa import AgentCommits, apply_villa_update
+from src.game.state.casa import CasaDecision
 from src.game.state.models import (
     AudienceSnapshot,
     Conversation,
@@ -163,6 +164,15 @@ def run_turn(
         event = challenge_response_event(state)
         if event is not None:
             ceremony_events.append(event)
+    if action.kind is ActionKind.CASA_DECISION and action.intent_id is not None:
+        decision = CasaDecision(action.intent_id)
+        ceremony_events.append(
+            CeremonyEvent(
+                kind="casa_amor_decision",
+                message=f"Casa Amor decision recorded: {decision.value}.",
+                islander_id=action.target_id,
+            )
+        )
     if action.kind is ActionKind.ADVANCE_PHASE:
         phase_events, audience_snapshot = advance_phase_with_events(state, rng)
         ceremony_events.extend(phase_events)
