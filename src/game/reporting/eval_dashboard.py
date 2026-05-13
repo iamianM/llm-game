@@ -34,6 +34,10 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Low-chance rolls", stats.low_chance_rolls),
         ("Ceremony events", stats.ceremony_events),
         ("Audience snapshots", stats.audience_snapshots),
+        ("Challenges completed", stats.challenges_completed),
+        ("Challenges succeeded", stats.challenges_succeeded),
+        ("Producer texts", stats.producer_texts_fired),
+        ("Group date turns", stats.group_dates_held),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

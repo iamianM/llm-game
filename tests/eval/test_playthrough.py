@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_thirteen_assertions() -> None:
+def test_playthrough_report_has_sixteen_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 13
+    assert len(report.assertions) == 16
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 13
+    assert report.passed == 16
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -89,6 +89,14 @@ def _complete_package():
             _record(6, "respond_with", intent_id="ask_gossip:mem1", chance=52),
             _record(7, "start_conversation", chance=75),
             _record(8, "respond_with", intent_id="ignore_interruption", chance=None, audience=True),
+            _record(9, "advance_phase", challenge=True),
+            _record(10, "advance_phase", challenge=True),
+            _record(11, "advance_phase", challenge=True),
+            _record(12, "advance_phase", challenge=True),
+            _record(13, "advance_phase", challenge=True),
+            _record(14, "advance_phase", producer_text=True, group_date=True),
+            _record(15, "advance_phase", producer_text=True),
+            _record(16, "advance_phase", producer_text=True),
         ],
         "final_state": {"outcome": "won_as_couple"},
     }
@@ -105,6 +113,9 @@ def _record(
     curator_memories: list[dict[str, object]] | None = None,
     background_dialogues: int = 0,
     audience: bool = False,
+    challenge: bool = False,
+    producer_text: bool = False,
+    group_date: bool = False,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -129,6 +140,21 @@ def _record(
         "audience_snapshot": (
             {"day": 1, "entries": [{"rank": 1, "couple": ["player", "chloe"], "score": 74, "is_player_couple": True}]}
             if audience
+            else None
+        ),
+        "challenge": (
+            {"id": f"challenge-{turn}", "kind": "compatibility_quiz", "stat_tested": "eq", "result": "success"}
+            if challenge
+            else None
+        ),
+        "producer_text": (
+            {"id": f"text-{turn}", "kind": "welcome", "body": "I've got a text."}
+            if producer_text
+            else None
+        ),
+        "group_date": (
+            {"id": "group-date", "participants": ["player", "chloe", "maya"], "location": "terrace", "day": 3}
+            if group_date
             else None
         ),
         "ceremony_events": [{"kind": "bombshell"}] if turn == 6 else [],

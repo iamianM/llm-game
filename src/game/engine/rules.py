@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
+from src.game.engine.challenges import resolve_challenge
 from src.game.engine.chance import (
     follow_up_success_breakdown,
     follow_up_success_chance,
@@ -46,6 +47,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return result
     if action.kind is ActionKind.END_CONVERSATION:
         return _apply_end_conversation(state, action)
+    if action.kind is ActionKind.CHALLENGE_RESPONSE:
+        return _apply_challenge_response(state, action, rng)
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:
@@ -119,6 +122,20 @@ def _apply_move(state: GameState, action: PlayerAction) -> MechanicalResult:
         raise ValueError("target_id is required for MOVE")
     state.location_id = Location(action.target_id)
     return MechanicalResult(action=action, success=True, tags=["move"])
+
+
+def _apply_challenge_response(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
+    if state.pending_challenge is None:
+        raise ValueError("CHALLENGE_RESPONSE requires a pending challenge")
+    choice = action.target_id
+    resolved = resolve_challenge(state, state.pending_challenge, rng, choice=choice)
+    state.pending_challenge = resolved
+    return MechanicalResult(
+        action=action,
+        success=resolved.result == "success",
+        relationship_deltas=resolved.deltas,
+        tags=["challenge", resolved.kind],
+    )
 
 
 __all__ = [

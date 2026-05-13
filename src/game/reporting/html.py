@@ -18,6 +18,7 @@ from src.game.reporting.html_blocks import (
     pull_attempt_block,
     villa_snapshot_block,
 )
+from src.game.reporting.html_events import challenge_block, group_date_block, producer_text_block
 
 
 def session_page(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
@@ -49,6 +50,9 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"<summary>{header}</summary>"
         f"<p class='meta'>{escape(record.get('visible_state', ''))}</p>"
         f"{villa_snapshot_block(record.get('villa_snapshot'))}"
+        f"{challenge_block(record.get('challenge'))}"
+        f"{producer_text_block(record.get('producer_text'))}"
+        f"{group_date_block(record.get('group_date'))}"
         f"<p><b>You chose:</b> {escape(action['kind'])} "
         f"{escape(str(action.get('target_id') or ''))} "
         f"{escape(str(action.get('intent_id') or ''))}</p>"

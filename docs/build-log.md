@@ -245,3 +245,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: character creation validation and starter advantages, audience ranking/scoring, final vote outcomes/events, H1 playthrough eval assertions, and character/final-vote scenario fixtures
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (127 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 11`; new `character-creation.yaml` and `day6-final-vote.yaml` pin the start and end of the run
+
+## Phase H2
+
+- Files added: deterministic challenge and producer-event engines, event state models, challenge/producer content, event HTML helpers, challenge/producer tests, and two H2 scenario fixtures
+- Files changed: state schema, turn/action/rule pipelines, content loading/linting, CLI/report rendering, snapshot hashing, playthrough eval/dashboard, and all scenario hashes for schema v12
+- Tests added: daily challenge scheduling/resolution, producer text scheduling/group-date setup, H2 eval assertions, and `challenge-day1.yaml` / `producer-text-day2.yaml`
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (145 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 12`; long day-five-plus fixtures now include the required `CHALLENGE_RESPONSE` for Snog Marry Pie

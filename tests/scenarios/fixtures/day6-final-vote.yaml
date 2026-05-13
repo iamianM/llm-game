@@ -9,7 +9,7 @@ character_creation:
     eq: 5
     graft: 5
     loyalty: 9
-expected_hash: 611ea9006c57a7ca3d205249ad47a830bed031c4df01d667ecdfc1f17e851c5d
+expected_hash: 6ab952d270afea8f74dbfce8adeae3921cf2160bbd5f72b6117dc58d71d73fb7
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -32,6 +32,10 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice: chloe
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase

@@ -9,12 +9,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-EXIT_INTENTS = {"end_softly", "walk_away", "change_subject_and_drift"}
-FLIRTY_INTENTS = {"escalate_flirt"}
-BANTER_INTENTS = {"joke_back", "deflect_with_humor"}
-DEEP_INTENTS = {"go_deeper", "honest_vulnerable"}
-SUPPORTIVE_INTENTS = {"apologize"}
-FRIENDLY_INTENTS = {"ask_about_topic", "change_subject", "defend_self"}
+from src.game.eval.playthrough_categories import record_category
 
 
 class PlaythroughAssertion(BaseModel):
@@ -49,6 +44,10 @@ class PlaythroughStats(BaseModel):
     low_chance_rolls: int
     ceremony_events: int
     audience_snapshots: int
+    challenges_completed: int = 0
+    challenges_succeeded: int = 0
+    producer_texts_fired: int = 0
+    group_dates_held: int = 0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
@@ -118,6 +117,10 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     low_chance_rolls = 0
     ceremony_events = 0
     audience_snapshots = 0
+    challenges_completed = 0
+    challenges_succeeded = 0
+    producer_texts_fired = 0
+    group_dates_held = 0
 
     for record in records:
         action = _dict(record.get("action"))
@@ -130,7 +133,7 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
 
         kind = str(action.get("kind", ""))
         intent_id = str(action.get("intent_id", "") or result_action.get("intent_id", ""))
-        category = _record_category(record)
+        category = record_category(record)
         if category:
             category_success[category]["success" if result.get("success") is True else "miss"] += 1
         if kind == "start_conversation":
@@ -169,6 +172,16 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             ceremony_events += len(events)
         if isinstance(record.get("audience_snapshot"), dict):
             audience_snapshots += 1
+        challenge = record.get("challenge")
+        if isinstance(challenge, dict) and challenge.get("result") in {"success", "failure"}:
+            challenges_completed += 1
+            if challenge.get("result") == "success":
+                challenges_succeeded += 1
+        if isinstance(record.get("producer_text"), dict):
+            producer_texts_fired += 1
+        group_date = record.get("group_date")
+        if isinstance(group_date, dict):
+            group_dates_held += 1
         if turn < 0:
             raise ValueError("recorded turn must be non-negative")
 
@@ -192,6 +205,10 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         low_chance_rolls=low_chance_rolls,
         ceremony_events=ceremony_events,
         audience_snapshots=audience_snapshots,
+        challenges_completed=challenges_completed,
+        challenges_succeeded=challenges_succeeded,
+        producer_texts_fired=producer_texts_fired,
+        group_dates_held=group_dates_held,
         outcome=_final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -222,6 +239,9 @@ def _assertions(
         _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", _turns_with_background(records)),
         _assert("outcome_assigned", "Run has a defined outcome", stats.outcome is not None, f"outcome: {stats.outcome or 'none'}", _turns_with_outcome(records)),
         _assert("audience_ranking_per_day", "Audience rankings were recorded", stats.audience_snapshots >= 1, f"{stats.audience_snapshots} audience snapshot(s)", _turns_with_audience(records)),
+        _assert("challenge_fired_each_day", "At least five daily challenges completed", stats.challenges_completed >= 5, f"{stats.challenges_completed} challenge(s)", _turns_with_challenge(records)),
+        _assert("producer_texts_fired", "At least three producer texts fired", stats.producer_texts_fired >= 3, f"{stats.producer_texts_fired} producer text(s)", _turns_with_producer_text(records)),
+        _assert("group_date_observed", "At least one group date was scheduled", stats.group_dates_held >= 1, f"{stats.group_dates_held} group date turn(s)", _turns_with_group_date(records)),
     ]
 
 
@@ -267,7 +287,7 @@ def _turns_with_category(records: list[dict[str, Any]], category: str) -> list[i
     return [
         _turn(record)
         for record in records
-        if _record_category(record) == category
+        if record_category(record) == category
     ]
 
 
@@ -342,6 +362,14 @@ def _turns_with_ceremony(records: list[dict[str, Any]]) -> list[int]:
 def _turns_with_audience(records: list[dict[str, Any]]) -> list[int]:
     return [_turn(record) for record in records if isinstance(record.get("audience_snapshot"), dict)]
 
+def _turns_with_challenge(records: list[dict[str, Any]]) -> list[int]:
+    return [_turn(record) for record in records if isinstance(record.get("challenge"), dict)]
+
+def _turns_with_producer_text(records: list[dict[str, Any]]) -> list[int]:
+    return [_turn(record) for record in records if isinstance(record.get("producer_text"), dict)]
+
+def _turns_with_group_date(records: list[dict[str, Any]]) -> list[int]:
+    return [_turn(record) for record in records if isinstance(record.get("group_date"), dict)]
 
 def _turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
     return [
@@ -355,38 +383,10 @@ def _final_outcome(final_state: dict[str, Any] | None) -> str | None:
     outcome = None if final_state is None else final_state.get("outcome")
     return outcome if isinstance(outcome, str) else None
 
-
-def _record_category(record: dict[str, Any]) -> str | None:
-    action = _dict(record.get("action"))
-    if action.get("kind") != "respond_with":
-        return None
-    intent_id = action.get("intent_id")
-    if not isinstance(intent_id, str):
-        return None
-    if intent_id in {"accept_interruption", "defer_interruption", "ignore_interruption"}:
-        return "interruption"
-    if intent_id.startswith("ask_gossip:"):
-        return "gossip"
-    if intent_id in EXIT_INTENTS:
-        return "exit"
-    if intent_id in FLIRTY_INTENTS:
-        return "flirty"
-    if intent_id in BANTER_INTENTS:
-        return "banter"
-    if intent_id in DEEP_INTENTS:
-        return "deep"
-    if intent_id in SUPPORTIVE_INTENTS:
-        return "supportive"
-    if intent_id in FRIENDLY_INTENTS:
-        return "friendly"
-    return None
-
-
 def _format_rate(successes: int, total: int) -> str:
     if total == 0:
         return "0/0"
     return f"{successes}/{total} ({round((successes / total) * 100)}%)"
-
 
 def _turn(record: dict[str, Any]) -> int:
     turn = record.get("turn")

@@ -26,6 +26,7 @@ class ActionKind(StrEnum):
     START_CONVERSATION = "start_conversation"
     RESPOND_WITH = "respond_with"
     END_CONVERSATION = "end_conversation"
+    CHALLENGE_RESPONSE = "challenge_response"
     MOVE = "move"
     RECOUPLE = "recouple"
     ADVANCE_PHASE = "advance_phase"
@@ -58,6 +59,22 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         return []
 
     actions: list[ActionSpec] = []
+    if state.pending_challenge is not None and state.pending_challenge.result is None:
+        if state.pending_challenge.kind == "snog_marry_pie":
+            for islander in state.islanders:
+                if not islander.eliminated:
+                    actions.append(
+                        ActionSpec(
+                            action=PlayerAction(
+                                kind=ActionKind.CHALLENGE_RESPONSE,
+                                target_id=islander.id,
+                                payload={"choice": islander.id},
+                            ),
+                            label=f"Snog Marry Pie: choose {islander.name}",
+                        )
+                    )
+            return actions
+
     if state.active_conversation is not None:
         interruption = state.active_conversation.pending_interruption
         if interruption is not None:
@@ -188,6 +205,13 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
     if action.kind is ActionKind.END_CONVERSATION:
         if state.active_conversation is None:
             raise ValueError("cannot end conversation when none is active")
+        return
+    if action.kind is ActionKind.CHALLENGE_RESPONSE:
+        if state.pending_challenge is None or state.pending_challenge.result is not None:
+            raise ValueError("no challenge is waiting for a response")
+        if action.target_id is None:
+            raise ValueError("CHALLENGE_RESPONSE requires target_id")
+        _find_islander(state, action.target_id)
         return
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:

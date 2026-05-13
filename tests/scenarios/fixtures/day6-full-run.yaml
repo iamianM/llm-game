@@ -1,6 +1,6 @@
 name: day6-full-run
 seed: 6
-expected_hash: 3ab1b2a1d1815d1e83283ce7531d58f514b7b1ecd11b1c6cf452218ff734278c
+expected_hash: 30b23ead5e47eaab80cf54b7c347a5a40dd64186b3218d55f26e3c0c0dfa8cf8
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -23,6 +23,10 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice: chloe
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase

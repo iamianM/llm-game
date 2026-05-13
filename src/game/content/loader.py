@@ -14,12 +14,21 @@ import yaml
 
 from src.game.content.models import (
     ArchetypeContent,
+    ChallengeContent,
     ContentIndex,
     LocationContent,
     PlayerArchetypeContent,
+    ProducerTextContent,
 )
 
-ContentT = TypeVar("ContentT", ArchetypeContent, LocationContent, PlayerArchetypeContent)
+ContentT = TypeVar(
+    "ContentT",
+    ArchetypeContent,
+    LocationContent,
+    PlayerArchetypeContent,
+    ChallengeContent,
+    ProducerTextContent,
+)
 
 
 def load_content(root: Path = Path("content")) -> ContentIndex:
@@ -28,6 +37,8 @@ def load_content(root: Path = Path("content")) -> ContentIndex:
         archetypes=_load_collection(root / "archetypes", ArchetypeContent),
         locations=_load_collection(root / "locations", LocationContent),
         player_archetypes=_load_collection(root / "player_archetypes", PlayerArchetypeContent),
+        challenges=_load_collection(root / "challenges", ChallengeContent),
+        producer_texts=_load_collection(root / "producer_texts", ProducerTextContent),
     )
 
 

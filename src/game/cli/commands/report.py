@@ -219,6 +219,9 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "audience_snapshot": (
             None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json")
         ),
+        "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
+        "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
+        "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }
@@ -325,4 +328,3 @@ def _final_state_summary(final_state: dict[str, Any], llm_mode: str) -> str:
         f"{llm_mode_note(llm_mode)}</p>"
         f"<ul>{''.join(memory_lines)}</ul>"
     )
-

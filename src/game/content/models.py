@@ -38,6 +38,31 @@ class PlayerArchetypeContent(BaseModel):
     body: str
 
 
+class ChallengeContent(BaseModel):
+    """Daily challenge content."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    day: int
+    kind: str
+    stat_tested: str
+    success_deltas: dict[str, int]
+    failure_deltas: dict[str, int]
+    body: str
+
+
+class ProducerTextContent(BaseModel):
+    """Scheduled producer text content."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    day: int
+    kind: str
+    body: str
+
+
 class ContentIndex(BaseModel):
     """Loaded runtime content indexed by id."""
 
@@ -46,3 +71,5 @@ class ContentIndex(BaseModel):
     archetypes: dict[str, ArchetypeContent]
     locations: dict[str, LocationContent]
     player_archetypes: dict[str, PlayerArchetypeContent]
+    challenges: dict[str, ChallengeContent]
+    producer_texts: dict[str, ProducerTextContent]

@@ -16,7 +16,47 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 11
+from src.game.state.event_models import (
+    AudienceEntry,
+    AudienceSnapshot,
+    Challenge,
+    GroupDate,
+    ProducerText,
+    RelationshipDelta,
+)
+
+SCHEMA_VERSION = 12
+
+__all__ = [
+    "AudienceEntry",
+    "AudienceSnapshot",
+    "Challenge",
+    "CharacterCreation",
+    "Conversation",
+    "Couple",
+    "ExchangeRecord",
+    "FollowUpMenu",
+    "FollowUpOption",
+    "GameState",
+    "GroupDate",
+    "IslanderState",
+    "Location",
+    "Memory",
+    "MemoryBatch",
+    "MemoryDraft",
+    "Mood",
+    "NPCInterruption",
+    "NPCNPCConversation",
+    "Phase",
+    "PlayerState",
+    "PlayerStats",
+    "ProducerText",
+    "RelationshipDelta",
+    "RelationshipState",
+    "RunOutcome",
+    "clamp_relationship",
+    "new_game",
+]
 
 
 class Phase(StrEnum):
@@ -157,17 +197,6 @@ class RelationshipState(BaseModel):
     friendship: int = Field(default=0, ge=0, le=100)
 
 
-class RelationshipDelta(BaseModel):
-    """Typed relationship changes for one target."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    affection: int = 0
-    chemistry: int = 0
-    trust: int = 0
-    friendship: int = 0
-
-
 class IslanderState(BaseModel):
     """Minimal NPC Islander state."""
 
@@ -192,26 +221,6 @@ class Couple(BaseModel):
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
-
-
-class AudienceEntry(BaseModel):
-    """One ranked audience score row."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    rank: int
-    couple: list[str]
-    score: int
-    is_player_couple: bool = False
-
-
-class AudienceSnapshot(BaseModel):
-    """End-of-day audience ranking surfaced to traces and reports."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    day: int
-    entries: list[AudienceEntry] = Field(default_factory=list)
 
 
 class FollowUpOption(BaseModel):
@@ -326,6 +335,9 @@ class GameState(BaseModel):
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
+    pending_challenge: Challenge | None = None
+    pending_text: ProducerText | None = None
+    pending_group_date: GroupDate | None = None
     outcome: RunOutcome | None = None
 
     @property

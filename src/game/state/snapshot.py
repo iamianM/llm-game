@@ -59,6 +59,9 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
                         if isinstance(exchange, dict):
                             exchange.pop("speaker_a_line", None)
                             exchange.pop("speaker_b_line", None)
+    pending_text = payload.get("pending_text")
+    if isinstance(pending_text, dict):
+        pending_text.pop("body", None)
     return payload
 
 

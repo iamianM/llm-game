@@ -64,6 +64,17 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
             f"\n*** Interruption: {name_for(state, interruption.interrupter_id)} wants to talk "
             f"({interruption.urgency}, {interruption.reason}) ***"
         )
+    if state.pending_challenge is not None:
+        challenge = state.pending_challenge
+        result = challenge.result or "waiting for choice"
+        print(f"\nChallenge: {challenge.kind} ({challenge.stat_tested}) -- {result}")
+    if state.pending_text is not None:
+        print(f"\nI've got a text: {state.pending_text.body}")
+    if state.pending_group_date is not None and state.pending_group_date.pending:
+        print(
+            f"\nGroup date pending: {names_for(state, state.pending_group_date.participants)} "
+            f"at the {state.pending_group_date.location}"
+        )
 
 
 def print_actions(actions: list[ActionSpec]) -> None:
@@ -91,6 +102,11 @@ def print_turn(turn: TurnResult) -> None:
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
     if turn.event_narration is not None:
         print(turn.event_narration.prose)
+    if turn.state.pending_challenge is not None and turn.state.pending_challenge.result is not None:
+        challenge = turn.state.pending_challenge
+        print(f"Challenge: {challenge.kind} -- {challenge.result}")
+    if turn.state.pending_text is not None:
+        print(f"Text: {turn.state.pending_text.body}")
     if turn.audience_snapshot is not None:
         print("Audience ranking:")
         for entry in turn.audience_snapshot.entries:

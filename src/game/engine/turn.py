@@ -32,13 +32,7 @@ from src.game.agents.event_narrator import (
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
-from src.game.engine.audience import record_audience_snapshot
-from src.game.engine.ceremonies import (
-    CeremonyEvent,
-    arrive_bombshell,
-    final_vote_ceremony,
-    recoupling,
-)
+from src.game.engine.ceremonies import CeremonyEvent, recoupling
 from src.game.engine.conversation import (
     append_exchange,
     close_conversation,
@@ -51,12 +45,16 @@ from src.game.engine.memory import (
     create_memory,
     remember_ceremony_events,
 )
-from src.game.engine.phases import advance_phase
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.rules import (
     EXIT_INTENT_KINDS,
     MechanicalResult,
     apply_action,
+)
+from src.game.engine.turn_events import (
+    advance_phase_with_events,
+    challenge_response_event,
+    recoupling_events,
 )
 from src.game.engine.villa import AgentCommits, apply_villa_update
 from src.game.state.models import (
@@ -157,29 +155,16 @@ def run_turn(
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
         ceremony = recoupling(state, action.target_id)
-        ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
+        ceremony_events.extend(recoupling_events(ceremony.eliminated_id))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
+    if action.kind is ActionKind.CHALLENGE_RESPONSE and state.pending_challenge is not None:
+        event = challenge_response_event(state)
+        if event is not None:
+            ceremony_events.append(event)
     if action.kind is ActionKind.ADVANCE_PHASE:
-        if state.phase.value == "evening" and state.day in {3, 5}:
-            ceremony = recoupling(state)
-            ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
-            if ceremony.eliminated_id == state.player.id:
-                state.outcome = RunOutcome.ELIMINATED
-        if state.phase.value == "evening":
-            audience_snapshot = record_audience_snapshot(state)
-        if state.phase.value == "evening" and state.day >= 6:
-            ceremony_events.append(final_vote_ceremony(state))
-        advance_phase(state)
-        if state.day == 4 and state.phase.value == "morning":
-            bombshell = arrive_bombshell(state)
-            ceremony_events.append(
-                CeremonyEvent(
-                    kind="bombshell",
-                    message=f"Bombshell arrived: {bombshell.name} enters the villa.",
-                    islander_id=bombshell.id,
-                )
-            )
+        phase_events, audience_snapshot = advance_phase_with_events(state, rng)
+        ceremony_events.extend(phase_events)
     state.turn_index += 1
     follow_up_menu = None
     curator_batches: list[MemoryBatch] = [*pre_curator_batches]
@@ -280,19 +265,6 @@ def run_turn(
         audience_snapshot=audience_snapshot,
         agent_commits=agent_commits,
     )
-
-
-def _recoupling_events(eliminated_id: str | None) -> list[CeremonyEvent]:
-    events = [CeremonyEvent(kind="recoupling", message="Recoupling ceremony completed.")]
-    if eliminated_id is not None:
-        events.append(
-            CeremonyEvent(
-                kind="elimination",
-                message=f"Dumping decision: {eliminated_id} leaves the villa.",
-                islander_id=eliminated_id,
-            )
-        )
-    return events
 
 
 def _curate_conversation(

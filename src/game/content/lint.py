@@ -11,7 +11,9 @@ engine enums and content indexes before the game runs.
 from pathlib import Path
 
 from src.game.content.loader import load_content
+from src.game.engine.challenges import DAILY_CHALLENGE_SCHEDULE
 from src.game.engine.intents import load_intents
+from src.game.engine.producer_events import PRODUCER_TEXT_SCHEDULE
 from src.game.state.models import Location
 
 
@@ -29,6 +31,14 @@ def run_lint() -> None:
     missing_player_archetypes = expected_player_archetypes - set(index.player_archetypes)
     if missing_player_archetypes:
         raise ValueError(f"missing player archetype content: {sorted(missing_player_archetypes)}")
+    expected_challenges = {definition.id for definition in DAILY_CHALLENGE_SCHEDULE.values()}
+    missing_challenges = expected_challenges - set(index.challenges)
+    if missing_challenges:
+        raise ValueError(f"missing challenge content: {sorted(missing_challenges)}")
+    expected_texts = {definition.id for definition in PRODUCER_TEXT_SCHEDULE.values()}
+    missing_texts = expected_texts - set(index.producer_texts)
+    if missing_texts:
+        raise ValueError(f"missing producer text content: {sorted(missing_texts)}")
     intents = load_intents()
     valid_stats = {"charm", "banter", "eq", "graft", "loyalty"}
     bad_stats = sorted({intent.stat_used for intent in intents} - valid_stats)
@@ -38,5 +48,6 @@ def run_lint() -> None:
         "content lint: "
         f"{len(index.archetypes)} archetype(s), {len(index.locations)} location(s), "
         f"{len(index.player_archetypes)} player archetype(s), "
+        f"{len(index.challenges)} challenge(s), {len(index.producer_texts)} producer text(s), "
         f"{len(intents)} intent(s)"
     )

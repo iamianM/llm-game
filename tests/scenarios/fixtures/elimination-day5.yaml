@@ -1,6 +1,6 @@
 name: elimination-day5
 seed: 10
-expected_hash: bc7ef6762c35fd55830afd38d0e126c379cde01195879c051c09ed4f494933a5
+expected_hash: fe27df7c36b884717a41814bb8b7f2785adc4039568864f4cd8c83b2dd276a35
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -23,6 +23,10 @@ actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice: chloe
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
