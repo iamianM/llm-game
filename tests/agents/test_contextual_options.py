@@ -120,6 +120,25 @@ def test_assembled_menu_adds_exit_to_bespoke_output() -> None:
     assert sum(option.category == "exit" for option in menu.options) == 1
 
 
+def test_contextual_bespoke_accepts_specific_longer_labels() -> None:
+    """Specific labels may need a few words for concrete context."""
+    bespoke = ContextualBespoke(
+        options=[
+            FollowUpOption(
+                label="Invite him to share his real feelings",
+                category="deep",
+                intent_kind="go_deeper",
+                stat_used="eq",
+                risk="medium",
+                tone="curious",
+            )
+        ],
+        npc_will_leave=False,
+    )
+
+    validate_contextual_bespoke(bespoke, [])
+
+
 @pytest.mark.llm
 def test_contextual_options_labels_are_specific() -> None:
     state = new_game(1)

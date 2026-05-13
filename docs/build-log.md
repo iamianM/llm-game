@@ -477,3 +477,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: checkpoint round-trip coverage and compare-report HTML generation
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (305 passed), content lint, smoke `verify-script`, fixture determinism, and line-cap audit
 - Review workflow note: checkpoints are developer review tools only; no save-scumming affordance was added to the in-game loop
+
+## Phase H11 validation: contextual label cap
+
+- Files added: none
+- Files changed: `contextual_options.py` and `test_contextual_options.py`
+- Tests added: regression coverage that specific longer bespoke labels accepted by the real LLM are valid
+- QA result: focused `ruff`, `mypy`, and non-LLM Contextual Options tests green
+- Validation note: fixes the real-LLM autopilot crash where useful seven-word labels such as `Invite him to share his real feelings` failed the bespoke option validator

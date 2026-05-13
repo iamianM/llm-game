@@ -27,6 +27,7 @@ from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memor
 CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
 FOLLOW_UP_CATEGORIES = {"friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"}
+BESPOKE_LABEL_MAX_WORDS = 8
 ALLOWED_BESPOKE_INTENTS = {
     "honest_vulnerable", "escalate_flirt", "deflect_with_humor", "joke_back",
     "go_deeper", "ask_about_topic", "apologize", "defend_self", "change_subject",
@@ -279,7 +280,7 @@ def validate_contextual_bespoke(
             raise ValueError(f"unknown bespoke category: {option.category}")
         if option.category == "exit":
             raise ValueError("bespoke options must not provide the engine-owned exit")
-        if len(option.label.split()) > 6:
+        if len(option.label.split()) > BESPOKE_LABEL_MAX_WORDS:
             raise ValueError(f"bespoke label too long: {option.label!r}")
         if re.search(r"\d", option.label):
             raise ValueError(f"bespoke label contains digits: {option.label!r}")
