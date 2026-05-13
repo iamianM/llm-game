@@ -33,6 +33,7 @@ from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islan
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.ceremonies import CeremonyEvent, recoupling
+from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.conversation import (
     append_exchange,
     close_conversation,
@@ -179,6 +180,7 @@ def run_turn(
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
+        _bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
         new_conversation.departure_probability_last = probability
         menu_fn = (
@@ -208,6 +210,7 @@ def run_turn(
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
+        _bump_target_familiarity(state, conversation.target_id, 1)
         if _is_wheel_exit(result):
             batch = _curate_conversation(state, conversation, conversation_curator)
             curator_batches.append(batch)
@@ -272,6 +275,7 @@ def _curate_conversation(
     conversation: Conversation,
     curator: ConversationCuratorFn | None,
 ) -> MemoryBatch:
+    _bump_target_familiarity(state, conversation.target_id, 2)
     bystander_ids = _conversation_bystanders(state, conversation.target_id)
     curate = mock_conversation_curator if curator is None else curator
     batch = curate(state, conversation, bystander_ids)
@@ -364,3 +368,10 @@ def _conversation_bystanders(state: GameState, target_id: str) -> list[str]:
         and not islander.eliminated
         and islander.location_id == state.location_id
     ]
+
+
+def _bump_target_familiarity(state: GameState, target_id: str, amount: int) -> None:
+    for islander in state.islanders:
+        if islander.id == target_id:
+            apply_familiarity(islander, amount)
+            return

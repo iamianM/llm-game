@@ -38,6 +38,8 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Challenges succeeded", stats.challenges_succeeded),
         ("Producer texts", stats.producer_texts_fired),
         ("Group date turns", stats.group_dates_held),
+        ("Revealed preferences", stats.revealed_preference_count),
+        ("Compatibility bonus rolls", stats.compatibility_bonus_observed),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

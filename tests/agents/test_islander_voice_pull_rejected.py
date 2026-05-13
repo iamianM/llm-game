@@ -9,10 +9,13 @@ from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.pull import PullAttempt
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import (
+    AttachmentStyle,
+    Big5,
     IslanderState,
     Location,
     RelationshipDelta,
     RelationshipState,
+    TypeOnPaper,
     new_game,
 )
 
@@ -44,6 +47,14 @@ def test_islander_voice_pull_rejected_deflects_busy_target(
                 archetype=archetype,
                 location_id=Location.POOL,
                 relationship=RelationshipState(affection=15),
+                big5=Big5(openness=9, conscientiousness=4, extraversion=9, agreeableness=5, neuroticism=5),
+                attachment=AttachmentStyle.AVOIDANT,
+                type_on_paper=TypeOnPaper(
+                    physical_type="confident eye contact",
+                    personality_type=["bold", "unpredictable"],
+                    values=["chemistry", "confidence"],
+                    dealbreakers=["neediness"],
+                ),
             )
         )
     target = next(islander for islander in state.islanders if islander.id == target_id)

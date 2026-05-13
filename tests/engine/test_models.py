@@ -8,6 +8,7 @@ import pytest
 from pydantic import ValidationError
 
 from src.game.state.models import (
+    AttachmentStyle,
     BackgroundExchangeRecord,
     Conversation,
     ExchangeRecord,
@@ -35,6 +36,15 @@ def test_player_stats_rejects_budget_over_30() -> None:
     """The starting stat allocation cannot exceed the 30-point budget."""
     with pytest.raises(ValidationError):
         PlayerStats(charm=9, banter=9, eq=6, graft=6, loyalty=6)
+
+
+def test_new_game_assigns_personality_per_npc() -> None:
+    """Starting islanders have deterministic personality profiles."""
+    state = new_game(1)
+
+    assert state.islanders[0].big5.extraversion == 9
+    assert state.islanders[1].attachment is AttachmentStyle.ANXIOUS
+    assert state.islanders[2].type_on_paper.values == ["steadiness", "depth"]
 
 
 def test_clamp_relationship_boundaries() -> None:

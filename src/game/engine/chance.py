@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.engine.compatibility import compatibility_bonus, dealbreaker_penalty
 from src.game.engine.intents import Intent, effective_risk
 from src.game.engine.results import ChanceBreakdown
 from src.game.state.models import GameState, IslanderState
@@ -39,12 +40,16 @@ def intent_success_breakdown(
     risk = effective_risk(intent)
     stat_contribution = stat * 5
     affection_contribution = target.relationship.affection // 4
+    compat = compatibility_bonus(state, target, intent.tags)
+    penalty = dealbreaker_penalty(target, intent.tags)
     pre_cap = (
         50
         + stat_contribution
         + affection_contribution
         + mood_modifier
         + RISK_SUCCESS_MODIFIER[risk]
+        + compat
+        - penalty
     )
     cap = RISK_SUCCESS_CAP[risk]
     return ChanceBreakdown(
@@ -60,6 +65,8 @@ def intent_success_breakdown(
         risk=risk,
         risk_modifier=RISK_SUCCESS_MODIFIER[risk],
         mood_modifier=mood_modifier,
+        compatibility_bonus=compat,
+        dealbreaker_penalty=penalty,
         pre_cap=pre_cap,
         cap=cap,
         floor=5,
@@ -90,7 +97,10 @@ def follow_up_success_breakdown(
     risk_modifier = RISK_SUCCESS_MODIFIER[risk]
     stat_contribution = stat * 5
     affection_contribution = target.relationship.affection // 5
-    pre_cap = 50 + stat_contribution + affection_contribution + risk_modifier
+    tags = [] if stat_used is None else [stat_used]
+    compat = compatibility_bonus(state, target, tags)
+    penalty = dealbreaker_penalty(target, tags)
+    pre_cap = 50 + stat_contribution + affection_contribution + risk_modifier + compat - penalty
     cap = RISK_SUCCESS_CAP[risk]
     return ChanceBreakdown(
         kind="follow_up",
@@ -104,6 +114,8 @@ def follow_up_success_breakdown(
         affection_contribution=affection_contribution,
         risk=risk,
         risk_modifier=risk_modifier,
+        compatibility_bonus=compat,
+        dealbreaker_penalty=penalty,
         pre_cap=pre_cap,
         cap=cap,
         floor=5,

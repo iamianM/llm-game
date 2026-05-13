@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.engine.actions import PlayerAction
 from src.game.engine.chance import follow_up_success_breakdown
+from src.game.engine.compatibility import attachment_delta_modifier
 from src.game.engine.gossip import apply_gossip_follow_up
 from src.game.engine.interruptions import (
     INTERRUPTION_INTENT_KINDS,
@@ -110,6 +111,8 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
         delta = apply_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
     else:
         delta = follow_up_delta(option.intent_kind, option.risk, success)
+    attachment_delta = attachment_delta_modifier(target, option.intent_kind, success)
+    delta = _add_delta(delta, attachment_delta)
     apply_relationship_delta(target, delta)
     normalized = action.model_copy(
         update={
@@ -123,7 +126,7 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
         success=success,
         roll=roll,
         success_chance=breakdown.final_chance,
-        chance_breakdown=breakdown,
+        chance_breakdown=breakdown.model_copy(update={"attachment_delta": attachment_delta}),
         relationship_deltas={target.id: delta},
         tags=[option.intent_kind, option.risk, option.tone],
     )
@@ -164,3 +167,12 @@ def _scale_delta(value: int, scale: float) -> int:
         return 0
     scaled = abs(value) * scale
     return int(math.copysign(math.floor(scaled + 0.5), value))
+
+
+def _add_delta(first: RelationshipDelta, second: RelationshipDelta) -> RelationshipDelta:
+    return RelationshipDelta(
+        affection=first.affection + second.affection,
+        chemistry=first.chemistry + second.chemistry,
+        trust=first.trust + second.trust,
+        friendship=first.friendship + second.friendship,
+    )

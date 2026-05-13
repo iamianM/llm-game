@@ -11,6 +11,7 @@ from src.game.engine.chance import (
     intent_success_chance,
 )
 from src.game.engine.character_creation import create_character
+from src.game.engine.compatibility import attachment_delta_modifier
 from src.game.engine.followups import (
     EXIT_INTENT_KINDS,
     FOLLOW_UP_DELTA_TABLE,
@@ -89,6 +90,9 @@ def _apply_intent(state: GameState, action: PlayerAction, rng: SeededRng) -> Mec
         if success
         else intent.relationship_deltas.miss.model_copy()
     )
+    attachment_delta = attachment_delta_modifier(target, intent.id, success)
+    delta = _add_delta(delta, attachment_delta)
+    breakdown.attachment_delta = attachment_delta
     apply_relationship_delta(target, delta)
     return MechanicalResult(
         action=action,
@@ -135,6 +139,15 @@ def _apply_challenge_response(state: GameState, action: PlayerAction, rng: Seede
         success=resolved.result == "success",
         relationship_deltas=resolved.deltas,
         tags=["challenge", resolved.kind],
+    )
+
+
+def _add_delta(first: RelationshipDelta, second: RelationshipDelta) -> RelationshipDelta:
+    return RelationshipDelta(
+        affection=first.affection + second.affection,
+        chemistry=first.chemistry + second.chemistry,
+        trust=first.trust + second.trust,
+        friendship=first.friendship + second.friendship,
     )
 
 

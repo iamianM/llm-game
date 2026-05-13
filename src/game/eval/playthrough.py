@@ -10,6 +10,29 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.eval.playthrough_categories import record_category
+from src.game.eval.playthrough_trace import (
+    as_dict,
+    final_outcome,
+    format_rate,
+    revealed_preference_count,
+    turn,
+    turns_with_action,
+    turns_with_audience,
+    turns_with_background,
+    turns_with_category,
+    turns_with_ceremony,
+    turns_with_challenge,
+    turns_with_compatibility,
+    turns_with_group_date,
+    turns_with_interruption,
+    turns_with_interruption_response,
+    turns_with_low_chance,
+    turns_with_memories,
+    turns_with_outcome,
+    turns_with_producer_text,
+    turns_with_pull,
+    turns_with_reveals,
+)
 
 
 class PlaythroughAssertion(BaseModel):
@@ -48,6 +71,8 @@ class PlaythroughStats(BaseModel):
     challenges_succeeded: int = 0
     producer_texts_fired: int = 0
     group_dates_held: int = 0
+    revealed_preference_count: int = 0
+    compatibility_bonus_observed: int = 0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
@@ -121,15 +146,16 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     challenges_succeeded = 0
     producer_texts_fired = 0
     group_dates_held = 0
+    compatibility_bonus_observed = 0
 
     for record in records:
-        action = _dict(record.get("action"))
-        result = _dict(record.get("mechanical_result"))
-        result_action = _dict(result.get("action"))
-        commits = _dict(record.get("agent_commits"))
-        villa_update = _dict(commits.get("villa_update"))
+        action = as_dict(record.get("action"))
+        result = as_dict(record.get("mechanical_result"))
+        result_action = as_dict(result.get("action"))
+        commits = as_dict(record.get("agent_commits"))
+        villa_update = as_dict(commits.get("villa_update"))
         pull = result.get("pull_attempt")
-        turn = _turn(record)
+        turn_number = turn(record)
 
         kind = str(action.get("kind", ""))
         intent_id = str(action.get("intent_id", "") or result_action.get("intent_id", ""))
@@ -155,7 +181,7 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         batches = commits.get("curator_batches")
         if isinstance(batches, list):
             for batch in batches:
-                memories = _dict(batch).get("memories")
+                memories = as_dict(batch).get("memories")
                 if isinstance(memories, list):
                     memories_created += len(memories)
         dialogues = commits.get("background_dialogues")
@@ -182,11 +208,14 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         group_date = record.get("group_date")
         if isinstance(group_date, dict):
             group_dates_held += 1
-        if turn < 0:
+        breakdown = as_dict(result.get("chance_breakdown"))
+        if isinstance(breakdown.get("compatibility_bonus"), int) and breakdown["compatibility_bonus"] > 0:
+            compatibility_bonus_observed += 1
+        if turn_number < 0:
             raise ValueError("recorded turn must be non-negative")
 
     success_rate_by_category = {
-        category: _format_rate(counts["success"], counts["success"] + counts["miss"])
+        category: format_rate(counts["success"], counts["success"] + counts["miss"])
         for category, counts in sorted(category_success.items())
     }
     return PlaythroughStats(
@@ -209,7 +238,9 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         challenges_succeeded=challenges_succeeded,
         producer_texts_fired=producer_texts_fired,
         group_dates_held=group_dates_held,
-        outcome=_final_outcome(final_state),
+        revealed_preference_count=revealed_preference_count(final_state),
+        compatibility_bonus_observed=compatibility_bonus_observed,
+        outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
 
@@ -220,28 +251,30 @@ def _assertions(
 ) -> list[PlaythroughAssertion]:
     memory_holders = _memory_holder_counts(records)
     return [
-        _assert("wheel_exit", "At least one graceful wheel exit", stats.wheel_exits >= 1, f"{stats.wheel_exits} wheel exit(s)", _turns_with_category(records, "exit")),
-        _assert("walk_away", "At least one curt walk-away", stats.walk_aways >= 1, f"{stats.walk_aways} walk-away action(s)", _turns_with_action(records, "end_conversation")),
-        _assert("pull_attempt", "At least one pull-for-chat attempt", stats.pull_attempts >= 1, f"{stats.pull_attempts} pull attempt(s)", _turns_with_pull(records)),
-        _assert("pull_failure", "At least one failed pull attempt", stats.pull_failures >= 1, f"{stats.pull_failures} failed pull(s)", _turns_with_pull(records, success=False)),
-        _assert("interruption_fired", "At least one NPC interruption fired", stats.interruptions_fired >= 1, f"{stats.interruptions_fired} interruption(s)", _turns_with_interruption(records)),
+        _assert("wheel_exit", "At least one graceful wheel exit", stats.wheel_exits >= 1, f"{stats.wheel_exits} wheel exit(s)", turns_with_category(records, "exit")),
+        _assert("walk_away", "At least one curt walk-away", stats.walk_aways >= 1, f"{stats.walk_aways} walk-away action(s)", turns_with_action(records, "end_conversation")),
+        _assert("pull_attempt", "At least one pull-for-chat attempt", stats.pull_attempts >= 1, f"{stats.pull_attempts} pull attempt(s)", turns_with_pull(records)),
+        _assert("pull_failure", "At least one failed pull attempt", stats.pull_failures >= 1, f"{stats.pull_failures} failed pull(s)", turns_with_pull(records, success=False)),
+        _assert("interruption_fired", "At least one NPC interruption fired", stats.interruptions_fired >= 1, f"{stats.interruptions_fired} interruption(s)", turns_with_interruption(records)),
         _assert(
             "interruption_answered",
             "At least two interruption response kinds were exercised",
             len(stats.interruption_response_kinds) >= 2,
             f"{stats.interruption_responses} response(s): {', '.join(stats.interruption_response_kinds) or 'none'}",
-            _turns_with_interruption_response(records),
+            turns_with_interruption_response(records),
         ),
-        _assert("memory_coverage", "Each major NPC has at least three memories", all(memory_holders.get(npc_id, 0) >= 3 for npc_id in ("chloe", "maya", "liam")), f"memory counts: {dict(memory_holders)}", _turns_with_memories(records)),
-        _assert("low_chance_rolls", "At least three rolls below sixty percent", stats.low_chance_rolls >= 3, f"{stats.low_chance_rolls} low-chance roll(s)", _turns_with_low_chance(records)),
-        _assert("gossip_pick", "At least one gossip option was picked", stats.gossip_picks >= 1, f"{stats.gossip_picks} gossip pick(s)", _turns_with_category(records, "gossip")),
-        _assert("ceremony_event_observed", "At least one ceremony or bombshell event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", _turns_with_ceremony(records)),
-        _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", _turns_with_background(records)),
-        _assert("outcome_assigned", "Run has a defined outcome", stats.outcome is not None, f"outcome: {stats.outcome or 'none'}", _turns_with_outcome(records)),
-        _assert("audience_ranking_per_day", "Audience rankings were recorded", stats.audience_snapshots >= 1, f"{stats.audience_snapshots} audience snapshot(s)", _turns_with_audience(records)),
-        _assert("challenge_fired_each_day", "At least five daily challenges completed", stats.challenges_completed >= 5, f"{stats.challenges_completed} challenge(s)", _turns_with_challenge(records)),
-        _assert("producer_texts_fired", "At least three producer texts fired", stats.producer_texts_fired >= 3, f"{stats.producer_texts_fired} producer text(s)", _turns_with_producer_text(records)),
-        _assert("group_date_observed", "At least one group date was scheduled", stats.group_dates_held >= 1, f"{stats.group_dates_held} group date turn(s)", _turns_with_group_date(records)),
+        _assert("memory_coverage", "Each major NPC has at least three memories", all(memory_holders.get(npc_id, 0) >= 3 for npc_id in ("chloe", "maya", "liam")), f"memory counts: {dict(memory_holders)}", turns_with_memories(records)),
+        _assert("low_chance_rolls", "At least three rolls below sixty percent", stats.low_chance_rolls >= 3, f"{stats.low_chance_rolls} low-chance roll(s)", turns_with_low_chance(records)),
+        _assert("gossip_pick", "At least one gossip option was picked", stats.gossip_picks >= 1, f"{stats.gossip_picks} gossip pick(s)", turns_with_category(records, "gossip")),
+        _assert("ceremony_event_observed", "At least one ceremony or bombshell event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", turns_with_ceremony(records)),
+        _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", turns_with_background(records)),
+        _assert("outcome_assigned", "Run has a defined outcome", stats.outcome is not None, f"outcome: {stats.outcome or 'none'}", turns_with_outcome(records)),
+        _assert("audience_ranking_per_day", "Audience rankings were recorded", stats.audience_snapshots >= 1, f"{stats.audience_snapshots} audience snapshot(s)", turns_with_audience(records)),
+        _assert("challenge_fired_each_day", "At least five daily challenges completed", stats.challenges_completed >= 5, f"{stats.challenges_completed} challenge(s)", turns_with_challenge(records)),
+        _assert("producer_texts_fired", "At least three producer texts fired", stats.producer_texts_fired >= 3, f"{stats.producer_texts_fired} producer text(s)", turns_with_producer_text(records)),
+        _assert("group_date_observed", "At least one group date was scheduled", stats.group_dates_held >= 1, f"{stats.group_dates_held} group date turn(s)", turns_with_group_date(records)),
+        _assert("type_on_paper_revealed", "At least one Type on Paper bit was revealed", stats.revealed_preference_count >= 1, f"{stats.revealed_preference_count} revealed bit(s)", turns_with_reveals(records)),
+        _assert("compatibility_bonus_observed", "At least one roll used compatibility bonus", stats.compatibility_bonus_observed >= 1, f"{stats.compatibility_bonus_observed} compatibility roll(s)", turns_with_compatibility(records)),
     ]
 
 
@@ -264,137 +297,16 @@ def _assert(
 def _memory_holder_counts(records: list[dict[str, Any]]) -> Counter[str]:
     counts: Counter[str] = Counter()
     for record in records:
-        commits = _dict(record.get("agent_commits"))
+        commits = as_dict(record.get("agent_commits"))
         batches = commits.get("curator_batches")
         if not isinstance(batches, list):
             continue
         for batch in batches:
-            memories = _dict(batch).get("memories")
+            memories = as_dict(batch).get("memories")
             if not isinstance(memories, list):
                 continue
             for raw_memory in memories:
-                holder = _dict(raw_memory).get("holder_id")
+                holder = as_dict(raw_memory).get("holder_id")
                 if isinstance(holder, str):
                     counts[holder] += 1
     return counts
-
-
-def _turns_with_action(records: list[dict[str, Any]], kind: str) -> list[int]:
-    return [_turn(record) for record in records if _dict(record.get("action")).get("kind") == kind]
-
-
-def _turns_with_category(records: list[dict[str, Any]], category: str) -> list[int]:
-    return [
-        _turn(record)
-        for record in records
-        if record_category(record) == category
-    ]
-
-
-def _turns_with_pull(records: list[dict[str, Any]], *, success: bool | None = None) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        pull = _dict(record.get("mechanical_result")).get("pull_attempt")
-        if not isinstance(pull, dict):
-            continue
-        if success is None or pull.get("success") is success:
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_interruption(records: list[dict[str, Any]]) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        villa_update = _dict(_dict(record.get("agent_commits")).get("villa_update"))
-        interruptions = villa_update.get("npc_interruptions")
-        if isinstance(interruptions, list) and interruptions:
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_interruption_response(records: list[dict[str, Any]]) -> list[int]:
-    intents = {"accept_interruption", "defer_interruption", "ignore_interruption"}
-    return [
-        _turn(record)
-        for record in records
-        if str(_dict(record.get("action")).get("intent_id", "")) in intents
-    ]
-
-
-def _turns_with_memories(records: list[dict[str, Any]]) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        commits = _dict(record.get("agent_commits"))
-        if commits.get("curator_batches"):
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_low_chance(records: list[dict[str, Any]]) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        result = _dict(record.get("mechanical_result"))
-        chance = result.get("success_chance")
-        roll = result.get("roll")
-        if isinstance(chance, int) and isinstance(roll, int) and chance < 60:
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_background(records: list[dict[str, Any]]) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        dialogues = _dict(record.get("agent_commits")).get("background_dialogues")
-        if isinstance(dialogues, list) and dialogues:
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_ceremony(records: list[dict[str, Any]]) -> list[int]:
-    turns: list[int] = []
-    for record in records:
-        events = record.get("ceremony_events")
-        if isinstance(events, list) and events:
-            turns.append(_turn(record))
-    return turns
-
-
-def _turns_with_audience(records: list[dict[str, Any]]) -> list[int]:
-    return [_turn(record) for record in records if isinstance(record.get("audience_snapshot"), dict)]
-
-def _turns_with_challenge(records: list[dict[str, Any]]) -> list[int]:
-    return [_turn(record) for record in records if isinstance(record.get("challenge"), dict)]
-
-def _turns_with_producer_text(records: list[dict[str, Any]]) -> list[int]:
-    return [_turn(record) for record in records if isinstance(record.get("producer_text"), dict)]
-
-def _turns_with_group_date(records: list[dict[str, Any]]) -> list[int]:
-    return [_turn(record) for record in records if isinstance(record.get("group_date"), dict)]
-
-def _turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
-    return [
-        _turn(record)
-        for record in records
-        if any(_dict(event).get("kind") == "final_vote" for event in _list(record.get("ceremony_events")))
-    ]
-
-
-def _final_outcome(final_state: dict[str, Any] | None) -> str | None:
-    outcome = None if final_state is None else final_state.get("outcome")
-    return outcome if isinstance(outcome, str) else None
-
-def _format_rate(successes: int, total: int) -> str:
-    if total == 0:
-        return "0/0"
-    return f"{successes}/{total} ({round((successes / total) * 100)}%)"
-
-def _turn(record: dict[str, Any]) -> int:
-    turn = record.get("turn")
-    return turn if isinstance(turn, int) else -1
-
-def _dict(value: Any) -> dict[str, Any]:
-    return value if isinstance(value, dict) else {}
-
-
-def _list(value: Any) -> list[Any]:
-    return value if isinstance(value, list) else []

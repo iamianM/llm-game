@@ -10,7 +10,16 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from src.game.engine.final_vote import final_vote, final_vote_message
-from src.game.state.models import Couple, GameState, IslanderState, Location, RelationshipState
+from src.game.state.models import (
+    AttachmentStyle,
+    Big5,
+    Couple,
+    GameState,
+    IslanderState,
+    Location,
+    RelationshipState,
+    TypeOnPaper,
+)
 
 
 class RecouplingResult(BaseModel):
@@ -77,6 +86,14 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
         location_id=location,
         relationship=RelationshipState(affection=8, chemistry=12),
         public_perception=55,
+        big5=Big5(openness=8, conscientiousness=7, extraversion=9, agreeableness=5, neuroticism=6),
+        attachment=AttachmentStyle.AVOIDANT,
+        type_on_paper=TypeOnPaper(
+            physical_type="bold style and sharp confidence",
+            personality_type=["ambitious", "edgy"],
+            values=["ambition", "edge"],
+            dealbreakers=["neediness"],
+        ),
     )
     state.islanders.append(bombshell)
     return bombshell

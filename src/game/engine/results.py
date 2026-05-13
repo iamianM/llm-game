@@ -26,6 +26,9 @@ class ChanceBreakdown(BaseModel):
     risk: str | None = None
     risk_modifier: int = 0
     mood_modifier: int = 0
+    compatibility_bonus: int = 0
+    dealbreaker_penalty: int = 0
+    attachment_delta: RelationshipDelta = Field(default_factory=RelationshipDelta)
     pre_cap: int
     cap: int
     floor: int

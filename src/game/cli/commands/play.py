@@ -34,6 +34,7 @@ from src.game.engine.character_creation import (
     PLAYER_ARCHETYPES,
     create_character,
 )
+from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import TurnResult, run_turn
@@ -302,6 +303,11 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) -
         "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
+        "revealed_preferences": {
+            islander.id: revealed
+            for islander in state.islanders
+            if (revealed := revealed_preferences(islander))
+        },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }

@@ -56,9 +56,33 @@ def test_intent_success_breakdown_names_formula_terms() -> None:
     assert breakdown.affection_contribution == 25
     assert breakdown.risk == "low"
     assert breakdown.risk_modifier == 5
-    assert breakdown.pre_cap == 125
+    assert breakdown.pre_cap == 129
     assert breakdown.cap == 80
     assert breakdown.final_chance == 80
+
+
+def test_intent_success_chance_includes_compatibility_bonus() -> None:
+    """Compatibility bonus appears in the chance breakdown."""
+    state = new_game(1)
+    state.player.archetype_id = "loyal_friend"
+    target = state.islanders[0]
+    intent = get_intent("friendly_chat_villa")
+
+    breakdown = intent_success_breakdown(state, target, intent)
+
+    assert breakdown.compatibility_bonus > 0
+
+
+def test_intent_success_chance_includes_dealbreaker_penalty() -> None:
+    """Dealbreaker tags reduce chance."""
+    state = new_game(1)
+    target = state.islanders[0]
+    target.type_on_paper.dealbreakers = ["friendly"]
+    intent = get_intent("friendly_chat_villa")
+
+    breakdown = intent_success_breakdown(state, target, intent)
+
+    assert breakdown.dealbreaker_penalty == 15
 
 
 def test_initial_intent_explicit_risk_overrides_default() -> None:
@@ -140,10 +164,8 @@ def test_follow_up_honest_vulnerable_builds_trust() -> None:
     )
 
     assert result.success is True
-    assert result.relationship_deltas == {
-        "chloe": RelationshipDelta(affection=2, trust=5)
-    }
-    assert state.islanders[0].relationship.trust == 5
+    assert result.relationship_deltas == {"chloe": RelationshipDelta(affection=2, trust=6)}
+    assert state.islanders[0].relationship.trust == 6
 
 
 def test_follow_up_escalate_flirt_miss_drops_chemistry() -> None:
@@ -189,9 +211,7 @@ def test_follow_up_high_risk_scales_deltas() -> None:
     )
 
     assert result.success is True
-    assert result.relationship_deltas == {
-        "chloe": RelationshipDelta(affection=5, trust=6)
-    }
+    assert result.relationship_deltas == {"chloe": RelationshipDelta(affection=5, trust=7)}
 
 
 def test_follow_up_success_chance_is_capped_by_risk() -> None:

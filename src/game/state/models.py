@@ -24,39 +24,18 @@ from src.game.state.event_models import (
     ProducerText,
     RelationshipDelta,
 )
+from src.game.state.personality import AttachmentStyle, Big5, TypeOnPaper
 
-SCHEMA_VERSION = 12
+SCHEMA_VERSION = 13
 
-__all__ = [
-    "AudienceEntry",
-    "AudienceSnapshot",
-    "Challenge",
-    "CharacterCreation",
-    "Conversation",
-    "Couple",
-    "ExchangeRecord",
-    "FollowUpMenu",
-    "FollowUpOption",
-    "GameState",
-    "GroupDate",
-    "IslanderState",
-    "Location",
-    "Memory",
-    "MemoryBatch",
-    "MemoryDraft",
-    "Mood",
-    "NPCInterruption",
-    "NPCNPCConversation",
-    "Phase",
-    "PlayerState",
-    "PlayerStats",
-    "ProducerText",
-    "RelationshipDelta",
-    "RelationshipState",
-    "RunOutcome",
-    "clamp_relationship",
-    "new_game",
-]
+__all__ = (
+    "AttachmentStyle", "AudienceEntry", "AudienceSnapshot", "Big5", "Challenge",
+    "CharacterCreation", "Conversation", "Couple", "ExchangeRecord", "FollowUpMenu",
+    "FollowUpOption", "GameState", "GroupDate", "IslanderState", "Location", "Memory",
+    "MemoryBatch", "MemoryDraft", "Mood", "NPCInterruption", "NPCNPCConversation", "Phase",
+    "PlayerState", "PlayerStats", "ProducerText", "RelationshipDelta", "RelationshipState",
+    "RunOutcome", "TypeOnPaper", "clamp_relationship", "new_game",
+)
 
 
 class Phase(StrEnum):
@@ -210,6 +189,10 @@ class IslanderState(BaseModel):
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
     mood: Mood = Mood.CONTENT
+    big5: Big5
+    attachment: AttachmentStyle
+    type_on_paper: TypeOnPaper
+    familiarity_with_player: int = Field(default=0, ge=0, le=100)
     memories: list[Memory] = Field(default_factory=list)
 
 
@@ -367,6 +350,14 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
                 archetype="sweetheart",
                 location_id=Location.POOL,
                 relationship=RelationshipState(affection=10),
+                big5=Big5(openness=7, conscientiousness=6, extraversion=9, agreeableness=8, neuroticism=4),
+                attachment=AttachmentStyle.SECURE,
+                type_on_paper=TypeOnPaper(
+                    physical_type="warm smiles and kind eyes",
+                    personality_type=["warm", "confident"],
+                    values=["loyalty", "honesty"],
+                    dealbreakers=["arrogance"],
+                ),
             ),
             IslanderState(
                 id="maya",
@@ -374,6 +365,14 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
                 archetype="joker",
                 location_id=Location.KITCHEN,
                 relationship=RelationshipState(affection=8),
+                big5=Big5(openness=8, conscientiousness=5, extraversion=9, agreeableness=5, neuroticism=6),
+                attachment=AttachmentStyle.ANXIOUS,
+                type_on_paper=TypeOnPaper(
+                    physical_type="expressive people with bright energy",
+                    personality_type=["funny", "attentive"],
+                    values=["humor", "attention"],
+                    dealbreakers=["neglect"],
+                ),
             ),
             IslanderState(
                 id="liam",
@@ -381,6 +380,14 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
                 archetype="friend",
                 location_id=Location.TERRACE,
                 relationship=RelationshipState(affection=6),
+                big5=Big5(openness=5, conscientiousness=8, extraversion=6, agreeableness=7, neuroticism=3),
+                attachment=AttachmentStyle.SECURE,
+                type_on_paper=TypeOnPaper(
+                    physical_type="grounded and easygoing",
+                    personality_type=["steady", "thoughtful"],
+                    values=["steadiness", "depth"],
+                    dealbreakers=["flakiness"],
+                ),
             ),
         ],
     )

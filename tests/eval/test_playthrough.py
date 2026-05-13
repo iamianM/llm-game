@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_sixteen_assertions() -> None:
+def test_playthrough_report_has_eighteen_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 16
+    assert len(report.assertions) == 18
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 16
+    assert report.passed == 18
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -98,7 +98,10 @@ def _complete_package():
             _record(15, "advance_phase", producer_text=True),
             _record(16, "advance_phase", producer_text=True),
         ],
-        "final_state": {"outcome": "won_as_couple"},
+        "final_state": {
+            "outcome": "won_as_couple",
+            "islanders": [{"id": "chloe", "familiarity_with_player": 50}],
+        },
     }
 
 
@@ -128,6 +131,9 @@ def _record(
     if chance is not None:
         result["success_chance"] = chance
         result["roll"] = 10
+        result["chance_breakdown"] = {
+            "compatibility_bonus": 4 if turn == 1 else 0,
+        }
     if pull is not None:
         result["pull_attempt"] = pull
     curator_batches = []

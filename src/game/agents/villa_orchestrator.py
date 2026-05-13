@@ -86,13 +86,39 @@ class OpenAIVillaOrchestrator:
 
     def decide(self, state: GameState) -> VillaUpdate:
         """Generate one VillaUpdate commit."""
+        rendered = _render_context(state)
+        last_error: ValueError | None = None
+        for attempt in range(3):
+            retry_context = rendered
+            if last_error is not None:
+                retry_context = (
+                    f"{rendered}\n\n"
+                    "The previous VillaUpdate failed deterministic engine validation. "
+                    f"Validation error: {last_error}. "
+                    "Return a corrected VillaUpdate. If an NPC interrupts this turn, "
+                    "do not also move that interrupter away from the player's location."
+                )
+            update = self._generate_update(retry_context)
+            try:
+                from src.game.engine.villa import validate_villa_update
+
+                validate_villa_update(state, update)
+                return update
+            except ValueError as exc:
+                last_error = exc
+                if attempt == 2:
+                    raise
+        raise AssertionError("unreachable Villa Orchestrator retry state")
+
+    def _generate_update(self, rendered_context: str) -> VillaUpdate:
+        """Request one parsed update from the model."""
         response = self._client.responses.parse(
             model=self._model,
             reasoning={"effort": "low"},
             instructions=Path("src/game/agents/prompts/villa_orchestrator.md").read_text(
                 encoding="utf-8"
             ),
-            input=_render_context(state),
+            input=rendered_context,
             text_format=VillaUpdate,
             max_output_tokens=900,
         )

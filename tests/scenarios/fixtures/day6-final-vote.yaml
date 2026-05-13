@@ -9,7 +9,7 @@ character_creation:
     eq: 5
     graft: 5
     loyalty: 9
-expected_hash: 6ab952d270afea8f74dbfce8adeae3921cf2160bbd5f72b6117dc58d71d73fb7
+expected_hash: a7b71befbaee66f34f90304868ee064b7a4e63d0080e362ab8b54b19ad6cd7d2
 actions:
 - kind: advance_phase
 - kind: advance_phase

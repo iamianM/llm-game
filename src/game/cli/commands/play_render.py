@@ -5,6 +5,7 @@ from __future__ import annotations
 from itertools import groupby
 
 from src.game.engine.actions import ActionKind, ActionSpec
+from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.turn import TurnResult
 from src.game.state.models import GameState, Location, NPCNPCConversation
 
@@ -54,8 +55,11 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
         rel = islander.relationship
         print(
             f"  {islander.name:<7} affection {rel.affection:<3} chemistry {rel.chemistry:<3} "
-            f"trust {rel.trust:<3} friendship {rel.friendship:<3}"
+            f"trust {rel.trust:<3} friendship {rel.friendship:<3} familiarity {islander.familiarity_with_player:<3}"
         )
+        revealed = revealed_preferences(islander)
+        if revealed:
+            print(f"    known type: {revealed}")
         if debug and islander.memories:
             print(f"    memories: {len(islander.memories)}")
     if state.active_conversation is not None and state.active_conversation.pending_interruption is not None:

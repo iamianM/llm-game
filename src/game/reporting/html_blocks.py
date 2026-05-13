@@ -337,6 +337,12 @@ def _chance_breakdown_text(breakdown: object, fallback_chance: int) -> str:
     mood_modifier = breakdown.get("mood_modifier")
     if isinstance(mood_modifier, int) and mood_modifier != 0:
         parts.append(f"mood {escape(_signed(mood_modifier))}")
+    compatibility = breakdown.get("compatibility_bonus")
+    if isinstance(compatibility, int) and compatibility:
+        parts.append(f"compatibility {escape(_signed(compatibility))}")
+    penalty = breakdown.get("dealbreaker_penalty")
+    if isinstance(penalty, int) and penalty:
+        parts.append(f"dealbreaker -{escape(penalty)}")
     return (
         f"{' + '.join(parts)} = {escape(breakdown.get('pre_cap'))}"
         f"{_cap_text(breakdown)}. Final chance {escape(breakdown.get('final_chance', fallback_chance))}%."

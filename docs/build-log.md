@@ -253,3 +253,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: daily challenge scheduling/resolution, producer text scheduling/group-date setup, H2 eval assertions, and `challenge-day1.yaml` / `producer-text-day2.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (145 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 12`; long day-five-plus fixtures now include the required `CHALLENGE_RESPONSE` for Snog Marry Pie
+
+## Phase H3
+
+- Files added: `src/game/state/personality.py`, `src/game/engine/compatibility.py`, `src/game/eval/playthrough_trace.py`, `tests/engine/test_compatibility.py`, and `tests/scenarios/fixtures/type-on-paper-reveal.yaml`
+- Files changed: islander state schema, bombshell setup, chance/rule/follow-up math, conversation familiarity updates, Islander Voice context, CLI/report rendering, playthrough eval/dashboard, and all scenario hashes for schema v13
+- Tests added: Big 5 / attachment / Type on Paper model checks, compatibility/dealbreaker/attachment modifiers, familiarity/reveal thresholds, compatibility math in rules, H3 playthrough eval assertions, and the Type-on-Paper reveal fixture
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (160 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 13`; `type-on-paper-reveal.yaml` pins familiarity-driven preference reveals

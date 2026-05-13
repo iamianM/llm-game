@@ -22,6 +22,7 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
+from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.intents import get_intent
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import GameState, IslanderState, Memory, Mood
@@ -72,6 +73,9 @@ class IslanderVoiceContext(BaseModel):
     npc_name: str
     npc_archetype: str
     archetype_prose: str
+    big5_summary: str
+    attachment_style: str
+    revealed_preferences: dict[str, object]
     npc_mood: Mood
     relationship_summary: str
     intent_category: str
@@ -172,6 +176,9 @@ def islander_voice_context(
         npc_name=target.name,
         npc_archetype=target.archetype,
         archetype_prose="" if archetype is None else archetype.body,
+        big5_summary=_big5_summary(target),
+        attachment_style=target.attachment.value,
+        revealed_preferences=revealed_preferences(target),
         npc_mood=target.mood,
         relationship_summary=_relationship_summary(target),
         intent_category=intent_category,
@@ -244,6 +251,9 @@ def _render_context(context: IslanderVoiceContext) -> str:
             f"Location flavor: {context.location_flavor}",
             f"Name: {context.npc_name}",
             f"Archetype voice: {context.archetype_prose}",
+            f"Big Five: {context.big5_summary}",
+            f"Attachment style: {context.attachment_style}",
+            f"Known preferences: {context.revealed_preferences}",
             f"Current mood before this exchange: {context.npc_mood.value}",
             f"How they feel about the player right now: {context.relationship_summary}",
             f"Category: {context.intent_category}",
@@ -272,6 +282,15 @@ def _relationship_summary(target: IslanderState) -> str:
     return (
         f"affection {relationship.affection}, chemistry {relationship.chemistry}, "
         f"trust {relationship.trust}, friendship {relationship.friendship}"
+    )
+
+
+def _big5_summary(target: IslanderState) -> str:
+    big5 = target.big5
+    return (
+        f"openness {big5.openness}, conscientiousness {big5.conscientiousness}, "
+        f"extraversion {big5.extraversion}, agreeableness {big5.agreeableness}, "
+        f"neuroticism {big5.neuroticism}"
     )
 
 

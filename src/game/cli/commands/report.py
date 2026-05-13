@@ -11,6 +11,7 @@ from typing import Any
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.turn import run_turn
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
@@ -222,6 +223,11 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
+        "revealed_preferences": {
+            islander.id: revealed
+            for islander in state.islanders
+            if (revealed := revealed_preferences(islander))
+        },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }

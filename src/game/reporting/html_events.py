@@ -44,3 +44,13 @@ def group_date_block(group_date: object) -> str:
         f"<p class='meta'>day {escape(group_date.get('day', '?'))}</p>"
         "</div>"
     )
+
+
+def revealed_preferences_block(revealed: object) -> str:
+    """Render currently revealed Type-on-Paper preferences."""
+    if not isinstance(revealed, dict) or not revealed:
+        return ""
+    rows = []
+    for islander_id, prefs in revealed.items():
+        rows.append(f"<li><b>{escape(islander_id)}</b>: {escape(prefs)}</li>")
+    return f"<div class='card'><p><b>Revealed Type on Paper</b></p><ul>{''.join(rows)}</ul></div>"
