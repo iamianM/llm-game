@@ -6,6 +6,7 @@ Design sources:
 """
 
 from src.game.state.models import GameState, Phase
+from src.game.state.phase_clock import PhaseClock
 
 PHASE_ORDER = [
     Phase.MORNING,
@@ -17,17 +18,37 @@ PHASE_ORDER = [
 
 MAX_DAYS = 6
 
+PHASE_BUDGETS: dict[Phase, int] = {
+    Phase.MORNING: 120,
+    Phase.CHALLENGE: 0,
+    Phase.AFTERNOON: 120,
+    Phase.TEXT: 30,
+    Phase.EVENING: 60,
+    Phase.COMPLETE: 0,
+}
+
 
 def advance_phase(state: GameState) -> None:
     """Advance the multi-day v0 clock."""
     if state.phase is Phase.COMPLETE:
+        _reset_phase_clock(state)
         return
     if state.phase is Phase.EVENING:
         if state.day >= MAX_DAYS:
             state.phase = Phase.COMPLETE
+            _reset_phase_clock(state)
             return
         state.day += 1
         state.phase = Phase.MORNING
+        _reset_phase_clock(state)
         return
     index = PHASE_ORDER.index(state.phase)
     state.phase = PHASE_ORDER[index + 1]
+    _reset_phase_clock(state)
+
+
+def _reset_phase_clock(state: GameState) -> None:
+    state.phase_clock = PhaseClock(
+        phase=state.phase.value,
+        budget_minutes=PHASE_BUDGETS[state.phase],
+    )

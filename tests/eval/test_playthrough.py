@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_twenty_six_assertions() -> None:
+def test_playthrough_report_has_twenty_eight_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 26
+    assert len(report.assertions) == 28
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 26
+    assert report.passed == 28
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -140,6 +140,7 @@ def _complete_package():
                 },
                 ceremony_events=[{"kind": "casa_amor_return_reveal"}],
             ),
+            _record(20, "start_conversation", chance=55, auto_advance=True),
         ],
         "final_state": {
             "outcome": "won_as_couple",
@@ -167,6 +168,7 @@ def _record(
     villa: str = "main",
     casa: dict[str, object] | None = None,
     ceremony_events: list[dict[str, object]] | None = None,
+    auto_advance: bool = False,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -189,7 +191,10 @@ def _record(
         curator_batches.append({"memories": curator_memories})
     return {
         "turn": turn,
+        "day": ((turn - 1) // 4) + 1,
+        "phase": ["morning", "challenge", "afternoon", "text", "evening"][turn % 5],
         "villa": villa,
+        "auto_advance": auto_advance,
         "action": action,
         "mechanical_result": result,
         "audience_snapshot": (

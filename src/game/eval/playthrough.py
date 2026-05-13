@@ -14,10 +14,12 @@ from src.game.eval.playthrough_trace import (
     as_dict,
     final_outcome,
     format_rate,
+    memory_holder_counts,
     revealed_preference_count,
     turn,
     turns_with_action,
     turns_with_audience,
+    turns_with_auto_advance,
     turns_with_autopilot,
     turns_with_background,
     turns_with_casa_amor,
@@ -35,6 +37,7 @@ from src.game.eval.playthrough_trace import (
     turns_with_low_chance,
     turns_with_memories,
     turns_with_outcome,
+    turns_with_phase_overage,
     turns_with_producer_text,
     turns_with_pull,
     turns_with_reveals,
@@ -87,6 +90,8 @@ class PlaythroughStats(BaseModel):
     autopilot_actions_total: int = 0
     autopilot_rationales_present: int = 0
     autopilot_confidence_counts: dict[str, int] = Field(default_factory=dict)
+    auto_advances_total: int = 0
+    avg_actions_per_phase: float = 0.0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
@@ -173,6 +178,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     autopilot_actions_total = 0
     autopilot_rationales_present = 0
     autopilot_confidence: Counter[str] = Counter()
+    auto_advances_total = 0
+    phase_counts: Counter[tuple[int, str]] = Counter()
 
     for record in records:
         action = as_dict(record.get("action"))
@@ -184,6 +191,12 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         turn_number = turn(record)
 
         kind = str(action.get("kind", ""))
+        day = record.get("day")
+        phase = record.get("phase")
+        if isinstance(day, int) and isinstance(phase, str):
+            phase_counts[(day, phase)] += 1
+        if record.get("auto_advance") is True:
+            auto_advances_total += 1
         intent_id = str(action.get("intent_id", "") or result_action.get("intent_id", ""))
         category = record_category(record)
         if category:
@@ -277,6 +290,9 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         category: format_rate(counts["success"], counts["success"] + counts["miss"])
         for category, counts in sorted(category_success.items())
     }
+    avg_actions_per_phase = (
+        0.0 if not phase_counts else sum(phase_counts.values()) / len(phase_counts)
+    )
     return PlaythroughStats(
         turns=len(records),
         conversations_started=conversations_started,
@@ -314,6 +330,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         autopilot_actions_total=autopilot_actions_total,
         autopilot_rationales_present=autopilot_rationales_present,
         autopilot_confidence_counts=dict(autopilot_confidence),
+        auto_advances_total=auto_advances_total,
+        avg_actions_per_phase=round(avg_actions_per_phase, 2),
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -325,7 +343,7 @@ def _assertions(
     *,
     trace_mode: str,
 ) -> list[PlaythroughAssertion]:
-    memory_holders = _memory_holder_counts(records)
+    memory_holders = memory_holder_counts(records)
     return [
         _assert("wheel_exit", "At least one graceful wheel exit", stats.wheel_exits >= 1, f"{stats.wheel_exits} wheel exit(s)", turns_with_category(records, "exit")),
         _assert("walk_away", "At least one curt walk-away", stats.walk_aways >= 1, f"{stats.walk_aways} walk-away action(s)", turns_with_action(records, "end_conversation")),
@@ -359,6 +377,8 @@ def _assertions(
         _assert("casa_amor_perception_swing", "Casa Amor created a major perception swing", abs(stats.casa_amor_perception_swing) >= 6, f"swing: {stats.casa_amor_perception_swing}", turns_with_casa_swing(records)),
         _assert("autopilot_outcome_assigned", "Autopilot run reached a terminal outcome", trace_mode != "autopilot" or stats.outcome is not None, f"mode: {trace_mode}; outcome: {stats.outcome or 'none'}", turns_with_outcome(records)),
         _assert("autopilot_rationale_present", "Autopilot turns include rationales", trace_mode != "autopilot" or (stats.autopilot_actions_total > 0 and stats.autopilot_actions_total == stats.autopilot_rationales_present), f"{stats.autopilot_rationales_present}/{stats.autopilot_actions_total} rationale(s)", turns_with_autopilot(records)),
+        _assert("phase_action_count_reasonable", "Average actions per phase is reasonable", stats.avg_actions_per_phase <= 12, f"avg actions/phase: {stats.avg_actions_per_phase}", turns_with_phase_overage(records)),
+        _assert("time_expired_advance_observed", "At least one phase advanced because time expired", stats.auto_advances_total >= 1, f"{stats.auto_advances_total} auto-advance turn(s)", turns_with_auto_advance(records)),
     ]
 
 
@@ -377,20 +397,3 @@ def _assert(
         interesting_turns=turns[:8],
     )
 
-
-def _memory_holder_counts(records: list[dict[str, Any]]) -> Counter[str]:
-    counts: Counter[str] = Counter()
-    for record in records:
-        commits = as_dict(record.get("agent_commits"))
-        batches = commits.get("curator_batches")
-        if not isinstance(batches, list):
-            continue
-        for batch in batches:
-            memories = as_dict(batch).get("memories")
-            if not isinstance(memories, list):
-                continue
-            for raw_memory in memories:
-                holder = as_dict(raw_memory).get("holder_id")
-                if isinstance(holder, str):
-                    counts[holder] += 1
-    return counts

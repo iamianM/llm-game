@@ -18,6 +18,7 @@ from src.game.reporting.html_blocks import (
     interruption_block,
     memory_block,
     pull_attempt_block,
+    time_block,
     villa_snapshot_block,
 )
 from src.game.reporting.html_events import (
@@ -64,6 +65,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"<summary>{header}</summary>"
         f"<p class='meta'>{escape(record.get('visible_state', ''))}</p>"
         f"{villa_snapshot_block(record.get('villa_snapshot'))}"
+        f"{time_block(record)}"
         f"{casa_amor_block(record)}"
         f"{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}"

@@ -1,0 +1,22 @@
+name: time-budget-expiry
+seed: 31
+expected_hash: 5a7d1f2574efd3373b6ac7cb0c1cf8e1c494c8bcbfd25cba7c509cc44418e4b6
+actions:
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa

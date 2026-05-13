@@ -52,6 +52,8 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Autopilot actions", stats.autopilot_actions_total),
         ("Autopilot rationales", f"{stats.autopilot_rationales_present}/{stats.autopilot_actions_total}"),
         ("Autopilot confidence", stats.autopilot_confidence_counts),
+        ("Auto advances", stats.auto_advances_total),
+        ("Avg actions per phase", stats.avg_actions_per_phase),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

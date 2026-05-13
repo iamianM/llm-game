@@ -4,4 +4,4 @@ initial_day: 4
 initial_phase: text
 actions:
 - kind: advance_phase
-expected_hash: 610e4fc730ca2b3e5efe15d824ce6ab0907208768139e3c8ed28bece5fa8fa9b
+expected_hash: bbe947fa6f0120ecfd467d25dfe20f0544618632961171a94f97681713214109

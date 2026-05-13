@@ -1,6 +1,6 @@
 name: day6-full-run
 seed: 6
-expected_hash: b3cef669927a61c2328f4415fd0aaf89b504f884ba7bb9a16de3150cf2e2b113
+expected_hash: 459dd9cf4970b85e4cc25e6eeb6de312c8fda1ba0fff03bf80d2e27eb3924c9c
 actions:
 - kind: advance_phase
 - kind: advance_phase
@@ -27,7 +27,6 @@ actions:
   target_id: chloe
   payload:
     choice: chloe
-- kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: casa_decision

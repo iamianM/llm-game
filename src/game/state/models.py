@@ -31,8 +31,9 @@ from src.game.state.event_models import (
 from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
+from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 15
+SCHEMA_VERSION = 16
 
 
 class Phase(StrEnum):
@@ -313,6 +314,9 @@ class GameState(BaseModel):
     turn_index: int = 0
     day: int = 1
     phase: Phase = Phase.MORNING
+    phase_clock: PhaseClock = Field(
+        default_factory=lambda: PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
+    )
     location_id: Location = Location.POOL
     villa: VillaName = VillaName.MAIN
     player: PlayerState
@@ -331,17 +335,14 @@ class GameState(BaseModel):
 
     @property
     def is_terminal(self) -> bool:
-        """Return whether the current run is terminal."""
         return self.phase is Phase.COMPLETE or self.outcome is not None
 
 
 def clamp_relationship(value: int) -> int:
-    """Clamp relationship values to the valid 0-100 range."""
     return max(0, min(100, value))
 
 
 def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState:
-    """Create the deterministic starting state."""
     return GameState(
         seed=seed,
         player=PlayerState(

@@ -1,6 +1,6 @@
 name: type-on-paper-reveal
 seed: 31
-expected_hash: 546c62dc03f5a7363f4b13d838a26dba50e82a977511a53777d033a7050edd9c
+expected_hash: 72975b6a1d4f16aff0db9de771a19ef68f1c8822f06fbcb85ea3c2eeeebe9a1c
 actions:
 - kind: start_conversation
   target_id: chloe

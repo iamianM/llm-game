@@ -294,3 +294,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: Player Autopilot LLM contract tests, mock autopilot end-to-end/replay/rationale tests, supportive follow-up delta coverage, background-dialogue validator retry coverage, Casa pull-location coverage, and autopilot scenario fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (218 passed), content lint, fixture determinism, line-cap audit, and full LLM suite (43 passed)
 - Validation note: fast deterministic `autopilot-check` completes and replays byte-identically; bounded real-LLM validation exposed phase-pacing gaps that are addressed by Phase H8 time budgets and NPC autonomy
+
+## Phase H8.1
+
+- Files added: `docs/build-plan-H8.md`, `src/game/state/phase_clock.py`, `src/game/engine/time_budget.py`, `tests/engine/test_time_budget.py`, and `tests/scenarios/fixtures/time-budget-expiry.yaml`
+- Files changed: state schema, phase advancement, turn pipeline, scenario replay setup, CLI/report time rendering, playthrough eval/dashboard, and all scenario hashes for schema v16
+- Tests added: action time-cost contract, time deduction expiry, phase-clock reset, run-turn auto-advance, H8 pacing eval assertions, and a time-budget expiry scenario fixture
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (223 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed after one retry of a stochastic pre-existing voice-quality assertion)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 16`; day-five Casa fixtures remove one manual `ADVANCE_PHASE` because challenge responses now auto-advance zero-budget challenge phases

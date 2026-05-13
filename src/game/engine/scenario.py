@@ -21,6 +21,7 @@ from src.game.agents.islander_voice import Exchange
 from src.game.agents.player_autopilot import PolicyDecision
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
+from src.game.engine.phases import PHASE_BUDGETS
 from src.game.engine.rules import MechanicalResult
 from src.game.engine.turn import TurnResult, run_turn
 from src.game.state.models import (
@@ -34,6 +35,7 @@ from src.game.state.models import (
     RelationshipState,
     new_game,
 )
+from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -108,6 +110,10 @@ def _apply_initial_state(state: GameState, script: ActionScript) -> None:
         state.day = script.initial_day
     if script.initial_phase is not None:
         state.phase = script.initial_phase
+        state.phase_clock = PhaseClock(
+            phase=state.phase.value,
+            budget_minutes=PHASE_BUDGETS[state.phase],
+        )
     if script.initial_location is not None:
         state.location_id = script.initial_location
     if script.initial_couples is not None:

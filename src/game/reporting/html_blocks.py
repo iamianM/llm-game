@@ -113,6 +113,27 @@ def autopilot_block(agent_commits: object) -> str:
     )
 
 
+def time_block(record: dict[str, Any]) -> str:
+    """Render phase clock details."""
+    clock = record.get("phase_clock")
+    if not isinstance(clock, dict):
+        return ""
+    budget = clock.get("budget_minutes", 0)
+    elapsed = clock.get("elapsed_minutes", 0)
+    try:
+        remaining = max(0, int(budget) - int(elapsed))
+    except (TypeError, ValueError):
+        remaining = "unknown"
+    marker = "<p><b>Auto-advanced:</b> yes</p>" if record.get("auto_advance") else ""
+    return (
+        "<div class='card time'>"
+        "<p><b>Phase clock</b></p>"
+        f"<p>{escape(elapsed)} / {escape(budget)} min used; "
+        f"{escape(remaining)} min remaining.</p>{marker}"
+        "</div>"
+    )
+
+
 def pull_attempt_block(pull_attempt: object) -> str:
     """Render a pull-for-chat result."""
     if not isinstance(pull_attempt, dict):

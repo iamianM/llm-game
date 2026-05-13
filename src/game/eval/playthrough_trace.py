@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Any
 
 from src.game.eval.playthrough_categories import record_category
@@ -152,6 +153,41 @@ def turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
         for record in records
         if any(as_dict(event).get("kind") == "final_vote" for event in as_list(record.get("ceremony_events")))
     ]
+
+
+def turns_with_auto_advance(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if record.get("auto_advance") is True]
+
+
+def turns_with_phase_overage(records: list[dict[str, Any]]) -> list[int]:
+    grouped: dict[tuple[int, str], list[int]] = {}
+    for record in records:
+        day = record.get("day")
+        phase = record.get("phase")
+        if isinstance(day, int) and isinstance(phase, str):
+            grouped.setdefault((day, phase), []).append(turn(record))
+    turns: list[int] = []
+    for phase_turns in grouped.values():
+        if len(phase_turns) > 12:
+            turns.extend(phase_turns)
+    return sorted(turns)
+
+
+def memory_holder_counts(records: list[dict[str, Any]]) -> Counter[str]:
+    counts: Counter[str] = Counter()
+    for record in records:
+        batches = as_dict(record.get("agent_commits")).get("curator_batches")
+        if not isinstance(batches, list):
+            continue
+        for batch in batches:
+            memories = as_dict(batch).get("memories")
+            if not isinstance(memories, list):
+                continue
+            for raw_memory in memories:
+                holder = as_dict(raw_memory).get("holder_id")
+                if isinstance(holder, str):
+                    counts[holder] += 1
+    return counts
 
 
 def final_outcome(final_state: dict[str, Any] | None) -> str | None:

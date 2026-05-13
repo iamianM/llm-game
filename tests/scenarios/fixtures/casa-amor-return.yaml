@@ -14,9 +14,8 @@ actions:
   target_id: blake
 - kind: advance_phase
 - kind: advance_phase
-- kind: advance_phase
 - kind: casa_decision
   target_id: blake
   intent_id: return_with_new
 - kind: advance_phase
-expected_hash: 99295ba0a057eb77b91cec9a0e8d792c81c703b41d66bccde7584c9e9c81878c
+expected_hash: c4fafeab09c85c9b7c937f188ad0c6c49ad183fefea9e7f10ddf3396390b7fda

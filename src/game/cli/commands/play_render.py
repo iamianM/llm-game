@@ -28,6 +28,12 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
     """Print the current villa map and player relationship state."""
     print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
     print(f"Current villa: {state.villa.value}. You are at the {state.location_id.value.upper()}.")
+    print(
+        f"Time remaining: {state.phase_clock.remaining} min "
+        f"({state.phase_clock.elapsed_minutes}/{state.phase_clock.budget_minutes} used)"
+    )
+    if 0 < state.phase_clock.remaining <= 20:
+        print("It's getting late - phase will end soon.")
     print("\nVilla:")
     for location in locations_for_villa(state.villa):
         occupants = ["you"] if location is state.location_id else []
@@ -114,6 +120,8 @@ def print_turn(turn: TurnResult) -> None:
         )
         if result.pull_attempt.deflection_line:
             print(result.pull_attempt.deflection_line)
+    if turn.auto_advance:
+        print(f"Time passes. -> {turn.state.phase.value}.")
     if turn.exchange is not None:
         print(f'You: "{turn.exchange.player_dialogue}"')
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')

@@ -20,15 +20,8 @@ from src.game.agents.contextual_options import (
     validate_follow_up_menu,
     with_gossip_options,
 )
-from src.game.agents.conversation_curator import (
-    ConversationCuratorFn,
-    mock_conversation_curator,
-)
-from src.game.agents.event_narrator import (
-    EventNarration,
-    EventNarratorFn,
-    mock_event_narration,
-)
+from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
+from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
@@ -47,11 +40,8 @@ from src.game.engine.memory import (
     remember_ceremony_events,
 )
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
-from src.game.engine.rules import (
-    EXIT_INTENT_KINDS,
-    MechanicalResult,
-    apply_action,
-)
+from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
+from src.game.engine.time_budget import check_auto_advance, deduct_time
 from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
@@ -90,6 +80,8 @@ class TurnResult(BaseModel):
     curator_batches: list[MemoryBatch] = []
     audience_snapshot: AudienceSnapshot | None = None
     agent_commits: AgentCommits = Field(default_factory=AgentCommits)
+    time_cost: int = 0
+    auto_advance: bool = False
 
 
 def run_turn(
@@ -122,6 +114,7 @@ def run_turn(
                 ]
             else:
                 result = _pull_rejected_result(state, action, pull_attempt)
+                time_cost = deduct_time(state, action)
                 state.turn_index += 1
                 speak = mock_islander_voice if islander_voice is None else islander_voice
                 exchange = speak(state, result)
@@ -142,6 +135,10 @@ def run_turn(
                     background_dialogues=villa_changes.background_dialogues,
                     curator_batches=pull_curator_batches,
                 )
+                auto_advance = False
+                if check_auto_advance(state):
+                    advance_phase_with_events(state, rng)
+                    auto_advance = True
                 return TurnResult(
                     state=state,
                     mechanical_result=result,
@@ -150,8 +147,11 @@ def run_turn(
                     state_hash=state_hash(state_hash_payload(state)),
                     curator_batches=pull_curator_batches,
                     agent_commits=agent_commits,
+                    time_cost=time_cost,
+                    auto_advance=auto_advance,
                 )
     result = apply_action(state, action, rng)
+    time_cost = deduct_time(state, action)
     if pull_attempt is not None:
         result.pull_attempt = pull_attempt
     ceremony_events: list[CeremonyEvent] = []
@@ -245,11 +245,6 @@ def run_turn(
             batch = _curate_conversation(state, state.active_conversation, conversation_curator)
             curator_batches.append(batch)
         close_conversation(state, "player_exit")
-    event_narration = None
-    if ceremony_events:
-        remember_ceremony_events(state, ceremony_events)
-        narrate_event = mock_event_narration if event_narrator is None else event_narrator
-        event_narration = narrate_event(state, ceremony_events)
     orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
     villa_update = orchestrate(state)
     villa_changes = apply_villa_update(
@@ -265,6 +260,17 @@ def run_turn(
         background_dialogues=villa_changes.background_dialogues,
         curator_batches=curator_batches,
     )
+    auto_advance = False
+    if action.kind is not ActionKind.ADVANCE_PHASE and check_auto_advance(state):
+        phase_events, audience_after_auto = advance_phase_with_events(state, rng)
+        ceremony_events.extend(phase_events)
+        audience_snapshot = audience_snapshot or audience_after_auto
+        auto_advance = True
+    event_narration = None
+    if ceremony_events:
+        remember_ceremony_events(state, ceremony_events)
+        narrate_event = mock_event_narration if event_narrator is None else event_narrator
+        event_narration = narrate_event(state, ceremony_events)
     return TurnResult(
         state=state,
         mechanical_result=result,
@@ -277,6 +283,8 @@ def run_turn(
         curator_batches=curator_batches,
         audience_snapshot=audience_snapshot,
         agent_commits=agent_commits,
+        time_cost=time_cost,
+        auto_advance=auto_advance,
     )
 
 
