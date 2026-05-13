@@ -13,7 +13,7 @@ from src.game.agents.conversation_curator import (
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.turn import run_turn
-from src.game.state.models import Location, NPCNPCConversation, new_game
+from src.game.state.models import Location, MemoryBatch, MemoryDraft, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -43,6 +43,47 @@ def test_curator_context_lists_required_memory_holders() -> None:
     rendered = _render_context(state, conversation, [])
 
     assert "Required direct memory holders: maya, liam" in rendered
+
+
+def test_curator_parse_budget_fits_three_output_schema() -> None:
+    """The expanded MemoryBatch shape needs enough tokens to avoid truncation."""
+
+    class FakeResponses:
+        def __init__(self) -> None:
+            self.kwargs = {}
+
+        def parse(self, **kwargs):
+            self.kwargs = kwargs
+
+            class ParsedResponse:
+                output_parsed = MemoryBatch(
+                    memories=[
+                        MemoryDraft(
+                            holder_id="player",
+                            subject_id="chloe",
+                            content="I remember Chloe being honest by the pool.",
+                            source="direct",
+                            emotional_weight=5,
+                            tags=["honest"],
+                        )
+                    ],
+                    summary="Player and Chloe had an honest pool conversation.",
+                    gossip_seeds=[],
+                )
+
+            return ParsedResponse()
+
+    class FakeClient:
+        def __init__(self) -> None:
+            self.responses = FakeResponses()
+
+    agent = OpenAIConversationCurator()
+    fake_client = FakeClient()
+    agent.__dict__["_client"] = fake_client
+
+    agent._generate_batch("context")
+
+    assert fake_client.responses.kwargs["max_output_tokens"] >= 1800
 
 
 @pytest.mark.llm

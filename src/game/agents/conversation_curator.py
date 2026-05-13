@@ -18,6 +18,7 @@ from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
+from pydantic import ValidationError
 
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.state.models import (
@@ -68,12 +69,12 @@ class OpenAIConversationCurator:
                     "not display names. "
                     f"You must include at least one direct memory for each participant holder: {required_holders}."
                 )
-            batch = self._generate_batch(retry_context)
             try:
+                batch = self._generate_batch(retry_context)
                 validate_memory_batch(batch, state, participant_ids, bystander_set)
                 return batch
-            except ValueError as exc:
-                last_error = exc
+            except (ValueError, ValidationError) as exc:
+                last_error = ValueError(str(exc))
                 if attempt == 2:
                     raise
         raise AssertionError("unreachable curator retry state")
@@ -97,7 +98,7 @@ class OpenAIConversationCurator:
             ),
             input=rendered_context,
             text_format=MemoryBatch,
-            max_output_tokens=900,
+            max_output_tokens=1800,
         )
         batch = response.output_parsed
         if batch is None:

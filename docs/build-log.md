@@ -485,3 +485,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: regression coverage that specific longer bespoke labels accepted by the real LLM are valid
 - QA result: focused `ruff`, `mypy`, and non-LLM Contextual Options tests green
 - Validation note: fixes the real-LLM autopilot crash where useful seven-word labels such as `Invite him to share his real feelings` failed the bespoke option validator
+
+## Phase H11 validation: curator output capacity
+
+- Files added: none
+- Files changed: `conversation_curator.py` and `test_conversation_curator.py`
+- Tests added: regression coverage that the live Curator parse call reserves enough output tokens for the expanded `MemoryBatch` schema
+- QA result: focused `ruff`, `mypy`, and non-LLM Conversation Curator tests green
+- Validation note: fixes the real-LLM autopilot crash where a three-output Curator response was truncated into invalid JSON before validation could retry
