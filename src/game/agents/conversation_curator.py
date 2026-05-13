@@ -134,7 +134,11 @@ def mock_conversation_curator(
                 tags=[tag, "witnessed"],
             )
         )
-    return MemoryBatch(memories=memories)
+    return MemoryBatch(
+        memories=memories,
+        summary=f"Player and {target_name} closed a {tag} conversation with a clear emotional shift.",
+        gossip_seeds=[],
+    )
 
 
 def validate_memory_batch(
@@ -162,6 +166,15 @@ def validate_memory_batch(
             raise ValueError(f"memory content contains digits: {memory.content!r}")
         if not memory.tags:
             raise ValueError(f"memory has no tags: {memory}")
+    if batch.summary and re.search(r"\d", batch.summary):
+        raise ValueError(f"summary contains digits: {batch.summary!r}")
+    for seed in batch.gossip_seeds:
+        if seed.holder_id not in valid_ids:
+            raise ValueError(f"unknown gossip seed holder_id: {seed.holder_id}")
+        if seed.subject_id not in valid_ids and seed.subject_id != "villa":
+            raise ValueError(f"unknown gossip seed subject_id: {seed.subject_id}")
+        if re.search(r"\d", seed.gist):
+            raise ValueError(f"gossip seed contains digits: {seed.gist!r}")
 
 
 def _render_context(
@@ -241,7 +254,11 @@ def _mock_npc_conversation_memory(
                 tags=["background", "witnessed"],
             )
         )
-    return MemoryBatch(memories=memories)
+    return MemoryBatch(
+        memories=memories,
+        summary=f"{first_name} and {second_name} talked about {conversation.topic}.",
+        gossip_seeds=[],
+    )
 
 
 def _render_npc_context(

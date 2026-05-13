@@ -421,3 +421,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: first-exchange message shape, prior exchange alternating user/assistant message shape, prior assistant JSON validation, and current-turn intent/outcome context coverage
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (281 passed), smoke script, content lint, fixture determinism, line-cap audit, focused Islander Voice chain tests, and LLM suite rerun note: one stochastic pull-rejection wording miss passed on focused rerun
 - Prompt note: installed Claude's H10.1 `islander_voice.md` recent-history line replacement verbatim; no other prompt edits made
+
+## Phase H10.2
+
+- Files added: `tests/engine/test_gossip_propagation.py`
+- Files changed: memory state models now carry `summary` and `gossip_seeds`, conversations retain hash-excluded summaries, Curator validation accepts three-output batches, gossip seeds propagate into `told_by` memories, Islander Voice receives gossip-eligible memories in context, and all scenario hashes were regenerated for `SCHEMA_VERSION = 22`
+- Tests added: gossip-seed propagation creates listener memories, attenuates emotional weight, handles unknown listeners, and dedupes against existing memories
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (285 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused Conversation Curator suite, and full LLM suite (55 passed)
+- Prompt note: installed Claude's H10.2 prompt updates for `conversation_curator.md`, `islander_voice.md`, and `villa_orchestrator.md`; no Codex-authored prompt wording changes made

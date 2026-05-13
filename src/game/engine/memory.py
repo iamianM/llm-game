@@ -14,6 +14,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from src.game.engine.ceremonies import CeremonyEvent
+from src.game.state.memory import GossipSeed
 from src.game.state.models import GameState, Memory, MemoryBatch
 
 
@@ -75,6 +76,35 @@ def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: in
     return created
 
 
+def propagate_gossip_seeds(
+    state: GameState,
+    seeds: Sequence[GossipSeed],
+    *,
+    day: int,
+    turn: int,
+) -> list[Memory]:
+    """Create deterministic secondhand memories from curator gossip seeds."""
+    created: list[Memory] = []
+    for seed in seeds:
+        for listener_id in _interested_listeners(state, seed):
+            if _has_similar_memory(state, listener_id, seed):
+                continue
+            memory = create_memory(
+                holder_id=listener_id,
+                subject_id=seed.subject_id,
+                source="told_by",
+                source_id=seed.holder_id,
+                day=day,
+                turn=turn,
+                weight=max(2, seed.emotional_weight - 2),
+                tags=[*seed.tags, "told_by", "gossip_spread"],
+                content=seed.gist,
+            )
+            add_memory(state, memory)
+            created.append(memory)
+    return created
+
+
 def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) -> None:
     """Create witnessed memories for visible ceremony events."""
     for event in events:
@@ -109,6 +139,34 @@ def _holder_memory_list(state: GameState, holder_id: str) -> list[Memory]:
 
 def _all_holder_ids(state: GameState) -> list[str]:
     return ["player"] + [islander.id for islander in state.islanders if not islander.eliminated]
+
+
+def _interested_listeners(state: GameState, seed: GossipSeed) -> list[str]:
+    valid_ids = set(_all_holder_ids(state))
+    listeners = [
+        listener_id
+        for listener_id in seed.spreadable_to
+        if listener_id in valid_ids and listener_id != seed.holder_id
+    ]
+    if listeners:
+        return listeners[:3]
+    return [
+        islander.id
+        for islander in state.islanders
+        if not islander.eliminated and islander.id not in {seed.holder_id, seed.subject_id}
+    ][:1]
+
+
+def _has_similar_memory(state: GameState, listener_id: str, seed: GossipSeed) -> bool:
+    holder = _holder_memory_list(state, listener_id)
+    gist_tokens = set(seed.gist.lower().split())
+    for memory in holder:
+        if memory.subject_id != seed.subject_id:
+            continue
+        overlap = gist_tokens & set(memory.content.lower().split())
+        if len(overlap) >= 4:
+            return True
+    return False
 
 
 def _memory_id(

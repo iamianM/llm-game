@@ -33,6 +33,7 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
     payload = state.model_dump(mode="json")
     conversation = payload.get("active_conversation")
     if isinstance(conversation, dict):
+        conversation.pop("summary", None)
         exchanges = conversation.get("exchanges")
         if isinstance(exchanges, list):
             for exchange in exchanges:

@@ -5,4 +5,4 @@ initial_phase: afternoon
 actions:
 - kind: advance_phase
 - kind: join_gather
-expected_hash: 6e4e9440a23ef10d7176e388c6adb7f7165a5abfdac9075c440ebf70291ab662
+expected_hash: 23261ccf9e0ed494128fcfb39bd7b429cdf7825c6b109d76a1ae8e6d56f186eb

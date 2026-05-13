@@ -38,6 +38,7 @@ from src.game.engine.daily_recap import append_daily_recap_if_needed
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
 from src.game.engine.memory import (
     add_memory_batch,
+    propagate_gossip_seeds,
     remember_ceremony_events,
 )
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
@@ -337,7 +338,9 @@ def _curate_conversation(
     bystander_ids = _conversation_bystanders(state, conversation.target_id)
     curate = mock_conversation_curator if curator is None else curator
     batch = curate(state, conversation, bystander_ids)
+    conversation.summary = batch.summary or None
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
+    propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
     return batch
 
 
@@ -359,6 +362,7 @@ def _curate_npc_conversation(
     curate = mock_conversation_curator if curator is None else curator
     batch = curate(state, conversation, bystander_ids)
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
+    propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
     return batch
 
 

@@ -64,4 +64,4 @@ actions:
 - kind: advance_phase
 - kind: join_gather
 - kind: advance_phase
-expected_hash: d448414e45429c11c35ff7bfef37c47819e47678d1e9172a8a3985ba6a040461
+expected_hash: 13301de04c55aa381dda9671e19ca5a6c3966a37d241c1e340c61d2946325108

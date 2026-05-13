@@ -37,7 +37,7 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 21
+SCHEMA_VERSION = 22
 
 
 class Phase(StrEnum):
@@ -306,6 +306,7 @@ class Conversation(BaseModel):
     pending_options: FollowUpMenu | None = None
     pending_interruption: NPCInterruption | None = None
     gossip_offers: list[Memory] = Field(default_factory=list)
+    summary: str | None = None
 
 
 class NPCNPCConversation(BaseModel):

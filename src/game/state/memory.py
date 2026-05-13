@@ -40,9 +40,24 @@ class MemoryDraft(BaseModel):
     durable: bool = True
 
 
+class GossipSeed(BaseModel):
+    """A curator-authored moment that can spread as gossip."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    subject_id: str
+    gist: str
+    holder_id: str
+    spreadable_to: list[str] = Field(default_factory=list)
+    emotional_weight: int = Field(ge=1, le=10)
+    tags: list[str] = Field(default_factory=list)
+
+
 class MemoryBatch(BaseModel):
     """A typed curator commit containing durable memories."""
 
     model_config = ConfigDict(extra="forbid")
 
     memories: list[MemoryDraft] = Field(min_length=1, max_length=8)
+    summary: str = ""
+    gossip_seeds: list[GossipSeed] = Field(default_factory=list)

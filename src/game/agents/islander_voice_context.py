@@ -69,6 +69,7 @@ class IslanderVoiceContext(BaseModel):
     mechanical_change_summary: str
     others_present: list[str]
     recent_exchange_topics: list[str]
+    gossip_eligible_memories: list[str]
 
 
 class NewTurnContext(BaseModel):
@@ -148,6 +149,7 @@ def islander_voice_context(
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
         recent_exchange_topics=_recent_exchange_topics(state),
+        gossip_eligible_memories=_gossip_eligible_memories(state, target.id),
     )
 
 
@@ -181,6 +183,7 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
             f"Recent exchange topics: {_list_or_none(context.recent_exchange_topics)}",
+            f"Gossip eligible memories: {_list_or_none(context.gossip_eligible_memories)}",
             "Write the exchange now.",
         ]
     )
@@ -281,6 +284,17 @@ def _recent_exchange_topics(state: GameState) -> list[str]:
     if conversation is None:
         return []
     return conversation.accumulated_tags[-6:]
+
+
+def _gossip_eligible_memories(state: GameState, target_id: str) -> list[str]:
+    for islander in state.islanders:
+        if islander.id == target_id:
+            return [
+                f"{memory.subject_id}: {memory.content}"
+                for memory in islander.memories[-5:]
+                if memory.subject_id != "player" and memory.emotional_weight >= 4
+            ]
+    return []
 
 
 def _intent_label(intent_id: str | None) -> str:

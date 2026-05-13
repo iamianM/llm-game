@@ -21,4 +21,4 @@ actions:
   intent_id: return_with_new
 - kind: advance_phase
 - kind: join_gather
-expected_hash: 598bcb4718a65b3075caceca72e69559d9caa87b3469d22f11228514758fa15d
+expected_hash: f55a91dca63a87a23b9b92172c23e2c2fed19e6301fd77b44f1647c4ccb8ce02
