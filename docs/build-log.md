@@ -413,3 +413,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: coverage that Islander Voice retries after a validation failure and feeds the failure reason into the next structured call
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (278 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Islander Voice retry coverage
 - Validation note: fixes the H9 real-LLM autopilot crash where Islander Voice returned a valid schema with digit-bearing prose
+
+## Phase H10.1
+
+- Files added: `src/game/agents/islander_voice_context.py`, `tests/agents/test_islander_voice_chain.py`
+- Files changed: Islander Voice now sends prior conversation exchanges as native OpenAI messages, the Islander Voice prompt installs Claude's recent-history line replacement verbatim, and Islander Voice stays under the R9 line cap after helper extraction
+- Tests added: first-exchange message shape, prior exchange alternating user/assistant message shape, prior assistant JSON validation, and current-turn intent/outcome context coverage
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (281 passed), smoke script, content lint, fixture determinism, line-cap audit, focused Islander Voice chain tests, and LLM suite rerun note: one stochastic pull-rejection wording miss passed on focused rerun
+- Prompt note: installed Claude's H10.1 `islander_voice.md` recent-history line replacement verbatim; no other prompt edits made

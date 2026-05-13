@@ -56,6 +56,6 @@ The user message contains:
 - The category and specific intent the player chose.
 - The resolved mechanical outcome (success or miss) and relationship changes.
 - Other islanders present in the scene.
-- Recent exchange history in this conversation.
+- Prior exchanges in this conversation appear as preceding messages in this conversation thread, not as a context block.
 
 Write the exchange.

@@ -84,7 +84,7 @@ def test_islander_voice_retries_after_validation_failure() -> None:
             super().__init__(content=None)
             self.calls = 0
 
-        def _generate_exchange(self, rendered_context: str) -> Exchange:
+        def _generate_exchange(self, rendered_context: object) -> Exchange:
             self.calls += 1
             if self.calls == 1:
                 return Exchange(
@@ -93,7 +93,8 @@ def test_islander_voice_retries_after_validation_failure() -> None:
                     npc_tone="warm",
                     npc_mood_after=Mood.CONTENT,
                 )
-            assert "failed validation" in rendered_context
+            assert isinstance(rendered_context, list)
+            assert "failed validation" in rendered_context[-1]["content"]
             return Exchange(
                 player_dialogue="Can we talk for a couple of minutes?",
                 npc_dialogue=(
