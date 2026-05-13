@@ -9,7 +9,9 @@ import pytest
 from src.game.agents.contextual_options import (
     ContextualBespoke,
     ContextualOptionsAgent,
+    mock_follow_up_menu,
     validate_contextual_bespoke,
+    validate_follow_up_menu,
 )
 from src.game.agents.islander_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
@@ -137,6 +139,33 @@ def test_contextual_bespoke_accepts_specific_longer_labels() -> None:
     )
 
     validate_contextual_bespoke(bespoke, [])
+
+
+def test_follow_up_menu_accepts_specific_longer_labels() -> None:
+    menu = mock_follow_up_menu().model_copy(
+        update={
+            "options": [
+                FollowUpOption(
+                    label="Ask if she really wants kids soon",
+                    category="deep",
+                    intent_kind="go_deeper",
+                    stat_used="eq",
+                    risk="medium",
+                    tone="curious",
+                ),
+                FollowUpOption(
+                    label="End on a good note",
+                    category="exit",
+                    intent_kind="end_softly",
+                    stat_used="loyalty",
+                    risk="safe",
+                    tone="warm",
+                ),
+            ]
+        }
+    )
+
+    validate_follow_up_menu(menu)
 
 
 @pytest.mark.llm

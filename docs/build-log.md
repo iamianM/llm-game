@@ -493,3 +493,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: regression coverage that the live Curator parse call reserves enough output tokens for the expanded `MemoryBatch` schema
 - QA result: focused `ruff`, `mypy`, and non-LLM Conversation Curator tests green
 - Validation note: fixes the real-LLM autopilot crash where a three-output Curator response was truncated into invalid JSON before validation could retry
+
+## Phase H11 validation: assembled label cap
+
+- Files added: none
+- Files changed: `contextual_options.py` and `test_contextual_options.py`
+- Tests added: regression coverage that assembled follow-up menus accept specific longer labels
+- QA result: focused `ruff` and non-LLM Contextual Options tests green
+- Validation note: fixes the real-LLM autopilot crash where the assembled menu validator rejected specific seven-word labels after bespoke validation accepted them

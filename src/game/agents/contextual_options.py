@@ -246,7 +246,7 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
             raise ValueError(f"unknown follow-up category: {option.category}")
         if option.category == "exit" and option.intent_kind not in EXIT_INTENT_KINDS:
             raise ValueError(f"exit option has non-exit intent_kind: {option.intent_kind}")
-        if len(option.label.split()) > 6:
+        if len(option.label.split()) > BESPOKE_LABEL_MAX_WORDS:
             raise ValueError(f"follow-up label too long: {option.label!r}")
         if re.search(r"\d", option.label):
             raise ValueError(f"follow-up label contains digits: {option.label!r}")
