@@ -33,6 +33,14 @@ def test_slide_session_page_contains_deck_controls() -> None:
     assert "side-panel" in html
 
 
+def test_slide_session_page_contains_state_popouts() -> None:
+    html = slide_session_page("Test Session", [_record(1, "advance_phase")])
+
+    assert "<dialog" in html
+    assert "data-open-dialog" in html
+    assert "Chloe" in html
+
+
 def _record(turn: int, action_kind: str) -> dict[str, object]:
     return {
         "turn": turn,

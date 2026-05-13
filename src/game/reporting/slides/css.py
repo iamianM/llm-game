@@ -17,6 +17,9 @@ SLIDE_CSS = """
 .success{color:var(--good)}.miss{color:var(--bad)}.dialogue{background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0}
 .side-panel{border-left:1px solid var(--line);background:#fff;overflow:auto;padding:16px}.side-panel h3{margin:0 0 12px}
 .state-card{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;background:#fffaf2}.nav{display:flex;gap:10px;margin-top:14px}
+.cast-button{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px;margin:6px 0;cursor:pointer}
+dialog{border:1px solid var(--line);border-radius:12px;max-width:520px;background:#fffaf2;color:var(--ink);box-shadow:0 20px 80px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(35,25,15,.35)}.dialog-close{float:right;border:0;background:var(--accent);color:#fff;border-radius:999px;padding:4px 10px;cursor:pointer}
 .bookmark-strip{display:flex;gap:6px;overflow:auto}.bookmark-strip button{border-radius:6px}.bookmark-event{border-color:#6b3fa0}.bookmark-anomaly{border-color:#9b2d20}.bookmark-highlight{border-color:#17633a}
 details{margin:8px 0}summary{cursor:pointer;font-weight:700}code{font-size:12px}.hidden{display:none}
 @media(max-width:900px){.deck-layout{grid-template-columns:1fr}.side-panel{display:none}.topbar{align-items:flex-start;flex-direction:column}.slides{padding:12px}}

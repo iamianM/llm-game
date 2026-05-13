@@ -453,3 +453,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: scene-kind classification, adjacent conversation scene grouping, and slide deck control rendering; existing report tests updated for the slide-deck shape and inline vanilla JavaScript
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (299 passed), content lint, smoke `verify-script`, fixture determinism, and line-cap audit
 - UI note: generated session HTML is still self-contained and uses vanilla JavaScript only; no framework or external assets added
+
+## Phase H11.2
+
+- Files added: none
+- Files changed: slide reports now populate the sticky side panel with scene state, villa occupants, memory summaries, and native `<dialog>` popouts opened from cast/location buttons
+- Tests added: slide session coverage for state popout markup and click targets
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (300 passed), fixture determinism, and line-cap audit
+- UI note: popouts use native browser dialogs and delegated vanilla JavaScript; no raw JSON is exposed in the rendered session page

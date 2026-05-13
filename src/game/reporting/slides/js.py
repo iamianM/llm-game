@@ -20,5 +20,15 @@ document.addEventListener('keydown',event=>{
   if(event.key==='ArrowRight')showSlide(current+1);
   if(event.key==='ArrowLeft')showSlide(current-1);
 });
+document.addEventListener('click',event=>{
+  const open=event.target.closest('[data-open-dialog]');
+  if(open){
+    const dialog=document.getElementById(open.dataset.openDialog);
+    if(dialog&&dialog.showModal)dialog.showModal();
+  }
+  if(event.target.matches('[data-close-dialog]')){
+    event.target.closest('dialog')?.close();
+  }
+});
 showSlide(0);
 """
