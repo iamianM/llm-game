@@ -386,6 +386,6 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 - Files added: none
 - Files changed: Villa Orchestrator movement prompt, Orchestrator context rendering, VillaUpdate validation during pending gathers, and related tests
-- Tests added: isolated-player context coverage, pending-gather autonomy rejection, and two LLM tests for H9.7 movement liveliness
+- Tests added: isolated-player context coverage, pending-gather autonomy rejection, Firepit pull privacy coverage, and two LLM tests for H9.7 movement liveliness
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (274 passed in 10.36s), content lint, fixture determinism, line-cap audit, H9.7 focused LLM suite (3 passed), and full LLM suite (55 passed after increasing the command timeout)
 - Prompt note: installed Claude's H9.7 `villa_orchestrator.md` movement bullet verbatim; no other prompt edits made

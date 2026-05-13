@@ -49,6 +49,13 @@ def test_pull_chance_supports_casa_locations() -> None:
     assert pull_chance(terrace, "chloe") > pull_chance(pool, "chloe") > pull_chance(kitchen, "chloe")
 
 
+def test_pull_chance_supports_firepit() -> None:
+    """Mandatory gather location has a crowded-space modifier, not a KeyError."""
+    state = _state_with_busy_chloe(location=Location.FIREPIT)
+
+    assert pull_chance(state, "chloe") >= 10
+
+
 def test_pull_chance_drops_with_repeated_attempts() -> None:
     state = _state_with_busy_chloe()
     baseline = pull_chance(state, "chloe")
