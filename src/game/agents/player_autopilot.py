@@ -17,7 +17,7 @@ from src.game.engine.couples import couple_strength, player_couple
 from src.game.state.casa import CasaDecision
 from src.game.state.models import GameState, Gender, PlayerStats
 
-PLAYER_AUTOPILOT_MODEL = "gpt-4.1-mini"
+PLAYER_AUTOPILOT_MODEL = "gpt-4.1-nano"
 AUTOPILOT_PERSONAS = {"loyal", "player", "chaotic"}
 
 

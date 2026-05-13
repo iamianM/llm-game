@@ -24,7 +24,7 @@ from src.game.agents.islander_voice import Exchange, load_dotenv_local
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
-CONTEXTUAL_OPTIONS_MODEL = "gpt-5.4-mini"
+CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
 FOLLOW_UP_CATEGORIES = {"friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"}
 FollowUpCategory = Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
@@ -102,7 +102,6 @@ class ContextualOptionsAgent:
         """Request one parsed menu from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            reasoning={"effort": "low"},
             instructions=Path("src/game/agents/prompts/contextual_options.md").read_text(
                 encoding="utf-8"
             ),

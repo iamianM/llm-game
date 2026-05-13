@@ -10,7 +10,10 @@ The Orchestrator proposes; this module validates and mutates canonical state.
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
+import inspect
+from typing import cast
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -24,9 +27,9 @@ from src.game.agents.conversation_curator import (
     mock_conversation_curator,
 )
 from src.game.agents.player_autopilot import PolicyDecision
-from src.game.agents.villa_orchestrator import EndConversation, NPCSummon, VillaUpdate
-from src.game.engine.casa_amor import location_villa, locations_for_villa
+from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
 from src.game.engine.memory import add_memory_batch
+from src.game.engine.villa_validation import normalize_villa_update, validate_villa_update
 from src.game.state.autonomy import PendingNPCSummon
 from src.game.state.models import (
     BackgroundExchangeRecord,
@@ -67,6 +70,26 @@ def apply_villa_update(
     background_dialogue: BackgroundDialogueFn | None = None,
     conversation_curator: ConversationCuratorFn | None = None,
 ) -> AppliedVillaChanges:
+    return asyncio.run(
+        apply_villa_update_async(
+            state,
+            update,
+            rng,
+            background_dialogue=background_dialogue,
+            conversation_curator=conversation_curator,
+        )
+    )
+
+
+async def apply_villa_update_async(
+    state: GameState,
+    update: VillaUpdate,
+    rng: SeededRng,
+    *,
+    background_dialogue: BackgroundDialogueFn | None = None,
+    conversation_curator: ConversationCuratorFn | None = None,
+) -> AppliedVillaChanges:
+    """Apply a VillaUpdate while batching independent agent calls."""
     update = normalize_villa_update(state, update)
     validate_villa_update(state, update)
     speak = mock_background_dialogue if background_dialogue is None else background_dialogue
@@ -79,7 +102,7 @@ def apply_villa_update(
         _islander(state, movement.npc_id).location_id = movement.target_location
 
     for summon in update.npc_summoned_elsewhere:
-        batch = _apply_summon(state, summon, curate)
+        batch = await _apply_summon_async(state, summon, curate)
         if batch is not None:
             curator_batches.append(batch)
             memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
@@ -97,28 +120,45 @@ def apply_villa_update(
             topic=start.topic,
             started_on_turn=state.turn_index,
         )
-        exchange = speak(state, conversation, "")
-        _append_background_exchange(state, conversation, exchange)
-        background_dialogues.append(exchange)
         state.npc_conversations.append(conversation)
+        background_dialogues.append(
+            await _call_background_dialogue(speak, state, conversation, "")
+        )
+        _append_background_exchange(state, conversation, background_dialogues[-1])
 
-    for continuation in update.conversation_continues:
-        conversation = _active_conversation(state, continuation.conversation_id)
-        exchange = speak(state, conversation, continuation.nudge)
+    continuations = [
+        (_active_conversation(state, continuation.conversation_id), continuation.nudge)
+        for continuation in update.conversation_continues
+    ]
+    continuation_exchanges = await asyncio.gather(
+        *[
+            _call_background_dialogue(speak, state, conversation, nudge)
+            for conversation, nudge in continuations
+        ]
+    )
+    for (conversation, _nudge), exchange in zip(continuations, continuation_exchanges, strict=True):
         _append_background_exchange(state, conversation, exchange)
         background_dialogues.append(exchange)
 
     ended_ids = {ended.conversation_id for ended in update.conversation_ends}
     retained: list[NPCNPCConversation] = []
+    conversations_to_curate: list[tuple[NPCNPCConversation, list[str]]] = []
     for conversation in state.npc_conversations:
         if conversation.id not in ended_ids:
             retained.append(conversation)
             continue
         conversation.status = "closed"
-        batch = curate(state, conversation, _bystander_ids(state, conversation))
+        conversations_to_curate.append((conversation, _bystander_ids(state, conversation)))
+    state.npc_conversations = retained
+    closed_batches = await asyncio.gather(
+        *[
+            _call_curator(curate, state, conversation, bystanders)
+            for conversation, bystanders in conversations_to_curate
+        ]
+    )
+    for batch in closed_batches:
         curator_batches.append(batch)
         memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
-    state.npc_conversations = retained
 
     return AppliedVillaChanges(
         villa_update=update,
@@ -128,135 +168,34 @@ def apply_villa_update(
     )
 
 
-def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate:
-    """Make implicit conversation exits explicit before validation."""
-    current_locations = {
-        islander.id: islander.location_id for islander in state.islanders if not islander.eliminated
-    }
-    moving_ids = {movement.npc_id for movement in update.npc_movements}
-    ended_ids = {ended.conversation_id for ended in update.conversation_ends}
-    summoned_ids = {summon.from_conversation_id for summon in update.npc_summoned_elsewhere}
-    implied_ends: list[EndConversation] = []
-    implied_end_ids: set[str] = set()
-    for conversation in state.npc_conversations:
-        if conversation.id in ended_ids or conversation.id in summoned_ids:
-            continue
-        participants = set(conversation.participants)
-        participant_moved = bool(moving_ids & participants)
-        stale_location = any(
-            current_locations.get(participant) != conversation.location_id
-            for participant in participants
-        )
-        if participant_moved or stale_location:
-            implied_ends.append(
-                EndConversation(conversation_id=conversation.id, reason="participant_moved")
-            )
-            implied_end_ids.add(conversation.id)
-    if not implied_ends:
-        return update
-    return update.model_copy(
-        update={
-            "conversation_continues": [
-                continuation
-                for continuation in update.conversation_continues
-                if continuation.conversation_id not in implied_end_ids
-            ],
-            "conversation_ends": [*update.conversation_ends, *implied_ends],
-        }
-    )
+async def _call_background_dialogue(
+    speak: BackgroundDialogueFn,
+    state: GameState,
+    conversation: NPCNPCConversation,
+    nudge: str,
+) -> BackgroundExchange:
+    if inspect.iscoroutinefunction(speak):
+        return cast(BackgroundExchange, await speak(state, conversation, nudge))
+    owner = getattr(speak, "__self__", None)
+    async_generate = getattr(owner, "generate_async", None)
+    if async_generate is not None:
+        return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
+    return await asyncio.to_thread(speak, state, conversation, nudge)
 
 
-def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
-    if state.pending_gather is not None and any(
-        (
-            update.npc_movements,
-            update.conversation_starts,
-            update.conversation_continues,
-            update.conversation_ends,
-            update.npc_interruptions,
-            update.npc_summoned_elsewhere,
-        )
-    ):
-        raise ValueError("villa autonomy is paused while a gather is pending")
-    known = {islander.id for islander in state.islanders if not islander.eliminated}
-    active_ids = {conversation.id for conversation in state.npc_conversations}
-    movement_ids = [movement.npc_id for movement in update.npc_movements]
-    if len(movement_ids) != len(set(movement_ids)):
-        raise ValueError("duplicate NPC movement in VillaUpdate")
-    for movement in update.npc_movements:
-        _ensure_known_npc(movement.npc_id, known)
-        if movement.target_location not in locations_for_villa(state.villa):
-            raise ValueError("NPC movement crosses out of the current villa")
-    if len(update.npc_summoned_elsewhere) > 1:
-        raise ValueError("at most one NPC summon is allowed per turn")
-    for summon in update.npc_summoned_elsewhere:
-        _validate_summon(state, summon, known, set(movement_ids))
-
-    ended = {end.conversation_id for end in update.conversation_ends}
-    continued = {cont.conversation_id for cont in update.conversation_continues}
-    summoned_conversations = {summon.from_conversation_id for summon in update.npc_summoned_elsewhere}
-    overlap = ended & continued
-    if overlap:
-        raise ValueError(f"cannot end and continue same conversation: {sorted(overlap)}")
-    summon_overlap = (ended | continued) & summoned_conversations
-    if summon_overlap:
-        raise ValueError(f"cannot summon from and also end/continue conversation: {sorted(summon_overlap)}")
-    for conversation_id in ended | continued:
-        if conversation_id not in active_ids:
-            raise ValueError(f"unknown active NPC conversation: {conversation_id}")
-
-    projected_locations = {
-        islander.id: islander.location_id for islander in state.islanders if not islander.eliminated
-    }
-    for movement in update.npc_movements:
-        projected_locations[movement.npc_id] = movement.target_location
-
-    if len(update.npc_interruptions) > 1:
-        raise ValueError("at most one NPC interruption is allowed per turn")
-    if update.npc_interruptions:
-        active = state.active_conversation
-        if active is None:
-            raise ValueError("cannot interrupt when player has no active conversation")
-        if active.pending_interruption is not None:
-            raise ValueError("cannot interrupt while another interruption is already pending")
-        interruption = update.npc_interruptions[0]
-        _ensure_known_npc(interruption.interrupter_id, known)
-        if interruption.interrupter_id == active.target_id:
-            raise ValueError("conversation partner cannot interrupt their own conversation")
-        if projected_locations[interruption.interrupter_id] != state.location_id:
-            raise ValueError("interrupter is not at player location")
-
-    locked = _player_locked_npc_ids(state)
-    used_in_new: set[str] = set()
-    for start in update.conversation_starts:
-        if len(set(start.participants)) != 2:
-            raise ValueError(f"conversation start requires two unique participants: {start}")
-        if start.location not in locations_for_villa(state.villa):
-            raise ValueError("NPC conversation start crosses out of the current villa")
-        for participant in start.participants:
-            _ensure_known_npc(participant, known)
-            if location_villa(projected_locations[participant]) is not state.villa:
-                raise ValueError(f"NPC conversation participant is not in current villa: {participant}")
-            if participant in locked:
-                raise ValueError(f"NPC is in player conversation and cannot start NPC chat: {participant}")
-            if participant in used_in_new:
-                raise ValueError(f"NPC appears in multiple new conversations: {participant}")
-            used_in_new.add(participant)
-            if projected_locations[participant] != start.location:
-                raise ValueError(f"conversation start participant not at location: {start}")
-
-    for conversation in state.npc_conversations:
-        if conversation.id in ended:
-            continue
-        if conversation.id in summoned_conversations:
-            continue
-        for participant in conversation.participants:
-            if participant in locked:
-                raise ValueError(f"NPC is in player conversation and active NPC chat: {participant}")
-            if projected_locations[participant] != conversation.location_id:
-                raise ValueError(
-                    f"active conversation participant moved away without ending: {conversation.id}"
-                )
+async def _call_curator(
+    curate: ConversationCuratorFn,
+    state: GameState,
+    conversation: Conversation | NPCNPCConversation,
+    bystanders: list[str],
+) -> MemoryBatch:
+    if inspect.iscoroutinefunction(curate):
+        return cast(MemoryBatch, await curate(state, conversation, bystanders))
+    owner = getattr(curate, "__self__", None)
+    async_curate = getattr(owner, "curate_async", None)
+    if async_curate is not None:
+        return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
+    return await asyncio.to_thread(curate, state, conversation, bystanders)
 
 
 def pending_to_summon(pending: PendingNPCSummon) -> NPCSummon:
@@ -309,29 +248,37 @@ def _apply_summon(
     return batch
 
 
-def _validate_summon(
+async def _apply_summon_async(
     state: GameState,
     summon: NPCSummon,
-    known: set[str],
-    moved_ids: set[str],
-) -> None:
-    _ensure_known_npc(summon.npc_id, known)
-    if summon.npc_id in moved_ids:
-        raise ValueError("cannot summon and move the same NPC in one VillaUpdate")
-    if summon.target_location not in locations_for_villa(state.villa):
-        raise ValueError("NPC summon crosses out of the current villa")
+    curate: ConversationCuratorFn,
+) -> MemoryBatch | None:
     if summon.from_conversation_id == "player_active":
-        active = state.active_conversation
-        if active is None or active.target_id != summon.npc_id:
-            raise ValueError("player_active summon must target the active conversation partner")
-        if _islander(state, summon.npc_id).location_id != state.location_id:
-            raise ValueError("summoned player conversation target is not at player location")
-        return
-    conversation = _active_conversation(state, summon.from_conversation_id)
-    if summon.npc_id not in conversation.participants:
-        raise ValueError("summoned NPC is not in named conversation")
-    if _islander(state, summon.npc_id).location_id != conversation.location_id:
-        raise ValueError("summoned NPC is not at named conversation location")
+        conversation = state.active_conversation
+        if conversation is None:
+            raise ValueError("player summon missing active conversation")
+        conversation.status = "closed"
+        batch = await _call_curator(
+            curate,
+            state,
+            conversation,
+            _player_conversation_bystanders(state, conversation),
+        )
+        state.active_conversation = None
+    else:
+        npc_conversation = _active_conversation(state, summon.from_conversation_id)
+        npc_conversation.status = "closed"
+        batch = await _call_curator(
+            curate,
+            state,
+            npc_conversation,
+            _bystander_ids(state, npc_conversation),
+        )
+        state.npc_conversations = [
+            existing for existing in state.npc_conversations if existing.id != npc_conversation.id
+        ]
+    _islander(state, summon.npc_id).location_id = summon.target_location
+    return batch
 
 
 def _player_conversation_bystanders(state: GameState, conversation: Conversation) -> list[str]:
@@ -356,19 +303,6 @@ def _islander(state: GameState, islander_id: str) -> IslanderState:
         if islander.id == islander_id and not islander.eliminated:
             return islander
     raise ValueError(f"unknown active islander: {islander_id}")
-
-
-def _ensure_known_npc(npc_id: str, known: set[str]) -> None:
-    if npc_id == "player":
-        raise ValueError("player cannot appear in NPC-NPC villa update")
-    if npc_id not in known:
-        raise ValueError(f"unknown or eliminated NPC in VillaUpdate: {npc_id}")
-
-
-def _player_locked_npc_ids(state: GameState) -> set[str]:
-    if state.active_conversation is None:
-        return set()
-    return {state.active_conversation.target_id}
 
 
 def _bystander_ids(state: GameState, conversation: NPCNPCConversation) -> list[str]:

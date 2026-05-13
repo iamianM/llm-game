@@ -429,3 +429,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: gossip-seed propagation creates listener memories, attenuates emotional weight, handles unknown listeners, and dedupes against existing memories
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (285 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused Conversation Curator suite, and full LLM suite (55 passed)
 - Prompt note: installed Claude's H10.2 prompt updates for `conversation_curator.md`, `islander_voice.md`, and `villa_orchestrator.md`; no Codex-authored prompt wording changes made
+
+## Phase H10.3
+
+- Files added: `src/game/engine/turn_async.py`, `src/game/engine/villa_validation.py`, and `tests/engine/test_h10_async_routing.py`
+- Files changed: model routing constants now use `gpt-5.4-mini` for Conversation Curator, `gpt-4.1-nano` for Background Dialogue and Player Autopilot, and `gpt-4.1-mini` for Contextual Options; Villa application now has an async path that batches independent background dialogue and curator calls while preserving ordered state mutation; Villa validation moved out of the application module to preserve R9 line limits
+- Tests added: H10 model routing constants and async VillaUpdate application with async background callables
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (287 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused async/villa tests, and full LLM suite note: one stochastic pull-rejection wording failure passed on focused rerun
+- Architecture note: `run_turn` stays sync-compatible for existing CLI/test callers; `turn_async.run_turn_async` provides the async entry point for callers that already own an event loop

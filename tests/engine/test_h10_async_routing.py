@@ -1,0 +1,60 @@
+"""Tests for H10.3 model routing and async villa application."""
+
+from __future__ import annotations
+
+import asyncio
+
+from src.game.agents.background_dialogue import (
+    BACKGROUND_DIALOGUE_MODEL,
+    mock_background_dialogue,
+)
+from src.game.agents.contextual_options import CONTEXTUAL_OPTIONS_MODEL
+from src.game.agents.conversation_curator import CONVERSATION_CURATOR_MODEL
+from src.game.agents.player_autopilot import PLAYER_AUTOPILOT_MODEL
+from src.game.agents.villa_orchestrator import NewConversation, VillaUpdate
+from src.game.engine.villa import apply_villa_update_async
+from src.game.state.models import GameState, Location, NPCNPCConversation, new_game
+from src.game.state.rng import SeededRng
+
+
+def test_h10_model_routing_constants() -> None:
+    assert CONVERSATION_CURATOR_MODEL == "gpt-5.4-mini"
+    assert BACKGROUND_DIALOGUE_MODEL == "gpt-4.1-nano"
+    assert PLAYER_AUTOPILOT_MODEL == "gpt-4.1-nano"
+    assert CONTEXTUAL_OPTIONS_MODEL == "gpt-4.1-mini"
+
+
+def test_apply_villa_update_async_accepts_parallel_background_callables() -> None:
+    state = new_game(1)
+    for islander in state.islanders[:4]:
+        islander.location_id = Location.POOL
+    first_pair = [state.islanders[0].id, state.islanders[1].id]
+    second_pair = [state.islanders[2].id, state.islanders[3].id]
+    update = VillaUpdate(
+        conversation_starts=[
+            NewConversation(participants=first_pair, location=Location.POOL, topic="pool gossip"),
+            NewConversation(participants=second_pair, location=Location.POOL, topic="villa strategy"),
+        ]
+    )
+
+    async def background(
+        game_state: GameState,
+        conversation: NPCNPCConversation,
+        nudge: str = "",
+    ):
+        await asyncio.sleep(0)
+        return mock_background_dialogue(game_state, conversation, nudge)
+
+    changes = asyncio.run(
+        apply_villa_update_async(
+            state,
+            update,
+            SeededRng(1),
+            background_dialogue=background,
+            conversation_curator=None,
+        )
+    )
+
+    assert len(changes.background_dialogues) == 2
+    assert len(state.npc_conversations) == 2
+    assert all(len(conversation.exchanges) == 1 for conversation in state.npc_conversations)

@@ -11,6 +11,7 @@ timestamps, and applies the memories to canonical state.
 
 from __future__ import annotations
 
+import asyncio
 import re
 from collections.abc import Callable, Sequence
 from functools import cached_property
@@ -27,7 +28,7 @@ from src.game.state.models import (
     NPCNPCConversation,
 )
 
-CONVERSATION_CURATOR_MODEL = "gpt-4.1-mini"
+CONVERSATION_CURATOR_MODEL = "gpt-5.4-mini"
 
 CuratableConversation = Conversation | NPCNPCConversation
 ConversationCuratorFn = Callable[[GameState, CuratableConversation, Sequence[str]], MemoryBatch]
@@ -77,10 +78,20 @@ class OpenAIConversationCurator:
                     raise
         raise AssertionError("unreachable curator retry state")
 
+    async def curate_async(
+        self,
+        state: GameState,
+        conversation: CuratableConversation,
+        bystander_ids: Sequence[str] = (),
+    ) -> MemoryBatch:
+        """Curate a closed conversation without blocking sibling curator calls."""
+        return await asyncio.to_thread(self.curate, state, conversation, bystander_ids)
+
     def _generate_batch(self, rendered_context: str) -> MemoryBatch:
         """Request one parsed memory batch from the model."""
         response = self._client.responses.parse(
             model=self._model,
+            reasoning={"effort": "low"},
             instructions=Path("src/game/agents/prompts/conversation_curator.md").read_text(
                 encoding="utf-8"
             ),

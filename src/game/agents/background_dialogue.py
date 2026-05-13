@@ -11,6 +11,7 @@ Orchestrator; memory extraction comes from the Curator.
 
 from __future__ import annotations
 
+import asyncio
 import re
 from collections.abc import Callable
 from functools import cached_property
@@ -23,7 +24,7 @@ from pydantic import BaseModel, ConfigDict
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.state.models import GameState, NPCNPCConversation
 
-BACKGROUND_DIALOGUE_MODEL = "gpt-4.1-mini"
+BACKGROUND_DIALOGUE_MODEL = "gpt-4.1-nano"
 
 
 class BackgroundExchange(BaseModel):
@@ -97,6 +98,15 @@ class OpenAIBackgroundDialogue:
             if attempt == 1 and last_error is not None:
                 raise last_error
         raise AssertionError("unreachable background dialogue retry state")
+
+    async def generate_async(
+        self,
+        state: GameState,
+        conversation: NPCNPCConversation,
+        nudge: str = "",
+    ) -> BackgroundExchange:
+        """Generate one NPC-NPC exchange without blocking sibling background calls."""
+        return await asyncio.to_thread(self.generate, state, conversation, nudge)
 
 
 def mock_background_dialogue(

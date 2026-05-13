@@ -121,7 +121,10 @@ class OpenAIVillaOrchestrator:
                 )
             update = self._generate_update(retry_context)
             try:
-                from src.game.engine.villa import normalize_villa_update, validate_villa_update
+                from src.game.engine.villa_validation import (
+                    normalize_villa_update,
+                    validate_villa_update,
+                )
 
                 update = normalize_villa_update(state, update)
                 validate_villa_update(state, update)

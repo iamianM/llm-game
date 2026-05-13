@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import asyncio
+
 from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.villa_orchestrator import (
@@ -11,7 +13,11 @@ from src.game.agents.villa_orchestrator import (
     mock_villa_orchestrator,
 )
 from src.game.engine.arrival_rolls import ArrivalRoll, roll_arrival
-from src.game.engine.villa import AppliedVillaChanges, apply_villa_update, pending_to_summon
+from src.game.engine.villa import (
+    AppliedVillaChanges,
+    apply_villa_update_async,
+    pending_to_summon,
+)
 from src.game.state.autonomy import PendingNPCSummon
 from src.game.state.models import GameState, IslanderState, Location, NPCInterruption
 from src.game.state.rng import SeededRng
@@ -25,14 +31,33 @@ def apply_villa_turn(
     background_dialogue: BackgroundDialogueFn | None,
     conversation_curator: ConversationCuratorFn | None,
 ) -> tuple[VillaUpdate, AppliedVillaChanges, list[ArrivalRoll]]:
-    """Apply one orchestrator turn and roll for player-location arrivals."""
+    return asyncio.run(
+        apply_villa_turn_async(
+            state,
+            rng,
+            villa_orchestrator,
+            background_dialogue=background_dialogue,
+            conversation_curator=conversation_curator,
+        )
+    )
+
+
+async def apply_villa_turn_async(
+    state: GameState,
+    rng: SeededRng,
+    villa_orchestrator: VillaOrchestratorFn | None,
+    *,
+    background_dialogue: BackgroundDialogueFn | None,
+    conversation_curator: ConversationCuratorFn | None,
+) -> tuple[VillaUpdate, AppliedVillaChanges, list[ArrivalRoll]]:
+    """Apply one orchestrator turn with parallel background agents."""
     if state.pending_gather is not None:
         villa_update = VillaUpdate()
         return villa_update, AppliedVillaChanges(villa_update=villa_update), []
     orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
     villa_update = _merge_pending_summon(state, orchestrate(state))
     pre_locations = {islander.id: islander.location_id for islander in state.islanders}
-    villa_changes = apply_villa_update(
+    villa_changes = await apply_villa_update_async(
         state,
         villa_update,
         rng,
