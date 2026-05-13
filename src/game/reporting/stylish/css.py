@@ -11,6 +11,7 @@ a{color:var(--drama)}code{font-size:12px}.shell{max-width:1480px;margin:0 auto;p
 .turn{margin:0 0 16px}.turn summary{cursor:pointer;font:800 22px/1.25 Inter,sans-serif}.meta{color:var(--muted);font-size:14px}.success{color:var(--win)}.miss{color:var(--drama)}
 .dialogue p{margin:.5rem 0}.speaker{font:800 12px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--cool)}
 .math details{border-left:4px solid var(--cool);padding-left:12px}.pull-attempt{border-left:4px solid #d8793f}.interruption{border-left:4px solid #6b3fa0}.memory{border-left:4px solid var(--warm)}.hideaway{border-left:4px solid #b36b83;background:#fff9fb}
+.background{border-left:4px solid #3a5a73}.bg-exchange{border-top:1px solid var(--border);padding-top:10px;margin-top:10px}.bg-exchange p{margin:.35rem 0}
 .couple{margin:10px 0;padding:10px;border:1px solid var(--border);border-radius:8px}.couple.player{border-color:var(--drama);box-shadow:inset 3px 0 0 var(--drama)}.bar-bg{height:10px;background:#eee4d7;border-radius:999px;overflow:hidden}.bar{display:block;height:10px;background:var(--warm)}
 svg{max-width:100%;height:auto}.viz{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--border);padding:8px;text-align:left}
 @media(max-width:700px){.shell{padding:16px}.layout{display:block}.left,.right{position:static;margin-bottom:14px}.viz{grid-template-columns:1fr}.hero h1{font-size:30px}}

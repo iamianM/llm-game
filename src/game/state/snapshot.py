@@ -59,6 +59,15 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
                         if isinstance(exchange, dict):
                             exchange.pop("speaker_a_line", None)
                             exchange.pop("speaker_b_line", None)
+    recaps = payload.get("daily_recaps")
+    if isinstance(recaps, list):
+        for recap in recaps:
+            if isinstance(recap, dict):
+                items = recap.get("items")
+                if isinstance(items, list):
+                    for item in items:
+                        if isinstance(item, dict):
+                            item.pop("content", None)
     pending_text = payload.get("pending_text")
     if isinstance(pending_text, dict):
         pending_text.pop("body", None)

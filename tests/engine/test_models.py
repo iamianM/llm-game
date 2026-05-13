@@ -11,6 +11,8 @@ from src.game.state.models import (
     AttachmentStyle,
     BackgroundExchangeRecord,
     Conversation,
+    DailyRecap,
+    DailyRecapItem,
     ExchangeRecord,
     GameState,
     Gender,
@@ -176,6 +178,30 @@ def test_background_dialogue_does_not_affect_hash() -> None:
     state.npc_conversations[0].topic = "Changed topic."
     state.npc_conversations[0].exchanges[0].speaker_a_line = "Changed Chloe line."
     state.npc_conversations[0].exchanges[0].speaker_b_line = "Changed Maya line."
+
+    assert state_hash(state_hash_payload(state)) == first
+
+
+def test_daily_recap_content_does_not_affect_hash() -> None:
+    """Daily recap prose stays out of deterministic hashes."""
+    state = new_game(1)
+
+    state.daily_recaps.append(
+        DailyRecap(
+            day=1,
+            items=[
+                DailyRecapItem(
+                    holder_id="chloe",
+                    subject_id="maya",
+                    content="Original recap.",
+                    emotional_weight=8,
+                    tags=["background"],
+                )
+            ],
+        )
+    )
+    first = state_hash(state_hash_payload(state))
+    state.daily_recaps[0].items[0].content = "Changed recap."
 
     assert state_hash(state_hash_payload(state)) == first
 

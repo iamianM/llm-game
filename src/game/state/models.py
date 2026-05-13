@@ -37,7 +37,7 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 20
+SCHEMA_VERSION = 21
 
 
 class Phase(StrEnum):
@@ -197,6 +197,27 @@ class PendingGather(BaseModel):
     fires_on_turn: int
 
 
+class DailyRecapItem(BaseModel):
+    """One notable memory shown in the daily recap."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    holder_id: str
+    subject_id: str
+    content: str
+    emotional_weight: int
+    tags: list[str] = Field(default_factory=list)
+
+
+class DailyRecap(BaseModel):
+    """End-of-day background recap."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    day: int
+    items: list[DailyRecapItem] = Field(default_factory=list)
+
+
 class FollowUpOption(BaseModel):
     """One contextual follow-up choice in an open conversation."""
 
@@ -326,6 +347,7 @@ class GameState(BaseModel):
     pending_text: ProducerText | None = None
     pending_gather: PendingGather | None = None
     pending_group_date: GroupDate | None = None
+    daily_recaps: list[DailyRecap] = Field(default_factory=list)
     hideaway: HideawayState = Field(default_factory=HideawayState)
     casa_amor_state: CasaAmorState | None = None
     outcome: RunOutcome | None = None

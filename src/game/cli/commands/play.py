@@ -34,6 +34,9 @@ from src.game.cli.commands.play_render import (
     print_actions as _print_actions,
 )
 from src.game.cli.commands.play_render import (
+    print_background_history as _print_background_history,
+)
+from src.game.cli.commands.play_render import (
     print_character_card as _print_character_card,
 )
 from src.game.cli.commands.play_render import (
@@ -98,7 +101,7 @@ def run(args: argparse.Namespace) -> int:
         print(f"Autopilot persona: {args.persona}")
     else:
         _run_character_creation_flow(state)
-    print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
+    print("Game CLI. Type a number, /state, /background, /hash, /help, or /quit.")
 
     while not state.is_terminal:
         _print_state(state)
@@ -126,12 +129,15 @@ def run(args: argparse.Namespace) -> int:
                 return 0
             if raw == "/help":
                 print(
-                    "Commands: /state, /hash, /help, /quit. Choose actions by number. "
+                    "Commands: /state, /background, /hash, /help, /quit. Choose actions by number. "
                     "Wheel exit options close gracefully; Walk away is curt."
                 )
                 continue
             if raw == "/state":
                 _print_state(state, debug=True)
+                continue
+            if raw == "/background":
+                _print_background_history(records)
                 continue
             if raw == "/hash":
                 print(state_hash(state_hash_payload(state)))

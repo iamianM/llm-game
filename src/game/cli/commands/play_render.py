@@ -136,6 +136,7 @@ def print_turn(turn: TurnResult) -> None:
         )
     if turn.auto_advance:
         print(f"Time passes. -> {turn.state.phase.value}.")
+    _print_latest_daily_recap(turn)
     if turn.exchange is not None:
         print(f'You: "{turn.exchange.player_dialogue}"')
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
@@ -210,6 +211,26 @@ def print_villa_update(turn: TurnResult) -> None:
         print(f"  - {line}")
 
 
+def print_background_history(records: list[dict[str, object]]) -> None:
+    """Print the last three recorded background exchanges."""
+    exchanges: list[dict[str, object]] = []
+    for record in records:
+        commits = record.get("agent_commits")
+        if not isinstance(commits, dict):
+            continue
+        background = commits.get("background_dialogues")
+        if isinstance(background, list):
+            exchanges.extend(item for item in background if isinstance(item, dict))
+    if not exchanges:
+        print("No background dialogue recorded yet.")
+        return
+    print("Recent background dialogue:")
+    for exchange in exchanges[-3:]:
+        print(f"  [{exchange.get('tone', 'unknown')}] {exchange.get('speaker_a_id')} -> {exchange.get('speaker_b_id')}")
+        print(f"    {exchange.get('speaker_a_line', '')}")
+        print(f"    {exchange.get('speaker_b_line', '')}")
+
+
 def name_for(state: GameState, islander_id: str) -> str:
     """Return a display name for an islander id."""
     if islander_id == "player":
@@ -218,6 +239,20 @@ def name_for(state: GameState, islander_id: str) -> str:
         if islander.id == islander_id:
             return islander.name
     return islander_id
+
+
+def _print_latest_daily_recap(turn: TurnResult) -> None:
+    if turn.state.day <= 1 or not turn.state.daily_recaps:
+        return
+    recap = turn.state.daily_recaps[-1]
+    if recap.day != turn.state.day - 1:
+        return
+    if not recap.items:
+        print("While you were busy yesterday: no major villa memories surfaced.")
+        return
+    print("While you were busy yesterday:")
+    for item in recap.items:
+        print(f"  - {name_for(turn.state, item.holder_id)} remembered {item.subject_id}: {item.content}")
 
 
 def names_for(state: GameState, islander_ids: list[str]) -> str:

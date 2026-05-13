@@ -25,6 +25,7 @@ from src.game.reporting.html_events import challenge_block, group_date_block, pr
 from src.game.reporting.html_math import math_block
 from src.game.reporting.memory_web import memory_web_svg
 from src.game.reporting.stylish.avatars import avatar_svg
+from src.game.reporting.stylish.background import background_dialogue_block, daily_recap_block
 from src.game.reporting.stylish.couple_status import couple_status_panel
 from src.game.reporting.stylish.css import STYLISH_CSS
 from src.game.reporting.stylish.perception_graph import perception_graph_svg
@@ -52,7 +53,7 @@ def _timeline(records: list[dict[str, Any]]) -> str:
     sections = []
     for day, day_records in grouped_days(records):
         cards = "".join(_turn_card(record) for record in day_records)
-        sections.append(f"<section>{day_heading(day, day_records)}{cards}</section>")
+        sections.append(f"<section>{day_heading(day, day_records)}{daily_recap_block(day, records)}{cards}</section>")
     return "".join(sections)
 
 
@@ -78,6 +79,7 @@ def _turn_card(record: dict[str, Any]) -> str:
         f"{pull_attempt_block(result.get('pull_attempt'))}{arrival_roll_block(record)}"
         f"<div class='dialogue'>{exchange_block(record.get('exchange'))}</div>"
         f"{event_block(record.get('event_narration'))}{follow_up_block(record.get('follow_up_menu'))}"
+        f"{background_dialogue_block(record)}"
         f"{interruption_block(record)}{agent_commit_block(record.get('agent_commits'))}{memory_block(record.get('agent_commits'))}"
         f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs {escape(str(result.get('success_chance')))} "
         f"<span class='{outcome_class}'>{'Success' if result['success'] else 'Miss'}</span></p>"

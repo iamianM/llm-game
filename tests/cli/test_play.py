@@ -11,6 +11,7 @@ from types import SimpleNamespace
 
 from src.game.cli.commands.play import run as play_run
 from src.game.cli.commands.play_autopilot import apply_autopilot_character, decide_with_autopilot
+from src.game.cli.commands.play_render import print_background_history
 from src.game.engine.actions import ActionKind, available_actions
 from src.game.engine.challenges import schedule_challenge
 from src.game.state.models import Conversation, ExchangeRecord, Mood, new_game
@@ -125,6 +126,34 @@ def test_play_autopilot_resolves_challenge_before_optional_chat() -> None:
 
     assert action.kind is ActionKind.CHALLENGE_RESPONSE
     assert "before optional chats" in decision.rationale
+
+
+def test_cli_background_command_prints_last_three() -> None:
+    records = [
+        {
+            "agent_commits": {
+                "background_dialogues": [
+                    {
+                        "speaker_a_id": f"a{index}",
+                        "speaker_b_id": f"b{index}",
+                        "speaker_a_line": f"line a {index}",
+                        "speaker_b_line": f"line b {index}",
+                        "tone": "warm",
+                    }
+                ]
+            }
+        }
+        for index in range(4)
+    ]
+    stdout = StringIO()
+
+    with redirect_stdout(stdout):
+        print_background_history(records)
+
+    output = stdout.getvalue()
+    assert "line a 0" not in output
+    assert "line a 1" in output
+    assert "line a 3" in output
 
 
 def test_play_autopilot_advances_after_one_conversation_in_phase() -> None:

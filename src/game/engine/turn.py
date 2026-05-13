@@ -34,6 +34,7 @@ from src.game.engine.conversation import (
     departure_probability,
     start_conversation,
 )
+from src.game.engine.daily_recap import append_daily_recap_if_needed
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
 from src.game.engine.memory import (
     add_memory_batch,
@@ -98,6 +99,7 @@ def run_turn(
     background_dialogue: BackgroundDialogueFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
+    starting_day = state.day
     pre_curator_batches: list[MemoryBatch] = []
     pull_attempt: PullAttempt | None = None
     exchange: Exchange | None = None
@@ -139,6 +141,7 @@ def run_turn(
                 if check_auto_advance(state):
                     advance_phase_with_events(state, rng)
                     auto_advance = True
+                append_daily_recap_if_needed(state, starting_day)
                 return TurnResult(
                     state=state,
                     mechanical_result=result,
@@ -191,6 +194,7 @@ def run_turn(
         move_everyone_to_gather(state)
         phase_events, audience_snapshot = resolve_pending_gather(state, rng)
         ceremony_events.extend(phase_events)
+        append_daily_recap_if_needed(state, starting_day)
         state.turn_index += 1
         event_narration = None
         if ceremony_events:
@@ -300,6 +304,7 @@ def run_turn(
         ceremony_events.extend(phase_events)
         audience_snapshot = audience_snapshot or audience_after_auto
         auto_advance = True
+    append_daily_recap_if_needed(state, starting_day)
     event_narration = None
     if ceremony_events:
         remember_ceremony_events(state, ceremony_events)

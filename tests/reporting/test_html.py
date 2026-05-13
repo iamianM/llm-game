@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.eval_dashboard import playthrough_eval_page
 from src.game.reporting.html import session_page
+from src.game.reporting.stylish.background import background_dialogue_block
 
 
 def test_session_page_renders_math_villa_memories_pull_and_interruption() -> None:
@@ -31,6 +32,28 @@ def test_playthrough_eval_page_links_to_session_turns() -> None:
     assert "Open session.html" in html
     assert "Turn 1" in html
     assert "href='session.html#turn-1'" in html
+
+
+def test_background_dialogues_render_full_text_in_html() -> None:
+    """Stylish reports show full off-screen dialogue lines."""
+    record = {
+        "agent_commits": {
+            "background_dialogues": [
+                {
+                    "speaker_a_id": "maya",
+                    "speaker_b_id": "liam",
+                    "speaker_a_line": "This is a long Maya line that should render fully.",
+                    "speaker_b_line": "This is Liam answering with the full line.",
+                    "tone": "flirty",
+                }
+            ]
+        }
+    }
+
+    html = background_dialogue_block(record)
+
+    assert "This is a long Maya line that should render fully." in html
+    assert "This is Liam answering with the full line." in html
 
 
 def _record() -> dict[str, object]:

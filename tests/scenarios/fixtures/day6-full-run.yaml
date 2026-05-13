@@ -1,6 +1,6 @@
 name: day6-full-run
 seed: 6
-expected_hash: f4e740406a5868cd12a8e3ebb52bde079f7d08905b550341b45473da15a7732d
+expected_hash: 8e080229bfa955e6b71fdf8e3b935add10ea09792d5437f0d51cd3aa78989578
 actions:
 - kind: advance_phase
 - kind: advance_phase

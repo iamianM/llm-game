@@ -373,3 +373,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: producer-text gather scheduling, Casa Amor gather resolution, conversation cleanup before gather events, final vote gather resolution, and updated Casa/final-vote tests for the two-step schedule/resolve flow
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (268 passed in 12.04s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
 - Scenario fixture: all fixtures regenerated for mandatory gather events; scripts now include `join_gather` where producer texts or ceremonies must interrupt normal play
+
+## Phase H9.6
+
+- Files added: `src/game/engine/daily_recap.py` and `src/game/reporting/stylish/background.py`
+- Files changed: canonical state schema, state hash exclusions, turn day-rollover recap generation, CLI slash-command handling, trace recording, stylish report rendering, and all scenario hashes for `SCHEMA_VERSION = 21`
+- Tests added: `/background` history rendering, full background-dialogue HTML rendering, daily recap generation at day rollover, and daily recap prose hash exclusion
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (272 passed in 10.06s), content lint, fixture determinism, line-cap audit, and full LLM suite (53 passed on rerun after one stochastic pre-existing pull-rejection wording failure)
+- Scenario fixture: all fixtures regenerated for daily recap state

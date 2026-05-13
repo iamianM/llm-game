@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
 from src.game.state.models import (
@@ -113,6 +114,32 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
     assert result.state.npc_conversations == []
     assert all(islander.location_id is not Location.TERRACE for islander in result.state.islanders)
     assert result.curator_batches
+
+
+def test_daily_recap_generated_at_day_rollover() -> None:
+    """Day rollover appends a recap from notable memories."""
+    state = new_game(1)
+    state.day = 1
+    state.phase = Phase.EVENING
+    add_memory(
+        state,
+        create_memory(
+            holder_id="chloe",
+            subject_id="maya",
+            source="witnessed",
+            day=1,
+            turn=0,
+            weight=9,
+            tags=["background"],
+            content="Maya and Liam had a sharp terrace moment.",
+        ),
+    )
+
+    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+
+    assert result.state.day == 2
+    assert result.state.daily_recaps
+    assert result.state.daily_recaps[0].items[0].content == "Maya and Liam had a sharp terrace moment."
 
 
 def test_apply_action_does_not_bump_turn_index() -> None:

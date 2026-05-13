@@ -48,6 +48,7 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
         "pending_gather": None if state.pending_gather is None else state.pending_gather.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
+        "daily_recaps": [recap.model_dump(mode="json") for recap in state.daily_recaps],
         "revealed_preferences": {
             islander.id: revealed
             for islander in state.islanders
