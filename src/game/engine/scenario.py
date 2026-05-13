@@ -19,9 +19,10 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
 from src.game.agents.islander_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.character_creation import create_character
 from src.game.engine.rules import MechanicalResult
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import FollowUpMenu, GameState, PlayerStats, new_game
+from src.game.state.models import CharacterCreation, FollowUpMenu, GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -34,6 +35,7 @@ class ActionScript(BaseModel):
     name: str
     seed: int
     player_stats: PlayerStats | None = None
+    character_creation: CharacterCreation | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None
 
@@ -63,6 +65,13 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
     """Replay ``script`` from a fresh deterministic game."""
     seed = script.seed if seed_override is None else seed_override
     state = new_game(seed, player_stats=script.player_stats)
+    if script.character_creation is not None:
+        create_character(
+            state,
+            archetype_id=script.character_creation.archetype_id,
+            stats=script.character_creation.stats,
+            rerolled=script.character_creation.rerolled,
+        )
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
     contextual_options = _scripted_contextual_options(script.actions)

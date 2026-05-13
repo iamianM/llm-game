@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.game.reporting.html_audience import audience_block
 from src.game.reporting.html_base import escape, index_page, page, table_page
 from src.game.reporting.html_blocks import (
     agent_commit_block,
@@ -55,6 +56,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"{pull_attempt_block(result.get('pull_attempt'))}"
         f"{exchange_block(record.get('exchange'))}"
         f"{event_block(record.get('event_narration'))}"
+        f"{audience_block(record.get('audience_snapshot'))}"
         f"{follow_up_block(record.get('follow_up_menu'))}"
         f"{interruption_block(record)}"
         f"{agent_commit_block(record.get('agent_commits'))}"

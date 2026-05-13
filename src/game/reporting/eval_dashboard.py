@@ -33,6 +33,8 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Gossip picks", stats.gossip_picks),
         ("Low-chance rolls", stats.low_chance_rolls),
         ("Ceremony events", stats.ceremony_events),
+        ("Audience snapshots", stats.audience_snapshots),
+        ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(
         f"<tr><th>{escape(label)}</th><td>{escape(value)}</td></tr>"

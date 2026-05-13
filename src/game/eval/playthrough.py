@@ -48,6 +48,8 @@ class PlaythroughStats(BaseModel):
     gossip_picks: int
     low_chance_rolls: int
     ceremony_events: int
+    audience_snapshots: int
+    outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
 
@@ -78,7 +80,8 @@ def evaluate_trace(package: dict[str, Any], *, trace_path: str = "<memory>") -> 
     if not isinstance(records, list):
         raise ValueError("playthrough trace requires a records list")
     typed_records = [record for record in records if isinstance(record, dict)]
-    stats = _stats(typed_records)
+    final_state = package.get("final_state")
+    stats = _stats(typed_records, final_state if isinstance(final_state, dict) else None)
     assertions = _assertions(typed_records, stats)
     interesting = sorted(
         {
@@ -99,7 +102,7 @@ def evaluate_trace(package: dict[str, Any], *, trace_path: str = "<memory>") -> 
     )
 
 
-def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
+def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) -> PlaythroughStats:
     category_success: dict[str, Counter[str]] = defaultdict(Counter)
     conversations_started = 0
     wheel_exits = 0
@@ -114,6 +117,7 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
     gossip_picks = 0
     low_chance_rolls = 0
     ceremony_events = 0
+    audience_snapshots = 0
 
     for record in records:
         action = _dict(record.get("action"))
@@ -163,6 +167,8 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
         events = record.get("ceremony_events")
         if isinstance(events, list):
             ceremony_events += len(events)
+        if isinstance(record.get("audience_snapshot"), dict):
+            audience_snapshots += 1
         if turn < 0:
             raise ValueError("recorded turn must be non-negative")
 
@@ -185,6 +191,8 @@ def _stats(records: list[dict[str, Any]]) -> PlaythroughStats:
         gossip_picks=gossip_picks,
         low_chance_rolls=low_chance_rolls,
         ceremony_events=ceremony_events,
+        audience_snapshots=audience_snapshots,
+        outcome=_final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
 
@@ -212,6 +220,8 @@ def _assertions(
         _assert("gossip_pick", "At least one gossip option was picked", stats.gossip_picks >= 1, f"{stats.gossip_picks} gossip pick(s)", _turns_with_category(records, "gossip")),
         _assert("ceremony_event_observed", "At least one ceremony or bombshell event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", _turns_with_ceremony(records)),
         _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", _turns_with_background(records)),
+        _assert("outcome_assigned", "Run has a defined outcome", stats.outcome is not None, f"outcome: {stats.outcome or 'none'}", _turns_with_outcome(records)),
+        _assert("audience_ranking_per_day", "Audience rankings were recorded", stats.audience_snapshots >= 1, f"{stats.audience_snapshots} audience snapshot(s)", _turns_with_audience(records)),
     ]
 
 
@@ -329,6 +339,23 @@ def _turns_with_ceremony(records: list[dict[str, Any]]) -> list[int]:
     return turns
 
 
+def _turns_with_audience(records: list[dict[str, Any]]) -> list[int]:
+    return [_turn(record) for record in records if isinstance(record.get("audience_snapshot"), dict)]
+
+
+def _turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
+    return [
+        _turn(record)
+        for record in records
+        if any(_dict(event).get("kind") == "final_vote" for event in _list(record.get("ceremony_events")))
+    ]
+
+
+def _final_outcome(final_state: dict[str, Any] | None) -> str | None:
+    outcome = None if final_state is None else final_state.get("outcome")
+    return outcome if isinstance(outcome, str) else None
+
+
 def _record_category(record: dict[str, Any]) -> str | None:
     action = _dict(record.get("action"))
     if action.get("kind") != "respond_with":
@@ -365,6 +392,9 @@ def _turn(record: dict[str, Any]) -> int:
     turn = record.get("turn")
     return turn if isinstance(turn, int) else -1
 
-
 def _dict(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
+
+
+def _list(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []

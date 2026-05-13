@@ -17,6 +17,9 @@ from src.game.cli.commands.play_render import (
     print_actions as _print_actions,
 )
 from src.game.cli.commands.play_render import (
+    print_character_card as _print_character_card,
+)
+from src.game.cli.commands.play_render import (
     print_state as _print_state,
 )
 from src.game.cli.commands.play_render import (
@@ -26,10 +29,15 @@ from src.game.cli.commands.play_render import (
     print_villa_update as _print_villa_update,
 )
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
+from src.game.engine.character_creation import (
+    DEFAULT_ARCHETYPE_STATS,
+    PLAYER_ARCHETYPES,
+    create_character,
+)
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import GameState, Location, new_game
+from src.game.state.models import CharacterCreation, GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -63,6 +71,7 @@ def run(args: argparse.Namespace) -> int:
     background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
     record_path = None if args.record is None else Path(args.record)
     records: list[dict[str, Any]] = []
+    _run_character_creation_flow(state)
     print("Game CLI. Type a number, /state, /hash, /help, or /quit.")
 
     while not state.is_terminal:
@@ -149,6 +158,61 @@ def _choose_intent(state: GameState, target_id: str) -> PlayerAction:
         print("choose an intent number")
 
 
+def _run_character_creation_flow(state: GameState) -> None:
+    print("Create your islander.")
+    rerolled = False
+    while True:
+        archetype_ids = list(PLAYER_ARCHETYPES)
+        for index, archetype_id in enumerate(archetype_ids, start=1):
+            archetype = PLAYER_ARCHETYPES[archetype_id]
+            stats = DEFAULT_ARCHETYPE_STATS[archetype_id]
+            print(
+                f"{index}. {archetype.display_name} "
+                f"(+{archetype.stat_bonus_value} {archetype.stat_bonus_name}; "
+                f"{_stats_text(stats)})"
+            )
+        raw = input("archetype> ").strip()
+        try:
+            selected = archetype_ids[int(raw) - 1]
+        except (ValueError, IndexError):
+            print("choose an archetype number")
+            continue
+        stats = DEFAULT_ARCHETYPE_STATS[selected]
+        print("Press Enter to accept these stats, type five numbers, or type reroll.")
+        print(_stats_text(stats))
+        stat_raw = input("stats> ").strip()
+        if stat_raw.lower() == "reroll":
+            if rerolled:
+                print("reroll already used")
+            else:
+                rerolled = True
+                print("Reroll used. Pick again.")
+            continue
+        if stat_raw:
+            try:
+                stats = _parse_stats(stat_raw)
+            except ValueError as exc:
+                print(exc)
+                continue
+        create_character(state, archetype_id=selected, stats=stats, rerolled=rerolled)
+        _print_character_card(state)
+        return
+
+
+def _parse_stats(raw: str) -> PlayerStats:
+    pieces = [int(piece) for piece in raw.replace(",", " ").split()]
+    if len(pieces) != 5:
+        raise ValueError("enter five stats: charm banter eq graft loyalty")
+    return PlayerStats(charm=pieces[0], banter=pieces[1], eq=pieces[2], graft=pieces[3], loyalty=pieces[4])
+
+
+def _stats_text(stats: PlayerStats) -> str:
+    return (
+        f"Charm {stats.charm}, Banter {stats.banter}, EQ {stats.eq}, "
+        f"Graft {stats.graft}, Loyalty {stats.loyalty}"
+    )
+
+
 def _replay_recording(path: Path) -> int:
     package = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(package, dict):
@@ -159,6 +223,15 @@ def _replay_recording(path: Path) -> int:
     if not isinstance(seed, int) or not isinstance(records, list):
         raise ValueError("recording requires integer seed and records list")
     state = new_game(seed)
+    raw_creation = package.get("character_creation")
+    if isinstance(raw_creation, dict):
+        creation = CharacterCreation.model_validate(raw_creation)
+        create_character(
+            state,
+            archetype_id=creation.archetype_id,
+            stats=creation.stats,
+            rerolled=creation.rerolled,
+        )
     rng = SeededRng(seed)
     agents = RecordedAgents()
     for raw_record in records:
@@ -223,6 +296,9 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) -
             None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
         ),
         "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
+        "audience_snapshot": (
+            None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json")
+        ),
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }
@@ -267,6 +343,9 @@ def _write_recording(
     package = {
         "seed": seed,
         "llm_mode": llm_mode,
+        "character_creation": (
+            None if state.character_creation is None else state.character_creation.model_dump(mode="json")
+        ),
         "final_hash": state_hash(state_hash_payload(state)),
         "records": records,
         "final_state": state.model_dump(mode="json"),

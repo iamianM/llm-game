@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_eleven_assertions() -> None:
-    """The L7 report exposes the planned feature checklist."""
+def test_playthrough_report_has_thirteen_assertions() -> None:
+    """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 11
+    assert len(report.assertions) == 13
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 11
+    assert report.passed == 13
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -88,8 +88,9 @@ def _complete_package():
             ),
             _record(6, "respond_with", intent_id="ask_gossip:mem1", chance=52),
             _record(7, "start_conversation", chance=75),
-            _record(8, "respond_with", intent_id="ignore_interruption", chance=None),
-        ]
+            _record(8, "respond_with", intent_id="ignore_interruption", chance=None, audience=True),
+        ],
+        "final_state": {"outcome": "won_as_couple"},
     }
 
 
@@ -103,6 +104,7 @@ def _record(
     interruption: dict[str, object] | None = None,
     curator_memories: list[dict[str, object]] | None = None,
     background_dialogues: int = 0,
+    audience: bool = False,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -124,6 +126,11 @@ def _record(
         "turn": turn,
         "action": action,
         "mechanical_result": result,
+        "audience_snapshot": (
+            {"day": 1, "entries": [{"rank": 1, "couple": ["player", "chloe"], "score": 74, "is_player_couple": True}]}
+            if audience
+            else None
+        ),
         "ceremony_events": [{"kind": "bombshell"}] if turn == 6 else [],
         "agent_commits": {
             "villa_update": (

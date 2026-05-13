@@ -1,7 +1,21 @@
-name: elimination-day5
-seed: 10
-expected_hash: bc7ef6762c35fd55830afd38d0e126c379cde01195879c051c09ed4f494933a5
+name: day6-final-vote
+seed: 12
+character_creation:
+  archetype_id: loyal_friend
+  rerolled: false
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+expected_hash: 611ea9006c57a7ca3d205249ad47a830bed031c4df01d667ecdfc1f17e851c5d
 actions:
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
+- kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase

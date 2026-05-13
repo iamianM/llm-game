@@ -22,6 +22,7 @@ from src.game.state.models import FollowUpOption, GameState, IslanderState, Loca
 class ActionKind(StrEnum):
     """Canonical action vocabulary shared by engine, CLI, browser, and tests."""
 
+    CREATE_CHARACTER = "create_character"
     START_CONVERSATION = "start_conversation"
     RESPOND_WITH = "respond_with"
     END_CONVERSATION = "end_conversation"
@@ -39,6 +40,7 @@ class PlayerAction(BaseModel):
     target_id: str | None = None
     intent_id: str | None = None
     option_index: int | None = None
+    payload: dict[str, object] | None = None
 
 
 class ActionSpec(BaseModel):
@@ -143,6 +145,12 @@ def available_actions(state: GameState) -> list[ActionSpec]:
 
 def validate_action(state: GameState, action: PlayerAction) -> None:
     """Raise if ``action`` is not valid for ``state``."""
+    if action.kind is ActionKind.CREATE_CHARACTER:
+        if state.character_creation is not None:
+            raise ValueError("character has already been created")
+        if state.turn_index != 0:
+            raise ValueError("character creation is only valid before the run starts")
+        return
     if action.kind is ActionKind.START_CONVERSATION:
         if state.active_conversation is not None:
             raise ValueError("cannot start a conversation while one is active")

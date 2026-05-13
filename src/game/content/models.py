@@ -25,6 +25,19 @@ class LocationContent(BaseModel):
     body: str
 
 
+class PlayerArchetypeContent(BaseModel):
+    """Player-facing archetype content."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    display_name: str
+    stat_bonus_name: str
+    stat_bonus_value: int
+    starter_advantage: str
+    body: str
+
+
 class ContentIndex(BaseModel):
     """Loaded runtime content indexed by id."""
 
@@ -32,3 +45,4 @@ class ContentIndex(BaseModel):
 
     archetypes: dict[str, ArchetypeContent]
     locations: dict[str, LocationContent]
+    player_archetypes: dict[str, PlayerArchetypeContent]

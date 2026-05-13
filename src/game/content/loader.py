@@ -12,9 +12,14 @@ from typing import TypeVar, cast
 
 import yaml
 
-from src.game.content.models import ArchetypeContent, ContentIndex, LocationContent
+from src.game.content.models import (
+    ArchetypeContent,
+    ContentIndex,
+    LocationContent,
+    PlayerArchetypeContent,
+)
 
-ContentT = TypeVar("ContentT", ArchetypeContent, LocationContent)
+ContentT = TypeVar("ContentT", ArchetypeContent, LocationContent, PlayerArchetypeContent)
 
 
 def load_content(root: Path = Path("content")) -> ContentIndex:
@@ -22,6 +27,7 @@ def load_content(root: Path = Path("content")) -> ContentIndex:
     return ContentIndex(
         archetypes=_load_collection(root / "archetypes", ArchetypeContent),
         locations=_load_collection(root / "locations", LocationContent),
+        player_archetypes=_load_collection(root / "player_archetypes", PlayerArchetypeContent),
     )
 
 

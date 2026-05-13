@@ -237,3 +237,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: none; cleanup keeps existing behavior and coverage
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest, content lint, smoke `verify-script`, fixture determinism, trace replay, playthrough eval, packet regeneration, and full LLM suite all green
 - Packet: regenerated from `.game_traces/manual-g8.json`; session report now discloses mock-LLM mode and in-app browser verified review surfaces
+
+## Phase H1
+
+- Files added: `src/game/engine/character_creation.py`, `src/game/engine/audience.py`, `src/game/engine/final_vote.py`, player archetype content, audience/final-vote tests, and two H1 scenario fixtures
+- Files changed: state models, action/rule/turn pipelines, scenario replay, CLI play/report rendering, content loading/linting, eval dashboard/assertions, and all scenario hashes for schema v11
+- Tests added: character creation validation and starter advantages, audience ranking/scoring, final vote outcomes/events, H1 playthrough eval assertions, and character/final-vote scenario fixtures
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (127 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 11`; new `character-creation.yaml` and `day6-final-vote.yaml` pin the start and end of the run

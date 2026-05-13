@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
+from src.game.engine.final_vote import final_vote, final_vote_message
 from src.game.state.models import Couple, GameState, IslanderState, Location, RelationshipState
 
 
@@ -79,6 +80,12 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
     )
     state.islanders.append(bombshell)
     return bombshell
+
+
+def final_vote_ceremony(state: GameState) -> CeremonyEvent:
+    """Resolve the final vote and return a visible event."""
+    result = final_vote(state)
+    return CeremonyEvent(kind="final_vote", message=final_vote_message(result))
 
 
 def _partner_score(islander: IslanderState) -> int:

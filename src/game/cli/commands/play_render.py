@@ -9,6 +9,18 @@ from src.game.engine.turn import TurnResult
 from src.game.state.models import GameState, Location, NPCNPCConversation
 
 
+def print_character_card(state: GameState) -> None:
+    """Print the confirmed player character card."""
+    stats = state.player.stats
+    print("\nCharacter confirmed:")
+    print(f"  Archetype: {state.player.archetype_id}")
+    print(
+        f"  Stats: Charm {stats.charm}, Banter {stats.banter}, EQ {stats.eq}, "
+        f"Graft {stats.graft}, Loyalty {stats.loyalty}"
+    )
+    print(f"  Public perception: {state.player.public_perception}")
+
+
 def print_state(state: GameState, *, debug: bool = False) -> None:
     """Print the current villa map and player relationship state."""
     print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
@@ -79,6 +91,12 @@ def print_turn(turn: TurnResult) -> None:
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
     if turn.event_narration is not None:
         print(turn.event_narration.prose)
+    if turn.audience_snapshot is not None:
+        print("Audience ranking:")
+        for entry in turn.audience_snapshot.entries:
+            couple = " & ".join(entry.couple)
+            marker = " (you)" if entry.is_player_couple else ""
+            print(f"  {entry.rank}. {couple}{marker}: {entry.score}")
     if turn.agent_commits.villa_update is not None:
         print_villa_update(turn)
     if turn.follow_up_menu is not None and turn.follow_up_menu.npc_will_leave:

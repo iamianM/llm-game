@@ -32,7 +32,13 @@ from src.game.agents.event_narrator import (
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
-from src.game.engine.ceremonies import CeremonyEvent, arrive_bombshell, recoupling
+from src.game.engine.audience import record_audience_snapshot
+from src.game.engine.ceremonies import (
+    CeremonyEvent,
+    arrive_bombshell,
+    final_vote_ceremony,
+    recoupling,
+)
 from src.game.engine.conversation import (
     append_exchange,
     close_conversation,
@@ -54,12 +60,14 @@ from src.game.engine.rules import (
 )
 from src.game.engine.villa import AgentCommits, apply_villa_update
 from src.game.state.models import (
+    AudienceSnapshot,
     Conversation,
     FollowUpMenu,
     GameState,
     MemoryBatch,
     NPCNPCConversation,
     RelationshipDelta,
+    RunOutcome,
     clamp_relationship,
 )
 from src.game.state.rng import SeededRng
@@ -80,6 +88,7 @@ class TurnResult(BaseModel):
     state_hash: str
     ceremony_events: list[CeremonyEvent] = []
     curator_batches: list[MemoryBatch] = []
+    audience_snapshot: AudienceSnapshot | None = None
     agent_commits: AgentCommits = Field(default_factory=AgentCommits)
 
 
@@ -98,6 +107,7 @@ def run_turn(
     pre_curator_batches: list[MemoryBatch] = []
     pull_attempt: PullAttempt | None = None
     exchange: Exchange | None = None
+    audience_snapshot: AudienceSnapshot | None = None
     if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
         blocked = target_in_active_conversation(state, action.target_id)
         if blocked is not None:
@@ -148,10 +158,18 @@ def run_turn(
     if action.kind is ActionKind.RECOUPLE:
         ceremony = recoupling(state, action.target_id)
         ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
+        if ceremony.eliminated_id == state.player.id:
+            state.outcome = RunOutcome.ELIMINATED
     if action.kind is ActionKind.ADVANCE_PHASE:
         if state.phase.value == "evening" and state.day in {3, 5}:
             ceremony = recoupling(state)
             ceremony_events.extend(_recoupling_events(ceremony.eliminated_id))
+            if ceremony.eliminated_id == state.player.id:
+                state.outcome = RunOutcome.ELIMINATED
+        if state.phase.value == "evening":
+            audience_snapshot = record_audience_snapshot(state)
+        if state.phase.value == "evening" and state.day >= 6:
+            ceremony_events.append(final_vote_ceremony(state))
         advance_phase(state)
         if state.day == 4 and state.phase.value == "morning":
             bombshell = arrive_bombshell(state)
@@ -259,6 +277,7 @@ def run_turn(
         state_hash=state_hash(state_hash_payload(state)),
         ceremony_events=ceremony_events,
         curator_batches=curator_batches,
+        audience_snapshot=audience_snapshot,
         agent_commits=agent_commits,
     )
 

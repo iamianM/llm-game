@@ -16,7 +16,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 
 
 class Phase(StrEnum):
@@ -28,6 +28,15 @@ class Phase(StrEnum):
     TEXT = "text"
     EVENING = "evening"
     COMPLETE = "complete"
+
+
+class RunOutcome(StrEnum):
+    """Terminal outcome assigned when the run resolves."""
+
+    WON_AS_COUPLE = "won_as_couple"
+    RUNNER_UP_COUPLE = "runner_up_couple"
+    LEFT_SINGLE = "left_single"
+    ELIMINATED = "eliminated"
 
 
 class Location(StrEnum):
@@ -68,6 +77,16 @@ class PlayerStats(BaseModel):
         if total > 30:
             raise ValueError("player stat total cannot exceed 30")
         return self
+
+
+class CharacterCreation(BaseModel):
+    """Audited starting character selection."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    archetype_id: str
+    stats: PlayerStats
+    rerolled: bool = False
 
 
 class Memory(BaseModel):
@@ -119,6 +138,9 @@ class PlayerState(BaseModel):
     id: str = "player"
     name: str = "You"
     stats: PlayerStats
+    archetype_id: str = "balanced"
+    character_created: bool = True
+    reroll_used: bool = False
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
     memories: list[Memory] = Field(default_factory=list)
@@ -170,6 +192,26 @@ class Couple(BaseModel):
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
+
+
+class AudienceEntry(BaseModel):
+    """One ranked audience score row."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    rank: int
+    couple: list[str]
+    score: int
+    is_player_couple: bool = False
+
+
+class AudienceSnapshot(BaseModel):
+    """End-of-day audience ranking surfaced to traces and reports."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    day: int
+    entries: list[AudienceEntry] = Field(default_factory=list)
 
 
 class FollowUpOption(BaseModel):
@@ -282,11 +324,14 @@ class GameState(BaseModel):
     couples: list[Couple] = Field(default_factory=list)
     active_conversation: Conversation | None = None
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
+    character_creation: CharacterCreation | None = None
+    audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
+    outcome: RunOutcome | None = None
 
     @property
     def is_terminal(self) -> bool:
         """Return whether the current run is terminal."""
-        return self.phase is Phase.COMPLETE
+        return self.phase is Phase.COMPLETE or self.outcome is not None
 
 
 def clamp_relationship(value: int) -> int:

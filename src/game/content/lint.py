@@ -25,6 +25,10 @@ def run_lint() -> None:
     missing_locations = {location.value for location in Location} - set(index.locations)
     if missing_locations:
         raise ValueError(f"missing location content: {sorted(missing_locations)}")
+    expected_player_archetypes = {"heartthrob", "class_clown", "loyal_friend"}
+    missing_player_archetypes = expected_player_archetypes - set(index.player_archetypes)
+    if missing_player_archetypes:
+        raise ValueError(f"missing player archetype content: {sorted(missing_player_archetypes)}")
     intents = load_intents()
     valid_stats = {"charm", "banter", "eq", "graft", "loyalty"}
     bad_stats = sorted({intent.stat_used for intent in intents} - valid_stats)
@@ -33,5 +37,6 @@ def run_lint() -> None:
     print(
         "content lint: "
         f"{len(index.archetypes)} archetype(s), {len(index.locations)} location(s), "
+        f"{len(index.player_archetypes)} player archetype(s), "
         f"{len(intents)} intent(s)"
     )

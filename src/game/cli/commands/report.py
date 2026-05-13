@@ -16,6 +16,7 @@ from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
 from src.game.reporting.eval_dashboard import playthrough_eval_page
 from src.game.reporting.html import index_page, session_page, table_page
+from src.game.reporting.packet_text import infer_llm_mode, llm_mode_note, notes, repro
 from src.game.state.models import GameState, Location, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -108,8 +109,8 @@ def packet_cmd(args: argparse.Namespace) -> int:
         json.dumps(records, indent=2),
         encoding="utf-8",
     )
-    (out / "notes.md").write_text(_notes(records, final_hash, llm_mode), encoding="utf-8")
-    (out / "how-to-reproduce.md").write_text(_repro(trace_path, out), encoding="utf-8")
+    (out / "notes.md").write_text(notes(records, final_hash, llm_mode), encoding="utf-8")
+    (out / "how-to-reproduce.md").write_text(repro(trace_path, out), encoding="utf-8")
     links = [
         ("Recorded playthrough", "session.html"),
         ("Playthrough eval dashboard", "playthrough-eval.html"),
@@ -215,6 +216,9 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
             None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
         ),
         "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
+        "audience_snapshot": (
+            None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json")
+        ),
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "output_hash": turn.state_hash,
     }
@@ -270,7 +274,7 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
 def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(raw, list):
-        return raw, None, None, _infer_llm_mode(raw)
+        return raw, None, None, infer_llm_mode(raw)
     if not isinstance(raw, dict):
         raise ValueError(f"recording must be a JSON object or list: {path}")
     records = raw.get("records")
@@ -284,7 +288,7 @@ def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | 
         raise ValueError(f"recording final_hash must be a string: {path}")
     llm_mode = raw.get("llm_mode")
     if not isinstance(llm_mode, str):
-        llm_mode = _infer_llm_mode(records)
+        llm_mode = infer_llm_mode(records)
     return records, final_state, final_hash, llm_mode
 
 
@@ -303,6 +307,9 @@ def _final_state_summary(final_state: dict[str, Any], llm_mode: str) -> str:
         memories = player.get("memories")
         if isinstance(memories, list):
             memory_lines.append(f"<li>Player memories: {len(memories)}</li>")
+        outcome = final_state.get("outcome")
+        if isinstance(outcome, str):
+            memory_lines.append(f"<li>Final outcome: {outcome}</li>")
     if isinstance(islanders, list):
         for islander in islanders:
             if not isinstance(islander, dict):
@@ -315,88 +322,7 @@ def _final_state_summary(final_state: dict[str, Any], llm_mode: str) -> str:
         "<p><b>Recorded playthrough.</b> This report is rendered from a trace package; "
         "agent commits are replayable and no new LLM calls are needed to inspect it.</p>"
         f"<p><b>LLM mode:</b> {llm_mode}. "
-        f"{_llm_mode_note(llm_mode)}</p>"
+        f"{llm_mode_note(llm_mode)}</p>"
         f"<ul>{''.join(memory_lines)}</ul>"
     )
 
-
-def _notes(records: list[dict[str, Any]], final_hash: str | None, llm_mode: str) -> str:
-    conversation_turns = sum(1 for record in records if record.get("exchange") is not None)
-    villa_turns = sum(
-        1
-        for record in records
-        if isinstance(record.get("agent_commits"), dict)
-        and record["agent_commits"].get("villa_update") is not None
-    )
-    return f"""# Notes
-
-## What I noticed
-
-This packet renders one recorded playthrough from trace data. It contains
-{len(records)} turn(s), {conversation_turns} player conversation turn(s), and
-{villa_turns} turn(s) with recorded villa agent commits.
-
-LLM mode: `{llm_mode}`. {_plain_llm_mode_note(llm_mode)}
-
-## What felt good
-
-The report keeps player dialogue, follow-up wheel options, relationship deltas,
-ceremony narration, and off-screen villa commits together in one inspectable
-artifact.
-
-## What felt off
-
-This is a trace review, not a balance report. Read it for feel, continuity,
-memories, and gossip surfacing rather than aggregate win-rate conclusions.
-
-## Open questions
-
-- Did the wheel choices feel Sims-like and short enough?
-- Did off-screen villa commits make the world feel alive?
-- Did memories and gossip surface at the right level of specificity?
-
-Final hash: `{final_hash or "unknown"}`
-"""
-
-
-def _infer_llm_mode(records: list[dict[str, Any]]) -> str:
-    for record in records:
-        exchange = record.get("exchange")
-        if not isinstance(exchange, dict):
-            continue
-        player_line = str(exchange.get("player_dialogue", ""))
-        npc_line = str(exchange.get("npc_dialogue", ""))
-        if "I wanted to say this properly" in player_line and "*smiles* I hear you" in npc_line:
-            return "mock"
-    return "unknown"
-
-
-def _llm_mode_note(llm_mode: str) -> str:
-    if llm_mode == "mock":
-        return "Dialogue was generated by deterministic mock agents for coverage, not by the real LLM voice."
-    if llm_mode == "real":
-        return "Dialogue and agent commits came from live LLM calls recorded into this trace."
-    return "This older trace does not declare whether dialogue came from mock or real LLM agents."
-
-
-def _plain_llm_mode_note(llm_mode: str) -> str:
-    if llm_mode == "mock":
-        return "Use this packet to verify mechanics and dashboard coverage, not final dialogue quality."
-    if llm_mode == "real":
-        return "Use this packet to judge both mechanics and dialogue feel."
-    return "Mode is unknown because the trace predates explicit `llm_mode` metadata."
-
-
-def _repro(trace_path: Path, out: Path) -> str:
-    trace = trace_path.as_posix()
-    output = out.as_posix()
-    return f"""# How To Reproduce
-
-```bash
-uv run python -m src.game.cli play --record {trace}
-uv run python -m src.game.cli play --replay {trace}
-uv run python -m src.game.cli report packet --trace {trace} --out {output}
-uv run python -m src.game.cli verify --playthrough {trace}
-uv run python -m src.game.cli verify --all
-```
-"""

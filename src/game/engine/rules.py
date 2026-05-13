@@ -9,6 +9,7 @@ from src.game.engine.chance import (
     intent_success_breakdown,
     intent_success_chance,
 )
+from src.game.engine.character_creation import create_character
 from src.game.engine.followups import (
     EXIT_INTENT_KINDS,
     FOLLOW_UP_DELTA_TABLE,
@@ -25,13 +26,16 @@ from src.game.engine.interruptions import (
 from src.game.engine.perception import update_public_perception
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
-from src.game.state.models import GameState, Location, RelationshipDelta
+from src.game.state.models import GameState, Location, PlayerStats, RelationshipDelta
 from src.game.state.rng import SeededRng
 
 
 def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     """Apply one valid action and mutate ``state``."""
     validate_action(state, action)
+    if action.kind is ActionKind.CREATE_CHARACTER:
+        _apply_create_character(state, action)
+        return MechanicalResult(action=action, success=True, tags=["character_creation"])
     if action.kind is ActionKind.START_CONVERSATION:
         result = _apply_intent(state, action, rng)
         update_public_perception(state, action, result)
@@ -49,6 +53,22 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
     if action.kind is ActionKind.ADVANCE_PHASE:
         return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented: {action.kind}")
+
+
+def _apply_create_character(state: GameState, action: PlayerAction) -> None:
+    if action.payload is None:
+        raise ValueError("CREATE_CHARACTER requires payload")
+    archetype_id = action.payload.get("archetype_id")
+    stats_payload = action.payload.get("stats")
+    rerolled = action.payload.get("rerolled", False)
+    if not isinstance(archetype_id, str) or not isinstance(stats_payload, dict):
+        raise ValueError("CREATE_CHARACTER payload requires archetype_id and stats")
+    create_character(
+        state,
+        archetype_id=archetype_id,
+        stats=PlayerStats.model_validate(stats_payload),
+        rerolled=bool(rerolled),
+    )
 
 
 def _apply_intent(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:

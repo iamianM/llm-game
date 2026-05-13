@@ -1,0 +1,14 @@
+name: character-creation
+seed: 11
+expected_hash: f9adcdd0edc1dd7e7a4ee17075f0117ad292c691ae3ed6032babfe99e81c66fa
+actions:
+- kind: create_character
+  payload:
+    archetype_id: heartthrob
+    rerolled: false
+    stats:
+      charm: 9
+      banter: 6
+      eq: 4
+      graft: 5
+      loyalty: 6
