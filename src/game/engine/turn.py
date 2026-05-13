@@ -34,13 +34,13 @@ from src.game.engine.conversation import (
     departure_probability,
     start_conversation,
 )
+from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
 from src.game.engine.memory import (
-    add_memory,
     add_memory_batch,
-    create_memory,
     remember_ceremony_events,
 )
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
+from src.game.engine.pull_turn import pull_rejected_result, remember_pull_rejection
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.time_budget import check_auto_advance, deduct_time
 from src.game.engine.turn_autonomy import apply_villa_turn
@@ -48,6 +48,7 @@ from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
     recoupling_events,
+    resolve_pending_gather,
 )
 from src.game.engine.villa import AgentCommits
 from src.game.state.casa import CasaDecision
@@ -58,9 +59,7 @@ from src.game.state.models import (
     GameState,
     MemoryBatch,
     NPCNPCConversation,
-    RelationshipDelta,
     RunOutcome,
-    clamp_relationship,
 )
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -116,13 +115,13 @@ def run_turn(
                     if conversation.id != blocked.id
                 ]
             else:
-                result = _pull_rejected_result(state, action, pull_attempt)
+                result = pull_rejected_result(state, action, pull_attempt)
                 time_cost = deduct_time(state, action)
                 state.turn_index += 1
                 speak = mock_islander_voice if islander_voice is None else islander_voice
                 exchange = speak(state, result)
                 pull_attempt.deflection_line = exchange.npc_dialogue
-                _remember_pull_rejection(state, pull_attempt)
+                remember_pull_rejection(state, pull_attempt)
                 villa_update, villa_changes, arrival_rolls = apply_villa_turn(
                     state,
                     rng.fork(f"villa-turn-{state.turn_index}"),
@@ -178,6 +177,37 @@ def run_turn(
                 message=f"Casa Amor decision recorded: {decision.value}.",
                 islander_id=action.target_id,
             )
+        )
+    if action.kind is ActionKind.JOIN_GATHER:
+        gather_curator_batches = [*pre_curator_batches]
+        gather_curator_batches.extend(
+            close_conversations_for_gather(
+                state,
+                conversation_curator,
+                _curate_conversation,
+                _curate_npc_conversation,
+            )
+        )
+        move_everyone_to_gather(state)
+        phase_events, audience_snapshot = resolve_pending_gather(state, rng)
+        ceremony_events.extend(phase_events)
+        state.turn_index += 1
+        event_narration = None
+        if ceremony_events:
+            remember_ceremony_events(state, ceremony_events)
+            narrate_event = mock_event_narration if event_narrator is None else event_narrator
+            event_narration = narrate_event(state, ceremony_events)
+        return TurnResult(
+            state=state,
+            mechanical_result=result,
+            event_narration=event_narration,
+            available_actions=available_actions(state),
+            state_hash=state_hash(state_hash_payload(state)),
+            ceremony_events=ceremony_events,
+            curator_batches=gather_curator_batches,
+            audience_snapshot=audience_snapshot,
+            agent_commits=AgentCommits(curator_batches=gather_curator_batches),
+            time_cost=time_cost,
         )
     if action.kind is ActionKind.ADVANCE_PHASE:
         phase_events, audience_snapshot = advance_phase_with_events(state, rng)
@@ -325,55 +355,6 @@ def _curate_npc_conversation(
     batch = curate(state, conversation, bystander_ids)
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     return batch
-
-
-def _pull_rejected_result(
-    state: GameState,
-    action: PlayerAction,
-    pull_attempt: PullAttempt,
-) -> MechanicalResult:
-    target = next(islander for islander in state.islanders if islander.id == pull_attempt.target_id)
-    delta = RelationshipDelta(affection=-1)
-    target.relationship.affection = clamp_relationship(target.relationship.affection + delta.affection)
-    return MechanicalResult(
-        action=action.model_copy(update={"intent_id": "pull_rejected"}),
-        success=False,
-        roll=pull_attempt.roll,
-        success_chance=pull_attempt.chance,
-        relationship_deltas={target.id: delta},
-        tags=["pull_rejected"],
-        pull_attempt=pull_attempt,
-    )
-
-
-def _remember_pull_rejection(state: GameState, pull_attempt: PullAttempt) -> None:
-    target_name = _name_for_memory(state, pull_attempt.target_id)
-    for islander in state.islanders:
-        if (
-            islander.id != pull_attempt.target_id
-            and not islander.eliminated
-            and islander.location_id == state.location_id
-        ):
-            add_memory(
-                state,
-                create_memory(
-                    holder_id=islander.id,
-                    subject_id="player",
-                    source="witnessed",
-                    day=state.day,
-                    turn=state.turn_index,
-                    weight=6,
-                    tags=["saw_pull_rejected", "pull", pull_attempt.target_id],
-                    content=f"I saw the player try to pull {target_name} away and get brushed off.",
-                ),
-            )
-
-
-def _name_for_memory(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
 
 
 def _is_wheel_exit(result: MechanicalResult) -> bool:

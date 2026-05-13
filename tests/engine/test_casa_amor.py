@@ -154,12 +154,14 @@ def test_villa_update_rejects_cross_villa_movement() -> None:
         validate_villa_update(state, update)
 
 
-def test_day_four_text_advance_enters_casa_amor() -> None:
+def test_day_four_text_gather_enters_casa_amor() -> None:
     state = new_game(1)
     state.day = 4
-    state.phase = Phase.TEXT
+    state.phase = Phase.AFTERNOON
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    scheduled = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    assert scheduled.state.pending_gather is not None
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
 
     assert result.state.villa is VillaName.CASA_AMOR
     assert any(event.kind == "casa_amor_arrival" for event in result.ceremony_events)

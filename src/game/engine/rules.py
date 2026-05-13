@@ -57,6 +57,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_hideaway(state, action)
     if action.kind is ActionKind.CASA_DECISION:
         return _apply_casa_decision(state, action)
+    if action.kind is ActionKind.JOIN_GATHER:
+        return MechanicalResult(action=action, success=True, tags=["join_gather"])
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:

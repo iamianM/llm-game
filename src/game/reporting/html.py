@@ -28,6 +28,7 @@ from src.game.reporting.html_events import (
     producer_text_block,
     revealed_preferences_block,
 )
+from src.game.reporting.html_gather import pending_gather_block
 from src.game.reporting.html_math import math_block
 from src.game.reporting.stylish.session import stylish_session_page
 
@@ -71,6 +72,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}"
         f"{producer_text_block(record.get('producer_text'))}"
+        f"{pending_gather_block(record)}"
         f"{group_date_block(record.get('group_date'))}"
         f"{revealed_preferences_block(record.get('revealed_preferences'))}"
         f"<p><b>You chose:</b> {escape(action['kind'])} "

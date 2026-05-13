@@ -60,13 +60,15 @@ def test_final_vote_does_not_override_existing_elimination() -> None:
 
 
 def test_final_vote_fires_only_on_day_six_evening() -> None:
-    """The final vote is tied to the day-six evening advance."""
+    """The final vote resolves after the mandatory day-six evening gather."""
     state = new_game(1)
     state.day = 6
     state.phase = Phase.EVENING
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5)]
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    scheduled = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    assert scheduled.state.pending_gather is not None
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
 
     assert any(event.kind == "final_vote" for event in result.ceremony_events)
     assert result.state.outcome is not None

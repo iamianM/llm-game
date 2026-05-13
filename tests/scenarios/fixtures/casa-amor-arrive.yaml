@@ -1,7 +1,8 @@
 name: casa-amor-arrive
 seed: 11
 initial_day: 4
-initial_phase: text
+initial_phase: afternoon
 actions:
 - kind: advance_phase
-expected_hash: c1eba7387b89516d5a62af004ef753ea66452d7903f05c30896e2e290ba5abf7
+- kind: join_gather
+expected_hash: 53eb0b6bb67006d338859a8d9b313925610b57919abb90faa8296d0d8f0002d6

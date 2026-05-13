@@ -170,7 +170,7 @@ def _parse_play_args(args: tuple[str, ...]) -> SimpleNamespace:
         replay=None,
         autopilot=False,
         persona="loyal",
-        max_turns=40,
+        max_turns=120,
     )
     index = 0
     while index < len(args):

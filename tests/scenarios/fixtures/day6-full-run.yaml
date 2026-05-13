@@ -1,25 +1,30 @@
 name: day6-full-run
 seed: 6
-expected_hash: 71fe0ceda574e7652e08cba96cf694865b1421e304a1f7e21d61bd0eeb4bc2ac
+expected_hash: f4e740406a5868cd12a8e3ebb52bde079f7d08905b550341b45473da15a7732d
 actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
+- kind: advance_phase
+- kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
@@ -33,8 +38,10 @@ actions:
   target_id: blake
   intent_id: return_with_new
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase

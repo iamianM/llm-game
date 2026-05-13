@@ -6,7 +6,15 @@ from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
-from src.game.state.models import MemoryBatch, MemoryDraft, Phase, new_game
+from src.game.state.models import (
+    Location,
+    MemoryBatch,
+    MemoryDraft,
+    NPCNPCConversation,
+    PendingGather,
+    Phase,
+    new_game,
+)
 from src.game.state.rng import SeededRng
 
 
@@ -42,16 +50,69 @@ def test_run_turn_advances_phase() -> None:
     assert result.state.turn_index == 1
 
 
-def test_run_turn_surfaces_casa_amor_arrival_event() -> None:
-    """Ceremony events are visible in TurnResult instead of hidden state changes."""
+def test_run_turn_schedules_casa_amor_arrival_as_gather() -> None:
+    """Producer texts schedule a mandatory gather before Casa Amor resolves."""
     state = new_game(1)
     state.day = 4
-    state.phase = Phase.TEXT
+    state.phase = Phase.AFTERNOON
 
     result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
 
+    assert result.state.phase is Phase.TEXT
+    assert result.state.pending_gather is not None
+    assert result.state.pending_gather.kind == "casa_announce"
+    assert [spec.action.kind for spec in result.available_actions] == [ActionKind.JOIN_GATHER]
+
+
+def test_join_gather_resolves_casa_amor_arrival() -> None:
+    """JOIN_GATHER moves the villa to the firepit and then resolves the event."""
+    state = new_game(1)
+    state.day = 4
+    state.phase = Phase.AFTERNOON
+    run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(2))
+
     assert any(event.kind == "casa_amor_arrival" for event in result.ceremony_events)
+    assert result.state.pending_gather is None
+    assert result.state.casa_amor_state is not None
     assert result.event_narration is not None
+
+
+def test_join_gather_closes_active_and_background_conversations() -> None:
+    """Mandatory gathers clear conversations before event narration."""
+    state = new_game(1)
+    rng = SeededRng(1)
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="friendly_chat_villa"),
+        rng,
+        contextual_options=lambda *_args: mock_follow_up_menu(),
+    )
+    state.npc_conversations.append(
+        NPCNPCConversation(
+            id="npcconv_test",
+            participants=["maya", "liam"],
+            location_id=Location.TERRACE,
+            topic="quiet strategy",
+            started_on_turn=state.turn_index,
+        )
+    )
+    state.pending_gather = PendingGather(
+        kind="ceremony",
+        event_id="recoupling_day_3",
+        gather_location=Location.FIREPIT,
+        fires_on_turn=state.turn_index + 1,
+    )
+    state.day = 3
+    state.phase = Phase.EVENING
+
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), rng)
+
+    assert result.state.active_conversation is None
+    assert result.state.npc_conversations == []
+    assert all(islander.location_id is not Location.TERRACE for islander in result.state.islanders)
+    assert result.curator_batches
 
 
 def test_apply_action_does_not_bump_turn_index() -> None:

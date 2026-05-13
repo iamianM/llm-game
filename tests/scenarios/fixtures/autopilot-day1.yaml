@@ -56,31 +56,12 @@ actions:
 - kind: start_conversation
   target_id: chloe
   intent_id: friendly_ask_feelings
-  option_index: null
-  payload: null
 - kind: start_conversation
   target_id: chloe
   intent_id: friendly_ask_feelings
-  option_index: null
-  payload: null
 - kind: advance_phase
-  target_id: null
-  intent_id: null
-  option_index: null
-  payload: null
 - kind: advance_phase
-  target_id: null
-  intent_id: null
-  option_index: null
-  payload: null
 - kind: advance_phase
-  target_id: null
-  intent_id: null
-  option_index: null
-  payload: null
+- kind: join_gather
 - kind: advance_phase
-  target_id: null
-  intent_id: null
-  option_index: null
-  payload: null
-expected_hash: b2592eb4a1a52d55241267de6d08fbcb300d9ced76c6371cf9ee57418bbc1572
+expected_hash: 5451a43bacc3ae2b12889f6802d2ee369931b23b8b9ea6ac4be46b9491d2cddb

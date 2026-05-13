@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from src.game.engine.audience import record_audience_snapshot
 from src.game.engine.casa_amor import enter_casa_amor, return_ceremony
 from src.game.engine.ceremonies import (
@@ -17,9 +19,17 @@ from src.game.engine.challenges import (
 )
 from src.game.engine.phases import advance_phase
 from src.game.engine.producer_events import producer_text_event_message, schedule_producer_text
-from src.game.state.casa import VillaName
-from src.game.state.models import AudienceSnapshot, GameState, Phase, RunOutcome
+from src.game.state.models import (
+    AudienceSnapshot,
+    GameState,
+    Location,
+    PendingGather,
+    Phase,
+    RunOutcome,
+)
 from src.game.state.rng import SeededRng
+
+GatherKind = Literal["producer_text", "ceremony", "challenge", "casa_announce"]
 
 
 def advance_phase_with_events(
@@ -31,22 +41,59 @@ def advance_phase_with_events(
     audience_snapshot: AudienceSnapshot | None = None
     casa_active = state.casa_amor_state is not None and not state.casa_amor_state.returned
     if state.phase.value == "evening" and state.day in {3, 5} and not (state.day == 5 and casa_active):
+        events.append(_schedule_gather(state, kind="ceremony", event_id=f"recoupling_day_{state.day}"))
+        return events, audience_snapshot
+    if state.phase.value == "evening" and state.day >= 6:
+        events.append(_schedule_gather(state, kind="ceremony", event_id="final_vote"))
+        return events, audience_snapshot
+    if state.phase.value == "evening":
+        audience_snapshot = record_audience_snapshot(state)
+    advance_phase(state)
+    if state.day == 6 and state.phase is Phase.MORNING:
+        if state.casa_amor_state is not None and not state.casa_amor_state.returned:
+            events.append(_schedule_gather(state, kind="ceremony", event_id="casa_return"))
+    events.extend(_scheduled_phase_events(state, rng))
+    return events, audience_snapshot
+
+
+def resolve_pending_gather(
+    state: GameState,
+    rng: SeededRng,
+) -> tuple[list[CeremonyEvent], AudienceSnapshot | None]:
+    """Resolve a mandatory gather event after the player joins it."""
+    if state.pending_gather is None:
+        raise ValueError("no pending gather to resolve")
+    gather = state.pending_gather
+    events: list[CeremonyEvent] = []
+    audience_snapshot: AudienceSnapshot | None = None
+    if gather.kind in {"producer_text", "casa_announce"}:
+        if state.pending_text is not None:
+            events.append(CeremonyEvent(kind="producer_text", message=producer_text_event_message(state.pending_text)))
+            if state.pending_text.kind == "casa_amor_announce":
+                events.append(enter_casa_amor(state))
+        state.pending_text = None
+    elif gather.kind == "ceremony" and gather.event_id.startswith("recoupling"):
         ceremony = recoupling(state)
         events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
-    if state.phase.value == "evening":
         audience_snapshot = record_audience_snapshot(state)
-    if state.phase.value == "evening" and state.day >= 6:
+        advance_phase(state)
+    elif gather.kind == "ceremony" and gather.event_id == "final_vote":
+        audience_snapshot = record_audience_snapshot(state)
         events.append(final_vote_ceremony(state))
-    if state.phase is Phase.TEXT and state.day == 4 and state.villa is VillaName.MAIN:
-        events.append(enter_casa_amor(state))
-    advance_phase(state)
-    if state.day == 6 and state.phase is Phase.MORNING:
+    elif gather.kind == "ceremony" and gather.event_id == "casa_return":
         casa_return = return_ceremony(state)
         if casa_return is not None:
             events.append(casa_return)
-    events.extend(_scheduled_phase_events(state, rng))
+    elif gather.kind == "challenge":
+        challenge = schedule_challenge(state.day)
+        if challenge is not None:
+            state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
+            events.append(CeremonyEvent(kind="challenge", message=challenge_event_message(state.pending_challenge)))
+    else:
+        raise ValueError(f"unknown pending gather: {gather.model_dump()}")
+    state.pending_gather = None
     return events, audience_snapshot
 
 
@@ -104,5 +151,26 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
     if state.phase.value == "text":
         state.pending_text = schedule_producer_text(state.day, state)
         if state.pending_text is not None:
-            events.append(CeremonyEvent(kind="producer_text", message=producer_text_event_message(state.pending_text)))
+            gather_kind: GatherKind = (
+                "casa_announce" if state.pending_text.kind == "casa_amor_announce" else "producer_text"
+            )
+            events.append(_schedule_gather(state, kind=gather_kind, event_id=state.pending_text.id))
     return events
+
+
+def _schedule_gather(
+    state: GameState,
+    *,
+    kind: GatherKind,
+    event_id: str,
+) -> CeremonyEvent:
+    state.pending_gather = PendingGather(
+        kind=kind,
+        event_id=event_id,
+        gather_location=Location.FIREPIT,
+        fires_on_turn=state.turn_index + 1,
+    )
+    return CeremonyEvent(
+        kind="gather_scheduled",
+        message=f"Everyone is called to the firepit for {event_id}.",
+    )

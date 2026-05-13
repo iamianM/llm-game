@@ -365,3 +365,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: repeated pull chance penalty, minimum pull clamp after repeated attempts, phase reset for pull attempts, repeated-pull memory creation, ignored-interruption walkaway movement, and forced movement trace coverage
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (266 passed in 9.31s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
 - Scenario fixture: all fixtures regenerated for pull-attempt tracking and forced-movement trace schema
+
+## Phase H9.5
+
+- Files added: `content/locations/firepit.md`, `src/game/engine/gather.py`, `src/game/engine/pull_turn.py`, and `src/game/reporting/html_gather.py`
+- Files changed: canonical state schema, action validation/surfacing, time budgets, phase event scheduling, turn pipeline, CLI/report rendering, Casa location set, and all scenario hashes for `SCHEMA_VERSION = 20`
+- Tests added: producer-text gather scheduling, Casa Amor gather resolution, conversation cleanup before gather events, final vote gather resolution, and updated Casa/final-vote tests for the two-step schedule/resolve flow
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (268 passed in 12.04s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
+- Scenario fixture: all fixtures regenerated for mandatory gather events; scripts now include `join_gather` where producer texts or ceremonies must interrupt normal play

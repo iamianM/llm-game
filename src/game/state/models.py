@@ -37,7 +37,7 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 19
+SCHEMA_VERSION = 20
 
 
 class Phase(StrEnum):
@@ -63,6 +63,7 @@ class Location(StrEnum):
     KITCHEN = "kitchen"
     TERRACE = "terrace"
     BEDROOM = "bedroom"
+    FIREPIT = "firepit"
     HIDEAWAY = "hideaway"
     CASA_POOL = "casa_pool"
     CASA_KITCHEN = "casa_kitchen"
@@ -183,6 +184,17 @@ class HideawayState(BaseModel):
     used_on_day: int | None = None
     partner_id: str | None = None
     deltas_applied: bool = False
+
+
+class PendingGather(BaseModel):
+    """A mandatory villa gather waiting to resolve."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["producer_text", "ceremony", "challenge", "casa_announce"]
+    event_id: str
+    gather_location: Location
+    fires_on_turn: int
 
 
 class FollowUpOption(BaseModel):
@@ -312,6 +324,7 @@ class GameState(BaseModel):
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
     pending_challenge: Challenge | None = None
     pending_text: ProducerText | None = None
+    pending_gather: PendingGather | None = None
     pending_group_date: GroupDate | None = None
     hideaway: HideawayState = Field(default_factory=HideawayState)
     casa_amor_state: CasaAmorState | None = None

@@ -24,7 +24,14 @@ from src.game.state.models import (
 from src.game.state.rng import SeededRng
 
 CASA_LOCATIONS = {Location.CASA_POOL, Location.CASA_KITCHEN, Location.CASA_TERRACE}
-MAIN_LOCATIONS = {Location.POOL, Location.KITCHEN, Location.TERRACE, Location.BEDROOM, Location.HIDEAWAY}
+MAIN_LOCATIONS = {
+    Location.POOL,
+    Location.KITCHEN,
+    Location.TERRACE,
+    Location.BEDROOM,
+    Location.FIREPIT,
+    Location.HIDEAWAY,
+}
 
 
 def location_villa(location: Location) -> VillaName:

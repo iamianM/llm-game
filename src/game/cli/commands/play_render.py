@@ -83,6 +83,11 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
         print(f"\nChallenge: {challenge.kind} ({challenge.stat_tested}) -- {result}")
     if state.pending_text is not None:
         print(f"\nI've got a text: {state.pending_text.body}")
+    if state.pending_gather is not None:
+        print(
+            f"\nGather pending: join everyone at the "
+            f"{state.pending_gather.gather_location.value} for {state.pending_gather.event_id}."
+        )
     if state.pending_group_date is not None and state.pending_group_date.pending:
         print(
             f"\nGroup date pending: {names_for(state, state.pending_group_date.participants)} "
@@ -144,6 +149,11 @@ def print_turn(turn: TurnResult) -> None:
         print(f"Challenge: {challenge.kind} -- {challenge.result}")
     if turn.state.pending_text is not None:
         print(f"Text: {turn.state.pending_text.body}")
+    if turn.state.pending_gather is not None:
+        print(
+            f"Gather pending: join everyone at the "
+            f"{turn.state.pending_gather.gather_location.value} for {turn.state.pending_gather.event_id}."
+        )
     if turn.audience_snapshot is not None:
         print("Audience ranking:")
         for entry in turn.audience_snapshot.entries:

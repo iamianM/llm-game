@@ -1,12 +1,14 @@
 name: casa-amor-return
 seed: 12
 initial_day: 4
-initial_phase: text
+initial_phase: afternoon
 initial_couples:
 - partner_a_id: player
   partner_b_id: chloe
   formed_on_day: 3
 actions:
+- kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
@@ -18,4 +20,5 @@ actions:
   target_id: blake
   intent_id: return_with_new
 - kind: advance_phase
-expected_hash: 6925358d3dfbaf602d576b4da37813ac5a596a96c87fe272f34aa84237bb4ccd
+- kind: join_gather
+expected_hash: 4d3d90296223f1d190c6b322753fc24f07225ee1edfce3477da672f21eb34f43

@@ -46,6 +46,7 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "audience_snapshot": None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json"),
         "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
+        "pending_gather": None if state.pending_gather is None else state.pending_gather.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
         "revealed_preferences": {
             islander.id: revealed

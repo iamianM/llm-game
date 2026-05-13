@@ -31,26 +31,31 @@ initial_couples:
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-expected_hash: b0295c3862f9a4645d49b02ad49f1852da03155cf9e3a6d74df147108c3def99
+expected_hash: 3b34ddcd52ef0c3a0b6a7e19071149336536c9d362b2a2d74a51cbb8fcd2e824
 actions:
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
+- kind: advance_phase
+- kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
@@ -64,8 +69,10 @@ actions:
   target_id: blake
   intent_id: return_with_new
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase
 - kind: advance_phase
+- kind: join_gather
 - kind: advance_phase
 - kind: advance_phase

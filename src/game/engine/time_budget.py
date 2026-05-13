@@ -15,6 +15,7 @@ ACTION_TIME_COST: dict[ActionKind, int] = {
     ActionKind.CHALLENGE_RESPONSE: 0,
     ActionKind.HIDEAWAY: 60,
     ActionKind.CASA_DECISION: 10,
+    ActionKind.JOIN_GATHER: 30,
     ActionKind.MOVE: 5,
     ActionKind.RECOUPLE: 0,
     ActionKind.ADVANCE_PHASE: 0,

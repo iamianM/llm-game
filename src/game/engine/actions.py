@@ -32,6 +32,7 @@ class ActionKind(StrEnum):
     CHALLENGE_RESPONSE = "challenge_response"
     HIDEAWAY = "hideaway"
     CASA_DECISION = "casa_decision"
+    JOIN_GATHER = "join_gather"
     MOVE = "move"
     RECOUPLE = "recouple"
     ADVANCE_PHASE = "advance_phase"
@@ -64,6 +65,13 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         return []
 
     actions: list[ActionSpec] = []
+    if state.pending_gather is not None:
+        return [
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.JOIN_GATHER),
+                label=f"Join gather at the {state.pending_gather.gather_location.value}",
+            )
+        ]
     casa_options = casa_decision_options(state)
     if casa_options:
         return [
@@ -264,6 +272,10 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         valid = [spec.action for spec in available_actions(state)]
         if action not in valid:
             raise ValueError(f"invalid Casa Amor decision: {action.model_dump()}")
+        return
+    if action.kind is ActionKind.JOIN_GATHER:
+        if state.pending_gather is None:
+            raise ValueError("no gather is waiting to resolve")
         return
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:
