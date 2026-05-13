@@ -195,6 +195,7 @@ def _render_context(state: GameState) -> str:
             f"Player location: {state.location_id.value}",
             f"Current villa: {state.villa.value}",
             f"Player active conversation target: {active_target}",
+            f"Player isolation: {_player_isolation(state)}",
             "Player active conversation id: player_active" if state.active_conversation is not None else "",
             f"Player active conversation pending_interruption: {pending_interruption}",
             "Islanders:",
@@ -218,6 +219,20 @@ def _locked_participants(state: GameState) -> str:
             "To move one, end the conversation or use npc_summoned_elsewhere; do not use npc_movements."
         )
     return "\n".join(rows) if rows else "none"
+
+
+def _player_isolation(state: GameState) -> str:
+    visible = [
+        islander.id
+        for islander in state.islanders
+        if not islander.eliminated and islander.location_id is state.location_id
+    ]
+    if visible:
+        return f"not alone; present islanders: {', '.join(visible)}"
+    return (
+        f"player is alone at {state.location_id.value}. If this has happened recently, "
+        "consider moving one available islander toward the player."
+    )
 
 
 def _recent_memories(memories: object) -> str:

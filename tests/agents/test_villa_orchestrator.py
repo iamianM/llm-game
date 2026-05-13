@@ -42,6 +42,16 @@ def test_villa_orchestrator_context_marks_conversation_participants_locked() -> 
     assert "do not use npc_movements" in rendered
 
 
+def test_villa_orchestrator_context_marks_isolated_player() -> None:
+    state = new_game(1)
+    for islander in state.islanders:
+        islander.location_id = Location.KITCHEN
+
+    rendered = _render_context(state)
+
+    assert "Player isolation: player is alone at pool" in rendered
+
+
 @pytest.mark.llm
 def test_villa_orchestrator_contract() -> None:
     """Real Orchestrator returns an update the engine can validate."""
@@ -51,3 +61,27 @@ def test_villa_orchestrator_contract() -> None:
     update = agent.decide(state)
 
     validate_villa_update(state, update)
+
+
+@pytest.mark.llm
+def test_orchestrator_draws_npc_toward_isolated_player() -> None:
+    """With an isolated player, the Orchestrator should tend toward movement."""
+    state = new_game(7)
+    for islander in state.islanders:
+        islander.location_id = Location.KITCHEN
+
+    update = OpenAIVillaOrchestrator().decide(state)
+
+    assert any(movement.target_location is Location.POOL for movement in update.npc_movements)
+
+
+@pytest.mark.llm
+def test_orchestrator_produces_at_least_one_movement_per_two_turns_avg() -> None:
+    """Claude's H9.7 prompt should make movement common, not static."""
+    movements = 0
+    for seed in range(20, 26):
+        state = new_game(seed)
+        update = OpenAIVillaOrchestrator().decide(state)
+        movements += len(update.npc_movements)
+
+    assert movements >= 3

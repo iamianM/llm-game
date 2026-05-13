@@ -42,8 +42,6 @@ from src.game.state.rng import SeededRng
 
 
 class AgentCommits(BaseModel):
-    """Agent commits produced or replayed during one turn."""
-
     model_config = ConfigDict(extra="forbid")
 
     villa_update: VillaUpdate | None = None
@@ -53,8 +51,6 @@ class AgentCommits(BaseModel):
 
 
 class AppliedVillaChanges(BaseModel):
-    """State changes applied from one VillaUpdate."""
-
     model_config = ConfigDict(extra="forbid")
 
     villa_update: VillaUpdate
@@ -71,7 +67,6 @@ def apply_villa_update(
     background_dialogue: BackgroundDialogueFn | None = None,
     conversation_curator: ConversationCuratorFn | None = None,
 ) -> AppliedVillaChanges:
-    """Validate and apply one Orchestrator update."""
     update = normalize_villa_update(state, update)
     validate_villa_update(state, update)
     speak = mock_background_dialogue if background_dialogue is None else background_dialogue
@@ -134,13 +129,7 @@ def apply_villa_update(
 
 
 def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate:
-    """Make implicit conversation exits explicit before validation.
-
-    The orchestrator sometimes proposes a movement for an NPC who is currently
-    inside an NPC-NPC conversation. In engine terms that means the conversation
-    must end first, so record the end in the commit instead of crashing on an
-    otherwise valid autonomous movement.
-    """
+    """Make implicit conversation exits explicit before validation."""
     current_locations = {
         islander.id: islander.location_id for islander in state.islanders if not islander.eliminated
     }
@@ -178,7 +167,17 @@ def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate
 
 
 def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
-    """Fail loud if a VillaUpdate cannot be applied to current state."""
+    if state.pending_gather is not None and any(
+        (
+            update.npc_movements,
+            update.conversation_starts,
+            update.conversation_continues,
+            update.conversation_ends,
+            update.npc_interruptions,
+            update.npc_summoned_elsewhere,
+        )
+    ):
+        raise ValueError("villa autonomy is paused while a gather is pending")
     known = {islander.id for islander in state.islanders if not islander.eliminated}
     active_ids = {conversation.id for conversation in state.npc_conversations}
     movement_ids = [movement.npc_id for movement in update.npc_movements]
@@ -261,7 +260,6 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
 
 
 def pending_to_summon(pending: PendingNPCSummon) -> NPCSummon:
-    """Convert a queued deterministic summon into an Orchestrator-shaped commit."""
     return NPCSummon(
         npc_id=pending.npc_id,
         from_conversation_id=pending.from_conversation_id,

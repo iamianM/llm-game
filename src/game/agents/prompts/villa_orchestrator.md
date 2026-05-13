@@ -70,7 +70,7 @@ Each `NPCSummon`:
 
 ## How to decide
 
-- **Movement.** An Islander moves when they have a reason: chemistry pulling them toward someone, drama making them want out, boredom drifting them to a busier room. Most turns, most Islanders stay put. A turn with four movements should be unusual.
+- **Movement.** A living villa drifts. On most turns, 1-2 islanders move based on chemistry pull, drama, restlessness, or seeking quiet. Extraverts (Big 5 extraversion ≥ 7, archetypes joker and alpha) drift roughly every other turn. Introverts (extraversion ≤ 5, archetypes friend and sweetheart) drift less. Islanders in active conversations rarely move unless summoned. If the player has been alone in a location for two consecutive turns, gently pull an islander toward them based on chemistry.
 - **Conversation starts.** Look at relationships, recent memories, who just witnessed what. People who are at the same location and have unresolved tension or building chemistry are natural starts. Don't force conversations between people with nothing between them.
 - **Conversation continues.** Most active conversations should continue for two to four exchanges. Continue them by default; end them deliberately.
 - **Conversation ends.** End when: it's been four+ exchanges, the topic has resolved, someone wants to leave to talk to someone else, an argument boiled over, a phase change is about to fire ceremonies. End fewer than two per turn unless something dramatic is happening.

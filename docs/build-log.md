@@ -381,3 +381,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: `/background` history rendering, full background-dialogue HTML rendering, daily recap generation at day rollover, and daily recap prose hash exclusion
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (272 passed in 10.06s), content lint, fixture determinism, line-cap audit, and full LLM suite (53 passed on rerun after one stochastic pre-existing pull-rejection wording failure)
 - Scenario fixture: all fixtures regenerated for daily recap state
+
+## Phase H9.7
+
+- Files added: none
+- Files changed: Villa Orchestrator movement prompt, Orchestrator context rendering, VillaUpdate validation during pending gathers, and related tests
+- Tests added: isolated-player context coverage, pending-gather autonomy rejection, and two LLM tests for H9.7 movement liveliness
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (274 passed in 10.36s), content lint, fixture determinism, line-cap audit, H9.7 focused LLM suite (3 passed), and full LLM suite (55 passed after increasing the command timeout)
+- Prompt note: installed Claude's H9.7 `villa_orchestrator.md` movement bullet verbatim; no other prompt edits made

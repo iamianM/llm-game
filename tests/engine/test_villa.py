@@ -12,7 +12,7 @@ from src.game.agents.villa_orchestrator import (
     VillaUpdate,
 )
 from src.game.engine.villa import apply_villa_update, normalize_villa_update, validate_villa_update
-from src.game.state.models import Location, NPCNPCConversation, new_game
+from src.game.state.models import Location, NPCNPCConversation, PendingGather, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -68,6 +68,23 @@ def test_villa_update_rejects_end_and_continue_same_conv() -> None:
     )
 
     with pytest.raises(ValueError, match="end and continue"):
+        validate_villa_update(state, update)
+
+
+def test_villa_update_rejects_movement_during_pending_gather() -> None:
+    """Autonomy pauses while mandatory gather actions are waiting."""
+    state = new_game(1)
+    state.pending_gather = PendingGather(
+        kind="ceremony",
+        event_id="recoupling_day_3",
+        gather_location=Location.FIREPIT,
+        fires_on_turn=1,
+    )
+    update = VillaUpdate(
+        npc_movements=[NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")]
+    )
+
+    with pytest.raises(ValueError, match="gather is pending"):
         validate_villa_update(state, update)
 
 
