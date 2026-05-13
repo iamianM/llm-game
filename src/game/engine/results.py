@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import PlayerAction
 from src.game.engine.pull import PullAttempt
-from src.game.state.models import RelationshipDelta
+from src.game.state.models import Location, RelationshipDelta
 
 
 class ChanceBreakdown(BaseModel):
@@ -35,6 +35,16 @@ class ChanceBreakdown(BaseModel):
     final_chance: int
 
 
+class ForcedMovement(BaseModel):
+    """Engine-owned movement caused by the player's direct action."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    actor_id: str
+    kind: str
+    target_location: Location
+
+
 class MechanicalResult(BaseModel):
     """Resolved mechanical outcome from one player action."""
 
@@ -48,3 +58,4 @@ class MechanicalResult(BaseModel):
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
     pull_attempt: PullAttempt | None = None
+    forced_movements: list[ForcedMovement] = Field(default_factory=list)

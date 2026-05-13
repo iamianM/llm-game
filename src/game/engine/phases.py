@@ -30,6 +30,7 @@ PHASE_BUDGETS: dict[Phase, int] = {
 
 def advance_phase(state: GameState) -> None:
     """Advance the multi-day v0 clock."""
+    state.player.pull_attempts_this_phase = {}
     if state.phase is Phase.COMPLETE:
         _reset_phase_clock(state)
         return

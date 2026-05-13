@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from src.game.engine.actions import PlayerAction
+from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.memory import add_memory, create_memory
-from src.game.engine.results import ChanceBreakdown, MechanicalResult
+from src.game.engine.results import ChanceBreakdown, ForcedMovement, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
-from src.game.state.models import GameState, RelationshipDelta
+from src.game.state.models import GameState, Location, RelationshipDelta
 from src.game.state.rng import SeededRng
 
 INTERRUPTION_INTENT_KINDS = {
@@ -62,6 +63,7 @@ def apply_interruption_response(
     roll: int | None = None
     chance: int | None = None
     breakdown: ChanceBreakdown | None = None
+    forced_movements: list[ForcedMovement] = []
     success = True
     tags = ["interruption", str(intent_id), interruption.reason, interruption.urgency]
 
@@ -86,6 +88,15 @@ def apply_interruption_response(
         apply_relationship_delta(interrupter, interrupter_delta)
         deltas = {interrupter.id: interrupter_delta}
         remember_interruption_snub(state, interrupter.id, "ignored_in_public", 8)
+        target_location = _walkaway_location(state, interrupter.id, rng)
+        interrupter.location_id = target_location
+        forced_movements.append(
+            ForcedMovement(
+                actor_id=interrupter.id,
+                kind="walks_away_after_snub",
+                target_location=target_location,
+            )
+        )
     else:
         raise ValueError(f"unknown interruption response: {intent_id}")
 
@@ -98,6 +109,7 @@ def apply_interruption_response(
         chance_breakdown=breakdown if chance is not None else None,
         relationship_deltas=deltas,
         tags=tags,
+        forced_movements=forced_movements,
     )
 
 
@@ -143,3 +155,13 @@ def remember_interruption_snub(
                     ),
                 ),
             )
+
+
+def _walkaway_location(state: GameState, interrupter_id: str, rng: SeededRng) -> Location:
+    interrupter = find_islander(state, interrupter_id)
+    candidates = [
+        location
+        for location in sorted(locations_for_villa(state.villa), key=lambda item: item.value)
+        if location != interrupter.location_id
+    ]
+    return rng.choice(candidates)

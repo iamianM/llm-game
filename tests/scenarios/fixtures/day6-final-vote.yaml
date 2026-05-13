@@ -31,7 +31,7 @@ initial_couples:
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-expected_hash: 9156ab595c5e1a0b0834db33e560af00ae5022e5eace3461ccbe0f425ded21bd
+expected_hash: b0295c3862f9a4645d49b02ad49f1852da03155cf9e3a6d74df147108c3def99
 actions:
 - kind: advance_phase
 - kind: advance_phase

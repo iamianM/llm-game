@@ -184,6 +184,35 @@ def test_ignore_interruption_keeps_current_drops_affection_4() -> None:
     assert any("ignored_in_public" in memory.tags for memory in maya.memories)
 
 
+def test_ignore_interruption_moves_interrupter_away() -> None:
+    state = _state_with_pending_interruption()
+    maya = next(islander for islander in state.islanders if islander.id == "maya")
+    before = maya.location_id
+
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="ignore_interruption"),
+        SeededRng(1),
+    )
+
+    assert maya.location_id != before
+
+
+def test_ignore_interruption_trace_records_movement() -> None:
+    state = _state_with_pending_interruption()
+
+    turn = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="ignore_interruption"),
+        SeededRng(1),
+    )
+
+    assert turn.mechanical_result.forced_movements
+    movement = turn.mechanical_result.forced_movements[0]
+    assert movement.actor_id == "maya"
+    assert movement.kind == "walks_away_after_snub"
+
+
 def _state_with_active_chloe_conversation():
     state = new_game(1)
     state.islanders[1].location_id = Location.POOL

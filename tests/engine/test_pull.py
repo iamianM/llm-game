@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.phases import advance_phase
 from src.game.engine.pull import attempt_pull, pull_chance, target_in_active_conversation
 from src.game.engine.turn import run_turn
 from src.game.state.models import Location, NPCNPCConversation, new_game
@@ -46,6 +47,24 @@ def test_pull_chance_supports_casa_locations() -> None:
     kitchen = _state_with_busy_chloe(location=Location.CASA_KITCHEN)
 
     assert pull_chance(terrace, "chloe") > pull_chance(pool, "chloe") > pull_chance(kitchen, "chloe")
+
+
+def test_pull_chance_drops_with_repeated_attempts() -> None:
+    state = _state_with_busy_chloe()
+    baseline = pull_chance(state, "chloe")
+
+    state.player.pull_attempts_this_phase["chloe"] = 1
+
+    assert pull_chance(state, "chloe") == baseline - 15
+
+
+def test_three_failed_pulls_clamped_near_minimum() -> None:
+    state = _state_with_busy_chloe(location=Location.KITCHEN)
+    state.player.stats.graft = 3
+    state.islanders[0].relationship.chemistry = 100
+    state.player.pull_attempts_this_phase["chloe"] = 3
+
+    assert pull_chance(state, "chloe") == 10
 
 
 def test_pull_chance_clamped_to_10_90() -> None:
@@ -139,6 +158,28 @@ def test_start_conversation_with_pull_failure_does_not_open() -> None:
     assert state.active_conversation is None
     assert state.npc_conversations
     assert state.islanders[0].relationship.affection == affection_before - 1
+    assert state.player.pull_attempts_this_phase["chloe"] == 1
+
+
+def test_pull_attempts_reset_on_phase_advance() -> None:
+    state = _state_with_busy_chloe()
+    state.player.pull_attempts_this_phase["chloe"] = 2
+
+    advance_phase(state)
+
+    assert state.player.pull_attempts_this_phase == {}
+
+
+def test_repeated_pull_creates_clingy_memory() -> None:
+    state = _state_with_busy_chloe(location=Location.KITCHEN)
+    state.player.stats.graft = 3
+    state.islanders[0].relationship.chemistry = 100
+
+    attempt_pull(state, "chloe", SeededRng(3))
+    attempt_pull(state, "chloe", SeededRng(3))
+
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    assert any("player_kept_pulling" in memory.tags for memory in chloe.memories)
 
 
 def test_pull_failure_bystanders_get_witness_memory() -> None:

@@ -37,7 +37,7 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 18
+SCHEMA_VERSION = 19
 
 
 class Phase(StrEnum):
@@ -131,6 +131,7 @@ class PlayerState(BaseModel):
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
     memories: list[Memory] = Field(default_factory=list)
+    pull_attempts_this_phase: dict[str, int] = Field(default_factory=dict)
 
 
 class RelationshipState(BaseModel):

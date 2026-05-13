@@ -6,7 +6,7 @@ initial_relationships:
     chemistry: 40
     trust: 0
     friendship: 0
-expected_hash: afc12651d8d93ae0a18f5eef9446c1ebabcf3dee0a768ded31acab98f027bc31
+expected_hash: 798c92690fa0ccf33cd0c51611658bab2fcb54f31cb22568bd209ca6549b76ec
 actions:
 - kind: start_conversation
   target_id: chloe

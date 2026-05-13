@@ -6,7 +6,7 @@ player_stats:
   eq: 7
   graft: 3
   loyalty: 6
-expected_hash: 4d15c0cd0c7ec2678b65f2c71c819f1ec010af8d85f269199a9f91014537e7af
+expected_hash: f2117ff079af5b67ba192e3ca99d7f6b1723fc0013864b76a75156c2d1af242f
 actions:
 - kind: start_conversation
   target_id: chloe

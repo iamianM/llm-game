@@ -357,3 +357,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: per-islander backstory loading, Islander Voice backstory context coverage, Islander Voice meta-talk rejection, and Contextual Options specificity checks
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (260 passed in 9.61s), content lint, fixture determinism, line-cap audit, and full LLM suite (53 passed)
 - Scenario fixture: all fixtures regenerated for backstory-bearing islander state
+
+## Phase H9.4
+
+- Files added: none
+- Files changed: player state pull-attempt tracking, pull chance math, phase reset behavior, interruption response mechanics, mechanical result trace schema, and all scenario hashes for `SCHEMA_VERSION = 19`
+- Tests added: repeated pull chance penalty, minimum pull clamp after repeated attempts, phase reset for pull attempts, repeated-pull memory creation, ignored-interruption walkaway movement, and forced movement trace coverage
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (266 passed in 9.31s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
+- Scenario fixture: all fixtures regenerated for pull-attempt tracking and forced-movement trace schema

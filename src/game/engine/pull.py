@@ -13,6 +13,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.engine.memory import add_memory, create_memory
 from src.game.state.models import GameState, IslanderState, Location, NPCNPCConversation
 from src.game.state.rng import SeededRng
 
@@ -60,6 +61,7 @@ def pull_chance(state: GameState, target_id: str) -> int:
         + (target.relationship.affection // 4)
         - (target.relationship.chemistry // 3)
         + privacy_modifier
+        - (15 * state.player.pull_attempts_this_phase.get(target_id, 0))
     )
     return max(10, min(90, chance))
 
@@ -71,7 +73,10 @@ def attempt_pull(state: GameState, target_id: str, rng: SeededRng) -> PullAttemp
         raise ValueError(f"target is not in an active NPC conversation: {target_id}")
     chance = pull_chance(state, target_id)
     roll = rng.randint(1, 100)
-    return PullAttempt(
+    state.player.pull_attempts_this_phase[target_id] = (
+        state.player.pull_attempts_this_phase.get(target_id, 0) + 1
+    )
+    attempt = PullAttempt(
         target_id=target_id,
         started_from_location=state.location_id,
         success=roll <= chance,
@@ -79,6 +84,9 @@ def attempt_pull(state: GameState, target_id: str, rng: SeededRng) -> PullAttemp
         roll=roll,
         blocked_conversation_id=blocked.id,
     )
+    if not attempt.success:
+        _remember_repeated_pull(state, target_id)
+    return attempt
 
 
 def _target(state: GameState, target_id: str) -> IslanderState:
@@ -86,3 +94,24 @@ def _target(state: GameState, target_id: str) -> IslanderState:
         if islander.id == target_id and not islander.eliminated:
             return islander
     raise ValueError(f"unknown active islander: {target_id}")
+
+
+def _remember_repeated_pull(state: GameState, target_id: str) -> None:
+    if state.player.pull_attempts_this_phase.get(target_id, 0) < 2:
+        return
+    target = _target(state, target_id)
+    if any("player_kept_pulling" in memory.tags for memory in target.memories):
+        return
+    add_memory(
+        state,
+        create_memory(
+            holder_id=target_id,
+            subject_id="player",
+            source="direct",
+            day=state.day,
+            turn=state.turn_index,
+            weight=6,
+            tags=["player_kept_pulling", "pull"],
+            content="Player kept pulling me away today - felt a bit much.",
+        ),
+    )
