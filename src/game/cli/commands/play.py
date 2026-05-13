@@ -59,7 +59,13 @@ from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import run_turn
 from src.game.state.models import CharacterCreation, GameState, Gender, PlayerStats, new_game
 from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash, state_hash_payload
+from src.game.state.snapshot import (
+    load_checkpoint,
+    save_auto_checkpoint,
+    save_named_checkpoint,
+    state_hash,
+    state_hash_payload,
+)
 
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -70,6 +76,8 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     parser.add_argument("--trace", action="store_true", help="write turn traces")
     parser.add_argument("--record", help="record this live session to a trace package")
     parser.add_argument("--replay", help="replay a recorded trace package without LLM calls")
+    parser.add_argument("--from-checkpoint", help="resume from a named checkpoint or checkpoint path")
+    parser.add_argument("--branch-name", help="branch name for checkpoint resume trace output")
     parser.add_argument("--autopilot", action="store_true", help="let the Player Autopilot play end-to-end")
     parser.add_argument("--persona", choices=sorted(AUTOPILOT_PERSONAS), default="loyal")
     parser.add_argument("--max-turns", type=int, default=120, help="autopilot safety cap")
@@ -77,14 +85,20 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 
 def run(args: argparse.Namespace) -> int:
+    from_checkpoint = getattr(args, "from_checkpoint", None)
     if args.record and args.replay:
         print("choose either --record or --replay, not both")
         return 2
     if args.replay:
         return _replay_recording(Path(args.replay))
 
-    seed = 1 if args.seed is None else args.seed
-    state = new_game(seed)
+    if from_checkpoint:
+        state, records, checkpoint_seed = load_checkpoint(from_checkpoint)
+        seed = checkpoint_seed if args.seed is None else args.seed
+    else:
+        seed = 1 if args.seed is None else args.seed
+        state = new_game(seed)
+        records: list[dict[str, Any]] = []
     rng = SeededRng(seed)
     islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
     contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
@@ -93,14 +107,15 @@ def run(args: argparse.Namespace) -> int:
     villa_orchestrator = None if args.mock_llm else OpenAIVillaOrchestrator().decide
     background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
     player_autopilot = None if args.mock_llm else OpenAIPlayerAutopilot()
-    record_path = None if args.record is None else Path(args.record)
-    records: list[dict[str, Any]] = []
-    if args.autopilot:
+    record_path = _record_path_from_args(args)
+    if args.autopilot and not from_checkpoint:
         apply_autopilot_character(state, args.persona)
         _print_character_card(state)
         print(f"Autopilot persona: {args.persona}")
-    else:
+    elif not from_checkpoint:
         _run_character_creation_flow(state)
+    elif args.autopilot:
+        print(f"Autopilot persona: {args.persona}")
     print("Game CLI. Type a number, /state, /background, /hash, /help, or /quit.")
 
     while not state.is_terminal:
@@ -139,6 +154,11 @@ def run(args: argparse.Namespace) -> int:
             if raw == "/background":
                 _print_background_history(records)
                 continue
+            if raw.startswith("/checkpoint"):
+                name = raw.removeprefix("/checkpoint").strip() or f"turn-{state.turn_index}"
+                path = save_named_checkpoint(state, name, records, seed=seed)
+                print(f"checkpoint saved: {path}")
+                continue
             if raw == "/hash":
                 print(state_hash(state_hash_payload(state)))
                 continue
@@ -168,6 +188,8 @@ def run(args: argparse.Namespace) -> int:
         if decision is not None:
             turn.agent_commits.player_autopilot = decision
         records.append(_record_from_turn(input_hash, action, turn))
+        if _should_auto_checkpoint(turn):
+            save_auto_checkpoint(state, seed, records)
         _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
         _print_turn(turn)
 
@@ -341,3 +363,27 @@ def _replay_recording(path: Path) -> int:
 
 
 __all__ = ["_print_state", "_print_villa_update", "add_parser", "run"]
+
+
+def _record_path_from_args(args: argparse.Namespace) -> Path | None:
+    if args.record is not None:
+        return Path(args.record)
+    from_checkpoint = getattr(args, "from_checkpoint", None)
+    branch_name = getattr(args, "branch_name", None)
+    if from_checkpoint and branch_name:
+        checkpoint_stem = Path(str(from_checkpoint)).stem
+        return Path(".game_traces") / f"{checkpoint_stem}_{branch_name}.json"
+    return None
+
+
+def _should_auto_checkpoint(turn: object) -> bool:
+    from src.game.engine.turn import TurnResult
+
+    if not isinstance(turn, TurnResult):
+        return False
+    action_kind = turn.mechanical_result.action.kind.value
+    return bool(
+        turn.auto_advance
+        or turn.ceremony_events
+        or action_kind in {"hideaway", "casa_decision", "join_gather"}
+    )

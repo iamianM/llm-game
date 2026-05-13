@@ -10,6 +10,7 @@ from typing import Any
 
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.cli.commands.report_compare import compare_cmd
 from src.game.cli.commands.review import review_notes_for_trace
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.bookmarks import bookmarks_for_turn
@@ -59,6 +60,13 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     eval_dashboard.add_argument("trace_path")
     eval_dashboard.add_argument("--out", required=True)
     eval_dashboard.set_defaults(func=eval_dashboard_cmd)
+
+    compare = nested.add_parser("compare", help="compare two checkpoint branches")
+    compare.add_argument("--checkpoint", required=True)
+    compare.add_argument("--trace-a", required=True)
+    compare.add_argument("--trace-b", required=True)
+    compare.add_argument("--out", required=True)
+    compare.set_defaults(func=compare_cmd)
 
     preview_f2 = nested.add_parser("preview-f2", help="build the Phase F2 voice preview")
     preview_f2.add_argument("--out", default="review-packet-preview/session-phaseF2.html")

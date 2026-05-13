@@ -469,3 +469,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: auto-advance bookmark generation, reviewer note add/clear helpers, and slide rendering for auto plus reviewer bookmarks
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (303 passed), fixture determinism, and line-cap audit
 - Review workflow note: reviewer notes are explicit CLI-authored artifacts; no LLM judge or automatic qualitative reviewer was added
+
+## Phase H11.4
+
+- Files added: `src/game/cli/commands/report_compare.py`, `tests/cli/test_report_compare.py`, `tests/state/test_checkpoints.py`, and checked-in H10/H11 plan docs
+- Files changed: checkpoint save/load helpers now support auto and named checkpoints, `play` can save `/checkpoint <name>` and resume with `--from-checkpoint` plus branch trace naming, and `report compare` renders a side-by-side branch comparison page
+- Tests added: checkpoint round-trip coverage and compare-report HTML generation
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (305 passed), content lint, smoke `verify-script`, fixture determinism, and line-cap audit
+- Review workflow note: checkpoints are developer review tools only; no save-scumming affordance was added to the in-game loop

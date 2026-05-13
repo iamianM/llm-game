@@ -98,3 +98,81 @@ def load_snapshot(path: Path) -> dict[str, object]:
     if not isinstance(payload, dict):
         raise ValueError(f"snapshot {path} did not contain a JSON object")
     return payload
+
+
+def save_named_checkpoint(
+    state: GameState,
+    name: str,
+    trace_records: list[dict[str, object]],
+    *,
+    seed: int,
+) -> Path:
+    """Save a named development checkpoint."""
+    path = Path(".game_saves") / "named" / f"{_safe_name(name)}.json"
+    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=name)
+    return path
+
+
+def save_auto_checkpoint(
+    state: GameState,
+    seed: int,
+    trace_records: list[dict[str, object]],
+) -> Path:
+    """Save an automatic boundary checkpoint."""
+    path = Path(".game_saves") / "auto" / str(seed) / f"day{state.day}_{state.phase.value}.json"
+    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=path.stem)
+    return path
+
+
+def load_checkpoint(name_or_path: str | Path) -> tuple[GameState, list[dict[str, object]], int]:
+    """Load a named or path-based development checkpoint."""
+    path = _checkpoint_path(name_or_path)
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(raw, dict):
+        raise ValueError(f"checkpoint must be a JSON object: {path}")
+    state_payload = raw.get("state")
+    trace_records = raw.get("trace_records")
+    seed = raw.get("seed")
+    if not isinstance(state_payload, dict) or not isinstance(trace_records, list) or not isinstance(seed, int):
+        raise ValueError(f"checkpoint missing state, trace_records, or seed: {path}")
+    records = [record for record in trace_records if isinstance(record, dict)]
+    return GameState.model_validate(state_payload), records, seed
+
+
+def _write_checkpoint(
+    path: Path,
+    state: GameState,
+    trace_records: list[dict[str, object]],
+    *,
+    seed: int,
+    checkpoint_name: str,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "name": checkpoint_name,
+                "seed": seed,
+                "state_hash": state_hash(state_hash_payload(state)),
+                "state": state.model_dump(mode="json"),
+                "trace_records": trace_records,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+
+def _checkpoint_path(name_or_path: str | Path) -> Path:
+    path = Path(name_or_path)
+    if path.exists():
+        return path
+    named = Path(".game_saves") / "named" / f"{_safe_name(str(name_or_path))}.json"
+    if named.exists():
+        return named
+    raise FileNotFoundError(f"checkpoint not found: {name_or_path}")
+
+
+def _safe_name(name: str) -> str:
+    cleaned = "".join(char if char.isalnum() or char in {"-", "_"} else "-" for char in name.strip())
+    return cleaned.strip("-") or "checkpoint"
