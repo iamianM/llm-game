@@ -18,6 +18,7 @@ from src.game.engine.followups import (
     apply_follow_up,
     follow_up_delta,
 )
+from src.game.engine.hideaway import HIDEAWAY_TAGS, apply_hideaway
 from src.game.engine.intents import available_intents_for, get_intent
 from src.game.engine.interruptions import (
     INTERRUPTION_INTENT_KINDS,
@@ -50,6 +51,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_end_conversation(state, action)
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         return _apply_challenge_response(state, action, rng)
+    if action.kind is ActionKind.HIDEAWAY:
+        return _apply_hideaway(state, action)
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:
@@ -139,6 +142,18 @@ def _apply_challenge_response(state: GameState, action: PlayerAction, rng: Seede
         success=resolved.result == "success",
         relationship_deltas=resolved.deltas,
         tags=["challenge", resolved.kind],
+    )
+
+
+def _apply_hideaway(state: GameState, action: PlayerAction) -> MechanicalResult:
+    partner_id = state.hideaway.partner_id
+    delta = apply_hideaway(state)
+    partner_id = state.hideaway.partner_id or partner_id
+    return MechanicalResult(
+        action=action,
+        success=True,
+        relationship_deltas={} if partner_id is None else {partner_id: delta},
+        tags=HIDEAWAY_TAGS,
     )
 
 

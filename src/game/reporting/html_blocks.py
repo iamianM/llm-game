@@ -133,6 +133,20 @@ def villa_snapshot_block(snapshot: object) -> str:
     return f"<div class='card'><p><b>Villa snapshot</b></p><ul>{''.join(rows)}</ul></div>"
 
 
+def couple_status_block(record: dict[str, Any]) -> str:
+    strength = record.get("couple_strength")
+    hideaway = record.get("hideaway")
+    rows = []
+    if isinstance(strength, int):
+        rows.append(f"<li>Player couple strength: {strength}</li>")
+    if isinstance(hideaway, dict) and hideaway.get("used_on_day") is not None:
+        rows.append(
+            f"<li>Hideaway used day {escape(hideaway.get('used_on_day'))} "
+            f"with {escape(hideaway.get('partner_id', 'unknown'))}</li>"
+        )
+    return "" if not rows else f"<div class='card hideaway'><p><b>Couple status</b></p><ul>{''.join(rows)}</ul></div>"
+
+
 def math_block(result: dict[str, Any]) -> str:
     """Render the chance formula and roll result."""
     roll = result.get("roll")

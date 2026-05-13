@@ -1,6 +1,6 @@
 name: elimination-day5
 seed: 10
-expected_hash: 06f66c13cbf0be53871640b72a6dad5e79b2a6311bca6e57532dbafb8ce7c783
+expected_hash: 32df0249e5fd81b61c56342109ffa2dccb26c2331bb523580ce8e083a02f35a9
 actions:
 - kind: advance_phase
 - kind: advance_phase

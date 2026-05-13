@@ -7,8 +7,9 @@ Design sources:
 
 from __future__ import annotations
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.engine.couples import StealAttempt, resolve_steal_attempt
 from src.game.engine.final_vote import final_vote, final_vote_message
 from src.game.state.models import (
     AttachmentStyle,
@@ -20,6 +21,7 @@ from src.game.state.models import (
     RelationshipState,
     TypeOnPaper,
 )
+from src.game.state.rng import SeededRng
 
 
 class RecouplingResult(BaseModel):
@@ -29,6 +31,7 @@ class RecouplingResult(BaseModel):
 
     couples: list[Couple]
     eliminated_id: str | None = None
+    steal_attempts: list[StealAttempt] = Field(default_factory=list)
 
 
 class CeremonyEvent(BaseModel):
@@ -66,10 +69,11 @@ def recoupling(state: GameState, player_choice_id: str | None = None) -> Recoupl
         eliminated_id = eliminated.id
 
     state.couples = couples
+    steal_attempts = _resolve_bombshell_steals(state)
     if not state.couples and not state.player.eliminated:
         state.player.eliminated = True
         eliminated_id = state.player.id
-    return RecouplingResult(couples=couples, eliminated_id=eliminated_id)
+    return RecouplingResult(couples=state.couples, eliminated_id=eliminated_id, steal_attempts=steal_attempts)
 
 
 def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) -> IslanderState:
@@ -117,3 +121,31 @@ def _partner_index(active: list[IslanderState], player_choice_id: str | None) ->
         if islander.id == player_choice_id:
             return index
     raise ValueError(f"recoupling target is not available: {player_choice_id}")
+
+
+def _resolve_bombshell_steals(state: GameState) -> list[StealAttempt]:
+    attempts: list[StealAttempt] = []
+    for bombshell in state.islanders:
+        if bombshell.eliminated or bombshell.id != "aisha":
+            continue
+        current = next(
+            (couple for couple in state.couples if bombshell.id in {couple.partner_a_id, couple.partner_b_id}),
+            None,
+        )
+        candidates = [
+            couple for couple in state.couples
+            if bombshell.id not in {couple.partner_a_id, couple.partner_b_id}
+        ]
+        if current is None and candidates:
+            target = candidates[0]
+        elif current is not None and candidates and bombshell.relationship.chemistry >= 25:
+            target = candidates[0]
+        else:
+            continue
+        attempt = resolve_steal_attempt(state, bombshell.id, target, _steal_rng(state, bombshell.id))
+        attempts.append(attempt)
+    return attempts
+
+
+def _steal_rng(state: GameState, bombshell_id: str) -> SeededRng:
+    return SeededRng(f"{state.seed}:steal:{state.day}:{bombshell_id}")

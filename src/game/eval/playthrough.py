@@ -23,7 +23,9 @@ from src.game.eval.playthrough_trace import (
     turns_with_ceremony,
     turns_with_challenge,
     turns_with_compatibility,
+    turns_with_couple_strength,
     turns_with_group_date,
+    turns_with_hideaway,
     turns_with_interruption,
     turns_with_interruption_response,
     turns_with_low_chance,
@@ -32,6 +34,7 @@ from src.game.eval.playthrough_trace import (
     turns_with_producer_text,
     turns_with_pull,
     turns_with_reveals,
+    turns_with_steal_attempt,
 )
 
 
@@ -73,6 +76,10 @@ class PlaythroughStats(BaseModel):
     group_dates_held: int = 0
     revealed_preference_count: int = 0
     compatibility_bonus_observed: int = 0
+    max_couple_strength_reached: int = 0
+    hideaway_used: bool = False
+    steal_attempts_total: int = 0
+    steal_successes: int = 0
     outcome: str | None = None
     success_rate_by_category: dict[str, str] = Field(default_factory=dict)
 
@@ -147,6 +154,10 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     producer_texts_fired = 0
     group_dates_held = 0
     compatibility_bonus_observed = 0
+    max_couple_strength_reached = 0
+    hideaway_used = False
+    steal_attempts_total = 0
+    steal_successes = 0
 
     for record in records:
         action = as_dict(record.get("action"))
@@ -196,6 +207,11 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         events = record.get("ceremony_events")
         if isinstance(events, list):
             ceremony_events += len(events)
+            for event in events:
+                if as_dict(event).get("kind") == "steal_attempt":
+                    steal_attempts_total += 1
+                    if "succeeds" in str(as_dict(event).get("message", "")):
+                        steal_successes += 1
         if isinstance(record.get("audience_snapshot"), dict):
             audience_snapshots += 1
         challenge = record.get("challenge")
@@ -211,6 +227,11 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         breakdown = as_dict(result.get("chance_breakdown"))
         if isinstance(breakdown.get("compatibility_bonus"), int) and breakdown["compatibility_bonus"] > 0:
             compatibility_bonus_observed += 1
+        strength = record.get("couple_strength")
+        if isinstance(strength, int):
+            max_couple_strength_reached = max(max_couple_strength_reached, strength)
+        if kind == "hideaway":
+            hideaway_used = True
         if turn_number < 0:
             raise ValueError("recorded turn must be non-negative")
 
@@ -240,6 +261,10 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         group_dates_held=group_dates_held,
         revealed_preference_count=revealed_preference_count(final_state),
         compatibility_bonus_observed=compatibility_bonus_observed,
+        max_couple_strength_reached=max_couple_strength_reached,
+        hideaway_used=hideaway_used,
+        steal_attempts_total=steal_attempts_total,
+        steal_successes=steal_successes,
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -275,6 +300,9 @@ def _assertions(
         _assert("group_date_observed", "At least one group date was scheduled", stats.group_dates_held >= 1, f"{stats.group_dates_held} group date turn(s)", turns_with_group_date(records)),
         _assert("type_on_paper_revealed", "At least one Type on Paper bit was revealed", stats.revealed_preference_count >= 1, f"{stats.revealed_preference_count} revealed bit(s)", turns_with_reveals(records)),
         _assert("compatibility_bonus_observed", "At least one roll used compatibility bonus", stats.compatibility_bonus_observed >= 1, f"{stats.compatibility_bonus_observed} compatibility roll(s)", turns_with_compatibility(records)),
+        _assert("couple_strength_visible", "Couple strength surfaced in the trace", stats.max_couple_strength_reached >= 1, f"max couple strength {stats.max_couple_strength_reached}", turns_with_couple_strength(records)),
+        _assert("hideaway_used_when_eligible", "Hideaway was used after reaching high couple strength", stats.max_couple_strength_reached < 70 or stats.hideaway_used, f"hideaway used: {stats.hideaway_used}", turns_with_hideaway(records)),
+        _assert("steal_attempt_observed", "At least one bombshell steal attempt occurred", stats.steal_attempts_total >= 1, f"{stats.steal_attempts_total} steal attempt(s), {stats.steal_successes} success(es)", turns_with_steal_attempt(records)),
     ]
 
 

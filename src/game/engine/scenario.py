@@ -22,7 +22,17 @@ from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
 from src.game.engine.rules import MechanicalResult
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import CharacterCreation, FollowUpMenu, GameState, PlayerStats, new_game
+from src.game.state.models import (
+    CharacterCreation,
+    Couple,
+    FollowUpMenu,
+    GameState,
+    Location,
+    Phase,
+    PlayerStats,
+    RelationshipState,
+    new_game,
+)
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -36,6 +46,11 @@ class ActionScript(BaseModel):
     seed: int
     player_stats: PlayerStats | None = None
     character_creation: CharacterCreation | None = None
+    initial_day: int | None = None
+    initial_phase: Phase | None = None
+    initial_location: Location | None = None
+    initial_relationships: dict[str, RelationshipState] | None = None
+    initial_couples: list[Couple] | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None
 
@@ -65,6 +80,7 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
     """Replay ``script`` from a fresh deterministic game."""
     seed = script.seed if seed_override is None else seed_override
     state = new_game(seed, player_stats=script.player_stats)
+    _apply_initial_state(state, script)
     if script.character_creation is not None:
         create_character(
             state,
@@ -83,6 +99,22 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
 
     final_hash = state_hash(state_hash_payload(state))
     return ScenarioRunResult(script=script, state=state, turns=turns, final_hash=final_hash)
+
+
+def _apply_initial_state(state: GameState, script: ActionScript) -> None:
+    if script.initial_day is not None:
+        state.day = script.initial_day
+    if script.initial_phase is not None:
+        state.phase = script.initial_phase
+    if script.initial_location is not None:
+        state.location_id = script.initial_location
+    if script.initial_couples is not None:
+        state.couples = [couple.model_copy(deep=True) for couple in script.initial_couples]
+    if script.initial_relationships is not None:
+        for islander in state.islanders:
+            relationship = script.initial_relationships.get(islander.id)
+            if relationship is not None:
+                islander.relationship = relationship.model_copy(deep=True)
 
 
 def _scripted_contextual_options(actions: list[PlayerAction]) -> ContextualOptionsFn:

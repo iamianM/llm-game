@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.game.engine.audience import record_audience_snapshot
 from src.game.engine.ceremonies import (
     CeremonyEvent,
+    RecouplingResult,
     arrive_bombshell,
     final_vote_ceremony,
     recoupling,
@@ -29,7 +30,7 @@ def advance_phase_with_events(
     audience_snapshot: AudienceSnapshot | None = None
     if state.phase.value == "evening" and state.day in {3, 5}:
         ceremony = recoupling(state)
-        events.extend(recoupling_events(ceremony.eliminated_id))
+        events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
     if state.phase.value == "evening":
@@ -41,15 +42,36 @@ def advance_phase_with_events(
     return events, audience_snapshot
 
 
-def recoupling_events(eliminated_id: str | None) -> list[CeremonyEvent]:
+def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
     """Create recoupling and optional dumping events."""
     events = [CeremonyEvent(kind="recoupling", message="Recoupling ceremony completed.")]
-    if eliminated_id is not None:
+    for attempt in ceremony.steal_attempts:
+        outcome = "succeeds" if attempt.success else "fails"
+        events.append(
+            CeremonyEvent(
+                kind="steal_attempt",
+                message=(
+                    f"Steal attempt: {attempt.bombshell_id} tries to steal {attempt.target_id} "
+                    f"from {attempt.abandoned_id} and {outcome} "
+                    f"(roll {attempt.roll} vs {attempt.chance})."
+                ),
+                islander_id=attempt.bombshell_id,
+            )
+        )
+        if attempt.success:
+            events.append(
+                CeremonyEvent(
+                    kind="partner_stolen",
+                    message=f"Partner stolen: {attempt.target_id} recouples with {attempt.bombshell_id}.",
+                    islander_id=attempt.target_id,
+                )
+            )
+    if ceremony.eliminated_id is not None:
         events.append(
             CeremonyEvent(
                 kind="elimination",
-                message=f"Dumping decision: {eliminated_id} leaves the villa.",
-                islander_id=eliminated_id,
+                message=f"Dumping decision: {ceremony.eliminated_id} leaves the villa.",
+                islander_id=ceremony.eliminated_id,
             )
         )
     return events

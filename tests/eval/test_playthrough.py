@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_eighteen_assertions() -> None:
+def test_playthrough_report_has_twenty_one_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 18
+    assert len(report.assertions) == 21
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 18
+    assert report.passed == 21
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -93,10 +93,10 @@ def _complete_package():
             _record(10, "advance_phase", challenge=True),
             _record(11, "advance_phase", challenge=True),
             _record(12, "advance_phase", challenge=True),
-            _record(13, "advance_phase", challenge=True),
+            _record(13, "hideaway", challenge=True, couple_strength=74),
             _record(14, "advance_phase", producer_text=True, group_date=True),
             _record(15, "advance_phase", producer_text=True),
-            _record(16, "advance_phase", producer_text=True),
+            _record(16, "advance_phase", producer_text=True, steal=True),
         ],
         "final_state": {
             "outcome": "won_as_couple",
@@ -119,6 +119,8 @@ def _record(
     challenge: bool = False,
     producer_text: bool = False,
     group_date: bool = False,
+    couple_strength: int | None = 50,
+    steal: bool = False,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -163,7 +165,17 @@ def _record(
             if group_date
             else None
         ),
-        "ceremony_events": [{"kind": "bombshell"}] if turn == 6 else [],
+        "couple_strength": couple_strength,
+        "hideaway": (
+            {"used_on_day": 5, "partner_id": "chloe", "deltas_applied": True}
+            if kind == "hideaway"
+            else {"used_on_day": None, "partner_id": None, "deltas_applied": False}
+        ),
+        "ceremony_events": (
+            [{"kind": "steal_attempt", "message": "Steal attempt fails."}]
+            if steal
+            else ([{"kind": "bombshell"}] if turn == 6 else [])
+        ),
         "agent_commits": {
             "villa_update": (
                 {"npc_interruptions": [interruption]}

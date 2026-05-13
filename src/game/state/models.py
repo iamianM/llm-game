@@ -17,25 +17,28 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from src.game.state.event_models import (
-    AudienceEntry,
-    AudienceSnapshot,
-    Challenge,
-    GroupDate,
-    ProducerText,
-    RelationshipDelta,
+    AudienceEntry as AudienceEntry,
 )
-from src.game.state.personality import AttachmentStyle, Big5, TypeOnPaper
-
-SCHEMA_VERSION = 13
-
-__all__ = (
-    "AttachmentStyle", "AudienceEntry", "AudienceSnapshot", "Big5", "Challenge",
-    "CharacterCreation", "Conversation", "Couple", "ExchangeRecord", "FollowUpMenu",
-    "FollowUpOption", "GameState", "GroupDate", "IslanderState", "Location", "Memory",
-    "MemoryBatch", "MemoryDraft", "Mood", "NPCInterruption", "NPCNPCConversation", "Phase",
-    "PlayerState", "PlayerStats", "ProducerText", "RelationshipDelta", "RelationshipState",
-    "RunOutcome", "TypeOnPaper", "clamp_relationship", "new_game",
+from src.game.state.event_models import (
+    AudienceSnapshot as AudienceSnapshot,
 )
+from src.game.state.event_models import (
+    Challenge as Challenge,
+)
+from src.game.state.event_models import (
+    GroupDate as GroupDate,
+)
+from src.game.state.event_models import (
+    ProducerText as ProducerText,
+)
+from src.game.state.event_models import (
+    RelationshipDelta as RelationshipDelta,
+)
+from src.game.state.personality import AttachmentStyle as AttachmentStyle
+from src.game.state.personality import Big5 as Big5
+from src.game.state.personality import TypeOnPaper as TypeOnPaper
+
+SCHEMA_VERSION = 14
 
 
 class Phase(StrEnum):
@@ -50,8 +53,6 @@ class Phase(StrEnum):
 
 
 class RunOutcome(StrEnum):
-    """Terminal outcome assigned when the run resolves."""
-
     WON_AS_COUPLE = "won_as_couple"
     RUNNER_UP_COUPLE = "runner_up_couple"
     LEFT_SINGLE = "left_single"
@@ -59,17 +60,14 @@ class RunOutcome(StrEnum):
 
 
 class Location(StrEnum):
-    """Discrete villa locations."""
-
     POOL = "pool"
     KITCHEN = "kitchen"
     TERRACE = "terrace"
     BEDROOM = "bedroom"
+    HIDEAWAY = "hideaway"
 
 
 class Mood(StrEnum):
-    """Current Islander mood for conversation prompts and intent modifiers."""
-
     HAPPY = "happy"
     FLIRTY = "flirty"
     UPSET = "upset"
@@ -197,13 +195,21 @@ class IslanderState(BaseModel):
 
 
 class Couple(BaseModel):
-    """Two islanders paired by the deterministic ceremony rules."""
-
     model_config = ConfigDict(extra="forbid")
 
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
+    has_used_hideaway: bool = False
+    last_steal_attempt_chance: int | None = None
+
+
+class HideawayState(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    used_on_day: int | None = None
+    partner_id: str | None = None
+    deltas_applied: bool = False
 
 
 class FollowUpOption(BaseModel):
@@ -321,6 +327,7 @@ class GameState(BaseModel):
     pending_challenge: Challenge | None = None
     pending_text: ProducerText | None = None
     pending_group_date: GroupDate | None = None
+    hideaway: HideawayState = Field(default_factory=HideawayState)
     outcome: RunOutcome | None = None
 
     @property

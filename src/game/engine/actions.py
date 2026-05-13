@@ -15,6 +15,8 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
+from src.game.engine.couples import player_couple
+from src.game.engine.hideaway import hideaway_eligible, hideaway_partner_id
 from src.game.engine.intents import available_intents_for, get_intent
 from src.game.state.models import FollowUpOption, GameState, IslanderState, Location, Phase
 
@@ -27,6 +29,7 @@ class ActionKind(StrEnum):
     RESPOND_WITH = "respond_with"
     END_CONVERSATION = "end_conversation"
     CHALLENGE_RESPONSE = "challenge_response"
+    HIDEAWAY = "hideaway"
     MOVE = "move"
     RECOUPLE = "recouple"
     ADVANCE_PHASE = "advance_phase"
@@ -142,9 +145,16 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 label=f"Talk to {islander.name}",
             )
         )
+    if hideaway_eligible(state):
+        partner_id = hideaway_partner_id(state)
+        partner = _find_islander(state, partner_id) if partner_id is not None else None
+        label = "Spend the night in the Hideaway"
+        if partner is not None:
+            label = f"Spend the night in the Hideaway with {partner.name}"
+        actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.HIDEAWAY), label=label))
     if state.phase in {Phase.MORNING, Phase.AFTERNOON}:
         for location in Location:
-            if location != state.location_id:
+            if location != state.location_id and location is not Location.HIDEAWAY:
                 actions.append(
                     ActionSpec(
                         action=PlayerAction(kind=ActionKind.MOVE, target_id=location.value),
@@ -212,6 +222,12 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         if action.target_id is None:
             raise ValueError("CHALLENGE_RESPONSE requires target_id")
         _find_islander(state, action.target_id)
+        return
+    if action.kind is ActionKind.HIDEAWAY:
+        if player_couple(state) is None:
+            raise ValueError("Hideaway requires a player couple")
+        if not hideaway_eligible(state):
+            raise ValueError("Hideaway is not available")
         return
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:

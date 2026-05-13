@@ -156,7 +156,7 @@ def run_turn(
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
         ceremony = recoupling(state, action.target_id)
-        ceremony_events.extend(recoupling_events(ceremony.eliminated_id))
+        ceremony_events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
     if action.kind is ActionKind.CHALLENGE_RESPONSE and state.pending_challenge is not None:

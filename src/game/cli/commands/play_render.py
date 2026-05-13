@@ -6,6 +6,7 @@ from itertools import groupby
 
 from src.game.engine.actions import ActionKind, ActionSpec
 from src.game.engine.compatibility import revealed_preferences
+from src.game.engine.couples import couple_strength, partner_for, player_couple
 from src.game.engine.turn import TurnResult
 from src.game.state.models import GameState, Location, NPCNPCConversation
 
@@ -79,6 +80,13 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
             f"\nGroup date pending: {names_for(state, state.pending_group_date.participants)} "
             f"at the {state.pending_group_date.location}"
         )
+    couple = player_couple(state)
+    if couple is not None:
+        partner_id = partner_for(couple, state.player.id)
+        print(f"\nCouple: {name_for(state, partner_id)} | strength {couple_strength(state, couple)}")
+    if state.hideaway.used_on_day is not None:
+        partner = state.hideaway.partner_id or "unknown"
+        print(f"Hideaway used day {state.hideaway.used_on_day} with {name_for(state, partner)}")
 
 
 def print_actions(actions: list[ActionSpec]) -> None:
@@ -106,6 +114,9 @@ def print_turn(turn: TurnResult) -> None:
         print(f'{_target_name(turn)}: {turn.exchange.npc_dialogue}')
     if turn.event_narration is not None:
         print(turn.event_narration.prose)
+    if result.action.kind is ActionKind.HIDEAWAY:
+        partner = turn.state.hideaway.partner_id or "unknown"
+        print(f"Hideaway night: you and {name_for(turn.state, partner)} spent private time together.")
     if turn.state.pending_challenge is not None and turn.state.pending_challenge.result is not None:
         challenge = turn.state.pending_challenge
         print(f"Challenge: {challenge.kind} -- {challenge.result}")

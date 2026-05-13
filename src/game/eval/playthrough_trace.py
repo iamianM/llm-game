@@ -96,6 +96,22 @@ def turns_with_compatibility(records: list[dict[str, Any]]) -> list[int]:
     return turns
 
 
+def turns_with_couple_strength(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if isinstance(record.get("couple_strength"), int)]
+
+
+def turns_with_hideaway(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if as_dict(record.get("action")).get("kind") == "hideaway"]
+
+
+def turns_with_steal_attempt(records: list[dict[str, Any]]) -> list[int]:
+    return [
+        turn(record)
+        for record in records
+        if any(as_dict(event).get("kind") == "steal_attempt" for event in as_list(record.get("ceremony_events")))
+    ]
+
+
 def turns_with_outcome(records: list[dict[str, Any]]) -> list[int]:
     return [
         turn(record)

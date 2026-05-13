@@ -261,3 +261,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: Big 5 / attachment / Type on Paper model checks, compatibility/dealbreaker/attachment modifiers, familiarity/reveal thresholds, compatibility math in rules, H3 playthrough eval assertions, and the Type-on-Paper reveal fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (160 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 13`; `type-on-paper-reveal.yaml` pins familiarity-driven preference reveals
+
+## Phase H4
+
+- Files added: `src/game/engine/couples.py`, `src/game/engine/hideaway.py`, `content/locations/hideaway.md`, `tests/engine/test_couples.py`, `tests/engine/test_hideaway.py`, and `tests/scenarios/fixtures/hideaway-night.yaml`
+- Files changed: state schema, action/rule/turn-event pipelines, recoupling ceremony events, audience scoring, CLI/report recording/rendering, playthrough eval/dashboard, scenario runner initial-state support, and all scenario hashes for schema v14
+- Tests added: couple strength/ranking/steal math, Hideaway eligibility/consumption/deltas/memories, H4 eval assertions, and the Hideaway night fixture
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (176 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 14`; `hideaway-night.yaml` pins the once-per-run Hideaway reward

@@ -12,6 +12,7 @@ from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.islander_voice import OpenAIIslanderVoice
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.compatibility import revealed_preferences
+from src.game.engine.couples import couple_strength, player_couple
 from src.game.engine.turn import run_turn
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
@@ -204,6 +205,8 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "location": state.location_id.value,
         "visible_state": _visible_state(state),
         "villa_snapshot": _villa_snapshot(state),
+        "couple_strength": _player_couple_strength(state),
+        "hideaway": state.hideaway.model_dump(mode="json"),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
@@ -251,6 +254,11 @@ def _visible_state(state: GameState) -> str:
                 f"{islander.name}: affection {rel.affection}, chemistry {rel.chemistry}, trust {rel.trust}"
             )
     return "; ".join(parts) if parts else "No visible islanders."
+
+
+def _player_couple_strength(state: GameState) -> int | None:
+    couple = player_couple(state)
+    return None if couple is None else couple_strength(state, couple)
 
 
 def _villa_snapshot(state: GameState) -> dict[str, list[str]]:

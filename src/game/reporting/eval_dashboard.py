@@ -40,6 +40,10 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Group date turns", stats.group_dates_held),
         ("Revealed preferences", stats.revealed_preference_count),
         ("Compatibility bonus rolls", stats.compatibility_bonus_observed),
+        ("Max couple strength", stats.max_couple_strength_reached),
+        ("Hideaway used", stats.hideaway_used),
+        ("Steal attempts", stats.steal_attempts_total),
+        ("Steal successes", stats.steal_successes),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

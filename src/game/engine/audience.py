@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.engine.couples import couple_strength
 from src.game.state.models import AudienceEntry, AudienceSnapshot, Couple, GameState
 
 
@@ -71,9 +72,4 @@ def _is_eliminated(state: GameState, actor_id: str) -> bool:
 def _couple_strength_bonus(state: GameState, couple: Couple) -> int:
     if state.player.id not in {couple.partner_a_id, couple.partner_b_id}:
         return 0
-    partner_id = couple.partner_b_id if couple.partner_a_id == state.player.id else couple.partner_a_id
-    for islander in state.islanders:
-        if islander.id == partner_id:
-            rel = islander.relationship
-            return (rel.affection + rel.trust) // 20
-    return 0
+    return couple_strength(state, couple) // 10
