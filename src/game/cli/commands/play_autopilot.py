@@ -31,6 +31,7 @@ def apply_autopilot_character(state: GameState, persona: str) -> None:
     create_character(
         state,
         archetype_id=choice.archetype_id,
+        gender=choice.gender,
         stats=choice.stats,
         rerolled=False,
     )

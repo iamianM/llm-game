@@ -333,3 +333,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: packet command regression proving an autopilot trace is not evaluated as a manual trace in `playthrough-eval.html`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (245 passed in 9.67s), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (43 passed)
 - Packet: regenerated `review-packet-loyal/` and `review-packet-chaotic/`; both dashboards now match `verify --playthrough` at 24 passed / 7 failed
+
+## Phase H9.1
+
+- Files added: `docs/build-plan-H9.md` and `src/game/state/memory.py`
+- Files changed: canonical state gender schema, character creation, intent filtering, intent catalog, Islander Voice context/prompt, Casa/bombshell cast creation, CLI character card, scenario replay, and all scenario hashes for `SCHEMA_VERSION = 17`
+- Tests added: required character-creation gender, canonical cast gender assignment, same/opposite-sex intent filtering, bromance/gossip-ring mechanical deltas, and Islander Voice LLM coverage for the expanded intent catalog
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (253 passed in 10.53s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 17`; `character_creation` and `CREATE_CHARACTER` payloads now include the required gender field

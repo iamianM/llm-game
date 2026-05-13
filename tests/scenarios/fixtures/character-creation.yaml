@@ -1,10 +1,11 @@
 name: character-creation
 seed: 11
-expected_hash: 40f69495e1d6543146ef8f66621a06e8766145bd5fa7c18fcee4b933c7b5b301
+expected_hash: 1c274161673ba0ba228ebff19a084e5bb23f0038e3a37337c0e94fd39ada70cc
 actions:
 - kind: create_character
   payload:
     archetype_id: heartthrob
+    gender: man
     rerolled: false
     stats:
       charm: 9

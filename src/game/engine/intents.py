@@ -15,7 +15,7 @@ from typing import Literal, cast
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.game.state.models import GameState, IslanderState, RelationshipDelta
+from src.game.state.models import GameState, Gender, IslanderState, RelationshipDelta
 
 
 class IntentCategory(StrEnum):
@@ -27,6 +27,8 @@ class IntentCategory(StrEnum):
     BANTER = "banter"
     SUPPORTIVE = "supportive"
     GOSSIP = "gossip"
+    BROMANCE = "bromance"
+    GOSSIP_RING = "gossip_ring"
 
 
 Risk = Literal["safe", "low", "medium", "high"]
@@ -39,6 +41,8 @@ CATEGORY_DEFAULT_RISK: dict[IntentCategory, Risk] = {
     IntentCategory.DEEP: "high",
     IntentCategory.SUPPORTIVE: "safe",
     IntentCategory.GOSSIP: "medium",
+    IntentCategory.BROMANCE: "low",
+    IntentCategory.GOSSIP_RING: "low",
 }
 
 
@@ -95,7 +99,11 @@ def available_intents_for(state: GameState, target_id: str) -> list[Intent]:
     """Return unlocked intents for a visible target."""
     target = _find_visible_target(state, target_id)
     affection = target.relationship.affection
-    return [intent for intent in load_intents() if affection >= intent.unlock_affection]
+    return [
+        intent
+        for intent in load_intents()
+        if affection >= intent.unlock_affection and _gender_pair_allows(state.player.gender, target.gender, intent.category)
+    ]
 
 
 def effective_risk(intent: Intent) -> Risk:
@@ -112,3 +120,13 @@ def _find_visible_target(state: GameState, target_id: str) -> IslanderState:
         ):
             return islander
     raise ValueError(f"target is not visible: {target_id}")
+
+
+def _gender_pair_allows(player_gender: Gender, target_gender: Gender, category: IntentCategory) -> bool:
+    if player_gender != target_gender:
+        return category not in {IntentCategory.BROMANCE, IntentCategory.GOSSIP_RING}
+    if category is IntentCategory.FLIRTY:
+        return False
+    if player_gender is Gender.MAN:
+        return category is not IntentCategory.GOSSIP_RING
+    return category is not IntentCategory.BROMANCE

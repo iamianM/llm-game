@@ -91,6 +91,7 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
         create_character(
             state,
             archetype_id=script.character_creation.archetype_id,
+            gender=script.character_creation.gender,
             stats=script.character_creation.stats,
             rerolled=script.character_creation.rerolled,
         )

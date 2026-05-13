@@ -11,6 +11,7 @@ from src.game.engine.rules import MechanicalResult
 from src.game.state.models import (
     AttachmentStyle,
     Big5,
+    Gender,
     IslanderState,
     Location,
     RelationshipDelta,
@@ -44,6 +45,7 @@ def test_islander_voice_pull_rejected_deflects_busy_target(
             IslanderState(
                 id="aisha",
                 name=name,
+                gender=Gender.WOMAN,
                 archetype=archetype,
                 location_id=Location.POOL,
                 relationship=RelationshipState(affection=15),

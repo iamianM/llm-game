@@ -2,6 +2,7 @@ name: day6-final-vote
 seed: 12
 character_creation:
   archetype_id: loyal_friend
+  gender: man
   rerolled: false
   stats:
     charm: 5
@@ -9,7 +10,7 @@ character_creation:
     eq: 5
     graft: 5
     loyalty: 9
-expected_hash: c887958a28ecb67dbe37538710dc5a3e2e3153199967fe1c9325b3c2bf824433
+expected_hash: 4020b99bea440a6a3f24eeb8bdde24635ae651a58045bfb7c9ed9478d291be36
 actions:
 - kind: advance_phase
 - kind: advance_phase

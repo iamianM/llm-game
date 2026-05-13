@@ -31,7 +31,7 @@ from src.game.engine.perception import update_public_perception
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
 from src.game.state.casa import CasaDecision
-from src.game.state.models import GameState, Location, PlayerStats, RelationshipDelta
+from src.game.state.models import GameState, Gender, Location, PlayerStats, RelationshipDelta
 from src.game.state.rng import SeededRng
 
 
@@ -70,13 +70,15 @@ def _apply_create_character(state: GameState, action: PlayerAction) -> None:
     if action.payload is None:
         raise ValueError("CREATE_CHARACTER requires payload")
     archetype_id = action.payload.get("archetype_id")
+    gender = action.payload.get("gender")
     stats_payload = action.payload.get("stats")
     rerolled = action.payload.get("rerolled", False)
-    if not isinstance(archetype_id, str) or not isinstance(stats_payload, dict):
-        raise ValueError("CREATE_CHARACTER payload requires archetype_id and stats")
+    if not isinstance(archetype_id, str) or not isinstance(gender, str) or not isinstance(stats_payload, dict):
+        raise ValueError("CREATE_CHARACTER payload requires archetype_id, gender, and stats")
     create_character(
         state,
         archetype_id=archetype_id,
+        gender=Gender(gender),
         stats=PlayerStats.model_validate(stats_payload),
         rerolled=bool(rerolled),
     )

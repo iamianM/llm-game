@@ -17,6 +17,7 @@ def print_character_card(state: GameState) -> None:
     stats = state.player.stats
     print("\nCharacter confirmed:")
     print(f"  Archetype: {state.player.archetype_id}")
+    print(f"  Gender: {state.player.gender.value}")
     print(
         f"  Stats: Charm {stats.charm}, Banter {stats.banter}, EQ {stats.eq}, "
         f"Graft {stats.graft}, Loyalty {stats.loyalty}"

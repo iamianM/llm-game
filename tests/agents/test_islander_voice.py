@@ -10,9 +10,9 @@ from src.game.agents.islander_voice import (
     validate_exchange,
 )
 from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.intents import Intent, load_intents
+from src.game.engine.intents import Intent, IntentCategory, load_intents
 from src.game.engine.rules import apply_action
-from src.game.state.models import new_game
+from src.game.state.models import Gender, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -24,11 +24,17 @@ def test_islander_voice_output_contract(intent: Intent) -> None:
     for islander in state.islanders:
         islander.relationship.affection = 80
         islander.location_id = state.location_id
+    target_id = "chloe"
+    if intent.category is IntentCategory.BROMANCE:
+        state.player.gender = Gender.MAN
+        target_id = "liam"
+    elif intent.category is IntentCategory.GOSSIP_RING:
+        state.player.gender = Gender.WOMAN
     result = apply_action(
         state,
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
-            target_id="chloe",
+            target_id=target_id,
             intent_id=intent.id,
         ),
         SeededRng(1),
@@ -39,4 +45,4 @@ def test_islander_voice_output_contract(intent: Intent) -> None:
     context = islander_voice_context(state, result)
 
     validate_exchange(exchange, context)
-    assert context.npc_name == "Chloe"
+    assert context.npc_name in {"Chloe", "Liam"}

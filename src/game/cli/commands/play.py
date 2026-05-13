@@ -54,7 +54,7 @@ from src.game.engine.character_creation import (
 from src.game.engine.intents import IntentCategory, available_intents_for
 from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import run_turn
-from src.game.state.models import CharacterCreation, GameState, PlayerStats, new_game
+from src.game.state.models import CharacterCreation, GameState, Gender, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -238,9 +238,23 @@ def _run_character_creation_flow(state: GameState) -> None:
             except ValueError as exc:
                 print(exc)
                 continue
-        create_character(state, archetype_id=selected, stats=stats, rerolled=rerolled)
+        gender = _choose_gender()
+        create_character(state, archetype_id=selected, gender=gender, stats=stats, rerolled=rerolled)
         _print_character_card(state)
         return
+
+
+def _choose_gender() -> Gender:
+    while True:
+        print("Gender:")
+        print("  1. Man")
+        print("  2. Woman")
+        raw = input("gender> ").strip()
+        if raw == "1" or raw.lower() == "man":
+            return Gender.MAN
+        if raw == "2" or raw.lower() == "woman":
+            return Gender.WOMAN
+        print("choose 1 for man or 2 for woman")
 
 
 def _parse_stats(raw: str) -> PlayerStats:
@@ -273,6 +287,7 @@ def _replay_recording(path: Path) -> int:
         create_character(
             state,
             archetype_id=creation.archetype_id,
+            gender=creation.gender,
             stats=creation.stats,
             rerolled=creation.rerolled,
         )

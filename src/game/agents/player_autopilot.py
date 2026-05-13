@@ -15,7 +15,7 @@ from src.game.engine.actions import ActionKind, ActionSpec
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
 from src.game.state.casa import CasaDecision
-from src.game.state.models import GameState, PlayerStats
+from src.game.state.models import GameState, Gender, PlayerStats
 
 PLAYER_AUTOPILOT_MODEL = "gpt-4.1-mini"
 AUTOPILOT_PERSONAS = {"loyal", "player", "chaotic"}
@@ -37,6 +37,7 @@ class AutopilotCharacter(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     archetype_id: str
+    gender: Gender
     stats: PlayerStats
 
 
@@ -108,15 +109,18 @@ def persona_character(persona: str) -> AutopilotCharacter:
     if persona == "loyal":
         return AutopilotCharacter(
             archetype_id="loyal_friend",
+            gender=Gender.MAN,
             stats=PlayerStats(charm=5, banter=5, eq=8, graft=4, loyalty=8),
         )
     if persona == "chaotic":
         return AutopilotCharacter(
             archetype_id="class_clown",
+            gender=Gender.MAN,
             stats=PlayerStats(charm=7, banter=8, eq=4, graft=8, loyalty=3),
         )
     return AutopilotCharacter(
         archetype_id="heartthrob",
+        gender=Gender.MAN,
         stats=PlayerStats(charm=8, banter=7, eq=5, graft=6, loyalty=4),
     )
 

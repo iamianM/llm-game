@@ -5,7 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.game.engine.state_access import apply_relationship_delta, find_islander
-from src.game.state.models import CharacterCreation, GameState, PlayerStats, RelationshipDelta
+from src.game.state.models import (
+    CharacterCreation,
+    GameState,
+    Gender,
+    PlayerStats,
+    RelationshipDelta,
+)
 
 
 @dataclass(frozen=True)
@@ -54,6 +60,7 @@ def create_character(
     state: GameState,
     *,
     archetype_id: str,
+    gender: Gender,
     stats: PlayerStats,
     rerolled: bool = False,
 ) -> CharacterCreation:
@@ -70,7 +77,8 @@ def create_character(
     bonus_value = getattr(stats, definition.stat_bonus_name)
     if bonus_value < 3 + definition.stat_bonus_value:
         raise ValueError("created stats must include the archetype stat bonus")
-    creation = CharacterCreation(archetype_id=archetype_id, stats=stats, rerolled=rerolled)
+    creation = CharacterCreation(archetype_id=archetype_id, gender=gender, stats=stats, rerolled=rerolled)
+    state.player.gender = gender
     state.player.stats = stats
     state.player.archetype_id = archetype_id
     state.player.character_created = True

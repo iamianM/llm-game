@@ -16,6 +16,7 @@ from src.game.state.models import (
     Big5,
     Couple,
     GameState,
+    Gender,
     IslanderState,
     Location,
     RelationshipState,
@@ -86,6 +87,7 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
     bombshell = IslanderState(
         id="aisha",
         name="Aisha",
+        gender=Gender.WOMAN,
         archetype="joker",
         location_id=location,
         relationship=RelationshipState(affection=8, chemistry=12),

@@ -13,6 +13,7 @@ from src.game.state.models import (
     CasaAmorState,
     Couple,
     GameState,
+    Gender,
     IslanderState,
     Location,
     RelationshipState,
@@ -144,19 +145,28 @@ def _ensure_casa_cast(state: GameState) -> list[IslanderState]:
 
 def _casa_cast() -> list[IslanderState]:
     return [
-        _casa("blake", "Blake", "smooth", 9, "secure", Location.CASA_POOL),
-        _casa("jordan", "Jordan", "sweetheart", 7, "anxious", Location.CASA_KITCHEN),
-        _casa("marcus", "Marcus", "heartthrob", 10, "avoidant", Location.CASA_TERRACE),
-        _casa("sophie", "Sophie", "joker", 8, "secure", Location.CASA_POOL),
-        _casa("zara", "Zara", "bombshell", 12, "avoidant", Location.CASA_KITCHEN),
-        _casa("nia", "Nia", "friend", 6, "anxious", Location.CASA_TERRACE),
+        _casa("blake", "Blake", Gender.MAN, "smooth", 9, "secure", Location.CASA_POOL),
+        _casa("jordan", "Jordan", Gender.MAN, "sweetheart", 7, "anxious", Location.CASA_KITCHEN),
+        _casa("marcus", "Marcus", Gender.MAN, "heartthrob", 10, "avoidant", Location.CASA_TERRACE),
+        _casa("sophie", "Sophie", Gender.WOMAN, "joker", 8, "secure", Location.CASA_POOL),
+        _casa("zara", "Zara", Gender.WOMAN, "bombshell", 12, "avoidant", Location.CASA_KITCHEN),
+        _casa("nia", "Nia", Gender.WOMAN, "friend", 6, "anxious", Location.CASA_TERRACE),
     ]
 
 
-def _casa(islander_id: str, name: str, archetype: str, chemistry: int, attachment: str, location: Location) -> IslanderState:
+def _casa(
+    islander_id: str,
+    name: str,
+    gender: Gender,
+    archetype: str,
+    chemistry: int,
+    attachment: str,
+    location: Location,
+) -> IslanderState:
     return IslanderState(
         id=islander_id,
         name=name,
+        gender=gender,
         archetype=archetype,
         location_id=location,
         relationship=RelationshipState(affection=12, chemistry=chemistry),

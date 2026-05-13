@@ -107,3 +107,75 @@ intents:
     relationship_deltas:
       success: {affection: 2, friendship: 1}
       miss: {affection: 0}
+  - id: bromance_rib
+    category: bromance
+    label: "Rib him a little"
+    stat_used: banter
+    tags: [bromance, funny, friendly_roast]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {friendship: 3, affection: 1}
+      miss: {friendship: -1}
+  - id: bromance_check_in
+    category: bromance
+    label: "Check how he's holding up"
+    stat_used: eq
+    tags: [bromance, supportive, sincere]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {trust: 3, friendship: 2}
+      miss: {trust: 0}
+  - id: bromance_share_strategy
+    category: bromance
+    label: "Ask who he's eyeing"
+    stat_used: loyalty
+    tags: [bromance, strategy, alliance]
+    unlock_affection: 10
+    relationship_deltas:
+      success: {trust: 2, friendship: 3}
+      miss: {trust: -1}
+  - id: bromance_solidarity
+    category: bromance
+    label: "Say you've got his back"
+    stat_used: loyalty
+    tags: [bromance, loyalty, support]
+    unlock_affection: 15
+    relationship_deltas:
+      success: {trust: 4, friendship: 2}
+      miss: {trust: -1, friendship: 0}
+  - id: gossip_ring_dish_about_him
+    category: gossip_ring
+    label: "Dish about one of the boys"
+    stat_used: banter
+    tags: [gossip_ring, gossip, playful]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {friendship: 3, trust: 1}
+      miss: {friendship: -1}
+  - id: gossip_ring_vent
+    category: gossip_ring
+    label: "Vent about villa pressure"
+    stat_used: eq
+    tags: [gossip_ring, vulnerable, support]
+    unlock_affection: 0
+    relationship_deltas:
+      success: {trust: 3, friendship: 2}
+      miss: {trust: -1}
+  - id: gossip_ring_strategize
+    category: gossip_ring
+    label: "Strategize about a boy"
+    stat_used: graft
+    tags: [gossip_ring, strategy, graft]
+    unlock_affection: 10
+    relationship_deltas:
+      success: {trust: 2, friendship: 2, affection: 1}
+      miss: {trust: -1, friendship: -1}
+  - id: gossip_ring_alliance
+    category: gossip_ring
+    label: "Promise to back her"
+    stat_used: loyalty
+    tags: [gossip_ring, alliance, loyalty]
+    unlock_affection: 15
+    relationship_deltas:
+      success: {trust: 4, friendship: 2}
+      miss: {trust: -2}

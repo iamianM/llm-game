@@ -71,6 +71,8 @@ class IslanderVoiceContext(BaseModel):
     phase: str
     location: str
     location_flavor: str
+    player_gender: str
+    npc_gender: str
     npc_name: str
     npc_archetype: str
     archetype_prose: str
@@ -177,6 +179,8 @@ def islander_voice_context(
         phase=state.phase.value,
         location=state.location_id.value,
         location_flavor="" if location_content is None else location_content.body,
+        player_gender=state.player.gender.value,
+        npc_gender=target.gender.value,
         npc_name=target.name,
         npc_archetype=target.archetype,
         archetype_prose="" if archetype is None else archetype.body,
@@ -253,6 +257,8 @@ def _render_context(context: IslanderVoiceContext) -> str:
             f"Phase: {context.phase}",
             f"Location: {context.location}",
             f"Location flavor: {context.location_flavor}",
+            f"Player gender: {context.player_gender}",
+            f"Islander gender: {context.npc_gender}",
             f"Name: {context.npc_name}",
             f"Archetype voice: {context.archetype_prose}",
             f"Big Five: {context.big5_summary}",

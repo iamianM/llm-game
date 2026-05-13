@@ -18,6 +18,7 @@ from src.game.state.models import (
     Conversation,
     FollowUpMenu,
     FollowUpOption,
+    Gender,
     RelationshipDelta,
     new_game,
 )
@@ -146,6 +147,46 @@ def test_locked_intent_fails_loud() -> None:
             ),
             SeededRng(1),
         )
+
+
+def test_bromance_intent_applies_friendship_delta() -> None:
+    """Same-sex men get bromance mechanics instead of flirty mechanics."""
+    state = new_game(1)
+    state.player.gender = Gender.MAN
+    liam = next(islander for islander in state.islanders if islander.id == "liam")
+    liam.location_id = state.location_id
+
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="liam",
+            intent_id="bromance_rib",
+        ),
+        SeededRng(1),
+    )
+
+    assert result.success is True
+    assert result.relationship_deltas == {"liam": RelationshipDelta(affection=1, friendship=3)}
+
+
+def test_gossip_ring_intent_applies_trust_delta() -> None:
+    """Same-sex women get gossip-ring mechanics instead of flirty mechanics."""
+    state = new_game(1)
+    state.player.gender = Gender.WOMAN
+
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="gossip_ring_vent",
+        ),
+        SeededRng(1),
+    )
+
+    assert result.success is True
+    assert result.relationship_deltas == {"chloe": RelationshipDelta(trust=3, friendship=2)}
 
 
 def test_relationship_delta_rejects_unknown_field() -> None:

@@ -2,6 +2,7 @@ name: autopilot-day1
 seed: 42
 character_creation:
   archetype_id: loyal_friend
+  gender: man
   stats:
     charm: 5
     banter: 5
@@ -61,4 +62,4 @@ actions:
   intent_id: null
   option_index: null
   payload: null
-expected_hash: 4fd83163f5c6b1edea4c4fce0a44e0bf0db11f46a1ed97cbd6e19735eec26ba0
+expected_hash: 8ae8020e76ae27f3014eaa8a924c6ee84788013ba1c4452e90c295c94309c657

@@ -1,6 +1,6 @@
 name: npc-summoned-exit
 seed: 41
-expected_hash: f366aa379c8417323b8559ebba6be1bc093c61d6e3c6d34c5f89424e096e8bf5
+expected_hash: f9546b543e105cb8c293eded6b7902b57143b89e4962f9c0fc546d2c354521dd
 actions:
 - kind: start_conversation
   target_id: chloe

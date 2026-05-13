@@ -13,6 +13,7 @@ from src.game.state.models import (
     Conversation,
     ExchangeRecord,
     GameState,
+    Gender,
     Location,
     Memory,
     Mood,
@@ -45,6 +46,19 @@ def test_new_game_assigns_personality_per_npc() -> None:
     assert state.islanders[0].big5.extraversion == 9
     assert state.islanders[1].attachment is AttachmentStyle.ANXIOUS
     assert state.islanders[2].type_on_paper.values == ["steadiness", "depth"]
+
+
+def test_new_game_assigns_canonical_gender_per_islander() -> None:
+    """Starting islanders carry the H9 gender model used by intent filtering."""
+    state = new_game(1)
+
+    genders = {islander.id: islander.gender for islander in state.islanders}
+
+    assert genders == {
+        "chloe": Gender.WOMAN,
+        "maya": Gender.WOMAN,
+        "liam": Gender.MAN,
+    }
 
 
 def test_clamp_relationship_boundaries() -> None:

@@ -29,12 +29,15 @@ from src.game.state.event_models import (
 from src.game.state.event_models import (
     RelationshipDelta as RelationshipDelta,
 )
+from src.game.state.memory import Memory as Memory
+from src.game.state.memory import MemoryBatch as MemoryBatch
+from src.game.state.memory import MemoryDraft as MemoryDraft
 from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 16
+SCHEMA_VERSION = 17
 
 
 class Phase(StrEnum):
@@ -75,6 +78,13 @@ class Mood(StrEnum):
     CONTENT = "content"
 
 
+class Gender(StrEnum):
+    """Binary villa gender used for attraction and same-sex dynamics in v0."""
+
+    MAN = "man"
+    WOMAN = "woman"
+
+
 class PlayerStats(BaseModel):
     """Five fixed player stats with the A3 30-point budget."""
 
@@ -101,49 +111,9 @@ class CharacterCreation(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     archetype_id: str
+    gender: Gender
     stats: PlayerStats
     rerolled: bool = False
-
-
-class Memory(BaseModel):
-    """One fact remembered by the player or an islander."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    id: str
-    holder_id: str
-    subject_id: str
-    content: str
-    source: Literal["direct", "witnessed", "told_by"]
-    source_id: str | None = None
-    formed_on_day: int
-    formed_on_turn: int
-    emotional_weight: int = Field(ge=1, le=10)
-    tags: list[str] = Field(default_factory=list)
-    durable: bool = True
-
-
-class MemoryDraft(BaseModel):
-    """One agent-authored memory before deterministic id assignment."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    holder_id: str
-    subject_id: str
-    content: str
-    source: Literal["direct", "witnessed", "told_by"]
-    source_id: str | None = None
-    emotional_weight: int = Field(ge=1, le=10)
-    tags: list[str] = Field(default_factory=list)
-    durable: bool = True
-
-
-class MemoryBatch(BaseModel):
-    """A typed curator commit containing durable memories."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    memories: list[MemoryDraft] = Field(min_length=1, max_length=8)
 
 
 class PlayerState(BaseModel):
@@ -153,6 +123,7 @@ class PlayerState(BaseModel):
 
     id: str = "player"
     name: str = "You"
+    gender: Gender = Gender.MAN
     stats: PlayerStats
     archetype_id: str = "balanced"
     character_created: bool = True
@@ -180,6 +151,7 @@ class IslanderState(BaseModel):
 
     id: str
     name: str
+    gender: Gender
     archetype: str
     location_id: Location
     relationship: RelationshipState = Field(default_factory=RelationshipState)
@@ -217,7 +189,17 @@ class FollowUpOption(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     label: str
-    category: Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
+    category: Literal[
+        "friendly",
+        "flirty",
+        "deep",
+        "banter",
+        "gossip",
+        "supportive",
+        "bromance",
+        "gossip_ring",
+        "exit",
+    ]
     intent_kind: str
     stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
     risk: Literal["safe", "low", "medium", "high"]
@@ -354,6 +336,7 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
             IslanderState(
                 id="chloe",
                 name="Chloe",
+                gender=Gender.WOMAN,
                 archetype="sweetheart",
                 location_id=Location.POOL,
                 relationship=RelationshipState(affection=10),
@@ -369,6 +352,7 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
             IslanderState(
                 id="maya",
                 name="Maya",
+                gender=Gender.WOMAN,
                 archetype="joker",
                 location_id=Location.KITCHEN,
                 relationship=RelationshipState(affection=8),
@@ -384,6 +368,7 @@ def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState
             IslanderState(
                 id="liam",
                 name="Liam",
+                gender=Gender.MAN,
                 archetype="friend",
                 location_id=Location.TERRACE,
                 relationship=RelationshipState(affection=6),
