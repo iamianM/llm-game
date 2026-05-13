@@ -437,3 +437,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: H10 model routing constants and async VillaUpdate application with async background callables
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (287 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused async/villa tests, and full LLM suite note: one stochastic pull-rejection wording failure passed on focused rerun
 - Architecture note: `run_turn` stays sync-compatible for existing CLI/test callers; `turn_async.run_turn_async` provides the async entry point for callers that already own an event loop
+
+## Phase H10.4
+
+- Files added: `src/game/engine/option_defaults.py`, `src/game/engine/follow_up_menu.py`, and `tests/engine/test_option_defaults.py`
+- Files changed: Contextual Options now returns a slim `ContextualBespoke` output, the engine assembles wheels from deterministic defaults plus tone reactions plus bespoke additions, follow-up menus allow up to five visible options, player-shared gossip transfers memories to the target, and turn generation uses the assembled menu bridge
+- Tests added: default exit option, repair options after misses, affection-gated escalation, gender filtering for flirty follow-ups, player share-gossip defaults, tone reactions, assembly dedupe/cap/exit validation, bespoke-plus-default bridge, and share-gossip memory transfer
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (296 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused Contextual Options LLM suite (11 passed), and full LLM suite (55 passed)
+- Prompt note: installed Claude's H10.4 slim Contextual Options scope; Codex did not modify other prompts

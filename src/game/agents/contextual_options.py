@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Literal
 
 from openai import OpenAI
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.islander_voice import Exchange, load_dotenv_local
 from src.game.engine.rules import MechanicalResult
@@ -27,6 +27,11 @@ from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memor
 CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
 FOLLOW_UP_CATEGORIES = {"friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"}
+ALLOWED_BESPOKE_INTENTS = {
+    "honest_vulnerable", "escalate_flirt", "deflect_with_humor", "joke_back",
+    "go_deeper", "ask_about_topic", "apologize", "defend_self", "change_subject",
+    "supportive_listen", "supportive_comfort", "supportive_reassure", "supportive_validate",
+}
 FollowUpCategory = Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
 
 
@@ -50,9 +55,21 @@ class ContextualOptionsContext(BaseModel):
     loyalty: int
     departure_probability: int
     gossip_memories: str
+    already_present: list[str] = Field(default_factory=list)
 
 
-ContextualOptionsFn = Callable[[GameState, MechanicalResult, Exchange, int], FollowUpMenu]
+class ContextualBespoke(BaseModel):
+    """Moment-specific additions to a partially-built follow-up wheel."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    options: list[FollowUpOption] = Field(min_length=1, max_length=2)
+    npc_will_leave: bool
+    npc_exit_line: str | None = None
+
+
+ContextualOptionsResult = ContextualBespoke | FollowUpMenu
+ContextualOptionsFn = Callable[[GameState, MechanicalResult, Exchange, int], ContextualOptionsResult]
 
 
 class ContextualOptionsAgent:
@@ -72,9 +89,16 @@ class ContextualOptionsAgent:
         result: MechanicalResult,
         exchange: Exchange,
         departure_probability: int,
-    ) -> FollowUpMenu:
-        """Generate and validate one contextual follow-up menu."""
-        context = contextual_options_context(state, result, exchange, departure_probability)
+        already_present: list[str] | None = None,
+    ) -> ContextualBespoke:
+        """Generate and validate bespoke contextual additions."""
+        context = contextual_options_context(
+            state,
+            result,
+            exchange,
+            departure_probability,
+            already_present=already_present or [],
+        )
         rendered = _render_context(context)
         last_error: ValueError | None = None
         for attempt in range(3):
@@ -82,37 +106,36 @@ class ContextualOptionsAgent:
             if last_error is not None:
                 retry_context = (
                     f"{rendered}\n\n"
-                    "The previous FollowUpMenu failed validation. "
+                    "The previous ContextualBespoke failed validation. "
                     f"Validation error: {last_error}. "
-                    "Return a corrected FollowUpMenu that satisfies every hard rule. "
-                    "There must be exactly one option with category set to exit, and that "
-                    "option must use intent_kind end_softly or walk_away."
+                    "Return a corrected ContextualBespoke with one or two specific options "
+                    "that do not duplicate already_present."
                 )
-            menu = _ensure_single_exit_option(self._generate_menu(retry_context))
+            bespoke = self._generate_bespoke(retry_context)
             try:
-                validate_follow_up_menu(menu)
-                return menu
+                validate_contextual_bespoke(bespoke, context.already_present)
+                return bespoke
             except ValueError as exc:
                 last_error = exc
                 if attempt == 2:
                     raise
         raise AssertionError("unreachable contextual options retry state")
 
-    def _generate_menu(self, rendered_context: str) -> FollowUpMenu:
-        """Request one parsed menu from the model."""
+    def _generate_bespoke(self, rendered_context: str) -> ContextualBespoke:
+        """Request one parsed bespoke option set from the model."""
         response = self._client.responses.parse(
             model=self._model,
             instructions=Path("src/game/agents/prompts/contextual_options.md").read_text(
                 encoding="utf-8"
             ),
             input=rendered_context,
-            text_format=FollowUpMenu,
-            max_output_tokens=520,
+            text_format=ContextualBespoke,
+            max_output_tokens=360,
         )
-        menu = response.output_parsed
-        if menu is None:
-            raise ValueError("Contextual Options returned no parsed FollowUpMenu")
-        return menu
+        bespoke = response.output_parsed
+        if bespoke is None:
+            raise ValueError("Contextual Options returned no parsed ContextualBespoke")
+        return bespoke
 
 
 def contextual_options_context(
@@ -120,6 +143,8 @@ def contextual_options_context(
     result: MechanicalResult,
     exchange: Exchange,
     departure_probability: int,
+    *,
+    already_present: list[str] | None = None,
 ) -> ContextualOptionsContext:
     """Build prompt context for one follow-up menu."""
     target_id = result.action.target_id
@@ -153,6 +178,30 @@ def contextual_options_context(
         loyalty=stats.loyalty,
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
+        already_present=already_present or [],
+    )
+
+
+def mock_contextual_bespoke(
+    intent_kind: str = "joke_back",
+    *,
+    npc_will_leave: bool = False,
+) -> ContextualBespoke:
+    """Return deterministic bespoke additions for tests and replay."""
+    primary_intent = "joke_back" if intent_kind in EXIT_INTENT_KINDS else intent_kind
+    return ContextualBespoke(
+        options=[
+            FollowUpOption(
+                label=_mock_label(primary_intent),
+                category=_mock_category(primary_intent),
+                intent_kind=primary_intent,
+                stat_used="banter",
+                risk="medium",
+                tone="playful",
+            )
+        ],
+        npc_will_leave=npc_will_leave,
+        npc_exit_line="I should go mingle for a bit." if npc_will_leave else None,
     )
 
 
@@ -186,7 +235,7 @@ def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool 
 
 def validate_follow_up_menu(menu: FollowUpMenu) -> None:
     """Fail loud if a follow-up menu violates the prompt contract."""
-    if not 2 <= len(menu.options) <= 4:
+    if not 2 <= len(menu.options) <= 5:
         raise ValueError(f"follow-up option count out of bounds: {len(menu.options)}")
     exit_count = sum(option.category == "exit" for option in menu.options)
     if exit_count != 1:
@@ -213,50 +262,32 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
             raise ValueError(f"npc_exit_line too long: {menu.npc_exit_line!r}")
 
 
-def _ensure_single_exit_option(menu: FollowUpMenu) -> FollowUpMenu:
-    """Enforce the engine-owned exit affordance before validating agent output."""
-    options = list(menu.options)
-    changed = False
-    for index, option in enumerate(options):
-        if option.intent_kind in EXIT_INTENT_KINDS and option.category != "exit":
-            options[index] = option.model_copy(update={"category": "exit", "stat_used": None})
-            changed = True
-    if changed:
-        menu = menu.model_copy(update={"options": options})
-        options = list(menu.options)
-    exit_indexes = [index for index, option in enumerate(options) if option.category == "exit"]
-    if len(exit_indexes) == 1:
-        return menu
-    replacement = FollowUpOption(
-        label="Let them go" if menu.npc_will_leave else "End on a good note",
-        category="exit",
-        intent_kind="walk_away" if menu.npc_will_leave else "end_softly",
-        stat_used=None,
-        risk="safe",
-        tone="cool" if menu.npc_will_leave else "warm",
-    )
-    if not exit_indexes:
-        options[-1] = replacement
-    else:
-        keep = exit_indexes[0]
-        options = [
-            option
-            for index, option in enumerate(options)
-            if index == keep or option.category != "exit"
-        ]
-        if len(options) < 2:
-            options.insert(
-                0,
-                FollowUpOption(
-                    label="Ask about that",
-                    category="friendly",
-                    intent_kind="change_subject",
-                    stat_used="eq",
-                    risk="safe",
-                    tone="warm",
-                ),
-            )
-    return menu.model_copy(update={"options": options})
+def validate_contextual_bespoke(
+    bespoke: ContextualBespoke,
+    already_present: list[str],
+) -> None:
+    """Validate the slim Contextual Options output before assembly."""
+    if not 1 <= len(bespoke.options) <= 2:
+        raise ValueError(f"bespoke option count out of bounds: {len(bespoke.options)}")
+    duplicates = set(already_present) & {option.intent_kind for option in bespoke.options}
+    if duplicates:
+        raise ValueError(f"bespoke duplicated already-present intents: {sorted(duplicates)}")
+    for option in bespoke.options:
+        if option.intent_kind not in ALLOWED_BESPOKE_INTENTS:
+            raise ValueError(f"unknown bespoke intent_kind: {option.intent_kind}")
+        if option.category not in FOLLOW_UP_CATEGORIES:
+            raise ValueError(f"unknown bespoke category: {option.category}")
+        if option.category == "exit":
+            raise ValueError("bespoke options must not provide the engine-owned exit")
+        if len(option.label.split()) > 6:
+            raise ValueError(f"bespoke label too long: {option.label!r}")
+        if re.search(r"\d", option.label):
+            raise ValueError(f"bespoke label contains digits: {option.label!r}")
+    if bespoke.npc_will_leave:
+        if not bespoke.npc_exit_line:
+            raise ValueError("npc_exit_line is required when npc_will_leave is true")
+        if len(bespoke.npc_exit_line.split()) > 40:
+            raise ValueError(f"npc_exit_line too long: {bespoke.npc_exit_line!r}")
 
 
 def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
@@ -280,7 +311,7 @@ def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
             risk="medium",
             tone="curious",
         )
-        if len(options) < 4:
+        if len(options) < 5:
             options.insert(max(0, len(options) - 1), option)
         else:
             replace_at = next(
@@ -307,8 +338,9 @@ def _render_context(context: ContextualOptionsContext) -> str:
             f"charm {context.charm}, banter {context.banter}, eq {context.eq}, "
             f"graft {context.graft}, loyalty {context.loyalty}",
             f"Departure probability: {context.departure_probability}",
+            f"already_present: {', '.join(context.already_present) or 'none'}",
             f"Gossip-eligible memories: {context.gossip_memories}",
-            "Write the follow-up menu now.",
+            "Write the bespoke follow-up additions now.",
         ]
     )
 

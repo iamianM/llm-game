@@ -6,11 +6,16 @@ from typing import Literal
 
 import pytest
 
-from src.game.agents.contextual_options import ContextualOptionsAgent, validate_follow_up_menu
+from src.game.agents.contextual_options import (
+    ContextualBespoke,
+    ContextualOptionsAgent,
+    validate_contextual_bespoke,
+)
 from src.game.agents.islander_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import FollowUpMenu, FollowUpOption, Mood, RelationshipDelta, new_game
+from src.game.state.models import FollowUpOption, Mood, RelationshipDelta, new_game
 
 Tone = Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
 
@@ -52,45 +57,23 @@ def test_contextual_options_contract(departure_probability: int, tone: Tone) -> 
     )
     agent = ContextualOptionsAgent()
 
-    menu = agent.generate(state, result, exchange, departure_probability)
+    bespoke = agent.generate(
+        state,
+        result,
+        exchange,
+        departure_probability,
+        already_present=["end_softly", "apologize"],
+    )
 
-    validate_follow_up_menu(menu)
+    validate_contextual_bespoke(bespoke, ["end_softly", "apologize"])
     if departure_probability == 0:
-        assert menu.npc_will_leave is False
+        assert bespoke.npc_will_leave is False
     if departure_probability == 100:
-        assert menu.npc_will_leave is True
+        assert bespoke.npc_will_leave is True
 
 
-def test_contextual_options_repairs_missing_exit_affordance() -> None:
-    """The engine keeps one exit wheel option even when the agent omits it."""
-
-    class FakeContextualOptionsAgent(ContextualOptionsAgent):
-        def __init__(self) -> None:
-            pass
-
-        def _generate_menu(self, _rendered_context: str) -> FollowUpMenu:
-            return FollowUpMenu(
-                options=[
-                    FollowUpOption(
-                        label="Ask something deeper",
-                        category="deep",
-                        intent_kind="go_deeper",
-                        stat_used="eq",
-                        risk="medium",
-                        tone="curious",
-                    ),
-                    FollowUpOption(
-                        label="Make it playful",
-                        category="banter",
-                        intent_kind="joke_back",
-                        stat_used="banter",
-                        risk="low",
-                        tone="playful",
-                    ),
-                ],
-                npc_will_leave=False,
-            )
-
+def test_assembled_menu_adds_exit_to_bespoke_output() -> None:
+    """The engine keeps one exit wheel option around bespoke additions."""
     state = new_game(1)
     result = MechanicalResult(
         action=PlayerAction(
@@ -109,9 +92,31 @@ def test_contextual_options_repairs_missing_exit_affordance() -> None:
         npc_mood_after=Mood.CONTENT,
     )
 
-    menu = FakeContextualOptionsAgent().generate(state, result, exchange, 0)
+    def contextual_options(*_args, **_kwargs) -> ContextualBespoke:
+        return ContextualBespoke(
+                options=[
+                    FollowUpOption(
+                        label="Ask why Liverpool matters",
+                        category="deep",
+                        intent_kind="go_deeper",
+                        stat_used="eq",
+                        risk="medium",
+                        tone="curious",
+                    ),
+                    FollowUpOption(
+                        label="Tease the villa tension",
+                        category="banter",
+                        intent_kind="joke_back",
+                        stat_used="banter",
+                        risk="low",
+                        tone="playful",
+                    ),
+                ],
+                npc_will_leave=False,
+        )
 
-    validate_follow_up_menu(menu)
+    menu = generate_follow_up_menu(state, result, exchange, 0, contextual_options)
+
     assert sum(option.category == "exit" for option in menu.options) == 1
 
 
@@ -138,7 +143,7 @@ def test_contextual_options_labels_are_specific() -> None:
         npc_mood_after=Mood.CONTENT,
     )
 
-    menu = ContextualOptionsAgent().generate(state, result, exchange, 20)
+    bespoke = ContextualOptionsAgent().generate(state, result, exchange, 20)
     generic = {
         "ask something deeper",
         "tell a joke",
@@ -147,4 +152,4 @@ def test_contextual_options_labels_are_specific() -> None:
         "make a joke",
     }
 
-    assert all(option.label.lower() not in generic for option in menu.options)
+    assert all(option.label.lower() not in generic for option in bespoke.options)

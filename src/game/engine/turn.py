@@ -16,9 +16,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.contextual_options import (
     ContextualOptionsFn,
-    mock_follow_up_menu,
-    validate_follow_up_menu,
-    with_gossip_options,
 )
 from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
 from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
@@ -35,6 +32,7 @@ from src.game.engine.conversation import (
     start_conversation,
 )
 from src.game.engine.daily_recap import append_daily_recap_if_needed
+from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
 from src.game.engine.memory import (
     add_memory_batch,
@@ -234,13 +232,13 @@ def run_turn(
         _bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
         new_conversation.departure_probability_last = probability
-        menu_fn = (
-            (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
-            if contextual_options is None
-            else contextual_options
+        follow_up_menu = generate_follow_up_menu(
+            state,
+            result,
+            exchange,
+            probability,
+            contextual_options,
         )
-        follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
-        validate_follow_up_menu(follow_up_menu)
         new_conversation.pending_options = follow_up_menu
     elif result.action.intent_id in {"defer_interruption", "ignore_interruption"}:
         follow_up_menu = (
@@ -269,13 +267,13 @@ def run_turn(
         else:
             probability = departure_probability(conversation, state)
             conversation.departure_probability_last = probability
-            menu_fn = (
-                (lambda _state, _result, _exchange, _probability: mock_follow_up_menu(npc_will_leave=True))
-                if contextual_options is None
-                else contextual_options
+            follow_up_menu = generate_follow_up_menu(
+                state,
+                result,
+                exchange,
+                probability,
+                contextual_options,
             )
-            follow_up_menu = with_gossip_options(menu_fn(state, result, exchange, probability), state)
-            validate_follow_up_menu(follow_up_menu)
             conversation.pending_options = follow_up_menu
             if follow_up_menu.npc_will_leave:
                 batch = _curate_conversation(state, conversation, conversation_curator)

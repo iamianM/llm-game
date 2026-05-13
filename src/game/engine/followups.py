@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict
 from src.game.engine.actions import PlayerAction
 from src.game.engine.chance import follow_up_success_breakdown
 from src.game.engine.compatibility import attachment_delta_modifier
-from src.game.engine.gossip import apply_gossip_follow_up
+from src.game.engine.gossip import apply_gossip_follow_up, apply_share_gossip_follow_up
 from src.game.engine.interruptions import (
     INTERRUPTION_INTENT_KINDS,
     apply_interruption_response,
@@ -125,6 +125,8 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
     success = roll <= breakdown.final_chance
     if option.intent_kind.startswith("ask_gossip:"):
         delta = apply_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
+    elif option.intent_kind.startswith("share_gossip:"):
+        delta = apply_share_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
     else:
         delta = follow_up_delta(option.intent_kind, option.risk, success)
     attachment_delta = attachment_delta_modifier(target, option.intent_kind, success)

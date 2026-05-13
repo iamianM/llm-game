@@ -247,7 +247,7 @@ class FollowUpMenu(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    options: list[FollowUpOption] = Field(min_length=2, max_length=4)
+    options: list[FollowUpOption] = Field(min_length=2, max_length=5)
     npc_will_leave: bool
     npc_exit_line: str | None = None
 

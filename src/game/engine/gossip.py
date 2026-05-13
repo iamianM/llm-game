@@ -40,3 +40,36 @@ def apply_gossip_follow_up(
         ),
     )
     return RelationshipDelta(trust=2)
+
+
+def apply_share_gossip_follow_up(
+    state: GameState,
+    target_id: str,
+    intent_kind: str,
+    success: bool,
+) -> RelationshipDelta:
+    """Apply player-shared gossip and transfer the player's memory on success."""
+    memory_id = intent_kind.removeprefix("share_gossip:")
+    source_memory = next(
+        (memory for memory in state.player.memories if memory.id == memory_id),
+        None,
+    )
+    if source_memory is None:
+        raise ValueError(f"player gossip memory not found: {memory_id}")
+    if not success:
+        return RelationshipDelta(trust=-1)
+    add_memory(
+        state,
+        create_memory(
+            holder_id=target_id,
+            subject_id=source_memory.subject_id,
+            source="told_by",
+            source_id="player",
+            day=state.day,
+            turn=state.turn_index,
+            weight=source_memory.emotional_weight,
+            tags=["gossip", f"source_memory:{source_memory.id}", *source_memory.tags],
+            content=source_memory.content,
+        ),
+    )
+    return RelationshipDelta(trust=1, friendship=1)

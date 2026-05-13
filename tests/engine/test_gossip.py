@@ -2,9 +2,13 @@
 
 from __future__ import annotations
 
-from src.game.agents.contextual_options import mock_follow_up_menu, with_gossip_options
+from src.game.agents.contextual_options import (
+    mock_contextual_bespoke,
+    mock_follow_up_menu,
+    with_gossip_options,
+)
 from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.memory import create_memory
+from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.turn import run_turn
 from src.game.state.models import Conversation, RelationshipState, new_game
 from src.game.state.rng import SeededRng
@@ -61,6 +65,51 @@ def test_gossip_pick_transfers_memory_to_player() -> None:
     assert heard[0].subject_id == "maya"
     assert any(tag.startswith("source_memory:") for tag in heard[0].tags)
     assert state.islanders[0].relationship.trust == 2
+
+
+def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
+    """Choosing share gossip records a told-by-player memory on the target."""
+    state = new_game(1)
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id="maya",
+            source="witnessed",
+            day=1,
+            turn=1,
+            weight=7,
+            tags=["gossip"],
+            content="Maya looked rattled after Liam pulled away.",
+        ),
+    )
+    first_turn = run_turn(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+        contextual_options=lambda *_args: mock_contextual_bespoke(npc_will_leave=False),
+    )
+    assert first_turn.follow_up_menu is not None
+    share_option = next(
+        option for option in first_turn.follow_up_menu.options if option.intent_kind.startswith("share_gossip:")
+    )
+
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id=share_option.intent_kind),
+        SeededRng(1),
+        contextual_options=lambda *_args: mock_follow_up_menu(),
+    )
+
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    assert any(
+        memory.subject_id == "maya" and memory.source_id == "player"
+        for memory in chloe.memories
+    )
 
 
 def test_gossip_locked_below_affection_threshold() -> None:
