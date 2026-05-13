@@ -96,7 +96,13 @@ def packet_cmd(args: argparse.Namespace) -> int:
     _clean_packet_output(out)
     (out / "artifacts").mkdir(parents=True, exist_ok=True)
     report = evaluate_trace(
-        {"records": records, "final_state": final_state, "final_hash": final_hash},
+        {
+            "records": records,
+            "final_state": final_state,
+            "final_hash": final_hash,
+            "mode": mode,
+            "persona": persona,
+        },
         trace_path=str(trace_path),
     )
     (out / "session.html").write_text(
@@ -131,9 +137,15 @@ def packet_cmd(args: argparse.Namespace) -> int:
 
 def eval_dashboard_cmd(args: argparse.Namespace) -> int:
     """Render only the playthrough eval dashboard for one trace."""
-    records, final_state, final_hash, _llm_mode, _mode, _persona = _load_recording(Path(args.trace_path))
+    records, final_state, final_hash, _llm_mode, mode, persona = _load_recording(Path(args.trace_path))
     report = evaluate_trace(
-        {"records": records, "final_state": final_state, "final_hash": final_hash},
+        {
+            "records": records,
+            "final_state": final_state,
+            "final_hash": final_hash,
+            "mode": mode,
+            "persona": persona,
+        },
         trace_path=args.trace_path,
     )
     Path(args.out).write_text(playthrough_eval_page(report), encoding="utf-8")

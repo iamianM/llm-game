@@ -326,3 +326,10 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (244 passed in 8.60s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
 - Validation result: real-LLM loyal validation recorded 61 turns, reached Day 5, and passed H8-specific acceptance signals; real-LLM chaotic validation recorded 83 turns, reached Day 6, and passed H8-specific acceptance signals
 - Packet: generated `review-packet-loyal/` and `review-packet-chaotic/` from `.game_traces/h8-validation-loyal.json` and `.game_traces/h8-validation-chaotic.json`
+
+## Phase H8 Packet Eval Fix
+
+- Files changed: report packet/eval-dashboard generation now preserves trace `mode` and `persona` when evaluating recorded traces
+- Tests added: packet command regression proving an autopilot trace is not evaluated as a manual trace in `playthrough-eval.html`
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (245 passed in 9.67s), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (43 passed)
+- Packet: regenerated `review-packet-loyal/` and `review-packet-chaotic/`; both dashboards now match `verify --playthrough` at 24 passed / 7 failed
