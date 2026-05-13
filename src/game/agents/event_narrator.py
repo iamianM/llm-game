@@ -83,9 +83,17 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
     if re.search(r"\d", prose):
         raise ValueError(f"event narration contains digits: {prose!r}")
     required = [event.islander_id for event in events if event.islander_id is not None]
-    missing = [name for name in required if name not in prose.lower()]
+    lower_prose = prose.lower()
+    missing = [name for name in required if not _mentions_participant(lower_prose, name)]
     if missing:
         raise ValueError(f"event narration omitted participant(s) {missing}: {prose!r}")
+
+
+def _mentions_participant(lower_prose: str, islander_id: str) -> bool:
+    aliases = {islander_id.lower(), islander_id.lower().replace("_", " ")}
+    if islander_id.endswith("_start"):
+        aliases.add(islander_id.removesuffix("_start").lower())
+    return any(alias in lower_prose for alias in aliases)
 
 
 def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:

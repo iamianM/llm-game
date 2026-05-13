@@ -397,3 +397,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: coverage that the turn scheduling a mandatory gather does not invoke Villa Orchestrator
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (276 passed), smoke script, content lint, fixture determinism, and line-cap audit
 - Validation note: fixes the H9 real-LLM autopilot crash where an Orchestrator movement was rejected after `ADVANCE_PHASE` scheduled a pending gather
+
+## Phase H9.7: accept public names in event narration validation
+
+- Files added: none
+- Files changed: `event_narrator.py`, `test_event_narrator.py`
+- Tests added: coverage that starting-cast ids such as `jordan_start` satisfy event narration validation when prose names the public first name
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (277 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Event Narrator suite
+- Validation note: fixes the H9 real-LLM autopilot crash where the narrator wrote `Jordan` for internal id `jordan_start`

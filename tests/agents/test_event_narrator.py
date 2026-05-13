@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import pytest
 
-from src.game.agents.event_narrator import OpenAIEventNarrator, validate_event_narration
+from src.game.agents.event_narrator import (
+    EventNarration,
+    OpenAIEventNarrator,
+    validate_event_narration,
+)
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.state.models import new_game
 
@@ -26,3 +30,19 @@ def test_event_narrator_output_contract(events: list[CeremonyEvent]) -> None:
     narration = agent.narrate(state, events)
 
     validate_event_narration(narration, events)
+
+
+def test_event_narrator_validation_accepts_starting_cast_display_name() -> None:
+    """Starting-cast ids may appear in prose as their public first name."""
+    validate_event_narration(
+        narration=EventNarration(
+            prose="The firepit falls quiet as Jordan faces the decision. Every glance sharpens, and the villa absorbs the shock."
+        ),
+        events=[
+            CeremonyEvent(
+                kind="elimination",
+                message="Jordan leaves the villa.",
+                islander_id="jordan_start",
+            )
+        ],
+    )
