@@ -65,6 +65,27 @@ def test_run_turn_schedules_casa_amor_arrival_as_gather() -> None:
     assert [spec.action.kind for spec in result.available_actions] == [ActionKind.JOIN_GATHER]
 
 
+def test_run_turn_skips_villa_autonomy_after_scheduling_gather() -> None:
+    """The turn that schedules a mandatory gather does not call Orchestrator."""
+    state = new_game(1)
+    state.day = 4
+    state.phase = Phase.AFTERNOON
+
+    def fail_orchestrator(_state):
+        raise AssertionError("villa autonomy should pause while gather is pending")
+
+    result = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.ADVANCE_PHASE),
+        SeededRng(1),
+        villa_orchestrator=fail_orchestrator,
+    )
+
+    assert result.state.pending_gather is not None
+    assert result.agent_commits.villa_update is not None
+    assert result.agent_commits.villa_update.npc_movements == []
+
+
 def test_join_gather_resolves_casa_amor_arrival() -> None:
     """JOIN_GATHER moves the villa to the firepit and then resolves the event."""
     state = new_game(1)

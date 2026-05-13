@@ -389,3 +389,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: isolated-player context coverage, pending-gather autonomy rejection, Firepit pull privacy coverage, and two LLM tests for H9.7 movement liveliness
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (274 passed in 10.36s), content lint, fixture determinism, line-cap audit, H9.7 focused LLM suite (3 passed), and full LLM suite (55 passed after increasing the command timeout)
 - Prompt note: installed Claude's H9.7 `villa_orchestrator.md` movement bullet verbatim; no other prompt edits made
+
+## Phase H9.7: fix gather autonomy pause
+
+- Files added: none
+- Files changed: `turn_autonomy.py`, `test_turn.py`
+- Tests added: coverage that the turn scheduling a mandatory gather does not invoke Villa Orchestrator
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (276 passed), smoke script, content lint, fixture determinism, and line-cap audit
+- Validation note: fixes the H9 real-LLM autopilot crash where an Orchestrator movement was rejected after `ADVANCE_PHASE` scheduled a pending gather

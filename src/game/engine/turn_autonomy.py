@@ -26,6 +26,9 @@ def apply_villa_turn(
     conversation_curator: ConversationCuratorFn | None,
 ) -> tuple[VillaUpdate, AppliedVillaChanges, list[ArrivalRoll]]:
     """Apply one orchestrator turn and roll for player-location arrivals."""
+    if state.pending_gather is not None:
+        villa_update = VillaUpdate()
+        return villa_update, AppliedVillaChanges(villa_update=villa_update), []
     orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
     villa_update = _merge_pending_summon(state, orchestrate(state))
     pre_locations = {islander.id: islander.location_id for islander in state.islanders}
