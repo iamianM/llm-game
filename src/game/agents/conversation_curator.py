@@ -58,12 +58,14 @@ class OpenAIConversationCurator:
         for attempt in range(3):
             retry_context = rendered
             if last_error is not None:
+                required_holders = ", ".join(sorted(participant_ids))
                 retry_context = (
                     f"{rendered}\n\n"
                     "The previous MemoryBatch failed validation. "
                     f"Validation error: {last_error}. "
                     "Return a corrected MemoryBatch using exact ids from the context, "
-                    "not display names."
+                    "not display names. "
+                    f"You must include at least one direct memory for each participant holder: {required_holders}."
                 )
             batch = self._generate_batch(retry_context)
             try:
@@ -184,6 +186,7 @@ def _render_context(
             f"Location: {state.location_id.value}",
             f"Participants: player, {conversation.target_id} ({target})",
             f"Bystanders: {_list_ids(bystander_ids)}",
+            f"Required direct memory holders: player, {conversation.target_id}",
             f"Conversation tags: {', '.join(conversation.accumulated_tags) or 'none'}",
             "Exchange history:",
             exchanges or "No exchange history.",
@@ -262,6 +265,7 @@ def _render_npc_context(
             f"{second_id} ({_name_for(state, second_id)})",
             f"Topic: {conversation.topic}",
             f"Bystanders: {_list_ids(bystander_ids)}",
+            f"Required direct memory holders: {first_id}, {second_id}",
             "Exchange history:",
             exchanges or "No exchange history.",
             "Participant relationship states:",

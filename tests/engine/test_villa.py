@@ -11,7 +11,7 @@ from src.game.agents.villa_orchestrator import (
     NPCMovement,
     VillaUpdate,
 )
-from src.game.engine.villa import apply_villa_update, validate_villa_update
+from src.game.engine.villa import apply_villa_update, normalize_villa_update, validate_villa_update
 from src.game.state.models import Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
 
@@ -81,6 +81,35 @@ def test_apply_movements_updates_locations() -> None:
     apply_villa_update(state, update, SeededRng(1))
 
     assert state.islanders[1].location_id is Location.POOL
+
+
+def test_moving_conversation_participant_implies_conversation_end() -> None:
+    state = new_game(1)
+    conversation = _npc_conversation()
+    state.npc_conversations.append(conversation)
+    update = VillaUpdate(
+        npc_movements=[NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")],
+        conversation_continues=[ContinueConversation(conversation_id=conversation.id)],
+    )
+
+    normalized = normalize_villa_update(state, update)
+
+    validate_villa_update(state, normalized)
+    assert normalized.conversation_continues == []
+    assert normalized.conversation_ends[0].conversation_id == conversation.id
+    assert normalized.conversation_ends[0].reason == "participant_moved"
+
+
+def test_stale_conversation_location_implies_conversation_end() -> None:
+    state = new_game(1)
+    conversation = _npc_conversation()
+    state.npc_conversations.append(conversation)
+    state.islanders[0].location_id = Location.KITCHEN
+
+    normalized = normalize_villa_update(state, VillaUpdate())
+
+    validate_villa_update(state, normalized)
+    assert normalized.conversation_ends[0].conversation_id == conversation.id
 
 
 def test_npc_conversation_close_invokes_curator() -> None:

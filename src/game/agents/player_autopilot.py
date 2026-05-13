@@ -113,7 +113,7 @@ def persona_character(persona: str) -> AutopilotCharacter:
     if persona == "chaotic":
         return AutopilotCharacter(
             archetype_id="class_clown",
-            stats=PlayerStats(charm=6, banter=8, eq=4, graft=8, loyalty=3),
+            stats=PlayerStats(charm=7, banter=8, eq=4, graft=8, loyalty=3),
         )
     return AutopilotCharacter(
         archetype_id="heartthrob",

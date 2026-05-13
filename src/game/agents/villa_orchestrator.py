@@ -114,12 +114,16 @@ class OpenAIVillaOrchestrator:
                     "The previous VillaUpdate failed deterministic engine validation. "
                     f"Validation error: {last_error}. "
                     "Return a corrected VillaUpdate. If an NPC interrupts this turn, "
-                    "do not also move that interrupter away from the player's location."
+                    "do not also move that interrupter away from the player's location. "
+                    "If any NPC is in an active NPC-NPC conversation, do not move them "
+                    "with npc_movements unless that same conversation is also listed in "
+                    "conversation_ends or the NPC is listed in npc_summoned_elsewhere."
                 )
             update = self._generate_update(retry_context)
             try:
-                from src.game.engine.villa import validate_villa_update
+                from src.game.engine.villa import normalize_villa_update, validate_villa_update
 
+                update = normalize_villa_update(state, update)
                 validate_villa_update(state, update)
                 return update
             except ValueError as exc:
@@ -182,6 +186,7 @@ def _render_context(state: GameState) -> str:
         if state.active_conversation is None or state.active_conversation.pending_interruption is None
         else state.active_conversation.pending_interruption.model_dump_json()
     )
+    locked_participants = _locked_participants(state)
     return "\n".join(
         [
             f"Day: {state.day}",
@@ -196,9 +201,23 @@ def _render_context(state: GameState) -> str:
             islanders or "none",
             "Active NPC-NPC conversations:",
             conversations or "none",
+            "Engine movement constraints:",
+            locked_participants,
             "Write the VillaUpdate now.",
         ]
     )
+
+
+def _locked_participants(state: GameState) -> str:
+    rows = []
+    for conversation in state.npc_conversations:
+        if conversation.status != "active" or location_villa(conversation.location_id) is not state.villa:
+            continue
+        rows.append(
+            f"- {conversation.id}: {', '.join(conversation.participants)} are locked in conversation. "
+            "To move one, end the conversation or use npc_summoned_elsewhere; do not use npc_movements."
+        )
+    return "\n".join(rows) if rows else "none"
 
 
 def _recent_memories(memories: object) -> str:

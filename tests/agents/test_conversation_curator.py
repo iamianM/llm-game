@@ -7,12 +7,13 @@ import pytest
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.agents.conversation_curator import (
     OpenAIConversationCurator,
+    _render_context,
     mock_conversation_curator,
     validate_memory_batch,
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.turn import run_turn
-from src.game.state.models import new_game
+from src.game.state.models import Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -27,6 +28,21 @@ def test_mock_curator_returns_participant_memories() -> None:
 
     validate_memory_batch(batch, state, {"player", "chloe"}, set())
     assert {memory.holder_id for memory in batch.memories} == {"player", "chloe"}
+
+
+def test_curator_context_lists_required_memory_holders() -> None:
+    state = new_game(1)
+    conversation = NPCNPCConversation(
+        id="npcconv_context",
+        participants=["maya", "liam"],
+        location_id=Location.POOL,
+        topic="testing memory requirements",
+        started_on_turn=0,
+    )
+
+    rendered = _render_context(state, conversation, [])
+
+    assert "Required direct memory holders: maya, liam" in rendered
 
 
 @pytest.mark.llm

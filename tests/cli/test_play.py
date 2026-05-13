@@ -10,7 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from src.game.cli.commands.play import run as play_run
-from src.game.cli.commands.play_autopilot import decide_with_autopilot
+from src.game.cli.commands.play_autopilot import apply_autopilot_character, decide_with_autopilot
 from src.game.engine.actions import ActionKind, available_actions
 from src.game.engine.challenges import schedule_challenge
 from src.game.state.models import Conversation, ExchangeRecord, Mood, new_game
@@ -38,6 +38,14 @@ def test_play_autopilot_records_rationale_per_turn(tmp_path: Path) -> None:
     records = payload["records"]
     assert records
     assert all(record["agent_commits"]["player_autopilot"]["rationale"] for record in records)
+
+
+def test_play_autopilot_persona_stats_are_valid() -> None:
+    for persona in ("loyal", "player", "chaotic"):
+        state = new_game(42)
+        apply_autopilot_character(state, persona)
+        stats = state.player.stats
+        assert stats.charm + stats.banter + stats.eq + stats.graft + stats.loyalty == 30
 
 
 def test_play_autopilot_replay_byte_identical(tmp_path: Path) -> None:

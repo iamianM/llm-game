@@ -24,7 +24,7 @@ from src.game.agents.conversation_curator import (
     mock_conversation_curator,
 )
 from src.game.agents.player_autopilot import PolicyDecision
-from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
+from src.game.agents.villa_orchestrator import EndConversation, NPCSummon, VillaUpdate
 from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.memory import add_memory_batch
 from src.game.state.autonomy import PendingNPCSummon
@@ -72,6 +72,7 @@ def apply_villa_update(
     conversation_curator: ConversationCuratorFn | None = None,
 ) -> AppliedVillaChanges:
     """Validate and apply one Orchestrator update."""
+    update = normalize_villa_update(state, update)
     validate_villa_update(state, update)
     speak = mock_background_dialogue if background_dialogue is None else background_dialogue
     curate = mock_conversation_curator if conversation_curator is None else conversation_curator
@@ -129,6 +130,50 @@ def apply_villa_update(
         background_dialogues=background_dialogues,
         curator_batches=curator_batches,
         memories=memories,
+    )
+
+
+def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate:
+    """Make implicit conversation exits explicit before validation.
+
+    The orchestrator sometimes proposes a movement for an NPC who is currently
+    inside an NPC-NPC conversation. In engine terms that means the conversation
+    must end first, so record the end in the commit instead of crashing on an
+    otherwise valid autonomous movement.
+    """
+    current_locations = {
+        islander.id: islander.location_id for islander in state.islanders if not islander.eliminated
+    }
+    moving_ids = {movement.npc_id for movement in update.npc_movements}
+    ended_ids = {ended.conversation_id for ended in update.conversation_ends}
+    summoned_ids = {summon.from_conversation_id for summon in update.npc_summoned_elsewhere}
+    implied_ends: list[EndConversation] = []
+    implied_end_ids: set[str] = set()
+    for conversation in state.npc_conversations:
+        if conversation.id in ended_ids or conversation.id in summoned_ids:
+            continue
+        participants = set(conversation.participants)
+        participant_moved = bool(moving_ids & participants)
+        stale_location = any(
+            current_locations.get(participant) != conversation.location_id
+            for participant in participants
+        )
+        if participant_moved or stale_location:
+            implied_ends.append(
+                EndConversation(conversation_id=conversation.id, reason="participant_moved")
+            )
+            implied_end_ids.add(conversation.id)
+    if not implied_ends:
+        return update
+    return update.model_copy(
+        update={
+            "conversation_continues": [
+                continuation
+                for continuation in update.conversation_continues
+                if continuation.conversation_id not in implied_end_ids
+            ],
+            "conversation_ends": [*update.conversation_ends, *implied_ends],
+        }
     )
 
 

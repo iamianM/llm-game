@@ -318,3 +318,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: session-scoped content-index fixture coverage, lazy OpenAI client construction check, pytest-xdist availability check, stalled day-progression assertion coverage, and faster in-process CLI autopilot replay tests
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (239 passed in 8.41s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, `pytest --durations=20` max test 0.13s, and full LLM suite (43 passed)
 - Performance note: `make test` now runs `pytest -m "not llm" -n auto`; `test-fast` runs engine tests in parallel; OpenAI clients are constructed lazily on first real agent call
+
+## Phase H8 Validation Hardening
+
+- Files changed: Player Autopilot persona setup, Villa Orchestrator context/retry handling, Conversation Curator context/retry handling, VillaUpdate normalization, and focused regression tests
+- Tests added: legal 30-point persona stat coverage, required curator-memory-holder context coverage, locked NPC conversation context coverage, and implicit conversation-end normalization for moved or stale-location NPC conversations
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (244 passed in 8.60s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
+- Validation result: real-LLM loyal validation recorded 61 turns, reached Day 5, and passed H8-specific acceptance signals; real-LLM chaotic validation recorded 83 turns, reached Day 6, and passed H8-specific acceptance signals
+- Packet: generated `review-packet-loyal/` and `review-packet-chaotic/` from `.game_traces/h8-validation-loyal.json` and `.game_traces/h8-validation-chaotic.json`
