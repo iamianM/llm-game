@@ -116,19 +116,42 @@ class OpenAIIslanderVoice:
     def generate(self, state: GameState, result: MechanicalResult) -> Exchange:
         """Generate one structured exchange for a resolved mechanical result."""
         context = islander_voice_context(state, result, self._content)
+        rendered = _render_context(context)
+        last_error: ValueError | None = None
+        for attempt in range(3):
+            retry_context = rendered
+            if last_error is not None:
+                retry_context = (
+                    f"{rendered}\n\n"
+                    "The previous Exchange failed validation. "
+                    f"Validation error: {last_error}. "
+                    "Return a corrected Exchange that satisfies every hard rule. "
+                    "Use words for numbers, do not mention hidden Islanders, and stay within the word count."
+                )
+            exchange = self._generate_exchange(retry_context)
+            try:
+                validate_exchange(exchange, context)
+                return exchange
+            except ValueError as exc:
+                last_error = exc
+                if attempt == 2:
+                    raise
+        raise AssertionError("unreachable Islander Voice retry state")
+
+    def _generate_exchange(self, rendered_context: str) -> Exchange:
+        """Request one parsed Exchange from the model."""
         response = self._client.responses.parse(
             model=self._model,
             instructions=Path("src/game/agents/prompts/islander_voice.md").read_text(
                 encoding="utf-8"
             ),
-            input=_render_context(context),
+            input=rendered_context,
             text_format=Exchange,
             max_output_tokens=320,
         )
         exchange = response.output_parsed
         if exchange is None:
             raise ValueError("Islander Voice returned no parsed Exchange")
-        validate_exchange(exchange, context)
         return exchange
 
 

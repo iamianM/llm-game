@@ -405,3 +405,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: coverage that starting-cast ids such as `jordan_start` satisfy event narration validation when prose names the public first name
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (277 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Event Narrator suite
 - Validation note: fixes the H9 real-LLM autopilot crash where the narrator wrote `Jordan` for internal id `jordan_start`
+
+## Phase H9.7: retry Islander Voice contract failures
+
+- Files added: none
+- Files changed: `islander_voice.py`, `test_islander_voice.py`
+- Tests added: coverage that Islander Voice retries after a validation failure and feeds the failure reason into the next structured call
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (278 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Islander Voice retry coverage
+- Validation note: fixes the H9 real-LLM autopilot crash where Islander Voice returned a valid schema with digit-bearing prose

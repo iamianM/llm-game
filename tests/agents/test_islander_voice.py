@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.islander_voice import (
+    Exchange,
     OpenAIIslanderVoice,
     islander_voice_context,
     validate_exchange,
@@ -12,7 +13,7 @@ from src.game.agents.islander_voice import (
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import Intent, IntentCategory, load_intents
 from src.game.engine.rules import apply_action
-from src.game.state.models import Gender, new_game
+from src.game.state.models import Gender, Mood, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -63,6 +64,51 @@ def test_islander_voice_context_includes_backstory() -> None:
     context = islander_voice_context(state, result)
 
     assert "primary school teacher" in context.npc_backstory
+
+
+def test_islander_voice_retries_after_validation_failure() -> None:
+    """Validation feedback gives the model a chance to fix contract slips."""
+    state = new_game(1)
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    class RetryVoice(OpenAIIslanderVoice):
+        def __init__(self) -> None:
+            super().__init__(content=None)
+            self.calls = 0
+
+        def _generate_exchange(self, rendered_context: str) -> Exchange:
+            self.calls += 1
+            if self.calls == 1:
+                return Exchange(
+                    player_dialogue="Can we talk for 2 minutes?",
+                    npc_dialogue="Sure, that sounds fine.",
+                    npc_tone="warm",
+                    npc_mood_after=Mood.CONTENT,
+                )
+            assert "failed validation" in rendered_context
+            return Exchange(
+                player_dialogue="Can we talk for a couple of minutes?",
+                npc_dialogue=(
+                    "Sure, that sounds fine. I was hoping for a calmer moment by the pool anyway."
+                ),
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+            )
+
+    agent = RetryVoice()
+
+    exchange = agent.generate(state, result)
+
+    assert agent.calls == 2
+    assert "2" not in exchange.player_dialogue
 
 
 @pytest.mark.llm
