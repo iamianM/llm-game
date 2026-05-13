@@ -30,6 +30,7 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "phase_clock": state.phase_clock.model_dump(mode="json"),
         "time_cost": turn.time_cost,
         "auto_advance": turn.auto_advance,
+        "arrival_rolls": [roll.model_dump(mode="json") for roll in turn.arrival_rolls],
         "visible_state": _visible_state(state),
         "villa_snapshot": _villa_snapshot(state),
         "couple_strength": _player_couple_strength(state),

@@ -1,0 +1,13 @@
+name: npc-summoned-exit
+seed: 41
+expected_hash: f366aa379c8417323b8559ebba6be1bc093c61d6e3c6d34c5f89424e096e8bf5
+actions:
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+villa_updates:
+- npc_summoned_elsewhere:
+  - npc_id: chloe
+    from_conversation_id: player_active
+    reason: needs_space
+    target_location: terrace

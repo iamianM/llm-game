@@ -120,6 +120,14 @@ def print_turn(turn: TurnResult) -> None:
         )
         if result.pull_attempt.deflection_line:
             print(result.pull_attempt.deflection_line)
+    for roll in turn.arrival_rolls:
+        print(
+            f"Arrival: {name_for(turn.state, roll.arriving_npc_id)} walked in. "
+            f"Interruption roll {roll.interruption_roll}/{roll.interruption_chance} "
+            f"({'hit' if roll.interruption_hit else 'miss'}); "
+            f"pull roll {roll.pull_roll}/{roll.pull_chance} "
+            f"({'hit' if roll.pull_hit else 'miss'})."
+        )
     if turn.auto_advance:
         print(f"Time passes. -> {turn.state.phase.value}.")
     if turn.exchange is not None:
@@ -177,6 +185,11 @@ def print_villa_update(turn: TurnResult) -> None:
         lines.append(f"{label} kept talking{nudge}")
     for ended in update.conversation_ends:
         lines.append(f"Conversation ended ({ended.conversation_id}): {ended.reason}")
+    for summon in update.npc_summoned_elsewhere:
+        lines.append(
+            f"{name_for(turn.state, summon.npc_id)} was pulled to the "
+            f"{summon.target_location.value} ({summon.reason})"
+        )
     for exchange in turn.agent_commits.background_dialogues:
         lines.append(f"Background ({exchange.tone}): {short_line(exchange.speaker_a_line)}")
     if not lines:

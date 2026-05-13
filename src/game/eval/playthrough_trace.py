@@ -159,6 +159,22 @@ def turns_with_auto_advance(records: list[dict[str, Any]]) -> list[int]:
     return [turn(record) for record in records if record.get("auto_advance") is True]
 
 
+def turns_with_arrival_rolls(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if as_list(record.get("arrival_rolls"))]
+
+
+def turns_with_npc_initiated_exit(records: list[dict[str, Any]]) -> list[int]:
+    turns: list[int] = []
+    for record in records:
+        update = as_dict(as_dict(record.get("agent_commits")).get("villa_update"))
+        if as_list(update.get("npc_summoned_elsewhere")):
+            turns.append(turn(record))
+            continue
+        if as_dict(record.get("follow_up_menu")).get("npc_will_leave") is True:
+            turns.append(turn(record))
+    return turns
+
+
 def turns_with_phase_overage(records: list[dict[str, Any]]) -> list[int]:
     grouped: dict[tuple[int, str], list[int]] = {}
     for record in records:

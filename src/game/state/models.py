@@ -7,6 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from src.game.state.autonomy import PendingNPCSummon as PendingNPCSummon
 from src.game.state.casa import CasaAmorState as CasaAmorState
 from src.game.state.casa import CasaDecision as CasaDecision
 from src.game.state.casa import VillaName as VillaName
@@ -314,9 +315,7 @@ class GameState(BaseModel):
     turn_index: int = 0
     day: int = 1
     phase: Phase = Phase.MORNING
-    phase_clock: PhaseClock = Field(
-        default_factory=lambda: PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
-    )
+    phase_clock: PhaseClock = Field(default_factory=lambda: PhaseClock(phase=Phase.MORNING.value, budget_minutes=120))
     location_id: Location = Location.POOL
     villa: VillaName = VillaName.MAIN
     player: PlayerState
@@ -324,6 +323,7 @@ class GameState(BaseModel):
     couples: list[Couple] = Field(default_factory=list)
     active_conversation: Conversation | None = None
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
+    pending_npc_summon: PendingNPCSummon | None = None
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
     pending_challenge: Challenge | None = None

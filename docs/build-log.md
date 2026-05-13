@@ -302,3 +302,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: action time-cost contract, time deduction expiry, phase-clock reset, run-turn auto-advance, H8 pacing eval assertions, and a time-budget expiry scenario fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (223 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed after one retry of a stochastic pre-existing voice-quality assertion)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 16`; day-five Casa fixtures remove one manual `ADVANCE_PHASE` because challenge responses now auto-advance zero-budget challenge phases
+
+## Phase H8.2
+
+- Files added: `src/game/engine/arrival_rolls.py`, `src/game/engine/turn_autonomy.py`, `src/game/eval/playthrough_models.py`, `src/game/reporting/html_arrivals.py`, `src/game/state/autonomy.py`, `tests/engine/test_arrival_rolls.py`, `tests/engine/test_npc_summoned.py`, and two scenario fixtures for arrival rolls and summoned exits
+- Files changed: Villa Orchestrator schema/prompt, VillaUpdate validation/application, turn autonomy pipeline, conversation departure math, trace recording, CLI/report rendering, playthrough eval/dashboard, scenario replay scripted VillaUpdates, and all scenario hashes
+- Tests added: arrival roll formulas/clamps/breakdown, NPC summon validation/application/curation/movement, attachment-driven departure modifiers, H8 autonomy eval assertions, scripted VillaUpdate replay, `arrival-roll-interrupt.yaml`, and `npc-summoned-exit.yaml`
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (235 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
+- Prompt note: installed Claude's `villa_orchestrator.md` NPC summoning section verbatim after `## Hard rules`; no other prompt edits made

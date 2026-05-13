@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.engine.casa_amor import location_villa
+from src.game.state.autonomy import SummonReason
 from src.game.state.models import GameState, Location, NPCInterruption
 
 VILLA_ORCHESTRATOR_MODEL = "gpt-5.4-mini"
@@ -62,6 +63,17 @@ class EndConversation(BaseModel):
     reason: str
 
 
+class NPCSummon(BaseModel):
+    """One NPC pulled out of an active conversation."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    npc_id: str
+    from_conversation_id: str
+    reason: SummonReason
+    target_location: Location
+
+
 class VillaUpdate(BaseModel):
     """A structured Orchestrator commit for one player turn."""
 
@@ -72,6 +84,7 @@ class VillaUpdate(BaseModel):
     conversation_continues: list[ContinueConversation] = Field(default_factory=list)
     conversation_ends: list[EndConversation] = Field(default_factory=list)
     npc_interruptions: list[NPCInterruption] = Field(default_factory=list)
+    npc_summoned_elsewhere: list[NPCSummon] = Field(default_factory=list)
 
 
 VillaOrchestratorFn = Callable[[GameState], VillaUpdate]
@@ -173,6 +186,7 @@ def _render_context(state: GameState) -> str:
             f"Player location: {state.location_id.value}",
             f"Current villa: {state.villa.value}",
             f"Player active conversation target: {active_target}",
+            "Player active conversation id: player_active" if state.active_conversation is not None else "",
             f"Player active conversation pending_interruption: {pending_interruption}",
             "Islanders:",
             islanders or "none",

@@ -7,9 +7,12 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field
-
 from src.game.eval.playthrough_categories import record_category
+from src.game.eval.playthrough_models import (
+    PlaythroughAssertion,
+    PlaythroughReport,
+    PlaythroughStats,
+)
 from src.game.eval.playthrough_trace import (
     as_dict,
     final_outcome,
@@ -18,6 +21,7 @@ from src.game.eval.playthrough_trace import (
     revealed_preference_count,
     turn,
     turns_with_action,
+    turns_with_arrival_rolls,
     turns_with_audience,
     turns_with_auto_advance,
     turns_with_autopilot,
@@ -36,6 +40,7 @@ from src.game.eval.playthrough_trace import (
     turns_with_interruption_response,
     turns_with_low_chance,
     turns_with_memories,
+    turns_with_npc_initiated_exit,
     turns_with_outcome,
     turns_with_phase_overage,
     turns_with_producer_text,
@@ -43,68 +48,6 @@ from src.game.eval.playthrough_trace import (
     turns_with_reveals,
     turns_with_steal_attempt,
 )
-
-
-class PlaythroughAssertion(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    id: str
-    label: str
-    passed: bool
-    detail: str
-    interesting_turns: list[int] = Field(default_factory=list)
-
-
-class PlaythroughStats(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    turns: int
-    conversations_started: int
-    wheel_exits: int
-    walk_aways: int
-    pull_attempts: int
-    pull_failures: int
-    interruptions_fired: int
-    interruption_responses: int
-    interruption_response_kinds: list[str] = Field(default_factory=list)
-    memories_created: int
-    background_dialogues: int
-    gossip_picks: int
-    low_chance_rolls: int
-    ceremony_events: int
-    audience_snapshots: int
-    challenges_completed: int = 0
-    challenges_succeeded: int = 0
-    producer_texts_fired: int = 0
-    group_dates_held: int = 0
-    revealed_preference_count: int = 0
-    compatibility_bonus_observed: int = 0
-    max_couple_strength_reached: int = 0
-    hideaway_used: bool = False
-    steal_attempts_total: int = 0
-    steal_successes: int = 0
-    casa_amor_visited: bool = False
-    casa_amor_player_decision: str | None = None
-    casa_amor_partners_swapped: bool = False
-    casa_amor_perception_swing: int = 0
-    autopilot_actions_total: int = 0
-    autopilot_rationales_present: int = 0
-    autopilot_confidence_counts: dict[str, int] = Field(default_factory=dict)
-    auto_advances_total: int = 0
-    avg_actions_per_phase: float = 0.0
-    outcome: str | None = None
-    success_rate_by_category: dict[str, str] = Field(default_factory=dict)
-
-
-class PlaythroughReport(BaseModel):
-    model_config = ConfigDict(extra="forbid")
-
-    trace_path: str
-    passed: int
-    failed: int
-    stats: PlaythroughStats
-    assertions: list[PlaythroughAssertion]
-    interesting_turns: list[int] = Field(default_factory=list)
 
 
 def evaluate_trace_file(path: Path) -> PlaythroughReport:
@@ -180,6 +123,11 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     autopilot_confidence: Counter[str] = Counter()
     auto_advances_total = 0
     phase_counts: Counter[tuple[int, str]] = Counter()
+    arrival_rolls_total = 0
+    arrival_interrupt_hits = 0
+    arrival_pull_hits = 0
+    npc_summoned_total = 0
+    npc_left_total = 0
 
     for record in records:
         action = as_dict(record.get("action"))
@@ -214,6 +162,19 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         interruptions = villa_update.get("npc_interruptions")
         if isinstance(interruptions, list):
             interruptions_fired += len(interruptions)
+        summoned = villa_update.get("npc_summoned_elsewhere")
+        if isinstance(summoned, list):
+            npc_summoned_total += len(summoned)
+        rolls = record.get("arrival_rolls")
+        if isinstance(rolls, list):
+            arrival_rolls_total += len(rolls)
+            for arrival_roll in rolls:
+                arrival = as_dict(arrival_roll)
+                arrival_interrupt_hits += int(arrival.get("interruption_hit") is True)
+                arrival_pull_hits += int(arrival.get("pull_hit") is True)
+        follow_up_menu = as_dict(record.get("follow_up_menu"))
+        if follow_up_menu.get("npc_will_leave") is True:
+            npc_left_total += 1
         if intent_id in {"accept_interruption", "defer_interruption", "ignore_interruption"}:
             interruption_responses += 1
             interruption_response_kinds.add(intent_id)
@@ -332,6 +293,11 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         autopilot_confidence_counts=dict(autopilot_confidence),
         auto_advances_total=auto_advances_total,
         avg_actions_per_phase=round(avg_actions_per_phase, 2),
+        arrival_rolls_total=arrival_rolls_total,
+        arrival_interrupt_hits=arrival_interrupt_hits,
+        arrival_pull_hits=arrival_pull_hits,
+        npc_summoned_total=npc_summoned_total,
+        npc_left_total=npc_left_total,
         outcome=final_outcome(final_state),
         success_rate_by_category=success_rate_by_category,
     )
@@ -379,6 +345,8 @@ def _assertions(
         _assert("autopilot_rationale_present", "Autopilot turns include rationales", trace_mode != "autopilot" or (stats.autopilot_actions_total > 0 and stats.autopilot_actions_total == stats.autopilot_rationales_present), f"{stats.autopilot_rationales_present}/{stats.autopilot_actions_total} rationale(s)", turns_with_autopilot(records)),
         _assert("phase_action_count_reasonable", "Average actions per phase is reasonable", stats.avg_actions_per_phase <= 12, f"avg actions/phase: {stats.avg_actions_per_phase}", turns_with_phase_overage(records)),
         _assert("time_expired_advance_observed", "At least one phase advanced because time expired", stats.auto_advances_total >= 1, f"{stats.auto_advances_total} auto-advance turn(s)", turns_with_auto_advance(records)),
+        _assert("npc_initiated_exit_observed", "At least one NPC initiated an exit", stats.npc_summoned_total + stats.npc_left_total >= 1, f"{stats.npc_summoned_total} summon(s), {stats.npc_left_total} npc-left menu(s)", turns_with_npc_initiated_exit(records)),
+        _assert("npc_arrival_rolls_observed", "At least two arrival rolls were recorded", stats.arrival_rolls_total >= 2, f"{stats.arrival_rolls_total} arrival roll(s)", turns_with_arrival_rolls(records)),
     ]
 
 
@@ -396,4 +364,3 @@ def _assert(
         detail=detail,
         interesting_turns=turns[:8],
     )
-

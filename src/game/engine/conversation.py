@@ -18,6 +18,7 @@ from src.game.state.models import (
     Memory,
     Mood,
 )
+from src.game.state.personality import AttachmentStyle
 
 MAX_RETAINED_EXCHANGES = 8
 
@@ -102,7 +103,7 @@ def append_exchange(
 
 def close_conversation(
     state: GameState,
-    reason: Literal["player_exit", "npc_left", "phase_end", "wheel_exit"],
+    reason: Literal["player_exit", "npc_left", "phase_end", "wheel_exit", "npc_summoned_elsewhere"],
 ) -> None:
     """Close the active conversation and remove it from canonical state."""
     if state.active_conversation is None:
@@ -136,6 +137,7 @@ def departure_probability(conversation: Conversation, state: GameState) -> int:
         chance += 25
     if _last_two_repeat(conversation):
         chance += 20
+    chance += _attachment_departure_modifier(state, conversation, recent)
 
     target = _target_relationship_strength(state, conversation.target_id)
     if target < 40:
@@ -144,6 +146,21 @@ def departure_probability(conversation: Conversation, state: GameState) -> int:
         chance -= 20
 
     return max(0, min(90, chance))
+
+
+def _attachment_departure_modifier(
+    state: GameState,
+    conversation: Conversation,
+    recent: list[ExchangeRecord],
+) -> int:
+    target = _target_islander(state, conversation.target_id)
+    if target.attachment is AttachmentStyle.AVOIDANT and any(
+        "deep" in record.tags or "vulnerable" in record.tags for record in recent
+    ):
+        return 10
+    if target.attachment is AttachmentStyle.ANXIOUS and recent and not recent[-1].success:
+        return 8
+    return 0
 
 
 def _last_two_repeat(conversation: Conversation) -> bool:

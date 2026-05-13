@@ -1,0 +1,18 @@
+name: arrival-roll-interrupt
+seed: 42
+initial_relationships:
+  maya:
+    affection: 8
+    chemistry: 40
+    trust: 0
+    friendship: 0
+expected_hash: d5b6fdf96d8d7f862adf48d83a796e3567c476594e6a400f01871403d180da97
+actions:
+- kind: start_conversation
+  target_id: chloe
+  intent_id: friendly_chat_villa
+villa_updates:
+- npc_movements:
+  - npc_id: maya
+    target_location: pool
+    reason: chasing_target

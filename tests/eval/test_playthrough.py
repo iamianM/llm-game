@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_twenty_eight_assertions() -> None:
+def test_playthrough_report_has_thirty_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 28
+    assert len(report.assertions) == 30
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 28
+    assert report.passed == 30
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -104,8 +104,8 @@ def _complete_package():
                 interruption={"interrupter_id": "maya", "reason": "jealous", "urgency": "insistent"},
             ),
             _record(6, "respond_with", intent_id="ask_gossip:mem1", chance=52),
-            _record(7, "start_conversation", chance=75),
-            _record(8, "respond_with", intent_id="ignore_interruption", chance=None, audience=True),
+            _record(7, "start_conversation", chance=75, arrival_roll=True, summon=True),
+            _record(8, "respond_with", intent_id="ignore_interruption", chance=None, audience=True, arrival_roll=True),
             _record(9, "advance_phase", challenge=True),
             _record(10, "advance_phase", challenge=True),
             _record(11, "advance_phase", challenge=True),
@@ -169,6 +169,8 @@ def _record(
     casa: dict[str, object] | None = None,
     ceremony_events: list[dict[str, object]] | None = None,
     auto_advance: bool = False,
+    arrival_roll: bool = False,
+    summon: bool = False,
 ) -> dict[str, object]:
     action: dict[str, object] = {"kind": kind}
     if intent_id is not None:
@@ -196,6 +198,20 @@ def _record(
         "villa": villa,
         "auto_advance": auto_advance,
         "action": action,
+        "arrival_rolls": [
+            {
+                "arriving_npc_id": "maya",
+                "target_id": "chloe",
+                "interruption_chance": 55,
+                "interruption_roll": 40,
+                "interruption_hit": True,
+                "pull_chance": 35,
+                "pull_roll": 20,
+                "pull_hit": True,
+            }
+        ]
+        if arrival_roll
+        else [],
         "mechanical_result": result,
         "audience_snapshot": (
             {"day": 1, "entries": [{"rank": 1, "couple": ["player", "chloe"], "score": 74, "is_player_couple": True}]}
@@ -228,12 +244,28 @@ def _record(
         if ceremony_events is not None
         else ([{"kind": "steal_attempt", "message": "Steal attempt fails."}] if steal else ([{"kind": "bombshell"}] if turn == 6 else [])),
         "agent_commits": {
-            "villa_update": (
-                {"npc_interruptions": [interruption]}
-                if interruption is not None
-                else {"npc_interruptions": []}
-            ),
+            "villa_update": _villa_update(interruption=interruption, summon=summon),
             "curator_batches": curator_batches,
             "background_dialogues": [{} for _ in range(background_dialogues)],
         },
+    }
+
+
+def _villa_update(
+    *,
+    interruption: dict[str, object] | None,
+    summon: bool,
+) -> dict[str, object]:
+    return {
+        "npc_interruptions": [interruption] if interruption is not None else [],
+        "npc_summoned_elsewhere": [
+            {
+                "npc_id": "chloe",
+                "from_conversation_id": "player_active",
+                "reason": "chemistry_partner_arrived",
+                "target_location": "kitchen",
+            }
+        ]
+        if summon
+        else [],
     }

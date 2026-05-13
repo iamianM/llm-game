@@ -54,6 +54,11 @@ def playthrough_eval_page(report: PlaythroughReport) -> str:
         ("Autopilot confidence", stats.autopilot_confidence_counts),
         ("Auto advances", stats.auto_advances_total),
         ("Avg actions per phase", stats.avg_actions_per_phase),
+        ("Arrival rolls", stats.arrival_rolls_total),
+        ("Arrival interrupt hits", stats.arrival_interrupt_hits),
+        ("Arrival pull hits", stats.arrival_pull_hits),
+        ("NPC summons", stats.npc_summoned_total),
+        ("NPC left menus", stats.npc_left_total),
         ("Outcome", stats.outcome or "none"),
     ]
     stats_html = "".join(

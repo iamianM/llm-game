@@ -23,8 +23,9 @@ from src.game.agents.contextual_options import (
 from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
 from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
-from src.game.agents.villa_orchestrator import VillaOrchestratorFn, mock_villa_orchestrator
+from src.game.agents.villa_orchestrator import VillaOrchestratorFn
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
+from src.game.engine.arrival_rolls import ArrivalRoll
 from src.game.engine.ceremonies import CeremonyEvent, recoupling
 from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.conversation import (
@@ -42,12 +43,13 @@ from src.game.engine.memory import (
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.time_budget import check_auto_advance, deduct_time
+from src.game.engine.turn_autonomy import apply_villa_turn
 from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
     recoupling_events,
 )
-from src.game.engine.villa import AgentCommits, apply_villa_update
+from src.game.engine.villa import AgentCommits
 from src.game.state.casa import CasaDecision
 from src.game.state.models import (
     AudienceSnapshot,
@@ -82,6 +84,7 @@ class TurnResult(BaseModel):
     agent_commits: AgentCommits = Field(default_factory=AgentCommits)
     time_cost: int = 0
     auto_advance: bool = False
+    arrival_rolls: list[ArrivalRoll] = Field(default_factory=list)
 
 
 def run_turn(
@@ -120,12 +123,10 @@ def run_turn(
                 exchange = speak(state, result)
                 pull_attempt.deflection_line = exchange.npc_dialogue
                 _remember_pull_rejection(state, pull_attempt)
-                orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
-                villa_update = orchestrate(state)
-                villa_changes = apply_villa_update(
+                villa_update, villa_changes, arrival_rolls = apply_villa_turn(
                     state,
-                    villa_update,
                     rng.fork(f"villa-turn-{state.turn_index}"),
+                    villa_orchestrator,
                     background_dialogue=background_dialogue,
                     conversation_curator=conversation_curator,
                 )
@@ -149,6 +150,7 @@ def run_turn(
                     agent_commits=agent_commits,
                     time_cost=time_cost,
                     auto_advance=auto_advance,
+                    arrival_rolls=arrival_rolls,
                 )
     result = apply_action(state, action, rng)
     time_cost = deduct_time(state, action)
@@ -245,12 +247,10 @@ def run_turn(
             batch = _curate_conversation(state, state.active_conversation, conversation_curator)
             curator_batches.append(batch)
         close_conversation(state, "player_exit")
-    orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
-    villa_update = orchestrate(state)
-    villa_changes = apply_villa_update(
+    villa_update, villa_changes, arrival_rolls = apply_villa_turn(
         state,
-        villa_update,
         rng.fork(f"villa-turn-{state.turn_index}"),
+        villa_orchestrator,
         background_dialogue=background_dialogue,
         conversation_curator=conversation_curator,
     )
@@ -285,6 +285,7 @@ def run_turn(
         agent_commits=agent_commits,
         time_cost=time_cost,
         auto_advance=auto_advance,
+        arrival_rolls=arrival_rolls,
     )
 
 

@@ -41,6 +41,33 @@ Return a `VillaUpdate`:
 - **Active player conversation lock.** If the user message says the player is in an active conversation with NPC X, X cannot be in any NPC-NPC interaction this turn — they're talking to the player.
 - **Interruptions are rare.** Emit at most one `NPCInterruption` per turn, and only when the player has an active conversation. The interrupter must be at the player's location and must not be the player's current conversation partner. Never emit an interruption if the user message says `pending_interruption` is already set on the player's active conversation — one at a time. Skip interruptions during ceremonies or phase transitions.
 
+## NPC summoning (pulling out of conversations)
+
+You may pull an NPC out of any active conversation — the player's conversation or any NPC-NPC conversation — via the `npc_summoned_elsewhere` output field. Use this when an Islander has a strong reason to leave where they are.
+
+Each `NPCSummon`:
+
+- `npc_id` — the Islander leaving.
+- `from_conversation_id` — the conversation they're leaving. Must be currently active.
+- `reason` — one of: `chemistry_partner_arrived`, `friend_needs_them`, `drama_pull`, `needs_space`, `phase_pressure`.
+- `target_location` — where they're going. Must be different from their current location.
+
+### When to fire a summon
+
+- **`chemistry_partner_arrived`** — an islander the NPC has high chemistry with just walked into a different location, and the NPC is currently with someone they don't share that chemistry with.
+- **`friend_needs_them`** — an NPC the holder has a strong friendship memory with appears upset or in drama elsewhere.
+- **`drama_pull`** — the NPC just heard or witnessed something gossip-worthy and wants to share it with someone else.
+- **`needs_space`** — the NPC has been in a deep or vulnerable exchange for multiple exchanges and (per their personality) wants to step away. Avoidant attachment especially.
+- **`phase_pressure`** — the phase clock is close to expiry and the NPC has somewhere they need to be before it ends.
+
+### Limits
+
+- At most **one summon per turn**. Use sparingly. Most turns have none.
+- Do not summon the player. The player ends their own conversations.
+- Do not summon an NPC and continue their conversation in the same turn. Pick one.
+- Do not summon someone you also moved this turn. Moves are for off-screen-to-off-screen drift; summons are for in-conversation extraction.
+
+
 ## How to decide
 
 - **Movement.** An Islander moves when they have a reason: chemistry pulling them toward someone, drama making them want out, boredom drifting them to a busier room. Most turns, most Islanders stay put. A turn with four movements should be unusual.

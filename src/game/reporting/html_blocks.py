@@ -291,6 +291,7 @@ def _conversation_lines(update: dict[str, object]) -> list[str]:
     lines.extend(_conversation_continue_lines(update.get("conversation_continues")))
     lines.extend(_conversation_end_lines(update.get("conversation_ends")))
     lines.extend(_interruption_lines(update.get("npc_interruptions")))
+    lines.extend(_summon_lines(update.get("npc_summoned_elsewhere")))
     return lines
 
 
@@ -343,6 +344,20 @@ def _interruption_lines(items: object) -> list[str]:
             lines.append(
                 f"{escape(str(item.get('interrupter_id', 'npc')))} interrupted: "
                 f"{escape(str(item.get('reason', '')))} / {escape(str(item.get('urgency', '')))}."
+            )
+    return lines
+
+
+def _summon_lines(items: object) -> list[str]:
+    if not isinstance(items, list):
+        return []
+    lines: list[str] = []
+    for item in items:
+        if isinstance(item, dict):
+            lines.append(
+                f"{escape(str(item.get('npc_id', 'npc')))} was summoned to "
+                f"{escape(str(item.get('target_location', 'unknown')))}: "
+                f"{escape(str(item.get('reason', '')))}."
             )
     return lines
 

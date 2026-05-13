@@ -24,13 +24,16 @@ from src.game.agents.conversation_curator import (
     mock_conversation_curator,
 )
 from src.game.agents.player_autopilot import PolicyDecision
-from src.game.agents.villa_orchestrator import VillaUpdate
+from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
 from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.memory import add_memory_batch
+from src.game.state.autonomy import PendingNPCSummon
 from src.game.state.models import (
     BackgroundExchangeRecord,
+    Conversation,
     GameState,
     IslanderState,
+    Location,
     Memory,
     MemoryBatch,
     NPCNPCConversation,
@@ -78,6 +81,12 @@ def apply_villa_update(
 
     for movement in update.npc_movements:
         _islander(state, movement.npc_id).location_id = movement.target_location
+
+    for summon in update.npc_summoned_elsewhere:
+        batch = _apply_summon(state, summon, curate)
+        if batch is not None:
+            curator_batches.append(batch)
+            memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
 
     if update.npc_interruptions:
         if state.active_conversation is None:
@@ -134,12 +143,20 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
         _ensure_known_npc(movement.npc_id, known)
         if movement.target_location not in locations_for_villa(state.villa):
             raise ValueError("NPC movement crosses out of the current villa")
+    if len(update.npc_summoned_elsewhere) > 1:
+        raise ValueError("at most one NPC summon is allowed per turn")
+    for summon in update.npc_summoned_elsewhere:
+        _validate_summon(state, summon, known, set(movement_ids))
 
     ended = {end.conversation_id for end in update.conversation_ends}
     continued = {cont.conversation_id for cont in update.conversation_continues}
+    summoned_conversations = {summon.from_conversation_id for summon in update.npc_summoned_elsewhere}
     overlap = ended & continued
     if overlap:
         raise ValueError(f"cannot end and continue same conversation: {sorted(overlap)}")
+    summon_overlap = (ended | continued) & summoned_conversations
+    if summon_overlap:
+        raise ValueError(f"cannot summon from and also end/continue conversation: {sorted(summon_overlap)}")
     for conversation_id in ended | continued:
         if conversation_id not in active_ids:
             raise ValueError(f"unknown active NPC conversation: {conversation_id}")
@@ -187,6 +204,8 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
     for conversation in state.npc_conversations:
         if conversation.id in ended:
             continue
+        if conversation.id in summoned_conversations:
+            continue
         for participant in conversation.participants:
             if participant in locked:
                 raise ValueError(f"NPC is in player conversation and active NPC chat: {participant}")
@@ -194,6 +213,16 @@ def validate_villa_update(state: GameState, update: VillaUpdate) -> None:
                 raise ValueError(
                     f"active conversation participant moved away without ending: {conversation.id}"
                 )
+
+
+def pending_to_summon(pending: PendingNPCSummon) -> NPCSummon:
+    """Convert a queued deterministic summon into an Orchestrator-shaped commit."""
+    return NPCSummon(
+        npc_id=pending.npc_id,
+        from_conversation_id=pending.from_conversation_id,
+        reason=pending.reason,
+        target_location=Location(pending.target_location),
+    )
 
 
 def _append_background_exchange(
@@ -212,6 +241,64 @@ def _append_background_exchange(
             tone=exchange.tone,
         )
     )
+
+
+def _apply_summon(
+    state: GameState,
+    summon: NPCSummon,
+    curate: ConversationCuratorFn,
+) -> MemoryBatch | None:
+    if summon.from_conversation_id == "player_active":
+        conversation = state.active_conversation
+        if conversation is None:
+            raise ValueError("player summon missing active conversation")
+        conversation.status = "closed"
+        batch = curate(state, conversation, _player_conversation_bystanders(state, conversation))
+        state.active_conversation = None
+    else:
+        npc_conversation = _active_conversation(state, summon.from_conversation_id)
+        npc_conversation.status = "closed"
+        batch = curate(state, npc_conversation, _bystander_ids(state, npc_conversation))
+        state.npc_conversations = [
+            existing for existing in state.npc_conversations if existing.id != npc_conversation.id
+        ]
+    _islander(state, summon.npc_id).location_id = summon.target_location
+    return batch
+
+
+def _validate_summon(
+    state: GameState,
+    summon: NPCSummon,
+    known: set[str],
+    moved_ids: set[str],
+) -> None:
+    _ensure_known_npc(summon.npc_id, known)
+    if summon.npc_id in moved_ids:
+        raise ValueError("cannot summon and move the same NPC in one VillaUpdate")
+    if summon.target_location not in locations_for_villa(state.villa):
+        raise ValueError("NPC summon crosses out of the current villa")
+    if summon.from_conversation_id == "player_active":
+        active = state.active_conversation
+        if active is None or active.target_id != summon.npc_id:
+            raise ValueError("player_active summon must target the active conversation partner")
+        if _islander(state, summon.npc_id).location_id != state.location_id:
+            raise ValueError("summoned player conversation target is not at player location")
+        return
+    conversation = _active_conversation(state, summon.from_conversation_id)
+    if summon.npc_id not in conversation.participants:
+        raise ValueError("summoned NPC is not in named conversation")
+    if _islander(state, summon.npc_id).location_id != conversation.location_id:
+        raise ValueError("summoned NPC is not at named conversation location")
+
+
+def _player_conversation_bystanders(state: GameState, conversation: Conversation) -> list[str]:
+    return [
+        islander.id
+        for islander in state.islanders
+        if islander.id != conversation.target_id
+        and not islander.eliminated
+        and islander.location_id == state.location_id
+    ]
 
 
 def _active_conversation(state: GameState, conversation_id: str) -> NPCNPCConversation:

@@ -19,6 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
 from src.game.agents.islander_voice import Exchange
 from src.game.agents.player_autopilot import PolicyDecision
+from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
@@ -55,6 +56,7 @@ class ActionScript(BaseModel):
     initial_relationships: dict[str, RelationshipState] | None = None
     initial_couples: list[Couple] | None = None
     autopilot_decisions: list[PolicyDecision] | None = None
+    villa_updates: list[VillaUpdate | None] | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None
 
@@ -94,10 +96,17 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
         )
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
-    contextual_options = _scripted_contextual_options(script.actions)
+    contextual_options = _scripted_contextual_options(script.actions, script.villa_updates)
+    villa_orchestrator = _scripted_villa_updates(script.villa_updates)
 
     for action in script.actions:
-        turn = run_turn(state, action, rng, contextual_options=contextual_options)
+        turn = run_turn(
+            state,
+            action,
+            rng,
+            contextual_options=contextual_options,
+            villa_orchestrator=villa_orchestrator,
+        )
         turns.append(turn.model_copy(deep=True))
         state = turn.state
 
@@ -125,8 +134,11 @@ def _apply_initial_state(state: GameState, script: ActionScript) -> None:
                 islander.relationship = relationship.model_copy(deep=True)
 
 
-def _scripted_contextual_options(actions: list[PlayerAction]) -> ContextualOptionsFn:
-    planned = _planned_follow_up_intents(actions)
+def _scripted_contextual_options(
+    actions: list[PlayerAction],
+    villa_updates: list[VillaUpdate | None] | None,
+) -> ContextualOptionsFn:
+    planned = _planned_follow_up_intents(actions, villa_updates)
     index = 0
 
     def contextual_options(
@@ -145,10 +157,31 @@ def _scripted_contextual_options(actions: list[PlayerAction]) -> ContextualOptio
     return contextual_options
 
 
-def _planned_follow_up_intents(actions: list[PlayerAction]) -> list[str | None]:
+def _scripted_villa_updates(updates: list[VillaUpdate | None] | None) -> VillaOrchestratorFn | None:
+    if updates is None:
+        return None
+    index = 0
+
+    def villa_orchestrator(_state: GameState) -> VillaUpdate:
+        nonlocal index
+        update = updates[index] if index < len(updates) else None
+        index += 1
+        return VillaUpdate() if update is None else update
+
+    return villa_orchestrator
+
+
+def _planned_follow_up_intents(
+    actions: list[PlayerAction],
+    villa_updates: list[VillaUpdate | None] | None,
+) -> list[str | None]:
     planned: list[str | None] = []
     for index, action in enumerate(actions):
         if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
+            continue
+        update = None if villa_updates is None or index >= len(villa_updates) else villa_updates[index]
+        if update is not None and update.npc_summoned_elsewhere:
+            planned.append("joke_back")
             continue
         next_action = actions[index + 1] if index + 1 < len(actions) else None
         if next_action is not None and next_action.kind is ActionKind.RESPOND_WITH:

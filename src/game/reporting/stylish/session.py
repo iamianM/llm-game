@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.game.reporting.html_arrivals import arrival_roll_block
 from src.game.reporting.html_base import escape
 from src.game.reporting.html_blocks import (
     agent_commit_block,
@@ -74,7 +75,8 @@ def _turn_card(record: dict[str, Any]) -> str:
         f"<p><b>You chose:</b> {escape(action['kind'])} {escape(str(action.get('target_id') or ''))} {escape(str(action.get('intent_id') or ''))}</p>"
         f"{autopilot_block(record.get('agent_commits'))}"
         f"<div class='math'><details><summary>Success math</summary>{math_block(result)}</details></div>"
-        f"{pull_attempt_block(result.get('pull_attempt'))}<div class='dialogue'>{exchange_block(record.get('exchange'))}</div>"
+        f"{pull_attempt_block(result.get('pull_attempt'))}{arrival_roll_block(record)}"
+        f"<div class='dialogue'>{exchange_block(record.get('exchange'))}</div>"
         f"{event_block(record.get('event_narration'))}{follow_up_block(record.get('follow_up_menu'))}"
         f"{interruption_block(record)}{agent_commit_block(record.get('agent_commits'))}{memory_block(record.get('agent_commits'))}"
         f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs {escape(str(result.get('success_chance')))} "
