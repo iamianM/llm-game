@@ -1,6 +1,6 @@
 name: character-creation
 seed: 11
-expected_hash: 22f23237b8bb04f2b09c59f42004a2600cd7cfcffcec5bdfe38f01966892ee47
+expected_hash: 9490cafc63a83d8ed9d5c8c3bcf49f50287d3d22e7f6f110c619fdf702582454
 actions:
 - kind: create_character
   payload:

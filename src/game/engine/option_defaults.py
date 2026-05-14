@@ -26,6 +26,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         stat_used="eq",
         risk="medium",
         tone="sincere",
+        reveal_tier=3,
     ),
     "escalate_flirt": FollowUpOption(
         label="Push the flirt",
@@ -84,6 +85,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         stat_used="loyalty",
         risk="medium",
         tone="defensive",
+        reveal_tier=1,
     ),
     "change_subject": FollowUpOption(
         label="Change the subject",
@@ -108,6 +110,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         stat_used="eq",
         risk="low",
         tone="warm",
+        reveal_tier=2,
     ),
     "end_softly": FollowUpOption(
         label="End on a good note",
@@ -180,7 +183,10 @@ def assemble_follow_up_menu(
         *tone_reaction_options(state, exchange),
         *bespoke_options,
     ]
-    assembled = [_with_audience_hint(option) for option in _cap_with_single_exit(_dedupe(options), max_total=5)]
+    assembled = [
+        _with_audience_hint(_with_reveal_default(option))
+        for option in _cap_with_single_exit(_dedupe(options), max_total=5)
+    ]
     menu = FollowUpMenu(
         options=assembled,
         npc_will_leave=npc_will_leave,
@@ -291,4 +297,16 @@ def _with_audience_hint(option: FollowUpOption) -> FollowUpOption:
         return option.model_copy(update={"audience_hint": "+"})
     if option.intent_kind in negative and option.risk in {"medium", "high"}:
         return option.model_copy(update={"audience_hint": "-"})
+    return option
+
+
+def _with_reveal_default(option: FollowUpOption) -> FollowUpOption:
+    if option.reveal_tier > 0 or option.category == "exit":
+        return option
+    if option.category == "deep" and option.risk != "safe":
+        return option.model_copy(update={"reveal_tier": 3})
+    if option.category == "friendly" and option.risk != "safe":
+        return option.model_copy(update={"reveal_tier": 1})
+    if option.category == "supportive" and option.risk not in {"safe", None}:
+        return option.model_copy(update={"reveal_tier": 2})
     return option

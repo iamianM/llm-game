@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import BaseModel, ConfigDict
 
 from src.game.engine.couples import couple_strength, partner_for
+from src.game.engine.knowledge import reveal_partner_surface_facts
 from src.game.engine.results import MechanicalResult
 from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft
 from src.game.state.models import (
@@ -334,6 +335,10 @@ def _form_proposal_couple(state: GameState, first_id: str, second_id: str, *, re
             rebound=rebound,
         )
     )
+    if state.player.id == first_id:
+        reveal_partner_surface_facts(state, second_id)
+    elif state.player.id == second_id:
+        reveal_partner_surface_facts(state, first_id)
 
 
 def _successful_player_audience_delta(state: GameState) -> int:

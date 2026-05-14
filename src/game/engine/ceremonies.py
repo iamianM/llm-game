@@ -14,6 +14,7 @@ from src.game.content.trait_library import heart_throb_trait_cards
 from src.game.engine.couples import StealAttempt, resolve_steal_attempt
 from src.game.engine.final_vote import final_vote, final_vote_message
 from src.game.engine.heart_throb_brief import pick_heart_throb_brief
+from src.game.engine.knowledge import reveal_partner_surface_facts
 from src.game.state.models import (
     AttachmentStyle,
     Big5,
@@ -73,6 +74,7 @@ def initial_coupling(state: GameState, player_choice_id: str) -> RecouplingResul
         )
     ]
     choice.familiarity_with_player = max(choice.familiarity_with_player, 25)
+    reveal_partner_surface_facts(state, choice.id)
     while opposite and same:
         couples.append(
             Couple(

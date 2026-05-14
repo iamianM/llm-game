@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.character_creation import create_character
 from src.game.engine.gossip import share_gossip
 from src.game.engine.intents import get_intent
 from src.game.engine.knowledge import emit_fact_reveal
+from src.game.engine.option_defaults import OPTION_TEMPLATES
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
-from src.game.state.models import Phase, new_game
+from src.game.state.models import Conversation, Gender, Phase, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.traits import KnownFact
 
@@ -19,6 +21,42 @@ def test_starting_cast_has_distinct_trait_cards() -> None:
     assert len(engines) == 8
     assert len(set(engines)) == 8
     assert all("hidden_secret" in islander.trait_card.core_traits for islander in state.islanders)
+    assert all(len(islander.trait_card.flavor_traits) >= 6 for islander in state.islanders)
+
+
+def test_opening_coupling_reveals_partner_surface_facts() -> None:
+    state = new_game(1)
+    create_character(
+        state,
+        archetype_id="heartthrob",
+        gender=Gender.MAN,
+        stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
+    )
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"),
+        SeededRng(1),
+    )
+    assert {"chloe.occupation", "chloe.hometown", "chloe.age"} <= set(state.player.known_facts)
+
+
+def test_successful_proposal_reveals_new_partner_surface_facts() -> None:
+    state = new_game(1)
+    create_character(
+        state,
+        archetype_id="heartthrob",
+        gender=Gender.MAN,
+        stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
+    )
+    run_turn(state, PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"), SeededRng(1))
+    maya = next(islander for islander in state.islanders if islander.id == "maya")
+    maya.relationship.affection = 100
+    maya.relationship.chemistry = 100
+    state.active_conversation = Conversation(target_id="maya", started_on_turn=state.turn_index, started_on_day=state.day)
+
+    apply_action(state, PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id="maya"), SeededRng(1))
+
+    assert {"maya.occupation", "maya.hometown", "maya.age"} <= set(state.player.known_facts)
 
 
 def test_intro_reveals_tier_one_known_facts() -> None:
@@ -57,6 +95,34 @@ def test_gossip_distortion_never_shares_hidden_secret() -> None:
         citation="test",
     )
     assert share_gossip(state, "maya", "chloe") is None
+
+
+def test_gossip_shares_non_secret_known_fact() -> None:
+    state = new_game(2)
+    speaker = next(islander for islander in state.islanders if islander.id == "maya")
+    speaker.known_facts.clear()
+    speaker.known_facts["chloe.occupation"] = KnownFact(
+        fact_key="chloe.occupation",
+        value="primary school teacher",
+        source="witnessed",
+        learned_on_day=1,
+        learned_on_turn=1,
+        confidence=1.0,
+        citation="test",
+    )
+    shared = share_gossip(state, "maya", "chloe")
+    assert shared is not None
+    assert shared.source == "gossip"
+    assert shared.source_npc_id == "maya"
+    assert shared.confidence in {0.6, 0.35}
+    assert state.player.known_facts["chloe.occupation"] == shared
+
+
+def test_follow_up_templates_continue_fact_reveals() -> None:
+    assert OPTION_TEMPLATES["honest_vulnerable"].reveal_tier == 3
+    assert OPTION_TEMPLATES["go_deeper"].reveal_tier == 3
+    assert OPTION_TEMPLATES["ask_about_topic"].reveal_tier == 1
+    assert OPTION_TEMPLATES["supportive_validate"].reveal_tier == 2
 
 
 def test_conversation_close_emits_known_fact() -> None:

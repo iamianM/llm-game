@@ -105,6 +105,23 @@ def pick_revealable_trait(
 
 def reveal_intro_facts(state: GameState, target: IslanderState) -> None:
     """Reveal tier-one intro facts for a target."""
+    reveal_surface_facts(state, target, citation=f"{target.name} told you during Day One introductions.")
+
+
+def reveal_partner_surface_facts(state: GameState, partner_id: str) -> None:
+    """Reveal basic partner facts when the player forms a couple."""
+    target = next((islander for islander in state.islanders if islander.id == partner_id), None)
+    if target is None:
+        return
+    reveal_surface_facts(
+        state,
+        target,
+        citation=f"You learned the basics while coupling with {target.name}.",
+    )
+
+
+def reveal_surface_facts(state: GameState, target: IslanderState, *, citation: str) -> None:
+    """Reveal tier-one facts for a target."""
     for key, fact in sorted(target.trait_card.core_traits.items()):
         if fact.tier != 1:
             continue
@@ -119,7 +136,7 @@ def reveal_intro_facts(state: GameState, target: IslanderState) -> None:
             learned_on_day=state.day,
             learned_on_turn=state.turn_index,
             confidence=1.0,
-            citation=f"{target.name} told you during Day One introductions.",
+            citation=citation,
         )
 
 
