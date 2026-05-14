@@ -28,7 +28,9 @@ venv/
 .game_traces/
 .py-server-*.txt
 .api-*.log
+.api-*.err
 .web-*.log
+.web-*.err
 .claude/
 .tmp_*
 tmp_input.txt

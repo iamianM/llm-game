@@ -47,7 +47,9 @@ export default function NewRunPage() {
         </section>
         <section className="mt-5 rounded-[var(--r-lg)] border border-white/10 bg-white/5 p-5">
           <h2 className="font-display text-2xl">Story engine</h2>
-          <p className="mt-2 text-sm text-[var(--muted-on-dark)]">Use test mode for fast deterministic checks, or real mode for authored live dialogue.</p>
+          <p className="mt-2 text-sm text-[var(--muted-on-dark)]">
+            Use test mode for fast deterministic checks, or real mode for authored live dialogue. Real mode can take 30-60 seconds while the cast is written.
+          </p>
           <div className="mt-4 flex gap-3">
             <Button variant={mockLlm ? "primary" : "secondary"} onClick={() => setMockLlm(true)}>Test mode</Button>
             <Button variant={!mockLlm ? "primary" : "secondary"} onClick={() => setMockLlm(false)}>Real mode</Button>
@@ -56,7 +58,11 @@ export default function NewRunPage() {
         <Button disabled={mutation.isPending} onClick={() => mutation.mutate()} className="mt-8">
           {mutation.isPending ? "Opening Sunset Bay..." : "Enter Sunset Bay"}
         </Button>
-        {mutation.error ? <p className="mt-4 text-[var(--bad-soft)]">{mutation.error.message}</p> : null}
+        {mutation.error ? (
+          <p role="alert" className="mt-4 max-w-2xl rounded-[var(--r-md)] border border-[var(--bad-soft)]/40 bg-[var(--bad-soft)]/10 p-3 text-sm text-[var(--bad-soft)]">
+            {mutation.error.message}
+          </p>
+        ) : null}
       </div>
     </main>
   );

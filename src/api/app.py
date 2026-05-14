@@ -84,8 +84,15 @@ def new_session(req: NewSessionRequest) -> SessionResponse:
     seed = req.seed if req.seed is not None else randint(1, 999_999)
     state = new_game(seed)
     if not _mock_mode(req.mock_llm):
-        generator = OpenAITraitGenerator()
-        assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
+        try:
+            generator = OpenAITraitGenerator()
+            assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
+        except Exception as exc:
+            raise _http_error(
+                502,
+                "STORY_ENGINE_ERROR",
+                "Real mode could not open Sunset Bay. Check that OPENAI_API_KEY is set and restart the API server.",
+            ) from exc
     state.player.name = req.player_name or "You"
     try:
         create_character(

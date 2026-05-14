@@ -3,16 +3,33 @@ import type { AvailableAction, CastDetail, Gender, SessionResponse, TurnResponse
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://127.0.0.1:8000";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...init,
-    headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
-    cache: "no-store"
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      ...init,
+      headers: { "content-type": "application/json", ...(init?.headers ?? {}) },
+      cache: "no-store"
+    });
+  } catch (error) {
+    throw new Error(
+      `Cannot reach the Paradise Hearts API at ${API_BASE}. Start or restart the FastAPI server, then try again.`
+    );
+  }
   if (!response.ok) {
-    const body = await response.text();
-    throw new Error(body || response.statusText);
+    throw new Error(await errorMessage(response));
   }
   return (await response.json()) as T;
+}
+
+async function errorMessage(response: Response): Promise<string> {
+  const body = await response.text();
+  if (!body) return response.statusText;
+  try {
+    const parsed = JSON.parse(body) as { detail?: { error?: { message?: string } }; error?: { message?: string } };
+    return parsed.detail?.error?.message ?? parsed.error?.message ?? body;
+  } catch {
+    return body;
+  }
 }
 
 export function newSession(archetype: string, gender: Gender, mockLlm: boolean): Promise<SessionResponse> {
