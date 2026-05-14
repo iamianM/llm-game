@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm
+.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -43,3 +43,17 @@ test-llm:
 
 smoke-real-llm:
 	uv run python -m src.game.cli play --record .game_traces/manual-real-g8.json
+
+dev: dev-start
+
+dev-start:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-server.ps1 start
+
+dev-stop:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-server.ps1 stop
+
+dev-restart:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-server.ps1 restart
+
+dev-status:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-server.ps1 status
