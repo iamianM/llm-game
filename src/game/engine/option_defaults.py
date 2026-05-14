@@ -58,6 +58,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         stat_used="eq",
         risk="medium",
         tone="vulnerable",
+        reveal_tier=3,
     ),
     "ask_about_topic": FollowUpOption(
         label="Ask about that",
@@ -66,6 +67,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         stat_used="eq",
         risk="low",
         tone="curious",
+        reveal_tier=1,
     ),
     "apologize": FollowUpOption(
         label="Apologize honestly",

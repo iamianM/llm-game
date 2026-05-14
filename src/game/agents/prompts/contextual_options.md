@@ -8,7 +8,7 @@ You add 1-2 *bespoke* follow-up options to a partially-built wheel. The engine a
 
 Return a `ContextualBespoke`:
 
-- `options` - 1 or 2 `FollowUpOption` items, each with: `label` (short, specific), `category`, `intent_kind` (from the enumerated set), `stat_used`, `risk`, `tone`, `unlock_threshold` (or null).
+- `options` - 1 or 2 `FollowUpOption` items, each with: `label` (short, specific), `category`, `intent_kind` (from the enumerated set), `stat_used`, `risk`, `tone`, `audience_hint`, `reveal_tier`, `reveal_tag`, `unlock_threshold` (or null).
 - `npc_will_leave` - true if the NPC would naturally walk away now. The user message includes a `departure_probability` hint.
 - `npc_exit_line` - if leaving, one short in-character line. Otherwise null.
 
@@ -24,6 +24,7 @@ Use only these `intent_kind` values: `honest_vulnerable`, `escalate_flirt`, `def
 - **Spread risk and tone across options.** Do not produce two identical-feeling options. Make the choice meaningful.
 - No digits in labels.
 - Do not invent characters or events not in context. If the context includes a gossip subject, you may reference that person by name.
+- Set `reveal_tier` to `0` unless the option explicitly asks a personal question. Use tier `3` only for genuinely deep life questions. Never use tier `4`.
 - If `npc_will_leave` is true, `npc_exit_line` is one sentence, at most forty words, in the Islander's voice.
 
 ## Label examples

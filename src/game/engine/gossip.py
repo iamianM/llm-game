@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from src.game.engine.memory import add_memory, create_memory
-from src.game.state.models import GameState, RelationshipDelta
+from src.game.state.models import GameState, IslanderState, RelationshipDelta
+from src.game.state.rng import SeededRng
+from src.game.state.traits import KnownFact
 
 
 def apply_gossip_follow_up(
@@ -13,6 +15,10 @@ def apply_gossip_follow_up(
     success: bool,
 ) -> RelationshipDelta:
     """Apply a gossip follow-up and transfer the memory on success."""
+    if intent_kind.startswith("ask_gossip:about_"):
+        if success:
+            share_gossip(state, source_id, intent_kind.removeprefix("ask_gossip:about_"))
+        return RelationshipDelta(trust=2 if success else 0)
     memory_id = intent_kind.removeprefix("ask_gossip:")
     conversation = state.active_conversation
     if conversation is None:
@@ -73,3 +79,67 @@ def apply_share_gossip_follow_up(
         ),
     )
     return RelationshipDelta(trust=1, friendship=1)
+
+
+def share_gossip(state: GameState, speaker_id: str, subject_id: str) -> KnownFact | None:
+    """Transfer one known fact from speaker to player with possible distortion."""
+    speaker = _islander(state, speaker_id)
+    fact = _fact_about(speaker, subject_id)
+    if fact is None:
+        return None
+    if fact.fact_key.endswith(".hidden_secret"):
+        return None
+    rng = SeededRng(f"{state.seed}:gossip:{state.day}:{state.turn_index}:{speaker_id}:{subject_id}")
+    value = _distorted_value(state, fact, rng)
+    known = KnownFact(
+        fact_key=fact.fact_key,
+        value=value,
+        source="gossip",
+        source_npc_id=speaker_id,
+        learned_on_day=state.day,
+        learned_on_turn=state.turn_index,
+        confidence=0.6 if value == fact.value else 0.35,
+        citation=f"{speaker.name} told you this on Day {state.day}.",
+    )
+    existing = state.player.known_facts.get(known.fact_key)
+    if existing is None or existing.confidence < known.confidence:
+        state.player.known_facts[known.fact_key] = known
+    return known
+
+
+def gossip_subjects_for(state: GameState, speaker_id: str) -> list[str]:
+    """Return subject ids the speaker can gossip about."""
+    speaker = _islander(state, speaker_id)
+    subjects = {
+        fact.fact_key.split(".", 1)[0]
+        for fact in speaker.known_facts.values()
+        if not fact.fact_key.endswith(".hidden_secret")
+    }
+    return sorted(subject for subject in subjects if subject not in {"player", speaker_id})
+
+
+def _fact_about(speaker: IslanderState, subject_id: str) -> KnownFact | None:
+    facts = [
+        fact for fact in speaker.known_facts.values()
+        if fact.fact_key.startswith(f"{subject_id}.") and not fact.fact_key.endswith(".hidden_secret")
+    ]
+    facts.sort(key=lambda fact: (fact.confidence, fact.fact_key), reverse=True)
+    return facts[0] if facts else None
+
+
+def _distorted_value(state: GameState, fact: KnownFact, rng: SeededRng) -> str:
+    if rng.randint(1, 100) > 30:
+        return fact.value
+    subject_id, trait_key = fact.fact_key.split(".", 1)
+    subject = _islander(state, subject_id)
+    trait = subject.trait_card.core_traits.get(trait_key)
+    if trait is None or not trait.distractors:
+        return fact.value
+    return rng.choice(trait.distractors)
+
+
+def _islander(state: GameState, islander_id: str) -> IslanderState:
+    for islander in state.islanders:
+        if islander.id == islander_id:
+            return islander
+    raise ValueError(f"unknown islander: {islander_id}")

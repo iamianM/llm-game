@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
 from src.game.engine.compatibility import apply_familiarity
+from src.game.engine.intents import get_intent
+from src.game.engine.knowledge import emit_fact_reveal, emit_fact_reveal_by_tier
 from src.game.engine.memory import add_memory_batch, propagate_gossip_seeds
 from src.game.state.models import (
     Conversation,
@@ -29,6 +31,7 @@ def curate_player_conversation(
     conversation.summary = batch.summary or None
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
+    emit_revealed_facts(state, conversation)
     return batch
 
 
@@ -71,6 +74,25 @@ def bump_target_familiarity(state: GameState, target_id: str, amount: int) -> No
         if islander.id == target_id:
             apply_familiarity(islander, amount)
             return
+
+
+def emit_revealed_facts(state: GameState, conversation: Conversation) -> None:
+    """Emit KnownFacts for successful tier-revealing conversation intents."""
+    target = next((islander for islander in state.islanders if islander.id == conversation.target_id), None)
+    if target is None:
+        return
+    for exchange in conversation.exchanges:
+        if not exchange.success:
+            continue
+        try:
+            intent = get_intent(exchange.intent_id)
+        except ValueError:
+            if exchange.intent_id == "go_deeper":
+                emit_fact_reveal_by_tier(state, target, 3)
+            elif exchange.intent_id == "honest_vulnerable":
+                emit_fact_reveal_by_tier(state, target, 3)
+            continue
+        emit_fact_reveal(state, target, intent)
 
 
 def intro_segment_complete(state: GameState) -> bool:

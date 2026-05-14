@@ -28,6 +28,7 @@ from src.game.engine.interruptions import (
     defer_chance,
     defer_chance_breakdown,
 )
+from src.game.engine.knowledge import reveal_intro_facts
 from src.game.engine.perception import update_public_perception
 from src.game.engine.proposals import apply_npc_proposal_response, apply_player_proposal
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
@@ -183,6 +184,7 @@ def _apply_intro(state: GameState, action: PlayerAction) -> MechanicalResult:
     delta = delta_by_style.get(style, RelationshipDelta(friendship=2))
     apply_relationship_delta(target, delta)
     apply_familiarity(target, 25)
+    reveal_intro_facts(state, target)
     if target.id not in state.intro_completed_ids:
         state.intro_completed_ids.append(target.id)
     state.active_ambient_id = None

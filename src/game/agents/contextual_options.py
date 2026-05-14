@@ -20,6 +20,7 @@ from typing import Literal
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.agents.contextual_gossip import with_gossip_options as with_gossip_options
 from src.game.agents.islander_voice import Exchange, load_dotenv_local
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
@@ -300,39 +301,6 @@ def validate_contextual_bespoke(
             raise ValueError(f"npc_exit_line too long: {bespoke.npc_exit_line!r}")
 
 
-def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
-    """Add deterministic gossip options from active conversation memory offers."""
-    conversation = state.active_conversation
-    if conversation is None or not conversation.gossip_offers:
-        return menu
-    existing = {option.intent_kind for option in menu.options}
-    if any(intent_kind.startswith("ask_gossip:") for intent_kind in existing):
-        return menu
-    options = list(menu.options)
-    for memory in conversation.gossip_offers:
-        intent_kind = f"ask_gossip:{memory.id}"
-        if intent_kind in existing:
-            continue
-        option = FollowUpOption(
-            label=f"Ask about {_subject_name(state, memory)}",
-            category="gossip",
-            intent_kind=intent_kind,
-            stat_used="eq",
-            risk="medium",
-            tone="curious",
-        )
-        if len(options) < 5:
-            options.insert(max(0, len(options) - 1), option)
-        else:
-            replace_at = next(
-                (index for index, existing_option in enumerate(options) if existing_option.category != "exit"),
-                0,
-            )
-            options[replace_at] = option
-        break
-    return menu.model_copy(update={"options": options})
-
-
 def _render_context(context: ContextualOptionsContext) -> str:
     return "\n".join(
         [
@@ -372,6 +340,7 @@ def _subject_name(state: GameState, memory: Memory) -> str:
         if islander.id == memory.subject_id:
             return islander.name
     return memory.subject_id
+
 
 def _mock_label(intent_kind: str) -> str:
     labels = {

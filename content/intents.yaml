@@ -1,5 +1,6 @@
 intents:
   - id: friendly_ask_feelings
+    reveal_tier: 1
     category: friendly
     label: "Ask how she's feeling"
     stat_used: eq
@@ -9,6 +10,7 @@ intents:
       success: {affection: 2, trust: 2}
       miss: {affection: 0, trust: 0}
   - id: friendly_chat_villa
+    reveal_tier: 1
     category: friendly
     label: "Chat about the villa"
     stat_used: banter
@@ -18,6 +20,7 @@ intents:
       success: {affection: 2, friendship: 1}
       miss: {affection: 0, friendship: 0}
   - id: friendly_compliment_personality
+    reveal_tier: 2
     category: friendly
     label: "Compliment her personality"
     stat_used: charm
@@ -27,6 +30,7 @@ intents:
       success: {affection: 3, trust: 1}
       miss: {affection: 0, trust: -1}
   - id: flirty_compliment_looks
+    reveal_tier: 1
     category: flirty
     label: "Compliment her looks"
     stat_used: charm
@@ -54,6 +58,7 @@ intents:
       success: {chemistry: 6, affection: 1}
       miss: {chemistry: -2, affection: -2}
   - id: deep_ask_life
+    reveal_tier: 3
     category: deep
     label: "Ask about her life back home"
     stat_used: eq
@@ -63,6 +68,7 @@ intents:
       success: {trust: 5, affection: 3}
       miss: {trust: -1, affection: 0}
   - id: deep_share_feelings
+    reveal_tier: 3
     category: deep
     label: "Share your feelings"
     stat_used: eq
@@ -72,6 +78,8 @@ intents:
       success: {trust: 5, affection: 4, chemistry: 2}
       miss: {trust: -2, affection: -1}
   - id: deep_discuss_connection
+    reveal_tier: 4
+    reveal_tag: hidden_secret
     category: deep
     label: "Discuss your connection"
     stat_used: loyalty

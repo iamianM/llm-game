@@ -55,6 +55,7 @@ class IslanderVoiceContext(BaseModel):
     npc_name: str
     npc_archetype: str
     npc_backstory: str
+    npc_persona_summary: str
     archetype_prose: str
     big5_summary: str
     attachment_style: str
@@ -135,6 +136,7 @@ def islander_voice_context(
         npc_name=target.name,
         npc_archetype=target.archetype,
         npc_backstory=target.backstory,
+        npc_persona_summary=_persona_summary(target),
         archetype_prose="" if archetype is None else archetype.body,
         big5_summary=_big5_summary(target),
         attachment_style=target.attachment.value,
@@ -165,6 +167,7 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Islander gender: {context.npc_gender}",
             f"Name: {context.npc_name}",
             f"Backstory: {context.npc_backstory}",
+            f"Internal persona summary: {context.npc_persona_summary}",
             f"Archetype voice: {context.archetype_prose}",
             f"Big Five: {context.big5_summary}",
             f"Attachment style: {context.attachment_style}",
@@ -260,6 +263,16 @@ def _big5_summary(target: IslanderState) -> str:
         f"openness {big5.openness}, conscientiousness {big5.conscientiousness}, "
         f"extraversion {big5.extraversion}, agreeableness {big5.agreeableness}, "
         f"neuroticism {big5.neuroticism}"
+    )
+
+
+def _persona_summary(target: IslanderState) -> str:
+    persona = target.trait_card.persona
+    return (
+        f"{persona.one_line}\n"
+        f"Voice notes: {persona.voice_notes}\n"
+        f"Contradictions: {', '.join(persona.contradictions)}\n"
+        f"Secret engine: {persona.secret_engine}"
     )
 
 

@@ -67,6 +67,8 @@ class Intent(BaseModel):
     tags: list[str] = Field(default_factory=list)
     unlock_affection: int = Field(ge=0, le=100)
     risk: Risk | None = None
+    reveal_tier: int = Field(default=0, ge=0, le=4)
+    reveal_tag: str | None = None
     relationship_deltas: IntentDeltaTable
 
 
