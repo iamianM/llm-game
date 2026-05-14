@@ -24,9 +24,25 @@ venv/
 
 # Local runtime artifacts
 .game_saves/
+.game_sessions/
 .game_traces/
 .py-server-*.txt
+.api-*.log
+.web-*.log
+.claude/
+.tmp_*
+tmp_input.txt
+review-packet*/
+review-packet-compare*
+_shots*/
 
 # Frontend
 web/node_modules/
+web/.next/
 web/dist/
+web/playwright-report/
+web/test-results/
+web/tsconfig.tsbuildinfo
+web/_shot*.cjs
+web/_screenshot.cjs
+_shots/

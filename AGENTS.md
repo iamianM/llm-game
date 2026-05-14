@@ -468,7 +468,7 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 **Keep scope tight** - Do not add features, agents, content, or abstractions beyond the current milestone.
 
-**Git is user-owned** - Never commit, amend, push, force-push, branch, rebase, or reset unless the user explicitly asks.
+**Git is user-owned** - Never commit, amend, push, force-push, branch, rebase, or reset unless the user explicitly asks. When the user does ask, keep commits small and logical, delete or ignore scratch artifacts first, run the relevant verification before committing, and push only after the repo is in a known-good state.
 
 **Use the shared engine path** - CLI, tests, and browser routes must call the same engine functions.
 
@@ -480,7 +480,8 @@ The design vault is no longer in concept-solidification mode. The current priori
 2. Make the smallest complete change that satisfies the request.
 3. Add or update tests that protect the contract touched by the change.
 4. Run `make qa`, or report the exact blocker.
-5. Summarize changed files and verification honestly.
+5. Keep the worktree clean: do not leave review packets, throwaway screenshots, server logs, or temporary playtest transcripts untracked.
+6. Summarize changed files and verification honestly.
 
 ---
 
