@@ -11,6 +11,7 @@ test("captures primary screen snapshots", async ({ page }) => {
   await page.getByRole("link", { name: "New Run" }).click();
   await page.screenshot({ path: out("new-run.png"), fullPage: true });
 
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await expect(page.locator('[data-screen="stage"]')).toBeVisible();
   await page.waitForSelector('[data-state="dialogue-complete"]', { timeout: 15_000 });

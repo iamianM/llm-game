@@ -17,7 +17,7 @@ const ARCHETYPES = [
 export default function NewRunPage() {
   const [archetype, setArchetype] = useState("heartthrob");
   const [gender, setGender] = useState<Gender>("man");
-  const [mockLlm, setMockLlm] = useState(true);
+  const [mockLlm, setMockLlm] = useState(false);
   const router = useRouter();
   const mutation = useMutation({
     mutationFn: () => newSession(archetype, gender, mockLlm),

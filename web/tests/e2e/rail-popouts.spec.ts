@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("right rail and cast popout render", async ({ page }) => {
   await page.goto("/new-run");
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await page.getByLabel("Open right rail").click();
   await expect(page.getByText("Where everyone is")).toBeVisible();

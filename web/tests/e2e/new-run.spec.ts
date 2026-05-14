@@ -7,6 +7,7 @@ test("starts a run from character creation", async ({ page }) => {
   await expect(page.getByText("Loyal Friend")).toBeVisible();
   await expect(page.getByRole("button", { name: "Test mode" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Real mode" })).toBeVisible();
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await expect(page).toHaveURL(/\/play\/.+/);
   await expect(page.getByText("Paradise Hearts").first()).toBeVisible();

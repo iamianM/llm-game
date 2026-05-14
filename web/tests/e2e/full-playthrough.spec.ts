@@ -7,6 +7,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
   test.setTimeout(240_000);
   await page.goto("/");
   await page.getByRole("link", { name: "New Run" }).click();
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await expect(page.getByTestId("choice-menu")).toBeVisible();
   let sawDayRecap = false;

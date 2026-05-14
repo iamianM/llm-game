@@ -27,6 +27,7 @@ test("player-facing pages use Paradise Hearts vocabulary", async ({ page }) => {
   await page.getByRole("link", { name: "New Run" }).click();
   await assertCleanCopy(page);
 
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await expect(page.getByTestId("choice-menu")).toBeVisible();
   await assertCleanCopy(page);

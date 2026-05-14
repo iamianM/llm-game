@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("settings update typewriter and reduce motion", async ({ page }) => {
   await page.goto("/new-run");
+  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
   await page.getByLabel("Open settings").click();
   await expect(page.getByRole("dialog")).toBeVisible();
