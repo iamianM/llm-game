@@ -112,7 +112,7 @@ def test_islander_voice_retries_after_validation_failure() -> None:
     assert "2" not in exchange.player_dialogue
 
 
-def test_islander_voice_rejects_self_vocative() -> None:
+def test_islander_voice_context_identifies_player_as_listener() -> None:
     state = new_game(1)
     result = apply_action(
         state,
@@ -123,18 +123,13 @@ def test_islander_voice_rejects_self_vocative() -> None:
         ),
         SeededRng(1),
     )
-    context = islander_voice_context(state, result)
-    exchange = Exchange(
-        player_dialogue="I worry I have to keep being funny or I will fade into the background.",
-        npc_dialogue=(
-            "*eyes soften* Chloe, I get that. You do not have to be switched on all the time."
-        ),
-        npc_tone="warm",
-        npc_mood_after=Mood.CONTENT,
-    )
 
-    with pytest.raises(ValueError, match="own name"):
-        validate_exchange(exchange, context)
+    from src.game.agents.islander_voice_context import build_voice_messages, new_turn_context
+
+    context = islander_voice_context(state, result)
+    messages = build_voice_messages(state, state.active_conversation, new_turn_context(context))
+
+    assert "Conversation partner: the player" in messages[0]["content"]
 
 
 @pytest.mark.llm

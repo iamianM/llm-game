@@ -126,11 +126,6 @@ def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None
         raise ValueError(
             f"exchange mentions hidden islander(s) {hidden_mentions}; exchange={exchange!r}"
         )
-    if _self_vocative(exchange.npc_dialogue, context.npc_name):
-        raise ValueError(
-            "npc_dialogue addresses the NPC by their own name; "
-            f"npc_name={context.npc_name!r}; exchange={exchange!r}"
-        )
     if exchange.npc_tone not in VALID_TONES:
         raise ValueError(f"invalid npc_tone: {exchange.npc_tone}")
 
@@ -168,11 +163,6 @@ def _intent_label(intent_id: str | None) -> str:
         return get_intent(intent_id).label
     except ValueError:
         return intent_id.replace("_", " ")
-
-
-def _self_vocative(dialogue: str, npc_name: str) -> bool:
-    pattern = rf"(?:^|[>*\s]){re.escape(npc_name)},"
-    return re.search(pattern, dialogue) is not None
 
 
 __all__ = [
