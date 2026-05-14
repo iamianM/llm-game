@@ -10,8 +10,10 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.content.loader import load_backstories
+from src.game.content.trait_library import heart_throb_trait_cards
 from src.game.engine.couples import StealAttempt, resolve_steal_attempt
 from src.game.engine.final_vote import final_vote, final_vote_message
+from src.game.engine.heart_throb_brief import pick_heart_throb_brief
 from src.game.state.models import (
     AttachmentStyle,
     Big5,
@@ -24,6 +26,7 @@ from src.game.state.models import (
     TypeOnPaper,
 )
 from src.game.state.rng import SeededRng
+from src.game.state.traits import TraitCard
 
 
 class RecouplingResult(BaseModel):
@@ -148,6 +151,9 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
         for islander in state.islanders:
             if islander.id == "aisha":
                 return islander
+    brief = pick_heart_throb_brief(state)
+    state.heart_throb_briefs.append(brief.model_dump(mode="json"))
+    trait_card = _heart_throb_card_for(brief.threat_mode.value)
     bombshell = IslanderState(
         id="aisha",
         name="Aisha",
@@ -165,9 +171,28 @@ def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) ->
             values=["ambition", "edge"],
             dealbreakers=["neediness"],
         ),
+        trait_card=trait_card,
     )
     state.islanders.append(bombshell)
     return bombshell
+
+
+def _heart_throb_card_for(threat_mode: str) -> TraitCard:
+    cards = heart_throb_trait_cards()
+    for card_id, card in cards.items():
+        if threat_mode in _eligible_modes(card_id):
+            return card
+    return next(iter(cards.values()))
+
+
+def _eligible_modes(card_id: str) -> set[str]:
+    mapping = {
+        "sam_ht": {"steal_partner", "tempt_player"},
+        "riley_ht": {"inject_chaos", "break_rival"},
+        "ellis_ht": {"break_rival", "shake_alliance"},
+        "talia_ht": {"tempt_player", "expose_history"},
+    }
+    return mapping.get(card_id, set())
 
 
 def final_vote_ceremony(state: GameState) -> CeremonyEvent:

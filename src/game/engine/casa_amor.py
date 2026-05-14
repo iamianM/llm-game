@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from src.game.content.loader import load_backstories
+from src.game.content.trait_library import heart_throb_trait_cards
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import partner_for, player_couple
+from src.game.engine.heart_throb_brief import pick_heart_throb_brief
 from src.game.engine.memory import add_memory, create_memory, remember_ceremony_events
 from src.game.engine.state_access import find_islander
 from src.game.state.casa import CasaDecision, VillaName
@@ -22,6 +24,7 @@ from src.game.state.models import (
     clamp_relationship,
 )
 from src.game.state.rng import SeededRng
+from src.game.state.traits import TraitCard
 
 CASA_LOCATIONS = {Location.CASA_POOL, Location.CASA_KITCHEN, Location.CASA_TERRACE}
 MAIN_LOCATIONS = {
@@ -51,6 +54,8 @@ def enter_casa_amor(state: GameState) -> CeremonyEvent:
     partner = player_couple(state)
     original_partner_id = None if partner is None else partner_for(partner, state.player.id)
     casa_cast = _ensure_casa_cast(state)
+    brief = pick_heart_throb_brief(state)
+    state.heart_throb_briefs.append(brief.model_dump(mode="json"))
     for islander in casa_cast:
         islander.location_id = Location.CASA_POOL
     state.villa = VillaName.CASA_AMOR
@@ -192,6 +197,7 @@ def _casa(
     attachment: str,
     location: Location,
 ) -> IslanderState:
+    trait_card = _casa_trait_card(islander_id)
     return IslanderState(
         id=islander_id,
         name=name,
@@ -209,7 +215,14 @@ def _casa(
             values=["chemistry", "honesty"],
             dealbreakers=["game playing"],
         ),
+        trait_card=trait_card,
     )
+
+
+def _casa_trait_card(islander_id: str) -> TraitCard:
+    cards = list(heart_throb_trait_cards().values())
+    index_by_id = {"blake": 0, "jordan": 1, "marcus": 2, "sophie": 3, "zara": 1, "nia": 2}
+    return cards[index_by_id.get(islander_id, 0)]
 
 
 def _active_casa(state: GameState) -> CasaAmorState:
