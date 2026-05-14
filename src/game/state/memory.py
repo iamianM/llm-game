@@ -58,6 +58,7 @@ class MemoryBatch(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    memories: list[MemoryDraft] = Field(min_length=1, max_length=8)
+    kind: Literal["player", "background"] = "player"
+    memories: list[MemoryDraft] = Field(min_length=1, max_length=16)
     summary: str = ""
     gossip_seeds: list[GossipSeed] = Field(default_factory=list)

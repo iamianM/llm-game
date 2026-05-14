@@ -66,7 +66,7 @@ def test_final_vote_fires_only_on_day_six_evening() -> None:
     state.phase = Phase.EVENING
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5)]
 
-    scheduled = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    scheduled = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
     assert scheduled.state.pending_gather is not None
     result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.ceremonies import arrive_bombshell, recoupling
 from src.game.engine.rules import apply_action
-from src.game.state.models import new_game
+from src.game.state.models import Gender, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -30,6 +30,38 @@ def test_recoupling_eliminates_leftover_islander() -> None:
 
     assert result.eliminated_id is not None
     assert any(islander.eliminated for islander in state.islanders)
+
+
+def test_recoupling_keeps_npc_couples_opposite_gender() -> None:
+    """Later ceremony matching uses the same gender constraint as opening coupling."""
+    state = new_game(1)
+    state.day = 3
+    state.player.gender = Gender.MAN
+    for islander in state.islanders:
+        islander.relationship.affection = 10
+        islander.relationship.chemistry = 10
+        islander.relationship.trust = 10
+
+    result = recoupling(state, "chloe")
+
+    genders = {islander.id: islander.gender for islander in state.islanders}
+    genders[state.player.id] = state.player.gender
+    for couple in result.couples:
+        assert genders[couple.partner_a_id] != genders[couple.partner_b_id]
+
+
+def test_recoupling_rejects_same_gender_player_choice() -> None:
+    """A player cannot choose a same-gender recoupling partner in v0."""
+    state = new_game(1)
+    state.day = 3
+    state.player.gender = Gender.MAN
+
+    try:
+        recoupling(state, "liam")
+    except ValueError as exc:
+        assert "opposite sex" in str(exc)
+    else:
+        raise AssertionError("same-gender recoupling choice should fail")
 
 
 def test_bombshell_arrival_is_idempotent() -> None:

@@ -14,9 +14,9 @@ from tests.reporting.test_html import _record
 def test_stylish_session_html_renders_with_minimal_trace() -> None:
     html = stylish_session_page("Session", [_record()])
 
-    assert "class='deck-layout'" in html
+    assert "class='shell'" in html
     assert "Day 1" in html
-    assert "data-scene-target" in html
+    assert "data-scene-index" in html
 
 
 def test_stylish_session_html_self_contained_no_external_refs() -> None:
@@ -101,4 +101,5 @@ def test_final_outcome_block_rendered_when_state_outcome_set() -> None:
 def test_math_breakdown_collapsed_by_default() -> None:
     html = stylish_session_page("Session", [_record()])
 
-    assert "<details><summary>Success math</summary>" in html
+    assert "Why this outcome?" in html
+    assert "inline-detail" in html

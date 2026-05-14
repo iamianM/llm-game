@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
+import pickle
 from pathlib import Path
 from typing import Any
 
@@ -12,12 +14,7 @@ from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.conversation_curator import OpenAIConversationCurator
 from src.game.agents.event_narrator import OpenAIEventNarrator
 from src.game.agents.islander_voice import OpenAIIslanderVoice
-from src.game.agents.player_autopilot import AUTOPILOT_PERSONAS, OpenAIPlayerAutopilot
 from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator
-from src.game.cli.commands.play_autopilot import (
-    apply_autopilot_character,
-    decide_with_autopilot,
-)
 from src.game.cli.commands.play_recording import (
     llm_mode as _llm_mode,
 )
@@ -78,9 +75,6 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     parser.add_argument("--replay", help="replay a recorded trace package without LLM calls")
     parser.add_argument("--from-checkpoint", help="resume from a named checkpoint or checkpoint path")
     parser.add_argument("--branch-name", help="branch name for checkpoint resume trace output")
-    parser.add_argument("--autopilot", action="store_true", help="let the Player Autopilot play end-to-end")
-    parser.add_argument("--persona", choices=sorted(AUTOPILOT_PERSONAS), default="loyal")
-    parser.add_argument("--max-turns", type=int, default=120, help="autopilot safety cap")
     parser.set_defaults(func=run)
 
 
@@ -92,13 +86,15 @@ def run(args: argparse.Namespace) -> int:
     if args.replay:
         return _replay_recording(Path(args.replay))
 
+    records: list[dict[str, Any]]
     if from_checkpoint:
-        state, records, checkpoint_seed = load_checkpoint(from_checkpoint)
+        state, loaded_records, checkpoint_seed = load_checkpoint(from_checkpoint)
+        records = loaded_records
         seed = checkpoint_seed if args.seed is None else args.seed
     else:
         seed = 1 if args.seed is None else args.seed
         state = new_game(seed)
-        records: list[dict[str, Any]] = []
+        records = []
     rng = SeededRng(seed)
     islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
     contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
@@ -106,71 +102,48 @@ def run(args: argparse.Namespace) -> int:
     conversation_curator = None if args.mock_llm else OpenAIConversationCurator().curate
     villa_orchestrator = None if args.mock_llm else OpenAIVillaOrchestrator().decide
     background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
-    player_autopilot = None if args.mock_llm else OpenAIPlayerAutopilot()
     record_path = _record_path_from_args(args)
-    if args.autopilot and not from_checkpoint:
-        apply_autopilot_character(state, args.persona)
-        _print_character_card(state)
-        print(f"Autopilot persona: {args.persona}")
-    elif not from_checkpoint:
+    if not from_checkpoint:
         _run_character_creation_flow(state)
-    elif args.autopilot:
-        print(f"Autopilot persona: {args.persona}")
     print("Game CLI. Type a number, /state, /background, /hash, /help, or /quit.")
 
     while not state.is_terminal:
         _print_state(state)
         actions = available_actions(state)
-        decision = None
-        if args.autopilot:
-            if state.turn_index >= args.max_turns:
-                _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
-                print(f"autopilot exceeded max turns: {args.max_turns}")
-                return 2
-            action, decision, chosen_spec = decide_with_autopilot(
-                state,
-                actions,
-                persona=args.persona,
-                recent_history=records[-12:],
-                decider=player_autopilot,
+        _print_actions(actions)
+        raw = input("> ").strip()
+        if raw in {"/quit", "quit", "q"}:
+            _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
+            return 0
+        if raw == "/help":
+            print(
+                "Commands: /state, /background, /hash, /help, /quit. Choose actions by number. "
+                "Wheel exit options close gracefully; Walk away is curt."
             )
-            print(f"Autopilot chose: {chosen_spec.label}")
-            print(f"Reason: {decision.rationale} ({decision.confidence})")
-        else:
-            _print_actions(actions)
-            raw = input("> ").strip()
-            if raw in {"/quit", "quit", "q"}:
-                _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
-                return 0
-            if raw == "/help":
-                print(
-                    "Commands: /state, /background, /hash, /help, /quit. Choose actions by number. "
-                    "Wheel exit options close gracefully; Walk away is curt."
-                )
-                continue
-            if raw == "/state":
-                _print_state(state, debug=True)
-                continue
-            if raw == "/background":
-                _print_background_history(records)
-                continue
-            if raw.startswith("/checkpoint"):
-                name = raw.removeprefix("/checkpoint").strip() or f"turn-{state.turn_index}"
-                path = save_named_checkpoint(state, name, records, seed=seed)
-                print(f"checkpoint saved: {path}")
-                continue
-            if raw == "/hash":
-                print(state_hash(state_hash_payload(state)))
-                continue
+            continue
+        if raw == "/state":
+            _print_state(state, debug=True)
+            continue
+        if raw == "/background":
+            _print_background_history(records)
+            continue
+        if raw.startswith("/checkpoint"):
+            name = raw.removeprefix("/checkpoint").strip() or f"turn-{state.turn_index}"
+            path = save_named_checkpoint(state, name, records, seed=seed, rng_state=_encode_rng_state(rng))
+            print(f"checkpoint saved: {path}")
+            continue
+        if raw == "/hash":
+            print(state_hash(state_hash_payload(state)))
+            continue
 
-            try:
-                index = int(raw) - 1
-                action = actions[index].action
-            except (ValueError, IndexError):
-                print("choose a listed action number or slash command")
-                continue
-            if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
-                action = _choose_intent(state, action.target_id)
+        try:
+            index = int(raw) - 1
+            action = actions[index].action
+        except (ValueError, IndexError):
+            print("choose a listed action number or slash command")
+            continue
+        if action.kind is ActionKind.START_CONVERSATION and action.target_id is not None:
+            action = _choose_intent(state, action.target_id)
 
         input_hash = state_hash(state_hash_payload(state))
         turn = run_turn(
@@ -185,17 +158,15 @@ def run(args: argparse.Namespace) -> int:
             background_dialogue=background_dialogue,
         )
         state = turn.state
-        if decision is not None:
-            turn.agent_commits.player_autopilot = decision
         records.append(_record_from_turn(input_hash, action, turn))
         if _should_auto_checkpoint(turn):
-            save_auto_checkpoint(state, seed, records)
-        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
+            save_auto_checkpoint(state, seed, records, rng_state=_encode_rng_state(rng))
+        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
         _print_turn(turn)
 
     print("Day complete.")
     print(f"final hash: {state_hash(state_hash_payload(state))}")
-    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona=args.persona)
+    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
     return 0
 
 
@@ -325,7 +296,6 @@ def _replay_recording(path: Path) -> int:
         if not isinstance(raw_record, dict):
             raise ValueError("each recorded turn must be an object")
         agents.begin_turn(raw_record)
-        agents.player_autopilot()
         action = PlayerAction.model_validate(raw_record.get("action"))
         input_hash = state_hash(state_hash_payload(state))
         if raw_record.get("input_hash") != input_hash:
@@ -387,3 +357,7 @@ def _should_auto_checkpoint(turn: object) -> bool:
         or turn.ceremony_events
         or action_kind in {"hideaway", "casa_decision", "join_gather"}
     )
+
+
+def _encode_rng_state(rng: SeededRng) -> str:
+    return base64.b64encode(pickle.dumps(rng._random.getstate())).decode("ascii")

@@ -85,7 +85,9 @@ def test_return_with_casa_amor_drops_perception_when_original_loyal() -> None:
     assert state.player.public_perception == 38
     assert state.casa_amor_state is not None
     assert state.casa_amor_state.partners_swapped is True
-    assert state.couples == [Couple(partner_a_id="player", partner_b_id="blake", formed_on_day=6)]
+    assert state.couples == [
+        Couple(partner_a_id="player", partner_b_id="blake", formed_on_day=6, formed_via="casa_return")
+    ]
     assert event is not None
     assert event.kind == "casa_amor_return_reveal"
 
@@ -159,7 +161,7 @@ def test_day_four_text_gather_enters_casa_amor() -> None:
     state.day = 4
     state.phase = Phase.AFTERNOON
 
-    scheduled = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    scheduled = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
     assert scheduled.state.pending_gather is not None
     result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
 

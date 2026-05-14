@@ -8,6 +8,7 @@ import sys
 from src.game.cli.commands import (
     content,
     play,
+    play_session,
     report,
     review,
     snapshot,
@@ -24,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
 
     for module in (
         play,
+        play_session,
         report,
         review,
         verify_script,

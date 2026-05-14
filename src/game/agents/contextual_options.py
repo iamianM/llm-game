@@ -26,7 +26,17 @@ from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memor
 
 CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
-FOLLOW_UP_CATEGORIES = {"friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"}
+FOLLOW_UP_CATEGORIES = {
+    "friendly",
+    "flirty",
+    "deep",
+    "banter",
+    "gossip",
+    "supportive",
+    "bromance",
+    "gossip_ring",
+    "exit",
+}
 BESPOKE_LABEL_MAX_WORDS = 8
 ALLOWED_BESPOKE_INTENTS = {
     "honest_vulnerable", "escalate_flirt", "deflect_with_humor", "joke_back",
@@ -138,7 +148,6 @@ class ContextualOptionsAgent:
             raise ValueError("Contextual Options returned no parsed ContextualBespoke")
         return bespoke
 
-
 def contextual_options_context(
     state: GameState,
     result: MechanicalResult,
@@ -182,7 +191,6 @@ def contextual_options_context(
         already_present=already_present or [],
     )
 
-
 def mock_contextual_bespoke(
     intent_kind: str = "joke_back",
     *,
@@ -204,7 +212,6 @@ def mock_contextual_bespoke(
         npc_will_leave=npc_will_leave,
         npc_exit_line="I should go mingle for a bit." if npc_will_leave else None,
     )
-
 
 def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool = False) -> FollowUpMenu:
     """Return a deterministic menu that includes ``intent_kind`` for replay."""
@@ -244,6 +251,8 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
     for option in menu.options:
         if option.category not in FOLLOW_UP_CATEGORIES:
             raise ValueError(f"unknown follow-up category: {option.category}")
+        if option.audience_hint not in {"+", "-", ""}:
+            raise ValueError(f"unknown audience_hint: {option.audience_hint}")
         if option.category == "exit" and option.intent_kind not in EXIT_INTENT_KINDS:
             raise ValueError(f"exit option has non-exit intent_kind: {option.intent_kind}")
         if len(option.label.split()) > BESPOKE_LABEL_MAX_WORDS:
@@ -345,13 +354,11 @@ def _render_context(context: ContextualOptionsContext) -> str:
         ]
     )
 
-
 def _gossip_memory_context(state: GameState) -> str:
     conversation = state.active_conversation
     if conversation is None or not conversation.gossip_offers:
         return "None."
     return "\n".join(_memory_line(state, memory) for memory in conversation.gossip_offers)
-
 
 def _memory_line(state: GameState, memory: Memory) -> str:
     return (
@@ -360,13 +367,11 @@ def _memory_line(state: GameState, memory: Memory) -> str:
         f"content {memory.content}"
     )
 
-
 def _subject_name(state: GameState, memory: Memory) -> str:
     for islander in state.islanders:
         if islander.id == memory.subject_id:
             return islander.name
     return memory.subject_id
-
 
 def _mock_label(intent_kind: str) -> str:
     labels = {
@@ -381,16 +386,15 @@ def _mock_label(intent_kind: str) -> str:
     }
     return labels.get(intent_kind, intent_kind.replace("_", " ").title())
 
-
 def _mock_category(intent_kind: str) -> FollowUpCategory:
     if intent_kind in EXIT_INTENT_KINDS:
         return "exit"
-    if intent_kind in {"escalate_flirt"}:
+    if intent_kind == "escalate_flirt":
         return "flirty"
     if intent_kind in {"joke_back", "deflect_with_humor"}:
         return "banter"
     if intent_kind in {"go_deeper", "honest_vulnerable"}:
         return "deep"
-    if intent_kind in {"apologize"}:
+    if intent_kind == "apologize":
         return "supportive"
     return "friendly"

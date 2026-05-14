@@ -18,7 +18,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
 from src.game.agents.islander_voice import Exchange
-from src.game.agents.player_autopilot import PolicyDecision
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
@@ -55,7 +54,6 @@ class ActionScript(BaseModel):
     initial_location: Location | None = None
     initial_relationships: dict[str, RelationshipState] | None = None
     initial_couples: list[Couple] | None = None
-    autopilot_decisions: list[PolicyDecision] | None = None
     villa_updates: list[VillaUpdate | None] | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None

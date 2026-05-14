@@ -178,7 +178,7 @@ def assemble_follow_up_menu(
         *tone_reaction_options(state, exchange),
         *bespoke_options,
     ]
-    assembled = _cap_with_single_exit(_dedupe(options), max_total=5)
+    assembled = [_with_audience_hint(option) for option in _cap_with_single_exit(_dedupe(options), max_total=5)]
     menu = FollowUpMenu(
         options=assembled,
         npc_will_leave=npc_will_leave,
@@ -203,7 +203,7 @@ def already_present_intents(
 
 
 def _template(intent_kind: str) -> FollowUpOption:
-    return OPTION_TEMPLATES[intent_kind].model_copy(deep=True)
+    return _with_audience_hint(OPTION_TEMPLATES[intent_kind].model_copy(deep=True))
 
 
 def _exit_option(tone: str) -> FollowUpOption:
@@ -266,3 +266,27 @@ def _subject_name(state: GameState, memory: Memory) -> str:
         if islander.id == memory.subject_id:
             return islander.name
     return "Villa"
+
+
+def _with_audience_hint(option: FollowUpOption) -> FollowUpOption:
+    if option.audience_hint:
+        return option
+    positive = {
+        "honest_vulnerable",
+        "supportive_listen",
+        "supportive_comfort",
+        "supportive_reassure",
+        "supportive_validate",
+        "apologize",
+        "end_softly",
+    }
+    negative = {"walk_away", "defend_self", "escalate_flirt"}
+    if option.intent_kind.startswith("share_gossip:"):
+        return option.model_copy(update={"audience_hint": "-"})
+    if option.intent_kind.startswith("ask_gossip:"):
+        return option.model_copy(update={"audience_hint": ""})
+    if option.intent_kind in positive:
+        return option.model_copy(update={"audience_hint": "+"})
+    if option.intent_kind in negative and option.risk in {"medium", "high"}:
+        return option.model_copy(update={"audience_hint": "-"})
+    return option

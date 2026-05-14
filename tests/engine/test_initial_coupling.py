@@ -34,7 +34,11 @@ def test_initial_coupling_pairs_player_without_eliminating_leftover_single() -> 
     )
 
     assert len(result.state.couples) == 4
-    assert Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1) in result.state.couples
+    assert (
+        Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1, formed_via="opening")
+        in result.state.couples
+    )
+    assert result.state.islanders[0].familiarity_with_player == 25
     assert not any(islander.eliminated for islander in result.state.islanders)
 
 

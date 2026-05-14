@@ -198,6 +198,7 @@ def _render_context(state: GameState) -> str:
             f"Player location: {state.location_id.value}",
             f"Current villa: {state.villa.value}",
             f"Player active conversation target: {active_target}",
+            f"Player ambient context: {_ambient_context(state)}",
             f"Player isolation: {_player_isolation(state)}",
             "Player active conversation id: player_active" if state.active_conversation is not None else "",
             f"Player active conversation pending_interruption: {pending_interruption}",
@@ -235,6 +236,22 @@ def _player_isolation(state: GameState) -> str:
     return (
         f"player is alone at {state.location_id.value}. If this has happened recently, "
         "consider moving one available islander toward the player."
+    )
+
+
+def _ambient_context(state: GameState) -> str:
+    if state.active_ambient_id is None:
+        return "none"
+    try:
+        from src.game.content.ambient import get_ambient_option
+
+        option = get_ambient_option(state.active_ambient_id)
+    except ValueError:
+        return state.active_ambient_id
+    return (
+        f"{option.label} at {option.location.value}; "
+        f"npc_encounter_boost {option.npc_encounter_boost}; "
+        f"consecutive turns {state.consecutive_ambient_turns}"
     )
 
 

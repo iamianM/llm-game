@@ -61,6 +61,7 @@ def test_apply_summon_closes_player_conversation_and_runs_curator() -> None:
     assert state.active_conversation is None
     assert state.islanders[0].location_id is Location.TERRACE
     assert changes.curator_batches
+    assert changes.curator_batches[0].kind == "player"
 
 
 def test_apply_summon_closes_npc_npc_conversation() -> None:
@@ -104,6 +105,7 @@ def test_apply_summon_closes_npc_npc_conversation() -> None:
     assert state.npc_conversations == []
     assert state.islanders[1].location_id is Location.POOL
     assert changes.curator_batches
+    assert changes.curator_batches[0].kind == "background"
 
 
 def test_departure_probability_increases_for_avoidant_deep_exchange() -> None:

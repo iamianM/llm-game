@@ -1,13 +1,22 @@
 name: producer-text-day2
 seed: 22
-expected_hash: 17cf3f6c621ff8ba5c1905d93c50e256806ec5ba8efbb75c1d1b5e43737869b0
+expected_hash: 445bec668fb9f4943286101167a3713ef013d767849b433f6b9dd7b54bae92f0
 actions:
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

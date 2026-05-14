@@ -13,7 +13,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from src.game.state.models import GameState
+from src.game.state.models import SCHEMA_VERSION, GameState
 
 JsonValue = dict[str, object] | list[object] | str | int | float | bool | None
 
@@ -106,10 +106,11 @@ def save_named_checkpoint(
     trace_records: list[dict[str, object]],
     *,
     seed: int,
+    rng_state: str | None = None,
 ) -> Path:
     """Save a named development checkpoint."""
     path = Path(".game_saves") / "named" / f"{_safe_name(name)}.json"
-    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=name)
+    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=name, rng_state=rng_state)
     return path
 
 
@@ -117,10 +118,11 @@ def save_auto_checkpoint(
     state: GameState,
     seed: int,
     trace_records: list[dict[str, object]],
+    rng_state: str | None = None,
 ) -> Path:
     """Save an automatic boundary checkpoint."""
     path = Path(".game_saves") / "auto" / str(seed) / f"day{state.day}_{state.phase.value}.json"
-    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=path.stem)
+    _write_checkpoint(path, state, trace_records, seed=seed, checkpoint_name=path.stem, rng_state=rng_state)
     return path
 
 
@@ -135,6 +137,12 @@ def load_checkpoint(name_or_path: str | Path) -> tuple[GameState, list[dict[str,
     seed = raw.get("seed")
     if not isinstance(state_payload, dict) or not isinstance(trace_records, list) or not isinstance(seed, int):
         raise ValueError(f"checkpoint missing state, trace_records, or seed: {path}")
+    checkpoint_version = state_payload.get("schema_version")
+    if checkpoint_version != SCHEMA_VERSION:
+        raise ValueError(
+            f"checkpoint schema_version {checkpoint_version!r} does not match "
+            f"current schema_version {SCHEMA_VERSION}; regenerate the checkpoint"
+        )
     records = [record for record in trace_records if isinstance(record, dict)]
     return GameState.model_validate(state_payload), records, seed
 
@@ -146,19 +154,20 @@ def _write_checkpoint(
     *,
     seed: int,
     checkpoint_name: str,
+    rng_state: str | None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    payload: dict[str, object] = {
+        "name": checkpoint_name,
+        "seed": seed,
+        "state_hash": state_hash(state_hash_payload(state)),
+        "state": state.model_dump(mode="json"),
+        "trace_records": trace_records,
+    }
+    if rng_state is not None:
+        payload["rng_state"] = rng_state
     path.write_text(
-        json.dumps(
-            {
-                "name": checkpoint_name,
-                "seed": seed,
-                "state_hash": state_hash(state_hash_payload(state)),
-                "state": state.model_dump(mode="json"),
-                "trace_records": trace_records,
-            },
-            indent=2,
-        ),
+        json.dumps(payload, indent=2),
         encoding="utf-8",
     )
 

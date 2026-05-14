@@ -17,14 +17,13 @@ from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.contextual_options import (
     ContextualOptionsFn,
 )
-from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
+from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
-from src.game.agents.villa_orchestrator import VillaOrchestratorFn
+from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.arrival_rolls import ArrivalRoll
 from src.game.engine.ceremonies import CeremonyEvent, initial_coupling, recoupling
-from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.conversation import (
     append_exchange,
     close_conversation,
@@ -34,22 +33,27 @@ from src.game.engine.conversation import (
 from src.game.engine.daily_recap import append_daily_recap_if_needed
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
-from src.game.engine.memory import (
-    add_memory_batch,
-    propagate_gossip_seeds,
-    remember_ceremony_events,
-)
+from src.game.engine.memory import add_memory_batch, remember_ceremony_events
+from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.pull_turn import pull_rejected_result, remember_pull_rejection
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.time_budget import check_auto_advance, deduct_time
 from src.game.engine.turn_autonomy import apply_villa_turn
+from src.game.engine.turn_curator import (
+    bump_target_familiarity,
+    curate_npc_conversation,
+    curate_player_conversation,
+    intro_memory_batch,
+    intro_segment_complete,
+)
 from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
     recoupling_events,
     resolve_pending_gather,
 )
+from src.game.engine.turn_proposals import close_proposal_conversation, proposal_event
 from src.game.engine.villa import AgentCommits
 from src.game.state.casa import CasaDecision
 from src.game.state.models import (
@@ -58,9 +62,10 @@ from src.game.state.models import (
     FollowUpMenu,
     GameState,
     MemoryBatch,
-    NPCNPCConversation,
+    Phase,
     RunOutcome,
 )
+from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -108,7 +113,7 @@ def run_turn(
         if blocked is not None:
             pull_attempt = attempt_pull(state, action.target_id, rng)
             if pull_attempt.success:
-                batch = _curate_npc_conversation(state, blocked, conversation_curator)
+                batch = curate_npc_conversation(state, blocked, conversation_curator)
                 pre_curator_batches.append(batch)
                 state.npc_conversations = [
                     conversation
@@ -180,15 +185,18 @@ def run_turn(
                 islander_id=action.target_id,
             )
         )
+    event = proposal_event(result)
+    if event is not None:
+        ceremony_events.append(event)
     if action.kind is ActionKind.JOIN_GATHER:
         gather_curator_batches = [*pre_curator_batches]
         gather_curator_batches.extend(
-            close_conversations_for_gather(
-                state,
-                conversation_curator,
-                _curate_conversation,
-                _curate_npc_conversation,
-            )
+                close_conversations_for_gather(
+                    state,
+                    conversation_curator,
+                    curate_player_conversation,
+                    curate_npc_conversation,
+                )
         )
         move_everyone_to_gather(state)
         phase_events, audience_snapshot = resolve_pending_gather(state, rng)
@@ -200,6 +208,12 @@ def run_turn(
             remember_ceremony_events(state, ceremony_events)
             narrate_event = mock_event_narration if event_narrator is None else event_narrator
             event_narration = narrate_event(state, ceremony_events)
+        auto_advance = False
+        if check_auto_advance(state):
+            more_events, audience_after_auto = advance_phase_with_events(state, rng)
+            ceremony_events.extend(more_events)
+            audience_snapshot = audience_snapshot or audience_after_auto
+            auto_advance = True
         return TurnResult(
             state=state,
             mechanical_result=result,
@@ -211,10 +225,11 @@ def run_turn(
             audience_snapshot=audience_snapshot,
             agent_commits=AgentCommits(curator_batches=gather_curator_batches),
             time_cost=time_cost,
+            auto_advance=auto_advance,
         )
-    if action.kind is ActionKind.ADVANCE_PHASE:
-        phase_events, audience_snapshot = advance_phase_with_events(state, rng)
-        ceremony_events.extend(phase_events)
+    if action.kind is ActionKind.RECOUPLE and state.day == 1 and state.phase is Phase.MORNING:
+        state.phase = Phase.INTROS
+        state.phase_clock = PhaseClock(phase=Phase.INTROS.value, budget_minutes=180)
     state.turn_index += 1
     follow_up_menu = None
     curator_batches: list[MemoryBatch] = [*pre_curator_batches]
@@ -222,14 +237,14 @@ def run_turn(
         active = state.active_conversation
         if active is None or result.action.target_id is None:
             raise ValueError("accept_interruption requires active conversation and target")
-        batch = _curate_conversation(state, active, conversation_curator)
+        batch = curate_player_conversation(state, active, conversation_curator)
         curator_batches.append(batch)
         close_conversation(state, "player_exit")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
-        _bump_target_familiarity(state, new_conversation.target_id, 1)
+        bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
         new_conversation.departure_probability_last = probability
         follow_up_menu = generate_follow_up_menu(
@@ -259,9 +274,9 @@ def run_turn(
         speak = mock_islander_voice if islander_voice is None else islander_voice
         exchange = speak(state, result)
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
-        _bump_target_familiarity(state, conversation.target_id, 1)
+        bump_target_familiarity(state, conversation.target_id, 1)
         if _is_wheel_exit(result):
-            batch = _curate_conversation(state, conversation, conversation_curator)
+            batch = curate_player_conversation(state, conversation, conversation_curator)
             curator_batches.append(batch)
             close_conversation(state, "wheel_exit")
         else:
@@ -276,29 +291,68 @@ def run_turn(
             )
             conversation.pending_options = follow_up_menu
             if follow_up_menu.npc_will_leave:
-                batch = _curate_conversation(state, conversation, conversation_curator)
+                batch = curate_player_conversation(state, conversation, conversation_curator)
                 curator_batches.append(batch)
                 close_conversation(state, "npc_left")
+    elif action.kind is ActionKind.INTRODUCE_TO:
+        speak = mock_islander_voice if islander_voice is None else islander_voice
+        exchange = speak(state, result)
+        if action.target_id is not None:
+            bump_target_familiarity(state, action.target_id, 0)
+        if intro_segment_complete(state):
+            if not state.intro_memory_created:
+                batch = intro_memory_batch(state)
+                add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
+                curator_batches.append(batch)
+                state.intro_memory_created = True
+            state.phase_clock.elapsed_minutes = state.phase_clock.budget_minutes
     if action.kind is ActionKind.END_CONVERSATION:
         if state.active_conversation is not None:
-            batch = _curate_conversation(state, state.active_conversation, conversation_curator)
+            batch = curate_player_conversation(state, state.active_conversation, conversation_curator)
             curator_batches.append(batch)
         close_conversation(state, "player_exit")
-    villa_update, villa_changes, arrival_rolls = apply_villa_turn(
-        state,
-        rng.fork(f"villa-turn-{state.turn_index}"),
-        villa_orchestrator,
-        background_dialogue=background_dialogue,
-        conversation_curator=conversation_curator,
-    )
-    curator_batches.extend(villa_changes.curator_batches)
+    curator_batches.extend(close_proposal_conversation(state, result, conversation_curator))
+    auto_advance = False
+    if state.active_conversation is None and check_auto_advance(state):
+        phase_events, audience_after_auto = advance_phase_with_events(state, rng)
+        ceremony_events.extend(phase_events)
+        audience_snapshot = audience_snapshot or audience_after_auto
+        auto_advance = True
+    villa_update_commit: VillaUpdate | None
+    background_dialogues = []
+    if state.pending_gather is not None:
+        villa_update_commit = None
+        arrival_rolls = []
+    else:
+        villa_update_commit, villa_changes, arrival_rolls = apply_villa_turn(
+            state,
+            rng.fork(f"villa-turn-{state.turn_index}"),
+            villa_orchestrator,
+            background_dialogue=background_dialogue,
+            conversation_curator=conversation_curator,
+        )
+        background_dialogues = villa_changes.background_dialogues
+        curator_batches.extend(villa_changes.curator_batches)
+        incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
+        if incoming is not None:
+            ceremony_events.append(
+                CeremonyEvent(
+                    kind="npc_proposal_incoming",
+                    sub_kind="incoming",
+                    message=f"{incoming.proposer_id} wants to ask the player to recouple.",
+                    islander_id=incoming.proposer_id,
+                )
+            )
     agent_commits = AgentCommits(
-        villa_update=villa_update,
-        background_dialogues=villa_changes.background_dialogues,
+        villa_update=villa_update_commit,
+        background_dialogues=background_dialogues,
         curator_batches=curator_batches,
     )
-    auto_advance = False
-    if action.kind is not ActionKind.ADVANCE_PHASE and check_auto_advance(state):
+    if not auto_advance and check_auto_advance(state):
+        if state.active_conversation is not None:
+            batch = curate_player_conversation(state, state.active_conversation, conversation_curator)
+            curator_batches.append(batch)
+            close_conversation(state, "phase_end")
         phase_events, audience_after_auto = advance_phase_with_events(state, rng)
         ceremony_events.extend(phase_events)
         audience_snapshot = audience_snapshot or audience_after_auto
@@ -327,62 +381,8 @@ def run_turn(
     )
 
 
-def _curate_conversation(
-    state: GameState,
-    conversation: Conversation,
-    curator: ConversationCuratorFn | None,
-) -> MemoryBatch:
-    _bump_target_familiarity(state, conversation.target_id, 2)
-    bystander_ids = _conversation_bystanders(state, conversation.target_id)
-    curate = mock_conversation_curator if curator is None else curator
-    batch = curate(state, conversation, bystander_ids)
-    conversation.summary = batch.summary or None
-    add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
-    propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
-    return batch
-
-
-def _curate_npc_conversation(
-    state: GameState,
-    conversation: NPCNPCConversation,
-    curator: ConversationCuratorFn | None,
-) -> MemoryBatch:
-    conversation.status = "closed"
-    bystander_ids = [
-        islander.id
-        for islander in state.islanders
-        if islander.id not in conversation.participants
-        and not islander.eliminated
-        and islander.location_id == conversation.location_id
-    ]
-    if state.location_id == conversation.location_id:
-        bystander_ids.append("player")
-    curate = mock_conversation_curator if curator is None else curator
-    batch = curate(state, conversation, bystander_ids)
-    add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
-    propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
-    return batch
-
-
 def _is_wheel_exit(result: MechanicalResult) -> bool:
     return (
         result.action.kind is ActionKind.RESPOND_WITH
         and result.action.intent_id in EXIT_INTENT_KINDS
     )
-
-
-def _conversation_bystanders(state: GameState, target_id: str) -> list[str]:
-    return [
-        islander.id
-        for islander in state.islanders
-        if islander.id != target_id
-        and not islander.eliminated
-        and islander.location_id == state.location_id
-    ]
-
-
-def _bump_target_familiarity(state: GameState, target_id: str, amount: int) -> None:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            apply_familiarity(islander, amount)
-            return

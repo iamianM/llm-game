@@ -9,7 +9,6 @@ from src.game.reporting.html_audience import audience_block
 from src.game.reporting.html_base import escape, index_page, page, table_page
 from src.game.reporting.html_blocks import (
     agent_commit_block,
-    autopilot_block,
     casa_amor_block,
     couple_status_block,
     delta_text,
@@ -38,9 +37,16 @@ def session_page(
     records: list[dict[str, Any]],
     preface: str = "",
     reviewer_notes: list[dict[str, object]] | None = None,
+    final_state: dict[str, Any] | None = None,
 ) -> str:
     """Render one session trace using the default stylish renderer."""
-    return stylish_session_page(title, records, preface=preface, reviewer_notes=reviewer_notes)
+    return stylish_session_page(
+        title,
+        records,
+        preface=preface,
+        reviewer_notes=reviewer_notes,
+        final_state=final_state,
+    )
 
 
 def session_page_minimal(title: str, records: list[dict[str, Any]], preface: str = "") -> str:
@@ -83,7 +89,6 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"<p><b>You chose:</b> {escape(action['kind'])} "
         f"{escape(str(action.get('target_id') or ''))} "
         f"{escape(str(action.get('intent_id') or ''))}</p>"
-        f"{autopilot_block(record.get('agent_commits'))}"
         f"{math_block(result)}"
         f"{pull_attempt_block(result.get('pull_attempt'))}"
         f"{arrival_roll_block(record)}"

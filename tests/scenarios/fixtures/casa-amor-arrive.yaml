@@ -3,6 +3,8 @@ seed: 11
 initial_day: 4
 initial_phase: afternoon
 actions:
-- kind: advance_phase
-- kind: join_gather
-expected_hash: 23261ccf9e0ed494128fcfb39bd7b429cdf7825c6b109d76a1ae8e6d56f186eb
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+expected_hash: 2f6de92936b87b4c35b927c6c6e8ea2de8c0731541e63645831706292a34ec5d

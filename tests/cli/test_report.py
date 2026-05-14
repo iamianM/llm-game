@@ -8,16 +8,15 @@ from types import SimpleNamespace
 from src.game.cli.commands.report import packet_cmd
 
 
-def test_packet_preserves_autopilot_mode_in_eval_dashboard(tmp_path) -> None:
-    """Autopilot packet dashboards must not be evaluated as manual traces."""
+def test_packet_writes_eval_dashboard_for_manual_trace(tmp_path) -> None:
     trace = tmp_path / "trace.json"
     out = tmp_path / "packet"
     trace.write_text(
         json.dumps(
             {
-                "mode": "autopilot",
-                "persona": "loyal",
-                "llm_mode": "real",
+                "mode": "manual",
+                "persona": "",
+                "llm_mode": "mock",
                 "final_hash": "abc123",
                 "records": [],
                 "final_state": {"day": 1, "outcome": None},
@@ -30,5 +29,5 @@ def test_packet_preserves_autopilot_mode_in_eval_dashboard(tmp_path) -> None:
 
     assert result == 0
     html = (out / "playthrough-eval.html").read_text(encoding="utf-8")
-    assert "FAIL - Autopilot run reached a terminal outcome" in html
-    assert "mode: autopilot; outcome: none" in html
+    assert "Playthrough Eval" in html
+    assert "Autopilot" not in html

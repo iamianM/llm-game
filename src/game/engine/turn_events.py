@@ -53,6 +53,13 @@ def advance_phase_with_events(
         if state.casa_amor_state is not None and not state.casa_amor_state.returned:
             events.append(_schedule_gather(state, kind="ceremony", event_id="casa_return"))
     events.extend(_scheduled_phase_events(state, rng))
+    if (
+        state.phase is Phase.CHALLENGE
+        and state.pending_challenge is not None
+        and state.pending_challenge.result is not None
+    ):
+        advance_phase(state)
+        events.extend(_scheduled_phase_events(state, rng))
     return events, audience_snapshot
 
 

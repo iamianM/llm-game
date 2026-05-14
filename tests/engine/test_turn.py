@@ -41,13 +41,17 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
     assert len(result.state_hash) == 64
 
 
-def test_run_turn_advances_phase() -> None:
-    """ADVANCE_PHASE uses the same run_turn path as other actions."""
+def test_run_turn_ambient_wait_advances_phase() -> None:
+    """Scripted ambient wait can consume the remaining phase budget."""
     state = new_game(1)
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    result = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+    )
 
-    assert result.state.phase is Phase.CHALLENGE
+    assert result.state.phase is Phase.AFTERNOON
     assert result.state.turn_index == 1
 
 
@@ -57,7 +61,7 @@ def test_run_turn_schedules_casa_amor_arrival_as_gather() -> None:
     state.day = 4
     state.phase = Phase.AFTERNOON
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    result = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
 
     assert result.state.phase is Phase.TEXT
     assert result.state.pending_gather is not None
@@ -76,14 +80,13 @@ def test_run_turn_skips_villa_autonomy_after_scheduling_gather() -> None:
 
     result = run_turn(
         state,
-        PlayerAction(kind=ActionKind.ADVANCE_PHASE),
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
         SeededRng(1),
         villa_orchestrator=fail_orchestrator,
     )
 
     assert result.state.pending_gather is not None
-    assert result.agent_commits.villa_update is not None
-    assert result.agent_commits.villa_update.npc_movements == []
+    assert result.agent_commits.villa_update is None
 
 
 def test_join_gather_resolves_casa_amor_arrival() -> None:
@@ -91,7 +94,7 @@ def test_join_gather_resolves_casa_amor_arrival() -> None:
     state = new_game(1)
     state.day = 4
     state.phase = Phase.AFTERNOON
-    run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
 
     result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(2))
 
@@ -156,7 +159,7 @@ def test_daily_recap_generated_at_day_rollover() -> None:
         ),
     )
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    result = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
 
     assert result.state.day == 2
     assert result.state.daily_recaps
@@ -225,6 +228,7 @@ def test_wheel_exit_closes_conversation_and_applies_trust_bonus() -> None:
     assert result.mechanical_result.relationship_deltas["chloe"].trust == 1
     assert calls == 1
     assert result.curator_batches
+    assert result.curator_batches[0].kind == "player"
 
 
 def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
@@ -273,3 +277,4 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
     assert result.mechanical_result.relationship_deltas["chloe"].affection == -1
     assert calls == 1
     assert result.curator_batches
+    assert result.curator_batches[0].kind == "player"

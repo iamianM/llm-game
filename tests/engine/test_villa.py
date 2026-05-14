@@ -141,6 +141,7 @@ def test_npc_conversation_close_invokes_curator() -> None:
     changes = apply_villa_update(state, update, SeededRng(1))
 
     assert changes.curator_batches
+    assert changes.curator_batches[0].kind == "background"
     assert state.npc_conversations == []
     assert state.islanders[0].memories
     assert state.islanders[1].memories

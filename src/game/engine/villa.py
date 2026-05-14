@@ -26,9 +26,9 @@ from src.game.agents.conversation_curator import (
     ConversationCuratorFn,
     mock_conversation_curator,
 )
-from src.game.agents.player_autopilot import PolicyDecision
 from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
 from src.game.engine.memory import add_memory_batch
+from src.game.engine.proposals import maybe_form_single_npc_couple_from_conversation
 from src.game.engine.villa_validation import normalize_villa_update, validate_villa_update
 from src.game.state.autonomy import PendingNPCSummon
 from src.game.state.models import (
@@ -50,7 +50,6 @@ class AgentCommits(BaseModel):
     villa_update: VillaUpdate | None = None
     background_dialogues: list[BackgroundExchange] = Field(default_factory=list)
     curator_batches: list[MemoryBatch] = Field(default_factory=list)
-    player_autopilot: PolicyDecision | None = None
 
 
 class AppliedVillaChanges(BaseModel):
@@ -159,6 +158,12 @@ async def apply_villa_update_async(
     for batch in closed_batches:
         curator_batches.append(batch)
         memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
+    for conversation, _bystanders in conversations_to_curate:
+        proposal_batch = maybe_form_single_npc_couple_from_conversation(state, conversation)
+        if proposal_batch is None:
+            continue
+        curator_batches.append(proposal_batch)
+        memories.extend(add_memory_batch(state, proposal_batch, day=state.day, turn=state.turn_index))
 
     return AppliedVillaChanges(
         villa_update=update,

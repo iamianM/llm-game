@@ -1,40 +1,16 @@
 name: type-on-paper-reveal
 seed: 31
-expected_hash: 9bbdb40d175802fca8ec5860af91890309173d9b5c16c92fcd4ed475618743b4
+expected_hash: 89feaed2d1613d6c84834c7d7b6a33923950cc8b979ca1b0b7f094a6ec25efcb
 actions:
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
-- kind: start_conversation
-  target_id: chloe
-  intent_id: friendly_chat_villa
-- kind: end_conversation
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

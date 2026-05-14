@@ -76,14 +76,18 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
     records, final_state, _final_hash, llm_mode, mode, persona = _load_recording(Path(args.trace_path))
-    Path(args.out).write_text(
-        _session_renderer(args)(
+    preface = _final_state_summary(final_state, llm_mode, mode, persona) if final_state is not None else ""
+    minimal = getattr(args, "minimal", False)
+    if minimal:
+        html = session_page_minimal(Path(args.trace_path).stem, records, preface=preface)
+    else:
+        html = session_page(
             Path(args.trace_path).stem,
             records,
-            preface=_final_state_summary(final_state, llm_mode, mode, persona) if final_state is not None else "",
-        ),
-        encoding="utf-8",
-    )
+            preface=preface,
+            final_state=final_state,
+        )
+    Path(args.out).write_text(html, encoding="utf-8")
     return 0
 
 
@@ -121,6 +125,7 @@ def packet_cmd(args: argparse.Namespace) -> int:
             records,
             preface=_final_state_summary(final_state, llm_mode, mode, persona),
             reviewer_notes=review_notes_for_trace(trace_path),
+            final_state=final_state,
         ),
         encoding="utf-8",
     )
@@ -327,10 +332,6 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
         table_page("Action Coverage", ["Action", "Count"], action_rows),
         encoding="utf-8",
     )
-
-
-def _session_renderer(args: argparse.Namespace):
-    return session_page_minimal if getattr(args, "minimal", False) else session_page
 
 
 def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str, str, str | None]:

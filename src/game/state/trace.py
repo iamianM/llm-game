@@ -18,7 +18,6 @@ from typing import Any
 
 class TraceMode(StrEnum):
     MANUAL = "manual"
-    AUTOPILOT = "autopilot"
     MOCKED = "mocked"
 
 

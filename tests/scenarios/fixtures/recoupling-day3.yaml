@@ -1,22 +1,40 @@
 name: recoupling-day3
 seed: 8
-expected_hash: e3e2719f675b6e30a915fb488e22c466dd7c93f7ec9aac257f827eee5b288b36
+expected_hash: 0fd4354930969ba469d0e44fa62d4868b6cdbb3d4277880bcedf659297123d0e
 actions:
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

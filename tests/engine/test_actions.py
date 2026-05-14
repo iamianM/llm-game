@@ -8,8 +8,8 @@ from src.game.engine.actions import ActionKind, PlayerAction, available_actions,
 from src.game.state.models import new_game
 
 
-def test_available_actions_include_visible_conversation_targets_and_advance() -> None:
-    """Visible islanders get START_CONVERSATION, plus movement and phase advancement."""
+def test_available_actions_include_visible_conversation_targets_and_ambient() -> None:
+    """Visible islanders get START_CONVERSATION, movement, and ambient actions."""
     state = new_game(1)
 
     actions = [spec.action for spec in available_actions(state)]
@@ -18,7 +18,7 @@ def test_available_actions_include_visible_conversation_targets_and_advance() ->
     assert PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="maya") not in actions
     assert PlayerAction(kind=ActionKind.MOVE, target_id="kitchen") in actions
     assert PlayerAction(kind=ActionKind.MOVE, target_id="terrace") in actions
-    assert PlayerAction(kind=ActionKind.ADVANCE_PHASE) in actions
+    assert any(action.kind is ActionKind.AMBIENT for action in actions)
     assert PlayerAction(kind=ActionKind.END_CONVERSATION) not in actions
 
 

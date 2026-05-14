@@ -79,6 +79,7 @@ def resolve_steal_attempt(
             partner_a_id=bombshell.id,
             partner_b_id=target_id,
             formed_on_day=state.day,
+            formed_via="ceremony",
         ))
     return StealAttempt(
         bombshell_id=bombshell.id,

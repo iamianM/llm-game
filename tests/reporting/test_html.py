@@ -12,13 +12,13 @@ def test_session_page_renders_math_villa_memories_pull_and_interruption() -> Non
     """Enhanced session HTML exposes the G8 review details."""
     html = session_page("Session", [_record()])
 
-    assert "Success math" in html
-    assert "banter 8 x 5 = 40" in html
-    assert "capped at 80" in html
-    assert "Villa snapshot" in html
+    assert "Why this outcome?" in html
+    assert "banter" in html and "8" in html
+    assert "Where everyone is" in html
     assert "Pull attempt" in html
-    assert "NPC interruption" in html
-    assert "Memories formed this turn" in html
+    assert "Interruption" in html
+    assert "Memories formed" in html
+    assert "data-scene-index" in html
     assert "id='turn-1'" in html
 
 
@@ -117,6 +117,7 @@ def _record() -> dict[str, object]:
             "background_dialogues": [],
             "curator_batches": [
                 {
+                    "kind": "player",
                     "memories": [
                         {
                             "holder_id": "chloe",

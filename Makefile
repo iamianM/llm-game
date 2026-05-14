@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm autopilot-check
+.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm
 
 install:
 	uv sync --extra dev
@@ -43,7 +43,3 @@ test-llm:
 
 smoke-real-llm:
 	uv run python -m src.game.cli play --record .game_traces/manual-real-g8.json
-
-autopilot-check:
-	uv run python -m src.game.cli play --mock-llm --autopilot --persona loyal --seed 42 --max-turns 60 --record .game_traces/autopilot-check.json
-	uv run python -m src.game.cli play --replay .game_traces/autopilot-check.json

@@ -44,6 +44,7 @@ class CeremonyEvent(BaseModel):
     kind: str
     message: str
     islander_id: str | None = None
+    sub_kind: str | None = None
 
 
 def initial_coupling(state: GameState, player_choice_id: str) -> RecouplingResult:
@@ -60,13 +61,22 @@ def initial_coupling(state: GameState, player_choice_id: str) -> RecouplingResul
     same = [islander for islander in available if islander.gender == state.player.gender]
     opposite.sort(key=lambda islander: _partner_score(islander), reverse=True)
     same.sort(key=lambda islander: _partner_score(islander), reverse=True)
-    couples = [Couple(partner_a_id=state.player.id, partner_b_id=choice.id, formed_on_day=state.day)]
+    couples = [
+        Couple(
+            partner_a_id=state.player.id,
+            partner_b_id=choice.id,
+            formed_on_day=state.day,
+            formed_via="opening",
+        )
+    ]
+    choice.familiarity_with_player = max(choice.familiarity_with_player, 25)
     while opposite and same:
         couples.append(
             Couple(
                 partner_a_id=opposite.pop(0).id,
                 partner_b_id=same.pop(0).id,
                 formed_on_day=state.day,
+                formed_via="opening",
             )
         )
     state.couples = couples
@@ -80,22 +90,28 @@ def recoupling(state: GameState, player_choice_id: str | None = None) -> Recoupl
 
     couples: list[Couple] = []
     if not state.player.eliminated and active:
-        partner_index = _partner_index(active, player_choice_id)
-        partner = active.pop(partner_index)
-        couples.append(
-            Couple(partner_a_id=state.player.id, partner_b_id=partner.id, formed_on_day=state.day)
-        )
+        partner_index = _player_partner_index(active, state, player_choice_id)
+        if partner_index is not None:
+            partner = active.pop(partner_index)
+            couples.append(
+                Couple(partner_a_id=state.player.id, partner_b_id=partner.id, formed_on_day=state.day)
+            )
 
-    while len(active) >= 2:
-        first = active.pop(0)
-        second = active.pop(0)
-        couples.append(Couple(partner_a_id=first.id, partner_b_id=second.id, formed_on_day=state.day))
+    npc_couples, leftovers = _npc_opposite_gender_couples(active, state.day)
+    couples.extend(npc_couples)
 
     eliminated_id: str | None = None
-    if active:
-        eliminated = active.pop(0)
+    if leftovers:
+        leftovers.sort(key=_partner_score)
+        eliminated = leftovers[0]
         eliminated.eliminated = True
         eliminated_id = eliminated.id
+
+    if not state.player.eliminated and not any(
+        state.player.id in {couple.partner_a_id, couple.partner_b_id} for couple in couples
+    ):
+        state.player.eliminated = True
+        eliminated_id = state.player.id
 
     state.couples = couples
     steal_attempts = _resolve_bombshell_steals(state)
@@ -103,6 +119,26 @@ def recoupling(state: GameState, player_choice_id: str | None = None) -> Recoupl
         state.player.eliminated = True
         eliminated_id = state.player.id
     return RecouplingResult(couples=state.couples, eliminated_id=eliminated_id, steal_attempts=steal_attempts)
+
+
+def _npc_opposite_gender_couples(active: list[IslanderState], formed_on_day: int) -> tuple[list[Couple], list[IslanderState]]:
+    men = [islander for islander in active if islander.gender == Gender.MAN]
+    women = [islander for islander in active if islander.gender == Gender.WOMAN]
+    men.sort(key=_partner_score, reverse=True)
+    women.sort(key=_partner_score, reverse=True)
+    couples: list[Couple] = []
+    while men and women:
+        first = men.pop(0)
+        second = women.pop(0)
+        couples.append(
+            Couple(
+                partner_a_id=first.id,
+                partner_b_id=second.id,
+                formed_via="ceremony",
+                formed_on_day=formed_on_day,
+            )
+        )
+    return couples, [*men, *women]
 
 
 def arrive_bombshell(state: GameState, location: Location = Location.TERRACE) -> IslanderState:
@@ -145,11 +181,20 @@ def _partner_score(islander: IslanderState) -> int:
     return rel.affection + (rel.chemistry // 2) + rel.trust
 
 
-def _partner_index(active: list[IslanderState], player_choice_id: str | None) -> int:
+def _player_partner_index(
+    active: list[IslanderState],
+    state: GameState,
+    player_choice_id: str | None,
+) -> int | None:
     if player_choice_id is None:
-        return 0
+        for index, islander in enumerate(active):
+            if islander.gender != state.player.gender:
+                return index
+        return None
     for index, islander in enumerate(active):
         if islander.id == player_choice_id:
+            if islander.gender == state.player.gender:
+                raise ValueError("recoupling target must be opposite sex")
             return index
     raise ValueError(f"recoupling target is not available: {player_choice_id}")
 

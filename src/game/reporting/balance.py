@@ -74,11 +74,9 @@ def _choose_action(state: GameState, specs: list[ActionSpec], rng: SeededRng) ->
 
     starts = [spec for spec in specs if spec.action.kind is ActionKind.START_CONVERSATION]
     moves = [spec for spec in specs if spec.action.kind is ActionKind.MOVE]
-    advance = [spec for spec in specs if spec.action.kind is ActionKind.ADVANCE_PHASE]
+    ambient = [spec for spec in specs if spec.action.kind is ActionKind.AMBIENT]
 
     roll = rng.randint(1, 100)
-    if advance and state.day >= 4 and roll <= 70:
-        return advance[0].action
     if starts and roll <= 58:
         spec = rng.choice(starts)
         target_id = spec.action.target_id
@@ -93,8 +91,8 @@ def _choose_action(state: GameState, specs: list[ActionSpec], rng: SeededRng) ->
         )
     if moves and roll <= 80:
         return rng.choice(moves).action
-    if advance:
-        return advance[0].action
+    if ambient:
+        return rng.choice(ambient).action
     return rng.choice(specs).action
 
 

@@ -1,136 +1,142 @@
-"""Render slide scene bodies."""
+"""Render slide scene bodies as polished, kind-specific layouts."""
 
 from __future__ import annotations
 
-from src.game.reporting.html_arrivals import arrival_roll_block
 from src.game.reporting.html_base import escape
-from src.game.reporting.html_blocks import (
-    autopilot_block,
-    delta_text,
-    event_block,
-    exchange_block,
-    follow_up_block,
-    interruption_block,
-    memory_block,
-    pull_attempt_block,
-    time_block,
-    villa_snapshot_block,
-)
-from src.game.reporting.html_events import challenge_block, group_date_block, producer_text_block
-from src.game.reporting.html_gather import pending_gather_block
-from src.game.reporting.html_math import math_block
 from src.game.reporting.scenes import Scene
-from src.game.reporting.stylish.background import background_dialogue_block, daily_recap_block
+from src.game.reporting.slides.cast import display_name
+from src.game.reporting.slides.scene_dialogue import _conversation_body
+from src.game.reporting.slides.scene_event_bodies import (
+    _background_body,
+    _ceremony_body,
+    _challenge_body,
+    _day_boundary_body,
+    _gather_body,
+    _movement_body,
+    _turn_body,
+)
+from src.game.reporting.slides.scene_time import phase_label, scene_clock_range
+from src.game.reporting.slides.scene_titles import (
+    _ceremony_title,
+    _challenge_title,
+    _conversation_target,
+)
 
+SCENE_KIND_ICON = {
+    "conversation": "💬",
+    "ceremony": "✨",
+    "challenge": "🎯",
+    "gather": "🔔",
+    "background": "👥",
+    "movement": "🚶",
+    "ambient": "☀",
+    "day_boundary": "🌅",
+    "turn": "•",
+}
+
+SCENE_KIND_LABEL = {
+    "conversation": "Conversation",
+    "ceremony": "Ceremony",
+    "challenge": "Challenge",
+    "gather": "Gather",
+    "background": "Background",
+    "movement": "Movement",
+    "ambient": "Villa time",
+    "day_boundary": "Day end",
+    "turn": "Moment",
+}
 
 def render_scene(scene: Scene) -> str:
-    """Render one review scene."""
-    records = "".join(_record_block(record) for record in scene.records)
-    state_panel = _state_panel(scene.records[-1])
-    return (
-        f"<article class='scene-card'><h2>{escape(scene.title)}</h2>"
-        f"<p class='scene-meta'>{escape(scene.kind)} · turns {scene.turn_range[0]}-{scene.turn_range[1]}</p>"
-        f"{records}<div class='hidden' data-state-panel>{state_panel}</div></article>"
+    """Render one review scene with kind-specific body."""
+    first = scene.records[0]
+    last = scene.records[-1]
+    day = first.get("day", "?")
+    phase = first.get("phase", "")
+    location = first.get("location", "")
+    icon = SCENE_KIND_ICON.get(scene.kind, "•")
+    kind_label = SCENE_KIND_LABEL.get(scene.kind, scene.kind.title())
+    first_turn = first.get("turn", "?")
+    last_turn = last.get("turn", first_turn)
+    turn_range = (
+        f"T{escape(first_turn)}" if first_turn == last_turn
+        else f"T{escape(first_turn)}–T{escape(last_turn)}"
     )
-
-
-def _record_block(record: dict[str, object]) -> str:
-    result = record.get("mechanical_result")
-    if not isinstance(result, dict):
-        return ""
-    action = result.get("action")
-    if not isinstance(action, dict):
-        return ""
-    outcome = "success" if result.get("success") else "miss"
-    return (
-        f"<section class='record-block' id='turn-{escape(record.get('turn'))}'>"
-        f"<p><b>Turn {escape(record.get('turn'))}</b> · Day {escape(record.get('day'))} · "
-        f"{escape(record.get('phase'))} · {escape(record.get('location'))}</p>"
-        f"<p><b>Choice:</b> {escape(action.get('kind'))} {escape(action.get('target_id') or '')} "
-        f"{escape(action.get('intent_id') or '')} <span class='{outcome}'>{outcome}</span></p>"
-        f"{time_block(record)}{challenge_block(record.get('challenge'))}{producer_text_block(record.get('producer_text'))}"
-        f"{pending_gather_block(record)}{group_date_block(record.get('group_date'))}"
-        f"{autopilot_block(record.get('agent_commits'))}"
-        f"<details><summary>Success math</summary>{math_block(result)}</details>"
-        f"{pull_attempt_block(result.get('pull_attempt'))}{interruption_block(record)}"
-        f"{arrival_roll_block(record)}<div class='dialogue'>{exchange_block(record.get('exchange'))}</div>"
-        f"{event_block(record.get('event_narration'))}{follow_up_block(record.get('follow_up_menu'))}"
-        f"{background_dialogue_block(record)}{memory_block(record.get('agent_commits'))}"
-        f"<p><b>Deltas:</b> {escape(delta_text(result))}</p></section>"
+    clock_range = scene_clock_range(scene.records)
+    clock_html = (
+        f"<span class='clock-pill'>🕒 {escape(clock_range)}</span> · " if clock_range else ""
     )
-
-
-def _state_panel(record: dict[str, object]) -> str:
-    occupants = _occupant_buttons(record)
-    memories = _memory_summary(record)
-    return (
-        "<h3>Scene State</h3>"
-        f"<div class='state-card'><b>Day</b><br>{escape(record.get('day'))} / {escape(record.get('phase'))}</div>"
-        f"<div class='state-card'><b>Location</b><br>{escape(record.get('location'))}</div>"
-        f"<div class='state-card'><b>Visible</b><br>{escape(record.get('visible_state') or 'No visible islanders.')}</div>"
-        f"<div class='state-card'><b>Villa</b>{occupants}</div>"
-        f"<div class='state-card'><b>Memories formed</b>{memories}</div>"
-        f"{villa_snapshot_block(record.get('villa_snapshot'))}"
-        f"{daily_recap_block(record.get('day'), [record])}"
+    anchors = "".join(
+        f"<span id='turn-{escape(record.get('turn', ''))}' class='turn-anchor'></span>"
+        for record in scene.records
     )
-
-
-def _occupant_buttons(record: dict[str, object]) -> str:
-    snapshot = record.get("villa_snapshot")
-    if not isinstance(snapshot, dict):
-        return "<p class='meta'>No villa map in trace.</p>"
-    chunks: list[str] = []
-    dialogs: list[str] = []
-    turn = escape(record.get("turn"))
-    for location, occupants in snapshot.items():
-        if not isinstance(occupants, list):
-            continue
-        names = []
-        for occupant in occupants:
-            name = str(occupant)
-            dialog_id = f"cast-{turn}-{_slug(location)}-{_slug(name)}"
-            names.append(
-                f"<button class='cast-button' data-open-dialog='{escape(dialog_id)}'>{escape(name)}</button>"
-            )
-            dialogs.append(_cast_dialog(dialog_id, name, str(location), record))
-        joined = "".join(names) if names else "<p class='meta'>Empty</p>"
-        chunks.append(f"<details><summary>{escape(location)}</summary>{joined}</details>")
-    return "".join(chunks) + "".join(dialogs)
-
-
-def _cast_dialog(dialog_id: str, name: str, location: str, record: dict[str, object]) -> str:
-    return (
-        f"<dialog id='{escape(dialog_id)}'><button class='dialog-close' data-close-dialog>Close</button>"
-        f"<h3>{escape(name)}</h3><p><b>Location:</b> {escape(location)}</p>"
-        f"<p><b>Visible status:</b> {escape(record.get('visible_state') or 'No direct visible status.')}</p>"
-        f"<div>{_memory_summary(record)}</div></dialog>"
+    header = (
+        f"{anchors}"
+        f"<header class='scene-header'>"
+        f"<div class='title-row'>"
+        f"<span class='scene-kind-chip scene-kind-{escape(scene.kind)}'>{icon} {escape(kind_label)}</span>"
+        f"<h2>{escape(_scene_title(scene))}</h2>"
+        f"</div>"
+        f"<p class='scene-meta'>"
+        f"{clock_html}"
+        f"<span class='turn-range'>{turn_range}</span>"
+        f" · Day {escape(day)} · {escape(phase_label(str(phase)))}"
+        f"{(' · ' + escape(display_name(str(location)))) if location else ''}</p>"
+        f"</header>"
     )
+    body = _scene_body(scene)
+    return f"{header}{body}"
 
 
-def _memory_summary(record: dict[str, object]) -> str:
-    commits = record.get("agent_commits")
-    if not isinstance(commits, dict):
-        return "<p class='meta'>None recorded.</p>"
-    batches = commits.get("curator_batches")
-    if not isinstance(batches, list):
-        return "<p class='meta'>None recorded.</p>"
-    items: list[str] = []
-    for batch in batches:
-        if not isinstance(batch, dict):
-            continue
-        memories = batch.get("memories")
-        if not isinstance(memories, list):
-            continue
-        for memory in memories[:4]:
-            if isinstance(memory, dict):
-                holder = memory.get("holder_id", "unknown")
-                subject = memory.get("subject_id", "unknown")
-                content = memory.get("content", "")
-                items.append(
-                    f"<li><b>{escape(holder)}</b> about {escape(subject)}: {escape(content)}</li>"
-                )
-    return "<ul>" + "".join(items) + "</ul>" if items else "<p class='meta'>None recorded.</p>"
+def _scene_title(scene: Scene) -> str:
+    first = scene.records[0]
+    day = first.get("day", "?")
+    if scene.kind == "conversation":
+        target = _conversation_target(scene.records)
+        return f"Conversation with {display_name(target)}" if target else "Conversation"
+    if scene.kind == "ceremony":
+        for record in scene.records:
+            events = record.get("ceremony_events")
+            if isinstance(events, list) and events:
+                ev = events[0]
+                if isinstance(ev, dict):
+                    kind = str(ev.get("kind") or "")
+                    return _ceremony_title(kind, day)
+        return "Ceremony"
+    if scene.kind == "challenge":
+        for record in scene.records:
+            chal = record.get("challenge")
+            if isinstance(chal, dict):
+                kind = str(chal.get("kind") or "")
+                return _challenge_title(kind)
+        return "Challenge"
+    if scene.kind == "gather":
+        return "Everyone gathers"
+    if scene.kind == "background":
+        return "Around the villa"
+    if scene.kind == "movement":
+        return "Villa shifts"
+    if scene.kind == "ambient":
+        return "Villa time"
+    if scene.kind == "day_boundary":
+        return f"Day {first.get('day', '?')} wraps"
+    return f"Turn {first.get('turn', '?')}"
 
 
-def _slug(value: object) -> str:
-    return "".join(char.lower() if char.isalnum() else "-" for char in str(value)).strip("-")
+def _scene_body(scene: Scene) -> str:
+    if scene.kind == "conversation":
+        return _conversation_body(scene)
+    if scene.kind == "ceremony":
+        return _ceremony_body(scene)
+    if scene.kind == "challenge":
+        return _challenge_body(scene)
+    if scene.kind == "gather":
+        return _gather_body(scene)
+    if scene.kind == "background":
+        return _background_body(scene)
+    if scene.kind == "movement":
+        return _movement_body(scene)
+    if scene.kind == "ambient":
+        return _turn_body(scene)
+    if scene.kind == "day_boundary":
+        return _day_boundary_body(scene)
+    return _turn_body(scene)

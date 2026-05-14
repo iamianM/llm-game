@@ -59,3 +59,6 @@ class MechanicalResult(BaseModel):
     tags: list[str] = Field(default_factory=list)
     pull_attempt: PullAttempt | None = None
     forced_movements: list[ForcedMovement] = Field(default_factory=list)
+    audience_delta: int = 0
+    audience_reason: str | None = None
+    proposal_outcome: dict[str, object] | None = None

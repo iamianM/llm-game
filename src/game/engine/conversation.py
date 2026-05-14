@@ -110,6 +110,7 @@ def close_conversation(
         "wheel_exit",
         "npc_summoned_elsewhere",
         "gather_event",
+        "proposal",
     ],
 ) -> None:
     """Close the active conversation and remove it from canonical state."""

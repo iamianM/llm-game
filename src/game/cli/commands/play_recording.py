@@ -95,8 +95,6 @@ def llm_mode(args: argparse.Namespace) -> str:
 
 
 def trace_mode(args: argparse.Namespace) -> TraceMode:
-    if args.autopilot:
-        return TraceMode.AUTOPILOT
     if args.mock_llm:
         return TraceMode.MOCKED
     return TraceMode.MANUAL

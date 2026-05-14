@@ -1,40 +1,16 @@
 name: elimination-day5
 seed: 10
-expected_hash: 861d4c7128796ad3b1e56edee594d7eb7e87437e2efcb54c2cdee194b42f174c
+expected_hash: 24413ea226f40ea679b76f9fc4aa1bbbdc45332333ca33f03b911a44870d0240
 actions:
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: challenge_response
-  target_id: chloe
-  payload:
-    choice: chloe
-- kind: advance_phase
-- kind: advance_phase
-- kind: casa_decision
-  target_id: blake
-  intent_id: return_with_new
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

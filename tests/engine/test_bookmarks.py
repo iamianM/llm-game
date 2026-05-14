@@ -22,7 +22,7 @@ def test_auto_bookmark_for_auto_advance() -> None:
 
 def _turn(state: GameState, *, auto_advance: bool = False) -> TurnResult:
     result = MechanicalResult(
-        action=PlayerAction(kind=ActionKind.ADVANCE_PHASE),
+        action=PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
         success=True,
         relationship_deltas={},
     )

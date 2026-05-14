@@ -12,6 +12,13 @@ def stylish_session_page(
     records: list[dict[str, Any]],
     preface: str = "",
     reviewer_notes: list[dict[str, object]] | None = None,
+    final_state: dict[str, Any] | None = None,
 ) -> str:
     """Render a self-contained editorial session report."""
-    return slide_session_page(title, records, preface=preface, reviewer_notes=reviewer_notes)
+    return slide_session_page(
+        title,
+        records,
+        preface=preface,
+        reviewer_notes=reviewer_notes,
+        final_state=final_state,
+    )

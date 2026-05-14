@@ -24,7 +24,6 @@ from src.game.eval.playthrough_trace import (
     turns_with_arrival_rolls,
     turns_with_audience,
     turns_with_auto_advance,
-    turns_with_autopilot,
     turns_with_background,
     turns_with_casa_amor,
     turns_with_casa_return,
@@ -66,9 +65,7 @@ def evaluate_trace(package: dict[str, Any], *, trace_path: str = "<memory>") -> 
     typed_records = [record for record in records if isinstance(record, dict)]
     final_state = package.get("final_state")
     stats = _stats(typed_records, final_state if isinstance(final_state, dict) else None)
-    mode = package.get("mode")
-    trace_mode = mode if isinstance(mode, str) else "manual"
-    assertions = _assertions(typed_records, stats, trace_mode=trace_mode)
+    assertions = _assertions(typed_records, stats)
     interesting = sorted(
         {
             turn
@@ -118,9 +115,6 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     casa_amor_partners_swapped = False
     casa_perception_before: int | None = None
     casa_perception_after: int | None = None
-    autopilot_actions_total = 0
-    autopilot_rationales_present = 0
-    autopilot_confidence: Counter[str] = Counter()
     auto_advances_total = 0
     phase_counts: Counter[tuple[int, str]] = Counter()
     arrival_rolls_total = 0
@@ -221,15 +215,6 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             max_couple_strength_reached = max(max_couple_strength_reached, strength)
         if kind == "hideaway":
             hideaway_used = True
-        autopilot = as_dict(commits.get("player_autopilot"))
-        if autopilot:
-            autopilot_actions_total += 1
-            rationale = autopilot.get("rationale")
-            if isinstance(rationale, str) and rationale.strip():
-                autopilot_rationales_present += 1
-            confidence = autopilot.get("confidence")
-            if isinstance(confidence, str):
-                autopilot_confidence[confidence] += 1
         if record.get("villa") == "casa_amor":
             casa_amor_visited = True
         casa = record.get("casa_amor")
@@ -289,9 +274,6 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             if casa_perception_before is None or casa_perception_after is None
             else casa_perception_after - casa_perception_before
         ),
-        autopilot_actions_total=autopilot_actions_total,
-        autopilot_rationales_present=autopilot_rationales_present,
-        autopilot_confidence_counts=dict(autopilot_confidence),
         auto_advances_total=auto_advances_total,
         avg_actions_per_phase=round(avg_actions_per_phase, 2),
         arrival_rolls_total=arrival_rolls_total,
@@ -308,8 +290,6 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
 def _assertions(
     records: list[dict[str, Any]],
     stats: PlaythroughStats,
-    *,
-    trace_mode: str,
 ) -> list[PlaythroughAssertion]:
     memory_holders = memory_holder_counts(records)
     return [
@@ -343,8 +323,6 @@ def _assertions(
         _assert("casa_amor_phase_observed", "Casa Amor phase was observed", stats.casa_amor_visited, f"visited: {stats.casa_amor_visited}", turns_with_casa_amor(records)),
         _assert("casa_amor_return_resolved", "Casa Amor return was resolved", stats.casa_amor_player_decision is not None, f"decision: {stats.casa_amor_player_decision or 'none'}", turns_with_casa_return(records)),
         _assert("casa_amor_perception_swing", "Casa Amor created a major perception swing", abs(stats.casa_amor_perception_swing) >= 6, f"swing: {stats.casa_amor_perception_swing}", turns_with_casa_swing(records)),
-        _assert("autopilot_outcome_assigned", "Autopilot run reached a terminal outcome", trace_mode != "autopilot" or stats.outcome is not None, f"mode: {trace_mode}; outcome: {stats.outcome or 'none'}", turns_with_outcome(records)),
-        _assert("autopilot_rationale_present", "Autopilot turns include rationales", trace_mode != "autopilot" or (stats.autopilot_actions_total > 0 and stats.autopilot_actions_total == stats.autopilot_rationales_present), f"{stats.autopilot_rationales_present}/{stats.autopilot_actions_total} rationale(s)", turns_with_autopilot(records)),
         _assert("phase_action_count_reasonable", "Average actions per phase is reasonable", stats.avg_actions_per_phase <= 12, f"avg actions/phase: {stats.avg_actions_per_phase}", turns_with_phase_overage(records)),
         _assert("time_expired_advance_observed", "At least one phase advanced because time expired", stats.auto_advances_total >= 1, f"{stats.auto_advances_total} auto-advance turn(s)", turns_with_auto_advance(records)),
         _assert("npc_initiated_exit_observed", "At least one NPC initiated an exit", stats.npc_summoned_total + stats.npc_left_total >= 1, f"{stats.npc_summoned_total} summon(s), {stats.npc_left_total} npc-left menu(s)", turns_with_npc_initiated_exit(records)),

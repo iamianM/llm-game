@@ -1,6 +1,6 @@
 name: day1-flirt-mixed
 seed: 2
-expected_hash: bcd51089001dc98ea9858f43fc1bbbf850a039d4fae3db2364eb9b81a32ff172
+expected_hash: 9c6e7f5d7643c380a1dc242e6a3faf7afa10b98a3937ca3b9da8368422157a5b
 actions:
 - kind: start_conversation
   target_id: chloe
@@ -15,9 +15,15 @@ actions:
 - kind: start_conversation
   target_id: liam
   intent_id: banter_tell_joke
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

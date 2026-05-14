@@ -7,18 +7,16 @@ initial_couples:
   partner_b_id: chloe
   formed_on_day: 3
 actions:
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: challenge_response
-  target_id: blake
-- kind: advance_phase
-- kind: advance_phase
-- kind: casa_decision
-  target_id: blake
-  intent_id: return_with_new
-- kind: advance_phase
-- kind: join_gather
-expected_hash: f55a91dca63a87a23b9b92172c23e2c2fed19e6301fd77b44f1647c4ccb8ce02
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+expected_hash: fa59a98de9c4c36648f77b45727bebd15de47d5f058809ddf19aa8a1b242b0ba

@@ -147,6 +147,7 @@ def mock_conversation_curator(
             )
         )
     return MemoryBatch(
+        kind="player",
         memories=memories,
         summary=f"Player and {target_name} closed a {tag} conversation with a clear emotional shift.",
         gossip_seeds=[],
@@ -267,6 +268,7 @@ def _mock_npc_conversation_memory(
             )
         )
     return MemoryBatch(
+        kind="background",
         memories=memories,
         summary=f"{first_name} and {second_name} talked about {conversation.topic}.",
         gossip_seeds=[],

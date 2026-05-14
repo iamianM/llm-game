@@ -10,6 +10,7 @@ from src.game.state.phase_clock import PhaseClock
 
 PHASE_ORDER = [
     Phase.MORNING,
+    Phase.INTROS,
     Phase.CHALLENGE,
     Phase.AFTERNOON,
     Phase.TEXT,
@@ -20,6 +21,7 @@ MAX_DAYS = 6
 
 PHASE_BUDGETS: dict[Phase, int] = {
     Phase.MORNING: 120,
+    Phase.INTROS: 180,
     Phase.CHALLENGE: 0,
     Phase.AFTERNOON: 120,
     Phase.TEXT: 30,
@@ -31,6 +33,8 @@ PHASE_BUDGETS: dict[Phase, int] = {
 def advance_phase(state: GameState) -> None:
     """Advance the multi-day v0 clock."""
     state.player.pull_attempts_this_phase = {}
+    state.active_ambient_id = None
+    state.consecutive_ambient_turns = 0
     if state.phase is Phase.COMPLETE:
         _reset_phase_clock(state)
         return
@@ -41,6 +45,13 @@ def advance_phase(state: GameState) -> None:
             return
         state.day += 1
         state.phase = Phase.MORNING
+        _reset_phase_clock(state)
+        return
+    if state.phase is Phase.MORNING:
+        if state.day == 1 and state.couples and not state.intro_memory_created:
+            state.phase = Phase.INTROS
+        else:
+            state.phase = Phase.CHALLENGE
         _reset_phase_clock(state)
         return
     index = PHASE_ORDER.index(state.phase)

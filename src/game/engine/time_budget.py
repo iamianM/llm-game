@@ -16,9 +16,12 @@ ACTION_TIME_COST: dict[ActionKind, int] = {
     ActionKind.HIDEAWAY: 60,
     ActionKind.CASA_DECISION: 10,
     ActionKind.JOIN_GATHER: 30,
+    ActionKind.AMBIENT: 20,
+    ActionKind.INTRODUCE_TO: 25,
     ActionKind.MOVE: 5,
     ActionKind.RECOUPLE: 0,
-    ActionKind.ADVANCE_PHASE: 0,
+    ActionKind.PROPOSE_RECOUPLE: 20,
+    ActionKind.NPC_PROPOSAL_RESPONSE: 10,
 }
 
 
@@ -31,14 +34,18 @@ def ensure_phase_clock(state: GameState) -> None:
         )
 
 
-def action_time_cost(action: PlayerAction) -> int:
+def action_time_cost(action: PlayerAction, state: GameState | None = None) -> int:
+    if action.kind is ActionKind.AMBIENT and action.target_id == "ambient_wait" and state is not None:
+        return state.phase_clock.remaining
+    if action.kind is ActionKind.AMBIENT and state is not None:
+        return 5 if state.active_ambient_id == action.target_id else 20
     return ACTION_TIME_COST[action.kind]
 
 
 def deduct_time(state: GameState, action: PlayerAction) -> int:
     """Apply an action's fixed time cost to the current phase clock."""
     ensure_phase_clock(state)
-    cost = action_time_cost(action)
+    cost = action_time_cost(action, state)
     state.phase_clock.elapsed_minutes += cost
     return cost
 

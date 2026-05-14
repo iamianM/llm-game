@@ -1,47 +1,16 @@
 name: day6-full-run
 seed: 6
-expected_hash: 4e7080546ced6dad3a1136857dc06a349622132ea9189e1514752ae3dad7fc82
+expected_hash: b8f78d24c8d9a95706dd1d05fb66903443ec93065194915d02fa513ec04386cd
 actions:
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: challenge_response
-  target_id: chloe
-  payload:
-    choice: chloe
-- kind: advance_phase
-- kind: advance_phase
-- kind: casa_decision
-  target_id: blake
-  intent_id: return_with_new
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

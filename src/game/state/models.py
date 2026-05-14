@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.state.autonomy import PendingNPCSummon as PendingNPCSummon
 from src.game.state.casa import CasaAmorState as CasaAmorState
@@ -37,13 +37,14 @@ from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 
-SCHEMA_VERSION = 22
+SCHEMA_VERSION = 24
 
 
 class Phase(StrEnum):
     """The day clock for the playable v0 loop."""
 
     MORNING = "morning"
+    INTROS = "intros"
     CHALLENGE = "challenge"
     AFTERNOON = "afternoon"
     TEXT = "text"
@@ -87,7 +88,11 @@ class Gender(StrEnum):
 
 
 class PlayerStats(BaseModel):
-    """Five fixed player stats with the A3 30-point budget."""
+    """Five player stats.
+
+    Character creation enforces the starting 30-point budget. Runtime state can
+    grow through game effects while each individual stat remains capped.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -96,14 +101,6 @@ class PlayerStats(BaseModel):
     eq: int = Field(ge=3, le=9)
     graft: int = Field(ge=3, le=9)
     loyalty: int = Field(ge=3, le=9)
-
-    @model_validator(mode="after")
-    def validate_budget(self) -> PlayerStats:
-        """Reject stat allocations above the starting 30-point budget."""
-        total = self.charm + self.banter + self.eq + self.graft + self.loyalty
-        if total > 30:
-            raise ValueError("player stat total cannot exceed 30")
-        return self
 
 
 class CharacterCreation(BaseModel):
@@ -174,8 +171,10 @@ class Couple(BaseModel):
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
+    formed_via: Literal["opening", "ceremony", "casa_return", "proposal"] = "ceremony"
     has_used_hideaway: bool = False
     last_steal_attempt_chance: int | None = None
+    rebound: bool = False
 
 
 class HideawayState(BaseModel):
@@ -239,6 +238,7 @@ class FollowUpOption(BaseModel):
     stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
     risk: Literal["safe", "low", "medium", "high"]
     tone: str
+    audience_hint: Literal["+", "-", ""] = ""
     unlock_threshold: dict[str, int] | None = None
 
 
@@ -323,6 +323,18 @@ class NPCNPCConversation(BaseModel):
     status: Literal["active", "ending", "closed"] = "active"
 
 
+class PendingRecoupleProposal(BaseModel):
+    """An NPC proposal awaiting the player's response."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    proposer_id: str
+    target_id: str = "player"
+    chance: int
+    audience_hint_accept: Literal["+", "-", ""] = ""
+    reason: str = "recouple_proposal"
+
+
 class GameState(BaseModel):
     """Canonical deterministic game state."""
 
@@ -339,9 +351,14 @@ class GameState(BaseModel):
     player: PlayerState
     islanders: list[IslanderState]
     couples: list[Couple] = Field(default_factory=list)
+    active_ambient_id: str | None = None
+    consecutive_ambient_turns: int = 0
+    intro_completed_ids: list[str] = Field(default_factory=list)
+    intro_memory_created: bool = False
     active_conversation: Conversation | None = None
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     pending_npc_summon: PendingNPCSummon | None = None
+    pending_recouple_proposal: PendingRecoupleProposal | None = None
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
     pending_challenge: Challenge | None = None

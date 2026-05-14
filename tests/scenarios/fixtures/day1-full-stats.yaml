@@ -1,6 +1,6 @@
 name: day1-full-stats
 seed: 3
-expected_hash: 51469b72e33bae062fc148728d8157b666b0f03f4c238acb9469c45b4e671829
+expected_hash: 4082f83a496fbba61eb5878f93dda98b9e13ce9769fb485a3da438400e3a246c
 actions:
 - kind: start_conversation
   target_id: chloe
@@ -21,9 +21,15 @@ actions:
 - kind: start_conversation
   target_id: chloe
   intent_id: friendly_chat_villa
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

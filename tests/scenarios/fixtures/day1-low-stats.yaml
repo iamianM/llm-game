@@ -6,7 +6,7 @@ player_stats:
   eq: 7
   graft: 3
   loyalty: 6
-expected_hash: 8670b019fd43e9129ffe6a4b41b73695cec57cc293b566e6a73a597c2bcd0bc1
+expected_hash: 19d78fb0541767591019ec63b9b4e280f644bddfd6aac53e941f7729f4c36dbb
 actions:
 - kind: start_conversation
   target_id: chloe
@@ -16,9 +16,15 @@ actions:
 - kind: start_conversation
   target_id: maya
   intent_id: banter_tell_joke
-- kind: advance_phase
-- kind: advance_phase
-- kind: advance_phase
-- kind: join_gather
-- kind: advance_phase
-- kind: advance_phase
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait

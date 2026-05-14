@@ -14,14 +14,26 @@ def update_public_perception(
 ) -> None:
     """Apply small deterministic public-perception movement."""
     delta = 0
+    reason: str | None = None
     if "supportive" in result.tags and result.success:
-        delta = 2
+        delta = 3
+        reason = "they liked the support"
     elif "honest_vulnerable" in result.tags and result.success:
-        delta = 1
+        delta = 2
+        reason = "they liked the honesty"
     elif "escalate_flirt" in result.tags and not result.success:
-        delta = -1
+        delta = -2
+        reason = "they thought the flirt missed"
     elif "intense" in result.tags and not result.success:
         delta = -2
+        reason = "they thought it was too much"
     elif "flirty" in result.tags and not result.success:
-        delta = -1
+        delta = -2
+        reason = "they thought the flirt missed"
+    elif "ambient_repeat" in result.tags:
+        delta = -2
+        reason = "they wanted more graft"
+    before = state.player.public_perception
     state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
+    result.audience_delta = state.player.public_perception - before
+    result.audience_reason = reason if result.audience_delta else None

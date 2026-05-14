@@ -12,6 +12,7 @@ SceneKind = Literal[
     "gather",
     "background",
     "movement",
+    "ambient",
     "challenge",
     "day_boundary",
     "turn",
@@ -53,14 +54,18 @@ def scene_kind(record: dict[str, Any]) -> SceneKind:
         return "ceremony"
     action = record.get("mechanical_result", {}).get("action", {})
     kind = str(action.get("kind") or "")
+    if kind in {"start_conversation", "respond_with", "end_conversation"}:
+        return "conversation"
+    if kind in {"introduce_to"}:
+        return "conversation"
+    if kind == "ambient":
+        return "ambient"
     if kind == "join_gather" or record.get("pending_gather"):
         return "gather"
     if record.get("challenge") or kind == "challenge_response":
         return "challenge"
     if record.get("daily_recaps"):
         return "day_boundary"
-    if kind in {"start_conversation", "respond_with", "end_conversation"}:
-        return "conversation"
     commits = record.get("agent_commits") or {}
     villa_update = commits.get("villa_update") or {}
     if commits.get("background_dialogues"):
@@ -112,6 +117,8 @@ def _title(
         return f"Day {day}: background villa life ({span})"
     if kind == "movement":
         return f"Day {day}: villa movement ({span})"
+    if kind == "ambient":
+        return f"Day {day}: ambient villa time ({span})"
     if kind == "challenge":
         return f"Day {day}: challenge ({span})"
     if kind == "day_boundary":

@@ -47,9 +47,6 @@ class PlaythroughStats(BaseModel):
     casa_amor_player_decision: str | None = None
     casa_amor_partners_swapped: bool = False
     casa_amor_perception_swing: int = 0
-    autopilot_actions_total: int = 0
-    autopilot_rationales_present: int = 0
-    autopilot_confidence_counts: dict[str, int] = Field(default_factory=dict)
     auto_advances_total: int = 0
     avg_actions_per_phase: float = 0.0
     arrival_rolls_total: int = 0

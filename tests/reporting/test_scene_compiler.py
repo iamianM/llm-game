@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.game.reporting.scenes import compile_scenes, scene_kind
+from src.game.reporting.slides.scene_inline import _intent_label, _is_player_batch
 from src.game.reporting.slides.session import slide_session_page
 
 
@@ -28,9 +29,10 @@ def test_compile_scenes_groups_adjacent_conversation_turns() -> None:
 def test_slide_session_page_contains_deck_controls() -> None:
     html = slide_session_page("Test Session", [_record(1, "advance_phase")])
 
-    assert "data-next" in html
-    assert "data-scene-target" in html
-    assert "side-panel" in html
+    assert "data-scene-index" in html
+    assert "scene-nav" in html
+    assert "right-rail" in html
+    assert "day-pill" in html
 
 
 def test_slide_session_page_contains_state_popouts() -> None:
@@ -56,6 +58,18 @@ def test_slide_session_page_renders_auto_and_reviewer_bookmarks() -> None:
 
     assert "Time expired" in html
     assert "Review this" in html
+
+
+def test_intent_label_hides_memory_suffix() -> None:
+    assert _intent_label("share_gossip:mem_abc123") == "Share gossip"
+
+
+def test_memory_batch_kind_drives_player_filter() -> None:
+    player_batch = {"kind": "player", "memories": []}
+    background_batch = {"kind": "background", "memories": [{"holder_id": "player"}]}
+
+    assert _is_player_batch(player_batch)
+    assert not _is_player_batch(background_batch)
 
 
 def _record(turn: int, action_kind: str) -> dict[str, object]:

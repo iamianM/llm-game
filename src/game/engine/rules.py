@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.content.ambient import get_ambient_option
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.engine.casa_amor import apply_casa_decision
 from src.game.engine.challenges import resolve_challenge
@@ -12,7 +13,7 @@ from src.game.engine.chance import (
     intent_success_chance,
 )
 from src.game.engine.character_creation import create_character
-from src.game.engine.compatibility import attachment_delta_modifier
+from src.game.engine.compatibility import apply_familiarity, attachment_delta_modifier
 from src.game.engine.followups import (
     EXIT_INTENT_KINDS,
     FOLLOW_UP_DELTA_TABLE,
@@ -28,6 +29,7 @@ from src.game.engine.interruptions import (
     defer_chance_breakdown,
 )
 from src.game.engine.perception import update_public_perception
+from src.game.engine.proposals import apply_npc_proposal_response, apply_player_proposal
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
 from src.game.state.casa import CasaDecision
@@ -51,6 +53,12 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return result
     if action.kind is ActionKind.END_CONVERSATION:
         return _apply_end_conversation(state, action)
+    if action.kind is ActionKind.PROPOSE_RECOUPLE:
+        result, _outcome = apply_player_proposal(state, action.target_id or "", rng)
+        return result
+    if action.kind is ActionKind.NPC_PROPOSAL_RESPONSE:
+        result, _outcome = apply_npc_proposal_response(state, action.intent_id or "")
+        return result
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         return _apply_challenge_response(state, action, rng)
     if action.kind is ActionKind.HIDEAWAY:
@@ -59,12 +67,16 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_casa_decision(state, action)
     if action.kind is ActionKind.JOIN_GATHER:
         return MechanicalResult(action=action, success=True, tags=["join_gather"])
+    if action.kind is ActionKind.AMBIENT:
+        result = _apply_ambient(state, action)
+        update_public_perception(state, action, result)
+        return result
+    if action.kind is ActionKind.INTRODUCE_TO:
+        return _apply_intro(state, action)
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
     if action.kind is ActionKind.RECOUPLE:
         return MechanicalResult(action=action, success=True, tags=["recouple"])
-    if action.kind is ActionKind.ADVANCE_PHASE:
-        return MechanicalResult(action=action, success=True, tags=["phase"])
     raise ValueError(f"action is not implemented: {action.kind}")
 
 
@@ -136,7 +148,51 @@ def _apply_move(state: GameState, action: PlayerAction) -> MechanicalResult:
     if action.target_id is None:
         raise ValueError("target_id is required for MOVE")
     state.location_id = Location(action.target_id)
+    state.active_ambient_id = None
+    state.consecutive_ambient_turns = 0
     return MechanicalResult(action=action, success=True, tags=["move"])
+
+
+def _apply_ambient(state: GameState, action: PlayerAction) -> MechanicalResult:
+    if action.target_id is None:
+        raise ValueError("AMBIENT requires target_id")
+    option = get_ambient_option(action.target_id)
+    same_context = state.active_ambient_id == option.id
+    state.active_ambient_id = option.id
+    state.consecutive_ambient_turns = state.consecutive_ambient_turns + 1 if same_context else 1
+    for stat_name, amount in option.stat_trickle.items():
+        current = getattr(state.player.stats, stat_name)
+        setattr(state.player.stats, stat_name, min(9, current + amount))
+    tags = ["ambient", option.category, option.mood_effect]
+    if state.consecutive_ambient_turns >= 3:
+        tags.append("ambient_repeat")
+    return MechanicalResult(action=action, success=True, tags=tags)
+
+
+def _apply_intro(state: GameState, action: PlayerAction) -> MechanicalResult:
+    if action.target_id is None or action.intent_id is None:
+        raise ValueError("INTRODUCE_TO requires target_id and intent_id")
+    target = find_islander(state, action.target_id)
+    style = action.intent_id.removeprefix("intro_")
+    delta_by_style = {
+        "friendly": RelationshipDelta(affection=2, friendship=3),
+        "flirty": RelationshipDelta(affection=2, chemistry=3),
+        "deep": RelationshipDelta(affection=1, trust=3),
+        "banter": RelationshipDelta(affection=1, friendship=2, chemistry=1),
+    }
+    delta = delta_by_style.get(style, RelationshipDelta(friendship=2))
+    apply_relationship_delta(target, delta)
+    apply_familiarity(target, 25)
+    if target.id not in state.intro_completed_ids:
+        state.intro_completed_ids.append(target.id)
+    state.active_ambient_id = None
+    state.consecutive_ambient_turns = 0
+    return MechanicalResult(
+        action=action,
+        success=True,
+        relationship_deltas={target.id: delta},
+        tags=["intro", style],
+    )
 
 
 def _apply_challenge_response(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:

@@ -5,11 +5,11 @@ from __future__ import annotations
 from src.game.eval.playthrough import evaluate_trace
 
 
-def test_playthrough_report_has_thirty_one_assertions() -> None:
+def test_playthrough_report_has_twenty_nine_assertions() -> None:
     """The L7 report exposes the planned feature checklist plus H1 run checks."""
     report = evaluate_trace(_complete_package())
 
-    assert len(report.assertions) == 31
+    assert len(report.assertions) == 29
 
 
 def test_playthrough_report_passes_complete_trace() -> None:
@@ -17,7 +17,7 @@ def test_playthrough_report_passes_complete_trace() -> None:
     report = evaluate_trace(_complete_package())
 
     assert report.failed == 0
-    assert report.passed == 31
+    assert report.passed == 29
 
 
 def test_playthrough_report_flags_missing_pull_failure() -> None:
@@ -53,23 +53,6 @@ def test_playthrough_report_tracks_interesting_turns() -> None:
 
     assert report.interesting_turns == sorted(set(report.interesting_turns))
     assert 4 in report.interesting_turns
-
-
-def test_playthrough_report_flags_missing_autopilot_rationale() -> None:
-    package = _complete_package()
-    package["mode"] = "autopilot"
-    for record in package["records"]:
-        record["agent_commits"]["player_autopilot"] = {
-            "chosen_action_index": 0,
-            "rationale": "This move supports the current persona plan.",
-            "confidence": "high",
-        }
-    package["records"][0]["agent_commits"]["player_autopilot"]["rationale"] = ""
-
-    report = evaluate_trace(package)
-
-    failure = next(assertion for assertion in report.assertions if assertion.id == "autopilot_rationale_present")
-    assert failure.passed is False
 
 
 def test_playthrough_report_flags_stalled_day_progression() -> None:

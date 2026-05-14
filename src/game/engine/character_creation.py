@@ -77,9 +77,14 @@ def create_character(
     bonus_value = getattr(stats, definition.stat_bonus_name)
     if bonus_value < 3 + definition.stat_bonus_value:
         raise ValueError("created stats must include the archetype stat bonus")
-    creation = CharacterCreation(archetype_id=archetype_id, gender=gender, stats=stats, rerolled=rerolled)
+    creation = CharacterCreation(
+        archetype_id=archetype_id,
+        gender=gender,
+        stats=stats.model_copy(deep=True),
+        rerolled=rerolled,
+    )
     state.player.gender = gender
-    state.player.stats = stats
+    state.player.stats = stats.model_copy(deep=True)
     state.player.archetype_id = archetype_id
     state.player.character_created = True
     state.player.reroll_used = rerolled

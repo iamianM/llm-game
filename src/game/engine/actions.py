@@ -15,6 +15,14 @@ from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict
 
+from src.game.content.ambient import ambient_options_for, get_ambient_option
+from src.game.engine.action_availability import (
+    initial_coupling_targets,
+    intro_actions,
+    needs_initial_coupling,
+    pending_recouple_proposal_actions,
+    player_proposal_eligible,
+)
 from src.game.engine.casa_amor import casa_decision_options, location_villa, locations_for_villa
 from src.game.engine.couples import player_couple
 from src.game.engine.hideaway import hideaway_eligible, hideaway_partner_id
@@ -33,9 +41,12 @@ class ActionKind(StrEnum):
     HIDEAWAY = "hideaway"
     CASA_DECISION = "casa_decision"
     JOIN_GATHER = "join_gather"
+    AMBIENT = "ambient"
+    INTRODUCE_TO = "introduce_to"
     MOVE = "move"
     RECOUPLE = "recouple"
-    ADVANCE_PHASE = "advance_phase"
+    PROPOSE_RECOUPLE = "propose_recouple"
+    NPC_PROPOSAL_RESPONSE = "npc_proposal_response"
 
 
 class PlayerAction(BaseModel):
@@ -72,6 +83,8 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 label=f"Join gather at the {state.pending_gather.gather_location.value}",
             )
         ]
+    if state.pending_recouple_proposal is not None:
+        return pending_recouple_proposal_actions(state)
     casa_options = casa_decision_options(state)
     if casa_options:
         return [
@@ -100,14 +113,16 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                         )
                     )
             return actions
-    if _needs_initial_coupling(state):
+    if needs_initial_coupling(state):
         return [
             ActionSpec(
                 action=PlayerAction(kind=ActionKind.RECOUPLE, target_id=islander.id),
                 label=f"Initial couple with {islander.name}",
             )
-            for islander in _initial_coupling_targets(state)
+            for islander in initial_coupling_targets(state)
         ]
+    if state.phase is Phase.INTROS:
+        return intro_actions(state)
 
     if state.active_conversation is not None:
         interruption = state.active_conversation.pending_interruption
@@ -145,6 +160,14 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 ]
             )
         menu = state.active_conversation.pending_options
+        if player_proposal_eligible(state, state.active_conversation.target_id):
+            target = _find_islander(state, state.active_conversation.target_id)
+            actions.append(
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id=target.id),
+                    label=f"Ask {target.name} to recouple with you",
+                )
+            )
         if menu is not None and not menu.npc_will_leave:
             target = _find_islander(state, state.active_conversation.target_id)
             for index, option in _unlocked_follow_up_options(menu.options, target):
@@ -194,12 +217,14 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                         label=f"Move to {location.value}",
                     )
                 )
-    actions.append(
-        ActionSpec(
-            action=PlayerAction(kind=ActionKind.ADVANCE_PHASE),
-            label="Advance phase",
-        )
-    )
+    if state.phase in {Phase.MORNING, Phase.AFTERNOON, Phase.EVENING}:
+        for ambient_option in ambient_options_for(state.location_id):
+            actions.append(
+                ActionSpec(
+                    action=PlayerAction(kind=ActionKind.AMBIENT, target_id=ambient_option.id),
+                    label=ambient_option.label,
+                )
+            )
     return actions
 
 
@@ -255,6 +280,24 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         if state.active_conversation is None:
             raise ValueError("cannot end conversation when none is active")
         return
+    if action.kind is ActionKind.PROPOSE_RECOUPLE:
+        if state.active_conversation is None:
+            raise ValueError("cannot propose recoupling outside an active conversation")
+        if action.target_id is None:
+            raise ValueError("PROPOSE_RECOUPLE requires target_id")
+        if action.target_id != state.active_conversation.target_id:
+            raise ValueError("recoupling proposal target must be the active conversation target")
+        if not player_proposal_eligible(state, action.target_id):
+            raise ValueError(f"recoupling proposal is not available: {action.model_dump()}")
+        return
+    if action.kind is ActionKind.NPC_PROPOSAL_RESPONSE:
+        if state.pending_recouple_proposal is None:
+            raise ValueError("no NPC recoupling proposal is waiting")
+        if action.target_id != state.pending_recouple_proposal.proposer_id:
+            raise ValueError("NPC proposal response target must be the proposer")
+        if action.intent_id not in {"accept", "decline_politely", "decline_harshly"}:
+            raise ValueError(f"invalid NPC proposal response: {action.model_dump()}")
+        return
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         if state.pending_challenge is None or state.pending_challenge.result is not None:
             raise ValueError("no challenge is waiting for a response")
@@ -276,6 +319,26 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
     if action.kind is ActionKind.JOIN_GATHER:
         if state.pending_gather is None:
             raise ValueError("no gather is waiting to resolve")
+        return
+    if action.kind is ActionKind.AMBIENT:
+        if action.target_id is None:
+            raise ValueError("AMBIENT requires target_id")
+        option = get_ambient_option(action.target_id)
+        if option.id != "ambient_wait" and option.location is not state.location_id:
+            raise ValueError(f"ambient option is unavailable at current location: {action.model_dump()}")
+        if option.id != "ambient_wait" and state.phase not in {Phase.MORNING, Phase.AFTERNOON, Phase.EVENING}:
+            raise ValueError("ambient actions are only valid during social phases")
+        return
+    if action.kind is ActionKind.INTRODUCE_TO:
+        if state.phase is not Phase.INTROS:
+            raise ValueError("INTRODUCE_TO is only valid during the Day 1 intros segment")
+        if action.target_id is None or action.intent_id is None:
+            raise ValueError("INTRODUCE_TO requires target_id and intent_id")
+        target = _find_islander(state, action.target_id)
+        if target.eliminated or target.id in state.intro_completed_ids:
+            raise ValueError(f"intro target is unavailable: {action.model_dump()}")
+        if action.intent_id not in _INTRO_INTENT_IDS:
+            raise ValueError(f"unknown intro style: {action.intent_id}")
         return
     valid = [spec.action for spec in available_actions(state)]
     if action not in valid:
@@ -304,24 +367,12 @@ def _meets_unlock_threshold(option: FollowUpOption, target: IslanderState) -> bo
     return True
 
 
-def _needs_initial_coupling(state: GameState) -> bool:
-    return (
-        state.day == 1
-        and state.phase is Phase.MORNING
-        and not state.couples
-        and state.character_creation is not None
-    )
-
-
-def _initial_coupling_targets(state: GameState) -> list[IslanderState]:
-    targets = [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.gender != state.player.gender
-        and location_villa(islander.location_id) is state.villa
-    ]
-    return sorted(targets, key=lambda islander: (islander.name, islander.id))
+_INTRO_INTENT_IDS = {
+    "intro_friendly",
+    "intro_flirty",
+    "intro_deep",
+    "intro_banter",
+}
 
 
 def _find_islander(state: GameState, target_id: str) -> IslanderState:
@@ -329,3 +380,4 @@ def _find_islander(state: GameState, target_id: str) -> IslanderState:
         if islander.id == target_id:
             return islander
     raise ValueError(f"unknown islander: {target_id}")
+

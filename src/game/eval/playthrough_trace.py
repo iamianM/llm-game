@@ -113,14 +113,6 @@ def turns_with_steal_attempt(records: list[dict[str, Any]]) -> list[int]:
     ]
 
 
-def turns_with_autopilot(records: list[dict[str, Any]]) -> list[int]:
-    return [
-        turn(record)
-        for record in records
-        if as_dict(as_dict(record.get("agent_commits")).get("player_autopilot"))
-    ]
-
-
 def turns_with_casa_amor(records: list[dict[str, Any]]) -> list[int]:
     return [turn(record) for record in records if record.get("villa") == "casa_amor"]
 

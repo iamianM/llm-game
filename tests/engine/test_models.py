@@ -35,10 +35,11 @@ def test_game_state_forbids_extra_fields() -> None:
         GameState.model_validate(payload)
 
 
-def test_player_stats_rejects_budget_over_30() -> None:
-    """The starting stat allocation cannot exceed the 30-point budget."""
-    with pytest.raises(ValidationError):
-        PlayerStats(charm=9, banter=9, eq=6, graft=6, loyalty=6)
+def test_player_stats_allows_runtime_growth_above_starting_budget() -> None:
+    """Runtime stat growth can exceed the starting 30-point creation budget."""
+    stats = PlayerStats(charm=9, banter=9, eq=6, graft=6, loyalty=6)
+
+    assert stats.charm + stats.banter + stats.eq + stats.graft + stats.loyalty == 36
 
 
 def test_new_game_assigns_personality_per_npc() -> None:

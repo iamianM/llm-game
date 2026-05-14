@@ -67,6 +67,6 @@ def test_ceremony_memory_is_witnessed() -> None:
     state.day = 3
     state.phase = Phase.EVENING
 
-    run_turn(state, PlayerAction(kind=ActionKind.ADVANCE_PHASE), SeededRng(1))
+    run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
 
     assert any(memory.source == "witnessed" for memory in state.player.memories)

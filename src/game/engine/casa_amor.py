@@ -110,12 +110,31 @@ def return_ceremony(state: GameState) -> CeremonyEvent | None:
         return None
     state.villa = VillaName.MAIN
     state.location_id = Location.POOL
+    npc_couples = [
+        couple
+        for couple in state.couples
+        if "player" not in {couple.partner_a_id, couple.partner_b_id}
+    ]
     if casa.player_decision is CasaDecision.RETURN_WITH_ORIGINAL and casa.original_partner_id is not None:
-        state.couples = [Couple(partner_a_id="player", partner_b_id=casa.original_partner_id, formed_on_day=state.day)]
+        state.couples = [
+            Couple(
+                partner_a_id="player",
+                partner_b_id=casa.original_partner_id,
+                formed_on_day=state.day,
+                formed_via="casa_return",
+            )
+        ] + npc_couples
     elif casa.player_decision is CasaDecision.RETURN_WITH_NEW and casa.chosen_partner_id is not None:
-        state.couples = [Couple(partner_a_id="player", partner_b_id=casa.chosen_partner_id, formed_on_day=state.day)]
+        state.couples = [
+            Couple(
+                partner_a_id="player",
+                partner_b_id=casa.chosen_partner_id,
+                formed_on_day=state.day,
+                formed_via="casa_return",
+            )
+        ] + npc_couples
     else:
-        state.couples = [couple for couple in state.couples if "player" not in {couple.partner_a_id, couple.partner_b_id}]
+        state.couples = npc_couples
     for islander in state.islanders:
         if not islander.eliminated:
             islander.location_id = Location.POOL
