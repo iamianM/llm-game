@@ -166,6 +166,7 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Player gender: {context.player_gender}",
             f"Islander gender: {context.npc_gender}",
             f"Name: {context.npc_name}",
+            "Conversation partner: the player. The Islander is replying to the player, not to themselves.",
             f"Backstory: {context.npc_backstory}",
             f"Internal persona summary: {context.npc_persona_summary}",
             f"Archetype voice: {context.archetype_prose}",

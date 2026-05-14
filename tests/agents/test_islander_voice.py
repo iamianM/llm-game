@@ -112,6 +112,31 @@ def test_islander_voice_retries_after_validation_failure() -> None:
     assert "2" not in exchange.player_dialogue
 
 
+def test_islander_voice_rejects_self_vocative() -> None:
+    state = new_game(1)
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+    context = islander_voice_context(state, result)
+    exchange = Exchange(
+        player_dialogue="I worry I have to keep being funny or I will fade into the background.",
+        npc_dialogue=(
+            "*eyes soften* Chloe, I get that. You do not have to be switched on all the time."
+        ),
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    with pytest.raises(ValueError, match="own name"):
+        validate_exchange(exchange, context)
+
+
 @pytest.mark.llm
 def test_islander_voice_avoids_meta_talk() -> None:
     state = new_game(1)

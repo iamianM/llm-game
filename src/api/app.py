@@ -150,7 +150,7 @@ async def submit_turn_stream(session_id: str, req: TurnRequest) -> StreamingResp
         exchange = response.exchange
         yield sse("turn_start", {"turn": turn.state.turn_index, "phase": turn.state.phase.value}, event_id=1)
         if exchange is not None:
-            yield sse("dialogue_start", {"speaker": exchange.speaker_id, "speaker_name": exchange.speaker_name}, event_id=2)
+            yield sse("dialogue_start", {"speaker": _exchange_speaker_id(turn), "speaker_name": exchange.speaker_name}, event_id=2)
             async for chunk in chunk_text(exchange.npc_dialogue):
                 yield sse("dialogue_chunk", {"text": chunk})
             yield sse("dialogue_end", {"mood_after": exchange.npc_mood_after}, event_id=3)
@@ -222,7 +222,7 @@ def _run_turn(session: GameSession, req: TurnRequest) -> TurnResult:
         action.kind.value,
         action.target_id,
         action.intent_id,
-        None if turn.exchange is None else turn.exchange.speaker_id,
+        None if turn.exchange is None else _exchange_speaker_id(turn),
         ",".join(str(event.kind) for event in turn.ceremony_events) or "-",
         turn.state.active_conversation.target_id if turn.state.active_conversation else None,
         turn.state_hash,
@@ -244,6 +244,12 @@ def _turn_response(session_id: str, turn: TurnResult) -> TurnResponse:
         background_activity=[_translated_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues],
         state_hash=turn.state_hash,
     )
+
+
+def _exchange_speaker_id(turn: TurnResult) -> str | None:
+    if turn.exchange is None:
+        return None
+    return turn.mechanical_result.action.target_id
 
 
 def _session_or_404(session_id: str) -> GameSession:
