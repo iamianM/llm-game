@@ -501,3 +501,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Tests added: regression coverage that assembled follow-up menus accept specific longer labels
 - QA result: focused `ruff` and non-LLM Contextual Options tests green
 - Validation note: fixes the real-LLM autopilot crash where the assembled menu validator rejected specific seven-word labels after bespoke validation accepted them
+
+## Phase 5.0.1: knowledge foundation cleanup
+
+- Files added: none
+- Files changed: curated Trait Cards now carry 6-10 flavor facts per Heartbreaker, couple formation reveals partner surface facts, follow-up wheels continue fact reveal progression, and real Trait Generator parsing/retry logic is hardened for live model output
+- Tests added: partner surface fact reveal on First Spark and proposal couples, gossip fact sharing, follow-up reveal tier coverage, and curated/Heart Throb flavor trait depth checks
+- QA result: `make qa` green (329 passed, 49 deselected), API/static checks green, web `type-check`, `lint`, production `build`, and Playwright suite green (7 passed)
+- Validation note: generated a real-model Trait Card audit at `.game_traces/phase5-real-trait-cards-seed-90505.json`; all 8 opening Heartbreakers had distinct `secret_engine` values and 9 flavor traits

@@ -5,11 +5,14 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.trait_generator import mock_opening_trait_cards, validate_trait_cards
+from src.game.content.trait_library import heart_throb_trait_cards
 
 
 def test_mock_trait_cards_validate() -> None:
     cards = mock_opening_trait_cards()
     validate_trait_cards(cards)
+    assert all(len(card.flavor_traits) >= 6 for card in cards.values())
+    assert all(len(card.flavor_traits) >= 6 for card in heart_throb_trait_cards().values())
     assert len(cards) == 8
 
 

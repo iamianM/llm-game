@@ -11,28 +11,163 @@
         "one_line": "26. Liverpool primary teacher. Easy-going on the surface. Has left every relationship before the other person could.",
         "voice_notes": "uses love and mate to keep things light; laughs when tension rises; goes still when topics get real",
         "history": "Grew up the middle child of three, the easy one her parents could rely on. Trained as a teacher because it felt safe and useful. Has ended three serious relationships, once the day before a proposal, and tells herself she just had not met the right person.\n\nLives with her pregnant older sister. Watching her sister build a life has made Chloe quietly ache for a brave choice of her own.",
-        "contradictions": ["warm but guarded", "loyal but afraid to be chosen back", "easy-going outside and exhausted inside"],
+        "contradictions": [
+          "warm but guarded",
+          "loyal but afraid to be chosen back",
+          "easy-going outside and exhausted inside"
+        ],
         "secret_engine": "she abandons people first to avoid being abandoned"
       },
       "core_traits": {
-        "occupation": {"value": "primary school teacher", "distractors": ["nurse", "junior solicitor", "social media manager"], "tier": 1},
-        "hometown": {"value": "Liverpool", "distractors": ["Manchester", "Birmingham", "Newcastle"], "tier": 1},
-        "age": {"value": "26", "distractors": ["24", "28", "29"], "tier": 1},
-        "favorite_food": {"value": "her gran's scouse stew", "distractors": ["sushi", "Thai curry", "Sunday roast"], "tier": 2},
-        "hobby": {"value": "reading romance novels she hides behind literary covers", "distractors": ["running", "pottery", "K-drama marathons"], "tier": 2},
-        "drink_of_choice": {"value": "white wine in a huge glass", "distractors": ["espresso martini", "Aperol spritz", "gin and tonic"], "tier": 2},
-        "biggest_fear": {"value": "being chosen and then unchosen", "distractors": ["being alone forever", "intimacy", "being boring"], "tier": 3},
-        "love_language": {"value": "words of affirmation because she needs to know where she stands", "distractors": ["physical touch", "acts of service", "quality time"], "tier": 3},
-        "worst_habit": {"value": "ghosting when things start getting real", "distractors": ["testing people with arguments", "agreeing to fake plans", "shutting down mid-conversation"], "tier": 3},
-        "pet_peeve": {"value": "people who do not say thank you to waitstaff", "distractors": ["loud chewers", "tardiness", "phones at dinner"], "tier": 3},
-        "insecurity": {"value": "everyone leaves once they really know her", "distractors": ["she is too much", "she is not enough", "she is boring"], "tier": 4},
-        "past_heartbreak": {"value": "ended a three-year relationship the night before he planned to propose", "distractors": ["was cheated on at nineteen", "fell for her best friend's brother", "had a fiance vanish"], "tier": 4},
-        "hidden_secret": {"value": "she found the ring in his sock drawer and panicked before he could ask", "distractors": ["she still texts that ex", "she lied about her age", "she has called off two engagements"], "tier": 4}
+        "occupation": {
+          "value": "primary school teacher",
+          "distractors": [
+            "nurse",
+            "junior solicitor",
+            "social media manager"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Liverpool",
+          "distractors": [
+            "Manchester",
+            "Birmingham",
+            "Newcastle"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "26",
+          "distractors": [
+            "24",
+            "28",
+            "29"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "her gran's scouse stew",
+          "distractors": [
+            "sushi",
+            "Thai curry",
+            "Sunday roast"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "reading romance novels she hides behind literary covers",
+          "distractors": [
+            "running",
+            "pottery",
+            "K-drama marathons"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "white wine in a huge glass",
+          "distractors": [
+            "espresso martini",
+            "Aperol spritz",
+            "gin and tonic"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being chosen and then unchosen",
+          "distractors": [
+            "being alone forever",
+            "intimacy",
+            "being boring"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "words of affirmation because she needs to know where she stands",
+          "distractors": [
+            "physical touch",
+            "acts of service",
+            "quality time"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "ghosting when things start getting real",
+          "distractors": [
+            "testing people with arguments",
+            "agreeing to fake plans",
+            "shutting down mid-conversation"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who do not say thank you to waitstaff",
+          "distractors": [
+            "loud chewers",
+            "tardiness",
+            "phones at dinner"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "everyone leaves once they really know her",
+          "distractors": [
+            "she is too much",
+            "she is not enough",
+            "she is boring"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "ended a three-year relationship the night before he planned to propose",
+          "distractors": [
+            "was cheated on at nineteen",
+            "fell for her best friend's brother",
+            "had a fiance vanish"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "she found the ring in his sock drawer and panicked before he could ask",
+          "distractors": [
+            "she still texts that ex",
+            "she lied about her age",
+            "she has called off two engagements"
+          ],
+          "tier": 4
+        }
       },
       "flavor_traits": {
-        "karaoke_song": {"value": "Stay by Rihanna every time", "tier": 0, "mechanical": false},
-        "comfort_show": {"value": "Gavin and Stacey", "tier": 0, "mechanical": false},
-        "unexpected_skill": {"value": "shockingly good at darts", "tier": 0, "mechanical": false}
+        "karaoke_song": {
+          "value": "Stay by Rihanna every time",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "Gavin and Stacey",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "shockingly good at darts",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "rearranges her classroom reading corner when she cannot sleep",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a tiny ceramic apple from her first class",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "touches her necklace when she wants to leave a conversation",
+          "tier": 0,
+          "mechanical": false
+        }
       }
     },
     {
@@ -45,28 +180,163 @@
         "one_line": "24. Bristol marketing exec. Will roast you before breakfast. Has not cried in front of anyone in years.",
         "voice_notes": "constant low-key bits; never lets a serious beat sit; pivots when intimacy approaches",
         "history": "Youngest of four and funny by survival. She learned early that the loud room notices you only if you can make it laugh.\n\nAt eighteen she fell in love with her best friend, wrote him a letter before his wedding, and never sent it. She says she has never been in love because saying otherwise would make it real.",
-        "contradictions": ["funniest in the room and the loneliest", "deflects intimacy but craves it", "everyone's friend and no one's confidant"],
+        "contradictions": [
+          "funniest in the room and the loneliest",
+          "deflects intimacy but craves it",
+          "everyone's friend and no one's confidant"
+        ],
         "secret_engine": "humor is how she keeps people at a comfortable distance"
       },
       "core_traits": {
-        "occupation": {"value": "marketing exec at a sustainable fashion brand", "distractors": ["stand-up comic", "barista", "PR assistant"], "tier": 1},
-        "hometown": {"value": "Bristol", "distractors": ["Cardiff", "Brighton", "Nottingham"], "tier": 1},
-        "age": {"value": "24", "distractors": ["22", "26", "27"], "tier": 1},
-        "favorite_food": {"value": "petrol station meal deal at two in the morning", "distractors": ["sushi", "lasagna", "tapas"], "tier": 2},
-        "hobby": {"value": "competitive pub quizzes with a team she captains", "distractors": ["yoga", "DJing", "running"], "tier": 2},
-        "drink_of_choice": {"value": "tequila straight with no chaser", "distractors": ["white wine", "Aperol spritz", "vodka soda"], "tier": 2},
-        "biggest_fear": {"value": "someone seeing her actually upset", "distractors": ["being boring", "being alone", "not being funny"], "tier": 3},
-        "love_language": {"value": "quality time where she does not have to perform", "distractors": ["words of affirmation", "acts of service", "physical touch"], "tier": 3},
-        "worst_habit": {"value": "making a joke right when someone tries to be vulnerable", "distractors": ["ghosting", "starting arguments for the bit", "double-texting"], "tier": 3},
-        "pet_peeve": {"value": "people who laugh at their own jokes mid-telling", "distractors": ["loud chewers", "bad tippers", "lateness"], "tier": 3},
-        "insecurity": {"value": "if she stops being funny no one will stay", "distractors": ["she is not deep", "she is too much", "she is not attractive"], "tier": 4},
-        "past_heartbreak": {"value": "fell for her best friend who married someone else", "distractors": ["was cheated on at twenty", "called off an engagement", "lost a first love"], "tier": 4},
-        "hidden_secret": {"value": "still has the unsent letter in her bedside drawer", "distractors": ["she is secretly in therapy", "she lied about her age", "she still calls her ex"], "tier": 4}
+        "occupation": {
+          "value": "marketing exec at a sustainable fashion brand",
+          "distractors": [
+            "stand-up comic",
+            "barista",
+            "PR assistant"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Bristol",
+          "distractors": [
+            "Cardiff",
+            "Brighton",
+            "Nottingham"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "24",
+          "distractors": [
+            "22",
+            "26",
+            "27"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "petrol station meal deal at two in the morning",
+          "distractors": [
+            "sushi",
+            "lasagna",
+            "tapas"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "competitive pub quizzes with a team she captains",
+          "distractors": [
+            "yoga",
+            "DJing",
+            "running"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "tequila straight with no chaser",
+          "distractors": [
+            "white wine",
+            "Aperol spritz",
+            "vodka soda"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "someone seeing her actually upset",
+          "distractors": [
+            "being boring",
+            "being alone",
+            "not being funny"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "quality time where she does not have to perform",
+          "distractors": [
+            "words of affirmation",
+            "acts of service",
+            "physical touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "making a joke right when someone tries to be vulnerable",
+          "distractors": [
+            "ghosting",
+            "starting arguments for the bit",
+            "double-texting"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who laugh at their own jokes mid-telling",
+          "distractors": [
+            "loud chewers",
+            "bad tippers",
+            "lateness"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "if she stops being funny no one will stay",
+          "distractors": [
+            "she is not deep",
+            "she is too much",
+            "she is not attractive"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "fell for her best friend who married someone else",
+          "distractors": [
+            "was cheated on at twenty",
+            "called off an engagement",
+            "lost a first love"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "still has the unsent letter in her bedside drawer",
+          "distractors": [
+            "she is secretly in therapy",
+            "she lied about her age",
+            "she still calls her ex"
+          ],
+          "tier": 4
+        }
       },
       "flavor_traits": {
-        "karaoke_song": {"value": "Hot N Cold with full choreography", "tier": 0, "mechanical": false},
-        "unexpected_skill": {"value": "school chess champion", "tier": 0, "mechanical": false},
-        "irrational_food_opinion": {"value": "cold pizza is superior pizza", "tier": 0, "mechanical": false}
+        "karaoke_song": {
+          "value": "Hot N Cold with full choreography",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "school chess champion",
+          "tier": 0,
+          "mechanical": false
+        },
+        "irrational_food_opinion": {
+          "value": "cold pizza is superior pizza",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "Taskmaster clips watched under a blanket",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "the unsent letter folded inside a cookbook",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "starts doing impressions when she is close to crying",
+          "tier": 0,
+          "mechanical": false
+        }
       }
     },
     {
@@ -79,27 +349,163 @@
         "one_line": "27. Galway paramedic. The calming presence everyone leans on. Quietly convinced he is no one's first choice.",
         "voice_notes": "gentle, dry, practical; notices everything and asks follow-up questions softly",
         "history": "Liam built his life around being useful in crisis. Work taught him how to stay calm, but it also taught him to tuck his own fear away until no one was watching.\n\nHe has been the dependable friend in every almost-romance. He came to Sunset Bay because one of those friends told him to stop applying for the supporting role.",
-        "contradictions": ["steady but starving for certainty", "observant but evasive about himself", "kind but resentful of being only kind"],
+        "contradictions": [
+          "steady but starving for certainty",
+          "observant but evasive about himself",
+          "kind but resentful of being only kind"
+        ],
         "secret_engine": "always the friend and never the chosen one"
       },
       "core_traits": {
-        "occupation": {"value": "paramedic", "distractors": ["firefighter", "teacher", "physio"], "tier": 1},
-        "hometown": {"value": "Galway", "distractors": ["Cork", "Dublin", "Belfast"], "tier": 1},
-        "age": {"value": "27", "distractors": ["25", "28", "30"], "tier": 1},
-        "favorite_food": {"value": "buttered toast after night shifts", "distractors": ["ramen", "steak", "fish tacos"], "tier": 2},
-        "hobby": {"value": "restoring old bicycles", "distractors": ["football", "DJing", "boxing"], "tier": 2},
-        "drink_of_choice": {"value": "black coffee gone lukewarm", "distractors": ["lager", "negroni", "whiskey sour"], "tier": 2},
-        "biggest_fear": {"value": "being useful but not wanted", "distractors": ["failure", "being alone", "public speaking"], "tier": 3},
-        "love_language": {"value": "acts of service that he wishes someone would return", "distractors": ["gifts", "words of affirmation", "physical touch"], "tier": 3},
-        "worst_habit": {"value": "saying he is fine until resentment leaks out", "distractors": ["interrupting", "over-spending", "jealous texting"], "tier": 3},
-        "pet_peeve": {"value": "people who are rude to cleaners", "distractors": ["lateness", "messy kitchens", "fake tans"], "tier": 3},
-        "insecurity": {"value": "he is only lovable when needed", "distractors": ["he is too quiet", "he is too soft", "he is boring"], "tier": 4},
-        "past_heartbreak": {"value": "his best mate kissed him once then called it a mistake", "distractors": ["was left at an altar", "was cheated on twice", "lost touch with a holiday romance"], "tier": 4},
-        "hidden_secret": {"value": "he still keeps her old voicemail because it is the only time she sounded sure", "distractors": ["he quit medicine once", "he has a child", "he lied about being single"], "tier": 4}
+        "occupation": {
+          "value": "paramedic",
+          "distractors": [
+            "firefighter",
+            "teacher",
+            "physio"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Galway",
+          "distractors": [
+            "Cork",
+            "Dublin",
+            "Belfast"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "27",
+          "distractors": [
+            "25",
+            "28",
+            "30"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "buttered toast after night shifts",
+          "distractors": [
+            "ramen",
+            "steak",
+            "fish tacos"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "restoring old bicycles",
+          "distractors": [
+            "football",
+            "DJing",
+            "boxing"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "black coffee gone lukewarm",
+          "distractors": [
+            "lager",
+            "negroni",
+            "whiskey sour"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being useful but not wanted",
+          "distractors": [
+            "failure",
+            "being alone",
+            "public speaking"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "acts of service that he wishes someone would return",
+          "distractors": [
+            "gifts",
+            "words of affirmation",
+            "physical touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "saying he is fine until resentment leaks out",
+          "distractors": [
+            "interrupting",
+            "over-spending",
+            "jealous texting"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who are rude to cleaners",
+          "distractors": [
+            "lateness",
+            "messy kitchens",
+            "fake tans"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "he is only lovable when needed",
+          "distractors": [
+            "he is too quiet",
+            "he is too soft",
+            "he is boring"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "his best mate kissed him once then called it a mistake",
+          "distractors": [
+            "was left at an altar",
+            "was cheated on twice",
+            "lost touch with a holiday romance"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "he still keeps her old voicemail because it is the only time she sounded sure",
+          "distractors": [
+            "he quit medicine once",
+            "he has a child",
+            "he lied about being single"
+          ],
+          "tier": 4
+        }
       },
       "flavor_traits": {
-        "comfort_show": {"value": "old wildlife documentaries", "tier": 0, "mechanical": false},
-        "unexpected_skill": {"value": "can fix almost any zip", "tier": 0, "mechanical": false}
+        "comfort_show": {
+          "value": "old wildlife documentaries",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can fix almost any zip",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "The Scientist sung too quietly",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a cracked bicycle bell from his dad",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "checks everyone has water before admitting he is tired",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "oils bike chains while listening to old radio dramas",
+          "tier": 0,
+          "mechanical": false
+        }
       }
     },
     {
@@ -112,25 +518,164 @@
         "one_line": "28. London events producer. Runs every room like a schedule. Terrified of needing anyone.",
         "voice_notes": "precise, teasing, decisive; softens only after she has tested the ground",
         "history": "Sophie grew up around adults who confused chaos with passion, so she became the itinerary. Her career rewards that control and so have most of her relationships, until they suddenly did not.\n\nShe came to prove she can be spontaneous. She has packed three backup outfits for every possible kind of spontaneity.",
-        "contradictions": ["commanding but touch-starved", "glamorous but practical", "controlled but attracted to disruption"],
+        "contradictions": [
+          "commanding but touch-starved",
+          "glamorous but practical",
+          "controlled but attracted to disruption"
+        ],
         "secret_engine": "controls intimacy by setting all the terms"
       },
       "core_traits": {
-        "occupation": {"value": "luxury events producer", "distractors": ["fashion buyer", "barrister", "hotel manager"], "tier": 1},
-        "hometown": {"value": "London", "distractors": ["Bath", "Leeds", "Oxford"], "tier": 1},
-        "age": {"value": "28", "distractors": ["25", "27", "30"], "tier": 1},
-        "favorite_food": {"value": "truffle chips eaten standing in a kitchen", "distractors": ["oysters", "pasta", "sushi"], "tier": 2},
-        "hobby": {"value": "planning trips she may never take", "distractors": ["pilates", "painting", "horse riding"], "tier": 2},
-        "drink_of_choice": {"value": "dirty martini with extra olives", "distractors": ["rose", "margarita", "gin and tonic"], "tier": 2},
-        "biggest_fear": {"value": "wanting someone more than they want her", "distractors": ["looking foolish", "losing control", "being ordinary"], "tier": 3},
-        "love_language": {"value": "quality time that she pretends is logistics", "distractors": ["gifts", "acts of service", "physical touch"], "tier": 3},
-        "worst_habit": {"value": "turning tenderness into a performance review", "distractors": ["silent treatment", "over-flirting", "being late"], "tier": 3},
-        "pet_peeve": {"value": "people who say maybe instead of no", "distractors": ["bad shoes", "small talk", "loud chewing"], "tier": 3},
-        "insecurity": {"value": "if she is not impressive she is disposable", "distractors": ["she is too intense", "she is not pretty enough", "she is too old"], "tier": 4},
-        "past_heartbreak": {"value": "her ex called her efficient and meant it as an insult", "distractors": ["he cheated at her birthday", "she was ghosted", "she left someone at the altar"], "tier": 4},
-        "hidden_secret": {"value": "she once hired a private coach to learn how to cry on command and still could not", "distractors": ["she faked a proposal", "she has massive debt", "she sabotaged an ex"], "tier": 4}
+        "occupation": {
+          "value": "luxury events producer",
+          "distractors": [
+            "fashion buyer",
+            "barrister",
+            "hotel manager"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "London",
+          "distractors": [
+            "Bath",
+            "Leeds",
+            "Oxford"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "28",
+          "distractors": [
+            "25",
+            "27",
+            "30"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "truffle chips eaten standing in a kitchen",
+          "distractors": [
+            "oysters",
+            "pasta",
+            "sushi"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "planning trips she may never take",
+          "distractors": [
+            "pilates",
+            "painting",
+            "horse riding"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "dirty martini with extra olives",
+          "distractors": [
+            "rose",
+            "margarita",
+            "gin and tonic"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "wanting someone more than they want her",
+          "distractors": [
+            "looking foolish",
+            "losing control",
+            "being ordinary"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "quality time that she pretends is logistics",
+          "distractors": [
+            "gifts",
+            "acts of service",
+            "physical touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "turning tenderness into a performance review",
+          "distractors": [
+            "silent treatment",
+            "over-flirting",
+            "being late"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who say maybe instead of no",
+          "distractors": [
+            "bad shoes",
+            "small talk",
+            "loud chewing"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "if she is not impressive she is disposable",
+          "distractors": [
+            "she is too intense",
+            "she is not pretty enough",
+            "she is too old"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "her ex called her efficient and meant it as an insult",
+          "distractors": [
+            "he cheated at her birthday",
+            "she was ghosted",
+            "she left someone at the altar"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "she once hired a private coach to learn how to cry on command and still could not",
+          "distractors": [
+            "she faked a proposal",
+            "she has massive debt",
+            "she sabotaged an ex"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"unexpected_skill": {"value": "can fold a fitted sheet perfectly", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "unexpected_skill": {
+          "value": "can fold a fitted sheet perfectly",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Murder on the Dancefloor with lethal eye contact",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "Grand Designs because disaster has a schedule",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a monogrammed planner full of crossed-out ex names",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "straightens cushions when she wants to be touched",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "builds fantasy itineraries for cities she will not visit",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "nia_start",
@@ -142,25 +687,164 @@
         "one_line": "25. Birmingham florist. Makes everything beautiful. Secretly believes beauty is the only thing that keeps people looking.",
         "voice_notes": "gentle, image-rich, quietly funny; apologizes before saying direct things",
         "history": "Nia grew up in the back room of her auntie's flower shop, learning how to make bruised petals look intentional. She is very good at arrangements and worse at admitting when something is dying.\n\nHer last relationship was a slow fade she decorated until it looked like romance. She came to stop mistaking pretty for safe.",
-        "contradictions": ["soft but stubborn", "romantic but avoidant of conflict", "generous but quietly measuring effort"],
+        "contradictions": [
+          "soft but stubborn",
+          "romantic but avoidant of conflict",
+          "generous but quietly measuring effort"
+        ],
         "secret_engine": "over-gives so she feels needed"
       },
       "core_traits": {
-        "occupation": {"value": "florist", "distractors": ["baker", "nursery nurse", "makeup artist"], "tier": 1},
-        "hometown": {"value": "Birmingham", "distractors": ["Coventry", "Leicester", "Derby"], "tier": 1},
-        "age": {"value": "25", "distractors": ["23", "26", "28"], "tier": 1},
-        "favorite_food": {"value": "jollof rice from her auntie's Sunday pot", "distractors": ["pizza", "pad thai", "falafel"], "tier": 2},
-        "hobby": {"value": "pressing flowers into old books", "distractors": ["netball", "baking", "vlogging"], "tier": 2},
-        "drink_of_choice": {"value": "elderflower gin fizz", "distractors": ["red wine", "rum punch", "lager"], "tier": 2},
-        "biggest_fear": {"value": "being easy to replace once the effort stops", "distractors": ["being too emotional", "public failure", "being alone"], "tier": 3},
-        "love_language": {"value": "gifts with tiny remembered details", "distractors": ["words", "touch", "acts of service"], "tier": 3},
-        "worst_habit": {"value": "giving more after she should ask for more", "distractors": ["jealous jokes", "silent treatment", "oversharing"], "tier": 3},
-        "pet_peeve": {"value": "people who call flowers a waste of money", "distractors": ["bad manners", "late replies", "loud music"], "tier": 3},
-        "insecurity": {"value": "she is decoration, not the main reason someone stays", "distractors": ["she is boring", "she is clingy", "she is naive"], "tier": 4},
-        "past_heartbreak": {"value": "planned a surprise anniversary for someone already planning to leave", "distractors": ["was cheated on", "was left abroad", "lost a childhood sweetheart"], "tier": 4},
-        "hidden_secret": {"value": "she still has the unused anniversary menu folded in her purse", "distractors": ["she lied about her job", "she owes her auntie money", "she kissed an ex last month"], "tier": 4}
+        "occupation": {
+          "value": "florist",
+          "distractors": [
+            "baker",
+            "nursery nurse",
+            "makeup artist"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Birmingham",
+          "distractors": [
+            "Coventry",
+            "Leicester",
+            "Derby"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "25",
+          "distractors": [
+            "23",
+            "26",
+            "28"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "jollof rice from her auntie's Sunday pot",
+          "distractors": [
+            "pizza",
+            "pad thai",
+            "falafel"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "pressing flowers into old books",
+          "distractors": [
+            "netball",
+            "baking",
+            "vlogging"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "elderflower gin fizz",
+          "distractors": [
+            "red wine",
+            "rum punch",
+            "lager"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being easy to replace once the effort stops",
+          "distractors": [
+            "being too emotional",
+            "public failure",
+            "being alone"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "gifts with tiny remembered details",
+          "distractors": [
+            "words",
+            "touch",
+            "acts of service"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "giving more after she should ask for more",
+          "distractors": [
+            "jealous jokes",
+            "silent treatment",
+            "oversharing"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who call flowers a waste of money",
+          "distractors": [
+            "bad manners",
+            "late replies",
+            "loud music"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "she is decoration, not the main reason someone stays",
+          "distractors": [
+            "she is boring",
+            "she is clingy",
+            "she is naive"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "planned a surprise anniversary for someone already planning to leave",
+          "distractors": [
+            "was cheated on",
+            "was left abroad",
+            "lost a childhood sweetheart"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "she still has the unused anniversary menu folded in her purse",
+          "distractors": [
+            "she lied about her job",
+            "she owes her auntie money",
+            "she kissed an ex last month"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"comfort_show": {"value": "Bake Off reruns", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "comfort_show": {
+          "value": "Bake Off reruns",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Put Your Records On with no irony",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can braid hair in complicated patterns from memory",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a voice note from her little cousin saved as a ringtone",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "over-offers tea when she feels unwanted",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "writes postcards and forgets to send them",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "marcus_start",
@@ -172,25 +856,164 @@
         "one_line": "29. Manchester sales lead. Will fix everyone else's problems before his own. Does not know how to receive.",
         "voice_notes": "leads conversations, asks too many questions, says I got you, deflects compliments with action",
         "history": "Raised by a single mum who worked nights, Marcus became the man of the house before he became a teenager. That role hardened into a career and a dating pattern.\n\nHe is promoted, useful, admired, and almost impossible to care for. He came because a colleague called him emotionally locked and he has been trying not to prove her right.",
-        "contradictions": ["confident but uncomfortable being cared for", "generous but bad at vulnerability", "wants love but does not know what receiving looks like"],
+        "contradictions": [
+          "confident but uncomfortable being cared for",
+          "generous but bad at vulnerability",
+          "wants love but does not know what receiving looks like"
+        ],
         "secret_engine": "he needs to be the most useful person in any room"
       },
       "core_traits": {
-        "occupation": {"value": "sales lead at a logistics startup", "distractors": ["personal trainer", "investment banker", "tech recruiter"], "tier": 1},
-        "hometown": {"value": "Manchester", "distractors": ["Leeds", "Sheffield", "Glasgow"], "tier": 1},
-        "age": {"value": "29", "distractors": ["27", "31", "32"], "tier": 1},
-        "favorite_food": {"value": "his mum's chicken curry", "distractors": ["steak", "ramen", "protein shake"], "tier": 2},
-        "hobby": {"value": "weightlifting and watercolor painting", "distractors": ["football", "rock climbing", "DJing"], "tier": 2},
-        "drink_of_choice": {"value": "old fashioned", "distractors": ["IPA", "espresso martini", "tequila soda"], "tier": 2},
-        "biggest_fear": {"value": "being seen as unnecessary", "distractors": ["losing control", "being alone", "failing at love"], "tier": 3},
-        "love_language": {"value": "acts of service but only giving", "distractors": ["physical touch", "quality time", "gifts"], "tier": 3},
-        "worst_habit": {"value": "giving unsolicited advice when overwhelmed", "distractors": ["overcommitting", "arguing to win", "interrupting"], "tier": 3},
-        "pet_peeve": {"value": "people who do not tip", "distractors": ["lateness", "indecision", "bad driving"], "tier": 3},
-        "insecurity": {"value": "if he is not earning his place he will not keep it", "distractors": ["he is boring", "he peaked already", "he is not romantic"], "tier": 4},
-        "past_heartbreak": {"value": "an ex called him a good project but not a partner", "distractors": ["was cheated on", "was ghosted after a year", "lost a fiancee"], "tier": 4},
-        "hidden_secret": {"value": "sleeps four hours a night and runs on caffeine and dread", "distractors": ["hides therapy", "sends half his salary home", "writes to his father"], "tier": 4}
+        "occupation": {
+          "value": "sales lead at a logistics startup",
+          "distractors": [
+            "personal trainer",
+            "investment banker",
+            "tech recruiter"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Manchester",
+          "distractors": [
+            "Leeds",
+            "Sheffield",
+            "Glasgow"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "29",
+          "distractors": [
+            "27",
+            "31",
+            "32"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "his mum's chicken curry",
+          "distractors": [
+            "steak",
+            "ramen",
+            "protein shake"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "weightlifting and watercolor painting",
+          "distractors": [
+            "football",
+            "rock climbing",
+            "DJing"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "old fashioned",
+          "distractors": [
+            "IPA",
+            "espresso martini",
+            "tequila soda"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being seen as unnecessary",
+          "distractors": [
+            "losing control",
+            "being alone",
+            "failing at love"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "acts of service but only giving",
+          "distractors": [
+            "physical touch",
+            "quality time",
+            "gifts"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "giving unsolicited advice when overwhelmed",
+          "distractors": [
+            "overcommitting",
+            "arguing to win",
+            "interrupting"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who do not tip",
+          "distractors": [
+            "lateness",
+            "indecision",
+            "bad driving"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "if he is not earning his place he will not keep it",
+          "distractors": [
+            "he is boring",
+            "he peaked already",
+            "he is not romantic"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "an ex called him a good project but not a partner",
+          "distractors": [
+            "was cheated on",
+            "was ghosted after a year",
+            "lost a fiancee"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "sleeps four hours a night and runs on caffeine and dread",
+          "distractors": [
+            "hides therapy",
+            "sends half his salary home",
+            "writes to his father"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"karaoke_song": {"value": "Mr Brightside with full conviction", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "karaoke_song": {
+          "value": "Mr Brightside with full conviction",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "old boxing documentaries",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can cook one perfect jerk salmon",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a dog-eared coaching whistle from his first youth team",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "gets louder when he feels replaceable",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "rewatches match clips and calls it analysis",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "blake_start",
@@ -202,25 +1025,164 @@
         "one_line": "26. York radio producer. Dry wit, careful heart. Wants to be picked before he has to audition.",
         "voice_notes": "quiet punchlines, warm pauses, asks permission before being sincere",
         "history": "Blake makes other people sound good for a living. He edits hesitation out of interviews and wishes someone could do that for him.\n\nHe has been the almost-boyfriend twice, the person people call safe while choosing louder men. He is here to stop being safe on demand.",
-        "contradictions": ["funny but self-protective", "romantic but allergic to grand gestures", "steady but tired of waiting"],
+        "contradictions": [
+          "funny but self-protective",
+          "romantic but allergic to grand gestures",
+          "steady but tired of waiting"
+        ],
         "secret_engine": "scared to want something so he wants nothing loudly"
       },
       "core_traits": {
-        "occupation": {"value": "radio producer", "distractors": ["podcast host", "teacher", "software tester"], "tier": 1},
-        "hometown": {"value": "York", "distractors": ["Hull", "Lincoln", "Durham"], "tier": 1},
-        "age": {"value": "26", "distractors": ["24", "28", "30"], "tier": 1},
-        "favorite_food": {"value": "crisps in a sandwich", "distractors": ["bao buns", "curry", "salad"], "tier": 2},
-        "hobby": {"value": "collecting old radio jingles", "distractors": ["gaming", "climbing", "gardening"], "tier": 2},
-        "drink_of_choice": {"value": "lager with lime", "distractors": ["negroni", "cider", "cola"], "tier": 2},
-        "biggest_fear": {"value": "being someone people settle for", "distractors": ["being single", "being ignored", "being mocked"], "tier": 3},
-        "love_language": {"value": "inside jokes that become private rituals", "distractors": ["gifts", "touch", "acts"], "tier": 3},
-        "worst_habit": {"value": "making himself too easy to lose", "distractors": ["overtexting", "lying", "flirting around"], "tier": 3},
-        "pet_peeve": {"value": "people who talk over quiet people", "distractors": ["mess", "slow walkers", "bad coffee"], "tier": 3},
-        "insecurity": {"value": "he is the pause before someone better arrives", "distractors": ["he is not fit enough", "he is too sarcastic", "he is too needy"], "tier": 4},
-        "past_heartbreak": {"value": "helped an ex plan the date where she ended things", "distractors": ["was cheated on", "was left by text", "was ghosted"], "tier": 4},
-        "hidden_secret": {"value": "he wrote a breakup speech for himself because he knew she would not be kind", "distractors": ["he lied on his application", "he has never dated", "he owes his ex money"], "tier": 4}
+        "occupation": {
+          "value": "radio producer",
+          "distractors": [
+            "podcast host",
+            "teacher",
+            "software tester"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "York",
+          "distractors": [
+            "Hull",
+            "Lincoln",
+            "Durham"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "26",
+          "distractors": [
+            "24",
+            "28",
+            "30"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "crisps in a sandwich",
+          "distractors": [
+            "bao buns",
+            "curry",
+            "salad"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "collecting old radio jingles",
+          "distractors": [
+            "gaming",
+            "climbing",
+            "gardening"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "lager with lime",
+          "distractors": [
+            "negroni",
+            "cider",
+            "cola"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being someone people settle for",
+          "distractors": [
+            "being single",
+            "being ignored",
+            "being mocked"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "inside jokes that become private rituals",
+          "distractors": [
+            "gifts",
+            "touch",
+            "acts"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "making himself too easy to lose",
+          "distractors": [
+            "overtexting",
+            "lying",
+            "flirting around"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who talk over quiet people",
+          "distractors": [
+            "mess",
+            "slow walkers",
+            "bad coffee"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "he is the pause before someone better arrives",
+          "distractors": [
+            "he is not fit enough",
+            "he is too sarcastic",
+            "he is too needy"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "helped an ex plan the date where she ended things",
+          "distractors": [
+            "was cheated on",
+            "was left by text",
+            "was ghosted"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "he wrote a breakup speech for himself because he knew she would not be kind",
+          "distractors": [
+            "he lied on his application",
+            "he has never dated",
+            "he owes his ex money"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"unexpected_skill": {"value": "can identify songs from one drum hit", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "unexpected_skill": {
+          "value": "can identify songs from one drum hit",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Mr. Brightside deliberately half a beat late",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "Detectorists",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a photo booth strip with an ex he calls just a mate",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "makes himself useful before saying what he wants",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "fixes loose screws in furniture nobody asked about",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "jordan_start",
@@ -232,25 +1194,169 @@
         "one_line": "25. Cardiff bartender. Bright grin, restless energy. Thinks being memorable is the same as being loved.",
         "voice_notes": "fast, playful, physical comedy, sincere for half a second then runs",
         "history": "Jordan grew up in a pub where charm got you fed and jokes got you forgiven. He is brilliant at turning a room toward him and bad at knowing what to do when it stays.\n\nHis last relationship ended because every apology became a performance. He came to learn whether he can be enough when he is not entertaining.",
-        "contradictions": ["magnetic but insecure", "generous but attention-hungry", "tender when no one is watching"],
+        "contradictions": [
+          "magnetic but insecure",
+          "generous but attention-hungry",
+          "tender when no one is watching"
+        ],
         "secret_engine": "uses being entertaining as currency"
       },
       "core_traits": {
-        "occupation": {"value": "cocktail bartender", "distractors": ["actor", "fitness coach", "student"], "tier": 1},
-        "hometown": {"value": "Cardiff", "distractors": ["Swansea", "Bristol", "Liverpool"], "tier": 1},
-        "age": {"value": "25", "distractors": ["23", "26", "29"], "tier": 1},
-        "favorite_food": {"value": "chips with curry sauce after close", "distractors": ["pizza", "sushi", "tacos"], "tier": 2},
-        "hobby": {"value": "card tricks he pretends are ironic", "distractors": ["football", "painting", "cycling"], "tier": 2},
-        "drink_of_choice": {"value": "anything with ginger beer", "distractors": ["lager", "martini", "rum and coke"], "tier": 2},
-        "biggest_fear": {"value": "being forgotten the second he leaves the room", "distractors": ["commitment", "failure", "silence"], "tier": 3},
-        "love_language": {"value": "laughter that keeps going after the joke", "distractors": ["gifts", "quality time", "touch"], "tier": 3},
-        "worst_habit": {"value": "turning apologies into a bit", "distractors": ["jealousy", "lateness", "overspending"], "tier": 3},
-        "pet_peeve": {"value": "people who are cruel to shy people", "distractors": ["bad dancers", "cheap tippers", "mess"], "tier": 3},
-        "insecurity": {"value": "without the performance there is nothing to choose", "distractors": ["he is short", "he is too loud", "he is not clever"], "tier": 4},
-        "past_heartbreak": {"value": "his ex said dating him felt like being in the audience", "distractors": ["she cheated", "she moved away", "she picked his friend"], "tier": 4},
-        "hidden_secret": {"value": "he has panic attacks before hosting nights and calls them pre-show buzz", "distractors": ["he has a secret child", "he faked his job", "he still lives with an ex"], "tier": 4}
+        "occupation": {
+          "value": "cocktail bartender",
+          "distractors": [
+            "actor",
+            "fitness coach",
+            "student"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Cardiff",
+          "distractors": [
+            "Swansea",
+            "Bristol",
+            "Liverpool"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "25",
+          "distractors": [
+            "23",
+            "26",
+            "29"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "chips with curry sauce after close",
+          "distractors": [
+            "pizza",
+            "sushi",
+            "tacos"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "card tricks he pretends are ironic",
+          "distractors": [
+            "football",
+            "painting",
+            "cycling"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "anything with ginger beer",
+          "distractors": [
+            "lager",
+            "martini",
+            "rum and coke"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being forgotten the second he leaves the room",
+          "distractors": [
+            "commitment",
+            "failure",
+            "silence"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "laughter that keeps going after the joke",
+          "distractors": [
+            "gifts",
+            "quality time",
+            "touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "turning apologies into a bit",
+          "distractors": [
+            "jealousy",
+            "lateness",
+            "overspending"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who are cruel to shy people",
+          "distractors": [
+            "bad dancers",
+            "cheap tippers",
+            "mess"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "without the performance there is nothing to choose",
+          "distractors": [
+            "he is short",
+            "he is too loud",
+            "he is not clever"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "his ex said dating him felt like being in the audience",
+          "distractors": [
+            "she cheated",
+            "she moved away",
+            "she picked his friend"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "he has panic attacks before hosting nights and calls them pre-show buzz",
+          "distractors": [
+            "he has a secret child",
+            "he faked his job",
+            "he still lives with an ex"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"signature_dance_move": {"value": "a committed shoulder shimmy", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "signature_dance_move": {
+          "value": "a committed shoulder shimmy",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Valerie with improvised crowd work",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "old panel shows he quotes too much",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can juggle badly but confidently",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a notebook of jokes that are secretly diary entries",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "keeps the bit going three seconds too long",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "writes fake reviews for imaginary restaurants",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     }
   ],
   "heart_throb_pool": [
@@ -261,30 +1367,176 @@
       "gender": "man",
       "age": 28,
       "designed_against_secret_engine": "she abandons people first to avoid being abandoned",
-      "threat_modes_eligible": ["steal_partner", "tempt_player"],
+      "threat_modes_eligible": [
+        "steal_partner",
+        "tempt_player"
+      ],
       "persona": {
         "one_line": "28. Brighton youth counsellor. Soft-spoken enough to feel safe, direct enough to be dangerous.",
         "voice_notes": "calm, attentive, names the feeling everyone else avoids",
         "history": "Sam learned tenderness through work before he trusted it in his own life. He is good with other people's fear and careful with his own.\n\nHe arrives as the kind of steadiness that makes guarded people wonder if running is still necessary.",
-        "contradictions": ["gentle but firm", "safe but disruptive"],
+        "contradictions": [
+          "gentle but firm",
+          "safe but disruptive"
+        ],
         "secret_engine": "believes staying is the only proof love was real"
       },
       "core_traits": {
-        "occupation": {"value": "youth counsellor", "distractors": ["teacher", "nurse", "bar manager"], "tier": 1},
-        "hometown": {"value": "Brighton", "distractors": ["Portsmouth", "Norwich", "Bath"], "tier": 1},
-        "age": {"value": "28", "distractors": ["26", "29", "31"], "tier": 1},
-        "favorite_food": {"value": "mushroom risotto cooked slowly", "distractors": ["steak", "ramen", "fish tacos"], "tier": 2},
-        "hobby": {"value": "night swimming", "distractors": ["golf", "DJing", "boxing"], "tier": 2},
-        "drink_of_choice": {"value": "mint tea after midnight", "distractors": ["lager", "negroni", "tequila"], "tier": 2},
-        "biggest_fear": {"value": "loving someone who only knows how to leave", "distractors": ["being boring", "being alone", "public failure"], "tier": 3},
-        "love_language": {"value": "showing up without being asked", "distractors": ["gifts", "touch", "words"], "tier": 3},
-        "worst_habit": {"value": "turning every conflict into a therapy session", "distractors": ["ghosting", "jealousy", "lying"], "tier": 3},
-        "pet_peeve": {"value": "people who weaponize honesty", "distractors": ["lateness", "mess", "loud music"], "tier": 3},
-        "insecurity": {"value": "being steady makes him easy to overlook", "distractors": ["he is too serious", "he is too soft", "he is not fit"], "tier": 4},
-        "past_heartbreak": {"value": "waited for someone who kept choosing chaos", "distractors": ["was cheated on", "was ghosted", "was left at a station"], "tier": 4},
-        "hidden_secret": {"value": "he still writes letters to people who never answer", "distractors": ["he hides a marriage", "he quit therapy", "he lied about work"], "tier": 4}
+        "occupation": {
+          "value": "youth counsellor",
+          "distractors": [
+            "teacher",
+            "nurse",
+            "bar manager"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Brighton",
+          "distractors": [
+            "Portsmouth",
+            "Norwich",
+            "Bath"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "28",
+          "distractors": [
+            "26",
+            "29",
+            "31"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "mushroom risotto cooked slowly",
+          "distractors": [
+            "steak",
+            "ramen",
+            "fish tacos"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "night swimming",
+          "distractors": [
+            "golf",
+            "DJing",
+            "boxing"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "mint tea after midnight",
+          "distractors": [
+            "lager",
+            "negroni",
+            "tequila"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "loving someone who only knows how to leave",
+          "distractors": [
+            "being boring",
+            "being alone",
+            "public failure"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "showing up without being asked",
+          "distractors": [
+            "gifts",
+            "touch",
+            "words"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "turning every conflict into a therapy session",
+          "distractors": [
+            "ghosting",
+            "jealousy",
+            "lying"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who weaponize honesty",
+          "distractors": [
+            "lateness",
+            "mess",
+            "loud music"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "being steady makes him easy to overlook",
+          "distractors": [
+            "he is too serious",
+            "he is too soft",
+            "he is not fit"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "waited for someone who kept choosing chaos",
+          "distractors": [
+            "was cheated on",
+            "was ghosted",
+            "was left at a station"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "he still writes letters to people who never answer",
+          "distractors": [
+            "he hides a marriage",
+            "he quit therapy",
+            "he lied about work"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"comfort_show": {"value": "Grand Designs", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "comfort_show": {
+          "value": "Grand Designs",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Someone You Loved with no wink",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can make fresh pasta by feel",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a brass key from the flat he thought he would share",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "answers lightly but remembers exact dates",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "polishes old records and refuses to skip tracks",
+          "tier": 0,
+          "mechanical": false
+        },
+        "guilty_pleasure": {
+          "value": "airport romance paperbacks",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "riley_ht",
@@ -293,30 +1545,176 @@
       "gender": "woman",
       "age": 27,
       "designed_against_secret_engine": "uses being entertaining as currency",
-      "threat_modes_eligible": ["inject_chaos", "break_rival"],
+      "threat_modes_eligible": [
+        "inject_chaos",
+        "break_rival"
+      ],
       "persona": {
         "one_line": "27. Glasgow tattoo artist. Chaos in a silk shirt. Makes people confess by laughing first.",
         "voice_notes": "bold, teasing, vivid, never asks permission to take up space",
         "history": "Riley learned early that being shocking gave her control over the room. Underneath it, she is frighteningly perceptive and sometimes too accurate.\n\nShe arrives to make settled couples look unfinished.",
-        "contradictions": ["reckless but precise", "flirty but hard to keep"],
+        "contradictions": [
+          "reckless but precise",
+          "flirty but hard to keep"
+        ],
         "secret_engine": "tests love by seeing whether it survives disruption"
       },
       "core_traits": {
-        "occupation": {"value": "tattoo artist", "distractors": ["stylist", "bartender", "photographer"], "tier": 1},
-        "hometown": {"value": "Glasgow", "distractors": ["Edinburgh", "Aberdeen", "Dundee"], "tier": 1},
-        "age": {"value": "27", "distractors": ["24", "26", "30"], "tier": 1},
-        "favorite_food": {"value": "salt and chilli chips", "distractors": ["sushi", "pasta", "salad"], "tier": 2},
-        "hobby": {"value": "collecting bad date voice notes", "distractors": ["yoga", "painting", "running"], "tier": 2},
-        "drink_of_choice": {"value": "spicy margarita", "distractors": ["white wine", "lager", "espresso martini"], "tier": 2},
-        "biggest_fear": {"value": "being ordinary enough to be left quietly", "distractors": ["commitment", "being alone", "failure"], "tier": 3},
-        "love_language": {"value": "dares that turn into rituals", "distractors": ["gifts", "acts", "touch"], "tier": 3},
-        "worst_habit": {"value": "pressing bruises to see who flinches", "distractors": ["ghosting", "lying", "oversharing"], "tier": 3},
-        "pet_peeve": {"value": "people who confuse peace with boredom", "distractors": ["lateness", "bad shoes", "cheap drinks"], "tier": 3},
-        "insecurity": {"value": "without drama she becomes replaceable", "distractors": ["she is too loud", "she is not deep", "she is selfish"], "tier": 4},
-        "past_heartbreak": {"value": "fell for someone who only wanted the spectacle", "distractors": ["was cheated on", "lost a fiance", "was ghosted"], "tier": 4},
-        "hidden_secret": {"value": "she once sabotaged a stable relationship because it scared her", "distractors": ["she stole from an ex", "she lied about age", "she is engaged"], "tier": 4}
+        "occupation": {
+          "value": "tattoo artist",
+          "distractors": [
+            "stylist",
+            "bartender",
+            "photographer"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Glasgow",
+          "distractors": [
+            "Edinburgh",
+            "Aberdeen",
+            "Dundee"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "27",
+          "distractors": [
+            "24",
+            "26",
+            "30"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "salt and chilli chips",
+          "distractors": [
+            "sushi",
+            "pasta",
+            "salad"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "collecting bad date voice notes",
+          "distractors": [
+            "yoga",
+            "painting",
+            "running"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "spicy margarita",
+          "distractors": [
+            "white wine",
+            "lager",
+            "espresso martini"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "being ordinary enough to be left quietly",
+          "distractors": [
+            "commitment",
+            "being alone",
+            "failure"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "dares that turn into rituals",
+          "distractors": [
+            "gifts",
+            "acts",
+            "touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "pressing bruises to see who flinches",
+          "distractors": [
+            "ghosting",
+            "lying",
+            "oversharing"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who confuse peace with boredom",
+          "distractors": [
+            "lateness",
+            "bad shoes",
+            "cheap drinks"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "without drama she becomes replaceable",
+          "distractors": [
+            "she is too loud",
+            "she is not deep",
+            "she is selfish"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "fell for someone who only wanted the spectacle",
+          "distractors": [
+            "was cheated on",
+            "lost a fiance",
+            "was ghosted"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "she once sabotaged a stable relationship because it scared her",
+          "distractors": [
+            "she stole from an ex",
+            "she lied about age",
+            "she is engaged"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"unexpected_skill": {"value": "can draw a perfect swan in one line", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "unexpected_skill": {
+          "value": "can draw a perfect swan in one line",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Toxic performed like a dare",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "messy reunion specials",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a red lighter from the night she decided to leave",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "smiles wider when she is about to test someone",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "rearranges furniture for drama",
+          "tier": 0,
+          "mechanical": false
+        },
+        "guilty_pleasure": {
+          "value": "voice notes longer than podcasts",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "ellis_ht",
@@ -325,30 +1723,176 @@
       "gender": "man",
       "age": 30,
       "designed_against_secret_engine": "controls intimacy by setting all the terms",
-      "threat_modes_eligible": ["break_rival", "shake_alliance"],
+      "threat_modes_eligible": [
+        "break_rival",
+        "shake_alliance"
+      ],
       "persona": {
         "one_line": "30. Leeds chef-owner. Controlled heat, sharper standards. Makes ambition feel romantic.",
         "voice_notes": "low, exact, dry humor, compliments like verdicts",
         "history": "Ellis built a restaurant out of a family debt and pure refusal. He trusts competence faster than charm and finds hesitation expensive.\n\nHe arrives as a mirror for people who think control is safety.",
-        "contradictions": ["disciplined but hungry for softness", "critical but deeply loyal"],
+        "contradictions": [
+          "disciplined but hungry for softness",
+          "critical but deeply loyal"
+        ],
         "secret_engine": "leads because being led once cost him everything"
       },
       "core_traits": {
-        "occupation": {"value": "chef-owner", "distractors": ["boxer", "architect", "agent"], "tier": 1},
-        "hometown": {"value": "Leeds", "distractors": ["York", "Hull", "Sheffield"], "tier": 1},
-        "age": {"value": "30", "distractors": ["27", "29", "32"], "tier": 1},
-        "favorite_food": {"value": "burnt butter pasta", "distractors": ["steak", "sushi", "pizza"], "tier": 2},
-        "hobby": {"value": "late-night chess apps", "distractors": ["golf", "boxing", "karaoke"], "tier": 2},
-        "drink_of_choice": {"value": "red wine he pretends not to judge", "distractors": ["beer", "vodka soda", "tea"], "tier": 2},
-        "biggest_fear": {"value": "trusting the wrong person with the keys", "distractors": ["failure", "being alone", "aging"], "tier": 3},
-        "love_language": {"value": "feeding people exactly what they need", "distractors": ["words", "gifts", "touch"], "tier": 3},
-        "worst_habit": {"value": "correcting before comforting", "distractors": ["flirting", "lying", "vanishing"], "tier": 3},
-        "pet_peeve": {"value": "people who waste effort", "distractors": ["mess", "lateness", "bad jokes"], "tier": 3},
-        "insecurity": {"value": "if he stops producing he becomes a burden", "distractors": ["he is too strict", "he is dull", "he is old"], "tier": 4},
-        "past_heartbreak": {"value": "a business partner and lover left him with the debt", "distractors": ["was cheated on", "was ghosted", "was rejected on TV"], "tier": 4},
-        "hidden_secret": {"value": "he keeps the failed restaurant's first menu in his wallet", "distractors": ["he cannot cook desserts", "he has a secret child", "he lied about money"], "tier": 4}
+        "occupation": {
+          "value": "chef-owner",
+          "distractors": [
+            "boxer",
+            "architect",
+            "agent"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Leeds",
+          "distractors": [
+            "York",
+            "Hull",
+            "Sheffield"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "30",
+          "distractors": [
+            "27",
+            "29",
+            "32"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "burnt butter pasta",
+          "distractors": [
+            "steak",
+            "sushi",
+            "pizza"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "late-night chess apps",
+          "distractors": [
+            "golf",
+            "boxing",
+            "karaoke"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "red wine he pretends not to judge",
+          "distractors": [
+            "beer",
+            "vodka soda",
+            "tea"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "trusting the wrong person with the keys",
+          "distractors": [
+            "failure",
+            "being alone",
+            "aging"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "feeding people exactly what they need",
+          "distractors": [
+            "words",
+            "gifts",
+            "touch"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "correcting before comforting",
+          "distractors": [
+            "flirting",
+            "lying",
+            "vanishing"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who waste effort",
+          "distractors": [
+            "mess",
+            "lateness",
+            "bad jokes"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "if he stops producing he becomes a burden",
+          "distractors": [
+            "he is too strict",
+            "he is dull",
+            "he is old"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "a business partner and lover left him with the debt",
+          "distractors": [
+            "was cheated on",
+            "was ghosted",
+            "was rejected on TV"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "he keeps the failed restaurant's first menu in his wallet",
+          "distractors": [
+            "he cannot cook desserts",
+            "he has a secret child",
+            "he lied about money"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"karaoke_song": {"value": "Back to Black, very quietly", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "karaoke_song": {
+          "value": "Back to Black, very quietly",
+          "tier": 0,
+          "mechanical": false
+        },
+        "comfort_show": {
+          "value": "chef competition shows watched for knife skills",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can remember every table order without writing it down",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a cufflink from a mentor who betrayed him",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "goes very still before making a power move",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "sharpens knives while thinking",
+          "tier": 0,
+          "mechanical": false
+        },
+        "guilty_pleasure": {
+          "value": "luxury hotel review videos",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     },
     {
       "slot_id": "talia_ht",
@@ -357,30 +1901,176 @@
       "gender": "woman",
       "age": 26,
       "designed_against_secret_engine": "always the friend and never the chosen one",
-      "threat_modes_eligible": ["tempt_player", "expose_history"],
+      "threat_modes_eligible": [
+        "tempt_player",
+        "expose_history"
+      ],
       "persona": {
         "one_line": "26. Dublin documentary researcher. Gentle questions, dangerous memory. Knows one past story too well.",
         "voice_notes": "soft, forensic, warm until she catches a lie",
         "history": "Talia researches other people's lives for a living and has become excellent at spotting the missing scene. She asks kind questions and remembers every answer.\n\nShe arrives carrying enough emotional precision to unsettle anyone hiding behind charm.",
-        "contradictions": ["gentle but relentless", "romantic but skeptical"],
+        "contradictions": [
+          "gentle but relentless",
+          "romantic but skeptical"
+        ],
         "secret_engine": "absorbs everyone else's feelings instead of having her own"
       },
       "core_traits": {
-        "occupation": {"value": "documentary researcher", "distractors": ["journalist", "teacher", "librarian"], "tier": 1},
-        "hometown": {"value": "Dublin", "distractors": ["Galway", "Cork", "Belfast"], "tier": 1},
-        "age": {"value": "26", "distractors": ["24", "27", "29"], "tier": 1},
-        "favorite_food": {"value": "brown bread with salted butter", "distractors": ["pasta", "sushi", "salad"], "tier": 2},
-        "hobby": {"value": "annotating films in tiny notebooks", "distractors": ["running", "DJing", "pottery"], "tier": 2},
-        "drink_of_choice": {"value": "whiskey ginger", "distractors": ["white wine", "lager", "negroni"], "tier": 2},
-        "biggest_fear": {"value": "living as a witness to everyone else's love", "distractors": ["being alone", "being boring", "being wrong"], "tier": 3},
-        "love_language": {"value": "remembering the detail everyone else misses", "distractors": ["gifts", "touch", "acts"], "tier": 3},
-        "worst_habit": {"value": "interviewing instead of confessing", "distractors": ["ghosting", "jealousy", "lying"], "tier": 3},
-        "pet_peeve": {"value": "people who say they are fine as a weapon", "distractors": ["lateness", "mess", "bad coffee"], "tier": 3},
-        "insecurity": {"value": "she is only interesting when reflecting someone else", "distractors": ["she is too quiet", "she is too clever", "she is too needy"], "tier": 4},
-        "past_heartbreak": {"value": "helped film an ex's wedding and smiled through it", "distractors": ["was cheated on", "was left abroad", "was ghosted"], "tier": 4},
-        "hidden_secret": {"value": "she edited herself out of the wedding footage before sending it", "distractors": ["she leaked a tape", "she lied about work", "she is still engaged"], "tier": 4}
+        "occupation": {
+          "value": "documentary researcher",
+          "distractors": [
+            "journalist",
+            "teacher",
+            "librarian"
+          ],
+          "tier": 1
+        },
+        "hometown": {
+          "value": "Dublin",
+          "distractors": [
+            "Galway",
+            "Cork",
+            "Belfast"
+          ],
+          "tier": 1
+        },
+        "age": {
+          "value": "26",
+          "distractors": [
+            "24",
+            "27",
+            "29"
+          ],
+          "tier": 1
+        },
+        "favorite_food": {
+          "value": "brown bread with salted butter",
+          "distractors": [
+            "pasta",
+            "sushi",
+            "salad"
+          ],
+          "tier": 2
+        },
+        "hobby": {
+          "value": "annotating films in tiny notebooks",
+          "distractors": [
+            "running",
+            "DJing",
+            "pottery"
+          ],
+          "tier": 2
+        },
+        "drink_of_choice": {
+          "value": "whiskey ginger",
+          "distractors": [
+            "white wine",
+            "lager",
+            "negroni"
+          ],
+          "tier": 2
+        },
+        "biggest_fear": {
+          "value": "living as a witness to everyone else's love",
+          "distractors": [
+            "being alone",
+            "being boring",
+            "being wrong"
+          ],
+          "tier": 3
+        },
+        "love_language": {
+          "value": "remembering the detail everyone else misses",
+          "distractors": [
+            "gifts",
+            "touch",
+            "acts"
+          ],
+          "tier": 3
+        },
+        "worst_habit": {
+          "value": "interviewing instead of confessing",
+          "distractors": [
+            "ghosting",
+            "jealousy",
+            "lying"
+          ],
+          "tier": 3
+        },
+        "pet_peeve": {
+          "value": "people who say they are fine as a weapon",
+          "distractors": [
+            "lateness",
+            "mess",
+            "bad coffee"
+          ],
+          "tier": 3
+        },
+        "insecurity": {
+          "value": "she is only interesting when reflecting someone else",
+          "distractors": [
+            "she is too quiet",
+            "she is too clever",
+            "she is too needy"
+          ],
+          "tier": 4
+        },
+        "past_heartbreak": {
+          "value": "helped film an ex's wedding and smiled through it",
+          "distractors": [
+            "was cheated on",
+            "was left abroad",
+            "was ghosted"
+          ],
+          "tier": 4
+        },
+        "hidden_secret": {
+          "value": "she edited herself out of the wedding footage before sending it",
+          "distractors": [
+            "she leaked a tape",
+            "she lied about work",
+            "she is still engaged"
+          ],
+          "tier": 4
+        }
       },
-      "flavor_traits": {"comfort_show": {"value": "slow crime documentaries", "tier": 0, "mechanical": false}}
+      "flavor_traits": {
+        "comfort_show": {
+          "value": "slow crime documentaries",
+          "tier": 0,
+          "mechanical": false
+        },
+        "karaoke_song": {
+          "value": "Dreams by Fleetwood Mac",
+          "tier": 0,
+          "mechanical": false
+        },
+        "unexpected_skill": {
+          "value": "can sketch people accurately in two minutes",
+          "tier": 0,
+          "mechanical": false
+        },
+        "keepsake": {
+          "value": "a cracked phone full of unsent apologies",
+          "tier": 0,
+          "mechanical": false
+        },
+        "villa_tell": {
+          "value": "mirrors people until she forgets her own opinion",
+          "tier": 0,
+          "mechanical": false
+        },
+        "rainy_day_habit": {
+          "value": "sorts seashells by imagined mood",
+          "tier": 0,
+          "mechanical": false
+        },
+        "guilty_pleasure": {
+          "value": "reading star signs for people she barely knows",
+          "tier": 0,
+          "mechanical": false
+        }
+      }
     }
   ]
 }
