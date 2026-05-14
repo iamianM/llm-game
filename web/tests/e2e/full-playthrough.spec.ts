@@ -35,8 +35,12 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
       await page.getByRole("button", { name: "Continue" }).click({ force: true });
       continue;
     }
-    const buttons = page.getByTestId("choice-menu").getByRole("button");
-    if ((await buttons.count()) === 0) break;
+    try {
+      await page.waitForSelector('[data-testid="choice"]:not([disabled])', { timeout: 15_000 });
+    } catch {
+      break;
+    }
+    const buttons = page.locator('[data-testid="choice"]:not([disabled])');
     await expect(buttons.first()).toBeVisible();
     const count = await buttons.count();
     let chosen = 0;

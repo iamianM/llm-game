@@ -58,6 +58,17 @@ class ApiMemory(BaseModel):
     formed_on_turn: int
 
 
+class ApiKnownFact(BaseModel):
+    fact_key: str
+    label: str
+    value: str
+    source: str
+    source_npc_id: str | None
+    confidence: float
+    citation: str
+    group: Literal["confirmed", "heard", "trivia"]
+
+
 class PlayerState(BaseModel):
     id: str
     name: str
@@ -175,6 +186,7 @@ class CastDetail(BaseModel):
     familiarity: int
     relationship: ApiRelationship
     type_on_paper: dict[str, object | None]
+    known_facts: list[ApiKnownFact]
     memories: list[ApiMemory]
     coupled_with: str | None
     eliminated: bool

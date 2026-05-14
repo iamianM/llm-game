@@ -40,6 +40,8 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
               ))}
               <h3 className="mt-5 font-display text-xl">Type on Paper</h3>
               {Object.entries(data.type_on_paper).map(([key, value]) => <p key={key} className="text-sm"><b>{key.replaceAll("_", " ")}:</b> {value ? String(value) : "???"}</p>)}
+              <h3 className="mt-5 font-display text-xl">What you know</h3>
+              <KnownFacts facts={data.known_facts} />
               <h3 className="mt-5 font-display text-xl">Recent memories</h3>
               {data.memories.length ? data.memories.map((m) => <p key={`${m.subject_id}-${m.formed_on_turn}`} className="mt-2 text-sm text-[var(--muted)]">{m.content}</p>) : <p className="text-sm text-[var(--muted)]">No memories yet.</p>}
             </>
@@ -47,6 +49,34 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
           <button ref={closeRef} onClick={onClose} className="mt-6 rounded bg-accent px-4 py-2 text-[var(--card)]">Close</button>
         </section>
       </div>
+    </div>
+  );
+}
+
+function KnownFacts({ facts }: { facts: NonNullable<Awaited<ReturnType<typeof getCast>>>["known_facts"] }) {
+  if (!facts.length) return <p className="text-sm text-[var(--muted)]">Nothing confirmed yet.</p>;
+  const groups = [
+    ["confirmed", "Confirmed"],
+    ["heard", "Heard"],
+    ["trivia", "Trivia"]
+  ] as const;
+  return (
+    <div className="mt-2 space-y-3">
+      {groups.map(([group, label]) => {
+        const items = facts.filter((fact) => fact.group === group);
+        if (!items.length) return null;
+        return (
+          <div key={group} className="rounded-[var(--r-md)] border border-[var(--line)] p-3">
+            <p className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">{label}</p>
+            {items.map((fact) => (
+              <p key={fact.fact_key} className="mt-2 text-sm">
+                <b>{fact.label}:</b> {fact.value}
+                <span className="block text-xs text-[var(--muted)]">{fact.citation} · confidence {Math.round(fact.confidence * 100)}%</span>
+              </p>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

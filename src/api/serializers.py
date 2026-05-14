@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from src.api.display import display, translate_text
 from src.api.models import (
     ApiExchange,
+    ApiKnownFact,
     ApiMemory,
     ApiRelationship,
     AudienceState,
@@ -27,6 +28,7 @@ from src.game.engine.couples import couple_strength, partner_for
 from src.game.engine.results import MechanicalResult
 from src.game.state.memory import Memory
 from src.game.state.models import FollowUpOption, GameState, IslanderState
+from src.game.state.traits import KnownFact
 
 
 def session_state(session_id: str, state: GameState, recent_delta: int | None = None) -> SessionState:
@@ -148,6 +150,7 @@ def cast_detail(state: GameState, npc_id: str) -> CastDetail:
             "values": top.values if familiarity >= 75 else None,
             "dealbreakers": top.dealbreakers if familiarity >= 100 else None,
         },
+        known_facts=known_facts_api(state, islander.id),
         memories=[memory_api(memory) for memory in islander.memories[-12:]],
         coupled_with=partner_id(state, islander.id),
         eliminated=islander.eliminated,
@@ -182,6 +185,49 @@ def memory_api(memory: Memory) -> ApiMemory:
         source=data["source"],
         tags=list(data.get("tags") or []),
         formed_on_turn=int(data.get("formed_on_turn") or 0),
+    )
+
+
+def known_facts_api(state: GameState, npc_id: str) -> list[ApiKnownFact]:
+    """Serialize player-known facts about one NPC."""
+    facts = [
+        fact for fact in state.player.known_facts.values()
+        if fact.fact_key.startswith(f"{npc_id}.")
+    ]
+    facts.sort(key=lambda fact: (fact.source != "direct", fact.fact_key))
+    return [_known_fact_api(fact) for fact in facts]
+
+
+def _known_fact_api(fact: KnownFact) -> ApiKnownFact:
+    trait_key = fact.fact_key.split(".", 1)[1] if "." in fact.fact_key else fact.fact_key
+    group: Literal["confirmed", "heard", "trivia"] = (
+        "confirmed" if fact.source in {"direct", "social_event"} else "heard"
+    )
+    if trait_key not in {
+        "occupation",
+        "hometown",
+        "age",
+        "favorite_food",
+        "hobby",
+        "drink_of_choice",
+        "biggest_fear",
+        "love_language",
+        "worst_habit",
+        "pet_peeve",
+        "insecurity",
+        "past_heartbreak",
+        "hidden_secret",
+    }:
+        group = "trivia"
+    return ApiKnownFact(
+        fact_key=fact.fact_key,
+        label=trait_key.replace("_", " ").title(),
+        value=translate_text(fact.value),
+        source=fact.source,
+        source_npc_id=fact.source_npc_id,
+        confidence=fact.confidence,
+        citation=translate_text(fact.citation),
+        group=group,
     )
 
 

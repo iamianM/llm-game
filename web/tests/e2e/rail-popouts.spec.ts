@@ -4,11 +4,16 @@ test("right rail and cast popout render", async ({ page }) => {
   await page.goto("/new-run");
   await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
+  await page.getByRole("button", { name: "Pair with Chloe" }).click();
+  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "Spark deep with Maya" }).click();
   await page.getByLabel("Open right rail").click();
   await expect(page.getByText("Where everyone is")).toBeVisible();
   await expect(page.getByText("Couples")).toBeVisible();
-  await page.getByRole("button", { name: "Open Chloe profile" }).click();
+  await page.getByRole("button", { name: "Open Maya profile" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await expect(page.getByText("Type on Paper")).toBeVisible();
+  await expect(page.getByText("What you know")).toBeVisible();
+  await expect(page.getByText("Occupation:")).toBeVisible();
   await page.getByRole("button", { name: "Close" }).last().click();
 });

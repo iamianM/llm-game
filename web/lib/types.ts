@@ -22,6 +22,17 @@ export type ApiMemory = {
   formed_on_turn: number;
 };
 
+export type ApiKnownFact = {
+  fact_key: string;
+  label: string;
+  value: string;
+  source: string;
+  source_npc_id: string | null;
+  confidence: number;
+  citation: string;
+  group: "confirmed" | "heard" | "trivia";
+};
+
 export type IslanderSummary = {
   id: string;
   name: string;
@@ -117,6 +128,7 @@ export type CastDetail = {
   familiarity: number;
   relationship: Record<string, number>;
   type_on_paper: Record<string, unknown | null>;
+  known_facts: ApiKnownFact[];
   memories: ApiMemory[];
   coupled_with: string | null;
   eliminated: boolean;

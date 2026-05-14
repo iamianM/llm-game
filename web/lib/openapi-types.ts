@@ -194,6 +194,28 @@ export interface components {
             /** Npc Mood After */
             npc_mood_after: string;
         };
+        /** ApiKnownFact */
+        ApiKnownFact: {
+            /** Fact Key */
+            fact_key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: string;
+            /** Source */
+            source: string;
+            /** Source Npc Id */
+            source_npc_id: string | null;
+            /** Confidence */
+            confidence: number;
+            /** Citation */
+            citation: string;
+            /**
+             * Group
+             * @enum {string}
+             */
+            group: "confirmed" | "heard" | "trivia";
+        };
         /** ApiMemory */
         ApiMemory: {
             /** Holder Id */
@@ -281,6 +303,8 @@ export interface components {
             type_on_paper: {
                 [key: string]: unknown | null;
             };
+            /** Known Facts */
+            known_facts: components["schemas"]["ApiKnownFact"][];
             /** Memories */
             memories: components["schemas"]["ApiMemory"][];
             /** Coupled With */
