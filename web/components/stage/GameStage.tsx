@@ -24,6 +24,8 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [seenRecaps, setSeenRecaps] = useState(0);
   const [streamText, setStreamText] = useState("");
   const [streamSpeaker, setStreamSpeaker] = useState("Producer");
+  const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
+  const [deferredCeremony, setDeferredCeremony] = useState(false);
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -33,6 +35,8 @@ export function GameStage({ sessionId }: { sessionId: string }) {
     mutationFn: (action: AvailableAction) => {
       setStreamText("");
       setStreamSpeaker("Producer");
+      setPendingActionLabel(action.label);
+      setDeferredCeremony(false);
       return submitTurnStream(sessionId, action, {
         onDialogueStart: (speaker) => setStreamSpeaker(speaker),
         onDialogueChunk: (chunk) => setStreamText((current) => current + chunk)
@@ -41,7 +45,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
     onSuccess: (data) => {
       setLastTurn(data);
       setStreamText("");
-      setShowCeremony(data.ceremony_events.length > 0);
+      setPendingActionLabel(null);
+      const hasCeremony = data.ceremony_events.length > 0;
+      const hasDialogue = data.exchange !== null;
+      setDeferredCeremony(hasCeremony && hasDialogue);
+      setShowCeremony(hasCeremony && !hasDialogue);
       if (data.state.daily_recaps.length > seenRecaps) {
         setShowRecap(true);
         setSeenRecaps(data.state.daily_recaps.length);
@@ -65,23 +73,32 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const event = lastTurn?.ceremony_events[0];
   const narration = ceremonyNarration(lastTurn, state);
   const latestRecap = state.daily_recaps[state.daily_recaps.length - 1];
-  const dialogueText = mutation.isPending && streamText ? streamText : dialogue?.npc_dialogue ?? "Sunset Bay is waiting. Choose your next move.";
-  const dialogueSpeaker = mutation.isPending && streamText ? streamSpeaker : dialogue?.speaker_name ?? "The Producer";
+  const dialogueText = mutation.isPending
+    ? streamText || "Sunset Bay is reacting..."
+    : dialogue?.npc_dialogue ?? stagePrompt(state, speaker?.name);
+  const dialogueSpeaker = mutation.isPending ? streamSpeaker : dialogue?.speaker_name ?? speaker?.name ?? "The Producer";
+  const playerLine = mutation.isPending ? pendingActionLabel ?? undefined : dialogue?.player_dialogue;
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
       <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} />
       <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col">
         <VillaBackground location={state.location_id}>
-          {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} />}
+          {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} phase={state.phase} />}
         </VillaBackground>
         <DialogueBox
           speaker={dialogueSpeaker}
-          playerLine={dialogue?.player_dialogue}
+          playerLine={playerLine}
           text={dialogueText}
           complete={!mutation.isPending}
           audienceDelta={lastTurn?.audience_delta}
           audienceReason={lastTurn?.audience_delta_reason}
+          onAdvance={() => {
+            if (deferredCeremony) {
+              setDeferredCeremony(false);
+              setShowCeremony(true);
+            }
+          }}
         />
         <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
       </div>
@@ -93,14 +110,21 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   );
 }
 
-function IdleStage({ location }: { location: string }) {
+function IdleStage({ location, phase }: { location: string; phase: string }) {
   return (
     <div className="rounded-[var(--r-lg)] border border-white/15 bg-black/25 px-8 py-6 text-center shadow-[var(--shadow-stage)]">
       <p className="font-hand text-4xl text-gold">Sunset Bay</p>
       <p className="mt-2 font-display text-3xl">{location}</p>
-      <p className="mt-2 text-sm text-[var(--muted-on-dark)]">Look around, Spark with someone, or let the day move.</p>
+      <p className="mt-2 text-sm text-[var(--muted-on-dark)]">{stagePrompt({ phase })}</p>
     </div>
   );
+}
+
+function stagePrompt(state: { phase: string }, speakerName?: string) {
+  if (speakerName) return `You're chatting with ${speakerName}. Choose your next response.`;
+  if (state.phase === "intros") return "Day-1 introductions: meet each Heartbreaker once before free time opens.";
+  if (state.phase === "morning") return "Choose your First Spark partner and see how the opening couples land.";
+  return "Look around, Spark with someone, or let the day move.";
 }
 
 function ceremonyTitle(event: Record<string, unknown> | undefined, state: SessionResponse["state"]) {

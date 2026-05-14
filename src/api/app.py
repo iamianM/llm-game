@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 import os
 from collections.abc import AsyncIterator
 from pathlib import Path
@@ -49,6 +50,7 @@ from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
 app = FastAPI(title="Paradise Hearts API", version="0.1.0")
+logger = logging.getLogger("paradise.api")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -211,6 +213,20 @@ def _run_turn(session: GameSession, req: TurnRequest) -> TurnResult:
     )
     session.state = turn.state
     session.records.append({"input_hash": input_hash, "output_hash": turn.state_hash})
+    logger.info(
+        "turn session=%s turn=%s day=%s phase=%s action=%s target=%s intent=%s exchange=%s events=%s active=%s hash=%s",
+        session.session_id,
+        turn.state.turn_index,
+        turn.state.day,
+        turn.state.phase.value,
+        action.kind.value,
+        action.target_id,
+        action.intent_id,
+        None if turn.exchange is None else turn.exchange.speaker_id,
+        ",".join(str(event.kind) for event in turn.ceremony_events) or "-",
+        turn.state.active_conversation.target_id if turn.state.active_conversation else None,
+        turn.state_hash,
+    )
     return turn
 
 

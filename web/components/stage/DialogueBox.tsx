@@ -12,9 +12,10 @@ type Props = {
   complete?: boolean;
   audienceDelta?: number | null;
   audienceReason?: string | null;
+  onAdvance?: () => void;
 };
 
-export function DialogueBox({ speaker, text, playerLine, complete = true, audienceDelta, audienceReason }: Props) {
+export function DialogueBox({ speaker, text, playerLine, complete = true, audienceDelta, audienceReason, onAdvance }: Props) {
   const speed = useUiStore((s) => s.typewriterSpeed);
   const reduce = useUiStore((s) => s.reduceMotion);
   const [visible, setVisible] = useState(text);
@@ -38,8 +39,16 @@ export function DialogueBox({ speaker, text, playerLine, complete = true, audien
     return () => window.clearInterval(timer);
   }, [text, speed, reduce, complete]);
 
+  function handleClick() {
+    if (visible !== text) {
+      setVisible(text);
+      return;
+    }
+    if (complete) onAdvance?.();
+  }
+
   return (
-    <section onClick={() => setVisible(text)} className="min-h-[28vh] border-t border-white/10 bg-black/30 p-5">
+    <section onClick={handleClick} className="min-h-[28vh] border-t border-white/10 bg-black/30 p-5">
       <div className="mx-auto max-w-5xl rounded-[var(--r-lg)] border border-line bg-card p-5 text-ink shadow-[var(--shadow-lg)]">
         {playerLine ? <p className="mb-3 text-sm text-[var(--muted)]"><b>You:</b> {playerLine}</p> : null}
         <div className="flex items-center justify-between gap-3">
