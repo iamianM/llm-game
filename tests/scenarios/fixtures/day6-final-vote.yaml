@@ -31,7 +31,7 @@ initial_couples:
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-expected_hash: ff4a9ffec66fd141e515c33e6742ef350bc65c841db41e7e41a28c863c843f24
+expected_hash: b90296a7a5891fe0c727ef2d263bf413efa089c7d9c0c06c04f4adaa33f3e352
 actions:
 - kind: ambient
   target_id: ambient_wait
