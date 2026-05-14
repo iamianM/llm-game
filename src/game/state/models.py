@@ -36,8 +36,11 @@ from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import TypeOnPaper as TypeOnPaper
 from src.game.state.phase_clock import PhaseClock as PhaseClock
+from src.game.state.traits import KnownFacts as KnownFacts
+from src.game.state.traits import TraitCard as TraitCard
+from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 24
+SCHEMA_VERSION = 25
 
 
 class Phase(StrEnum):
@@ -81,8 +84,6 @@ class Mood(StrEnum):
 
 
 class Gender(StrEnum):
-    """Binary villa gender used for attraction and same-sex dynamics in v0."""
-
     MAN = "man"
     WOMAN = "woman"
 
@@ -129,6 +130,7 @@ class PlayerState(BaseModel):
     public_perception: int = Field(default=50, ge=0, le=100)
     eliminated: bool = False
     memories: list[Memory] = Field(default_factory=list)
+    known_facts: KnownFacts = Field(default_factory=dict)
     pull_attempts_this_phase: dict[str, int] = Field(default_factory=dict)
 
 
@@ -163,6 +165,8 @@ class IslanderState(BaseModel):
     type_on_paper: TypeOnPaper
     familiarity_with_player: int = Field(default=0, ge=0, le=100)
     memories: list[Memory] = Field(default_factory=list)
+    trait_card: TraitCard = Field(default_factory=empty_trait_card)
+    known_facts: KnownFacts = Field(default_factory=dict)
 
 
 class Couple(BaseModel):
@@ -239,6 +243,8 @@ class FollowUpOption(BaseModel):
     risk: Literal["safe", "low", "medium", "high"]
     tone: str
     audience_hint: Literal["+", "-", ""] = ""
+    reveal_tier: int = Field(default=0, ge=0, le=4)
+    reveal_tag: str | None = None
     unlock_threshold: dict[str, int] | None = None
 
 
@@ -359,6 +365,7 @@ class GameState(BaseModel):
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     pending_npc_summon: PendingNPCSummon | None = None
     pending_recouple_proposal: PendingRecoupleProposal | None = None
+    heart_throb_briefs: list[dict[str, str]] = Field(default_factory=list)
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
     pending_challenge: Challenge | None = None
