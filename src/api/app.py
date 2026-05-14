@@ -35,6 +35,11 @@ from src.api.serializers import (
 )
 from src.api.session import AgentBundle, GameSession, add_session, delete_session, get_session
 from src.api.streaming import chunk_text, sse
+from src.game.agents.trait_generator import (
+    OpenAITraitGenerator,
+    assign_trait_cards,
+    opening_generation_seeds,
+)
 from src.game.engine.actions import PlayerAction
 from src.game.engine.character_creation import DEFAULT_ARCHETYPE_STATS, create_character
 from src.game.engine.intents import available_intents_for
@@ -78,6 +83,9 @@ def version() -> VersionResponse:
 def new_session(req: NewSessionRequest) -> SessionResponse:
     seed = req.seed if req.seed is not None else randint(1, 999_999)
     state = new_game(seed)
+    if not _mock_mode(req.mock_llm):
+        generator = OpenAITraitGenerator()
+        assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
     state.player.name = req.player_name or "You"
     try:
         create_character(
