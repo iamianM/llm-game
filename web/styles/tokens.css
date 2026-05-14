@@ -1,0 +1,17 @@
+:root {
+  --bg:#1c1612; --bg-elev:#251d18; --card:#faf6ef; --card-alt:#fffaf2;
+  --line:#e3d8c5; --line-strong:#cdbfa6; --ink:#2a2620;
+  --ink-on-dark:#faf6ef; --muted:#786a58; --muted-on-dark:#a99887;
+  --accent:#b9502f; --accent-soft:#f6dccf; --accent-glow:rgba(185,80,47,.4);
+  --sage:#5b7c4f; --gold:#c8932a; --gold-soft:#f4e3b8;
+  --good:#2d6a3f; --bad:#a93826; --bad-soft:#f7e2dd;
+  --mood-happy:rgba(91,124,79,.18); --mood-flirty:rgba(185,80,47,.18);
+  --mood-anxious:rgba(120,106,88,.18); --mood-cold:rgba(63,107,106,.18);
+  --mood-angry:rgba(169,56,38,.18); --shadow-sm:0 2px 8px rgba(0,0,0,.12);
+  --shadow-md:0 8px 24px rgba(0,0,0,.18); --shadow-lg:0 16px 48px rgba(0,0,0,.28);
+  --shadow-stage:0 24px 80px rgba(0,0,0,.5); --r-sm:6px; --r-md:10px;
+  --r-lg:14px; --r-xl:20px; --r-pill:999px;
+  --font-display:'Iowan Old Style','Charter','Georgia',serif;
+  --font-body:'Inter',-apple-system,'Segoe UI',system-ui,sans-serif;
+  --font-hand:'Caveat','Comic Sans MS',cursive;
+}
