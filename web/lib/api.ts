@@ -88,6 +88,25 @@ export async function submitTurnStream(
   action: AvailableAction,
   handlers: StreamHandlers = {}
 ): Promise<TurnResponse> {
+  // The SSE endpoint can fail at the TLS/proxy layer (e.g.
+  // ERR_SSL_BAD_RECORD_MAC_ALERT on some Vercel edges, function timeouts).
+  // We try the stream first for the typewriter feel and fall back to the
+  // non-streaming turn endpoint on any failure so gameplay is uninterrupted.
+  try {
+    return await streamTurn(sessionId, action, handlers);
+  } catch (err) {
+    if (typeof console !== "undefined") {
+      console.warn("Streaming turn failed, falling back to non-streaming:", err);
+    }
+    return await submitTurn(sessionId, action);
+  }
+}
+
+async function streamTurn(
+  sessionId: string,
+  action: AvailableAction,
+  handlers: StreamHandlers
+): Promise<TurnResponse> {
   const persisted = requirePersisted(sessionId);
   const response = await fetch(`${API_BASE}/session/turn/stream`, {
     method: "POST",
