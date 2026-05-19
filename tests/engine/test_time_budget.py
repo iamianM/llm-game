@@ -44,10 +44,11 @@ def test_advance_phase_resets_phase_clock_budget() -> None:
 def test_run_turn_auto_advances_when_budget_expires() -> None:
     state = new_game(1)
     rng = SeededRng(1)
-    result = None
 
-    for _ in range(6):
-        result = run_turn(
+    # Five start/end pairs accumulate 100 minutes against the 120-minute MORNING
+    # budget. END_CONVERSATION costs 0; START_CONVERSATION costs 20.
+    for _ in range(5):
+        run_turn(
             state,
             PlayerAction(
                 kind=ActionKind.START_CONVERSATION,
@@ -56,8 +57,22 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
             ),
             rng,
         )
+        run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng)
 
-    assert result is not None
+    # The sixth START pushes elapsed to 120 (= budget). The end-of-turn
+    # phase_end branch closes the still-active conversation and advances the
+    # phase, chaining MORNING → CHALLENGE → AFTERNOON via the pre-resolved
+    # challenge event.
+    result = run_turn(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        rng,
+    )
+
     assert result.auto_advance is True
     assert result.time_cost == 20
     assert state.phase is Phase.AFTERNOON

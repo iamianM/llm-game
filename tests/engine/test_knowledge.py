@@ -130,6 +130,14 @@ def test_conversation_close_emits_known_fact() -> None:
     target = next(islander for islander in state.islanders if islander.id == "chloe")
     target.relationship.affection = 50
     target.familiarity_with_player = 50
-    action = PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="deep_ask_life")
-    run_turn(state, action, SeededRng(1))
+    rng = SeededRng(1)
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="deep_ask_life"),
+        rng,
+    )
+    # Facts are curated when the conversation closes; in mock mode the player
+    # has to walk away explicitly because no LLM is deciding when the NPC bows
+    # out.
+    run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng)
     assert any(key.startswith("chloe.") for key in state.player.known_facts)
