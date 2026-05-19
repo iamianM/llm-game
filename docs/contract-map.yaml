@@ -1,0 +1,52 @@
+groups:
+  - id: browser_api_contract
+    paths:
+      - src/api/**
+      - web/**
+      - vercel.json
+    docs:
+      - AGENTS.md
+      - docs/phase3-fastapi-contract.md
+      - docs/phase3-ui-spec.md
+      - docs/decisions/0012-nextjs-thin-client-over-vite.md
+
+  - id: balance_boundary
+    paths:
+      - data/balance/**
+      - content/**
+      - src/game/content/**
+      - src/game/engine/intents.py
+      - src/game/engine/challenges.py
+    docs:
+      - AGENTS.md
+      - ENGINEERING.md
+      - docs/decisions/0013-balance-data-boundary.md
+
+  - id: checkpoint_replay_contract
+    paths:
+      - src/game/state/rng.py
+      - src/game/state/snapshot.py
+      - src/game/cli/commands/play.py
+      - src/game/cli/commands/play_session.py
+      - src/game/cli/commands/report_compare.py
+    docs:
+      - docs/qa-strategy.md
+      - docs/decisions/0008-snapshot-and-trace-architecture.md
+
+  - id: agent_prompt_contract
+    paths:
+      - src/game/agents/**
+    docs:
+      - ENGINEERING.md
+      - docs/decisions/0014-agent-split-after-narrator-v0.md
+
+  - id: qa_tooling
+    paths:
+      - Makefile
+      - pyproject.toml
+      - scripts/**
+      - .githooks/**
+      - docs/contract-map.yaml
+    docs:
+      - AGENTS.md
+      - docs/qa-strategy.md

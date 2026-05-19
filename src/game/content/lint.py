@@ -1,11 +1,11 @@
-"""Content linting for frontmatter references.
+"""Content and balance linting for structural references.
 
 Design sources:
 - docs/decisions/0006-mechanics-in-code-flavor-in-content.md
 
 Implementation rule:
-Validate markdown ids, phase names, location ids, and action references against
-engine enums and content indexes before the game runs.
+Validate markdown ids, balance data, phase names, location ids, and action
+references against engine enums and Pydantic models before the game runs.
 """
 
 from pathlib import Path
@@ -63,5 +63,5 @@ def run_lint() -> None:
         f"{len(index.challenges)} challenge(s), {len(index.producer_texts)} producer text(s), "
         f"{len(index.casa_amor_cast)} casa islander(s), "
         f"{len(index.backstories)} backstory item(s), "
-        f"{len(intents)} intent(s)"
+        f"{len(intents)} balance intent(s)"
     )

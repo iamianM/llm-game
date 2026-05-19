@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.api.display import display, translate_text
+from src.api.display import display
 
 
 def test_display_translates_protected_terms() -> None:
@@ -14,11 +14,3 @@ def test_display_translates_protected_terms() -> None:
     assert display("intros") == "Day-1 Introductions"
     assert display("main") == "Sunset Bay"
     assert display("bombshell") == "Heart Throb"
-
-
-def test_translate_text_hides_engine_enum_values() -> None:
-    text = translate_text("Casa Amor return reveal: player chose return_with_original.")
-
-    assert "return_with_original" not in text
-    assert "Casa Amor" not in text
-    assert text == "Sunset Bay return: player chose return with your original couple."

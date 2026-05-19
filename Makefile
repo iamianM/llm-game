@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -17,6 +17,9 @@ type-check:
 
 content-lint:
 	uv run python -m src.game.cli content lint
+
+docs-health:
+	uv run python scripts/docs-health.py
 
 scenarios:
 	uv run pytest tests/scenarios

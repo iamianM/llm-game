@@ -230,29 +230,6 @@ def _append_background_exchange(
     )
 
 
-def _apply_summon(
-    state: GameState,
-    summon: NPCSummon,
-    curate: ConversationCuratorFn,
-) -> MemoryBatch | None:
-    if summon.from_conversation_id == "player_active":
-        conversation = state.active_conversation
-        if conversation is None:
-            raise ValueError("player summon missing active conversation")
-        conversation.status = "closed"
-        batch = curate(state, conversation, _player_conversation_bystanders(state, conversation))
-        state.active_conversation = None
-    else:
-        npc_conversation = _active_conversation(state, summon.from_conversation_id)
-        npc_conversation.status = "closed"
-        batch = curate(state, npc_conversation, _bystander_ids(state, npc_conversation))
-        state.npc_conversations = [
-            existing for existing in state.npc_conversations if existing.id != npc_conversation.id
-        ]
-    _islander(state, summon.npc_id).location_id = summon.target_location
-    return batch
-
-
 async def _apply_summon_async(
     state: GameState,
     summon: NPCSummon,

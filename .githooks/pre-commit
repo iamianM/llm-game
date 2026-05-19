@@ -1,0 +1,3 @@
+#!/bin/sh
+SCRIPT_DIR="$(dirname "$0")"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$SCRIPT_DIR/pre-commit.ps1"

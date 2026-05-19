@@ -108,9 +108,10 @@ it back toward this tone.
 
 ## Engine internal names (UNCHANGED through Phase 3)
 
-The FastAPI server translates engine identifiers into display strings. The
-engine code itself keeps the existing generic names; a post-Phase-3 rename
-PR aligns them.
+The FastAPI server translates structured engine identifiers into display
+strings. The engine code itself keeps the existing generic names; a post-Phase-3
+rename PR aligns them. Do not use free-text keyword replacement to rewrite
+narration, memories, or prompt output; fix those at their structured source.
 
 | Engine identifier | Display string |
 |---|---|

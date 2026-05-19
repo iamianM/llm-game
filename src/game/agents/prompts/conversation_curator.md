@@ -10,7 +10,7 @@ You produce three things from a closed conversation:
 
 ### Memories
 
-Per-participant first-person memories. Existing rules apply â€” what each person felt, in their voice, with weight 1-10 and tags. At least one per participant. Optionally bystander memories tagged as `witnessed`.
+Per-participant first-person memories. Existing rules apply - what each person felt, in their voice, with weight 1-10 and tags. At least one per participant. Optionally bystander memories tagged as `witnessed`.
 
 ### Summary
 
@@ -22,13 +22,13 @@ Example: "Player and Chloe spent the morning at the pool. Chloe opened up about 
 
 Explicit "this is worth telling someone else" moments. Each seed:
 
-- `subject_id` â€” who the gossip is about. Must be an islander mentioned in the conversation (not necessarily a participant).
-- `gist` â€” one short line, third-person, that the holder could repeat aloud.
-- `holder_id` â€” who can spread it (one of the conversation participants or a listed bystander).
-- `spreadable_to` â€” list of islander ids likely to be interested (high chemistry with subject, alliance with holder, recent drama). Can be empty.
-- `emotional_weight` â€” 1-10.
+- `subject_id` - who the gossip is about. Must be an islander mentioned in the conversation (not necessarily a participant).
+- `gist` - one short line, third-person, that the holder could repeat aloud.
+- `holder_id` - who can spread it (one of the conversation participants or a listed bystander).
+- `spreadable_to` - list of islander ids likely to be interested (high chemistry with subject, alliance with holder, recent drama). Can be empty.
+- `emotional_weight` - 1-10.
 
-Only flag a moment as a gossip seed if it's genuinely worth talking about â€” a confession, a flirt revealed, a betrayal seen, a vulnerable confession. Routine warmth is not a gossip seed.
+Only flag a moment as a gossip seed if it's genuinely worth talking about - a confession, a flirt revealed, a betrayal seen, a vulnerable confession. Routine warmth is not a gossip seed.
 
 If a gossip seed would essentially repeat content already captured in a memory, just include the memory and skip the seed. Don't duplicate.
 

@@ -28,7 +28,9 @@ Do not add abstractions for hypothetical futures. Prefer a direct implementation
 
 ## R7. No Hardcoded Content Heuristics
 
-Do not add keyword maps, regex filters, or scoring hacks to "fix" LLM content quality. Tighten prompts, schemas, tools, or deterministic rules instead.
+Do not add keyword maps, regex filters, or scoring hacks to "fix" LLM content quality. Tighten prompts, schemas, tools, deterministic rules, or structured display identifiers instead.
+
+QA checks must not police prose quality or vocabulary with free-text string matching. Prefer schemas, enums, AST/module metadata, content frontmatter validation, fixture hashes, and cross-reference checks.
 
 ## R8. Seeded RNG Only
 
@@ -60,7 +62,7 @@ Never commit, amend, push, force-push, branch, rebase, or reset without explicit
 
 ## R15. Stay In The Boundary
 
-Engine = deterministic math and state. Content = prose and light metadata. Agents = narration from resolved results. Changes that blur these boundaries do not belong in core.
+Engine = deterministic math and state. `data/balance/` = typed mechanical tuning tables interpreted by engine code. Content = prose and light metadata. Agents = narration from resolved results. Changes that blur these boundaries do not belong in core.
 
 ## R16. Architecture Violations Are Regressions
 
@@ -73,6 +75,7 @@ Reject changes that add:
 - swallowed LLM/tool/content errors
 - fallback narration strings in code
 - content frontmatter fields that encode gameplay logic
+- free-text string matching checks for docs, content, prompts, or player-facing vocabulary
 
 ## R17. Prompts Are User-Owned
 

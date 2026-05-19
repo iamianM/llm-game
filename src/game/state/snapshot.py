@@ -12,10 +12,12 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from typing import Any
 
 from src.game.state.models import SCHEMA_VERSION, GameState
 
 JsonValue = dict[str, object] | list[object] | str | int | float | bool | None
+RngSnapshot = list[Any]
 
 
 def state_hash(payload: JsonValue) -> str:
@@ -106,7 +108,7 @@ def save_named_checkpoint(
     trace_records: list[dict[str, object]],
     *,
     seed: int,
-    rng_state: str | None = None,
+    rng_state: RngSnapshot | None = None,
 ) -> Path:
     """Save a named development checkpoint."""
     path = Path(".game_saves") / "named" / f"{_safe_name(name)}.json"
@@ -118,7 +120,7 @@ def save_auto_checkpoint(
     state: GameState,
     seed: int,
     trace_records: list[dict[str, object]],
-    rng_state: str | None = None,
+    rng_state: RngSnapshot | None = None,
 ) -> Path:
     """Save an automatic boundary checkpoint."""
     path = Path(".game_saves") / "auto" / str(seed) / f"day{state.day}_{state.phase.value}.json"
@@ -126,7 +128,9 @@ def save_auto_checkpoint(
     return path
 
 
-def load_checkpoint(name_or_path: str | Path) -> tuple[GameState, list[dict[str, object]], int]:
+def load_checkpoint(
+    name_or_path: str | Path,
+) -> tuple[GameState, list[dict[str, object]], int, RngSnapshot | None]:
     """Load a named or path-based development checkpoint."""
     path = _checkpoint_path(name_or_path)
     raw = json.loads(path.read_text(encoding="utf-8"))
@@ -137,6 +141,9 @@ def load_checkpoint(name_or_path: str | Path) -> tuple[GameState, list[dict[str,
     seed = raw.get("seed")
     if not isinstance(state_payload, dict) or not isinstance(trace_records, list) or not isinstance(seed, int):
         raise ValueError(f"checkpoint missing state, trace_records, or seed: {path}")
+    rng_state = raw.get("rng_state")
+    if rng_state is not None and not isinstance(rng_state, list):
+        raise ValueError(f"checkpoint rng_state must be a JSON list: {path}")
     checkpoint_version = state_payload.get("schema_version")
     if checkpoint_version != SCHEMA_VERSION:
         raise ValueError(
@@ -144,7 +151,7 @@ def load_checkpoint(name_or_path: str | Path) -> tuple[GameState, list[dict[str,
             f"current schema_version {SCHEMA_VERSION}; regenerate the checkpoint"
         )
     records = [record for record in trace_records if isinstance(record, dict)]
-    return GameState.model_validate(state_payload), records, seed
+    return GameState.model_validate(state_payload), records, seed, rng_state
 
 
 def _write_checkpoint(
@@ -154,7 +161,7 @@ def _write_checkpoint(
     *,
     seed: int,
     checkpoint_name: str,
-    rng_state: str | None,
+    rng_state: RngSnapshot | None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload: dict[str, object] = {

@@ -22,7 +22,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
-from src.api.display import translate_text
 from src.api.models import (
     ApiError,
     ApiErrorBody,
@@ -55,7 +54,7 @@ from src.game.engine.actions import PlayerAction
 from src.game.engine.character_creation import DEFAULT_ARCHETYPE_STATS, create_character
 from src.game.engine.intents import available_intents_for
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import SCHEMA_VERSION, Gender, GameState, new_game
+from src.game.state.models import SCHEMA_VERSION, GameState, Gender, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -249,12 +248,12 @@ def _turn_response(session_id: str, turn: TurnResult) -> TurnResponse:
         state=session_state(session_id, turn.state, audience_delta(result)),
         exchange=exchange_api(turn.state, turn.exchange, result.action.target_id),
         available_actions=available_actions_api(turn.state),
-        ceremony_events=[_translated_dump(event) for event in turn.ceremony_events],
-        event_narration=None if turn.event_narration is None else _translated_dump(turn.event_narration),
+        ceremony_events=[_model_dump(event) for event in turn.ceremony_events],
+        event_narration=None if turn.event_narration is None else _model_dump(turn.event_narration),
         audience_delta=audience_delta(result),
-        audience_delta_reason=None if result.audience_reason is None else translate_text(result.audience_reason),
-        memories_formed=[_translated_dump(batch) for batch in turn.curator_batches],
-        background_activity=[_translated_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues],
+        audience_delta_reason=result.audience_reason,
+        memories_formed=[_model_dump(batch) for batch in turn.curator_batches],
+        background_activity=[_model_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues],
         state_hash=turn.state_hash,
     )
 
@@ -295,6 +294,5 @@ def _load_local_env() -> None:
 _load_local_env()
 
 
-def _translated_dump(value: BaseModel) -> dict[str, object]:
-    data = value.model_dump(mode="json")
-    return {key: translate_text(item) if isinstance(item, str) else item for key, item in data.items()}
+def _model_dump(value: BaseModel) -> dict[str, object]:
+    return value.model_dump(mode="json")

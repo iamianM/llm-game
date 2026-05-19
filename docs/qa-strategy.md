@@ -20,6 +20,7 @@ The goal is for the CLI, browser, and tests to exercise the same engine with the
 | L4 Scenario | `tests/scenarios/fixtures/` | Seed + snapshot + actions yields expected hash | yes | no |
 | L5 E2E | `tests/scenarios/e2e/` | Full no-LLM day, save/load, API parity | yes | no |
 | L6 Narrator | `tests/agents/` | Narration quality and contract compliance | opt-in | yes |
+| L7 Docs Health | `scripts/docs-health.py` | Contract-sensitive files changed with their owning docs | local hook / targeted | no |
 
 L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 
@@ -34,6 +35,8 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 5. `make smoke`
 6. `make determinism`
 
+`make docs-health` is a fast structural guard for contract-sensitive changes. It is intentionally outside the default gate until the map is tuned enough to stay low-friction.
+
 `make smoke` verifies `tests/scenarios/fixtures/day1-happy-path.yaml`. `make determinism` verifies checked-in scenario fixtures and expected hashes.
 
 If a change touches Pydantic state models, also verify checked-in snapshots still load or regenerate them intentionally.
@@ -41,6 +44,21 @@ If a change touches Pydantic state models, also verify checked-in snapshots stil
 If a change touches prompts or agents, run mock agent tests. Run `make test-llm` when real agent behavior changed.
 
 Recorded playthroughs also run structural pacing checks: average actions per phase, day progression, time-expired advances, NPC-initiated exits, and NPC arrival rolls. These stay deterministic and do not use an LLM judge.
+
+## Docs Health
+
+Documentation health checks should be structural, not semantic prose checks.
+
+- Use `docs/contract-map.yaml` to map contract-sensitive source paths to owning docs.
+- The staged-file check fails only when a mapped source path changes without at least one mapped doc changing in the same staged set.
+- Do not add checks that scan prose for forbidden words, brand vocabulary, or prompt quality. Fix those at the source through typed display identifiers, prompt ownership, authored content, or tests around structured fields.
+- Keep hooks fast enough to run before every commit. Full `make qa`, web builds, Playwright, and LLM tests belong outside the hook.
+
+Install the local hook with:
+
+```bash
+git config core.hooksPath .githooks
+```
 
 ## Snapshot Contract
 
