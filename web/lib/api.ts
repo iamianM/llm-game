@@ -9,9 +9,15 @@ import type {
   TurnResponseEnvelope
 } from "./types";
 
-const API_BASE =
+// Request paths in this file already carry the `/api/...` prefix that matches
+// the FastAPI route table. The base must therefore point at the *origin*, not
+// at `/api`. We strip any trailing `/api` so that an env var like
+// `NEXT_PUBLIC_API_BASE=/api` (or Vercel's auto-injected `/svc/api` shape)
+// can't double-prefix and 404.
+const RAW_API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
   (process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000" : "");
+const API_BASE = RAW_API_BASE.replace(/\/api\/?$/, "");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
