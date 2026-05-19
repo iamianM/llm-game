@@ -11,6 +11,7 @@ import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
 import { ChoiceMenu } from "./ChoiceMenu";
 import { DialogueBox } from "./DialogueBox";
+import { IntroPanel } from "./IntroPanel";
 import { NpcPortrait } from "./NpcPortrait";
 import { RightRail } from "../rail/RightRail";
 import { TopBar } from "./TopBar";
@@ -79,29 +80,48 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const dialogueSpeaker = mutation.isPending ? streamSpeaker : dialogue?.speaker_name ?? speaker?.name ?? "The Producer";
   const playerLine = mutation.isPending ? pendingActionLabel ?? undefined : dialogue?.player_dialogue;
 
+  const isIntros = state.phase === "intros";
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
       <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} />
-      <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col">
-        <VillaBackground location={state.location_id}>
-          {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} phase={state.phase} />}
-        </VillaBackground>
-        <DialogueBox
-          speaker={dialogueSpeaker}
-          playerLine={playerLine}
-          text={dialogueText}
-          complete={!mutation.isPending}
-          audienceDelta={lastTurn?.audience_delta}
-          audienceReason={lastTurn?.audience_delta_reason}
-          onAdvance={() => {
-            if (deferredCeremony) {
-              setDeferredCeremony(false);
-              setShowCeremony(true);
-            }
-          }}
-        />
-        <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
-      </div>
+      <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
+        {isIntros ? (
+          <IntroPanel
+            state={state}
+            actions={actions}
+            pending={mutation.isPending}
+            lastNpcDialogue={dialogue?.npc_dialogue}
+            lastPlayerLine={dialogue?.player_dialogue}
+            onChoose={(action, playerLine) => {
+              const enriched: AvailableAction = { ...action, label: playerLine };
+              mutation.mutate(enriched);
+            }}
+          />
+        ) : (
+          <>
+            <div className="flex-1 min-h-0 flex">
+              <VillaBackground location={state.location_id}>
+                {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} phase={state.phase} />}
+              </VillaBackground>
+            </div>
+            <DialogueBox
+              speaker={dialogueSpeaker}
+              playerLine={playerLine}
+              text={dialogueText}
+              complete={!mutation.isPending}
+              audienceDelta={lastTurn?.audience_delta}
+              audienceReason={lastTurn?.audience_delta_reason}
+              onAdvance={() => {
+                if (deferredCeremony) {
+                  setDeferredCeremony(false);
+                  setShowCeremony(true);
+                }
+              }}
+            />
+            <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
+          </>
+        )}
+        </div>
       <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} />
       <SettingsMenu />
       {showCeremony ? <CeremonyOverlay title={ceremonyTitle(event, state)} narration={narration} couples={state.couples} onContinue={() => setShowCeremony(false)} /> : null}
@@ -112,10 +132,61 @@ export function GameStage({ sessionId }: { sessionId: string }) {
 
 function IdleStage({ location, phase }: { location: string; phase: string }) {
   return (
-    <div className="rounded-[var(--r-lg)] border border-white/15 bg-black/25 px-8 py-6 text-center shadow-[var(--shadow-stage)]">
-      <p className="font-hand text-4xl text-gold">Sunset Bay</p>
-      <p className="mt-2 font-display text-3xl">{location}</p>
-      <p className="mt-2 text-sm text-[var(--muted-on-dark)]">{stagePrompt({ phase })}</p>
+    <div className="idle-stage">
+      <span className="idle-eyebrow">Sunset Bay</span>
+      <h2 className="idle-place">{location || "Paradise"}</h2>
+      <p className="idle-hint">{stagePrompt({ phase })}</p>
+      <style jsx>{`
+        .idle-stage {
+          position: relative;
+          display: grid;
+          place-items: center;
+          gap: 6px;
+          padding: 22px 32px 24px;
+          border-radius: var(--r-xl);
+          background: linear-gradient(180deg, rgba(8,6,4,.55), rgba(8,6,4,.35));
+          border: 1px solid rgba(217,167,58,.32);
+          backdrop-filter: blur(10px);
+          box-shadow: var(--shadow-stage), var(--inset-gold);
+          color: var(--ink-on-dark);
+          animation: drift-up 0.6s cubic-bezier(.22,.61,.36,1) both;
+          min-width: 380px;
+          text-align: center;
+        }
+        .idle-stage::before, .idle-stage::after {
+          content: "";
+          position: absolute;
+          left: 50%; transform: translateX(-50%);
+          width: 80px; height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(217,167,58,.45), transparent);
+        }
+        .idle-stage::before { top: 12px; }
+        .idle-stage::after { bottom: 12px; }
+        .idle-eyebrow {
+          font-family: var(--font-hand);
+          font-size: 20px;
+          color: var(--gold-soft);
+          letter-spacing: .04em;
+          margin-top: 6px;
+        }
+        .idle-place {
+          margin: 0;
+          font-family: var(--font-display);
+          font-size: 36px;
+          font-weight: 600;
+          letter-spacing: -.01em;
+          color: var(--card);
+          text-transform: capitalize;
+        }
+        .idle-hint {
+          margin: 4px 0 6px;
+          font-size: 13px;
+          line-height: 1.55;
+          color: var(--muted-on-dark);
+          font-style: italic;
+          max-width: 48ch;
+        }
+      `}</style>
     </div>
   );
 }

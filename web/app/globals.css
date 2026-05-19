@@ -4,13 +4,32 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body { min-height: 100%; background: var(--bg); color: var(--ink-on-dark); }
-body { margin: 0; font-family: var(--font-body); }
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink-on-dark);
+}
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  overflow: hidden;          /* No-scroll: pages must fit. */
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+/* iOS Safari + small-viewport correction */
+@supports (height: 100svh) { html, body { height: 100svh; } }
+
 button, a { outline-offset: 3px; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); }
 .reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
   transition-duration: 1ms !important;
   animation-duration: 1ms !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
 }
 .film-grain::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .08;
@@ -26,3 +45,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); }
 .location-casa_pool,.location-casa_kitchen,.location-casa_terrace {
   background: linear-gradient(180deg,#5a4490 0%,#3f2f6a 70%,#1f163a 100%);
 }
+
+/* Make modal/popout scrollable internally even though body cannot scroll. */
+[role="dialog"] [role="document"], dialog, .scroll-y { overflow-y: auto; }

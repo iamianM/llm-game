@@ -12,7 +12,7 @@ test("captures primary screen snapshots", async ({ page }) => {
   await page.screenshot({ path: out("new-run.png"), fullPage: true });
 
   await page.getByRole("button", { name: "Test mode" }).click();
-  await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
+  await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await expect(page.locator('[data-screen="stage"]')).toBeVisible();
   await page.waitForSelector('[data-state="dialogue-complete"]', { timeout: 15_000 });
   await page.screenshot({ path: out("stage-start.png"), fullPage: true });
@@ -23,11 +23,11 @@ test("captures primary screen snapshots", async ({ page }) => {
   await page.screenshot({ path: out("rail-open.png"), fullPage: true });
   await page.getByRole("button", { name: "Open Chloe profile" }).click();
   await page.screenshot({ path: out("cast-popout.png"), fullPage: true });
-  await page.getByRole("button", { name: "Close" }).last().click();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).first().click();
 
   await page.getByLabel("Open settings").click();
   await page.screenshot({ path: out("settings.png"), fullPage: true });
-  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).first().click();
 
   await page.getByRole("button", { name: "Pair with Chloe" }).click();
   await expect(page.locator('[data-screen="ceremony"]')).toBeVisible();

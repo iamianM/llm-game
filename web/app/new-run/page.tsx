@@ -6,12 +6,11 @@ import { useState } from "react";
 import { newSession } from "../../lib/api";
 import type { Gender } from "../../lib/types";
 import { ArchetypeCard } from "../../components/chrome/ArchetypeCard";
-import { Button } from "../../components/ui/Button";
 
 const ARCHETYPES = [
-  { id: "heartthrob", title: "Heartthrob", bonus: "+3 Charm", advantage: "Walk into Sunset Bay with instant spark and a little extra first-impression heat." },
-  { id: "class_clown", title: "Class Clown", bonus: "+3 Banter", advantage: "Win the room with quick jokes, warm timing, and a crowd-pleaser edge." },
-  { id: "loyal_friend", title: "Loyal Friend", bonus: "+3 Loyalty", advantage: "Start with steadier bonds and a reputation for meaning what you say." }
+  { id: "heartthrob", title: "Heartthrob", bonus: "+3 Charm", advantage: "Walk into Sunset Bay with instant spark." },
+  { id: "class_clown", title: "Class Clown", bonus: "+3 Banter", advantage: "Quick jokes, warm timing, crowd-pleaser edge." },
+  { id: "loyal_friend", title: "Loyal Friend", bonus: "+3 Loyalty", advantage: "Start with steadier bonds and a real reputation." }
 ];
 
 export default function NewRunPage() {
@@ -28,42 +27,213 @@ export default function NewRunPage() {
   });
 
   return (
-    <main className="min-h-screen bg-bg px-8 py-10 text-[var(--card)]">
-      <div className="mx-auto max-w-6xl">
-        <p className="text-sm text-[var(--muted-on-dark)]">Paradise Hearts casting</p>
-        <h1 className="mt-2 font-display text-5xl">Choose your opening vibe</h1>
-        <div className="mt-8 grid grid-cols-3 gap-5">
+    <main className="newrun-stage film-grain vignette" data-screen="new-run">
+      <div className="newrun-bg" aria-hidden />
+      <div className="newrun-content">
+        <header className="newrun-header">
+          <p className="newrun-eyebrow flourish">Paradise Hearts · Casting</p>
+          <h1 className="newrun-title">
+            <span className="title-main gold-shimmer">Choose your opening vibe</span>
+          </h1>
+        </header>
+
+        <div className="archetypes">
           {ARCHETYPES.map((item) => (
             <ArchetypeCard key={item.id} {...item} selected={archetype === item.id} onSelect={() => setArchetype(item.id)} />
           ))}
         </div>
-        <section className="mt-8 rounded-[var(--r-lg)] border border-white/10 bg-white/5 p-5">
-          <h2 className="font-display text-2xl">Heartbreaker card</h2>
-          <p className="mt-2 text-sm text-[var(--muted-on-dark)]">Stats are assigned from your archetype for this MVP.</p>
-          <div className="mt-4 flex gap-3">
-            <Button variant={gender === "man" ? "primary" : "secondary"} onClick={() => setGender("man")}>Man</Button>
-            <Button variant={gender === "woman" ? "primary" : "secondary"} onClick={() => setGender("woman")}>Woman</Button>
-          </div>
-        </section>
-        <section className="mt-5 rounded-[var(--r-lg)] border border-white/10 bg-white/5 p-5">
-          <h2 className="font-display text-2xl">Story engine</h2>
-          <p className="mt-2 text-sm text-[var(--muted-on-dark)]">
-            Use test mode for fast deterministic checks, or real mode for authored live dialogue. Real mode can take 30-60 seconds while the cast is written.
-          </p>
-          <div className="mt-4 flex gap-3">
-            <Button variant={mockLlm ? "primary" : "secondary"} onClick={() => setMockLlm(true)}>Test mode</Button>
-            <Button variant={!mockLlm ? "primary" : "secondary"} onClick={() => setMockLlm(false)}>Real mode</Button>
-          </div>
-        </section>
-        <Button disabled={mutation.isPending} onClick={() => mutation.mutate()} className="mt-8">
-          {mutation.isPending ? "Opening Sunset Bay..." : "Enter Sunset Bay"}
-        </Button>
+
+        <div className="config-row">
+          <section className="config-card">
+            <span className="config-label">You walk in as</span>
+            <div className="toggle-group">
+              <Toggle on={gender === "man"} onClick={() => setGender("man")}>Man</Toggle>
+              <Toggle on={gender === "woman"} onClick={() => setGender("woman")}>Woman</Toggle>
+            </div>
+          </section>
+
+          <section className="config-card">
+            <span className="config-label">Story engine</span>
+            <div className="toggle-group">
+              <Toggle on={mockLlm} onClick={() => setMockLlm(true)}>Test mode</Toggle>
+              <Toggle on={!mockLlm} onClick={() => setMockLlm(false)}>Real mode</Toggle>
+            </div>
+          </section>
+
+          <button
+            disabled={mutation.isPending}
+            onClick={() => mutation.mutate()}
+            className="enter-cta"
+          >
+            <span className="cta-label">{mutation.isPending ? "Opening…" : "Step into Sunset Bay"}</span>
+            <span className="cta-arrow">→</span>
+          </button>
+        </div>
+
         {mutation.error ? (
-          <p role="alert" className="mt-4 max-w-2xl rounded-[var(--r-md)] border border-[var(--bad-soft)]/40 bg-[var(--bad-soft)]/10 p-3 text-sm text-[var(--bad-soft)]">
-            {mutation.error.message}
-          </p>
+          <p role="alert" className="error-banner">{mutation.error.message}</p>
         ) : null}
       </div>
+
+      <style jsx>{`
+        .newrun-stage {
+          position: relative;
+          height: 100vh;
+          height: 100svh;
+          overflow: hidden;
+          padding: 3vh 3vw;
+          color: var(--ink-on-dark);
+          isolation: isolate;
+        }
+        .newrun-bg {
+          position: absolute; inset: 0;
+          background:
+            radial-gradient(100% 70% at 50% -10%, rgba(212,99,62,.22), transparent 50%),
+            radial-gradient(80% 60% at 10% 100%, rgba(91,124,79,.18), transparent 60%),
+            radial-gradient(80% 60% at 90% 100%, rgba(120,80,40,.20), transparent 60%),
+            linear-gradient(180deg, #100b08, #060403);
+          z-index: 0;
+        }
+        .newrun-content {
+          position: relative; z-index: 3;
+          max-width: 1200px;
+          height: 100%;
+          margin: 0 auto;
+          display: grid;
+          grid-template-rows: auto 1fr auto;
+          gap: 18px;
+        }
+        .newrun-header {
+          text-align: center;
+        }
+        .newrun-eyebrow {
+          font-family: var(--font-hand);
+          color: var(--gold-soft);
+          font-size: 15px;
+          letter-spacing: .04em;
+          margin-bottom: 8px;
+        }
+        .newrun-title { margin: 0; font-family: var(--font-display); font-weight: 600; line-height: 1; }
+        .title-main {
+          display: block;
+          font-style: italic;
+          font-size: clamp(34px, 5.2vw, 64px);
+          letter-spacing: -.02em;
+        }
+
+        .archetypes {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 14px;
+          align-content: center;
+          min-height: 0;
+        }
+        @media (max-width: 760px) {
+          .archetypes { grid-template-columns: 1fr; gap: 8px; }
+        }
+
+        .config-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr auto;
+          gap: 14px;
+          align-items: center;
+        }
+        @media (max-width: 760px) {
+          .config-row { grid-template-columns: 1fr; gap: 10px; }
+        }
+        .config-card {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 14px;
+          border-radius: var(--r-lg);
+          border: var(--frame-gold);
+          background: rgba(20,16,12,.6);
+          backdrop-filter: blur(8px);
+        }
+        .config-label {
+          font-size: 10px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: var(--gold-soft);
+          flex-shrink: 0;
+        }
+        .toggle-group {
+          display: inline-flex;
+          gap: 4px;
+          padding: 3px;
+          border-radius: var(--r-pill);
+          background: rgba(0,0,0,.4);
+          border: 1px solid rgba(248,236,210,.08);
+          margin-left: auto;
+        }
+
+        .enter-cta {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 26px;
+          font-family: var(--font-display);
+          font-size: 18px;
+          font-style: italic;
+          color: var(--card);
+          background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+          border: 1px solid rgba(217,167,58,.55);
+          border-radius: var(--r-pill);
+          cursor: pointer;
+          box-shadow: var(--shadow-lg), var(--inset-gold);
+          transition: transform .18s, box-shadow .18s;
+          white-space: nowrap;
+        }
+        .enter-cta:hover:not([disabled]) { transform: translateY(-2px); box-shadow: var(--shadow-lg), var(--shadow-accent), var(--inset-gold); }
+        .enter-cta[disabled] { opacity: .55; cursor: progress; }
+        .cta-arrow { font-size: 20px; font-style: normal; transition: transform .2s; }
+        .enter-cta:hover:not([disabled]) .cta-arrow { transform: translateX(4px); }
+
+        .error-banner {
+          position: absolute;
+          left: 50%; bottom: 14px; transform: translateX(-50%);
+          padding: 8px 14px;
+          border-radius: var(--r-md);
+          background: rgba(193,75,58,.18);
+          border: 1px solid rgba(193,75,58,.45);
+          color: #f7c8c1;
+          font-size: 13px;
+        }
+      `}</style>
     </main>
+  );
+}
+
+function Toggle({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`toggle-pill ${on ? "is-on" : ""}`}
+    >
+      {children}
+      <style jsx>{`
+        .toggle-pill {
+          padding: 6px 14px;
+          border-radius: var(--r-pill);
+          border: 0;
+          background: transparent;
+          color: var(--muted-on-dark);
+          font-size: 12.5px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background .15s, color .15s;
+        }
+        .toggle-pill:hover { color: var(--ink-on-dark); }
+        .toggle-pill.is-on {
+          background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+          color: var(--card);
+          box-shadow: var(--shadow-sm), var(--inset-gold);
+        }
+      `}</style>
+    </button>
   );
 }

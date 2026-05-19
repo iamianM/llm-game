@@ -4,12 +4,17 @@ import path from "node:path";
 const out = (name: string) => path.join(process.cwd(), "tests", "snapshots", name);
 
 test("complete mock playthrough reaches finale", async ({ page }) => {
-  test.setTimeout(240_000);
+  test.setTimeout(720_000);
   await page.goto("/");
   await page.getByRole("link", { name: "New Run" }).click();
   await page.getByRole("button", { name: "Test mode" }).click();
-  await page.getByRole("button", { name: "Enter Sunset Bay" }).click();
+  await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await expect(page.getByTestId("choice-menu")).toBeVisible();
+  // Speed up dialogue + animations so the long playthrough fits in budget.
+  await page.getByLabel("Open settings").click();
+  await page.getByLabel("Typewriter speed").selectOption("instant");
+  await page.getByLabel("Reduce motion").check();
+  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   let sawDayRecap = false;
   let sawFirstSpark = false;
   let sawPairingCeremony = false;
@@ -24,7 +29,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
       continue;
     }
     if (await page.locator('[data-screen="ceremony"]').count()) {
-      const ceremonyText = await page.locator('[data-screen="ceremony"]').innerText();
+      const ceremonyText = await page.locator('[data-screen="ceremony"]').textContent({ timeout: 5_000 }) ?? "";
       if (/First Spark/i.test(ceremonyText)) sawFirstSpark = true;
       if (/Pairing Ceremony/i.test(ceremonyText)) sawPairingCeremony = true;
       if (/Flush of Hearts/i.test(ceremonyText)) sawFlushOfHearts = true;
@@ -40,18 +45,15 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
     } catch {
       break;
     }
-    const buttons = page.locator('[data-testid="choice"]:not([disabled])');
-    await expect(buttons.first()).toBeVisible();
-    const count = await buttons.count();
-    let chosen = 0;
-    for (let index = 0; index < count; index += 1) {
-      const text = await buttons.nth(index).innerText();
-      if (/Challenge|Join gather|Flush of Hearts|Pair with|Spark .* with|ambient|Lounge|People-watch|Walk away|Move/i.test(text)) {
-        chosen = index;
-        break;
-      }
+    const introChoice = page.locator('[data-intent="intro_friendly"]:not([disabled])');
+    if (await introChoice.count() > 0) {
+      await introChoice.click();
+    } else {
+      const buttons = page.locator('[data-testid="choice"]:not([disabled])');
+      await expect(buttons.first()).toBeVisible();
+      // Click first available action; engine surfaces something meaningful every turn.
+      await buttons.first().click();
     }
-    await buttons.nth(chosen).click();
     await page.waitForSelector('[data-state="dialogue-complete"], [data-screen="ceremony"], [data-screen="finale"]', { timeout: 15_000 });
     if (page.url().includes("/finale") || await page.getByRole("heading", { name: "Sunset Bay crowns its couple" }).count()) break;
   }

@@ -2,11 +2,51 @@ import type { ApiMemory } from "../../lib/types";
 
 export function MemoriesList({ memories }: { memories: ApiMemory[] }) {
   return (
-    <section className="rounded-[var(--r-md)] border border-white/10 bg-white/5 p-3">
-      <h3 className="font-display text-lg">Memories</h3>
-      <div className="mt-3 space-y-2 text-sm text-[var(--muted-on-dark)]">
-        {memories.length ? memories.map((memory) => <p key={`${memory.subject_id}-${memory.formed_on_turn}`}>{memory.content}</p>) : <p>No memories yet.</p>}
+    <section className="rail-section">
+      <h3 className="rail-section-title">Memories</h3>
+      <div className="memories">
+        {memories.length ? (
+          memories.slice(0, 8).map((memory) => (
+            <p key={`${memory.subject_id}-${memory.formed_on_turn}`} className="memory">
+              {memory.content}
+            </p>
+          ))
+        ) : (
+          <p className="empty">No memories yet.</p>
+        )}
       </div>
+      <style jsx>{`
+        .rail-section {
+          padding: 14px 14px 16px;
+          border-radius: var(--r-lg);
+          background: rgba(248,236,210,.04);
+          border: 1px solid rgba(248,236,210,.08);
+        }
+        .rail-section-title {
+          margin: 0 0 10px;
+          font-size: 10px;
+          letter-spacing: .16em;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: var(--gold-soft);
+        }
+        .memories { display: grid; gap: 8px; }
+        .memory {
+          margin: 0;
+          font-size: 12.5px;
+          line-height: 1.55;
+          color: var(--muted-on-dark);
+          padding-left: 10px;
+          border-left: 2px solid rgba(217,167,58,.25);
+          font-style: italic;
+        }
+        .empty {
+          margin: 0;
+          font-size: 12px;
+          color: var(--muted-on-dark);
+          opacity: .7;
+        }
+      `}</style>
     </section>
   );
 }

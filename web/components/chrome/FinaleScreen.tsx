@@ -8,7 +8,7 @@ import { Button } from "../ui/Button";
 export function FinaleScreen({ state }: { state: SessionState }) {
   const playerCouple = state.couples.find((couple) => couple.is_player_couple);
   return (
-    <main data-screen="finale" className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_50%_20%,rgba(200,147,42,.28),transparent_34%),#1c1612] p-8 text-center text-[var(--card)]">
+    <main data-screen="finale" className="grid min-h-screen place-items-center bg-[linear-gradient(180deg,rgba(7,5,4,.4),rgba(7,5,4,.9)),url('/images/features/finale.webp')] bg-cover bg-center p-8 text-center text-[var(--card)]">
       <section className="max-w-3xl">
         <p className="font-hand text-4xl text-gold">Finale</p>
         <h1 className="mt-2 font-display text-7xl">Sunset Bay crowns its couple</h1>

@@ -1,23 +1,150 @@
-import { PanelRightOpen, Settings } from "lucide-react";
+"use client";
+
+import { PanelRightOpen, Settings, Clock } from "lucide-react";
 import type { SessionState } from "../../lib/types";
 import { PulseMeter } from "./PulseMeter";
-import { Pill } from "../ui/Pill";
 
 type Props = { state: SessionState; onRail: () => void; onSettings: () => void };
 
 export function TopBar({ state, onRail, onSettings }: Props) {
   return (
-    <header className="flex h-14 items-center gap-4 border-b border-white/10 bg-black/25 px-4 backdrop-blur">
-      <button aria-label="Open right rail" onClick={onRail} className="rounded p-2 hover:bg-white/10"><PanelRightOpen size={20} /></button>
-      <div className="font-display text-lg text-[var(--card)]">Paradise Hearts</div>
-      <div className="ml-auto flex items-center gap-2">
-        <Pill tone="gold">Day {state.day}</Pill>
-        <Pill>{state.phase_label}</Pill>
-        <Pill>T{state.turn_index}</Pill>
-        <Pill>{clockText(state.phase_clock)}</Pill>
-        <PulseMeter score={state.audience.public_perception} delta={state.audience.recent_delta} />
-        <button aria-label="Open settings" onClick={onSettings} className="rounded p-2 hover:bg-white/10"><Settings size={20} /></button>
+    <header className="topbar">
+      <button aria-label="Open right rail" onClick={onRail} className="icon-btn"><PanelRightOpen size={18} /></button>
+      <div className="brand">
+        <span className="brand-dot" />
+        <span className="brand-text">Paradise Hearts</span>
       </div>
+
+      <div className="hud-row">
+        <span className="day-chip" aria-label={`Day ${state.day}`}>
+          <span className="day-label">Day</span>
+          <span className="day-num">{state.day}</span>
+        </span>
+        <span className="divider" aria-hidden />
+        <span className="phase-chip">{state.phase_label}</span>
+        <span className="turn-chip"><Clock size={11} /> {clockText(state.phase_clock)} · T{state.turn_index}</span>
+      </div>
+
+      <div className="hud-right">
+        <PulseMeter score={state.audience.public_perception} delta={state.audience.recent_delta} />
+        <button aria-label="Open settings" onClick={onSettings} className="icon-btn"><Settings size={18} /></button>
+      </div>
+
+      <style jsx>{`
+        .topbar {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          height: 56px;
+          padding: 0 14px;
+          background:
+            linear-gradient(180deg, rgba(20,16,12,.95), rgba(8,6,4,.85)),
+            linear-gradient(90deg, transparent, rgba(217,167,58,.06), transparent);
+          border-bottom: 1px solid rgba(217,167,58,.18);
+          backdrop-filter: blur(10px);
+          position: relative;
+          z-index: 6;
+        }
+        .topbar::after {
+          content: "";
+          position: absolute;
+          left: 0; right: 0; bottom: -1px;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(217,167,58,.4), transparent);
+        }
+        .icon-btn {
+          display: grid;
+          place-items: center;
+          width: 32px; height: 32px;
+          border-radius: var(--r-md);
+          color: var(--ink-on-dark);
+          background: transparent;
+          border: 0;
+          cursor: pointer;
+          transition: background .15s, color .15s;
+        }
+        .icon-btn:hover { background: rgba(255,255,255,.08); color: var(--gold-soft); }
+
+        .brand {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding-right: 14px;
+          border-right: 1px solid rgba(248,236,210,.1);
+        }
+        @media (max-width: 700px) {
+          .brand { padding-right: 8px; }
+          .brand-text { display: none; }
+          .turn-chip { display: none; }
+          .phase-chip { font-size: 12px; }
+        }
+        .brand-dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: var(--accent);
+          box-shadow: 0 0 12px var(--accent-glow);
+          animation: ambient-pulse 3s ease-in-out infinite;
+        }
+        .brand-text {
+          font-family: var(--font-display);
+          font-size: 15px;
+          color: var(--ink-on-dark);
+          letter-spacing: .02em;
+        }
+
+        .hud-row {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .day-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 12px;
+          border-radius: var(--r-pill);
+          background: linear-gradient(180deg, rgba(217,167,58,.18), rgba(168,122,31,.12));
+          border: 1px solid rgba(217,167,58,.4);
+          color: var(--gold-soft);
+        }
+        .day-label {
+          font-size: 10px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          font-weight: 700;
+          opacity: .9;
+        }
+        .day-num {
+          font-family: var(--font-display);
+          font-size: 16px;
+          font-weight: 700;
+          color: var(--card);
+        }
+        .divider { width: 1px; height: 16px; background: rgba(248,236,210,.12); }
+        .phase-chip {
+          font-family: var(--font-display);
+          font-style: italic;
+          font-size: 14px;
+          color: var(--ink-on-dark);
+          letter-spacing: .02em;
+        }
+        .turn-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          font-size: 11px;
+          font-variant-numeric: tabular-nums;
+          color: var(--muted-on-dark);
+          letter-spacing: .04em;
+        }
+
+        .hud-right {
+          margin-left: auto;
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+        }
+      `}</style>
     </header>
   );
 }

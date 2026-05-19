@@ -6,8 +6,7 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   use: {
     baseURL: "http://127.0.0.1:3001",
-    trace: "retain-on-failure",
-    viewport: { width: 1440, height: 900 }
+    trace: "retain-on-failure"
   },
   webServer: [
     {
@@ -24,5 +23,26 @@ export default defineConfig({
       timeout: 120_000
     }
   ],
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }]
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1440, height: 900 } }
+    },
+    {
+      name: "chromium-small",
+      testMatch: /no-scroll|title|new-run|rail-popouts|settings/,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 720 } }
+    },
+    {
+      name: "mobile",
+      testMatch: /no-scroll|title|new-run|mobile/,
+      use: { ...devices["Pixel 7"] }
+    },
+    {
+      name: "golden",
+      testDir: "./tests/golden",
+      timeout: 600_000,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1600, height: 900 } }
+    }
+  ]
 });

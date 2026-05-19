@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paradise Hearts · Golden Playthrough</title>
+  <style>
+    :root {
+      --bg-deep: #070504;
+      --bg: #0d0a08;
+      --ink: #faf6ef;
+      --muted: #b5a187;
+      --gold: #d9a73a;
+      --gold-soft: #f4e3b8;
+      --accent: #d4633e;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background:
+        radial-gradient(80% 60% at 50% -10%, rgba(212,99,62,.22), transparent 50%),
+        var(--bg-deep);
+      color: var(--ink);
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      min-height: 100vh;
+      padding: 6vh 4vw 12vh;
+    }
+    header.banner {
+      text-align: center;
+      max-width: 880px;
+      margin: 0 auto 6vh;
+    }
+    .eyebrow {
+      font-style: italic;
+      color: var(--gold-soft);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    h1 {
+      margin-top: 12px;
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 700;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+    h1 .italic {
+      font-style: italic;
+      background: linear-gradient(110deg, #a87a1f 25%, #f4e3b8 50%, #a87a1f 75%);
+      background-size: 220% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .tagline {
+      margin-top: 16px;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .stats {
+      margin-top: 22px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .deck {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      gap: 60px;
+    }
+    .slide {
+      display: grid;
+      gap: 18px;
+      padding: 24px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(20,16,12,.65), rgba(8,6,4,.85));
+      border: 1px solid rgba(217,167,58,.25);
+      box-shadow: 0 18px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(248,236,210,.06);
+    }
+    .slide header {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      border-bottom: 1px solid rgba(217,167,58,.18);
+      padding-bottom: 12px;
+    }
+    .slide-num {
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: -.04em;
+      font-variant-numeric: tabular-nums;
+    }
+    .slide h2 {
+      font-family: "Iowan Old Style", Charter, Georgia, serif;
+      font-size: 26px;
+      font-style: italic;
+      color: var(--ink);
+      letter-spacing: -.01em;
+    }
+    .slide figure {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(217,167,58,.28);
+      background: var(--bg);
+    }
+    .slide img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .caption {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--muted);
+      max-width: 76ch;
+    }
+
+    nav.toc {
+      position: fixed;
+      right: 24px; top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 10;
+    }
+    nav.toc a {
+      display: block;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(248,236,210,.18);
+      transition: background .2s, transform .2s;
+    }
+    nav.toc a:hover { background: var(--gold); transform: scale(1.4); }
+
+    @media (max-width: 720px) {
+      nav.toc { display: none; }
+      body { padding: 4vh 3vw 8vh; }
+      .deck { gap: 36px; }
+      .slide { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="banner">
+    <p class="eyebrow">A Paradise Hearts production</p>
+    <h1>Paradise <span class="italic">Hearts</span></h1>
+    <p class="tagline">Golden Playthrough — the sizzle reel.</p>
+    <p class="stats">17 beats · captured 2026-05-15 · 1600 × 900</p>
+  </header>
+
+  <nav class="toc" aria-label="Beat navigation">
+    <a href="#slide-1" title="Title"></a><a href="#slide-2" title="Character select"></a><a href="#slide-3" title="First Spark choices"></a><a href="#slide-4" title="First Spark ceremony"></a><a href="#slide-5" title="Intros · first greeting"></a><a href="#slide-6" title="Intros · deep response lands"></a><a href="#slide-7" title="Intros · second NPC"></a><a href="#slide-8" title="Intros · banter pick"></a><a href="#slide-9" title="Settings"></a><a href="#slide-10" title="Field Report rail"></a><a href="#slide-11" title="Cast popout · discovery"></a><a href="#slide-12" title="Main stage"></a><a href="#slide-13" title="Conversation"></a><a href="#slide-14" title="Day boundary recap"></a><a href="#slide-15" title="Pairing Ceremony"></a><a href="#slide-16" title="Flush of Hearts"></a><a href="#slide-17" title="Finale"></a>
+  </nav>
+
+  <div class="deck">
+    <article class="slide" id="slide-1">
+      <header>
+        <span class="slide-num">01</span>
+        <h2>Title</h2>
+      </header>
+      <figure>
+        <img src="01-title.png" alt="Title" />
+      </figure>
+      <p class="caption">Paradise Hearts — the arrival. Charter serif wordmark, gold-shimmer italic, palm silhouettes against a sunset horizon.</p>
+    </article>
+
+    <article class="slide" id="slide-2">
+      <header>
+        <span class="slide-num">02</span>
+        <h2>Character select</h2>
+      </header>
+      <figure>
+        <img src="02-character-select.png" alt="Character select" />
+      </figure>
+      <p class="caption">Pick your opening vibe. Three archetype cards with hero gradients, hand-script tag-lines, and a &#39;Step into Sunset Bay&#39; CTA.</p>
+    </article>
+
+    <article class="slide" id="slide-3">
+      <header>
+        <span class="slide-num">03</span>
+        <h2>First Spark choices</h2>
+      </header>
+      <figure>
+        <img src="03-first-spark-choices.png" alt="First Spark choices" />
+      </figure>
+      <p class="caption">Day 1, morning. The four opening pair options. The game&#39;s first decision. Pulse meter is anchored at 50, no audience reaction yet.</p>
+    </article>
+
+    <article class="slide" id="slide-4">
+      <header>
+        <span class="slide-num">04</span>
+        <h2>First Spark ceremony</h2>
+      </header>
+      <figure>
+        <img src="04-first-spark-ceremony.png" alt="First Spark ceremony" />
+      </figure>
+      <p class="caption">Paradise Calls · First Spark. The opening couples lock in with a staggered reveal. Gold-bordered pair rows beneath the gold-shimmer title.</p>
+    </article>
+
+    <article class="slide" id="slide-5">
+      <header>
+        <span class="slide-num">05</span>
+        <h2>Intros · first greeting</h2>
+      </header>
+      <figure>
+        <img src="05-intros-first-greeting.png" alt="Intros · first greeting" />
+      </figure>
+      <p class="caption">Day-1 introductions. The first Heartbreaker walks up and greets the player. Four real-dialogue response cards beneath — Friendly, Flirty, Deep, Banter — each a line the player can actually say.</p>
+    </article>
+
+    <article class="slide" id="slide-6">
+      <header>
+        <span class="slide-num">06</span>
+        <h2>Intros · deep response lands</h2>
+      </header>
+      <figure>
+        <img src="06-intros-deep-response-lands.png" alt="Intros · deep response lands" />
+      </figure>
+      <p class="caption">Player picked the Deep response. NPC mirrors back. Notice the player-bubble on the right (accent orange) and the NPC-bubble on the left (cream).</p>
+    </article>
+
+    <article class="slide" id="slide-7">
+      <header>
+        <span class="slide-num">07</span>
+        <h2>Intros · second NPC</h2>
+      </header>
+      <figure>
+        <img src="07-intros-second-npc.png" alt="Intros · second NPC" />
+      </figure>
+      <p class="caption">Different archetype, different greeting. The IntroPanel rotates through every non-partner Heartbreaker in stable order, sets baseline familiarity 25.</p>
+    </article>
+
+    <article class="slide" id="slide-8">
+      <header>
+        <span class="slide-num">08</span>
+        <h2>Intros · banter pick</h2>
+      </header>
+      <figure>
+        <img src="08-intros-banter-pick.png" alt="Intros · banter pick" />
+      </figure>
+      <p class="caption">The Banter response. Self-roast, charming. Each chosen dynamic biases the relationship&#39;s baseline — the foundation for later interactions.</p>
+    </article>
+
+    <article class="slide" id="slide-9">
+      <header>
+        <span class="slide-num">09</span>
+        <h2>Settings</h2>
+      </header>
+      <figure>
+        <img src="09-settings.png" alt="Settings" />
+      </figure>
+      <p class="caption">Configuration drawer. Dark gradient, gold-bordered, custom switch with golden dot. Typewriter speed, reduce motion, audio coming later.</p>
+    </article>
+
+    <article class="slide" id="slide-10">
+      <header>
+        <span class="slide-num">10</span>
+        <h2>Field Report rail</h2>
+      </header>
+      <figure>
+        <img src="10-field-report-rail.png" alt="Field Report rail" />
+      </figure>
+      <p class="caption">Right rail open. Where everyone is, current couples (player-couple highlighted gold), the cast grid, and a memories scroll — the field report between scenes.</p>
+    </article>
+
+    <article class="slide" id="slide-11">
+      <header>
+        <span class="slide-num">11</span>
+        <h2>Cast popout · discovery</h2>
+      </header>
+      <figure>
+        <img src="11-cast-popout-discovery.png" alt="Cast popout · discovery" />
+      </figure>
+      <p class="caption">Heartbreaker profile. Backstory, relationship bars, Type-on-Paper (gated by familiarity), and &#39;What you know&#39; — the structured trait knowledge revealed through conversation.</p>
+    </article>
+
+    <article class="slide" id="slide-12">
+      <header>
+        <span class="slide-num">12</span>
+        <h2>Main stage</h2>
+      </header>
+      <figure>
+        <img src="12-main-stage.png" alt="Main stage" />
+      </figure>
+      <p class="caption">Sunset Bay, afternoon. Conversation choice menu with audience hints, risk badges, and stat callouts. Each choice card has a gold-accent reveal on hover.</p>
+    </article>
+
+    <article class="slide" id="slide-13">
+      <header>
+        <span class="slide-num">13</span>
+        <h2>Conversation</h2>
+      </header>
+      <figure>
+        <img src="13-conversation.png" alt="Conversation" />
+      </figure>
+      <p class="caption">A real chat. Player bubble (accent orange, right-aligned), NPC bubble (cream, gold-gradient outline), audience delta + intent chip on the outcome row.</p>
+    </article>
+
+    <article class="slide" id="slide-14">
+      <header>
+        <span class="slide-num">14</span>
+        <h2>Day boundary recap</h2>
+      </header>
+      <figure>
+        <img src="14-day-boundary-recap.png" alt="Day boundary recap" />
+      </figure>
+      <p class="caption">End-of-day modal. Recap of what happened while you were busy, plus the Pulse Board (audience standings). Gold ampersands between couples.</p>
+    </article>
+
+    <article class="slide" id="slide-15">
+      <header>
+        <span class="slide-num">15</span>
+        <h2>Pairing Ceremony</h2>
+      </header>
+      <figure>
+        <img src="15-pairing-ceremony.png" alt="Pairing Ceremony" />
+      </figure>
+      <p class="caption">A regular re-coupling. The cast lines up; couples are locked. Notice the gold-bordered pair rows animate in one by one.</p>
+    </article>
+
+    <article class="slide" id="slide-16">
+      <header>
+        <span class="slide-num">16</span>
+        <h2>Flush of Hearts</h2>
+      </header>
+      <figure>
+        <img src="16-flush-of-hearts.png" alt="Flush of Hearts" />
+      </figure>
+      <p class="caption">The mid-show twist. Multiple new arrivals at once, pulling the existing couples apart. Pairs ceremony reveal with staggered animation.</p>
+    </article>
+
+    <article class="slide" id="slide-17">
+      <header>
+        <span class="slide-num">17</span>
+        <h2>Finale</h2>
+      </header>
+      <figure>
+        <img src="17-finale.png" alt="Finale" />
+      </figure>
+      <p class="caption">Sunset Bay crowns its couple. Gold palette, the winning couple front and center, couple-strength, outcome, Heart Beats earned. The end of the run.</p>
+    </article></div>
+</body>
+</html>
