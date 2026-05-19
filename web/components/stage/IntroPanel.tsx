@@ -240,12 +240,6 @@ export function IntroPanel({
           color: var(--card);
           letter-spacing: -.01em;
         }
-        .intro-sub {
-          margin: 0;
-          font-size: 12px;
-          color: var(--muted-on-dark);
-          letter-spacing: .04em;
-        }
 
         .bubble {
           border-radius: var(--r-xl);
