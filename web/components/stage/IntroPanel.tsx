@@ -16,8 +16,12 @@ type Props = {
   state: SessionState;
   actions: AvailableAction[];
   pending: boolean;
-  lastNpcDialogue?: string | null;
-  lastPlayerLine?: string | null;
+  /** The most recent exchange returned by the server, or null if none yet. */
+  lastExchange?: {
+    speakerId: string;
+    playerLine: string;
+    npcLine: string;
+  } | null;
   onChoose: (action: AvailableAction, playerLine: string) => void;
   /** Called when the player advances past the final intro (no next target). */
   onIntrosDone?: () => void;
@@ -30,8 +34,7 @@ export function IntroPanel({
   state,
   actions,
   pending,
-  lastNpcDialogue,
-  lastPlayerLine,
+  lastExchange,
   onChoose,
   onIntrosDone,
 }: Props) {
@@ -49,19 +52,21 @@ export function IntroPanel({
   const [completed, setCompleted] = useState<Completed | null>(null);
 
   // When a turn finishes, promote `inFlight` into `completed` using the NPC
-  // reply the server returned. This keeps the previous NPC on screen until the
-  // player clicks Continue, even though `nextTarget` has already advanced.
+  // reply the server returned. The exchange's speaker_id must match the target
+  // the player just clicked — otherwise we'd attribute a stale reply (e.g.
+  // Blake's still in props before Chloe's mutation resolves) to the wrong NPC.
   useEffect(() => {
     if (pending) return;
     if (!inFlight) return;
-    if (!lastNpcDialogue) return;
+    if (!lastExchange) return;
+    if (lastExchange.speakerId !== inFlight.targetId) return;
     setCompleted({
       targetId: inFlight.targetId,
       playerLine: inFlight.playerLine,
-      npcLine: lastNpcDialogue,
+      npcLine: lastExchange.npcLine,
     });
     setInFlight(null);
-  }, [pending, inFlight, lastNpcDialogue]);
+  }, [pending, inFlight, lastExchange]);
 
   // Resolve who to render. While in flight or showing the completed exchange,
   // we render that NPC. Otherwise we render the next fresh intro target.
@@ -134,9 +139,6 @@ export function IntroPanel({
           <header className="intro-header">
             <span className="intro-eyebrow">Day-1 Introductions</span>
             <h2 className="intro-title">Meet {displayTarget.name}</h2>
-            <p className="intro-sub">
-              {displayTarget.archetype} · at {displayTarget.location_label ?? displayTarget.location_id}
-            </p>
           </header>
 
           {playerBubble ? (

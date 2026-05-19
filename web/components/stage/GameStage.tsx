@@ -101,8 +101,15 @@ export function GameStage({ sessionId }: { sessionId: string }) {
             state={state}
             actions={actions}
             pending={mutation.isPending}
-            lastNpcDialogue={dialogue?.npc_dialogue}
-            lastPlayerLine={dialogue?.player_dialogue}
+            lastExchange={
+              dialogue
+                ? {
+                    speakerId: dialogue.speaker_id,
+                    playerLine: dialogue.player_dialogue,
+                    npcLine: dialogue.npc_dialogue
+                  }
+                : null
+            }
             onChoose={(action, playerLine) => {
               const enriched: AvailableAction = { ...action, label: playerLine };
               mutation.mutate(enriched);

@@ -22,7 +22,7 @@ export function TopBar({ state, onRail, onSettings }: Props) {
         </span>
         <span className="divider" aria-hidden />
         <span className="phase-chip">{state.phase_label}</span>
-        <span className="turn-chip"><Clock size={11} /> {clockText(state.phase_clock)} · T{state.turn_index}</span>
+        <span className="turn-chip"><Clock size={11} /> {clockText(state.phase_clock)}</span>
       </div>
 
       <div className="hud-right">
@@ -162,7 +162,9 @@ function clockText(clock: Record<string, unknown>) {
     complete: 22 * 60
   };
   const total = (anchors[phase] ?? 9 * 60) + elapsed;
-  const hours = Math.floor(total / 60) % 24;
+  const hours24 = Math.floor(total / 60) % 24;
   const minutes = total % 60;
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  const period = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = hours24 % 12 === 0 ? 12 : hours24 % 12;
+  return `${hours12}:${String(minutes).padStart(2, "0")} ${period}`;
 }

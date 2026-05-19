@@ -2,10 +2,18 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getCurrentSessionId, sessionStore } from "../../lib/storage";
 
 export function TitleScreen() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  const [resumeSessionId, setResumeSessionId] = useState<string | null>(null);
+  useEffect(() => {
+    setMounted(true);
+    const sid = getCurrentSessionId();
+    if (sid && sessionStore.load(sid)) {
+      setResumeSessionId(sid);
+    }
+  }, []);
 
   return (
     <main className="title-stage film-grain vignette">
@@ -31,10 +39,21 @@ export function TitleScreen() {
             <span className="cta-label">New Run</span>
             <span className="cta-sub">Step into Sunset Bay</span>
           </Link>
-          <button className="cta cta-secondary" disabled>
-            <span className="cta-label">Continue Run</span>
-            <span className="cta-sub">No run in progress</span>
-          </button>
+          {resumeSessionId ? (
+            <Link
+              href={`/play/${resumeSessionId}`}
+              className="cta cta-secondary cta-active"
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
+            >
+              <span className="cta-label">Continue Run</span>
+              <span className="cta-sub">Pick up where you left off</span>
+            </Link>
+          ) : (
+            <button className="cta cta-secondary" disabled>
+              <span className="cta-label">Continue Run</span>
+              <span className="cta-sub">No run in progress</span>
+            </button>
+          )}
           <button className="cta cta-secondary" disabled>
             <span className="cta-label">The Reunion</span>
             <span className="cta-sub">Unlocks in Phase 4</span>
@@ -203,6 +222,16 @@ export function TitleScreen() {
         .cta-secondary:not([disabled]):hover {
           border-color: rgba(217,167,58,.55);
           color: var(--ink-on-dark);
+        }
+        .cta-active {
+          text-decoration: none;
+          color: var(--ink-on-dark);
+        }
+        .cta-active:hover {
+          border-color: rgba(217,167,58,.7);
+          color: var(--card);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
         }
 
         .title-footer {

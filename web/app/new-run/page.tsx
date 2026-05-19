@@ -27,6 +27,10 @@ export default function NewRunPage() {
     }
   });
 
+  if (mutation.isPending) {
+    return <CastingLoader mockLlm={mockLlm} />;
+  }
+
   return (
     <main className="newrun-stage film-grain vignette" data-screen="new-run">
       <div className="newrun-bg" aria-hidden />
@@ -201,6 +205,106 @@ export default function NewRunPage() {
           border: 1px solid rgba(193,75,58,.45);
           color: #f7c8c1;
           font-size: 13px;
+        }
+      `}</style>
+    </main>
+  );
+}
+
+function CastingLoader({ mockLlm }: { mockLlm: boolean }) {
+  const beats = mockLlm
+    ? ["Calling places…", "Mixing the cast…", "Lighting the firepit…"]
+    : ["Casting your Heartbreakers…", "Writing their backstories…", "Setting the scene at Sunset Bay…"];
+  return (
+    <main className="loader-stage film-grain vignette" data-screen="casting-loader">
+      <div className="loader-bg" aria-hidden />
+      <div className="loader-content">
+        <p className="loader-eyebrow flourish">Paradise Hearts</p>
+        <h1 className="loader-title gold-shimmer">Opening Sunset Bay</h1>
+        <div className="loader-spinner" aria-hidden>
+          <span /><span /><span />
+        </div>
+        <ul className="loader-beats">
+          {beats.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      </div>
+
+      <style jsx>{`
+        .loader-stage {
+          position: relative;
+          height: 100vh;
+          height: 100svh;
+          overflow: hidden;
+          color: var(--ink-on-dark);
+          isolation: isolate;
+          display: grid;
+          place-items: center;
+        }
+        .loader-bg {
+          position: absolute; inset: 0;
+          background:
+            radial-gradient(100% 70% at 50% -10%, rgba(212,99,62,.28), transparent 55%),
+            radial-gradient(80% 60% at 10% 100%, rgba(91,124,79,.22), transparent 60%),
+            radial-gradient(80% 60% at 90% 100%, rgba(120,80,40,.24), transparent 60%),
+            linear-gradient(180deg, #100b08, #060403);
+          z-index: 0;
+        }
+        .loader-content {
+          position: relative;
+          z-index: 1;
+          display: grid;
+          gap: 22px;
+          place-items: center;
+          padding: 0 32px;
+          text-align: center;
+        }
+        .loader-eyebrow {
+          font-family: var(--font-hand);
+          font-size: 16px;
+          color: var(--gold-soft);
+          letter-spacing: .04em;
+          opacity: .9;
+          margin: 0;
+        }
+        .loader-title {
+          margin: 0;
+          font-family: var(--font-display);
+          font-weight: 600;
+          font-style: italic;
+          font-size: clamp(36px, 6vw, 64px);
+          letter-spacing: -.02em;
+        }
+        .loader-spinner {
+          display: inline-flex;
+          gap: 8px;
+        }
+        .loader-spinner span {
+          width: 10px; height: 10px;
+          border-radius: 50%;
+          background: var(--gold-soft);
+          box-shadow: 0 0 12px rgba(217,167,58,.55);
+          animation: loader-pulse 1.2s ease-in-out infinite;
+        }
+        .loader-spinner span:nth-child(2) { animation-delay: .15s; }
+        .loader-spinner span:nth-child(3) { animation-delay: .3s; }
+        @keyframes loader-pulse {
+          0%, 80%, 100% { transform: scale(0.6); opacity: .5; }
+          40% { transform: scale(1); opacity: 1; }
+        }
+        .loader-beats {
+          margin: 6px 0 0;
+          padding: 0;
+          list-style: none;
+          display: grid;
+          gap: 4px;
+          color: var(--muted-on-dark);
+          font-size: 13.5px;
+          font-style: italic;
+          font-family: var(--font-display);
+          letter-spacing: .02em;
+          max-width: 36ch;
         }
       `}</style>
     </main>
