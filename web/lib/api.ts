@@ -9,15 +9,14 @@ import type {
   TurnResponseEnvelope
 } from "./types";
 
-// Request paths in this file already carry the `/api/...` prefix that matches
-// the FastAPI route table. The base must therefore point at the *origin*, not
-// at `/api`. We strip any trailing `/api` so that an env var like
-// `NEXT_PUBLIC_API_BASE=/api` (or Vercel's auto-injected `/svc/api` shape)
-// can't double-prefix and 404.
-const RAW_API_BASE =
+// On Vercel, `vercel.json` routes /api/* to the FastAPI service and strips the
+// `/api` prefix before invoking the function — so the backend's routes are
+// defined at root (`/session/new`), and the browser reaches them via `/api/*`.
+// Locally, the FastAPI dev server is reached at `http://127.0.0.1:8000/...`
+// without any prefix.
+const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
-  (process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000" : "");
-const API_BASE = RAW_API_BASE.replace(/\/api\/?$/, "");
+  (process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000" : "/api");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
@@ -53,7 +52,7 @@ async function errorMessage(response: Response): Promise<string> {
 }
 
 export async function newSession(archetype: string, gender: Gender, mockLlm: boolean): Promise<SessionResponse> {
-  const envelope = await request<NewSessionEnvelope>("/api/session/new", {
+  const envelope = await request<NewSessionEnvelope>("/session/new", {
     method: "POST",
     body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm })
   });
@@ -63,7 +62,7 @@ export async function newSession(archetype: string, gender: Gender, mockLlm: boo
 
 export function getSession(sessionId: string): Promise<SessionResponse> {
   const persisted = requirePersisted(sessionId);
-  return request<SessionResponse>("/api/session/view", {
+  return request<SessionResponse>("/session/view", {
     method: "POST",
     body: JSON.stringify(persisted)
   });
@@ -71,7 +70,7 @@ export function getSession(sessionId: string): Promise<SessionResponse> {
 
 export async function submitTurn(sessionId: string, action: AvailableAction): Promise<TurnResponse> {
   const persisted = requirePersisted(sessionId);
-  const envelope = await request<TurnResponseEnvelope>("/api/session/turn", {
+  const envelope = await request<TurnResponseEnvelope>("/session/turn", {
     method: "POST",
     body: JSON.stringify({ persisted, action })
   });
@@ -90,7 +89,7 @@ export async function submitTurnStream(
   handlers: StreamHandlers = {}
 ): Promise<TurnResponse> {
   const persisted = requirePersisted(sessionId);
-  const response = await fetch(`${API_BASE}/api/session/turn/stream`, {
+  const response = await fetch(`${API_BASE}/session/turn/stream`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ persisted, action }),
@@ -134,7 +133,7 @@ function parseSseFrame(frame: string): { event: string; data: Record<string, unk
 
 export function getCast(sessionId: string, npcId: string): Promise<CastDetail> {
   const persisted = requirePersisted(sessionId);
-  return request<CastDetail>("/api/session/cast", {
+  return request<CastDetail>("/session/cast", {
     method: "POST",
     body: JSON.stringify({ persisted, npc_id: npcId })
   });

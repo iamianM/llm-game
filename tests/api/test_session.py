@@ -11,7 +11,7 @@ def test_new_session_returns_view_and_persisted_envelope() -> None:
     client = TestClient(app)
 
     created = client.post(
-        "/api/session/new",
+        "/session/new",
         json={"archetype": "heartthrob", "player_gender": "man", "seed": 42},
     )
 
@@ -33,11 +33,11 @@ def test_view_session_rehydrates_persisted_envelope() -> None:
     client = TestClient(app)
 
     created = client.post(
-        "/api/session/new",
+        "/session/new",
         json={"archetype": "heartthrob", "player_gender": "man", "seed": 42},
     ).json()
 
-    rehydrated = client.post("/api/session/view", json=created["persisted"])
+    rehydrated = client.post("/session/view", json=created["persisted"])
 
     assert rehydrated.status_code == 200
     body = rehydrated.json()

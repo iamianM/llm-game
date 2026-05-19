@@ -17,7 +17,7 @@ from pathlib import Path
 from random import randint
 from uuid import uuid4
 
-from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -75,25 +75,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-api = APIRouter(prefix="/api")
+# Routes are mounted at the root. On Vercel, the `routePrefix: "/api"` in
+# vercel.json places this whole app behind `/api/*` from the browser's view;
+# Vercel strips that prefix before invoking FastAPI, so the routes here stay
+# at root. Locally, the FastAPI dev server is reached at `localhost:8000/...`.
 
 
-@api.get("/healthz")
+@app.get("/healthz")
 def healthz() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@api.get("/readyz")
+@app.get("/readyz")
 def readyz() -> dict[str, str]:
     return {"status": "ready"}
 
 
-@api.get("/version", response_model=VersionResponse)
+@app.get("/version", response_model=VersionResponse)
 def version() -> VersionResponse:
     return VersionResponse(schema_version=SCHEMA_VERSION, api_version="0.1.0", build="2026-05-19")
 
 
-@api.post("/session/new", response_model=NewSessionEnvelope, status_code=201)
+@app.post("/session/new", response_model=NewSessionEnvelope, status_code=201)
 def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     seed = req.seed if req.seed is not None else randint(1, 999_999)
     state = new_game(seed)
@@ -129,7 +132,7 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     return NewSessionEnvelope(view=view, persisted=persisted)
 
 
-@api.post("/session/view", response_model=SessionResponse)
+@app.post("/session/view", response_model=SessionResponse)
 def view_session(persisted: PersistedSession) -> SessionResponse:
     state, _ = hydrate(persisted)
     return SessionResponse(
@@ -139,7 +142,7 @@ def view_session(persisted: PersistedSession) -> SessionResponse:
     )
 
 
-@api.post("/session/turn", response_model=TurnResponseEnvelope)
+@app.post("/session/turn", response_model=TurnResponseEnvelope)
 async def submit_turn(envelope: TurnEnvelope) -> TurnResponseEnvelope:
     state, rng = hydrate(envelope.persisted)
     agents = _agents_for(envelope.persisted.mock_llm)
@@ -157,7 +160,7 @@ async def submit_turn(envelope: TurnEnvelope) -> TurnResponseEnvelope:
     return TurnResponseEnvelope(view=_turn_response(envelope.persisted.session_id, turn), persisted=new_persisted)
 
 
-@api.post("/session/turn/stream")
+@app.post("/session/turn/stream")
 async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
     state, rng = hydrate(envelope.persisted)
     agents = _agents_for(envelope.persisted.mock_llm)
@@ -195,16 +198,13 @@ async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
     return StreamingResponse(events(), media_type="text/event-stream")
 
 
-@api.post("/session/cast", response_model=CastDetail)
+@app.post("/session/cast", response_model=CastDetail)
 def get_cast(req: CastRequest) -> CastDetail:
     state, _ = hydrate(req.persisted)
     try:
         return cast_detail(state, req.npc_id)
     except KeyError as exc:
         raise _http_error(404, "NOT_FOUND", f"unknown Heartbreaker: {req.npc_id}") from exc
-
-
-app.include_router(api)
 
 
 def _run_turn(state: GameState, rng: SeededRng, envelope: TurnEnvelope, agents: AgentBundle) -> TurnResult:

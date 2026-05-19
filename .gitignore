@@ -54,3 +54,4 @@ _shots/
 
 # Original PNGs (replaced by WebP)
 web/public/images/**/*.png
+.vercel

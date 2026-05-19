@@ -12,13 +12,13 @@ from src.api.app import app
 def test_turn_stream_emits_state_options_response_and_end_events() -> None:
     client = TestClient(app)
     created = client.post(
-        "/api/session/new",
+        "/session/new",
         json={"archetype": "class_clown", "player_gender": "man", "seed": 42},
     ).json()
     action = created["view"]["available_actions"][0]
 
     response = client.post(
-        "/api/session/turn/stream",
+        "/session/turn/stream",
         json={"persisted": created["persisted"], "action": action},
     )
 

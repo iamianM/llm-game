@@ -13,7 +13,7 @@ def test_submit_valid_turn_updates_state_and_returns_new_persisted() -> None:
     first_action = created["view"]["available_actions"][0]
 
     response = client.post(
-        "/api/session/turn",
+        "/session/turn",
         json={"persisted": created["persisted"], "action": first_action},
     )
 
@@ -36,7 +36,7 @@ def test_submit_invalid_turn_returns_400() -> None:
     created = _new_session(client)
 
     response = client.post(
-        "/api/session/turn",
+        "/session/turn",
         json={"persisted": created["persisted"], "action": {"kind": "hideaway"}},
     )
 
@@ -51,13 +51,13 @@ def test_two_consecutive_turns_advance_state() -> None:
     first_action = created["view"]["available_actions"][0]
 
     first = client.post(
-        "/api/session/turn",
+        "/session/turn",
         json={"persisted": created["persisted"], "action": first_action},
     ).json()
     second_action = first["view"]["available_actions"][0]
 
     second = client.post(
-        "/api/session/turn",
+        "/session/turn",
         json={"persisted": first["persisted"], "action": second_action},
     )
 
@@ -69,7 +69,7 @@ def test_two_consecutive_turns_advance_state() -> None:
 
 def _new_session(client: TestClient) -> dict[str, object]:
     response = client.post(
-        "/api/session/new",
+        "/session/new",
         json={"archetype": "loyal_friend", "player_gender": "man", "seed": 42},
     )
     assert response.status_code == 201
