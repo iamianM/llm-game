@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "experimentalServices": {
+    "web": {
+      "entrypoint": "web",
+      "framework": "nextjs",
+      "routePrefix": "/"
+    },
+    "api": {
+      "entrypoint": "src/api/app.py",
+      "framework": "fastapi",
+      "routePrefix": "/api",
+      "maxDuration": 60,
+      "excludeFiles": [
+        "tests/**",
+        "fixtures/**",
+        "docs/**",
+        "web/**",
+        ".obsidian/**",
+        "*.md",
+        ".gamefeel/**",
+        "gamefeel/**"
+      ]
+    }
+  }
+}

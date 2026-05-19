@@ -47,3 +47,16 @@ class SeededRng:
     def fork(self, salt: str) -> SeededRng:
         """Create an independent deterministic stream from the root seed."""
         return SeededRng(f"{self.seed}:{salt}")
+
+    def snapshot(self) -> list[object]:
+        """Capture mutable RNG state in JSON-serializable form."""
+        version, internalstate, gauss_next = self._random.getstate()
+        return [version, list(internalstate), gauss_next]
+
+    @classmethod
+    def from_snapshot(cls, seed: int | str, snapshot: list[object]) -> SeededRng:
+        """Reconstruct an RNG and restore a previously captured snapshot."""
+        rng = cls(seed)
+        version, internalstate, gauss_next = snapshot
+        rng._random.setstate((version, tuple(internalstate), gauss_next))  # type: ignore[arg-type]
+        return rng

@@ -5,7 +5,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Resolve-Path (Join-Path $PSScriptRoot "..")
-$ApiUrl = "http://127.0.0.1:8000/healthz"
+$ApiUrl = "http://127.0.0.1:8000/api/healthz"
 $WebUrl = "http://127.0.0.1:3001"
 $ApiOut = Join-Path $Root ".api-dev.log"
 $ApiErr = Join-Path $Root ".api-dev.err"

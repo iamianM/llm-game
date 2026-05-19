@@ -4,6 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { newSession } from "../../lib/api";
+import { rememberCurrentSession } from "../../lib/storage";
 import type { Gender } from "../../lib/types";
 import { ArchetypeCard } from "../../components/chrome/ArchetypeCard";
 
@@ -21,7 +22,7 @@ export default function NewRunPage() {
   const mutation = useMutation({
     mutationFn: () => newSession(archetype, gender, mockLlm),
     onSuccess: (data) => {
-      localStorage.setItem("paradise.currentSessionId", data.session_id);
+      rememberCurrentSession(data.session_id);
       router.push(`/play/${data.session_id}`);
     }
   });
