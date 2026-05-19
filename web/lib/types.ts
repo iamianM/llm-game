@@ -133,3 +133,22 @@ export type CastDetail = {
   coupled_with: string | null;
   eliminated: boolean;
 };
+
+export type PersistedSession = {
+  schema_version: number;
+  session_id: string;
+  user_id: string | null;
+  rng_state: unknown[];
+  game_state: Record<string, unknown>;
+  mock_llm: boolean;
+};
+
+export type NewSessionEnvelope = {
+  view: SessionResponse;
+  persisted: PersistedSession;
+};
+
+export type TurnResponseEnvelope = {
+  view: TurnResponse;
+  persisted: PersistedSession;
+};

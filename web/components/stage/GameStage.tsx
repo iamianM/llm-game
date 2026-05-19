@@ -27,6 +27,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [streamSpeaker, setStreamSpeaker] = useState("Producer");
   const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
   const [deferredCeremony, setDeferredCeremony] = useState(false);
+  // When the player submits the LAST intro response, the engine auto-advances
+  // the phase out of "intros" but the response carries the final NPC's reply.
+  // Hold the IntroPanel mounted for that final exchange until the user clicks
+  // Continue, so the reply is actually visible.
+  const [holdIntrosForFinalReply, setHoldIntrosForFinalReply] = useState(false);
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -44,6 +49,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       });
     },
     onSuccess: (data) => {
+      const prevPhase = lastTurn?.state.phase ?? query.data?.state.phase;
       setLastTurn(data);
       setStreamText("");
       setPendingActionLabel(null);
@@ -54,6 +60,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       if (data.state.daily_recaps.length > seenRecaps) {
         setShowRecap(true);
         setSeenRecaps(data.state.daily_recaps.length);
+      }
+      // Intros just ended with a final-NPC exchange → hold the IntroPanel mounted
+      // so the player can read that reply before the regular play UI takes over.
+      if (prevPhase === "intros" && data.state.phase !== "intros" && data.exchange) {
+        setHoldIntrosForFinalReply(true);
       }
       if (data.state.outcome) router.push(`/play/${sessionId}/finale`);
     }
@@ -80,7 +91,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const dialogueSpeaker = mutation.isPending ? streamSpeaker : dialogue?.speaker_name ?? speaker?.name ?? "The Producer";
   const playerLine = mutation.isPending ? pendingActionLabel ?? undefined : dialogue?.player_dialogue;
 
-  const isIntros = state.phase === "intros";
+  const isIntros = state.phase === "intros" || holdIntrosForFinalReply;
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
       <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} />
@@ -90,12 +101,20 @@ export function GameStage({ sessionId }: { sessionId: string }) {
             state={state}
             actions={actions}
             pending={mutation.isPending}
-            lastNpcDialogue={dialogue?.npc_dialogue}
-            lastPlayerLine={dialogue?.player_dialogue}
+            lastExchange={
+              dialogue
+                ? {
+                    speakerId: dialogue.speaker_id,
+                    playerLine: dialogue.player_dialogue,
+                    npcLine: dialogue.npc_dialogue
+                  }
+                : null
+            }
             onChoose={(action, playerLine) => {
               const enriched: AvailableAction = { ...action, label: playerLine };
               mutation.mutate(enriched);
             }}
+            onIntrosDone={() => setHoldIntrosForFinalReply(false)}
           />
         ) : (
           <>

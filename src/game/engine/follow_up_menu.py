@@ -29,7 +29,10 @@ def generate_follow_up_menu(
     """Generate the assembled follow-up wheel from code defaults plus bespoke options."""
     already_present = already_present_intents(state, result, exchange)
     if contextual_options is None:
-        raw: ContextualOptionsResult = mock_contextual_bespoke(npc_will_leave=True)
+        # Mock mode: keep the NPC in the conversation by default so test-mode
+        # gameplay isn't a one-line dead-end every time. Real-mode contextual
+        # options decide departure based on the actual chat context.
+        raw: ContextualOptionsResult = mock_contextual_bespoke()
     else:
         call = cast(Any, contextual_options)
         if "already_present" in inspect.signature(contextual_options).parameters:

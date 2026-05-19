@@ -1,4 +1,11 @@
-"""FastAPI app for Paradise Hearts."""
+"""FastAPI app for Paradise Hearts.
+
+The API is stateless. Every endpoint that touches game state takes the full
+``PersistedSession`` envelope in the request body and returns the updated
+envelope alongside the renderable view. The client owns persistence — today
+that's localStorage, tomorrow it's a Postgres ``game_history`` table indexed by
+``user_id``. The server itself stores nothing across requests.
+"""
 
 from __future__ import annotations
 
@@ -8,10 +15,11 @@ import os
 from collections.abc import AsyncIterator
 from pathlib import Path
 from random import randint
+from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, StreamingResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from src.api.display import translate_text
@@ -19,22 +27,24 @@ from src.api.models import (
     ApiError,
     ApiErrorBody,
     CastDetail,
-    CouplesResponse,
+    CastRequest,
+    NewSessionEnvelope,
     NewSessionRequest,
     SessionResponse,
-    TurnRequest,
+    TurnEnvelope,
     TurnResponse,
+    TurnResponseEnvelope,
     VersionResponse,
 )
+from src.api.persisted import PersistedSession, freeze, hydrate
 from src.api.serializers import (
     audience_delta,
     available_actions_api,
     cast_detail,
-    couple_summaries,
     exchange_api,
     session_state,
 )
-from src.api.session import AgentBundle, GameSession, add_session, delete_session, get_session
+from src.api.session import AgentBundle
 from src.api.streaming import chunk_text, sse
 from src.game.agents.trait_generator import (
     OpenAITraitGenerator,
@@ -45,7 +55,7 @@ from src.game.engine.actions import PlayerAction
 from src.game.engine.character_creation import DEFAULT_ARCHETYPE_STATS, create_character
 from src.game.engine.intents import available_intents_for
 from src.game.engine.turn import TurnResult, run_turn
-from src.game.state.models import SCHEMA_VERSION, Gender, new_game
+from src.game.state.models import SCHEMA_VERSION, Gender, GameState, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -65,6 +75,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Routes are mounted at the root. On Vercel, the `routePrefix: "/api"` in
+# vercel.json places this whole app behind `/api/*` from the browser's view;
+# Vercel strips that prefix before invoking FastAPI, so the routes here stay
+# at root. Locally, the FastAPI dev server is reached at `localhost:8000/...`.
+
 
 @app.get("/healthz")
 def healthz() -> dict[str, str]:
@@ -78,14 +93,15 @@ def readyz() -> dict[str, str]:
 
 @app.get("/version", response_model=VersionResponse)
 def version() -> VersionResponse:
-    return VersionResponse(schema_version=SCHEMA_VERSION, api_version="0.1.0", build="2026-05-14")
+    return VersionResponse(schema_version=SCHEMA_VERSION, api_version="0.1.0", build="2026-05-19")
 
 
-@app.post("/session/new", response_model=SessionResponse, status_code=201)
-def new_session(req: NewSessionRequest) -> SessionResponse:
+@app.post("/session/new", response_model=NewSessionEnvelope, status_code=201)
+def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     seed = req.seed if req.seed is not None else randint(1, 999_999)
     state = new_game(seed)
-    if not _mock_mode(req.mock_llm):
+    mock = _mock_mode(req.mock_llm)
+    if not mock:
         try:
             generator = OpenAITraitGenerator()
             assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
@@ -105,117 +121,113 @@ def new_session(req: NewSessionRequest) -> SessionResponse:
         )
     except ValueError as exc:
         raise _http_error(400, "VALIDATION_ERROR", str(exc)) from exc
-    agents = AgentBundle.mock() if _mock_mode(req.mock_llm) else AgentBundle.live()
-    session = add_session(state, SeededRng(seed), agents)
+    rng = SeededRng(seed)
+    session_id = str(uuid4())
+    persisted = freeze(state, rng, session_id=session_id, user_id=None, mock_llm=mock)
+    view = SessionResponse(
+        session_id=session_id,
+        state=session_state(session_id, state),
+        available_actions=available_actions_api(state),
+    )
+    return NewSessionEnvelope(view=view, persisted=persisted)
+
+
+@app.post("/session/view", response_model=SessionResponse)
+def view_session(persisted: PersistedSession) -> SessionResponse:
+    state, _ = hydrate(persisted)
     return SessionResponse(
-        session_id=session.session_id,
-        state=session_state(session.session_id, session.state),
-        available_actions=available_actions_api(session.state),
+        session_id=persisted.session_id,
+        state=session_state(persisted.session_id, state),
+        available_actions=available_actions_api(state),
     )
 
 
-@app.get("/session/{session_id}", response_model=SessionResponse)
-def get_state(session_id: str) -> SessionResponse:
-    session = _session_or_404(session_id)
-    return SessionResponse(
-        session_id=session.session_id,
-        state=session_state(session.session_id, session.state),
-        available_actions=available_actions_api(session.state),
+@app.post("/session/turn", response_model=TurnResponseEnvelope)
+async def submit_turn(envelope: TurnEnvelope) -> TurnResponseEnvelope:
+    state, rng = hydrate(envelope.persisted)
+    agents = _agents_for(envelope.persisted.mock_llm)
+    try:
+        turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
+    except ValueError as exc:
+        raise _http_error(400, "INVALID_ACTION", str(exc)) from exc
+    new_persisted = freeze(
+        turn.state,
+        rng,
+        session_id=envelope.persisted.session_id,
+        user_id=envelope.persisted.user_id,
+        mock_llm=envelope.persisted.mock_llm,
     )
+    return TurnResponseEnvelope(view=_turn_response(envelope.persisted.session_id, turn), persisted=new_persisted)
 
 
-@app.post("/session/{session_id}/turn", response_model=TurnResponse)
-async def submit_turn(session_id: str, req: TurnRequest) -> TurnResponse:
-    session = _session_or_404(session_id)
-    async with session.lock:
-        try:
-            turn = await asyncio.to_thread(_run_turn, session, req)
-        except ValueError as exc:
-            raise _http_error(400, "INVALID_ACTION", str(exc)) from exc
-    return _turn_response(session.session_id, turn)
-
-
-@app.post("/session/{session_id}/turn/stream")
-async def submit_turn_stream(session_id: str, req: TurnRequest) -> StreamingResponse:
-    session = _session_or_404(session_id)
+@app.post("/session/turn/stream")
+async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
+    state, rng = hydrate(envelope.persisted)
+    agents = _agents_for(envelope.persisted.mock_llm)
+    session_id = envelope.persisted.session_id
 
     async def events() -> AsyncIterator[str]:
-        async with session.lock:
-            try:
-                turn = await asyncio.to_thread(_run_turn, session, req)
-            except ValueError as exc:
-                yield sse("error", {"status": 400, "message": str(exc)}, event_id=0)
-                return
-        response = _turn_response(session.session_id, turn)
-        exchange = response.exchange
+        try:
+            turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
+        except ValueError as exc:
+            yield sse("error", {"status": 400, "message": str(exc)}, event_id=0)
+            return
+        new_persisted = freeze(
+            turn.state,
+            rng,
+            session_id=session_id,
+            user_id=envelope.persisted.user_id,
+            mock_llm=envelope.persisted.mock_llm,
+        )
+        view = _turn_response(session_id, turn)
+        exchange = view.exchange
         yield sse("turn_start", {"turn": turn.state.turn_index, "phase": turn.state.phase.value}, event_id=1)
         if exchange is not None:
             yield sse("dialogue_start", {"speaker": _exchange_speaker_id(turn), "speaker_name": exchange.speaker_name}, event_id=2)
             async for chunk in chunk_text(exchange.npc_dialogue):
                 yield sse("dialogue_chunk", {"text": chunk})
             yield sse("dialogue_end", {"mood_after": exchange.npc_mood_after}, event_id=3)
-        yield sse("state", session_state(session.session_id, turn.state).model_dump(mode="json"), event_id=4)
+        yield sse("state", session_state(session_id, turn.state).model_dump(mode="json"), event_id=4)
         yield sse("options", {"actions": [a.model_dump(mode="json") for a in available_actions_api(turn.state)]}, event_id=5)
         if turn.ceremony_events:
             yield sse("ceremony", {"events": [e.model_dump(mode="json") for e in turn.ceremony_events]}, event_id=6)
-        yield sse("response", response.model_dump(mode="json"), event_id=7)
+        envelope_out = TurnResponseEnvelope(view=view, persisted=new_persisted)
+        yield sse("response", envelope_out.model_dump(mode="json"), event_id=7)
         yield sse("turn_end", {"state_hash": turn.state_hash}, event_id=8)
 
     return StreamingResponse(events(), media_type="text/event-stream")
 
 
-@app.get("/session/{session_id}/cast/{npc_id}", response_model=CastDetail)
-def get_cast(session_id: str, npc_id: str) -> CastDetail:
-    session = _session_or_404(session_id)
+@app.post("/session/cast", response_model=CastDetail)
+def get_cast(req: CastRequest) -> CastDetail:
+    state, _ = hydrate(req.persisted)
     try:
-        return cast_detail(session.state, npc_id)
+        return cast_detail(state, req.npc_id)
     except KeyError as exc:
-        raise _http_error(404, "NOT_FOUND", f"unknown Heartbreaker: {npc_id}") from exc
+        raise _http_error(404, "NOT_FOUND", f"unknown Heartbreaker: {req.npc_id}") from exc
 
 
-@app.get("/session/{session_id}/couples", response_model=CouplesResponse)
-def get_couples(session_id: str) -> CouplesResponse:
-    session = _session_or_404(session_id)
-    coupled_ids = {actor for couple in session.state.couples for actor in (couple.partner_a_id, couple.partner_b_id)}
-    singles = [item.id for item in session.state.islanders if not item.eliminated and item.id not in coupled_ids]
-    return CouplesResponse(couples=couple_summaries(session.state), singles=singles)
-
-
-@app.get("/session/{session_id}/timeline")
-def get_timeline(session_id: str) -> dict[str, object]:
-    session = _session_or_404(session_id)
-    return {"days": [recap.model_dump(mode="json") for recap in session.state.daily_recaps]}
-
-
-@app.delete("/session/{session_id}", status_code=204)
-def end_session(session_id: str) -> Response:
-    delete_session(session_id)
-    return Response(status_code=204)
-
-
-def _run_turn(session: GameSession, req: TurnRequest) -> TurnResult:
-    action = PlayerAction.model_validate(req.model_dump(exclude_none=True))
+def _run_turn(state: GameState, rng: SeededRng, envelope: TurnEnvelope, agents: AgentBundle) -> TurnResult:
+    action = PlayerAction.model_validate(envelope.action.model_dump(exclude_none=True))
     if action.kind.value == "start_conversation" and action.target_id and action.intent_id is None:
-        intents = available_intents_for(session.state, action.target_id)
+        intents = available_intents_for(state, action.target_id)
         if intents:
             action.intent_id = intents[0].id
-    input_hash = state_hash(state_hash_payload(session.state))
+    input_hash = state_hash(state_hash_payload(state))
     turn = run_turn(
-        session.state,
+        state,
         action,
-        session.rng,
-        islander_voice=session.agents.islander_voice,
-        contextual_options=session.agents.contextual_options,
-        event_narrator=session.agents.event_narrator,
-        conversation_curator=session.agents.conversation_curator,
-        villa_orchestrator=session.agents.villa_orchestrator,
-        background_dialogue=session.agents.background_dialogue,
+        rng,
+        islander_voice=agents.islander_voice,
+        contextual_options=agents.contextual_options,
+        event_narrator=agents.event_narrator,
+        conversation_curator=agents.conversation_curator,
+        villa_orchestrator=agents.villa_orchestrator,
+        background_dialogue=agents.background_dialogue,
     )
-    session.state = turn.state
-    session.records.append({"input_hash": input_hash, "output_hash": turn.state_hash})
     logger.info(
-        "turn session=%s turn=%s day=%s phase=%s action=%s target=%s intent=%s exchange=%s events=%s active=%s hash=%s",
-        session.session_id,
+        "turn session=%s turn=%s day=%s phase=%s action=%s target=%s intent=%s exchange=%s events=%s active=%s hash=%s input_hash=%s",
+        envelope.persisted.session_id,
         turn.state.turn_index,
         turn.state.day,
         turn.state.phase.value,
@@ -226,6 +238,7 @@ def _run_turn(session: GameSession, req: TurnRequest) -> TurnResult:
         ",".join(str(event.kind) for event in turn.ceremony_events) or "-",
         turn.state.active_conversation.target_id if turn.state.active_conversation else None,
         turn.state_hash,
+        input_hash,
     )
     return turn
 
@@ -252,15 +265,12 @@ def _exchange_speaker_id(turn: TurnResult) -> str | None:
     return turn.mechanical_result.action.target_id
 
 
-def _session_or_404(session_id: str) -> GameSession:
-    session = get_session(session_id)
-    if session is None:
-        raise _http_error(404, "SESSION_NOT_FOUND", f"session not found: {session_id}")
-    return session
-
-
 def _http_error(status: int, code: str, message: str) -> HTTPException:
     return HTTPException(status_code=status, detail=ApiError(error=ApiErrorBody(code=code, message=message)).model_dump())
+
+
+def _agents_for(mock_llm: bool) -> AgentBundle:
+    return AgentBundle.mock() if _mock_mode(mock_llm) else AgentBundle.live()
 
 
 def _mock_mode(override: bool | None = None) -> bool:

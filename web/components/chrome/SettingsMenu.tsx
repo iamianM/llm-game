@@ -1,9 +1,11 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useUiStore } from "../../lib/store";
 
 export function SettingsMenu() {
+  const router = useRouter();
   const open = useUiStore((s) => s.settingsOpen);
   const setOpen = useUiStore((s) => s.setSettings);
   const speed = useUiStore((s) => s.typewriterSpeed);
@@ -51,6 +53,17 @@ export function SettingsMenu() {
             </div>
 
             <p className="setting-hint">Audio controls arrive in a later phase.</p>
+
+            <button
+              type="button"
+              className="main-menu-btn"
+              onClick={() => {
+                setOpen(false);
+                router.push("/");
+              }}
+            >
+              Return to Main Menu
+            </button>
           </div>
         </section>
       </div>
@@ -176,6 +189,26 @@ export function SettingsMenu() {
         }
         .switch input:checked + .track { background: rgba(217,167,58,.3); }
         .switch input:checked + .track .dot { left: 22px; background: var(--gold); }
+
+        .main-menu-btn {
+          margin-top: 4px;
+          padding: 10px 16px;
+          border-radius: var(--r-md);
+          background: rgba(8,6,4,.55);
+          border: 1px solid rgba(217,167,58,.35);
+          color: var(--ink-on-dark);
+          font-family: var(--font-display);
+          font-size: 14px;
+          font-style: italic;
+          letter-spacing: .02em;
+          cursor: pointer;
+          transition: background .15s, border-color .15s, color .15s;
+        }
+        .main-menu-btn:hover {
+          background: rgba(217,167,58,.18);
+          border-color: rgba(217,167,58,.6);
+          color: var(--card);
+        }
       `}</style>
     </div>
   );

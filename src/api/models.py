@@ -6,6 +6,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.api.persisted import PersistedSession
+
 
 class ApiErrorBody(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -173,6 +175,38 @@ class TurnResponse(BaseModel):
     memories_formed: list[dict[str, object]]
     background_activity: list[dict[str, object]]
     state_hash: str
+
+
+class NewSessionEnvelope(BaseModel):
+    """Initial session payload: a renderable view plus the blob the client persists."""
+
+    view: SessionResponse
+    persisted: PersistedSession
+
+
+class TurnEnvelope(BaseModel):
+    """Stateless turn request: client sends the full persisted blob plus the action."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persisted: PersistedSession
+    action: TurnRequest
+
+
+class TurnResponseEnvelope(BaseModel):
+    """Stateless turn response: the updated view plus the new persisted blob."""
+
+    view: TurnResponse
+    persisted: PersistedSession
+
+
+class CastRequest(BaseModel):
+    """Stateless cast detail request."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    persisted: PersistedSession
+    npc_id: str
 
 
 class CastDetail(BaseModel):

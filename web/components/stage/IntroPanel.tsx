@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { AvailableAction, IslanderSummary, SessionState } from "../../lib/types";
 import {
   INTRO_DYNAMICS,
@@ -16,20 +16,66 @@ type Props = {
   state: SessionState;
   actions: AvailableAction[];
   pending: boolean;
-  lastNpcDialogue?: string | null;
-  lastPlayerLine?: string | null;
+  /** The most recent exchange returned by the server, or null if none yet. */
+  lastExchange?: {
+    speakerId: string;
+    playerLine: string;
+    npcLine: string;
+  } | null;
   onChoose: (action: AvailableAction, playerLine: string) => void;
+  /** Called when the player advances past the final intro (no next target). */
+  onIntrosDone?: () => void;
 };
 
-export function IntroPanel({ state, actions, pending, lastNpcDialogue, lastPlayerLine, onChoose }: Props) {
-  const target = nextIntroTarget(state.islanders, actions, state.player.id);
-  const targetId = target?.id ?? null;
-  const [shownTargetId, setShownTargetId] = useState<string | null>(targetId);
-  useEffect(() => {
-    if (targetId && targetId !== shownTargetId) setShownTargetId(targetId);
-  }, [targetId, shownTargetId]);
+type InFlight = { targetId: string; playerLine: string };
+type Completed = { targetId: string; playerLine: string; npcLine: string };
 
-  if (!target) {
+export function IntroPanel({
+  state,
+  actions,
+  pending,
+  lastExchange,
+  onChoose,
+  onIntrosDone,
+}: Props) {
+  const islandersById = useMemo(
+    () => Object.fromEntries(state.islanders.map((islander) => [islander.id, islander])),
+    [state.islanders],
+  );
+  const nextTarget = nextIntroTarget(state.islanders, actions, state.player.id);
+
+  // Snapshot of who the player is currently talking to and what they said. Set
+  // on click, cleared once the response is captured into `completed`.
+  const [inFlight, setInFlight] = useState<InFlight | null>(null);
+  // Holds the just-finished exchange so the player can read the NPC's reply
+  // against the correct speaker before the next NPC takes over.
+  const [completed, setCompleted] = useState<Completed | null>(null);
+
+  // When a turn finishes, promote `inFlight` into `completed` using the NPC
+  // reply the server returned. The exchange's speaker_id must match the target
+  // the player just clicked — otherwise we'd attribute a stale reply (e.g.
+  // Blake's still in props before Chloe's mutation resolves) to the wrong NPC.
+  useEffect(() => {
+    if (pending) return;
+    if (!inFlight) return;
+    if (!lastExchange) return;
+    if (lastExchange.speakerId !== inFlight.targetId) return;
+    setCompleted({
+      targetId: inFlight.targetId,
+      playerLine: inFlight.playerLine,
+      npcLine: lastExchange.npcLine,
+    });
+    setInFlight(null);
+  }, [pending, inFlight, lastExchange]);
+
+  // Resolve who to render. While in flight or showing the completed exchange,
+  // we render that NPC. Otherwise we render the next fresh intro target.
+  const displayTargetId = inFlight?.targetId ?? completed?.targetId ?? nextTarget?.id ?? null;
+  const displayTarget: IslanderSummary | null = displayTargetId
+    ? islandersById[displayTargetId] ?? null
+    : null;
+
+  if (!displayTarget) {
     return (
       <div className="intro-empty">
         <p className="intro-empty-line">All introductions made. Sunset Bay is yours.</p>
@@ -48,70 +94,101 @@ export function IntroPanel({ state, actions, pending, lastNpcDialogue, lastPlaye
     );
   }
 
-  const choices = introActionsForTarget(actions, target.id);
-  const showResponse = pending || (lastNpcDialogue && lastPlayerLine);
-  const npcLine = pending
-    ? "…"
-    : lastNpcDialogue ?? greetingFor(target);
-  const playerLine = pending ? lastPlayerLine ?? null : lastPlayerLine ?? null;
+  const isCompleted = completed?.targetId === displayTarget.id;
+  const isStreaming = pending && inFlight?.targetId === displayTarget.id;
+  const choices = !isCompleted && !isStreaming ? introActionsForTarget(actions, displayTarget.id) : {};
+
+  // What goes in each bubble at each step:
+  // - fresh: NPC greeting, no player bubble
+  // - in flight: player's chosen line, NPC bubble shows ellipsis while we stream
+  // - completed: player's chosen line, NPC's actual reply
+  const playerBubble = isCompleted
+    ? completed.playerLine
+    : isStreaming
+      ? inFlight.playerLine
+      : null;
+  const npcBubble = isCompleted
+    ? completed.npcLine
+    : isStreaming
+      ? "…"
+      : greetingFor(displayTarget);
+
+  const handleChoose = (action: AvailableAction, line: string) => {
+    setInFlight({ targetId: displayTarget.id, playerLine: line });
+    setCompleted(null);
+    onChoose(action, line);
+  };
+
+  const handleContinue = () => {
+    setCompleted(null);
+    if (!nextTarget) onIntrosDone?.();
+  };
 
   return (
     <div
       className="intro-stage"
       data-screen="intros"
-      data-state={pending ? "dialogue-streaming" : "dialogue-complete"}
+      data-state={isCompleted ? "exchange-complete" : isStreaming ? "dialogue-streaming" : "ready"}
     >
       <div className="intro-grid">
         <div className="intro-portrait">
-          <NpcPortrait npc={target} />
+          <NpcPortrait npc={displayTarget} />
         </div>
 
         <div className="intro-conversation">
           <header className="intro-header">
             <span className="intro-eyebrow">Day-1 Introductions</span>
-            <h2 className="intro-title">Meet {target.name}</h2>
-            <p className="intro-sub">{target.archetype} · at {target.location_label ?? target.location_id}</p>
+            <h2 className="intro-title">Meet {displayTarget.name}</h2>
           </header>
 
-          {playerLine ? (
+          {playerBubble ? (
             <div className="bubble bubble-player">
               <span className="bubble-tag">You</span>
-              <p>{playerLine}</p>
+              <p>{playerBubble}</p>
             </div>
           ) : null}
 
           <div className="bubble bubble-npc">
-            <span className="bubble-tag">{target.name}</span>
-            <p>{npcLine}</p>
+            <span className="bubble-tag">{displayTarget.name}</span>
+            <p>{npcBubble}</p>
           </div>
 
-          {!showResponse ? (
+          {!isCompleted && !isStreaming ? (
             <p className="intro-prompt">How do you respond?</p>
           ) : null}
         </div>
       </div>
 
-      <div data-testid="choice-menu" className="intro-choices">
-        {INTRO_DYNAMICS.map((dynamic) => {
-          const action = choices[dynamic];
-          const meta = INTRO_RESPONSES[dynamic];
-          return (
-            <button
-              key={dynamic}
-              data-role="choice"
-              data-testid="choice"
-              data-intent={dynamic}
-              disabled={pending || !action}
-              onClick={() => action && onChoose(action, meta.line)}
-              className={`intro-choice intro-${dynamic}`}
-            >
-              <span className="choice-dynamic">{meta.label}</span>
-              <span className="choice-line">&ldquo;{meta.line}&rdquo;</span>
-              <span className="choice-tone">{meta.tone}</span>
-            </button>
-          );
-        })}
-      </div>
+      {isCompleted ? (
+        <div className="intro-continue">
+          <button data-role="continue" data-testid="intro-continue" onClick={handleContinue} className="continue-btn">
+            <span className="continue-label">{nextTarget ? `Continue → meet ${nextTarget.name}` : "Continue"}</span>
+            <span className="continue-arrow">→</span>
+          </button>
+        </div>
+      ) : (
+        <div data-testid="choice-menu" className="intro-choices">
+          {INTRO_DYNAMICS.map((dynamic) => {
+            const action = choices[dynamic];
+            const meta = INTRO_RESPONSES[dynamic];
+            return (
+              <button
+                key={dynamic}
+                data-role="choice"
+                data-testid="choice"
+                data-intent={dynamic}
+                disabled={isStreaming || !action}
+                onClick={() => action && handleChoose(action, meta.line)}
+                className={`intro-choice intro-${dynamic}`}
+              >
+                <span className="choice-dynamic">{meta.label}</span>
+                <span className="choice-line">&ldquo;{meta.line}&rdquo;</span>
+                <span className="choice-tone">{meta.tone}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       <style jsx>{`
         .intro-stage {
@@ -162,12 +239,6 @@ export function IntroPanel({ state, actions, pending, lastNpcDialogue, lastPlaye
           font-weight: 600;
           color: var(--card);
           letter-spacing: -.01em;
-        }
-        .intro-sub {
-          margin: 0;
-          font-size: 12px;
-          color: var(--muted-on-dark);
-          letter-spacing: .04em;
         }
 
         .bubble {
@@ -265,6 +336,32 @@ export function IntroPanel({ state, actions, pending, lastNpcDialogue, lastPlaye
           letter-spacing: .03em;
           font-style: italic;
         }
+
+        .intro-continue {
+          display: grid;
+          justify-content: end;
+        }
+        .continue-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 22px;
+          font-family: var(--font-display);
+          font-size: 16px;
+          font-style: italic;
+          color: var(--card);
+          background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+          border: 1px solid rgba(217,167,58,.55);
+          border-radius: var(--r-pill);
+          cursor: pointer;
+          box-shadow: var(--shadow-md), var(--inset-gold);
+          transition: transform .18s, box-shadow .18s;
+        }
+        .continue-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-lg), var(--shadow-accent), var(--inset-gold);
+        }
+        .continue-arrow { font-style: normal; font-size: 18px; }
       `}</style>
     </div>
   );

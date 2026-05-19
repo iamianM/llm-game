@@ -1,43 +1,76 @@
-"""FastAPI turn endpoint tests."""
+"""Stateless turn endpoint tests."""
 
 from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
 from src.api.app import app
-from src.api.session import SESSIONS
 
 
-def test_submit_valid_turn_updates_state() -> None:
-    SESSIONS.clear()
+def test_submit_valid_turn_updates_state_and_returns_new_persisted() -> None:
     client = TestClient(app)
-    session_id = _new_session(client)
-    first = client.get(f"/session/{session_id}").json()["available_actions"][0]
+    created = _new_session(client)
+    first_action = created["view"]["available_actions"][0]
 
-    response = client.post(f"/session/{session_id}/turn", json=first)
+    response = client.post(
+        "/session/turn",
+        json={"persisted": created["persisted"], "action": first_action},
+    )
 
     assert response.status_code == 200
     payload = response.json()
-    assert payload["state"]["turn_index"] == 1
-    assert payload["available_actions"]
-    assert payload["state_hash"]
+    view = payload["view"]
+    assert view["state"]["turn_index"] == 1
+    assert view["available_actions"]
+    assert view["state_hash"]
+    new_persisted = payload["persisted"]
+    assert new_persisted["session_id"] == created["persisted"]["session_id"]
+    assert new_persisted["game_state"]["turn_index"] == 1
+    # rng_state round-trips structurally; engine may or may not advance the parent on a given turn
+    assert isinstance(new_persisted["rng_state"], list)
+    assert new_persisted["rng_state"][0] == created["persisted"]["rng_state"][0]
 
 
 def test_submit_invalid_turn_returns_400() -> None:
-    SESSIONS.clear()
     client = TestClient(app)
-    session_id = _new_session(client)
+    created = _new_session(client)
 
-    response = client.post(f"/session/{session_id}/turn", json={"kind": "hideaway"})
+    response = client.post(
+        "/session/turn",
+        json={"persisted": created["persisted"], "action": {"kind": "hideaway"}},
+    )
 
     assert response.status_code == 400
     assert response.json()["detail"]["error"]["code"] == "INVALID_ACTION"
 
 
-def _new_session(client: TestClient) -> str:
+def test_two_consecutive_turns_advance_state() -> None:
+    """A second turn submitted with the persisted blob from the first must compose."""
+    client = TestClient(app)
+    created = _new_session(client)
+    first_action = created["view"]["available_actions"][0]
+
+    first = client.post(
+        "/session/turn",
+        json={"persisted": created["persisted"], "action": first_action},
+    ).json()
+    second_action = first["view"]["available_actions"][0]
+
+    second = client.post(
+        "/session/turn",
+        json={"persisted": first["persisted"], "action": second_action},
+    )
+
+    assert second.status_code == 200
+    payload = second.json()
+    assert payload["view"]["state"]["turn_index"] == 2
+    assert payload["persisted"]["game_state"]["turn_index"] == 2
+
+
+def _new_session(client: TestClient) -> dict[str, object]:
     response = client.post(
         "/session/new",
         json={"archetype": "loyal_friend", "player_gender": "man", "seed": 42},
     )
     assert response.status_code == 201
-    return str(response.json()["session_id"])
+    return response.json()
