@@ -8,6 +8,7 @@ import {
   greetingFor,
   introActionsForTarget,
   nextIntroTarget,
+  responseFor,
   type IntroDynamic,
 } from "../../lib/intros";
 import { NpcPortrait } from "./NpcPortrait";
@@ -128,7 +129,7 @@ export function IntroPanel({
     <div
       className="intro-stage"
       data-screen="intros"
-      data-state={isCompleted ? "exchange-complete" : isStreaming ? "dialogue-streaming" : "ready"}
+      data-state={isCompleted ? "dialogue-complete" : isStreaming ? "dialogue-streaming" : "ready"}
     >
       <div className="intro-grid">
         <div className="intro-portrait">
@@ -171,6 +172,7 @@ export function IntroPanel({
           {INTRO_DYNAMICS.map((dynamic) => {
             const action = choices[dynamic];
             const meta = INTRO_RESPONSES[dynamic];
+            const line = responseFor(displayTarget, dynamic);
             return (
               <button
                 key={dynamic}
@@ -178,11 +180,11 @@ export function IntroPanel({
                 data-testid="choice"
                 data-intent={dynamic}
                 disabled={isStreaming || !action}
-                onClick={() => action && handleChoose(action, meta.line)}
+                onClick={() => action && handleChoose(action, line)}
                 className={`intro-choice intro-${dynamic}`}
               >
                 <span className="choice-dynamic">{meta.label}</span>
-                <span className="choice-line">&ldquo;{meta.line}&rdquo;</span>
+                <span className="choice-line">&ldquo;{line}&rdquo;</span>
                 <span className="choice-tone">{meta.tone}</span>
               </button>
             );

@@ -126,6 +126,60 @@ def test_assemble_dedupes_and_caps_with_one_exit() -> None:
     assert len({option.intent_kind for option in menu.options}) == len(menu.options)
 
 
+def test_assemble_avoids_recent_repeated_intents() -> None:
+    state, result, exchange = _context(success=False, tone="defensive")
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        exchanges=[
+            _exchange_record("apologize"),
+            _exchange_record("defend_self"),
+        ],
+    )
+
+    menu = assemble_follow_up_menu(
+        state,
+        result,
+        exchange,
+        bespoke_options=[],
+        npc_will_leave=False,
+        npc_exit_line=None,
+    )
+
+    intents = {option.intent_kind for option in menu.options}
+    assert "apologize" not in intents
+    assert "defend_self" not in intents
+    assert sum(option.category == "exit" for option in menu.options) == 1
+
+
+def test_assemble_fallback_skips_intents_already_in_recent_repeats() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        exchanges=[
+            _exchange_record("ask_about_topic"),
+            _exchange_record("go_deeper"),
+        ],
+    )
+
+    menu = assemble_follow_up_menu(
+        state,
+        result,
+        exchange,
+        bespoke_options=[],
+        npc_will_leave=False,
+        npc_exit_line=None,
+    )
+
+    intents = {option.intent_kind for option in menu.options}
+    assert "ask_about_topic" not in intents
+    assert "go_deeper" not in intents
+    assert sum(option.category != "exit" for option in menu.options) >= 1
+
+
 def test_generate_follow_up_menu_uses_bespoke_and_defaults() -> None:
     state, result, exchange = _context(success=True, tone="warm")
 
@@ -169,3 +223,19 @@ def _context(*, success: bool, tone: str):
         npc_mood_after=Mood.CONTENT,
     )
     return state, result, exchange
+
+
+def _exchange_record(intent_id: str):
+    from src.game.state.models import ExchangeRecord
+
+    return ExchangeRecord(
+        turn_index=1,
+        intent_id=intent_id,
+        player_dialogue="I am trying to be honest.",
+        npc_dialogue="I hear that.",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+        success=True,
+        tags=[intent_id],
+        relationship_deltas={},
+    )

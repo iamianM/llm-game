@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from src.game.engine.challenges import resolve_challenge, schedule_challenge
+from src.game.engine.challenges import (
+    challenge_event_message,
+    resolve_challenge,
+    schedule_challenge,
+)
 from src.game.state.models import Couple, new_game
 from src.game.state.rng import SeededRng
 
@@ -107,3 +111,12 @@ def test_schedule_challenge_returns_correct_kind_per_day() -> None:
 
 def test_schedule_challenge_returns_none_off_schedule() -> None:
     assert schedule_challenge(7) is None
+
+
+def test_challenge_event_message_uses_player_facing_labels() -> None:
+    challenge = schedule_challenge(5)
+    assert challenge is not None
+
+    message = challenge_event_message(challenge)
+
+    assert message == "Kiss Wed Pass tested Banter and is still pending."

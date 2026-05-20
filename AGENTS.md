@@ -14,7 +14,7 @@
 
 **The Innovation**: The LLM acts as a dynamic Game Master, generating unique contestants, dialogue, drama, and events for every playthrough. No two "summers of love" are ever the same.
 
-**Current Phase**: Implementation planning and scaffolding - build the deterministic Python CLI loop first
+**Current Phase**: Playable POC hardening - the deterministic Python engine, CLI, FastAPI adapter, and Next.js browser client exist and must stay in parity.
 
 **Tech Stack**: See detailed breakdown below
 
@@ -26,13 +26,13 @@
 
 ### Current Implementation Direction
 
-The previous Next.js/Vercel AI SDK plan has been superseded. See `docs/decisions/` for the reasoning behind the current direction.
+The previous Vercel AI SDK plan has been superseded. The current browser implementation uses Next.js as a thin client while the Python engine remains canonical. See `docs/decisions/` for superseding ADRs when older ADRs disagree.
 
 **Backend / Engine**: Python 3.11+
 - Canonical game state, rules, seeded RNG, NPC simulation, action validation, phase progression, and persistence
 - Pydantic v2 for every state, action, content, and agent contract
-- FastAPI for HTTP once the CLI loop works
-- SQLite for local saves and deterministic replay
+- FastAPI for HTTP and SSE
+- JSON snapshots/traces for local saves and deterministic replay during the POC
 
 **LLM Integration**: Python agents
 - OpenAI Responses structured output behind typed Python agent wrappers
@@ -40,7 +40,7 @@ The previous Next.js/Vercel AI SDK plan has been superseded. See `docs/decisions
 - Prompts live under `src/game/agents/prompts/` and are user-owned per `ENGINEERING.md` R17
 - The LLM never calculates success, relationship deltas, eliminations, votes, or phase movement
 
-**Frontend**: Vite + React + TypeScript
+**Frontend**: Next.js + React + TypeScript
 - Thin visual novel client that renders state and posts actions to FastAPI
 - Tailwind CSS for styling
 - Zustand only for UI state such as selected menus, animation timing, and local panel state
@@ -79,20 +79,27 @@ The current design docs are design canon, not runtime input. Runtime-loaded cont
 content/
   archetypes/   # narrator-relevant personality and casting flavor
   locations/    # prose mood + light metadata
-  actions/      # optional prose flavor only; mechanics stay in code
   events/       # event beats only; mechanics stay in code
-  challenges/   # challenge flavor only; scoring stays in code
+  challenges/   # challenge flavor only; scoring stays in code or typed balance data
+```
+
+Typed mechanical balance data is separate from runtime flavor content:
+
+```
+data/
+  balance/      # deterministic tuning tables interpreted by Python engine code
 ```
 
 Rule of thumb:
 
-- Math, branching, state changes, and unlock logic live in Python.
+- Math, branching, state changes, and unlock logic live in Python engine code.
+- Tunable mechanical tables may live in `data/balance/` only when they are Pydantic-validated and interpreted by engine code.
 - Flavor, tone, display copy, and narrator snippets live in markdown.
 - `content_lint` validates frontmatter references against engine enums and Pydantic models.
 
 ### What We're Not Using For The POC
 
-- **Next.js API routes** - The Python engine owns game logic.
+- **Next.js API routes for gameplay** - The Python engine owns game logic; Next.js is UI-only.
 - **Vercel AI SDK** - LLM calls live behind Python agents.
 - **LiveKit** - Voice/realtime is a future layer, not core gameplay.
 - **Game engines** - DOM-based visual novel UI is enough.
@@ -106,7 +113,7 @@ Rule of thumb:
 3. `apply_action()` returns deterministic `MechanicalResult`
 4. CLI plays through one day and can replay from seed
 5. Narrator agent converts `MechanicalResult` to prose
-6. FastAPI and Vite UI call the same engine
+6. FastAPI and Next.js UI call the same engine
 
 ---
 
@@ -445,7 +452,7 @@ The design vault is no longer in concept-solidification mode. The current priori
    - Mock narration remains the default for tests
 
 6. **Browser last**
-   - Add the Vite client under `web/`
+   - Maintain the Next.js client under `web/`
    - It renders visible state and submits actions to FastAPI
    - Zustand remains UI-only
 
@@ -453,10 +460,10 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 - `AGENTS.md` is the only entry point.
 - `CLAUDE.md` is a pointer for compatibility only.
-- Existing numbered design docs remain design canon.
+- Existing numbered design docs remain design canon unless a newer ADR, build log entry, or phase doc explicitly supersedes them.
 - Implementation decisions live in `docs/decisions/`.
 - Runtime markdown under `content/` carries flavor and light metadata, not mechanics.
-- Code modules cite the design docs they implement in module docstrings.
+- Contract-sensitive modules cite the design docs they implement in module docstrings or in `docs/contract-map.yaml`.
 
 ---
 
@@ -648,7 +655,7 @@ The design vault is no longer in concept-solidification mode. The current priori
 - "What's the tech stack?" → **AGENTS.md** ## Tech Stack
 - "What engineering rules apply?" → **ENGINEERING.md**
 - "What checks and tests matter?" → **docs/qa-strategy.md**
-- "Why Python/Vite/one Narrator?" → **docs/decisions/**
+- "Why Python/Next.js/agent split?" → **docs/decisions/**
 
 **System-specific questions:**
 

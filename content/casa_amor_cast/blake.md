@@ -1,7 +1,7 @@
 ---
 id: blake
-name: Blake
+name: Beau
 gender: m
 archetype: smooth
 ---
-Blake is relaxed, charming, and dangerous because he makes temptation feel harmless.
+Beau is relaxed, charming, and dangerous because he makes temptation feel harmless.

@@ -185,7 +185,7 @@ def assemble_follow_up_menu(
     ]
     assembled = [
         _with_audience_hint(_with_reveal_default(option))
-        for option in _cap_with_single_exit(_dedupe(options), max_total=5)
+        for option in _cap_with_single_exit(_avoid_recent_repeats(state, _dedupe(options)), max_total=5)
     ]
     menu = FollowUpMenu(
         options=assembled,
@@ -241,6 +241,43 @@ def _cap_with_single_exit(options: list[FollowUpOption], *, max_total: int) -> l
     if len(capped) < 2:
         capped.insert(0, _template("ask_about_topic"))
     return capped
+
+
+def _avoid_recent_repeats(state: GameState, options: list[FollowUpOption]) -> list[FollowUpOption]:
+    conversation = state.active_conversation
+    if conversation is None:
+        return options
+    recent_intents = {record.intent_id for record in conversation.exchanges[-2:]}
+    if not recent_intents:
+        return options
+    fresh = [
+        option
+        for option in options
+        if option.category == "exit" or option.intent_kind not in recent_intents
+    ]
+    if any(option.category != "exit" for option in fresh):
+        return fresh
+    fallback = _first_unused_template(recent_intents, {option.intent_kind for option in fresh})
+    if fallback is not None:
+        fresh.insert(0, fallback)
+    return fresh
+
+
+_FALLBACK_INTENTS: tuple[str, ...] = (
+    "ask_about_topic",
+    "change_subject",
+    "joke_back",
+    "go_deeper",
+)
+
+
+def _first_unused_template(recent: set[str], present: set[str]) -> FollowUpOption | None:
+    for intent_kind in _FALLBACK_INTENTS:
+        if intent_kind in recent or intent_kind in present:
+            continue
+        if intent_kind in OPTION_TEMPLATES:
+            return _template(intent_kind)
+    return None
 
 
 def _target(state: GameState, result: MechanicalResult) -> IslanderState:

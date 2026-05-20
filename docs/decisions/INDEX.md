@@ -1,4 +1,4 @@
-# Architecture Decision Records
+﻿# Architecture Decision Records
 
 This folder records implementation decisions that should not be re-litigated in every AI session.
 
@@ -7,8 +7,8 @@ Use `template.md` for new ADRs. ADRs are append-only: if a decision changes, add
 ## Index
 
 - `0001-python-engine-over-typescript.md` - Python owns the canonical engine.
-- `0002-vite-over-nextjs.md` - The browser client uses Vite, not Next.js.
-- `0003-one-narrator-agent-for-v0.md` - v0 starts with one Narrator agent.
+- `0002-vite-over-nextjs.md` - Superseded by `0012`; historical Vite decision.
+- `0003-one-narrator-agent-for-v0.md` - Superseded by `0014`; historical one-Narrator decision.
 - `0004-seeded-rng-as-core-primitive.md` - All randomness flows through seeded RNG.
 - `0005-structured-content-not-runtime-design-docs.md` - Runtime content is structured markdown, not the full design vault.
 - `0006-mechanics-in-code-flavor-in-content.md` - Mechanics live in code; flavor lives in content.
@@ -17,3 +17,6 @@ Use `template.md` for new ADRs. ADRs are append-only: if a decision changes, add
 - `0009-action-vocabulary-as-single-source.md` - `ActionKind` is the canonical action vocabulary.
 - `0010-engineering-rules.md` - `ENGINEERING.md` defines non-negotiable implementation discipline.
 - `0011-makefile-cli-split.md` - CLI owns operations; Makefile wraps common commands.
+- `0012-nextjs-thin-client-over-vite.md` - Next.js is the browser shell; Python remains canonical.
+- `0013-balance-data-boundary.md` - Typed balance data lives outside flavor content.
+- `0014-agent-split-after-narrator-v0.md` - The current POC uses multiple typed agents behind engine-owned mechanics.

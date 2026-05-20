@@ -23,6 +23,7 @@ from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islan
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.arrival_rolls import ArrivalRoll
+from src.game.engine.casa_amor import casa_decision_message
 from src.game.engine.ceremonies import CeremonyEvent, initial_coupling, recoupling
 from src.game.engine.conversation import (
     append_exchange,
@@ -181,7 +182,7 @@ def run_turn(
         ceremony_events.append(
             CeremonyEvent(
                 kind="casa_amor_decision",
-                message=f"Casa Amor decision recorded: {decision.value}.",
+                message=casa_decision_message(state, decision, action.target_id),
                 islander_id=action.target_id,
             )
         )

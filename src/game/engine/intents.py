@@ -81,7 +81,7 @@ class IntentCatalog(BaseModel):
 
 
 @lru_cache(maxsize=8)
-def load_intents(path: Path = Path("content/intents.yaml")) -> list[Intent]:
+def load_intents(path: Path = Path("data/balance/intents.yaml")) -> list[Intent]:
     """Load and validate the intent catalog."""
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):

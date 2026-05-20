@@ -5,8 +5,8 @@ import type { AvailableAction } from "../../lib/types";
 type Props = { actions: AvailableAction[]; locked: boolean; onChoose: (action: AvailableAction) => void };
 
 const HINT_LABEL: Record<string, { label: string; tone: "good" | "bad" | "neutral" }> = {
-  "+": { label: "Audience +", tone: "good" },
-  "-": { label: "Audience −", tone: "bad" }
+  "+": { label: "Pulse +", tone: "good" },
+  "-": { label: "Pulse −", tone: "bad" }
 };
 
 const RISK_TONE: Record<string, string> = {
@@ -21,27 +21,30 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
   return (
     <div data-testid="choice-menu" className="choice-stage">
       <div className="choice-row">
-        {actions.slice(0, 5).map((action, index) => {
+        {actions.map((action, index) => {
           const hint = action.audience_hint ? HINT_LABEL[action.audience_hint] : null;
           const risk = action.risk ? RISK_TONE[action.risk.toLowerCase()] : null;
           return (
             <button
               data-role="choice"
               data-testid="choice"
+              data-action-kind={action.kind}
               disabled={locked}
               key={`${action.kind}-${action.target_id}-${action.intent_id}-${index}`}
               onClick={() => onChoose(action)}
+              aria-label={action.label}
               className="choice-card"
             >
               <span className="choice-corner" aria-hidden />
               <div className="choice-top">
                 {hint ? (
                   <span className={`hint hint-${hint.tone}`}>{hint.label}</span>
-                ) : <span className="hint hint-neutral">·</span>}
+                ) : null}
                 {risk ? <span className={`risk risk-${risk}`}>{action.risk}</span> : null}
+                {action.description ? <span className="kind">{action.description}</span> : null}
               </div>
               <div className="choice-label">{action.label}</div>
-              {action.stat_used ? <div className="choice-stat">uses · {action.stat_used}</div> : null}
+              {action.stat_used ? <div className="choice-stat">{action.stat_used}</div> : null}
             </button>
           );
         })}
@@ -52,19 +55,22 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
           background: linear-gradient(180deg, rgba(8,6,4,.95), rgba(8,6,4,1));
           padding: 14px 18px 22px;
           border-top: 1px solid rgba(217,167,58,.12);
+          max-height: min(34vh, 300px);
+          overflow-y: auto;
+          scrollbar-width: thin;
         }
         .choice-row {
-          max-width: 1080px;
+          max-width: 1180px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: repeat(5, 1fr);
+          grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));
           gap: 12px;
         }
         @media (max-width: 1024px) {
-          .choice-row { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+          .choice-row { grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 8px; }
         }
         @media (max-width: 700px) {
-          .choice-row { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+          .choice-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
         }
         @media (max-width: 480px) {
           .choice-row { grid-template-columns: 1fr 1fr; gap: 6px; }
@@ -128,6 +134,7 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
         .choice-top {
           display: flex;
           align-items: center;
+          flex-wrap: wrap;
           gap: 6px;
           min-height: 18px;
         }
@@ -146,7 +153,7 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
         .hint-bad { color: var(--bad-soft); border-color: rgba(247,226,221,.45); background: rgba(193,75,58,.18); }
         .hint-neutral { color: rgba(181,161,135,.55); border-color: rgba(248,236,210,.12); background: transparent; padding: 2px 9px; }
 
-        .risk {
+        .risk, .kind {
           font-size: 10px;
           letter-spacing: .14em;
           text-transform: uppercase;
@@ -159,6 +166,10 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
         .risk-low { color: var(--good-soft); border-color: rgba(164,205,177,.35); }
         .risk-med { color: var(--gold-soft); border-color: rgba(244,227,184,.45); }
         .risk-high { color: var(--bad-soft); border-color: rgba(247,226,221,.45); }
+        .kind {
+          color: rgba(248,236,210,.74);
+          border-color: rgba(248,236,210,.12);
+        }
 
         .choice-label {
           font-family: var(--font-display);

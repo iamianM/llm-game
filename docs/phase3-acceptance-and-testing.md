@@ -160,34 +160,13 @@ the recouple-proposal action when available.
 - Verify backstory, relationship bars, Type on Paper, memories visible
 - Close popout, close rail
 
-### `e2e/brand-vocabulary.spec.ts` ⭐ zero-tolerance vocabulary check
+### Display Vocabulary Checks
 
-Walks the full playthrough and asserts no Love Island residue appears in any
-rendered page source:
-
-```ts
-const FORBIDDEN_STRINGS = [
-  /\bislander/i, /\bThe Villa\b/, /\bCasa Amor\b/i,
-  /\bbombshell/i, /\brecoupling\b/i, /\bgraft(ing)?\b/i,
-  /I('|’)?ve got a text/i, /\bdumped\b/i,
-  /\bmugged off\b/i, /\bpied\b/i,
-];
-
-test('no Love Island residue in player-facing copy', async ({ page }) => {
-  // Walk through every screen
-  for (const screenName of allScreens) {
-    await navigateTo(page, screenName);
-    const html = await page.content();
-    // Strip script tags and JSON data (engine internals can use generic names)
-    const visibleText = stripScriptsAndDataAttrs(html);
-    for (const pattern of FORBIDDEN_STRINGS) {
-      expect(visibleText).not.toMatch(pattern);
-    }
-  }
-});
-```
-
-Codex MUST add this test, run it, and verify it passes before reporting done.
+Do not add free-text string or regex scans for player-facing vocabulary.
+Vocabulary checks should assert structured display identifiers, serialized API
+fields, and component props. If prose contains wrong terminology, fix the
+source content, prompt, or structured display field instead of masking it with a
+runtime replacement pass.
 
 ### `smoke/snapshot-pages.spec.ts` — visual smoke
 

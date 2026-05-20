@@ -266,9 +266,13 @@ time in.
 - Click anywhere on box → fast-forward typewriter to complete
 
 **Choice menu:**
-- 3–5 buttons in a row (wrap on narrow viewport)
+- Render every action returned by the API. The browser must not silently cap,
+  truncate, or reorder available actions; if the engine offers six valid
+  choices, all six must be reachable.
+- Buttons wrap on narrow viewports and the menu may scroll internally when the
+  valid action set is larger than the available vertical space.
 - Each button:
-  - Pulse hint chip (+/−/empty) above the label
+  - Pulse hint chip (+/-/empty) above the label
   - Label text
   - Risk + stat used (small muted text below)
   - Hover: subtle lift + glow
@@ -300,11 +304,16 @@ Flush of Hearts announcements, and the finale.
 - Full-screen overlay; main stage dimmed to ~30% opacity behind it
 - Background fades to deep `--bg` (warm near-black)
 - Centered Charter serif narration prose, max-width 60ch, slow fade-in
-- For pairing ceremonies: animate the couples list in, one couple per row,
-  600ms stagger, avatars + names with "&" between
+- For pairing ceremonies and other events that actually form or reveal couples:
+  animate the couples list in, one couple per row, 600ms stagger, avatars +
+  names with "&" between
+- Challenge, producer text, gather, and other non-pairing events must not show
+  stale couples just because current couples exist in state.
 - For Heart Throb arrivals: bigger portrait of the new arrival, name, intro
   line from the narrator
-- "Continue" button at bottom — accent CTA, advances back to stage
+- "Continue" button at bottom - accent CTA, advances back to stage. It must
+  remain visible and clickable even when the cast size grows to Flush of Hearts
+  scale; long narration or pairing lists scroll inside the overlay.
 
 ### 3.5 Day boundary (modal overlay on stage)
 
@@ -619,6 +628,9 @@ dialogue appear all at once.
 - See `phase3-acceptance-and-testing.md` for the full test plan
 - Add `web/tests/e2e/*.spec.ts` covering title, new-run, ceremony, finale,
   full playthrough
+- Add focused browser contract tests for action reachability, duplicate-key or
+  console warnings on repeated memories, long ceremony scroll behavior, and
+  event overlays that should not display stale pairings.
 - Add `web/tests/smoke/snapshot-pages.spec.ts` that screenshots every page
   state and saves to `web/tests/snapshots/` for visual review
 

@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import json
-import pickle
 from pathlib import Path
 from typing import Any
 
@@ -87,15 +85,18 @@ def run(args: argparse.Namespace) -> int:
         return _replay_recording(Path(args.replay))
 
     records: list[dict[str, Any]]
+    rng_state: list[object] | None = None
     if from_checkpoint:
-        state, loaded_records, checkpoint_seed = load_checkpoint(from_checkpoint)
+        state, loaded_records, checkpoint_seed, checkpoint_rng_state = load_checkpoint(from_checkpoint)
         records = loaded_records
         seed = checkpoint_seed if args.seed is None else args.seed
+        if args.seed is None:
+            rng_state = checkpoint_rng_state
     else:
         seed = 1 if args.seed is None else args.seed
         state = new_game(seed)
         records = []
-    rng = SeededRng(seed)
+    rng = SeededRng.from_snapshot(seed, rng_state) if rng_state is not None else SeededRng(seed)
     islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
     contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
     event_narrator = None if args.mock_llm else OpenAIEventNarrator().narrate
@@ -129,7 +130,7 @@ def run(args: argparse.Namespace) -> int:
             continue
         if raw.startswith("/checkpoint"):
             name = raw.removeprefix("/checkpoint").strip() or f"turn-{state.turn_index}"
-            path = save_named_checkpoint(state, name, records, seed=seed, rng_state=_encode_rng_state(rng))
+            path = save_named_checkpoint(state, name, records, seed=seed, rng_state=rng.snapshot())
             print(f"checkpoint saved: {path}")
             continue
         if raw == "/hash":
@@ -160,7 +161,7 @@ def run(args: argparse.Namespace) -> int:
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
         if _should_auto_checkpoint(turn):
-            save_auto_checkpoint(state, seed, records, rng_state=_encode_rng_state(rng))
+            save_auto_checkpoint(state, seed, records, rng_state=rng.snapshot())
         _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
         _print_turn(turn)
 
@@ -359,5 +360,3 @@ def _should_auto_checkpoint(turn: object) -> bool:
     )
 
 
-def _encode_rng_state(rng: SeededRng) -> str:
-    return base64.b64encode(pickle.dumps(rng._random.getstate())).decode("ascii")

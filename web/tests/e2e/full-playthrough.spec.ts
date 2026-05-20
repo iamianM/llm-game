@@ -20,7 +20,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
   let sawPairingCeremony = false;
   let sawFlushOfHearts = false;
 
-  for (let turn = 0; turn < 260; turn += 1) {
+  for (let turn = 0; turn < 420; turn += 1) {
     if (page.url().includes("/finale") || await page.getByRole("heading", { name: "Sunset Bay crowns its couple" }).count()) break;
     if (await page.locator('[data-screen="day-recap"]').count()) {
       sawDayRecap = true;
@@ -37,7 +37,13 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
       if (/Flush of Hearts/i.test(ceremonyText)) await page.screenshot({ path: out("ceremony-flush-of-hearts.png"), fullPage: true });
       if (/Heart Swap Proposal/i.test(ceremonyText)) await page.screenshot({ path: out("recouple-proposal.png"), fullPage: true });
       if (/Pairing Ceremony/i.test(ceremonyText)) await page.screenshot({ path: out("ceremony-pairing.png"), fullPage: true });
-      await page.getByRole("button", { name: "Continue" }).click({ force: true });
+      await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+      await page.getByRole("button", { name: "Continue" }).click();
+      continue;
+    }
+    const introContinue = page.getByTestId("intro-continue");
+    if (await introContinue.count() > 0) {
+      await introContinue.click();
       continue;
     }
     try {

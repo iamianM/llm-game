@@ -4,12 +4,12 @@ import { Avatar } from "../ui/Avatar";
 export function PairingList({ couples }: { couples: CoupleSummary[] }) {
   if (!couples.length) return null;
   return (
-    <div className="pairing-list">
+    <div className="pairing-list" data-testid="pairing-list">
       {couples.map((couple, idx) => (
         <div
-          key={`${couple.partner_a_id}-${couple.partner_b_id}`}
+          key={`${couple.partner_a_id}-${couple.partner_b_id}-${couple.formed_on_day}-${couple.formed_via}-${idx}`}
           className="pairing-row"
-          style={{ animationDelay: `${idx * 180 + 250}ms` }}
+          style={{ animationDelay: `${Math.min(idx, 5) * 120 + 180}ms` }}
         >
           <div className="pairing-side">
             <Avatar id={couple.partner_a_id} name={couple.partner_a_name} size="sm" />
@@ -34,13 +34,13 @@ export function PairingList({ couples }: { couples: CoupleSummary[] }) {
           grid-template-columns: 1fr auto 1fr;
           align-items: center;
           gap: 12px;
-          padding: 12px 18px;
+          padding: 10px 16px;
           border-radius: var(--r-pill);
           background: rgba(8,6,4,.55);
           border: 1px solid rgba(217,167,58,.35);
           color: var(--card);
           font-family: var(--font-display);
-          font-size: 18px;
+          font-size: 17px;
           opacity: 0;
           transform: translateY(8px);
           animation: pairing-in .6s cubic-bezier(.22,.61,.36,1) forwards;
@@ -56,6 +56,10 @@ export function PairingList({ couples }: { couples: CoupleSummary[] }) {
         .pairing-side.end { justify-content: flex-end; }
         .pairing-name {
           letter-spacing: .01em;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .pairing-amp {
           font-family: var(--font-hand);

@@ -16,7 +16,7 @@ def compare_cmd(args: object) -> int:
     trace_a = args.trace_a
     trace_b = args.trace_b
     out = args.out
-    _state, checkpoint_records, _seed = load_checkpoint(checkpoint)
+    _state, checkpoint_records, _seed, _rng_state = load_checkpoint(checkpoint)
     records_a = _load_records(Path(trace_a))
     records_b = _load_records(Path(trace_b))
     rows = _compare_rows(len(checkpoint_records), records_a, records_b)

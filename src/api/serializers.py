@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-from src.api.display import display, translate_text
+from src.api.display import display
 from src.api.models import (
     ApiExchange,
     ApiKnownFact,
@@ -70,7 +70,7 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
             None if state.active_conversation is None else state.active_conversation.target_id
         ),
         villa_snapshot=villa_snapshot(state),
-        daily_recaps=[_translated_dump(recap) for recap in state.daily_recaps],
+        daily_recaps=[_model_dump(recap) for recap in state.daily_recaps],
     )
 
 
@@ -82,10 +82,14 @@ def available_actions_api(state: GameState) -> list[AvailableAction]:
             index: option
             for index, option in enumerate(state.active_conversation.pending_options.options)
         }
-    return [available_action(spec, menu_options=menu_options) for spec in available_actions(state)]
+    return [
+        available_action(state, spec, menu_options=menu_options)
+        for spec in available_actions(state)
+    ]
 
 
 def available_action(
+    state: GameState,
     spec: ActionSpec,
     *,
     menu_options: Mapping[int, FollowUpOption] | None = None,
@@ -94,23 +98,37 @@ def available_action(
     risk: str | None = None
     stat: str | None = None
     hint: Literal["+", "-", ""] = ""
+    label = action_label(state, spec)
+    description: str | None = None
     if action.kind.value == "respond_with" and action.option_index is not None:
         option = (menu_options or {}).get(action.option_index)
         if option is not None:
             risk = option.risk
             stat = None if option.stat_used is None else display(option.stat_used)
-            hint = option.audience_hint
+            hint = hide_redundant_hint(state, option.audience_hint)
+            label = option.label
+            description = display(option.category)
     return AvailableAction(
         kind=action.kind.value,
-        label=translate_label(spec.label),
+        label=label,
         target_id=action.target_id,
         intent_id=action.intent_id,
         option_index=action.option_index,
         audience_hint=hint,
         risk=risk,
         stat_used=stat,
-        description=None,
+        description=description,
     )
+
+
+def hide_redundant_hint(state: GameState, hint: Literal["+", "-", ""]) -> Literal["+", "-", ""]:
+    """Drop hint chips when Pulse is already pinned at the relevant end of the meter."""
+    perception = state.player.public_perception
+    if hint == "+" and perception >= 95:
+        return ""
+    if hint == "-" and perception <= 5:
+        return ""
+    return hint
 
 
 def exchange_api(state: GameState, exchange: Exchange | None, speaker_id: str | None) -> ApiExchange | None:
@@ -178,9 +196,10 @@ def couple_summaries(state: GameState) -> list[CoupleSummary]:
 def memory_api(memory: Memory) -> ApiMemory:
     data = memory.model_dump(mode="json")
     return ApiMemory(
+        id=data["id"],
         holder_id=data["holder_id"],
         subject_id=data["subject_id"],
-        content=translate_text(data["content"]),
+        content=data["content"],
         emotional_weight=data["emotional_weight"],
         source=data["source"],
         tags=list(data.get("tags") or []),
@@ -222,11 +241,11 @@ def _known_fact_api(fact: KnownFact) -> ApiKnownFact:
     return ApiKnownFact(
         fact_key=fact.fact_key,
         label=trait_key.replace("_", " ").title(),
-        value=translate_text(fact.value),
+        value=fact.value,
         source=fact.source,
         source_npc_id=fact.source_npc_id,
         confidence=fact.confidence,
-        citation=translate_text(fact.citation),
+        citation=fact.citation,
         group=group,
     )
 
@@ -273,21 +292,61 @@ def find_name(state: GameState, actor_id: str) -> str:
     return actor_id
 
 
-def translate_label(label: str) -> str:
-    translated = translate_text(label).replace("Snog Marry Pie", "Kiss Wed Pass")
-    if translated.startswith("Initial couple with "):
-        return translated.replace("Initial couple with ", "Pair with ", 1)
-    if ": " in translated and translated.endswith(" introduction"):
-        name, rest = translated.split(": ", 1)
-        dynamic = rest.removesuffix(" introduction").strip().lower()
-        return f"Spark {dynamic} with {name}"
-    return translated
+def action_label(state: GameState, spec: ActionSpec) -> str:
+    """Render action labels from structured action/state fields."""
+    action = spec.action
+    if action.kind.value == "join_gather" and state.pending_gather is not None:
+        return f"Join gather at {display(state.pending_gather.gather_location.value)}"
+    if action.kind.value == "challenge_response" and state.pending_challenge is not None:
+        target = "" if action.target_id is None else f": choose {find_name(state, action.target_id)}"
+        return f"{display(state.pending_challenge.kind)}{target}"
+    if action.kind.value == "recouple" and action.target_id is not None:
+        return f"Pair with {find_name(state, action.target_id)}"
+    if action.kind.value == "propose_recouple" and action.target_id is not None:
+        return f"Ask {find_name(state, action.target_id)} for a Heart Swap"
+    if action.kind.value == "npc_proposal_response" and action.target_id is not None:
+        proposer = find_name(state, action.target_id)
+        if action.intent_id == "accept":
+            return f"Accept {proposer}'s Heart Swap proposal"
+        if action.intent_id == "decline_politely":
+            return f"Decline {proposer} politely"
+        if action.intent_id == "decline_harshly":
+            return f"Decline {proposer} harshly"
+    if action.kind.value == "hideaway":
+        partner_id = partner_id_for_player(state)
+        suffix = "" if partner_id is None else f" with {find_name(state, partner_id)}"
+        return f"Spend the night in {display('hideaway')}{suffix}"
+    if action.kind.value == "casa_decision":
+        if action.intent_id == "return_with_original":
+            return "Return loyal"
+        if action.intent_id == "return_with_new" and action.target_id is not None:
+            return f"Return with {find_name(state, action.target_id)}"
+        if action.intent_id == "return_single":
+            return "Return solo"
+    if action.kind.value == "move" and action.target_id is not None:
+        return f"Move to {display(action.target_id)}"
+    if action.kind.value == "introduce_to" and action.target_id is not None:
+        intro_style = {
+            "intro_friendly": "friendly",
+            "intro_flirty": "flirty",
+            "intro_deep": "deep",
+            "intro_banter": "banter",
+        }.get(action.intent_id or "", "warmly")
+        return f"Spark {intro_style} with {find_name(state, action.target_id)}"
+    if action.kind.value == "start_conversation" and action.target_id is not None:
+        return f"Talk to {find_name(state, action.target_id)}"
+    if action.kind.value == "end_conversation":
+        return "Walk away"
+    return spec.label
 
 
 def audience_delta(result: MechanicalResult) -> int | None:
     return result.audience_delta if result.audience_delta != 0 else None
 
 
-def _translated_dump(value: BaseModel) -> dict[str, object]:
-    data = value.model_dump(mode="json")
-    return {key: translate_text(item) if isinstance(item, str) else item for key, item in data.items()}
+def _model_dump(value: BaseModel) -> dict[str, object]:
+    return value.model_dump(mode="json")
+
+
+def partner_id_for_player(state: GameState) -> str | None:
+    return partner_id(state, "player")

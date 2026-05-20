@@ -9,7 +9,7 @@ from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.content.archetype_templates import ARCHETYPE_TEMPLATES, ArchetypeTemplate
@@ -34,12 +34,32 @@ class GenerationSeed:
     used_secret_engines: tuple[str, ...] = ()
 
 
+class GeneratedTraitCard(TraitCard):
+    """Trait Card shape required from the live generator."""
+
+    flavor_traits: dict[str, TraitFact]
+
+    @field_validator("flavor_traits")
+    @classmethod
+    def _validate_flavor_trait_count(cls, value: dict[str, TraitFact]) -> dict[str, TraitFact]:
+        if not 6 <= len(value) <= 10:
+            raise ValueError("flavor_traits must contain 6-10 concrete traits")
+        return value
+
+
 class TraitCardBatch(BaseModel):
     """Structured Trait Generator output."""
 
     model_config = ConfigDict(extra="forbid")
 
-    cast: dict[str, TraitCard] = Field(min_length=1)
+    cast: dict[str, GeneratedTraitCard]
+
+    @field_validator("cast")
+    @classmethod
+    def _validate_cast_count(cls, value: dict[str, GeneratedTraitCard]) -> dict[str, GeneratedTraitCard]:
+        if not value:
+            raise ValueError("cast must contain at least one Trait Card")
+        return value
 
 
 class OpenAITraitGenerator:
@@ -58,7 +78,7 @@ class OpenAITraitGenerator:
         seed_list = list(seeds)
         rendered = _render_seeds(seed_list)
         last_error: Exception | None = None
-        for attempt in range(2):
+        for attempt in range(3):
             input_text = rendered
             if last_error is not None:
                 input_text = (
@@ -66,23 +86,28 @@ class OpenAITraitGenerator:
                     "Return corrected JSON only. Every Heartbreaker needs exactly the core_traits shape "
                     "and 6-10 concrete flavor_traits."
                 )
-            response = self._client.responses.create(
-                model=self._model,
-                reasoning={"effort": "low"},
-                instructions=Path("src/game/agents/prompts/trait_generator.md").read_text(encoding="utf-8"),
-                input=input_text,
-                text={"format": {"type": "json_object"}},
-                max_output_tokens=12000,
-            )
             try:
-                parsed = _parse_trait_batch(response.output_text)
-                validate_trait_cards(parsed.cast)
-                return parsed.cast
+                parsed = self._generate_batch(input_text)
+                cards: dict[str, TraitCard] = dict(parsed.cast)
+                validate_trait_cards(cards)
+                return cards
             except (ValueError, ValidationError, json.JSONDecodeError) as exc:
                 last_error = exc
-                if attempt == 1:
+                if attempt == 2:
                     raise
         raise AssertionError("unreachable trait generator retry state")
+
+    def _generate_batch(self, input_text: str) -> TraitCardBatch:
+        """Request one parsed Trait Card batch from the model."""
+        response = self._client.responses.create(
+            model=self._model,
+            reasoning={"effort": "low"},
+            instructions=Path("src/game/agents/prompts/trait_generator.md").read_text(encoding="utf-8"),
+            input=input_text,
+            text={"format": {"type": "json_object"}},
+            max_output_tokens=12000,
+        )
+        return _parse_trait_batch(response.output_text)
 
 
 def mock_opening_trait_cards() -> dict[str, TraitCard]:
@@ -166,24 +191,24 @@ def _parse_trait_batch(output_text: str) -> TraitCardBatch:
         )
 
 
-def _coerce_trait_card(entry: dict[str, object]) -> TraitCard:
+def _coerce_trait_card(entry: dict[str, object]) -> GeneratedTraitCard:
     if "persona" in entry and "core_traits" in entry:
         try:
-            return TraitCard.model_validate(entry)
+            return GeneratedTraitCard.model_validate(entry)
         except ValidationError:
             core_source = entry.get("core_traits")
             flavor_source = entry.get("flavor_traits")
             core = core_source if isinstance(core_source, dict) else entry
             core_traits = {key: _coerce_trait_fact(key, core.get(key)) for key in sorted(CORE_TRAIT_KEYS)}
             persona = _coerce_persona(entry.get("persona"), fallback_secret=_fallback_secret(core_traits))
-            return TraitCard(
+            return GeneratedTraitCard(
                 persona=persona,
                 core_traits=core_traits,
                 flavor_traits=_coerce_flavor_traits(flavor_source),
             )
     core_traits = {key: _coerce_trait_fact(key, entry.get(key)) for key in sorted(CORE_TRAIT_KEYS)}
     persona = _coerce_persona(entry, fallback_secret=_fallback_secret(core_traits))
-    return TraitCard(
+    return GeneratedTraitCard(
         persona=persona,
         core_traits=core_traits,
         flavor_traits=_coerce_flavor_traits(entry.get("flavor_traits")),

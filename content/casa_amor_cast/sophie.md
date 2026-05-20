@@ -1,7 +1,7 @@
 ---
 id: sophie
-name: Sophie
+name: Sasha
 gender: f
 archetype: joker
 ---
-Sophie turns pressure into jokes, then uses the laughter to find out what people really want.
+Sasha turns pressure into jokes, then uses the laughter to find out what people really want.

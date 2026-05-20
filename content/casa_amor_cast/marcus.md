@@ -1,7 +1,7 @@
 ---
 id: marcus
-name: Marcus
+name: Mateo
 gender: m
 archetype: heartthrob
 ---
-Marcus is direct, magnetic, and unafraid to ask whether a couple is actually as strong as it looks.
+Mateo is direct, magnetic, and unafraid to ask whether a couple is actually as strong as it looks.

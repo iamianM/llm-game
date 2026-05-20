@@ -4,12 +4,13 @@ The HTTP and SSE contract between the Next.js frontend and the Python engine.
 The FastAPI server is a *thin adapter*. It does no game logic — every request
 calls into existing `src/game/` modules and serializes their output.
 
-**One of its key responsibilities** is translating engine-internal identifiers
+**One of its key responsibilities** is translating structured engine identifiers
 (`bombshell`, `casa_amor`, `recouple`, `opening`, etc.) into Paradise Hearts
 display strings (Heart Throb, Flush of Hearts, Heart Swap, First Spark, etc.)
-before sending to the frontend. See `paradise-hearts-glossary.md` for the
-full vocabulary and the "Naming reconciliation" section below for the
-translation table.
+before sending to the frontend. It must not rewrite free-text prose with
+keyword or regex replacement. See `paradise-hearts-glossary.md` for the full
+vocabulary and the "Naming reconciliation" section below for the identifier
+display table.
 
 **Target:** ~200 lines for `src/api/app.py`, plus Pydantic models in
 `src/api/models.py`, plus ~80 lines in `src/api/display.py` for the
@@ -436,10 +437,11 @@ DISPLAY_NAMES = {
 }
 ```
 
-`src/api/display.py` (small module) holds the translation table and helpers.
-The frontend code uses the translated strings directly; the engine code stays
-unchanged until the post-Phase-3 rename PR. Full vocabulary reference is in
-`docs/paradise-hearts-glossary.md` — display strings here MUST match it.
+`src/api/display.py` (small module) holds the structured identifier display
+table and helpers. The frontend code uses the display strings directly; the
+engine code stays unchanged until the post-Phase-3 rename PR. Full vocabulary
+reference is in `docs/paradise-hearts-glossary.md`; display identifiers here
+MUST match it.
 
 ## Session storage
 

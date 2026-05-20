@@ -7,6 +7,7 @@ import pytest
 from src.game.agents.event_narrator import (
     EventNarration,
     OpenAIEventNarrator,
+    mock_event_narration,
     validate_event_narration,
 )
 from src.game.engine.ceremonies import CeremonyEvent
@@ -46,3 +47,19 @@ def test_event_narrator_validation_accepts_starting_cast_display_name() -> None:
             )
         ],
     )
+
+
+def test_mock_event_narration_uses_player_facing_event_language() -> None:
+    state = new_game(1)
+
+    narration = mock_event_narration(
+        state,
+        [
+            CeremonyEvent(kind="recoupling", message="internal recouple completed"),
+            CeremonyEvent(kind="elimination", message="jordan_start leaves", islander_id="jordan_start"),
+        ],
+    )
+
+    assert "Pairing Ceremony" in narration.prose
+    assert "Jordan is Heart Out" in narration.prose
+    assert "jordan_start" not in narration.prose

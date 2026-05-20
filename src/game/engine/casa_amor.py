@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from src.game.content.loader import load_backstories
+from src.game.content.loader import load_content
+from src.game.content.models import CasaAmorCastContent
 from src.game.content.trait_library import heart_throb_trait_cards
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import partner_for, player_couple
@@ -50,7 +51,7 @@ def locations_for_villa(villa: VillaName) -> set[Location]:
 def enter_casa_amor(state: GameState) -> CeremonyEvent:
     """Split the villa and add the fixed Casa Amor cast."""
     if state.casa_amor_state is not None:
-        return CeremonyEvent(kind="casa_amor_arrival", message="Casa Amor is already underway.")
+        return CeremonyEvent(kind="casa_amor_arrival", message="Flush of Hearts is already underway.")
     partner = player_couple(state)
     original_partner_id = None if partner is None else partner_for(partner, state.player.id)
     casa_cast = _ensure_casa_cast(state)
@@ -67,7 +68,10 @@ def enter_casa_amor(state: GameState) -> CeremonyEvent:
         main_villa_partner_ids=[islander.id for islander in state.islanders if islander.id not in {i.id for i in casa_cast}],
         player_perception_before=state.player.public_perception,
     )
-    return CeremonyEvent(kind="casa_amor_arrival", message="Casa Amor begins: the player is sent to the second villa.")
+    return CeremonyEvent(
+        kind="casa_amor_arrival",
+        message="Flush of Hearts begins: you are sent to the second villa.",
+    )
 
 
 def casa_decision_options(state: GameState) -> list[tuple[CasaDecision, str | None, str]]:
@@ -105,7 +109,11 @@ def apply_casa_decision(state: GameState, decision: CasaDecision, partner_id: st
     else:
         _adjust_player_perception(state, 3)
     casa.player_perception_after = state.player.public_perception
-    return CeremonyEvent(kind="casa_amor_decision", message=f"Casa Amor decision recorded: {decision.value}.")
+    return CeremonyEvent(
+        kind="casa_amor_decision",
+        message=casa_decision_message(state, decision, partner_id),
+        islander_id=partner_id,
+    )
 
 
 def return_ceremony(state: GameState) -> CeremonyEvent | None:
@@ -146,7 +154,7 @@ def return_ceremony(state: GameState) -> CeremonyEvent | None:
     casa.returned = True
     event = CeremonyEvent(
         kind="casa_amor_return_reveal",
-        message=f"Casa Amor return reveal: player chose {casa.player_decision.value}.",
+        message=casa_decision_message(state, casa.player_decision, casa.chosen_partner_id),
         islander_id=casa.chosen_partner_id or casa.original_partner_id,
     )
     _remember_return(state, event)
@@ -176,34 +184,34 @@ def _ensure_casa_cast(state: GameState) -> list[IslanderState]:
 
 
 def _casa_cast() -> list[IslanderState]:
-    backstories = load_backstories()
+    index = load_content()
+    backstories = index.backstories
+    content = index.casa_amor_cast
     return [
-        _casa("blake", "Blake", Gender.MAN, "smooth", backstories, 9, "secure", Location.CASA_POOL),
-        _casa("jordan", "Jordan", Gender.MAN, "sweetheart", backstories, 7, "anxious", Location.CASA_KITCHEN),
-        _casa("marcus", "Marcus", Gender.MAN, "heartthrob", backstories, 10, "avoidant", Location.CASA_TERRACE),
-        _casa("sophie", "Sophie", Gender.WOMAN, "joker", backstories, 8, "secure", Location.CASA_POOL),
-        _casa("zara", "Zara", Gender.WOMAN, "bombshell", backstories, 12, "avoidant", Location.CASA_KITCHEN),
-        _casa("nia", "Nia", Gender.WOMAN, "friend", backstories, 6, "anxious", Location.CASA_TERRACE),
+        _casa(content["blake"], backstories, 9, "secure", Location.CASA_POOL),
+        _casa(content["jordan"], backstories, 7, "anxious", Location.CASA_KITCHEN),
+        _casa(content["marcus"], backstories, 10, "avoidant", Location.CASA_TERRACE),
+        _casa(content["sophie"], backstories, 8, "secure", Location.CASA_POOL),
+        _casa(content["zara"], backstories, 12, "avoidant", Location.CASA_KITCHEN),
+        _casa(content["nia"], backstories, 6, "anxious", Location.CASA_TERRACE),
     ]
 
 
 def _casa(
-    islander_id: str,
-    name: str,
-    gender: Gender,
-    archetype: str,
+    member: CasaAmorCastContent,
     backstories: dict[str, str],
     chemistry: int,
     attachment: str,
     location: Location,
 ) -> IslanderState:
-    trait_card = _casa_trait_card(islander_id)
+    gender = Gender.MAN if member.gender == "m" else Gender.WOMAN
+    trait_card = _casa_trait_card(member.id)
     return IslanderState(
-        id=islander_id,
-        name=name,
+        id=member.id,
+        name=member.name,
         gender=gender,
-        archetype=archetype,
-        backstory=backstories[islander_id],
+        archetype=member.archetype,
+        backstory=backstories[member.id],
         location_id=location,
         relationship=RelationshipState(affection=12, chemistry=chemistry),
         public_perception=52,
@@ -233,6 +241,18 @@ def _active_casa(state: GameState) -> CasaAmorState:
 
 def _adjust_player_perception(state: GameState, delta: int) -> None:
     state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
+
+
+def casa_decision_message(
+    state: GameState,
+    decision: CasaDecision,
+    partner_id: str | None,
+) -> str:
+    if decision is CasaDecision.RETURN_WITH_ORIGINAL:
+        return "You chose to return loyal to your original connection."
+    if decision is CasaDecision.RETURN_WITH_NEW and partner_id is not None:
+        return f"You chose to return with {find_islander(state, partner_id).name}."
+    return "You chose to return solo."
 
 
 def _remember_return(state: GameState, event: CeremonyEvent) -> None:

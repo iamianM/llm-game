@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import argparse
-import base64
 import json
-import pickle
 from pathlib import Path
 from typing import Any
 
@@ -92,7 +90,7 @@ def _start(args: argparse.Namespace) -> int:
         "record_path": str(record),
         "state": state.model_dump(mode="json"),
         "records": [],
-        "rng_state": _encode_rng_state(rng),
+        "rng_state": rng.snapshot(),
     }
     _save_session(args.name, package)
     write_recording(
@@ -111,14 +109,8 @@ def _start(args: argparse.Namespace) -> int:
 
 
 def _resume(args: argparse.Namespace) -> int:
-    state, records, seed = load_checkpoint(args.from_checkpoint)
-    checkpoint = _load_checkpoint_payload(args.from_checkpoint)
-    rng = SeededRng(seed)
-    rng_state = checkpoint.get("rng_state")
-    if isinstance(rng_state, str):
-        _decode_rng_state(rng, rng_state)
-    else:
-        print("checkpoint has no RNG state; resuming with seed start")
+    state, records, seed, rng_state = load_checkpoint(args.from_checkpoint)
+    rng = SeededRng.from_snapshot(seed, rng_state) if rng_state is not None else SeededRng(seed)
     record = Path(args.record) if args.record else Path(".game_traces") / f"{args.name}.json"
     package = {
         "seed": seed,
@@ -127,7 +119,7 @@ def _resume(args: argparse.Namespace) -> int:
         "source_checkpoint": str(args.from_checkpoint),
         "state": state.model_dump(mode="json"),
         "records": records,
-        "rng_state": _encode_rng_state(rng),
+        "rng_state": rng.snapshot(),
     }
     _save_session(args.name, package)
     write_recording(
@@ -169,8 +161,7 @@ def _choose(args: argparse.Namespace) -> int:
             return 2
         action = resolved
 
-    rng = SeededRng(int(package["seed"]))
-    _decode_rng_state(rng, str(package["rng_state"]))
+    rng = SeededRng.from_snapshot(int(package["seed"]), _rng_snapshot(package.get("rng_state")))
     input_hash = state_hash(state_hash_payload(state))
     turn = run_turn(
         state,
@@ -187,7 +178,7 @@ def _choose(args: argparse.Namespace) -> int:
     records.append(record_from_turn(input_hash, action, turn))
     package["state"] = state.model_dump(mode="json")
     package["records"] = records
-    package["rng_state"] = _encode_rng_state(rng)
+    package["rng_state"] = rng.snapshot()
     _save_session(args.name, package)
     write_recording(
         Path(str(package["record_path"])),
@@ -215,7 +206,7 @@ def _checkpoint(args: argparse.Namespace) -> int:
         args.checkpoint,
         records,
         seed=int(package["seed"]),
-        rng_state=str(package["rng_state"]),
+        rng_state=_rng_snapshot(package.get("rng_state")),
     )
     print(f"checkpoint saved: {path}")
     return 0
@@ -286,27 +277,10 @@ def _save_session(name: str, package: dict[str, Any]) -> None:
     path.write_text(json.dumps(package, indent=2), encoding="utf-8")
 
 
-def _load_checkpoint_payload(name_or_path: str) -> dict[str, Any]:
-    path = Path(name_or_path)
-    if not path.exists():
-        path = Path(".game_saves") / "named" / f"{_safe_checkpoint_name(name_or_path)}.json"
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ValueError(f"checkpoint file is invalid: {path}")
-    return payload
-
-
-def _safe_checkpoint_name(name: str) -> str:
-    cleaned = "".join(char if char.isalnum() or char in {"-", "_"} else "-" for char in name.strip())
-    return cleaned.strip("-") or "checkpoint"
-
-
-def _encode_rng_state(rng: SeededRng) -> str:
-    return base64.b64encode(pickle.dumps(rng._random.getstate())).decode("ascii")
-
-
-def _decode_rng_state(rng: SeededRng, payload: str) -> None:
-    rng._random.setstate(pickle.loads(base64.b64decode(payload.encode("ascii"))))
+def _rng_snapshot(payload: object) -> list[object]:
+    if not isinstance(payload, list):
+        raise ValueError("session is missing JSON RNG state")
+    return list(payload)
 
 
 def _llm_mode(mock_llm: bool) -> str:

@@ -39,16 +39,13 @@ class PlayerArchetypeContent(BaseModel):
 
 
 class ChallengeContent(BaseModel):
-    """Daily challenge content."""
+    """Narrator-facing daily challenge flavor."""
 
     model_config = ConfigDict(extra="forbid")
 
     id: str
     day: int
     kind: str
-    stat_tested: str
-    success_deltas: dict[str, int]
-    failure_deltas: dict[str, int]
     body: str
 
 
