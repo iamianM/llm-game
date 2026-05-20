@@ -1,6 +1,6 @@
 id: interruption-defer
 title: Conversation Interruption (Defer)
-goal: Prove an NPC interruption mid-conversation routes through the engine cleanly — the player picks "defer", the engine resolves the chance, the pending interruption clears, and dialogue tracks what just happened.
+goal: 'Prove an NPC interruption mid-conversation routes through the engine cleanly: the player picks "defer", the engine resolves the chance, the pending interruption clears, and the original conversation stays active.'
 seed: 1919
 initial_location: pool
 live_villa_life: false
@@ -25,8 +25,8 @@ initial_relationships:
     friendship: 25
 judge_context:
   - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
-  - The engine decides whether a deferral lands well based on stats and affection; the LLM only writes Chloe's and Liam's reactions, never the outcome.
-  - This scenario only covers the "defer politely" path; accept and ignore are separate variants worth adding later.
+  - The engine decides whether a deferral lands well based on stats and affection.
+  - Defer and ignore are engine-only interruption responses because they keep the original conversation in place. Accept is the path that starts a new voiced exchange.
 turns:
   - id: defer-liam
     arrange_player_location: pool
@@ -46,19 +46,19 @@ turns:
       target_id: liam
       intent_id: defer_interruption
     golden: >
-      Liam walks up polite, the player asks him for a beat, and Chloe stays
-      in the picture. The dialogue should acknowledge that Liam was the one
-      interrupting (his name, the polite ask) and Chloe's reaction to being
-      held onto. The pending interruption clears either way; whether Liam
-      actually leaves the conversation easy is the engine's call.
+      Liam walks up polite, the player asks him for a beat, and the engine
+      keeps Chloe as the active conversation. The pending interruption clears
+      either way; whether Liam leaves easily is recorded by the chance roll
+      and relationship delta.
     checks:
       - interruption_cleared
-      - agent_traces_present
+      - active_conversation_target_is:chloe
+      - relationship_delta:liam:affection:-1
+      - no_exchange
     judge_checks:
       - id: defer_grounded
         criteria: >
           The recorded relationship deltas and chance breakdown reflect a
-          deferral attempt by the player: a small affection cost to the
-          interrupter (Liam) and no swap to the new conversation. Fail if
-          the engine result reads like an acceptance or an outright
-          ignore.
+          deferral attempt by the player: a small affection cost to Liam and
+          no swap to the new conversation. Fail if the engine result reads
+          like an acceptance or an outright ignore.

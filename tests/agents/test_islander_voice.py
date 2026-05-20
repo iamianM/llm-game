@@ -12,6 +12,7 @@ from src.game.agents.islander_voice import (
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import Intent, IntentCategory, load_intents
+from src.game.engine.pull import PullAttempt
 from src.game.engine.results import MechanicalResult
 from src.game.engine.rules import apply_action
 from src.game.state.models import Gender, Mood, new_game
@@ -141,6 +142,38 @@ def test_islander_voice_context_identifies_player_as_listener() -> None:
     messages = build_voice_messages(state, state.active_conversation, new_turn_context(context))
 
     assert "Conversation partner: the player" in messages[0]["content"]
+
+
+def test_islander_voice_context_includes_successful_pull() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="maya",
+            intent_id="flirty_intimate_eye_contact",
+        ),
+        success=True,
+        tags=["flirty", "intense"],
+        pull_attempt=PullAttempt(
+            target_id="maya",
+            started_from_location="pool",
+            success=True,
+            chance=77,
+            roll=18,
+            blocked_conversation_id="npcconv_maya_liam_pool",
+            blocked_participants=["maya", "liam"],
+            blocked_topic="Maya and Liam comparing notes on the early couples",
+        ),
+    )
+
+    from src.game.agents.islander_voice_context import new_turn_context
+
+    context = islander_voice_context(state, result)
+    turn = new_turn_context(context)
+
+    assert context.pull_context is not None
+    assert "pulling Maya away from Liam" in turn.turn
+    assert "comparing notes on the early couples" in turn.turn
 
 
 def test_islander_voice_allows_gossip_subject_mentions() -> None:

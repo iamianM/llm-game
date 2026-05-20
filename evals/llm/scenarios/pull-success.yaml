@@ -1,7 +1,7 @@
 id: pull-success
 title: Pull For Chat (Success)
 goal: Prove a successful pull cleanly closes the NPC-NPC conversation and hands the player a normal first exchange with the pulled Heartbreaker — without the LLM choosing the outcome.
-seed: 1414
+seed: 2
 initial_location: pool
 live_villa_life: false
 character_creation:
@@ -29,7 +29,7 @@ initial_npc_conversations:
     status: active
 judge_context:
   - Maya and Liam are mid-conversation at the pool when the player walks up.
-  - The pull is engine-decided; the seed and stats are set so the pull succeeds here.
+  - The pull and opening intent are engine-decided; the seed and stats are set so both succeed here.
   - On success the NPC-NPC conversation closes and the player gets a normal start_conversation beat with Maya.
 turns:
   - id: pull-maya
@@ -50,6 +50,7 @@ turns:
     checks:
       - pull_recorded
       - pull_succeeded
+      - npc_conversation_closed
       - exchange_valid
       - follow_up_menu_valid
       - exactly_one_exit

@@ -266,8 +266,8 @@ The reviewer should be able to review without reading logs:
 
 ## Implemented V1
 
-The first implemented suite lives under `evals/llm/scenarios/`. It currently
-contains nine golden scenarios and forty mock turns:
+The implemented suite lives under `evals/llm/scenarios/`. It currently
+contains nineteen golden scenarios:
 
 - `opening-ceremony.yaml` checks Event Narrator on a resolved initial coupling.
 - `day1-intro-round.yaml` checks the first communal intro beat and pending
@@ -277,12 +277,26 @@ contains nine golden scenarios and forty mock turns:
   voice expectations.
 - `conversation-continuity-exit.yaml` checks Islander Voice, Contextual Options,
   Conversation Curator, validation retries, judge checks, and reasoning traces.
+- `wheel-exit.yaml` checks the conversation-wheel exit path separately from the
+  top-level walk-away action.
 - `challenge-result-narration.yaml` checks challenge resolution and narration.
 - `producer-casa-announce.yaml` checks Casa Amor announcement state and event
   narration.
 - `recoupling-dumping.yaml` checks ceremony events around recoupling and dumping.
 - `player-recouple-proposal.yaml` checks a player-driven recoupling proposal.
+- `npc-proposal-incoming.yaml` checks an NPC proposal as a pending ask, then
+  accepts it and verifies the exact couple, relationship, and audience results.
+- `npc-proposal-decline.yaml` checks a harsh NPC proposal decline without
+  changing couples.
 - `final-vote-ending.yaml` checks run-ending outcome narration.
+- `pull-success.yaml` and `pull-rejection.yaml` check both sides of pulling an
+  NPC out of a background conversation.
+- `interruption-accept.yaml`, `interruption-defer.yaml`, and
+  `interruption-ignore.yaml` split the three interruption response paths.
+- `background-villa-life.yaml` checks Villa Orchestrator, Background Dialogue,
+  and background memory isolation.
+- `hideaway-night.yaml` checks Hideaway state consumption, exact relationship
+  deltas, the dedicated hideaway event, and privacy narration.
 
 The generated `index.html` is the primary review surface. It intentionally hides
 hashes and raw JSON by default, and instead renders scenario goals, authored
@@ -296,6 +310,10 @@ Run the deterministic/mock golden pack:
 ```bash
 python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
 ```
+
+The runner parallelizes by scenario with `min(number_of_scenarios, 8)` workers
+by default. Use `--max-workers 1` for a sequential diagnostic run. The CLI,
+`run.json`, and HTML report all show the resolved worker count.
 
 Run a live judged scenario with `gpt-5.4-mini`, high reasoning, detailed summaries:
 
@@ -315,13 +333,6 @@ Review in this order:
    a specific NPC/system.
 4. For each failing turn, read Checks first, then Actual output, then Model reasoning traces.
 5. Open `judge-prompts/*.txt` only when a judge result looks suspicious.
-
-The current live continuity run found a real boundary issue: a generated follow-up
-can ask Chloe about off-screen Blake, but Islander Voice validation treats Blake
-as hidden unless the gossip subject is explicitly allowed in the voice context.
-That creates a retry and can make the final exchange less faithful to the selected
-follow-up. This is exactly the kind of prompt/contract mismatch the suite is meant
-to reveal before it becomes a gameplay bug.
 
 ## Why This Is Reliable
 

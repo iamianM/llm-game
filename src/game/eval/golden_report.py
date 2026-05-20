@@ -54,6 +54,7 @@ def _hero(run: GoldenEvalRun) -> str:
         f"{_metric('Mode', run.llm_mode)}"
         f"{_metric('Judge', 'on' if run.judge_enabled else 'off')}"
         f"{_metric('Scenarios', run.scenario_count)}"
+        f"{_metric('Workers', run.worker_count)}"
         f"{_metric('Turns', total_turns)}"
         f"{_metric('Passed', run.passed, 'pass')}"
         f"{_metric('Failed', run.failed, 'fail')}"
@@ -191,6 +192,25 @@ def _arrangements(raw: dict[str, Any]) -> str:
             f"<li><b>{escape(npc_id)}</b>: {escape(location)}</li>"
             for npc_id, location in npc_locations.items()
         )
+    active = raw.get("active_conversation")
+    if isinstance(active, dict):
+        rows.append(f"<li><b>active conversation</b>: {escape(active.get('target_id', 'unknown'))}</li>")
+        pending = active.get("pending_interruption")
+        if isinstance(pending, dict):
+            rows.append(
+                "<li><b>pending interruption</b>: "
+                f"{escape(pending.get('interrupter_id', 'unknown'))} "
+                f"({escape(pending.get('reason', 'unknown'))}, {escape(pending.get('urgency', 'unknown'))})</li>"
+            )
+        options = active.get("pending_options")
+        if isinstance(options, list):
+            for option in options:
+                if isinstance(option, dict):
+                    rows.append(
+                        "<li><b>wheel option</b>: "
+                        f"{escape(option.get('label', ''))} "
+                        f"[{escape(option.get('category', ''))} / {escape(option.get('intent_kind', ''))}]</li>"
+                    )
     return f"<div class='contract-card'><b>Arranged preconditions</b><ul class='compact'>{''.join(rows)}</ul></div>"
 
 

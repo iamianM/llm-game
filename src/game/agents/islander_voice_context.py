@@ -67,6 +67,7 @@ class IslanderVoiceContext(BaseModel):
     stat_used: str
     tags: list[str]
     outcome: str
+    pull_context: str | None = None
     mechanical_change_summary: str
     others_present: list[str]
     cast_names: list[str]
@@ -151,6 +152,7 @@ def islander_voice_context(
         stat_used=stat_used,
         tags=tags,
         outcome="success" if result.success else "miss",
+        pull_context=_pull_context(state, result),
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
         cast_names=sorted({islander.name for islander in state.islanders}),
@@ -189,6 +191,7 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Player stat used: {context.stat_used}",
             f"Tags: {', '.join(context.tags)}",
             f"Mechanical outcome: {context.outcome}",
+            f"Pull context: {context.pull_context or 'none'}",
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
             f"Allowed gossip subjects this turn: {_list_or_none(context.gossip_subject_names)}",
@@ -293,6 +296,29 @@ def _mechanical_change_summary(result: MechanicalResult, target_id: str) -> str:
         if value != 0
     ]
     return ", ".join(parts) if parts else "No relationship change."
+
+
+def _pull_context(state: GameState, result: MechanicalResult) -> str | None:
+    attempt = result.pull_attempt
+    if attempt is None:
+        return None
+    target_name = _subject_name(state, attempt.target_id)
+    other_names = [
+        _subject_name(state, participant_id)
+        for participant_id in attempt.blocked_participants
+        if participant_id != attempt.target_id
+    ]
+    source = (
+        f"{target_name} away from {', '.join(other_names)}"
+        if other_names
+        else f"{target_name} away from another conversation"
+    )
+    topic = f" about {attempt.blocked_topic}" if attempt.blocked_topic else ""
+    outcome = "succeeded at pulling" if attempt.success else "failed to pull"
+    return (
+        f"The player just {outcome} {source}{topic}. Acknowledge that social "
+        "interruption before moving into the selected intent."
+    )
 
 
 def _list_or_none(values: list[str]) -> str:

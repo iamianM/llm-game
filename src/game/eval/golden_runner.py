@@ -68,11 +68,10 @@ def run_golden_eval(
     out.mkdir(parents=True, exist_ok=True)
     (out / "artifacts").mkdir(exist_ok=True)
     (out / "judge-prompts").mkdir(exist_ok=True)
+    worker_count = _resolved_worker_count(len(scenarios), max_workers)
     if not scenarios:
         results: list[GoldenScenarioResult] = []
     else:
-        worker_count = max_workers if max_workers is not None else min(len(scenarios), 8)
-
         def _run_isolated(scenario: GoldenEvalScenario) -> GoldenScenarioResult:
             return contextvars.copy_context().run(
                 _run_scenario, scenario, out=out, real_llm=real_llm, judge=judge
@@ -90,6 +89,7 @@ def run_golden_eval(
         llm_mode="real" if real_llm else "mock",
         judge_enabled=judge,
         scenario_count=len(results),
+        worker_count=worker_count,
         passed=passed,
         failed=failed,
         cannot_determine=cannot_determine,
@@ -98,6 +98,16 @@ def run_golden_eval(
     (out / "artifacts" / "run.json").write_text(run.model_dump_json(indent=2), encoding="utf-8")
     (out / "index.html").write_text(render_golden_eval_html(run), encoding="utf-8")
     return run
+
+
+def _resolved_worker_count(scenario_count: int, max_workers: int | None) -> int:
+    if scenario_count == 0:
+        return 0
+    if max_workers is None:
+        return min(scenario_count, 8)
+    if max_workers < 1:
+        raise ValueError("--max-workers must be at least 1")
+    return min(max_workers, scenario_count)
 
 
 def _run_scenario(
@@ -263,11 +273,31 @@ def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
             islander_id: location.value
             for islander_id, location in turn_spec.arrange_npc_locations.items()
         }
+    if turn_spec.arrange_active_conversation is not None:
+        conversation = turn_spec.arrange_active_conversation
+        active: dict[str, object] = {"target_id": conversation.target_id}
+        if conversation.pending_interruption is not None:
+            active["pending_interruption"] = conversation.pending_interruption.model_dump(mode="json")
+        if conversation.pending_options is not None:
+            active["pending_options"] = [
+                {
+                    "label": option.label,
+                    "category": option.category,
+                    "intent_kind": option.intent_kind,
+                }
+                for option in conversation.pending_options.options
+            ]
+        payload["active_conversation"] = active
     return payload
 
 
 def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> list[str]:
     kind = turn_spec.action.kind.value
+    if kind == "respond_with" and turn_spec.action.intent_id in {
+        "defer_interruption",
+        "ignore_interruption",
+    }:
+        return ["Engine-only turn"]
     if kind in {"start_conversation", "respond_with"}:
         tools = ["Islander Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
         if scenario.live_villa_life:
@@ -278,7 +308,15 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
         if scenario.live_villa_life:
             tools.extend(["Villa Orchestrator -> VillaUpdate", "Background Dialogue -> BackgroundExchange"])
         return tools
-    if kind in {"ambient", "join_gather", "recouple", "propose_recouple", "challenge_response"}:
+    if kind in {
+        "ambient",
+        "join_gather",
+        "recouple",
+        "propose_recouple",
+        "challenge_response",
+        "hideaway",
+        "npc_proposal_response",
+    }:
         tools = ["Event Narrator -> EventNarration"]
         if scenario.live_villa_life:
             tools.extend(["Villa Orchestrator -> VillaUpdate", "Background Dialogue -> BackgroundExchange"])

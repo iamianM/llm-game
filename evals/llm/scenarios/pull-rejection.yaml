@@ -52,6 +52,7 @@ turns:
       - pull_recorded
       - pull_rejected
       - npc_conversation_still_active
+      - pull_rejection_witness_memory
       - exchange_valid
       - agent_traces_present
     judge_checks:

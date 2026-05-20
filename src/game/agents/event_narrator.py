@@ -156,6 +156,18 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         f"- {event.kind}: {event.message} ({event.islander_id or 'no named islander'})"
         for event in events
     )
+    semantics = [
+        "- recouple_proposal rejected means the target did not accept the player's proposal.",
+        "- npc_proposal_incoming means a pending ask, not an accepted recoupling or couple change.",
+        "- recoupling narration should name the player's partner when the current couple is known.",
+        "- hideaway means the player and named partner leave for a private suite beat.",
+    ]
+    event_kinds = {event.kind for event in events}
+    if "hideaway" in event_kinds and "gather_scheduled" in event_kinds:
+        semantics.append(
+            "- If hideaway appears with gather_scheduled, narrate only the Hideaway. "
+            "The scheduled gather is a later UI/state fact, not part of the private suite beat."
+        )
     return "\n".join(
         [
             f"Day: {state.day}",
@@ -163,9 +175,7 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
             f"Location: {state.location_id.value}",
             f"Current player couple: {_player_couple(state)}",
             "Event semantics:",
-            "- recouple_proposal rejected means the target did not accept the player's proposal.",
-            "- npc_proposal_incoming means a pending ask, not an accepted recoupling or couple change.",
-            "- recoupling narration should name the player's partner when the current couple is known.",
+            *semantics,
             "Events:",
             event_lines,
             "Narrate these resolved events now.",

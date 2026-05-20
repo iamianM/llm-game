@@ -29,6 +29,8 @@ class PullAttempt(BaseModel):
     chance: int = Field(ge=10, le=90)
     roll: int = Field(ge=1, le=100)
     blocked_conversation_id: str | None = None
+    blocked_participants: list[str] = Field(default_factory=list)
+    blocked_topic: str | None = None
     deflection_line: str | None = None
 
 
@@ -84,6 +86,8 @@ def attempt_pull(state: GameState, target_id: str, rng: SeededRng) -> PullAttemp
         chance=chance,
         roll=roll,
         blocked_conversation_id=blocked.id,
+        blocked_participants=list(blocked.participants),
+        blocked_topic=blocked.topic,
     )
     if not attempt.success:
         _remember_repeated_pull(state, target_id)

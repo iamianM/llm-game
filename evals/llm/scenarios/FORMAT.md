@@ -43,9 +43,8 @@ initial_npc_conversations:       # seed an off-screen NPC-NPC chat
     topic: Maya and Liam comparing notes on the early couples
     started_on_turn: 0
     status: active
-live_villa_life: false           # default false in evals so Villa Orchestrator
-                                 # + Background Dialogue are off unless the
-                                 # scenario is actually testing them
+live_villa_life: false           # set false unless the scenario is testing
+                                 # Villa Orchestrator + Background Dialogue
 judge_context:                   # short bullets the judge sees as fixed facts
   - This is a Day 3 firepit beat; recoupling is decided in-engine.
 ```
@@ -99,6 +98,8 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `exactly_one_exit` — exactly one exit-category option.
   - `conversation_active` / `conversation_closed` — state matches the turn's
     action intent.
+  - `active_conversation_target_is:<id>` — exact active-conversation target,
+    useful for interruption resolution paths.
   - `curator_memories` — close-turn writes both player and target memories
     (or for non-close turns, the action's participants).
 
@@ -107,6 +108,7 @@ vocabulary (per ENGINEERING.md R7 and R18).
     the prose.
   - `event_narration_present` — prose exists.
   - `ceremony_events_present` — at least one ceremony event was recorded.
+  - `ceremony_event_present:<kind>` — a specific event kind was recorded.
 
 - **Engine state:**
   - `pending_gather_waiting` — `state.pending_gather` is set.
@@ -114,6 +116,21 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `casa_active` — Flush of Hearts is active.
   - `run_outcome_present` — final outcome is set.
   - `location_is:<id>` — player location matches.
+  - `relationship_delta:<target>:<field>:<amount>` — exact mechanical
+    relationship delta, such as `relationship_delta:liam:affection:-4`.
+  - `forced_movement_present:<actor>:<kind>` — a deterministic movement side
+    effect was recorded.
+  - `pending_npc_proposal_from:<id>` — an NPC proposal is pending from the
+    named proposer.
+  - `pending_npc_proposal_cleared` — the pending NPC proposal was consumed by
+    a response action.
+  - `proposal_outcome_is:<accepted|rejected>` — proposal outcome matches the
+    expected response.
+  - `couple_present:<first>:<second>` — the named pair exists in `state.couples`.
+  - `audience_delta:<amount>` — the action applied the exact public perception
+    delta.
+  - `hideaway_consumed:<partner_id>` — Hideaway state, couple flag, player
+    location, partner location, used day, and deltas-applied flag all match.
   - `visible_targets_include:id1,id2,...` — listed NPCs are at the player's
     location and not eliminated.
 
@@ -122,6 +139,10 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `pull_succeeded` / `pull_rejected` — the attempt resolved as expected.
   - `npc_conversation_still_active` — after a rejected pull, the original
     NPC-NPC conversation persists.
+  - `npc_conversation_closed` — after a successful pull, the original NPC-NPC
+    conversation was removed.
+  - `pull_rejection_witness_memory` — rejected pulls leave a witnessed memory
+    tagged to the target.
 
 - **Background villa life:**
   - `villa_update_committed` — orchestrator returned a typed update.
@@ -159,13 +180,15 @@ make llm-eval-real-judge
 uv run python -m src.game.cli llm-eval \
   --scenarios evals/llm/scenarios/pull-rejection.yaml \
   --out review-packet/single-pull \
-  --real-llm --judge
+  --real-llm --judge \
+  --max-workers 1
 ```
 
 The output is `review-packet/.../index.html`. The report has a scenario
 filter, search, sort, an LLM-mode badge per scenario, and per-turn details
 including the golden, the actual agent output, model reasoning summaries,
-and judge findings.
+and judge findings. The CLI and report show the worker count; default is
+`min(number_of_scenarios, 8)`, and `--max-workers 1` gives a sequential run.
 
 ## When to add a scenario
 

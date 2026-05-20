@@ -40,7 +40,7 @@ def run(args: argparse.Namespace) -> int:
     )
     print(f"golden eval report: {Path(args.out) / 'index.html'}")
     print(
-        f"scenarios={result.scenario_count} pass={result.passed} "
+        f"scenarios={result.scenario_count} workers={result.worker_count} pass={result.passed} "
         f"fail={result.failed} cannot_determine={result.cannot_determine}"
     )
     return 0 if result.failed == 0 else 1

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import couple_strength, partner_for, player_couple
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.state_access import apply_relationship_delta, find_islander
@@ -53,6 +54,19 @@ def apply_hideaway(state: GameState) -> RelationshipDelta:
         couple.has_used_hideaway = True
     _remember_hideaway(state, partner.id)
     return HIDEAWAY_DAILY_DELTAS
+
+
+def hideaway_event(state: GameState) -> CeremonyEvent:
+    """Return the visible event created by the consumed Hideaway reward."""
+    partner_id = state.hideaway.partner_id
+    if partner_id is None:
+        raise ValueError("Hideaway event requires a consumed Hideaway partner")
+    partner = find_islander(state, partner_id)
+    return CeremonyEvent(
+        kind="hideaway",
+        message=f"The player and {partner.name} leave for a private Paradise Suite night.",
+        islander_id=partner.id,
+    )
 
 
 def _remember_hideaway(state: GameState, partner_id: str) -> None:

@@ -65,7 +65,7 @@ class GoldenEvalScenario(BaseModel):
     initial_relationships: dict[str, RelationshipState] | None = None
     initial_couples: list[Couple] | None = None
     initial_npc_conversations: list[NPCNPCConversation] | None = None
-    live_villa_life: bool = True
+    live_villa_life: bool = False
     judge_context: list[str] = Field(default_factory=list)
     turns: list[GoldenTurnSpec] = Field(min_length=1)
 
@@ -121,6 +121,7 @@ class GoldenEvalRun(BaseModel):
     llm_mode: Literal["mock", "real"]
     judge_enabled: bool
     scenario_count: int
+    worker_count: int
     passed: int
     failed: int
     cannot_determine: int

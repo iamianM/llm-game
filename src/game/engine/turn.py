@@ -39,6 +39,7 @@ from src.game.engine.conversation import (
 from src.game.engine.daily_recap import append_daily_recap_if_needed
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
+from src.game.engine.hideaway import hideaway_event
 from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
@@ -200,6 +201,8 @@ def run_turn(
                 islander_id=action.target_id,
             )
         )
+    if action.kind is ActionKind.HIDEAWAY:
+        ceremony_events.append(hideaway_event(state))
     event = proposal_event(result)
     if event is not None:
         ceremony_events.append(event)
@@ -350,16 +353,17 @@ def run_turn(
         )
         background_dialogues = villa_changes.background_dialogues
         curator_batches.extend(villa_changes.curator_batches)
-        incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
-        if incoming is not None:
-            ceremony_events.append(
-                CeremonyEvent(
-                    kind="npc_proposal_incoming",
-                    sub_kind="incoming",
-                    message=f"{incoming.proposer_id} wants to ask the player to recouple.",
-                    islander_id=incoming.proposer_id,
+        if action.kind is not ActionKind.NPC_PROPOSAL_RESPONSE:
+            incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
+            if incoming is not None:
+                ceremony_events.append(
+                    CeremonyEvent(
+                        kind="npc_proposal_incoming",
+                        sub_kind="incoming",
+                        message=f"{incoming.proposer_id} wants to ask the player to recouple.",
+                        islander_id=incoming.proposer_id,
+                    )
                 )
-            )
     agent_commits = AgentCommits(
         villa_update=villa_update_commit,
         background_dialogues=background_dialogues,

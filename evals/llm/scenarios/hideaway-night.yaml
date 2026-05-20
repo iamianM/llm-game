@@ -1,6 +1,6 @@
 id: hideaway-night
 title: Paradise Suite (Hideaway)
-goal: Prove a Day 5 evening Hideaway moves the player + partner into the suite, applies the deterministic relationship reward exactly once, and marks the couple as committed.
+goal: Prove a Day 5 evening Hideaway moves the player and partner into the suite, applies the deterministic relationship reward exactly once, marks the couple as committed, and gives the Event Narrator the Hideaway beat to narrate.
 seed: 2020
 initial_day: 5
 initial_phase: evening
@@ -25,27 +25,40 @@ initial_relationships:
     trust: 65
     friendship: 30
 judge_context:
-  - Hideaway is engine-owned — eligibility is gated on couple strength, day, phase, and once-per-run usage. The action only fires from inside that gate.
-  - The engine applies the relationship deltas; the LLM only narrates the moment.
-  - The check matters because hideaway is the one beat where the couple visibly leaves the rest of the cast — the narrator must not let a stray Heartbreaker show up here.
+  - Hideaway is engine-owned. Eligibility is gated on couple strength, day, phase, and once-per-run usage.
+  - The engine applies the relationship deltas and records a hideaway event; the LLM only narrates that resolved event.
+  - The narrator may mention the wider cast outside the suite, but only the player and Chloe should appear inside the private beat.
 turns:
   - id: open-the-suite
+    arrange_player_location: firepit
+    arrange_npc_locations:
+      chloe: firepit
     action:
       kind: hideaway
     golden: >
       The player and Chloe leave the firepit and the suite door closes. The
-      narration should hold on the privacy of it — softer light, fewer
+      narration should hold on the privacy of it: softer light, fewer
       cameras, the cast pretending not to listen. Imagine: "He follows her
       into the suite without saying a word. Outside, the rest of the cast
       is loud on purpose to give them the room." No other Heartbreaker is
-      named.
+      named inside the suite.
     checks:
+      - hideaway_consumed:chloe
       - location_is:hideaway
+      - relationship_delta:chloe:affection:10
+      - relationship_delta:chloe:chemistry:15
+      - relationship_delta:chloe:trust:10
+      - ceremony_event_present:hideaway
+      - event_narration_valid
       - agent_traces_present
     judge_checks:
       - id: hideaway_privacy
         criteria: >
-          The narration treats the suite as private — only the player and
-          Chloe appear by name; the rest of the villa is implied or
-          off-screen. Fail if a third Heartbreaker is named inside the
-          suite.
+          The narration treats the suite as private: only the player and
+          Chloe appear by name inside the suite. Fail if a third
+          Heartbreaker is placed inside the private Hideaway beat.
+      - id: hideaway_foregrounded
+        criteria: >
+          The Hideaway beat is the dominant moment. Fail if a later scheduled
+          gather or ceremony crowds it out, appears first, or makes the suite
+          feel like an afterthought.

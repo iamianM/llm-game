@@ -1,0 +1,71 @@
+id: wheel-exit
+title: Conversation Wheel Exit
+goal: Prove choosing the exit option from a conversation wheel is a voiced, graceful close with curator memories, not the same path as the top-level walk-away action.
+seed: 2121
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_relationships:
+  chloe:
+    affection: 45
+    chemistry: 20
+    trust: 30
+    friendship: 25
+judge_context:
+  - The active conversation already has a legal wheel with one exit option.
+  - This scenario selects the exit option itself, not the top-level end_conversation action.
+  - A wheel exit should produce a goodbye exchange, apply the exit delta, curate memories, and close the active conversation.
+turns:
+  - id: choose-wheel-exit
+    arrange_player_location: pool
+    arrange_npc_locations:
+      chloe: pool
+    arrange_active_conversation:
+      target_id: chloe
+      started_on_turn: 0
+      started_on_day: 1
+      pending_options:
+        npc_will_leave: false
+        options:
+          - label: Ask what she really wants from the villa
+            category: deep
+            intent_kind: ask_future
+            stat_used: eq
+            risk: low
+            tone: warm
+          - label: End on a good note
+            category: exit
+            intent_kind: end_softly
+            stat_used: null
+            risk: safe
+            tone: warm
+    action:
+      kind: respond_with
+      target_id: chloe
+      intent_id: end_softly
+    golden: >
+      The player exits warmly through the wheel. Chloe gets a voiced goodbye,
+      the conversation closes, and curator memories capture a real social
+      close rather than an abrupt walk-away.
+    checks:
+      - exchange_valid
+      - conversation_closed
+      - relationship_delta:chloe:trust:1
+      - curator_memories
+      - agent_traces_present
+      - no_agent_validation_retries
+    judge_checks:
+      - id: wheel_exit_social_close
+        criteria: >
+          The exchange and memories read like a warm, intentional goodbye
+          chosen from the conversation wheel. Fail if it feels like a system
+          cancel, an abrupt walk-away, or a continuation that leaves the
+          conversation open.
