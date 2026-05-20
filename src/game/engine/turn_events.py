@@ -97,7 +97,13 @@ def resolve_pending_gather(
         challenge = schedule_challenge(state.day)
         if challenge is not None:
             state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
-            events.append(CeremonyEvent(kind="challenge", message=challenge_event_message(state.pending_challenge)))
+            events.append(
+                CeremonyEvent(
+                    kind="challenge",
+                    sub_kind=state.pending_challenge.kind,
+                    message=challenge_event_message(state.pending_challenge),
+                )
+            )
     else:
         raise ValueError(f"unknown pending gather: {gather.model_dump()}")
     state.pending_gather = None
@@ -106,15 +112,15 @@ def resolve_pending_gather(
 
 def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
     """Create recoupling and optional dumping events."""
-    events = [CeremonyEvent(kind="recoupling", message="Recoupling ceremony completed.")]
+    events = [CeremonyEvent(kind="recoupling", message="The Pairing Ceremony locks in the next couples.")]
     for attempt in ceremony.steal_attempts:
         outcome = "succeeds" if attempt.success else "fails"
         events.append(
             CeremonyEvent(
                 kind="steal_attempt",
                 message=(
-                    f"Steal attempt: {attempt.bombshell_id} tries to steal {attempt.target_id} "
-                    f"from {attempt.abandoned_id} and {outcome} "
+                    f"Heart Throb steal attempt: {attempt.bombshell_id} tries to steal "
+                    f"{attempt.target_id} from {attempt.abandoned_id} and {outcome} "
                     f"(roll {attempt.roll} vs {attempt.chance})."
                 ),
                 islander_id=attempt.bombshell_id,
@@ -124,7 +130,7 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
             events.append(
                 CeremonyEvent(
                     kind="partner_stolen",
-                    message=f"Partner stolen: {attempt.target_id} recouples with {attempt.bombshell_id}.",
+                    message=f"Partner stolen: {attempt.target_id} pairs with {attempt.bombshell_id}.",
                     islander_id=attempt.target_id,
                 )
             )
@@ -132,7 +138,7 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
         events.append(
             CeremonyEvent(
                 kind="elimination",
-                message=f"Dumping decision: {ceremony.eliminated_id} leaves the villa.",
+                message=f"Heart Out: {ceremony.eliminated_id} leaves Sunset Bay.",
                 islander_id=ceremony.eliminated_id,
             )
         )
@@ -143,7 +149,11 @@ def challenge_response_event(state: GameState) -> CeremonyEvent | None:
     """Return a narratable event for a completed challenge response."""
     if state.pending_challenge is None:
         return None
-    return CeremonyEvent(kind="challenge", message=challenge_event_message(state.pending_challenge))
+    return CeremonyEvent(
+        kind="challenge",
+        sub_kind=state.pending_challenge.kind,
+        message=challenge_event_message(state.pending_challenge),
+    )
 
 
 def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEvent]:
@@ -154,7 +164,13 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
             state.pending_challenge = challenge
             if challenge.kind != "snog_marry_pie":
                 state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
-            events.append(CeremonyEvent(kind="challenge", message=challenge_event_message(state.pending_challenge)))
+            events.append(
+                CeremonyEvent(
+                    kind="challenge",
+                    sub_kind=state.pending_challenge.kind,
+                    message=challenge_event_message(state.pending_challenge),
+                )
+            )
     if state.phase.value == "text":
         state.pending_text = schedule_producer_text(state.day, state)
         if state.pending_text is not None:
@@ -179,5 +195,17 @@ def _schedule_gather(
     )
     return CeremonyEvent(
         kind="gather_scheduled",
-        message=f"Everyone is called to the firepit for {event_id}.",
+        message=f"Everyone is called to the firepit for {_event_label(event_id)}.",
     )
+
+
+def _event_label(event_id: str) -> str:
+    if event_id == "casa_return":
+        return "the Sunset Bay return"
+    if event_id == "final_vote":
+        return "the Final Vote"
+    if event_id == "casa_amor_announce":
+        return "Flush of Hearts"
+    if event_id.startswith("recoupling"):
+        return "a Pairing Ceremony"
+    return event_id.replace("_", " ")

@@ -46,6 +46,7 @@ groups:
       - pyproject.toml
       - scripts/**
       - .githooks/**
+      - .github/workflows/**
       - docs/contract-map.yaml
     docs:
       - AGENTS.md

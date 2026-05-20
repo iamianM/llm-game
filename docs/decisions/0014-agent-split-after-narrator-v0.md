@@ -14,6 +14,18 @@ Keep the multi-agent split, but preserve the original boundary: agents narrate, 
 
 Each agent surface must stay typed and mockable. Non-LLM tests use mock agents or recorded traces by default.
 
+Real agent calls must request structured output through the typed contract when
+the provider supports it, validate the parsed Pydantic model, and retry only
+with explicit validation feedback. If the contract still fails, the call fails
+loudly at the adapter boundary; it must not substitute a heuristic fallback or
+repair the response with string matching.
+
+When a contract intentionally uses dynamic object keys that the provider's
+strict schema subset cannot represent, the wrapper may request JSON-object mode
+and immediately parse it through the same Pydantic contract. This is still a
+typed agent boundary; the provider is not trusted to repair, coerce, or score
+the result.
+
 ## Consequences
 
 - Older docs that say "one Narrator only" are historical unless they refer to the initial build milestone.

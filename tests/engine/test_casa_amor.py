@@ -40,6 +40,21 @@ def test_casa_amor_enter_adds_new_islanders() -> None:
     assert {"blake", "jordan", "marcus", "sophie", "zara", "nia"} <= ids
 
 
+def test_casa_amor_display_names_do_not_duplicate_starting_cast() -> None:
+    state = new_game(1)
+    starting_names = {islander.name for islander in state.islanders}
+
+    enter_casa_amor(state)
+
+    casa_names = [
+        islander.name
+        for islander in state.islanders
+        if state.casa_amor_state is not None and islander.id in state.casa_amor_state.casa_islander_ids
+    ]
+    assert starting_names.isdisjoint(casa_names)
+    assert len(casa_names) == len(set(casa_names))
+
+
 def test_casa_amor_locations_only_visible_at_casa() -> None:
     state = new_game(1)
     enter_casa_amor(state)

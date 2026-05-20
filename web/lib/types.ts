@@ -13,6 +13,7 @@ export type AvailableAction = {
 };
 
 export type ApiMemory = {
+  id: string;
   holder_id: string;
   subject_id: string;
   content: string;

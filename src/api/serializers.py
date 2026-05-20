@@ -98,22 +98,30 @@ def available_action(
     risk: str | None = None
     stat: str | None = None
     hint: Literal["+", "-", ""] = ""
+    label = action_label(state, spec)
+    description: str | None = None
     if action.kind.value == "respond_with" and action.option_index is not None:
         option = (menu_options or {}).get(action.option_index)
         if option is not None:
             risk = option.risk
             stat = None if option.stat_used is None else display(option.stat_used)
-            hint = option.audience_hint
+            hint = (
+                ""
+                if state.player.public_perception >= 95 and option.audience_hint == "+"
+                else option.audience_hint
+            )
+            label = option.label
+            description = display(option.category)
     return AvailableAction(
         kind=action.kind.value,
-        label=action_label(state, spec),
+        label=label,
         target_id=action.target_id,
         intent_id=action.intent_id,
         option_index=action.option_index,
         audience_hint=hint,
         risk=risk,
         stat_used=stat,
-        description=None,
+        description=description,
     )
 
 
@@ -182,6 +190,7 @@ def couple_summaries(state: GameState) -> list[CoupleSummary]:
 def memory_api(memory: Memory) -> ApiMemory:
     data = memory.model_dump(mode="json")
     return ApiMemory(
+        id=data["id"],
         holder_id=data["holder_id"],
         subject_id=data["subject_id"],
         content=data["content"],
@@ -328,10 +337,6 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
 def audience_delta(result: MechanicalResult) -> int | None:
     return result.audience_delta if result.audience_delta != 0 else None
 
-
-
-def _model_dump(value: BaseModel) -> dict[str, object]:
-    return value.model_dump(mode="json")
 
 def _model_dump(value: BaseModel) -> dict[str, object]:
     return value.model_dump(mode="json")

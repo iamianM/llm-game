@@ -105,10 +105,11 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
             generator = OpenAITraitGenerator()
             assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
         except Exception as exc:
+            logger.exception("real-mode trait generation failed")
             raise _http_error(
                 502,
                 "STORY_ENGINE_ERROR",
-                "Real mode could not open Sunset Bay. Check that OPENAI_API_KEY is set and restart the API server.",
+                f"Real mode could not open Sunset Bay because the story engine failed its contract: {exc}",
             ) from exc
     state.player.name = req.player_name or "You"
     try:

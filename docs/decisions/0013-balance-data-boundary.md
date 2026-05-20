@@ -17,6 +17,13 @@ Intent tuning had grown into `content/intents.yaml`, and challenge markdown cont
 
 Keep `content/` flavor-only. Markdown content may carry identifiers, display labels, ordering metadata, and narrator-facing prose, but it must not encode state mutation, scoring, unlocks, or deterministic branching.
 
+Authored cast display names, including rival-twist or Flush of Hearts arrivals,
+are content rather than mechanics. The engine may load those labels for
+player-facing text, while IDs, eligibility, loyalty checks, score deltas, and
+pairing decisions stay in Python. Content lint protects the structural
+invariant that authored cast labels remain unique against the starting cast so
+the UI never shows duplicate people because two IDs share one display name.
+
 Allow typed mechanical balance tables under `data/balance/`. These files may contain thresholds, deltas, weights, and other tunable numbers only when:
 
 - Pydantic models validate the file shape.

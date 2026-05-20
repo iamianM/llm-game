@@ -51,6 +51,7 @@ class ApiRelationship(BaseModel):
 
 
 class ApiMemory(BaseModel):
+    id: str
     holder_id: str
     subject_id: str
     content: str

@@ -34,6 +34,64 @@ export const INTRO_RESPONSES: Record<IntroDynamic, { label: string; line: string
   },
 };
 
+const RESPONSE_VARIANTS: Partial<Record<string, Partial<Record<IntroDynamic, string[]>>>> = {
+  sweetheart: {
+    intro_friendly: [
+      "You make this feel less terrifying already.",
+      "I was hoping you would be easy to talk to.",
+      "Honestly, your energy is exactly what I needed first.",
+    ],
+    intro_deep: [
+      "I am trying to stay present, but this is a lot. You too?",
+      "You seem calm. Is that real, or are you hiding the panic better than me?",
+      "I want this to feel honest from the start. How are you really doing?",
+    ],
+  },
+  alpha: {
+    intro_flirty: [
+      "Confident opener. Dangerous. I might need to see if you can back it up.",
+      "You do not waste time, do you? I respect that.",
+      "That sounded like a challenge. I am listening.",
+    ],
+    intro_banter: [
+      "Strong entrance. I give it eight out of ten until proven otherwise.",
+      "You are intense in a fun way. Probably trouble, but fun.",
+      "I was going to play it cool, then you went and made that difficult.",
+    ],
+  },
+  joker: {
+    intro_banter: [
+      "Good, someone who understands this is all deeply unserious until it is not.",
+      "If we embarrass ourselves, I vote we commit fully.",
+      "You look like you might be my best chance at surviving the awkward bits.",
+    ],
+    intro_friendly: [
+      "You are making this easier than expected, which is suspicious but welcome.",
+      "I am choosing to trust the grin. Big decision, honestly.",
+      "Okay, I like your timing already.",
+    ],
+  },
+  friend: {
+    intro_friendly: [
+      "You feel like someone I could actually breathe around in here.",
+      "I like this pace. No performance, just a real hello.",
+      "You seem steady. That might be rare in here.",
+    ],
+    intro_deep: [
+      "I am a bit overwhelmed, honestly. You seem like you might get that.",
+      "This place is beautiful and a lot. I am trying to work out which matters more.",
+      "I would rather start real than polished. How are you holding up?",
+    ],
+  },
+};
+
+export function responseFor(npc: IslanderSummary, dynamic: IntroDynamic): string {
+  const variants = RESPONSE_VARIANTS[npc.archetype]?.[dynamic];
+  if (!variants?.length) return INTRO_RESPONSES[dynamic].line;
+  const idx = (npc.id.length + dynamic.length + npc.name.charCodeAt(0)) % variants.length;
+  return variants[idx];
+}
+
 /** Templated NPC greetings tailored loosely by archetype. */
 const ARCHETYPE_GREETINGS: Record<string, string[]> = {
   sweetheart: [

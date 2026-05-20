@@ -83,8 +83,26 @@ def resolve_challenge(
 
 def challenge_event_message(challenge: Challenge) -> str:
     """Return a concise narratable challenge event message."""
-    result = challenge.result or "pending"
-    return f"Challenge result: {challenge.kind} tested {challenge.stat_tested} and ended in {result}."
+    result = "is still pending" if challenge.result is None else f"ended in {challenge.result}"
+    return f"{_challenge_label(challenge.kind)} tested {_stat_label(challenge.stat_tested)} and {result}."
+
+
+def _challenge_label(kind: str) -> str:
+    labels = {
+        "compatibility_quiz": "Compatibility Quiz",
+        "final_couples": "Final Couples Challenge",
+        "heart_rate": "Pulse Race",
+        "lie_detector": "Lie Detector",
+        "mr_and_mrs": "The Couples Quiz",
+        "snog_marry_pie": "Kiss Wed Pass",
+    }
+    return labels.get(kind, kind.replace("_", " ").title())
+
+
+def _stat_label(stat: str) -> str:
+    if stat == "combined":
+        return "combined couple energy"
+    return stat.replace("_", " ").title()
 
 
 def _challenge_success_chance(state: GameState, challenge: Challenge) -> int:

@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -30,7 +30,13 @@ smoke:
 determinism:
 	uv run python -m src.game.cli verify --all
 
-qa: lint type-check content-lint test smoke determinism
+web-check:
+	cd web && npm run type-check
+
+web-contracts:
+	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts
+
+qa: lint type-check content-lint test smoke determinism web-check web-contracts
 
 play:
 	uv run python -m src.game.cli play

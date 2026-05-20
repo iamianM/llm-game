@@ -19,31 +19,31 @@ class ProducerTextDef:
 
 
 PRODUCER_TEXT_SCHEDULE: dict[int, ProducerTextDef] = {
-    1: ProducerTextDef("welcome", 1, "welcome", "Islanders, welcome to the villa. Let the grafting begin."),
+    1: ProducerTextDef("welcome", 1, "welcome", "Heartbreakers, welcome to Sunset Bay. Let the sparks begin."),
     2: ProducerTextDef(
         "group_date_invite",
         2,
         "group_date_invite",
-        "Islanders, tomorrow morning two of you will join the player for a group date.",
+        "Heartbreakers, tomorrow morning two of you will join the player for a group date.",
         ("group_date_day3",),
     ),
     3: ProducerTextDef(
         "coupling_warning",
         3,
         "coupling_warning",
-        "Islanders, tonight there will be a recoupling. Choose wisely.",
+        "Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
     ),
     4: ProducerTextDef(
         "casa_amor_announce",
         4,
         "casa_amor_announce",
-        "Islanders, pack a bag. Casa Amor is open, and every connection is about to be tested.",
+        "Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
     ),
     6: ProducerTextDef(
         "final_vote_announce",
         6,
         "final_vote_announce",
-        "Islanders, tonight the public vote decides the winning couple.",
+        "Heartbreakers, tonight the Pulse vote decides the winning couple.",
     ),
 }
 
@@ -76,4 +76,15 @@ def schedule_producer_text(day: int, state: GameState) -> ProducerText | None:
 
 def producer_text_event_message(text: ProducerText) -> str:
     """Return a concise narratable producer text event message."""
-    return f"Producer text: {text.kind}. {text.body}"
+    return f"{_producer_text_label(text.kind)}: {text.body}"
+
+
+def _producer_text_label(kind: str) -> str:
+    labels = {
+        "casa_amor_announce": "Flush of Hearts text",
+        "coupling_warning": "Pairing Ceremony text",
+        "final_vote_announce": "Final Vote text",
+        "group_date_invite": "Date text",
+        "welcome": "Welcome text",
+    }
+    return labels.get(kind, "Paradise Calls")

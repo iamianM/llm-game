@@ -34,8 +34,12 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 4. `make test` (parallel non-LLM pytest via `pytest-xdist`)
 5. `make smoke`
 6. `make determinism`
+7. `make web-check`
+8. `make web-contracts`
 
 `make docs-health` is a fast structural guard for contract-sensitive changes. It is intentionally outside the default gate until the map is tuned enough to stay low-friction.
+
+`make web-contracts` runs focused browser checks for UI contracts that have broken real playtests: every API action must be reachable, ceremony overlays must keep their primary action clickable at long-run cast sizes, and React console warnings must stay clean on the covered surfaces. Full golden screenshots and real-LLM playthroughs remain opt-in because they are slower and nondeterministic.
 
 `make smoke` verifies `tests/scenarios/fixtures/day1-happy-path.yaml`. `make determinism` verifies checked-in scenario fixtures and expected hashes.
 

@@ -1,13 +1,14 @@
 import type { ApiMemory } from "../../lib/types";
 
 export function MemoriesList({ memories }: { memories: ApiMemory[] }) {
+  const visibleMemories = memories.slice(0, 8);
   return (
     <section className="rail-section">
       <h3 className="rail-section-title">Memories</h3>
       <div className="memories">
-        {memories.length ? (
-          memories.slice(0, 8).map((memory) => (
-            <p key={`${memory.subject_id}-${memory.formed_on_turn}`} className="memory">
+        {visibleMemories.length ? (
+          visibleMemories.map((memory) => (
+            <p key={memory.id} className="memory">
               {memory.content}
             </p>
           ))

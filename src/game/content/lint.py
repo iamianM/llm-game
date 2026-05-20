@@ -50,6 +50,14 @@ def run_lint() -> None:
     genders = [member.gender for member in index.casa_amor_cast.values()]
     if genders.count("m") != 3 or genders.count("f") != 3:
         raise ValueError("Casa Amor cast must contain 3 men and 3 women")
+    starting_names = {islander.name for islander in starting_islanders()}
+    casa_names = [member.name for member in index.casa_amor_cast.values()]
+    duplicate_names = sorted(starting_names & set(casa_names))
+    if duplicate_names:
+        raise ValueError(f"Casa Amor display names duplicate the starting cast: {duplicate_names}")
+    repeated_casa_names = sorted({name for name in casa_names if casa_names.count(name) > 1})
+    if repeated_casa_names:
+        raise ValueError(f"Casa Amor display names must be unique: {repeated_casa_names}")
     expected_backstories = {
         islander.id for islander in starting_islanders()
     } | {"aisha", *set(index.casa_amor_cast)}

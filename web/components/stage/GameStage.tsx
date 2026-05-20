@@ -143,7 +143,16 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         </div>
       <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} />
       <SettingsMenu />
-      {showCeremony ? <CeremonyOverlay title={ceremonyTitle(event, state)} narration={narration} couples={state.couples} onContinue={() => setShowCeremony(false)} /> : null}
+      {showCeremony ? (
+        <CeremonyOverlay
+          title={ceremonyTitle(event, state)}
+          eyebrow={ceremonyEyebrow(event)}
+          narration={narration}
+          couples={state.couples}
+          showCouples={ceremonyShowsCouples(event, state)}
+          onContinue={() => setShowCeremony(false)}
+        />
+      ) : null}
       {showRecap && latestRecap && !showCeremony ? <DayRecap recap={latestRecap} onClose={() => setShowRecap(false)} /> : null}
     </main>
   );
@@ -219,12 +228,34 @@ function stagePrompt(state: { phase: string }, speakerName?: string) {
 
 function ceremonyTitle(event: Record<string, unknown> | undefined, state: SessionResponse["state"]) {
   const kind = String(event?.kind ?? "");
+  const subKind = String(event?.sub_kind ?? "");
+  if (kind === "challenge") return displayEventName(subKind || kind);
   if (kind === "recouple_proposal") return "Heart Swap Proposal";
+  if (kind === "casa_amor_return_reveal") return "Sunset Bay Return";
   if (kind.includes("casa")) return "Flush of Hearts";
   if (kind === "producer_text" || kind === "gather_scheduled") return "Paradise Calls";
   if (kind === "elimination") return "Heart Out";
+  if (kind === "final_vote") return "Final Vote";
   if (state.day === 1 && state.couples.some((couple) => couple.formed_via_label === "First Spark")) return "First Spark";
   return "Pairing Ceremony";
+}
+
+function ceremonyEyebrow(event: Record<string, unknown> | undefined) {
+  const kind = String(event?.kind ?? "");
+  if (kind === "challenge") return "Challenge Result";
+  if (kind === "producer_text") return "A Text Lands";
+  if (kind === "gather_scheduled") return "At the Firepit";
+  if (kind === "casa_amor_return_reveal") return "Flush of Hearts";
+  if (kind.includes("casa")) return "Second Villa";
+  if (kind === "final_vote") return "The Last Text";
+  return "At the Firepit";
+}
+
+function ceremonyShowsCouples(event: Record<string, unknown> | undefined, state: SessionResponse["state"]) {
+  const kind = String(event?.kind ?? "");
+  if (kind === "challenge" || kind === "producer_text" || kind === "gather_scheduled") return false;
+  if (state.day === 1 && state.couples.some((couple) => couple.formed_via_label === "First Spark")) return true;
+  return ["recoupling", "partner_stolen", "casa_amor_return_reveal", "final_vote"].includes(kind);
 }
 
 function ceremonyNarration(turn: TurnResponse | null, state: SessionResponse["state"]) {
@@ -243,4 +274,17 @@ function coupleSentence(state: SessionResponse["state"]) {
   const names = state.couples.map((couple) => `${couple.partner_a_name} and ${couple.partner_b_name}`);
   if (!names.length) return "All eyes are on what happens next.";
   return `Tonight's couples: ${names.join("; ")}.`;
+}
+
+function displayEventName(value: string) {
+  const names: Record<string, string> = {
+    challenge: "Challenge",
+    compatibility_quiz: "Compatibility Quiz",
+    final_couples: "Final Couples Challenge",
+    heart_rate: "Pulse Race",
+    lie_detector: "Lie Detector",
+    mr_and_mrs: "The Couples Quiz",
+    snog_marry_pie: "Kiss Wed Pass",
+  };
+  return names[value] ?? value.replaceAll("_", " ").replace(/\b\w/g, (match) => match.toUpperCase());
 }

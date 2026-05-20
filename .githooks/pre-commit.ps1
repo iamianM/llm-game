@@ -20,3 +20,16 @@ $contentFiles = @($staged | Where-Object { $_ -like "content/*" -or $_ -like "da
 if ($contentFiles.Count -gt 0) {
   uv run python -m src.game.cli content lint
 }
+
+$webConfigFiles = @("web/package.json", "web/package-lock.json", "web/tsconfig.json")
+$webFiles = @($staged | Where-Object {
+  $_.StartsWith("web/") -and (
+    @(".ts", ".tsx").Contains([IO.Path]::GetExtension($_)) -or
+    $webConfigFiles.Contains($_)
+  )
+})
+if ($webFiles.Count -gt 0) {
+  Push-Location web
+  npm run type-check
+  Pop-Location
+}

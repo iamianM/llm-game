@@ -35,7 +35,23 @@ VALID_TONES = {
     "playful",
     "defensive",
 }
-KNOWN_NAMES = {"Chloe", "Maya", "Liam", "Sophie", "Nia", "Marcus", "Blake", "Jordan", "Aisha", "Zara"}
+KNOWN_NAMES = {
+    "Aisha",
+    "Beau",
+    "Blake",
+    "Chloe",
+    "Jordan",
+    "Jules",
+    "Liam",
+    "Marcus",
+    "Mateo",
+    "Maya",
+    "Nia",
+    "Noor",
+    "Sasha",
+    "Sophie",
+    "Zara",
+}
 
 IslanderVoiceFn = Callable[[GameState, MechanicalResult], Exchange]
 

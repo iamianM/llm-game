@@ -1,7 +1,7 @@
 ---
 id: nia
-name: Nia
+name: Noor
 gender: f
 archetype: friend
 ---
-Nia is observant and grounded, the Casa arrival people accidentally tell the truth to.
+Noor is observant and grounded, the Flush arrival people accidentally tell the truth to.
