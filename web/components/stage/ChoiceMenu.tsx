@@ -6,7 +6,7 @@ type Props = { actions: AvailableAction[]; locked: boolean; onChoose: (action: A
 
 const HINT_LABEL: Record<string, { label: string; tone: "good" | "bad" | "neutral" }> = {
   "+": { label: "Pulse +", tone: "good" },
-  "-": { label: "Pulse risk", tone: "bad" }
+  "-": { label: "Pulse −", tone: "bad" }
 };
 
 const RISK_TONE: Record<string, string> = {

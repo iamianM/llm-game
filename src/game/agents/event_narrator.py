@@ -105,16 +105,8 @@ def _mock_event_sentence(state: GameState, event: CeremonyEvent) -> str:
         return f"The {_event_label(event.sub_kind or event.kind)} result lands, changing the mood around the pool."
     if event.kind == "casa_amor_arrival":
         return "Flush of Hearts opens, sending you into the second villa with every connection under pressure."
-    if event.kind == "casa_amor_decision":
-        return event.message
     if event.kind == "casa_amor_return_reveal":
-        return f"The Sunset Bay return reveal lands: {event.message}"
-    if event.kind == "producer_text":
-        return event.message
-    if event.kind == "gather_scheduled":
-        return event.message
-    if event.kind == "final_vote":
-        return event.message
+        return f"The Sunset Bay return reveal: {event.message}"
     return event.message
 
 
@@ -126,7 +118,7 @@ def _name_for(state: GameState, actor_id: str | None) -> str:
     for islander in state.islanders:
         if islander.id == actor_id:
             return islander.name
-    return actor_id.replace("_start", "").replace("_", " ").title()
+    return actor_id
 
 
 def _event_label(kind: str) -> str:

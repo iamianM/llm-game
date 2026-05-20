@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import pytest
+
 from src.api.display import display
-from src.api.serializers import available_actions_api, memory_api
+from src.api.serializers import action_label, available_actions_api, hide_redundant_hint, memory_api
+from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction
 from src.game.engine.memory import create_memory
 from src.game.state.models import Conversation, FollowUpMenu, FollowUpOption, new_game
 
@@ -57,6 +60,63 @@ def test_follow_up_actions_are_player_facing_and_hide_capped_pulse() -> None:
     assert follow_up.description == "Deep"
     assert follow_up.audience_hint == ""
     assert follow_up.stat_used == "Eq"
+
+
+@pytest.mark.parametrize(
+    "kind,target_id,intent_id,expected",
+    [
+        (ActionKind.MOVE, "pool", None, "Move to Pool"),
+        (ActionKind.START_CONVERSATION, "chloe", None, "Talk to Chloe"),
+        (ActionKind.END_CONVERSATION, None, None, "Walk away"),
+        (ActionKind.RECOUPLE, "liam", None, "Pair with Liam"),
+        (ActionKind.PROPOSE_RECOUPLE, "liam", None, "Ask Liam for a Heart Swap"),
+        (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "accept", "Accept Liam's Heart Swap proposal"),
+        (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "decline_politely", "Decline Liam politely"),
+        (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "decline_harshly", "Decline Liam harshly"),
+        (ActionKind.INTRODUCE_TO, "chloe", "intro_flirty", "Spark flirty with Chloe"),
+        (ActionKind.INTRODUCE_TO, "chloe", "intro_deep", "Spark deep with Chloe"),
+        (ActionKind.INTRODUCE_TO, "chloe", None, "Spark warmly with Chloe"),
+        (ActionKind.CASA_DECISION, None, "return_with_original", "Return loyal"),
+        (ActionKind.CASA_DECISION, "liam", "return_with_new", "Return with Liam"),
+        (ActionKind.CASA_DECISION, None, "return_single", "Return solo"),
+    ],
+)
+def test_action_label_covers_every_player_action(
+    kind: ActionKind, target_id: str | None, intent_id: str | None, expected: str
+) -> None:
+    state = new_game(1)
+    spec = ActionSpec(
+        action=PlayerAction(kind=kind, target_id=target_id, intent_id=intent_id),
+        label="fallback",
+    )
+
+    assert action_label(state, spec) == expected
+
+
+def test_action_label_falls_back_to_spec_label_for_unmatched_branches() -> None:
+    state = new_game(1)
+    spec = ActionSpec(
+        action=PlayerAction(kind=ActionKind.AMBIENT),
+        label="Wait by the pool",
+    )
+
+    assert action_label(state, spec) == "Wait by the pool"
+
+
+def test_hide_redundant_hint_drops_both_pinned_ends() -> None:
+    state = new_game(1)
+
+    state.player.public_perception = 95
+    assert hide_redundant_hint(state, "+") == ""
+    assert hide_redundant_hint(state, "-") == "-"
+
+    state.player.public_perception = 5
+    assert hide_redundant_hint(state, "-") == ""
+    assert hide_redundant_hint(state, "+") == "+"
+
+    state.player.public_perception = 50
+    assert hide_redundant_hint(state, "+") == "+"
+    assert hide_redundant_hint(state, "-") == "-"
 
 
 def test_memory_api_exposes_stable_identity() -> None:

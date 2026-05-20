@@ -69,6 +69,7 @@ class IslanderVoiceContext(BaseModel):
     outcome: str
     mechanical_change_summary: str
     others_present: list[str]
+    cast_names: list[str]
     recent_exchange_topics: list[str]
     gossip_eligible_memories: list[str]
 
@@ -150,6 +151,7 @@ def islander_voice_context(
         outcome="success" if result.success else "miss",
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
+        cast_names=sorted({islander.name for islander in state.islanders}),
         recent_exchange_topics=_recent_exchange_topics(state),
         gossip_eligible_memories=_gossip_eligible_memories(state, target.id),
     )

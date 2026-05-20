@@ -60,7 +60,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
       // Click first available action; engine surfaces something meaningful every turn.
       await buttons.first().click();
     }
-    await page.waitForSelector('[data-state="dialogue-complete"], [data-state="exchange-complete"], [data-screen="ceremony"], [data-screen="finale"]', { timeout: 15_000 });
+    await page.waitForSelector('[data-state="dialogue-complete"], [data-screen="ceremony"], [data-screen="finale"]', { timeout: 15_000 });
     if (page.url().includes("/finale") || await page.getByRole("heading", { name: "Sunset Bay crowns its couple" }).count()) break;
   }
 

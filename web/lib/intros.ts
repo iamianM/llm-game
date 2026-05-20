@@ -88,8 +88,16 @@ const RESPONSE_VARIANTS: Partial<Record<string, Partial<Record<IntroDynamic, str
 export function responseFor(npc: IslanderSummary, dynamic: IntroDynamic): string {
   const variants = RESPONSE_VARIANTS[npc.archetype]?.[dynamic];
   if (!variants?.length) return INTRO_RESPONSES[dynamic].line;
-  const idx = (npc.id.length + dynamic.length + npc.name.charCodeAt(0)) % variants.length;
-  return variants[idx];
+  return variants[fnv1a(`${npc.id}|${dynamic}`) % variants.length];
+}
+
+function fnv1a(input: string): number {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < input.length; i += 1) {
+    hash ^= input.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return hash >>> 0;
 }
 
 /** Templated NPC greetings tailored loosely by archetype. */

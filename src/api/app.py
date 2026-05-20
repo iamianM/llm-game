@@ -109,7 +109,7 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
             raise _http_error(
                 502,
                 "STORY_ENGINE_ERROR",
-                f"Real mode could not open Sunset Bay because the story engine failed its contract: {exc}",
+                f"Real mode could not open Sunset Bay; the story engine raised {type(exc).__name__}.",
             ) from exc
     state.player.name = req.player_name or "You"
     try:

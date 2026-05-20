@@ -105,11 +105,7 @@ def available_action(
         if option is not None:
             risk = option.risk
             stat = None if option.stat_used is None else display(option.stat_used)
-            hint = (
-                ""
-                if state.player.public_perception >= 95 and option.audience_hint == "+"
-                else option.audience_hint
-            )
+            hint = hide_redundant_hint(state, option.audience_hint)
             label = option.label
             description = display(option.category)
     return AvailableAction(
@@ -123,6 +119,16 @@ def available_action(
         stat_used=stat,
         description=description,
     )
+
+
+def hide_redundant_hint(state: GameState, hint: Literal["+", "-", ""]) -> Literal["+", "-", ""]:
+    """Drop hint chips when Pulse is already pinned at the relevant end of the meter."""
+    perception = state.player.public_perception
+    if hint == "+" and perception >= 95:
+        return ""
+    if hint == "-" and perception <= 5:
+        return ""
+    return hint
 
 
 def exchange_api(state: GameState, exchange: Exchange | None, speaker_id: str | None) -> ApiExchange | None:

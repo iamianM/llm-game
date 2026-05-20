@@ -255,12 +255,29 @@ def _avoid_recent_repeats(state: GameState, options: list[FollowUpOption]) -> li
         for option in options
         if option.category == "exit" or option.intent_kind not in recent_intents
     ]
-    if len([option for option in fresh if option.category != "exit"]) >= 1:
+    if any(option.category != "exit" for option in fresh):
         return fresh
-    fallback = _template("ask_about_topic")
-    if fallback.intent_kind not in {option.intent_kind for option in fresh}:
+    fallback = _first_unused_template(recent_intents, {option.intent_kind for option in fresh})
+    if fallback is not None:
         fresh.insert(0, fallback)
     return fresh
+
+
+_FALLBACK_INTENTS: tuple[str, ...] = (
+    "ask_about_topic",
+    "change_subject",
+    "joke_back",
+    "go_deeper",
+)
+
+
+def _first_unused_template(recent: set[str], present: set[str]) -> FollowUpOption | None:
+    for intent_kind in _FALLBACK_INTENTS:
+        if intent_kind in recent or intent_kind in present:
+            continue
+        if intent_kind in OPTION_TEMPLATES:
+            return _template(intent_kind)
+    return None
 
 
 def _target(state: GameState, result: MechanicalResult) -> IslanderState:

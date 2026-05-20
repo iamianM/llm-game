@@ -153,6 +153,33 @@ def test_assemble_avoids_recent_repeated_intents() -> None:
     assert sum(option.category == "exit" for option in menu.options) == 1
 
 
+def test_assemble_fallback_skips_intents_already_in_recent_repeats() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        exchanges=[
+            _exchange_record("ask_about_topic"),
+            _exchange_record("go_deeper"),
+        ],
+    )
+
+    menu = assemble_follow_up_menu(
+        state,
+        result,
+        exchange,
+        bespoke_options=[],
+        npc_will_leave=False,
+        npc_exit_line=None,
+    )
+
+    intents = {option.intent_kind for option in menu.options}
+    assert "ask_about_topic" not in intents
+    assert "go_deeper" not in intents
+    assert sum(option.category != "exit" for option in menu.options) >= 1
+
+
 def test_generate_follow_up_menu_uses_bespoke_and_defaults() -> None:
     state, result, exchange = _context(success=True, tone="warm")
 

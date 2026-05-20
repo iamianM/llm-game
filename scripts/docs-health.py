@@ -79,11 +79,11 @@ def _load_contract_map(path: Path) -> ContractMap:
 
 
 def _changed_paths(repo: Path, *, staged: bool) -> set[str]:
-    commands = [["diff", "--cached", "--name-only"]] if staged else [
-        ["diff", "--name-only"],
-        ["diff", "--cached", "--name-only"],
-        ["ls-files", "--others", "--exclude-standard"],
-    ]
+    commands = (
+        [["diff", "--cached", "--name-only"]]
+        if staged
+        else [["diff", "--name-only"], ["diff", "--cached", "--name-only"]]
+    )
     changed: set[str] = set()
     for args in commands:
         output = _git(repo, args)

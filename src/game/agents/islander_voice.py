@@ -35,23 +35,6 @@ VALID_TONES = {
     "playful",
     "defensive",
 }
-KNOWN_NAMES = {
-    "Aisha",
-    "Beau",
-    "Blake",
-    "Chloe",
-    "Jordan",
-    "Jules",
-    "Liam",
-    "Marcus",
-    "Mateo",
-    "Maya",
-    "Nia",
-    "Noor",
-    "Sasha",
-    "Sophie",
-    "Zara",
-}
 
 IslanderVoiceFn = Callable[[GameState, MechanicalResult], Exchange]
 
@@ -137,7 +120,12 @@ def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None
     if re.search(r"\d", joined):
         raise ValueError(f"exchange contains digits; exchange={exchange!r}")
     allowed = {context.npc_name, *context.others_present}
-    hidden_mentions = sorted(name for name in KNOWN_NAMES - allowed if name in joined)
+    cast = set(context.cast_names)
+    hidden_mentions = sorted(
+        name
+        for name in cast - allowed
+        if re.search(rf"\b{re.escape(name)}\b", joined)
+    )
     if hidden_mentions:
         raise ValueError(
             f"exchange mentions hidden islander(s) {hidden_mentions}; exchange={exchange!r}"
