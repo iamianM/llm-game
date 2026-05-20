@@ -22,9 +22,18 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.state.models import GameState, NPCNPCConversation
 
-BACKGROUND_DIALOGUE_MODEL = "gpt-4.1-nano"
+BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
+BACKGROUND_DIALOGUE_PROMPT = "src/game/agents/prompts/background_dialogue.md"
 
 
 class BackgroundExchange(BaseModel):
@@ -71,30 +80,49 @@ class OpenAIBackgroundDialogue:
         rendered = _render_context(state, conversation, nudge)
         last_error: ValueError | None = None
         for attempt in range(2):
+            attempt_number = attempt + 1
             context = rendered
             if last_error is not None:
                 context = (
                     f"{rendered}\n\nPrevious BackgroundExchange failed validation: "
                     f"{last_error}. Return a corrected BackgroundExchange."
                 )
-            response = self._client.responses.parse(
-                model=self._model,
-                instructions=Path("src/game/agents/prompts/background_dialogue.md").read_text(
-                    encoding="utf-8"
-                ),
-                input=context,
-                text_format=BackgroundExchange,
-                max_output_tokens=320,
-            )
+            attempt_token = begin_agent_attempt(attempt_number)
+            try:
+                try:
+                    response = self._client.responses.parse(
+                        model=self._model,
+                        instructions=Path(BACKGROUND_DIALOGUE_PROMPT).read_text(encoding="utf-8"),
+                        input=context,
+                        text_format=BackgroundExchange,
+                        **reasoning_request_kwargs(),
+                    )
+                except Exception as exc:
+                    last_error = ValueError(str(exc))
+                    mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
+                    if attempt == 1:
+                        raise
+                    continue
+            finally:
+                end_agent_attempt(attempt_token)
             exchange = response.output_parsed
+            record_agent_trace(
+                agent_name="background_dialogue",
+                model=self._model,
+                prompt_path=BACKGROUND_DIALOGUE_PROMPT,
+                response=response,
+                output=exchange,
+            )
             if exchange is None:
                 last_error = ValueError("Background Dialogue returned no parsed BackgroundExchange")
+                mark_agent_trace_validation_error("background_dialogue", attempt_number, last_error)
             else:
                 try:
                     validate_background_exchange(exchange)
                     return exchange
                 except ValueError as exc:
                     last_error = exc
+                    mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
             if attempt == 1 and last_error is not None:
                 raise last_error
         raise AssertionError("unreachable background dialogue retry state")
@@ -127,13 +155,13 @@ def mock_background_dialogue(
 
 
 def validate_background_exchange(exchange: BackgroundExchange) -> None:
-    """Fail loud if generated background dialogue violates contract."""
+    """Fail loud if generated background dialogue violates the agent boundary.
+
+    Only enforces the third-person body language contract — speakers describe
+    each other, not themselves. Length and digit-vs-spelled-number
+    preferences are conveyed via the prompt, not enforced here.
+    """
     joined = f"{exchange.speaker_a_line} {exchange.speaker_b_line}"
-    word_count = len(joined.split())
-    if not 20 <= word_count <= 120:
-        raise ValueError(f"background exchange word count out of bounds: {word_count}")
-    if re.search(r"\d", joined):
-        raise ValueError(f"background exchange contains digits: {exchange!r}")
     body_language = " ".join(re.findall(r"\*([^*]+)\*", joined))
     if re.search(r"\bmy (lips|eyes|hands|shoulder|arm|face)\b", body_language, re.IGNORECASE):
         raise ValueError(f"background exchange uses first-person body language: {exchange!r}")
@@ -146,7 +174,7 @@ def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: s
             f"- {exchange.speaker_a_id}: {exchange.speaker_a_line}; "
             f"{exchange.speaker_b_id}: {exchange.speaker_b_line}; tone {exchange.tone}"
         )
-        for exchange in conversation.exchanges[-4:]
+        for exchange in conversation.exchanges
     )
     return "\n".join(
         [

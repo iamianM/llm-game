@@ -1,0 +1,51 @@
+id: hideaway-night
+title: Paradise Suite (Hideaway)
+goal: Prove a Day 5 evening Hideaway moves the player + partner into the suite, applies the deterministic relationship reward exactly once, and marks the couple as committed.
+seed: 2020
+initial_day: 5
+initial_phase: evening
+live_villa_life: false
+character_creation:
+  archetype_id: heartthrob
+  gender: man
+  stats:
+    charm: 9
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 5
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 80
+    chemistry: 70
+    trust: 65
+    friendship: 30
+judge_context:
+  - Hideaway is engine-owned — eligibility is gated on couple strength, day, phase, and once-per-run usage. The action only fires from inside that gate.
+  - The engine applies the relationship deltas; the LLM only narrates the moment.
+  - The check matters because hideaway is the one beat where the couple visibly leaves the rest of the cast — the narrator must not let a stray Heartbreaker show up here.
+turns:
+  - id: open-the-suite
+    action:
+      kind: hideaway
+    golden: >
+      The player and Chloe leave the firepit and the suite door closes. The
+      narration should hold on the privacy of it — softer light, fewer
+      cameras, the cast pretending not to listen. Imagine: "He follows her
+      into the suite without saying a word. Outside, the rest of the cast
+      is loud on purpose to give them the room." No other Heartbreaker is
+      named.
+    checks:
+      - location_is:hideaway
+      - agent_traces_present
+    judge_checks:
+      - id: hideaway_privacy
+        criteria: >
+          The narration treats the suite as private — only the player and
+          Chloe appear by name; the rest of the villa is implied or
+          off-screen. Fail if a third Heartbreaker is named inside the
+          suite.

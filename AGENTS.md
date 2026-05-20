@@ -139,10 +139,20 @@ make qa
 4. `make test`
 5. `make smoke`
 6. `make determinism`
+7. `make llm-eval-mock` — golden scenarios through `run_turn` in mock mode (see [docs/llm-eval-system.md](docs/llm-eval-system.md))
+8. `make web-check`
+9. `make web-contracts`
 
 If the gate cannot run, report the exact blocker. Do not replace the gate with "looks right."
 
 Use `make test-llm` only for opt-in agent quality tests. LLM tests are excluded from the default QA gate.
+
+Opt-in live agent checks (slow and billed) live behind:
+
+- `make llm-eval-real` — golden scenarios with live OpenAI agents.
+- `make llm-eval-real-judge` — adds the LLM judge for voice-fit / continuity / faithfulness.
+
+Every feature that touches an agent boundary or a player-facing beat should ship with a scenario under `evals/llm/scenarios/` — see [docs/llm-eval-system.md](docs/llm-eval-system.md) and [evals/llm/scenarios/FORMAT.md](evals/llm/scenarios/FORMAT.md).
 
 ### CLI And Makefile Split
 

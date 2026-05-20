@@ -1,0 +1,50 @@
+id: opening-ceremony
+title: First Spark Narration
+goal: Prove the Event Narrator turns a deterministic First Spark into a moment the player remembers — without rewriting who they chose.
+seed: 101
+character_creation:
+  archetype_id: heartthrob
+  gender: man
+  stats:
+    charm: 9
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 5
+live_villa_life: false
+judge_context:
+  - The engine has already decided the opening couple. The narrator only describes the moment.
+  - Reality TV texture is encouraged — the firepit lights, the held breath, a beat that lands.
+  - The narrator must not invent eliminations, votes, bombshell arrivals, or a different partner.
+turns:
+  - id: couple-with-chloe
+    action:
+      kind: recouple
+      target_id: chloe
+    golden: >
+      The player crosses the firepit and stops in front of Chloe. The
+      narration should sell that exact moment — eyes met, choice landed,
+      Chloe's small reaction (a breath, a smile she tries to keep cool),
+      and the villa registering a new pair. Imagine: "He walks straight
+      past the noise and stops in front of Chloe. She tries not to smile
+      and fails. Around the firepit, everyone is already reading what this
+      means for the rest of the night."
+    checks:
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: event_faithful
+        criteria: >
+          The prose preserves that the player chose Chloe and is now coupled
+          with Chloe. No alternate partner, no invented dumping, vote, or
+          bombshell, no claim that anyone is leaving Sunset Bay.
+      - id: reality_tv_tone
+        criteria: >
+          The prose carries villa ceremony energy — sensory detail, a held
+          beat, the cast as audience. Fail if it reads like a debug log,
+          generic fantasy narration, or a stat printout.
+      - id: chloe_reaction_specific
+        criteria: >
+          Chloe's reaction is a specific small beat (a smile, a breath, eye
+          contact), not a generic "she was happy". Fail if Chloe disappears
+          from the prose entirely.

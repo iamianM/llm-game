@@ -18,6 +18,8 @@ def test_session_page_renders_math_villa_memories_pull_and_interruption() -> Non
     assert "Pull attempt" in html
     assert "Interruption" in html
     assert "Memories formed" in html
+    assert "Model reasoning traces" in html
+    assert "Checked whether Chloe should stay in the conversation." in html
     assert "data-scene-index" in html
     assert "id='turn-1'" in html
 
@@ -130,5 +132,24 @@ def _record() -> dict[str, object]:
                 }
             ],
         },
+        "agent_traces": [
+            {
+                "agent_name": "contextual_options",
+                "model": "gpt-5.4-mini",
+                "reasoning_effort": "high",
+                "attempt": 1,
+                "prompt_path": "src/game/agents/prompts/contextual_options.md",
+                "response_id": "resp_test",
+                "output_type": "ContextualBespoke",
+                "output": {"npc_will_leave": False},
+                "validation_error": None,
+                "reasoning_summaries": [
+                    {
+                        "item_id": "rs_test",
+                        "texts": ["Checked whether Chloe should stay in the conversation."],
+                    }
+                ],
+            }
+        ],
         "output_hash": "abc123",
     }

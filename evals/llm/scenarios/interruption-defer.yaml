@@ -1,0 +1,64 @@
+id: interruption-defer
+title: Conversation Interruption (Defer)
+goal: Prove an NPC interruption mid-conversation routes through the engine cleanly — the player picks "defer", the engine resolves the chance, the pending interruption clears, and dialogue tracks what just happened.
+seed: 1919
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_relationships:
+  chloe:
+    affection: 50
+    chemistry: 20
+    trust: 35
+    friendship: 20
+  liam:
+    affection: 35
+    trust: 25
+    friendship: 25
+judge_context:
+  - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
+  - The engine decides whether a deferral lands well based on stats and affection; the LLM only writes Chloe's and Liam's reactions, never the outcome.
+  - This scenario only covers the "defer politely" path; accept and ignore are separate variants worth adding later.
+turns:
+  - id: defer-liam
+    arrange_player_location: pool
+    arrange_npc_locations:
+      chloe: pool
+      liam: pool
+    arrange_active_conversation:
+      target_id: chloe
+      started_on_turn: 0
+      started_on_day: 1
+      pending_interruption:
+        interrupter_id: liam
+        reason: needs_to_talk
+        urgency: polite
+    action:
+      kind: respond_with
+      target_id: liam
+      intent_id: defer_interruption
+    golden: >
+      Liam walks up polite, the player asks him for a beat, and Chloe stays
+      in the picture. The dialogue should acknowledge that Liam was the one
+      interrupting (his name, the polite ask) and Chloe's reaction to being
+      held onto. The pending interruption clears either way; whether Liam
+      actually leaves the conversation easy is the engine's call.
+    checks:
+      - interruption_cleared
+      - agent_traces_present
+    judge_checks:
+      - id: defer_grounded
+        criteria: >
+          The recorded relationship deltas and chance breakdown reflect a
+          deferral attempt by the player: a small affection cost to the
+          interrupter (Liam) and no swap to the new conversation. Fail if
+          the engine result reads like an acceptance or an outright
+          ignore.

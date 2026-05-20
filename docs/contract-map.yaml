@@ -51,3 +51,14 @@ groups:
     docs:
       - AGENTS.md
       - docs/qa-strategy.md
+
+  - id: llm_eval_system
+    paths:
+      - evals/llm/**
+      - src/game/eval/golden_*.py
+      - src/game/cli/commands/eval_llm.py
+      - src/game/agents/runtime.py
+    docs:
+      - docs/llm-eval-system.md
+      - docs/qa-strategy.md
+      - evals/llm/scenarios/FORMAT.md

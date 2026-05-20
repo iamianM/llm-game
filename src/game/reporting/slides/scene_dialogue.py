@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.game.reporting.agent_trace_blocks import agent_trace_detail
 from src.game.reporting.html_base import escape
 from src.game.reporting.scenes import Scene
 from src.game.reporting.slides.cast import display_name
@@ -176,4 +177,7 @@ def _inline_blocks_for_record(
             f"<details class='inline-detail bg-detail'><summary>Meanwhile around the villa</summary>"
             f"<div class='inline-body'>{bg_html}</div></details>"
         )
+    trace_html = agent_trace_detail(record)
+    if trace_html:
+        blocks.append(trace_html)
     return "".join(blocks)

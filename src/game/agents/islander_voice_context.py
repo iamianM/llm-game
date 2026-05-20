@@ -70,6 +70,7 @@ class IslanderVoiceContext(BaseModel):
     mechanical_change_summary: str
     others_present: list[str]
     cast_names: list[str]
+    gossip_subject_names: list[str]
     recent_exchange_topics: list[str]
     gossip_eligible_memories: list[str]
 
@@ -93,6 +94,7 @@ def islander_voice_context(
     intent_id = result.action.intent_id
     if intent_id is None:
         raise ValueError("conversation result is missing intent_id")
+    gossip: Memory | None = None
     try:
         intent = get_intent(intent_id)
         intent_category = intent.category.value
@@ -152,6 +154,7 @@ def islander_voice_context(
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
         cast_names=sorted({islander.name for islander in state.islanders}),
+        gossip_subject_names=_gossip_subject_names_for_intent(state, intent_id, gossip),
         recent_exchange_topics=_recent_exchange_topics(state),
         gossip_eligible_memories=_gossip_eligible_memories(state, target.id),
     )
@@ -188,6 +191,7 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Mechanical outcome: {context.outcome}",
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
+            f"Allowed gossip subjects this turn: {_list_or_none(context.gossip_subject_names)}",
             f"Recent exchange topics: {_list_or_none(context.recent_exchange_topics)}",
             f"Gossip eligible memories: {_list_or_none(context.gossip_eligible_memories)}",
             "Write the exchange now.",
@@ -299,7 +303,7 @@ def _recent_exchange_topics(state: GameState) -> list[str]:
     conversation = state.active_conversation
     if conversation is None:
         return []
-    return conversation.accumulated_tags[-6:]
+    return list(conversation.accumulated_tags)
 
 
 def _gossip_eligible_memories(state: GameState, target_id: str) -> list[str]:
@@ -307,7 +311,7 @@ def _gossip_eligible_memories(state: GameState, target_id: str) -> list[str]:
         if islander.id == target_id:
             return [
                 f"{memory.subject_id}: {memory.content}"
-                for memory in islander.memories[-5:]
+                for memory in islander.memories
                 if memory.subject_id != "player" and memory.emotional_weight >= 4
             ]
     return []
@@ -337,6 +341,20 @@ def _subject_name(state: GameState, subject_id: str) -> str:
         if islander.id == subject_id:
             return islander.name
     return subject_id
+
+
+def _gossip_subject_names_for_intent(
+    state: GameState,
+    intent_id: str,
+    gossip: Memory | None,
+) -> list[str]:
+    subject_ids: list[str] = []
+    if gossip is not None:
+        subject_ids.append(gossip.subject_id)
+    if intent_id.startswith("ask_gossip:about_"):
+        subject_ids.append(intent_id.removeprefix("ask_gossip:about_"))
+    names = [_subject_name(state, subject_id) for subject_id in subject_ids]
+    return list(dict.fromkeys(names))
 
 
 __all__ = [

@@ -1,0 +1,57 @@
+id: challenge-result-narration
+title: Challenge Result Narration
+goal: Prove the Event Narrator makes a deterministic Compatibility Quiz result feel like a moment, without changing who scored what.
+seed: 505
+initial_phase: intros
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 45
+    trust: 30
+    friendship: 20
+judge_context:
+  - Challenge scoring is deterministic engine output; the narrator describes the resolved outcome.
+  - The narrator may dramatise — laughter, side-eye, the moment a couple either clicked or didn't — but cannot change success, failure, or relationship deltas.
+turns:
+  - id: morning-to-challenge
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      The Compatibility Quiz wraps and the narrator lands the result with a
+      bit of villa texture — laughter or wince, the player and Chloe
+      catching each other's eye, the rest of the cast reacting. Imagine on
+      a success: "She got every answer right except the one about
+      breakfast. Around the pool, the rest of the cast is loudly pretending
+      not to be jealous." The narrator does not claim a different score or
+      add a non-existent reward.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: challenge_outcome_faithful
+        criteria: >
+          The prose matches the resolved challenge outcome (success or
+          failure) and the recorded relationship deltas direction. No
+          invented scoring rule, player choice, prize, or different
+          relationship result.
+      - id: villa_reaction_specific
+        criteria: >
+          The prose includes a specific cast reaction beat — laughter,
+          side-eye, a one-line comment — not a flat "the challenge ended".
+          Fail if the narration reads like a status print.

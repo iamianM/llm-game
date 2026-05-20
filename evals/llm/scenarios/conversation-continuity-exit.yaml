@@ -1,0 +1,115 @@
+id: conversation-continuity-exit
+title: Conversation Continuity And Exit
+goal: Prove a multi-turn Chloe chat actually remembers itself — every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.
+seed: 202
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_relationships:
+  chloe:
+    affection: 45
+    chemistry: 20
+    trust: 25
+    friendship: 25
+judge_context:
+  - Chloe is a secure sweetheart who already trusts the player a little — deep follow-ups are legal.
+  - Follow-up option indexes select from the prior generated menu, so the exact intent will vary in real-LLM mode; continuity is what matters, not exact wording.
+  - Each menu must be playable — concrete, distinct options, one and only one exit.
+turns:
+  - id: start-chloe-deep
+    action:
+      kind: start_conversation
+      target_id: chloe
+      intent_id: deep_ask_life
+    golden: >
+      The player opens deeper. Chloe answers a real life question with a
+      specific, slightly vulnerable beat — something she's been turning
+      over, not a tidy soundbite. Imagine: "Honestly? I keep thinking about
+      why I came in here. The version of me before this place was getting
+      smaller. I wanted to see who I'd be in front of people again." The
+      menu offers Go Deeper, Lighten It, and a clean Exit.
+    checks:
+      - exchange_valid
+      - follow_up_menu_valid
+      - exactly_one_exit
+      - conversation_active
+      - agent_traces_present
+      - no_agent_validation_retries
+    judge_checks:
+      - id: responds_to_deep_intent
+        criteria: >
+          Chloe answers a deeper personal question with a real beat, not a
+          generic greeting, gossip pivot, or flirt-redirect.
+      - id: chloe_voice_fit
+        criteria: >
+          Chloe reads warm, sincere, gently vulnerable. Fail if she sounds
+          chaotic, icy, or like a different archetype.
+      - id: followups_playable
+        criteria: >
+          Follow-ups offer concrete next actions on this deeper beat — go
+          deeper, lighten, gossip pivot if it's a legal social move — plus
+          exactly one exit. No placeholders, no duplicate exits, no choices
+          that contradict the visible state.
+  - id: first-follow-up
+    action:
+      kind: respond_with
+      target_id: chloe
+      option_index: 0
+    golden: >
+      Continuity is the whole point of this turn. The player line must come
+      directly from the chosen follow-up. Chloe's reply must build on the
+      previous beat she just told — same thread, deeper or warmer, not a
+      reset. Imagine her starting with "I haven't said that out loud
+      before. Don't make me regret it," then giving the player a little
+      more.
+    checks:
+      - exchange_valid
+      - follow_up_menu_valid
+      - exactly_one_exit
+      - conversation_active
+      - agent_traces_present
+      - no_agent_validation_retries
+    judge_checks:
+      - id: immediate_continuity
+        criteria: >
+          The player line clearly comes from the selected prior menu option,
+          and Chloe's reply continues the exact topic or emotional direction
+          from the previous exchange. Fail if either restarts the chat,
+          ignores the prior beat, or switches to an unrelated topic.
+      - id: deepens_not_resets
+        criteria: >
+          The second exchange should feel like it could only come after the
+          first — a callback, a deeper turn, or a small consequence. Fail if
+          it reads as a fresh greeting.
+  - id: close-conversation
+    action:
+      kind: end_conversation
+    golden: >
+      A real social close. The player should leave with a line that
+      acknowledges what was shared — not just "bye". Memories should be
+      first-person and specific: the player remembers Chloe trusting them
+      with something, Chloe remembers being heard.
+    checks:
+      - conversation_closed
+      - curator_memories
+      - agent_traces_present
+      - no_agent_validation_retries
+    judge_checks:
+      - id: memory_faithful
+        criteria: >
+          Each memory is first-person, names the other participant, captures
+          a beat that actually appeared in the visible exchanges, and never
+          invents private facts not revealed in the dialogue.
+      - id: close_feels_social
+        criteria: >
+          The close reads as a social ending (a thank-you, a soft callback,
+          a beat) rather than an abrupt system action. Fail if either side
+          just walks off mid-thought.

@@ -1,0 +1,82 @@
+id: final-vote-ending
+title: Final Vote Finale
+goal: Prove the finale narration names the deterministic winning couple and the player's actual outcome — no rewrites, no consolation prizes, no invented twists.
+seed: 909
+initial_day: 6
+initial_phase: evening
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 5
+  - partner_a_id: maya
+    partner_b_id: liam
+    formed_on_day: 5
+  - partner_a_id: sophie_start
+    partner_b_id: marcus_start
+    formed_on_day: 5
+  - partner_a_id: nia_start
+    partner_b_id: blake_start
+    formed_on_day: 5
+initial_relationships:
+  chloe:
+    affection: 80
+    chemistry: 30
+    trust: 70
+    friendship: 25
+judge_context:
+  - The final vote outcome is deterministic; the narrator describes the engine's verdict.
+  - The narrator may carry finale weight — the firepit at night, the speeches, the camera holding on each couple — but cannot move the prize.
+turns:
+  - id: schedule-final-vote
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      The villa is called to the firepit one last time. The producer text
+      lands, the four couples assemble, and the narrator sets the finale
+      stakes — months of moments hanging on the next reveal. The outcome
+      is still pending.
+    checks:
+      - ceremony_events_present
+      - pending_gather_waiting
+      - agent_traces_present
+  - id: resolve-final-vote
+    action:
+      kind: join_gather
+    golden: >
+      The final vote lands. The narrator names the winning couple exactly
+      as the engine recorded, places the player and Chloe in their actual
+      finishing position, and gives the moment finale weight — a kiss, a
+      held look, the cast and the cameras all at once. Imagine: "The host
+      reads the result. Maya and Liam win it. Chloe finds the player's
+      hand in the dark. Sunset Bay's first season ends with both couples
+      still on the firepit and the cameras pulling away."
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - run_outcome_present
+      - agent_traces_present
+    judge_checks:
+      - id: final_outcome_faithful
+        criteria: >
+          The narration matches the recorded final_vote event exactly —
+          same winning couple, same runner-up positions, same player
+          outcome. Fail if the prose names a different winner, awards the
+          player a placement they did not earn, or invents a tie / twist
+          ending.
+      - id: finale_tone
+        criteria: >
+          The prose carries finale weight — at least one specific moment
+          (a kiss, a hand, a held look, a camera pull) for the player and
+          Chloe and for the winning couple if they aren't the same.
+          Fail if the narration reads like a vote-tally summary.

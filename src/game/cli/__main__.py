@@ -7,6 +7,7 @@ import sys
 
 from src.game.cli.commands import (
     content,
+    eval_llm,
     play,
     play_session,
     report,
@@ -33,6 +34,7 @@ def main(argv: list[str] | None = None) -> int:
         snapshot,
         content,
         trace,
+        eval_llm,
     ):
         module.add_parser(subparsers)
 

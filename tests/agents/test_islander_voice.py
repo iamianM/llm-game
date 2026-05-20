@@ -12,6 +12,7 @@ from src.game.agents.islander_voice import (
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.intents import Intent, IntentCategory, load_intents
+from src.game.engine.results import MechanicalResult
 from src.game.engine.rules import apply_action
 from src.game.state.models import Gender, Mood, new_game
 from src.game.state.rng import SeededRng
@@ -88,17 +89,26 @@ def test_islander_voice_retries_after_validation_failure() -> None:
             self.calls += 1
             if self.calls == 1:
                 return Exchange(
-                    player_dialogue="Can we talk for 2 minutes?",
-                    npc_dialogue="Sure, that sounds fine.",
+                    player_dialogue=(
+                        "I wanted to come find you. I was thinking about what Maya said earlier and "
+                        "honestly it stuck with me more than I expected."
+                    ),
+                    npc_dialogue=(
+                        "I noticed you looked thoughtful. Liam was watching the same conversation, "
+                        "I think it shifted something in him too."
+                    ),
                     npc_tone="warm",
                     npc_mood_after=Mood.CONTENT,
                 )
             assert isinstance(rendered_context, list)
             assert "failed validation" in rendered_context[-1]["content"]
             return Exchange(
-                player_dialogue="Can we talk for a couple of minutes?",
+                player_dialogue=(
+                    "I wanted to come find you. I was thinking about you and how the day landed."
+                ),
                 npc_dialogue=(
-                    "Sure, that sounds fine. I was hoping for a calmer moment by the pool anyway."
+                    "I noticed you looked thoughtful out there, and I was hoping you would come "
+                    "sit with me before the sun dropped."
                 ),
                 npc_tone="warm",
                 npc_mood_after=Mood.CONTENT,
@@ -109,7 +119,8 @@ def test_islander_voice_retries_after_validation_failure() -> None:
     exchange = agent.generate(state, result)
 
     assert agent.calls == 2
-    assert "2" not in exchange.player_dialogue
+    assert "Maya" not in exchange.player_dialogue and "Maya" not in exchange.npc_dialogue
+    assert "Liam" not in exchange.player_dialogue and "Liam" not in exchange.npc_dialogue
 
 
 def test_islander_voice_context_identifies_player_as_listener() -> None:
@@ -130,6 +141,33 @@ def test_islander_voice_context_identifies_player_as_listener() -> None:
     messages = build_voice_messages(state, state.active_conversation, new_turn_context(context))
 
     assert "Conversation partner: the player" in messages[0]["content"]
+
+
+def test_islander_voice_allows_gossip_subject_mentions() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="chloe",
+            intent_id="ask_gossip:about_blake_start",
+        ),
+        success=True,
+        tags=["gossip"],
+    )
+
+    context = islander_voice_context(state, result)
+    exchange = Exchange(
+        player_dialogue="What do you make of Blake so far, Chloe? I want your honest read.",
+        npc_dialogue=(
+            "Blake seems polished, and I am not fully sure what sits under it yet. "
+            "I would keep watching before trusting the charm too much."
+        ),
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    assert context.gossip_subject_names == ["Blake"]
+    validate_exchange(exchange, context)
 
 
 @pytest.mark.llm

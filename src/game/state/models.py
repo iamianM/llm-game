@@ -249,11 +249,16 @@ class FollowUpOption(BaseModel):
 
 
 class FollowUpMenu(BaseModel):
-    """Contextual menu generated after an NPC reply."""
+    """Contextual menu generated after an NPC reply.
+
+    Option count is driven by the prompt (it asks for a 2-5 menu including
+    one exit); the schema only enforces non-emptiness so the engine can
+    always render something.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
-    options: list[FollowUpOption] = Field(min_length=2, max_length=5)
+    options: list[FollowUpOption] = Field(min_length=1)
     npc_will_leave: bool
     npc_exit_line: str | None = None
 

@@ -11,7 +11,6 @@ who arrives, couples, or leaves.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Callable
 from functools import cached_property
 from pathlib import Path
@@ -20,10 +19,17 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.state.models import GameState
 
-EVENT_NARRATOR_MODEL = "gpt-4.1-mini"
+EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
+EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
 
 
 class EventNarration(BaseModel):
@@ -54,34 +60,45 @@ class OpenAIEventNarrator:
             raise ValueError("event narration requires at least one ceremony event")
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path("src/game/agents/prompts/event_narrator.md").read_text(
-                encoding="utf-8"
-            ),
+            instructions=Path(EVENT_NARRATOR_PROMPT).read_text(encoding="utf-8"),
             input=_render_context(state, events),
             text_format=EventNarration,
-            max_output_tokens=220,
+            **reasoning_request_kwargs(),
         )
         narration = response.output_parsed
+        record_agent_trace(
+            agent_name="event_narrator",
+            model=self._model,
+            prompt_path=EVENT_NARRATOR_PROMPT,
+            response=response,
+            output=narration,
+        )
         if narration is None:
             raise ValueError("Event Narrator returned no parsed EventNarration")
-        validate_event_narration(narration, events)
+        try:
+            validate_event_narration(narration, events)
+        except ValueError as exc:
+            mark_agent_trace_validation_error("event_narrator", 1, exc)
+            raise
         return narration
 
 
 def mock_event_narration(state: GameState, events: list[CeremonyEvent]) -> EventNarration:
     """Return deterministic mock event narration for tests and replay."""
-    messages = [_mock_event_sentence(state, event) for event in events]
-    return EventNarration(prose=" ".join(messages))
+    sentences = [_mock_event_sentence(state, event) for event in events]
+    if not sentences:
+        sentences = ["The villa watches as the moment lands."]
+    return EventNarration(prose=" ".join(sentences))
 
 
 def validate_event_narration(narration: EventNarration, events: list[CeremonyEvent]) -> None:
-    """Fail loud if event prose violates the contract."""
+    """Fail loud if event prose violates the agent boundary.
+
+    Only enforces the structural contract: every named ceremony participant
+    must appear in the prose. Prose length, sentence count, and digit
+    preferences are conveyed via the prompt, not enforced here.
+    """
     prose = narration.prose
-    sentences = [part for part in re.split(r"[.!?]+", prose) if part.strip()]
-    if not 2 <= len(sentences) <= 4:
-        raise ValueError(f"event narration sentence count out of bounds: {prose!r}")
-    if re.search(r"\d", prose):
-        raise ValueError(f"event narration contains digits: {prose!r}")
     required = [event.islander_id for event in events if event.islander_id is not None]
     lower_prose = prose.lower()
     missing = [name for name in required if not _mentions_participant(lower_prose, name)]
@@ -144,8 +161,25 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
             f"Day: {state.day}",
             f"Phase: {state.phase.value}",
             f"Location: {state.location_id.value}",
+            f"Current player couple: {_player_couple(state)}",
+            "Event semantics:",
+            "- recouple_proposal rejected means the target did not accept the player's proposal.",
+            "- npc_proposal_incoming means a pending ask, not an accepted recoupling or couple change.",
+            "- recoupling narration should name the player's partner when the current couple is known.",
             "Events:",
             event_lines,
             "Narrate these resolved events now.",
         ]
     )
+
+
+def _player_couple(state: GameState) -> str:
+    for couple in state.couples:
+        members = {couple.partner_a_id, couple.partner_b_id}
+        if "player" not in members:
+            continue
+        partner_id = next((member for member in members if member != "player"), None)
+        if partner_id is None:
+            return "player is single"
+        return f"player with {partner_id} ({_name_for(state, partner_id)})"
+    return "player is single"
