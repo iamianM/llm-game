@@ -2,8 +2,22 @@
 
 *Daily activities, challenges, social bonding events, and dramatic twists*
 
-**Document Status:** ✅ Complete
+**Document Status:** Design canon (intent).
 **Last Updated:** 2025-10-08
+
+> **Implementation note.** This document is the design intent for daily
+> challenges. The **shared minigame harness** that turns these from single
+> dice rolls into real player-driven scenes is defined in
+> [docs/minigame-system.md](docs/minigame-system.md). The **per-minigame
+> implementation specs** live under [docs/minigames/](docs/minigames/):
+> [Compatibility Quiz](docs/minigames/compatibility-quiz.md) ·
+> [The Couples Quiz](docs/minigames/couples-quiz.md) ·
+> [Lie Detector](docs/minigames/lie-detector.md) ·
+> [Pulse Race](docs/minigames/heart-rate.md) ·
+> [Kiss Wed Pass](docs/minigames/snog-marry-pie.md) ·
+> [Final Couples](docs/minigames/final-couples.md). When the implementation
+> docs and this canon disagree, the implementation docs win
+> ([current-plan.md](docs/current-plan.md), "Documentation Rules").
 
 ---
 

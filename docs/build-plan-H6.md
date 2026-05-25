@@ -1,5 +1,8 @@
 # Build Plan: Phase H6 — Stylish HTML Report
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 The current `session.html` is utilitarian — a wall of turn cards in default fonts. H6 turns it into a reviewable artifact that's pleasant to read: typography, avatar placeholders, day-by-day timeline, couple status panel, public perception graph, memory web visualization. Same single-file, self-contained HTML constraint — no JS frameworks, no external CDN, no chart library. Pure HTML+CSS+SVG.
 
 **Design sources:** [00-Game-Start-And-Setup.md § Audience Meter](../00-Game-Start-And-Setup.md), [10-Elimination-System.md § Audience System](../10-Elimination-System.md). No game-design canon for visual design — H6 is a UX phase.

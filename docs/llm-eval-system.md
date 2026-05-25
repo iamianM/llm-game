@@ -1,8 +1,9 @@
 # LLM Eval System
 
-This plan adapts the working eval pattern from
-`C:\Users\Mcian\projects\steno-livekit-agent` branch `feat/prompt-overlays-sdk`
-to this game. The important LiveKit findings are:
+This doc describes the current golden LLM eval system for the game. The system
+adapts the working eval pattern from
+`C:\Users\Mcian\projects\steno-livekit-agent` branch `feat/prompt-overlays-sdk`.
+The important LiveKit findings are:
 
 - Run eval turns through production code, not a mock prompt harness.
 - Seed earlier turns from authored goldens so every evaluated turn is isolated and replayable.
@@ -10,9 +11,9 @@ to this game. The important LiveKit findings are:
 - Treat the judge as a reviewer assistant, not the source of truth.
 - Make the human review packet the main artifact.
 
-## Recommendation
+## System Shape
 
-Build a three-layer LLM eval system:
+The eval stack has three layers:
 
 1. **Recorded playthrough evals**
    Keep the existing deterministic trace system as the broad coverage gate. A full trace proves that mechanics, phase movement, replay, and report rendering stay stable.
@@ -23,7 +24,10 @@ Build a three-layer LLM eval system:
 3. **Judge-assisted review**
    Use an LLM judge only for qualities schemas cannot prove: voice fit, continuity, drama readability, and whether a generated response meaningfully matches the authored golden. Judge results are pass/fail/cannot_determine and always shown beside raw trace evidence.
 
-This will work because the engine already has the hard part LiveKit had to build toward: a single deterministic `run_turn` path, typed agent outputs, replayable traces, and review packets. We do not need an LLM to inspect game state or decide outcomes. We need it to compare narrative intent against evidence after deterministic validators have already run.
+This works because the game has a single deterministic `run_turn` path, typed
+agent outputs, replayable traces, and review packets. The judge does not inspect
+game state or decide outcomes. It compares narrative intent against evidence
+after deterministic validators have already run.
 
 ## Model And Trace Policy
 
@@ -50,7 +54,9 @@ The trace stores summaries, not hidden chain of thought. These summaries go into
 
 ## Scenario Suite
 
-The first suite should be small and sharp. Do not try to test the whole game with an LLM judge first.
+Scenarios live under `evals/llm/scenarios/`. Keep them focused and authored:
+one scenario should prove one player-facing contract or one risky agent
+boundary. Broad playthrough coverage still belongs to deterministic traces.
 
 ### S1: Start Chat With Every Starting NPC
 
@@ -264,10 +270,9 @@ The reviewer should be able to review without reading logs:
 - expand `Model reasoning traces`
 - compare any judge failure against the raw turn evidence
 
-## Implemented V1
+## Current Scenario Files
 
-The implemented suite lives under `evals/llm/scenarios/`. It currently
-contains nineteen golden scenarios:
+The suite currently contains nineteen golden scenarios:
 
 - `opening-ceremony.yaml` checks Event Narrator on a resolved initial coupling.
 - `day1-intro-round.yaml` checks the first communal intro beat and pending
@@ -308,7 +313,7 @@ sort scenarios, jump by scenario chip, and expand only failing turns.
 Run the deterministic/mock golden pack:
 
 ```bash
-python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
+uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
 ```
 
 The runner parallelizes by scenario with `min(number_of_scenarios, 8)` workers
@@ -318,7 +323,7 @@ by default. Use `--max-workers 1` for a sequential diagnostic run. The CLI,
 Run a live judged scenario with `gpt-5.4-mini`, high reasoning, detailed summaries:
 
 ```bash
-python -m src.game.cli llm-eval \
+uv run python -m src.game.cli llm-eval \
   --scenarios evals/llm/scenarios/conversation-continuity-exit.yaml \
   --out review-packet/llm-eval-real-continuity \
   --real-llm \
@@ -345,15 +350,18 @@ The LiveKit branch proved two key implementation details:
 - independent golden-seeded turn replay avoids multi-turn flakiness while still exercising production code
 - reasoning summaries make model mistakes inspectable without relying on vibes
 
-For this game, the first implementation step is therefore model/trace instrumentation. The second step is a YAML scenario runner. The third step is judge-assisted reports.
+## Maintenance Rules
 
-## Implementation Order
-
-1. Centralize model settings and reasoning kwargs for all live agents.
-2. Capture reasoning summaries and parsed outputs into turn traces.
-3. Render agent traces inside `report packet`.
-4. Add scenario YAML for S1 and S2.
-5. Add deterministic check runner over recorded turns.
-6. Add judge prompt/report layer after deterministic checks are stable.
-7. Expand to pull/interruption/background/ceremony scenarios.
-8. Add mini-game and ending scenarios when those systems exist.
+- New player-facing systems that cross an agent boundary need at least one
+  scenario.
+- New action kinds need expected tool/report coverage if they show up in eval
+  reports.
+- Mini-games should add scenarios only after their deterministic engine contract
+  exists.
+- Scenarios should use authored goldens for intent, not vague prose like "make
+  this good."
+- Prefer structural deterministic checks over judge checks.
+- Keep judge checks for voice, continuity, specificity, emotional readability,
+  and narrative faithfulness.
+- When a scenario is no longer accurate, update or delete it in the same change
+  that changed the game behavior. Do not support old scenario shapes.

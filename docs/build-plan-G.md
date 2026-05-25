@@ -1,5 +1,8 @@
 # Build Plan: Phase G — Make It Feel Like A Game
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 F3 built the conversation system but landed two design drifts: follow-up menus show full dialogue lines (should be short Sims-style labels), and follow-up choices have no mechanical consequence. Phase G fixes both, adds the memory + gossip layer the game has always needed, and ends with one real playthrough as the deliverable instead of three policy scripts and a 1000-seed sim.
 
 Read [`ENGINEERING.md`](../ENGINEERING.md), [`docs/qa-strategy.md`](qa-strategy.md), and ADRs in [`docs/decisions/`](decisions/) before each sub-phase. Re-read [05-Interaction-System.md](../05-Interaction-System.md), [07-Gossip-And-Information.md](../07-Gossip-And-Information.md), and [09-Social-Dynamics.md](../09-Social-Dynamics.md) — they are the design source for G1-G5.

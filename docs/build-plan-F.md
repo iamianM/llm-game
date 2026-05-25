@@ -1,5 +1,8 @@
 # Build Plan: Phase F — The Conversation System
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 This is the corrective plan that builds the actual game described in [05-Interaction-System.md](../05-Interaction-System.md), [11-Conversation-Flow.md](../11-Conversation-Flow.md), and [03-LLM-Architecture.md](../03-LLM-Architecture.md). The deterministic engine from A2-E is the substrate; this phase builds the conversational layer that sits on top of it — the layer the player actually experiences.
 
 Read [`ENGINEERING.md`](../ENGINEERING.md), [`docs/qa-strategy.md`](qa-strategy.md), and every ADR in [`docs/decisions/`](decisions/) before each sub-phase. Also re-read the three design docs cited above.

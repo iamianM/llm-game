@@ -21,6 +21,14 @@ groups:
       - AGENTS.md
       - ENGINEERING.md
       - docs/decisions/0013-balance-data-boundary.md
+      - docs/minigame-system.md
+      - docs/minigames/README.md
+      - docs/minigames/compatibility-quiz.md
+      - docs/minigames/couples-quiz.md
+      - docs/minigames/heart-rate.md
+      - docs/minigames/lie-detector.md
+      - docs/minigames/snog-marry-pie.md
+      - docs/minigames/final-couples.md
 
   - id: checkpoint_replay_contract
     paths:
@@ -62,3 +70,65 @@ groups:
       - docs/llm-eval-system.md
       - docs/qa-strategy.md
       - evals/llm/scenarios/FORMAT.md
+
+  - id: current_planning
+    paths:
+      - docs/current-plan.md
+      - AGENTS.md
+    docs:
+      - AGENTS.md
+      - docs/current-plan.md
+
+  - id: core_gameplay_loop
+    paths:
+      - src/game/engine/turn.py
+      - src/game/engine/turn_*.py
+      - src/game/engine/phases.py
+      - src/game/engine/time_budget.py
+      - src/game/engine/ceremonies.py
+      - src/game/engine/producer_events.py
+      - src/game/engine/casa_amor.py
+      - src/game/engine/final_vote.py
+      - src/game/engine/proposals.py
+      - src/game/engine/pull.py
+      - src/game/engine/interruptions.py
+      - src/game/engine/hideaway.py
+      - src/game/engine/gather.py
+    docs:
+      - AGENTS.md
+      - docs/current-plan.md
+      - docs/qa-strategy.md
+      - 08-Daily-Loop.md
+      - 09-Social-Dynamics.md
+      - 10-Elimination-System.md
+      - 12-Challenges-And-Events.md
+
+  - id: knowledge_foundation
+    paths:
+      - src/game/state/traits.py
+      - src/game/engine/knowledge.py
+      - src/game/engine/gossip.py
+      - src/game/engine/heart_throb_brief.py
+      - src/game/content/trait_library.py
+      - src/game/content/curated_cast.json
+      - src/game/agents/trait_generator.py
+      - src/game/agents/prompts/trait_generator.md
+    docs:
+      - docs/phase5-0-knowledge-foundation.md
+      - docs/current-plan.md
+      - 07-Gossip-And-Information.md
+      - 12-Challenges-And-Events.md
+
+  - id: review_packet_tooling
+    paths:
+      - src/game/reporting/**
+      - src/game/cli/commands/report.py
+      - src/game/cli/commands/report_compare.py
+      - src/game/cli/commands/review.py
+      - src/game/cli/commands/play_session.py
+      - src/game/state/bookmarks.py
+      - src/game/engine/bookmarks.py
+    docs:
+      - docs/current-plan.md
+      - docs/qa-strategy.md
+      - docs/subagent-cli-playtest.md

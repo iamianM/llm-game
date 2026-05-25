@@ -1,5 +1,8 @@
 # Build Plan: Phase H4 — Hideaway + Couple Strength
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 Couples currently exist as a tuple of two ids and a `formed_on_day` date. There's no concept of a couple's *strength* and no reward for investing in one partner. H4 adds Couple Strength as a derived stat and unlocks the Hideaway — a private overnight stay reserved for high-strength couples. Bombshell stealing becomes properly mechanized: a steal succeeds against couple strength, not against vibes.
 
 **Design sources:** [12-Challenges-And-Events.md § The Hideaway](../12-Challenges-And-Events.md), [02-Core-Mechanics.md § Couple Strength](../02-Core-Mechanics.md), [10-Elimination-System.md § Bombshell System](../10-Elimination-System.md).

@@ -1,5 +1,8 @@
 # Build Plan: Phase H9 — Game Feel Pass
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 H1–H8 built the game's full skeleton: arc, content, autonomy, pacing. The first real playthrough surfaced twelve game-feel issues. H9 is the focused pass that turns the working game into a *fun* game.
 
 This phase is mostly **prompt refinement, context enrichment, and a handful of state/engine changes**. No new agents. No new architectural patterns. The substrate exists; H9 makes the substrate produce better output.

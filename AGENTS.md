@@ -6,7 +6,7 @@
 
 ---
 
-## 🎯 Project Overview
+## Project Overview
 
 **Working Title**: "Isle of Echoes" (or TBD)
 
@@ -57,7 +57,7 @@ The previous Vercel AI SDK plan has been superseded. The current browser impleme
 - Pure engine tests with no LLM calls
 - Scenario/golden-run tests using fixed seeds and action scripts
 - Mock-LLM mode for most agent-adjacent tests
-- Later: judge-based narration quality tests
+- Golden LLM evals through the production `run_turn` path, with optional live-agent and judge-assisted review packets
 
 ### Architecture
 
@@ -106,14 +106,18 @@ Rule of thumb:
 - **Complex database** - SQLite is enough for local saves and replay.
 - **LLM-driven mechanics** - The LLM narrates resolved outcomes; code owns numbers.
 
-### First Playable Milestone
+### Current Implementation Snapshot
 
-1. `GameState`, seeded RNG, one location, three NPCs
-2. `available_actions()` returns a small set of actions
-3. `apply_action()` returns deterministic `MechanicalResult`
-4. CLI plays through one day and can replay from seed
-5. Narrator agent converts `MechanicalResult` to prose
-6. FastAPI and Next.js UI call the same engine
+The repo is past the first playable milestone. The current POC has:
+
+1. A deterministic Python engine with seeded RNG, typed state, action validation, phase clocks, couples, proposals, interruptions, pulls, hideaway, Casa Amor, challenges, final vote, knowledge/fact state, background villa life, and review bookmarks.
+2. A typed Python agent layer for Islander Voice, Contextual Options, Event Narrator, Conversation Curator, Villa Orchestrator, Background Dialogue, Contextual Gossip, and Trait Generator.
+3. A CLI that supports interactive play, deterministic verification, persisted playtest sessions, checkpoints, trace replay, review notes, report packets, and golden LLM evals.
+4. A FastAPI adapter and Next.js browser client that stay thin over the Python engine.
+5. Static review packets for playthroughs and golden eval reports.
+6. Mock, deterministic, and opt-in live LLM gates for different kinds of confidence.
+
+Current active planning lives in [docs/current-plan.md](docs/current-plan.md). Finished systems should be documented as present-tense behavior in their owning system docs, not preserved as completed checklist items.
 
 ---
 
@@ -158,24 +162,29 @@ Every feature that touches an agent boundary or a player-facing beat should ship
 
 The CLI is the program surface. The Makefile is a shortcut layer.
 
-- Real operations live under `python -m src.game.cli ...`.
+- Real operations live under `uv run python -m src.game.cli ...`.
 - Make targets wrap CLI commands or common test commands.
 - Make targets should not duplicate business logic.
 - AI assistants should prefer explicit CLI commands when debugging.
 
-Current planned CLI surface:
+Current CLI surface:
 
 ```bash
-python -m src.game.cli play
-python -m src.game.cli verify-script --actions tests/scenarios/fixtures/day1-happy-path.yaml
-python -m src.game.cli play --replay .game_traces/<trace>.json
-python -m src.game.cli verify --all
-python -m src.game.cli verify --playthrough .game_traces/<trace>.json
-python -m src.game.cli snapshot inspect <file>
-python -m src.game.cli snapshot hash <file>
-python -m src.game.cli content lint
-python -m src.game.cli trace inspect <file>
-python -m src.game.cli report packet --trace .game_traces/<trace>.json --out review-packet
+uv run python -m src.game.cli play
+uv run python -m src.game.cli play-session ...
+uv run python -m src.game.cli review ...
+uv run python -m src.game.cli verify-script --actions tests/scenarios/fixtures/day1-happy-path.yaml
+uv run python -m src.game.cli play --replay .game_traces/<trace>.json
+uv run python -m src.game.cli verify --all
+uv run python -m src.game.cli verify --playthrough .game_traces/<trace>.json
+uv run python -m src.game.cli snapshot inspect <file>
+uv run python -m src.game.cli snapshot hash <file>
+uv run python -m src.game.cli content lint
+uv run python -m src.game.cli trace inspect <file>
+uv run python -m src.game.cli report packet --trace .game_traces/<trace>.json --out review-packet
+uv run python -m src.game.cli report compare --checkpoint <checkpoint> --trace-a <trace-a> --trace-b <trace-b> --out <html-path>
+uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
+uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-real --real-llm --judge
 ```
 
 ### Action Vocabulary
@@ -195,14 +204,26 @@ Snapshots and action scripts are first-class debugging tools:
 
 The CLI, browser, and tests must be able to start from the same snapshot and produce the same state hash after the same action script.
 
-Planned in-session debug commands for CLI and browser dev mode:
+Current interactive CLI slash commands:
 
-- Implemented in A1: `/state`, `/hash`, `/help`, `/quit`
-- Planned: `/save <name>`, `/load <name>`, `/record <name>`, `/stop`, `/state --debug`, `/trace`
+- `/state` prints the visible state.
+- `/background` prints recent background villa activity.
+- `/checkpoint <name>` saves a named checkpoint for branch testing.
+- `/hash` prints the deterministic state hash.
+- `/help` prints the available commands.
+- `/quit` exits the session.
+
+Checkpoint resume and branch comparison are CLI commands rather than in-session slash commands:
+
+```bash
+uv run python -m src.game.cli play --from-checkpoint <checkpoint> --branch-name <name>
+uv run python -m src.game.cli play-session resume --name <name> --from-checkpoint <checkpoint>
+uv run python -m src.game.cli report compare --checkpoint <checkpoint> --trace-a <trace-a> --trace-b <trace-b> --out <html-path>
+```
 
 ---
 
-## 📚 Documentation Philosophy
+## Documentation Philosophy
 
 This repo follows a **high-context-efficiency** approach optimized for AI-assisted development.
 
@@ -214,7 +235,7 @@ This repo follows a **high-context-efficiency** approach optimized for AI-assist
 - **Design docs are canon; implementation rules live in ENGINEERING.md**
 - **Runtime content is structured markdown; mechanics live in Python**
 - **Each file should be 300-800 lines** - If smaller, it probably belongs in another file
-- **Use ## headers heavily** - For AI navigation via grep
+- **Use ## headers heavily** - For AI navigation via `rg`
 
 **When to Create a New File:**
 - ✅ When a system is **fully designed** (not "we might do X or Y")
@@ -243,7 +264,7 @@ Location: `/home/azureuser/pachinko-pop-docs`
 
 ---
 
-## 🎮 Current Game Design
+## Current Game Design
 
 ### Format Decision
 
@@ -428,43 +449,18 @@ Temporary boons earned during a season:
 
 ---
 
-## 🗺️ Implementation Roadmap
+## Implementation Roadmap
 
-The design vault is no longer in concept-solidification mode. The current priority is a tiny, deterministic, replayable CLI loop before any large content authoring or browser work.
+The active roadmap lives in [docs/current-plan.md](docs/current-plan.md). Keep `AGENTS.md` as the entry point and orientation layer, not the backlog.
 
 ### Build Order
 
-1. **Engine spine**
-   - Implement `src/game/state/rng.py`
-   - Define minimal `GameState`, `PlayerAction`, `MechanicalResult`, and `TurnResult`
-   - Make every random outcome reproducible from seed + action script
+1. Make the current playable loop easier to evaluate and improve from real play.
+2. Keep CLI, FastAPI, browser, scenarios, traces, and review packets on the same engine path.
+3. Build new gameplay only when it can be protected by deterministic tests, scenario fixtures, and, when agent behavior matters, golden LLM evals.
+4. When a feature lands, update the owning system doc so it describes present behavior. Do not leave completed phase checklists as the main source of truth.
 
-2. **One playable day**
-   - One location
-   - Three NPCs
-   - A small action set: talk, flirt, listen, leave, advance phase
-   - Deterministic relationship deltas and phase movement
-
-3. **CLI first**
-   - `play` runs an interactive local session
-   - `verify-script` checks seed + action scripts
-   - `play --replay` reproduces recorded trace packages
-   - Debug output shows rolls, deltas, and current state
-
-4. **Tests before agents**
-   - Pure engine tests with no LLM calls
-   - Golden scenario tests for fixed seeds
-   - Smoke tests for content loading once real content exists
-
-5. **Narrator second**
-   - Add the single v0 Narrator agent after the deterministic loop works
-   - The Narrator receives `MechanicalResult` and visible context only
-   - Mock narration remains the default for tests
-
-6. **Browser last**
-   - Maintain the Next.js client under `web/`
-   - It renders visible state and submits actions to FastAPI
-   - Zustand remains UI-only
+Historical build plans under `docs/build-plan-*.md` are useful implementation archaeology, but they are not the current roadmap. Use them for context, then check `docs/current-plan.md`, `ENGINEERING.md`, `docs/qa-strategy.md`, and the relevant system docs before changing code.
 
 ### Documentation Rules Going Forward
 
@@ -477,7 +473,7 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 ---
 
-## 🤝 AI Assistant Instructions
+## AI Assistant Instructions
 
 ### Your Role
 
@@ -545,7 +541,7 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 ---
 
-## 🎯 Quick Reference
+## Quick Reference
 
 ### Key Innovations
 
@@ -606,66 +602,49 @@ The design vault is no longer in concept-solidification mode. The current priori
 
 ---
 
-## 🎯 Current Status: Core Systems Defined
+## Current Status
 
-**Phase:** Implementation scaffolding started. Core systems are designed; next build target is the deterministic Python CLI loop.
+**Phase:** Playable POC hardening. The repo has a deterministic game engine, CLI, FastAPI adapter, browser client, review packets, and a golden LLM eval system. The current work is making the loop better through real play, stronger evals, and focused feature slices.
 
-**What's Been Decided:**
-- ✅ **Genre:** Social Sandbox with Seasonal Runs (NOT hardcore roguelite)
-- ✅ **Format:** Love Island structure (locked in)
-- ✅ **Run length:** 2-3 hours (15-20 key days, not full 42)
-- ✅ **Target audience:** General/women, casual-friendly, low failure tolerance
-- ✅ **LLM role:** Narrative flavor and personality, NOT game mechanics
-- ✅ **Core philosophy:** Algorithm calculates outcomes, LLM writes dialogue
-- ✅ **Interaction model:** Two-tier hybrid (static intent menu → dynamic contextual follow-ups)
-- ✅ **Conversation system:** LLM generates both player dialogue and NPC response in single call
-- ✅ **Conversation endings:** Organic (hybrid algorithm + LLM decides when NPC leaves, no hard cap)
-- ✅ **Islander count:** 8 Islanders (4 couples), peak at 14-16 with bombshells/Casa Amor
-- ✅ **Personality system:** Big 5 OCEAN + Attachment Styles + Type on Paper
-- ✅ **Information architecture:** Hybrid visibility (map shown, dialogue hidden)
-- ✅ **Location system:** Discrete locations with context-specific actions
-- ✅ **No save scumming:** Choices locked in
-- ✅ **Stats:** 5 fixed stats (Charm, Banter, EQ, Graft, Loyalty) set at character creation (3-9 range, 30 points)
-- ✅ **Stat gating:** Advanced options locked behind stat thresholds (e.g., Graft 5 = Bold category)
-- ✅ **Social events:** Round-table sharing events (6 types) replace free days
-- ✅ **Setup flow:** Archetype selection → stat allocation → character card examination → reroll system
-- ✅ **Challenges:** All non-interactive (algorithm-based), no physical challenges
-- ✅ **Audience meter:** Visible individual (1-8) and couple (1-4) rankings with trajectory arrows
+**Product direction:**
+- **Genre:** Social sandbox with seasonal runs, not a punishing hardcore roguelite.
+- **Format:** Love Island-style villa structure.
+- **Target run length:** 2-3 hours, roughly 15-20 key days once the full game is built.
+- **Target audience:** Casual-friendly, drama-forward, emotionally legible, and low on opaque failure.
+- **LLM role:** Personality, dialogue, narration, summaries, and authored-feeling texture. The LLM does not own mechanics.
+- **Engine role:** State, RNG, action legality, relationship deltas, votes, eliminations, phase movement, and rewards.
+- **Interaction model:** Static intent/action surface plus dynamic contextual follow-ups.
+- **Information model:** The player sees the villa map, relationship/audience signals, known facts, and memories; hidden truth remains engine-side.
+- **Testing model:** Deterministic tests protect mechanics; golden LLM evals protect agent behavior and reviewability.
 
-**Documentation Structure:**
+**Current documentation model:**
 
-| File | Contents | Lines | Status |
-|------|----------|-------|--------|
-| **Love-Island-Reference.md** | Complete show breakdown, what works/doesn't | ~800 | ✅ Reference |
-| **00-Game-Start-And-Setup.md** | Character creation, archetypes, stats, rerolls, meta-progression | ~900 | ✅ Complete |
-| **01-Game-Vision.md** | Genre, philosophy, inspiration, why this works | ~450 | ✅ Complete |
-| **02-Core-Mechanics.md** | Stats (fixed 3-9), relationships, interactions, formulas | ~1115 | ✅ Complete |
-| **03-LLM-Architecture.md** | Multi-AI system, code vs LLM separation | ~750 | ✅ Complete |
-| **04-State-Management.md** | Data structures, schemas, state flow | ~800 | ✅ Complete |
-| **05-Interaction-System.md** | Conversation system, contextual follow-ups, organic endings | ~1508 | ✅ Complete |
-| **06-Location-System.md** | Villa layout, actions, spatial gameplay | ~600 | ✅ Complete |
-| **07-Gossip-And-Information.md** | Knowledge systems, information architecture | ~650 | ✅ Complete |
-| **08-Daily-Loop.md** | Run structure, pacing, social events | ~1090 | ✅ Complete |
-| **09-Social-Dynamics.md** | Interruptions, group chats, pulls for chat | ~750 | ✅ Complete |
-| **10-Elimination-System.md** | Producer AI, recouplings, voting, bombshells, weekly flow | ~1269 | ✅ Complete |
-| **11-Conversation-Flow.md** | Contextual follow-ups, organic endings, two-tier system | ~800 | ✅ Complete |
-| **12-Challenges-And-Events.md** | Challenges, social events, Casa Amor, special events | ~1110 | ✅ Complete |
-| **ENGINEERING.md** | Non-negotiable implementation rules | ~100 | ✅ Active |
-| **docs/qa-strategy.md** | QA layers, snapshots, traces, and parity plan | ~100 | ✅ Active |
-| **docs/decisions/** | ADRs for implementation choices and architecture tradeoffs | 11 files | ✅ Active |
+| Need | Read |
+|------|------|
+| Entry point and engineering posture | `AGENTS.md` |
+| Non-negotiable rules | `ENGINEERING.md` |
+| Active priorities and planning cycle | `docs/current-plan.md` |
+| QA gates and trace strategy | `docs/qa-strategy.md` |
+| LLM eval system | `docs/llm-eval-system.md` and `evals/llm/scenarios/FORMAT.md` |
+| Design canon | `00-Game-Start-And-Setup.md` through `12-Challenges-And-Events.md`, plus `Love-Island-Reference.md` |
+| Implementation decisions | `docs/decisions/` |
+| Browser/API contract | `docs/phase3-fastapi-contract.md`, `docs/phase3-ui-spec.md`, `docs/phase3-acceptance-and-testing.md` |
+| Historical build context | `docs/build-plan-*.md`, `docs/build-log.md`, and `docs/engine-issues-from-h11-review.md` |
 
 ---
 
-## 🔍 Finding Information
+## Finding Information
 
 **High-level questions:**
-- "What is this game?" → **AGENTS.md** (this file)
-- "How does Love Island actually work?" → **Love-Island-Reference.md**
-- "Why Love Island?" → **01-Game-Vision.md**
-- "What's the tech stack?" → **AGENTS.md** ## Tech Stack
-- "What engineering rules apply?" → **ENGINEERING.md**
-- "What checks and tests matter?" → **docs/qa-strategy.md**
-- "Why Python/Next.js/agent split?" → **docs/decisions/**
+- "What is this game?" - `AGENTS.md` (this file)
+- "What are we working on now?" - `docs/current-plan.md`
+- "How does Love Island actually work?" - `Love-Island-Reference.md`
+- "Why Love Island?" - `01-Game-Vision.md`
+- "What's the tech stack?" - `AGENTS.md` ## Tech Stack
+- "What engineering rules apply?" - `ENGINEERING.md`
+- "What checks and tests matter?" - `docs/qa-strategy.md`
+- "How do LLM evals work?" - `docs/llm-eval-system.md`
+- "Why Python/Next.js/agent split?" - `docs/decisions/`
 
 **System-specific questions:**
 
@@ -707,18 +686,18 @@ The design vault is no longer in concept-solidification mode. The current priori
 | "How do votes and eliminations work?" | 10-Elimination-System.md | ## Voting and Eliminations |
 | "How does audience ranking work?" | 10-Elimination-System.md | ## Audience/Public Perception System |
 
-**Use grep to find specific topics:**
+**Use `rg` to find specific topics:**
 ```bash
 # Find all mentions of chemistry
-grep -rn "chemistry" *.md
+rg -n "chemistry" *.md
 
 # Find where relationship thresholds are defined
-grep -n "threshold" 05-Interaction-System.md
+rg -n "threshold" 05-Interaction-System.md
 
 # Find personality system details
-grep -n "Big 5" 03-LLM-Architecture.md
+rg -n "Big 5" 03-LLM-Architecture.md
 ```
 
 ---
 
-*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Core systems are now fully documented in 10 comprehensive files plus Love Island reference. Ready for implementation planning.*
+*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Use it for orientation, then use the owning system doc and `docs/current-plan.md` for current implementation work.*

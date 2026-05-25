@@ -1,5 +1,8 @@
 # Build Plan: Phase H1 — Win Condition + Character Creation
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 The current run starts with hardcoded player stats and ends on day 6 with no outcome. The player has no ownership of their character at the beginning and no stakes at the end. H1 fixes both. Pre-game flow gives the player a real character. Day 6 evening fires a final vote ceremony that resolves the entire run into a named outcome.
 
 After H1 the game has a start and an end. Every subsequent phase builds toward making the middle worthwhile.

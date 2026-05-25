@@ -1,5 +1,8 @@
 # Build Plan: Phase H7 — AI Self-Play Validation
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 H1-H5 build the game. H6 makes it readable. H7 makes it self-validating. A new **Player Autopilot** agent picks actions strategically with the goal of winning the final vote. Recorded autopilot traces become a reproducible quality signal: when prompts change, we replay the same autopilot against the same seed and see whether the game still feels coherent.
 
 **Design sources:** None directly — H7 is process infrastructure. Pattern reference: balance simulation in [`src/game/reporting/balance.py`](../src/game/reporting/balance.py), but with an LLM-driven policy instead of random.

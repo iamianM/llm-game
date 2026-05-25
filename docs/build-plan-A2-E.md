@@ -1,5 +1,8 @@
 # Build Plan: Phases A2 through E
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 Superseded by later Phase G and G8 work. This file is historical context only; use current Makefile targets, `docs/build-plan-G.md`, and `docs/build-plan-G8.md` for active implementation details.
 
 This is the hand-off document Codex executes against to take the game from the Phase A1 starting slice to a reviewable v0. Read [`ENGINEERING.md`](../ENGINEERING.md), [`docs/qa-strategy.md`](qa-strategy.md), and every ADR in [`docs/decisions/`](decisions/) before each phase.

@@ -1,5 +1,8 @@
 # Build Plan: Phase H10 — Engine Architecture Refresh
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 H1–H9 built the full game and fixed game feel. H10 cleans up the agent architecture that's been quietly costing us quality and money. Four targeted refactors: native chat-history continuity for in-conversation calls, a three-output Curator, model routing rebalance plus parallel background calls, and a three-source options model that shifts most option generation to code with a thin LLM contextual layer.
 
 No new gameplay surface. Same six agents, smarter wiring.
