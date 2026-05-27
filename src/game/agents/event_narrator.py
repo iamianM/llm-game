@@ -204,12 +204,25 @@ def _render_minigame_details(state: GameState) -> str:
         return ""
     # Only round-based minigames carry meaningful per-round structure
     # (legacy single-roll resolutions don\'t populate the `rounds` list).
+    # Render every islander id as "id (Name)" so the narrator can never
+    # accidentally print a raw id like "blake_start" — it has the human
+    # name right there in the same token.
+    def _id_label(islander_id: str) -> str:
+        name = _name_for(state, islander_id) if islander_id and islander_id != "player" else (
+            "the player" if islander_id == "player" else ""
+        )
+        if not name or name == islander_id:
+            return islander_id
+        return f"{islander_id} ({name})"
+
+    participants_str = ", ".join(_id_label(p) for p in challenge.participants)
     lines = [
         f"Minigame: {challenge.kind}",
         f"  classification: {challenge.classification}",
         f"  total_points: {challenge.total_points}",
         f"  audience_delta: {challenge.audience_delta}",
-        f"  participants: {', '.join(challenge.participants)}",
+        f"  participants: {participants_str}",
+        "  RULE: when you mention any islander, use the Name in parens, never the raw id",
         "  rounds:",
     ]
     for round_ in challenge.rounds:
@@ -225,15 +238,23 @@ def _render_minigame_details(state: GameState) -> str:
         elif round_.trait_key:
             round_meta.append(f"flavor_key={round_.trait_key}")
         if round_.target_id:
-            round_meta.append(f"target={round_.target_id}")
+            round_meta.append(f"target={_id_label(round_.target_id)}")
         meta_str = (" (" + ", ".join(round_meta) + ")") if round_meta else ""
         lines.append(
             f"    r{round_.index + 1} [{outcome}] {round_.stem!r}{meta_str}"
         )
         lines.append(f"        chose {chosen_label}; correct was {correct_label}; points {round_.points}")
         for reveal in round_.reveals:
-            payload_summary = ", ".join(f"{k}={v}" for k, v in reveal.payload.items())
-            lines.append(f"        reveal[{reveal.kind}] subject={reveal.subject_id} {payload_summary}")
+            payload_parts = []
+            for k, v in reveal.payload.items():
+                if k == "observer_id" and isinstance(v, str):
+                    payload_parts.append(f"observer={_id_label(v)}")
+                else:
+                    payload_parts.append(f"{k}={v}")
+            payload_summary = ", ".join(payload_parts)
+            lines.append(
+                f"        reveal[{reveal.kind}] subject={_id_label(reveal.subject_id)} {payload_summary}"
+            )
     return "\n".join(lines)
 
 

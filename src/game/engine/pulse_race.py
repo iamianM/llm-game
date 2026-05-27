@@ -105,18 +105,77 @@ def _partner_surprise(state: GameState) -> tuple[str | None, int]:
 
 
 def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[MinigameRound]:
-    """Build the reveal matrix and the optional reaction round.
+    """Build a 3-round 'read the room' Pulse Race.
 
-    Returns either one round (the reaction) or zero rounds (flat week,
-    classification will be ``failure`` with no player input required).
+    Pulse Race is the show's chemistry-reveal moment: every islander wears a
+    monitor and reactions are projected publicly. We turn that into a
+    playable beat — the player tries to *guess* who pinged hardest at whom.
+    The "answer" for every round is the engine's actual highest-chemistry
+    pairing for that performer; three plausible non-answers fill the rest
+    of the menu. Right guesses surface KnownFacts and tilt audience favour;
+    wrong guesses surface the same matrix but read as a misread.
+
+    Round 1: who climbed highest when YOU did your bit.
+    Round 2: who climbed highest when your PARTNER did theirs.
+    Round 3: who YOU spiked for the most (excluding partner). Can include
+             your partner as a decoy so a loyal pick "wholesomely wrong"
+             still reads.
     """
-    bal = load_minigame_balance().heart_rate
-    surprise_target, surprise_chem = _surprise_target_id(state)
     matrix = _matrix_entries(state)
+    reveals = _matrix_reveals(matrix)
+    cast_ids = [
+        islander.id
+        for islander in sorted(state.islanders, key=lambda i: i.id)
+        if not islander.eliminated and islander.id != "player"
+    ]
+    rounds: list[MinigameRound] = []
 
-    # Build matrix reveals (chemistry_rank) on the synthetic announce round
-    # if there's no surprise high enough; otherwise attach them to the
-    # reaction round so the browser/CLI render them before the choices.
+    # Round 1 — observers ranked by chemistry toward the player.
+    rounds.append(_build_guess_round(
+        state,
+        index=0,
+        rng=rng.fork("pulse_race::round_0"),
+        prompt_id=f"pulse_race_who_spiked_for_player_{state.day}",
+        stem="When you did your reveal, whose pulse climbed the highest?",
+        ranked=_observers_for_player(state, cast_ids),
+        decoys=cast_ids,
+    ))
+
+    # Round 2 — observers ranked by chemistry toward the partner.
+    if partner_id and partner_id != "player" and any(i.id == partner_id for i in state.islanders):
+        partner_name = find_islander(state, partner_id).name
+        ranked_partner = _observers_for_npc(state, partner_id, cast_ids)
+        rounds.append(_build_guess_round(
+            state,
+            index=1,
+            rng=rng.fork("pulse_race::round_1"),
+            prompt_id=f"pulse_race_who_spiked_for_partner_{state.day}",
+            stem=f"When {partner_name} did the bit, whose monitor climbed highest?",
+            ranked=ranked_partner,
+            decoys=[c for c in cast_ids if c != partner_id],
+        ))
+
+    # Round 3 — who the player's own pulse spiked for the most. Excludes
+    # nobody — the partner is a valid pick (the "stayed loyal" answer).
+    rounds.append(_build_guess_round(
+        state,
+        index=len(rounds),
+        rng=rng.fork("pulse_race::round_2"),
+        prompt_id=f"pulse_race_player_spiked_for_{state.day}",
+        stem="Whose bit made your own monitor jump the most?",
+        ranked=_player_chemistry_ranked(state, cast_ids),
+        decoys=cast_ids,
+    ))
+
+    # Stamp the reveal matrix onto the last round so the wrap UI surfaces
+    # the full chemistry table after the player commits their guesses.
+    if rounds:
+        rounds[-1] = rounds[-1].model_copy(update={"reveals": [*rounds[-1].reveals, *reveals]})
+    return rounds
+
+
+def _matrix_reveals(matrix: list[tuple[str, str, int, int]]) -> list[MinigameReveal]:
+    """Filter the chemistry matrix down to the entries strong enough to surface."""
     reveals: list[MinigameReveal] = []
     for performer, observer, bpm, chem in matrix:
         if chem < CHEMISTRY_KNOWN_THRESHOLD:
@@ -125,102 +184,128 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             MinigameReveal(
                 kind="chemistry_rank",
                 subject_id=performer,
-                payload={
-                    "observer_id": observer,
-                    "bpm": bpm,
-                    "chemistry": chem,
-                },
+                payload={"observer_id": observer, "bpm": bpm, "chemistry": chem},
             )
         )
+    return reveals
 
-    if surprise_target is None or surprise_chem < bal.thresholds.surprise_chemistry:
-        # Flat week — the matrix didn't surface anyone hot enough to be a
-        # surprise. The minigame still fires (the cast is rigged up), so give
-        # the player something meaningful to do with the calm: own it, stir
-        # it, or steady their partner. These all resolve into a "failure"
-        # classification at the engine level (no real spike) but the player
-        # pick shapes audience and the partner relationship.
-        partner_name = find_islander(state, partner_id).name if partner_id else "your partner"
-        return [
-            MinigameRound(
-                index=0,
-                prompt_id=f"pulse_race_flat_{state.day}",
-                target_id=partner_id,
-                trait_key=None,
-                tier=0,
-                mechanical=False,
-                stem=(
-                    "The Pulse Race plays out and nobody's reading hits a real spike. "
-                    f"The producers cut to {partner_name} watching you. How do you sell it?"
-                ),
-                choices=[
-                    MinigameChoice(
-                        id="lean_in",
-                        label=f"Pull {partner_name} closer and own the calm.",
-                        fact_value="lean_in",
-                        is_correct=True,
-                        distractor_source="generator",
-                    ),
-                    MinigameChoice(
-                        id="play_cool",
-                        label="Crack a joke about no one fancying you.",
-                        fact_value="play_cool",
-                        is_correct=True,
-                        distractor_source="generator",
-                    ),
-                    MinigameChoice(
-                        id="apologize",
-                        label=f"Reassure {partner_name} that this means it's solid.",
-                        fact_value="apologize",
-                        is_correct=True,
-                        distractor_source="generator",
-                    ),
-                ],
-                reveals=reveals,
-            )
-        ]
 
-    surprise_name = find_islander(state, surprise_target).name
-    choices = [
-        MinigameChoice(
-            id="lean_in",
-            label=f"Lean into it with {surprise_name}.",
-            fact_value="lean_in",
-            is_correct=True,
-            distractor_source="generator",
-        ),
-        MinigameChoice(
-            id="play_cool",
-            label="Play it cool — laugh it off.",
-            fact_value="play_cool",
-            is_correct=True,
-            distractor_source="generator",
-        ),
-        MinigameChoice(
-            id="apologize",
-            label=f"Apologise to your partner.",
-            fact_value="apologize",
-            is_correct=True,
-            distractor_source="generator",
-        ),
-    ]
-    return [
-        MinigameRound(
-            index=0,
-            prompt_id=f"pulse_race_react_{state.day}",
-            target_id=surprise_target,
+def _observers_for_player(state: GameState, cast_ids: list[str]) -> list[tuple[str, int]]:
+    """Return (islander_id, chemistry) sorted by who's most into the player."""
+    ranked: list[tuple[str, int]] = []
+    for islander_id in cast_ids:
+        target = find_islander(state, islander_id)
+        ranked.append((islander_id, target.relationship.chemistry))
+    ranked.sort(key=lambda pair: (-pair[1], pair[0]))
+    return ranked
+
+
+def _observers_for_npc(state: GameState, npc_id: str, cast_ids: list[str]) -> list[tuple[str, int]]:
+    """NPC-to-NPC chemistry isn't tracked directly; approximate from familiarity.
+
+    Returns (islander_id, score) sorted highest score first. The Pulse Race
+    spec accepts this estimate because Day 2 has no NPC-NPC chemistry
+    interactions to draw from.
+    """
+    npc = find_islander(state, npc_id)
+    ranked: list[tuple[str, int]] = []
+    for islander_id in cast_ids:
+        if islander_id == npc_id:
+            continue
+        other = find_islander(state, islander_id)
+        score = (npc.familiarity_with_player + other.familiarity_with_player) // 4
+        ranked.append((islander_id, score))
+    ranked.sort(key=lambda pair: (-pair[1], pair[0]))
+    return ranked
+
+
+def _player_chemistry_ranked(state: GameState, cast_ids: list[str]) -> list[tuple[str, int]]:
+    """Same as `_observers_for_player` for Day-2 since chemistry is symmetric."""
+    return _observers_for_player(state, cast_ids)
+
+
+def _build_guess_round(
+    state: GameState,
+    *,
+    index: int,
+    rng: SeededRng,
+    prompt_id: str,
+    stem: str,
+    ranked: list[tuple[str, int]],
+    decoys: list[str],
+) -> MinigameRound:
+    """Assemble one guess-the-spike round.
+
+    ``ranked`` is sorted highest-chemistry first; entry 0 is the correct
+    answer, entries 1-3 are the natural distractors. If there aren't enough
+    ranked candidates, pad from ``decoys``.
+    """
+    if not ranked:
+        # Edge case — no cast left. Build a single-choice round so the
+        # minigame stays valid.
+        return MinigameRound(
+            index=index,
+            prompt_id=prompt_id,
+            target_id=None,
             trait_key=None,
             tier=0,
             mechanical=False,
-            stem=(
-                f"Pulse spike. The room sees you and {surprise_name} pinned at "
-                f"{60 + int(surprise_chem * 0.4)} BPM. The cameras cut to your partner. "
-                "What do you do?"
-            ),
-            choices=choices,
-            reveals=reveals,
+            stem=stem,
+            choices=[MinigameChoice(id="acknowledge", label="The cast is empty.", is_correct=True, distractor_source="generator")],
         )
+    correct_id, correct_score = ranked[0]
+    pool: list[str] = []
+    for islander_id, _score in ranked[1:]:
+        if islander_id not in pool and islander_id != correct_id:
+            pool.append(islander_id)
+        if len(pool) >= 3:
+            break
+    if len(pool) < 3:
+        for islander_id in decoys:
+            if islander_id == correct_id or islander_id in pool:
+                continue
+            pool.append(islander_id)
+            if len(pool) >= 3:
+                break
+    pool = pool[:3]
+    choices: list[MinigameChoice] = [
+        MinigameChoice(
+            id="correct",
+            label=find_islander(state, correct_id).name,
+            fact_value=correct_id,
+            is_correct=True,
+            distractor_source="trait_card",
+        ),
     ]
+    for d_index, distractor_id in enumerate(pool):
+        choices.append(
+            MinigameChoice(
+                id=f"distractor_{d_index}",
+                label=find_islander(state, distractor_id).name,
+                fact_value=distractor_id,
+                is_correct=False,
+                distractor_source="trait_card",
+            )
+        )
+    _shuffle_choices(choices, rng)
+    return MinigameRound(
+        index=index,
+        prompt_id=prompt_id,
+        target_id=correct_id,
+        trait_key=None,
+        tier=0,
+        mechanical=False,
+        stem=stem,
+        choices=choices,
+    )
+
+
+def _shuffle_choices(items: list[MinigameChoice], rng: SeededRng) -> None:
+    """Deterministic in-place Fisher-Yates."""
+    n = len(items)
+    for i in range(n - 1, 0, -1):
+        j = rng.randint(0, i)
+        items[i], items[j] = items[j], items[i]
 
 
 def submit_choice(challenge: Challenge, choice_id: str) -> Challenge:
@@ -248,39 +333,26 @@ def has_more_rounds(challenge: Challenge) -> bool:
 
 def score_pulse_race(state: GameState, challenge: Challenge) -> Challenge:
     bal = load_minigame_balance().heart_rate
-    surprise_target, surprise_chem = _surprise_target_id(state)
-    partner_surprise_id, partner_surprise_chem = _partner_surprise(state)
-    if surprise_target is not None and surprise_chem >= bal.thresholds.surprise_chemistry:
+    # Score by how many guesses the player got right.
+    correct = 0
+    for round_ in challenge.rounds:
+        chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
+        if chosen is not None and chosen.is_correct:
+            correct += 1
+    total_rounds = len(challenge.rounds) or 1
+    if correct >= total_rounds:
         classification = "success"
-    elif partner_surprise_id is not None and partner_surprise_chem >= bal.thresholds.surprise_chemistry:
+    elif correct >= max(1, total_rounds // 2):
         classification = "partial"
     else:
         classification = "failure"
 
     audience = getattr(bal.audience, classification)
-    # Player-pick bonus/penalty
-    if challenge.rounds:
-        last = challenge.rounds[-1]
-        if last.chosen_id == "lean_in":
-            audience += bal.audience.lean_in_bonus
-        elif last.chosen_id == "apologize":
-            audience += bal.audience.apologize_penalty
     audience = apply_recovery_floor(state, audience, classification)
-
-    # Surface a coherent score: peak BPM observed in the matrix (deterministic,
-    # always >=60). Avoids the "success but 0 pts" confusion the narrator
-    # flagged in the live eval.
-    peak_bpm = 60
-    for round_ in challenge.rounds:
-        for reveal in round_.reveals:
-            if reveal.kind == "chemistry_rank":
-                bpm = int(reveal.payload.get("bpm", 0))
-                if bpm > peak_bpm:
-                    peak_bpm = bpm
 
     return challenge.model_copy(
         update={
-            "total_points": peak_bpm,
+            "total_points": correct,
             "classification": classification,
             "audience_delta": audience,
             "result": "failure" if classification == "failure" else "success",
@@ -288,32 +360,40 @@ def score_pulse_race(state: GameState, challenge: Challenge) -> Challenge:
     )
 
 
-def _apply_reaction_delta(state: GameState, choice_id: str | None, surprise_target: str | None) -> dict[str, RelationshipDelta]:
+def _guess_reaction_deltas(state: GameState, challenge: Challenge) -> dict[str, RelationshipDelta]:
+    """Apply small relationship deltas tied to each round's guess.
+
+    Right guesses about the player's own pulse (round 3) reward the picked
+    islander with chemistry +1 — the player publicly clocked the spike.
+    Right guesses about the partner (round 2) earn the partner trust +1.
+    Right guesses about who's into the player (round 1) earn audience
+    favour through the classification path; no per-NPC delta. Wrong
+    guesses produce no delta.
+    """
     deltas: dict[str, RelationshipDelta] = {}
-    if choice_id == "lean_in" and surprise_target is not None:
-        target = find_islander(state, surprise_target)
-        delta = RelationshipDelta(chemistry=3)
-        apply_relationship_delta(target, delta)
-        deltas[surprise_target] = delta
-    elif choice_id == "apologize":
-        partner = _partner_id(state)
-        if partner is not None:
+    partner = _partner_id(state)
+    for round_ in challenge.rounds:
+        chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
+        if chosen is None or not chosen.is_correct:
+            continue
+        prompt = round_.prompt_id
+        if "player_spiked_for" in prompt:
+            target_id = chosen.fact_value or ""
+            if target_id and target_id != "player":
+                target = find_islander(state, target_id)
+                delta = RelationshipDelta(chemistry=1)
+                apply_relationship_delta(target, delta)
+                deltas[target_id] = delta
+        elif "who_spiked_for_partner" in prompt and partner:
             target = find_islander(state, partner)
-            delta = RelationshipDelta(trust=2)
+            delta = RelationshipDelta(trust=1)
             apply_relationship_delta(target, delta)
             deltas[partner] = delta
-            if surprise_target is not None:
-                surprise = find_islander(state, surprise_target)
-                surprise_delta = RelationshipDelta(chemistry=-1)
-                apply_relationship_delta(surprise, surprise_delta)
-                deltas[surprise_target] = surprise_delta
     return deltas
 
 
 def apply_pulse_race_result(state: GameState, challenge: Challenge) -> Challenge:
-    surprise_target, _ = _surprise_target_id(state)
-    chosen = (challenge.rounds[-1].chosen_id if challenge.rounds else None)
-    deltas = _apply_reaction_delta(state, chosen, surprise_target)
+    deltas = _guess_reaction_deltas(state, challenge)
     state.player.public_perception = max(
         0, min(100, state.player.public_perception + challenge.audience_delta)
     )
@@ -342,4 +422,9 @@ def apply_pulse_race_result(state: GameState, challenge: Challenge) -> Challenge
                 confidence=1.0,
                 citation=f"pulse_race day {state.day}",
             )
-    return challenge.model_copy(update={"participants": ["player", surprise_target or _partner_id(state) or ""], "deltas": deltas})
+    # The minigame's "participants" surface to narrator + report packets;
+    # name the player plus the partner so wrap prose centers on the couple.
+    partner = _partner_id(state)
+    return challenge.model_copy(
+        update={"participants": ["player", partner or ""], "deltas": deltas}
+    )

@@ -1,11 +1,11 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "f8fbf0f09b4421e2ce2a1d56d07c56d17198fcac652b5266f32cb679bf417d48",
+  "state_hash": "eabb829c90fd03356e638d92431e428140bb41d6ac24f67bd1a46a2f9087c06e",
   "state": {
     "schema_version": 26,
     "seed": 7,
-    "turn_index": 256,
+    "turn_index": 258,
     "day": 4,
     "phase": "text",
     "phase_clock": {
@@ -113,14 +113,14 @@
           "durable": true
         },
         {
-          "id": "mem_049e40db83602928",
+          "id": "mem_c15bb9c4afa2329b",
           "holder_id": "player",
           "subject_id": "villa",
-          "content": "Pulse Race ended in failure (60 pts).",
+          "content": "Pulse Race ended in failure (0 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 98,
+          "formed_on_turn": 100,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -129,14 +129,14 @@
           "durable": true
         },
         {
-          "id": "mem_f478e7fbac037036",
+          "id": "mem_79de62412cb21585",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for group date invite.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 122,
+          "formed_on_turn": 124,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -145,14 +145,14 @@
           "durable": true
         },
         {
-          "id": "mem_4dc479e4eab39047",
+          "id": "mem_eef47f2f6ddf648c",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 123,
+          "formed_on_turn": 125,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -161,14 +161,14 @@
           "durable": true
         },
         {
-          "id": "mem_679d10a1643c9b43",
+          "id": "mem_5c7a995ed9096dce",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Couples Quiz tested Banter and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 159,
+          "formed_on_turn": 161,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -177,14 +177,14 @@
           "durable": true
         },
         {
-          "id": "mem_899d599c6dd95a22",
+          "id": "mem_281b10822ab76ffb",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Couples Quiz ended in failure (3 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 165,
+          "formed_on_turn": 167,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -193,14 +193,14 @@
           "durable": true
         },
         {
-          "id": "mem_968af68fa9a00ad4",
+          "id": "mem_cd8a37eaf25ab468",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for coupling warning.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 189,
+          "formed_on_turn": 191,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -209,14 +209,14 @@
           "durable": true
         },
         {
-          "id": "mem_909687981ec9aeed",
+          "id": "mem_65065f871d6f354c",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 190,
+          "formed_on_turn": 192,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -225,14 +225,14 @@
           "durable": true
         },
         {
-          "id": "mem_f484f6bd8665a361",
+          "id": "mem_b13cdd5a6b5133f3",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for a Pairing Ceremony.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 202,
+          "formed_on_turn": 204,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -241,14 +241,14 @@
           "durable": true
         },
         {
-          "id": "mem_9cef5166759d3cbf",
+          "id": "mem_99cdbe85012658bb",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Pairing Ceremony locks in the next couples.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
-          "formed_on_turn": 203,
+          "formed_on_turn": 205,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -257,14 +257,14 @@
           "durable": true
         },
         {
-          "id": "mem_03bec726a78747fa",
+          "id": "mem_b37e8f8cefc49c04",
           "holder_id": "player",
           "subject_id": "jordan_start",
           "content": "Heart Out: jordan_start leaves Sunset Bay.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
-          "formed_on_turn": 203,
+          "formed_on_turn": 205,
           "emotional_weight": 7,
           "tags": [
             "ceremony",
@@ -273,14 +273,14 @@
           "durable": true
         },
         {
-          "id": "mem_0094864001305f98",
+          "id": "mem_59da3715070a5fba",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Lie Detector tested Loyalty and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
-          "formed_on_turn": 227,
+          "formed_on_turn": 229,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -289,14 +289,14 @@
           "durable": true
         },
         {
-          "id": "mem_f5be54e4be50c68c",
+          "id": "mem_e1d1ab70e44ffe1b",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Lie Detector ended in partial (7 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
-          "formed_on_turn": 232,
+          "formed_on_turn": 234,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -305,14 +305,14 @@
           "durable": true
         },
         {
-          "id": "mem_fd07931d79de72f3",
+          "id": "mem_03b6baf6173e1ef8",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for Flush of Hearts.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
-          "formed_on_turn": 256,
+          "formed_on_turn": 258,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -598,7 +598,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 164,
+          "learned_on_turn": 166,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         },
@@ -608,7 +608,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 164,
+          "learned_on_turn": 166,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         },
@@ -618,7 +618,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 164,
+          "learned_on_turn": 166,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         }
@@ -798,14 +798,14 @@
             "durable": true
           },
           {
-            "id": "mem_7928f99695d1d1a0",
+            "id": "mem_2a1758fd1a2afd07",
             "holder_id": "chloe",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -814,14 +814,14 @@
             "durable": true
           },
           {
-            "id": "mem_c6127a3c274c2446",
+            "id": "mem_7c8f24fa8066e4f3",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -830,14 +830,14 @@
             "durable": true
           },
           {
-            "id": "mem_c99b8fa077ae1f25",
+            "id": "mem_f45736dfe8d4207e",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -846,14 +846,14 @@
             "durable": true
           },
           {
-            "id": "mem_3f448398011ce860",
+            "id": "mem_3c175f850f7e93af",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -862,14 +862,14 @@
             "durable": true
           },
           {
-            "id": "mem_19785ade1633d5ad",
+            "id": "mem_088728eb568d2c1e",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -878,14 +878,14 @@
             "durable": true
           },
           {
-            "id": "mem_dc43ace71734e1c7",
+            "id": "mem_a17bcd461784bf18",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -894,14 +894,14 @@
             "durable": true
           },
           {
-            "id": "mem_8daffa819265b896",
+            "id": "mem_265069366cc28adf",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -910,14 +910,14 @@
             "durable": true
           },
           {
-            "id": "mem_d3bca99f6b0163a5",
+            "id": "mem_e833d4a7f6f92913",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -926,14 +926,14 @@
             "durable": true
           },
           {
-            "id": "mem_fbb3d4c4fbd0cd6c",
+            "id": "mem_479ce2fcd136fd35",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -942,14 +942,14 @@
             "durable": true
           },
           {
-            "id": "mem_a67eab228153c970",
+            "id": "mem_c59b37080136c59d",
             "holder_id": "chloe",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -958,14 +958,14 @@
             "durable": true
           },
           {
-            "id": "mem_d602b729e5fb4fa6",
+            "id": "mem_41fa325c3f082b5b",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -974,14 +974,14 @@
             "durable": true
           },
           {
-            "id": "mem_324761ba1f48eae0",
+            "id": "mem_4fe358b4f377aab8",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -990,14 +990,14 @@
             "durable": true
           },
           {
-            "id": "mem_6c5c810289fa1a19",
+            "id": "mem_0f241fab7584151f",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1577,14 +1577,14 @@
             "durable": true
           },
           {
-            "id": "mem_cc4e738d08b3f2fc",
+            "id": "mem_4d8ec5ccccd64439",
             "holder_id": "maya",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1593,14 +1593,14 @@
             "durable": true
           },
           {
-            "id": "mem_4bb0edf86cef8e84",
+            "id": "mem_17f18db4a0020bc6",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1609,14 +1609,14 @@
             "durable": true
           },
           {
-            "id": "mem_eb614a1aad121987",
+            "id": "mem_03bc1ece98bbff7d",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1625,14 +1625,14 @@
             "durable": true
           },
           {
-            "id": "mem_d707e0bfb56fed3d",
+            "id": "mem_a41377787607583a",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1641,14 +1641,14 @@
             "durable": true
           },
           {
-            "id": "mem_ac76aaf07af30943",
+            "id": "mem_fa2542bdaec546f0",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1657,14 +1657,14 @@
             "durable": true
           },
           {
-            "id": "mem_3ace5d746a55923d",
+            "id": "mem_0ef099ae083c9d1a",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1673,14 +1673,14 @@
             "durable": true
           },
           {
-            "id": "mem_438c72c69144a72c",
+            "id": "mem_38929cd9429b9d3e",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1689,14 +1689,14 @@
             "durable": true
           },
           {
-            "id": "mem_51f862d7cb6d5aac",
+            "id": "mem_37002bc531220366",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1705,14 +1705,14 @@
             "durable": true
           },
           {
-            "id": "mem_13a85a5962d96218",
+            "id": "mem_1b1b1c1c390fd558",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1721,14 +1721,14 @@
             "durable": true
           },
           {
-            "id": "mem_9157ec9043cbaf1b",
+            "id": "mem_eb6178b151e9998c",
             "holder_id": "maya",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -1737,14 +1737,14 @@
             "durable": true
           },
           {
-            "id": "mem_a2055aec9493b078",
+            "id": "mem_d2fa2e62eb011f3b",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1753,14 +1753,14 @@
             "durable": true
           },
           {
-            "id": "mem_f1f2591fda7ce808",
+            "id": "mem_35e2a92a0d69e4f5",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1769,14 +1769,14 @@
             "durable": true
           },
           {
-            "id": "mem_8ad77e7b94f695af",
+            "id": "mem_c4027ea55acda7ed",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2356,14 +2356,14 @@
             "durable": true
           },
           {
-            "id": "mem_8f70edbc986ecbfd",
+            "id": "mem_23a4626f41956a8f",
             "holder_id": "liam",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2372,14 +2372,14 @@
             "durable": true
           },
           {
-            "id": "mem_93003b033ac8cab6",
+            "id": "mem_b5c82e7aa85819f2",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2388,14 +2388,14 @@
             "durable": true
           },
           {
-            "id": "mem_74ad8fe1edb16a2d",
+            "id": "mem_773ba5d7095c3ee4",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2404,14 +2404,14 @@
             "durable": true
           },
           {
-            "id": "mem_e687a67599e0ad7f",
+            "id": "mem_04d5eff6703acd88",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2420,14 +2420,14 @@
             "durable": true
           },
           {
-            "id": "mem_b382588b1f0509de",
+            "id": "mem_ccb8bc92af1a1920",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2436,14 +2436,14 @@
             "durable": true
           },
           {
-            "id": "mem_8499142c62f8da6b",
+            "id": "mem_464aa4a4c4b46cb4",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2452,14 +2452,14 @@
             "durable": true
           },
           {
-            "id": "mem_1caddb332e3d0720",
+            "id": "mem_2dccd7ebe28afed2",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2468,14 +2468,14 @@
             "durable": true
           },
           {
-            "id": "mem_2194500a7c5df9fb",
+            "id": "mem_f91e57637f31b3fd",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2484,14 +2484,14 @@
             "durable": true
           },
           {
-            "id": "mem_55bd6f6df1a56670",
+            "id": "mem_df66eed886425169",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2500,14 +2500,14 @@
             "durable": true
           },
           {
-            "id": "mem_9d094fcb71a2a072",
+            "id": "mem_f78dae5f1819fe21",
             "holder_id": "liam",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -2516,14 +2516,14 @@
             "durable": true
           },
           {
-            "id": "mem_1b61ddde2ecc5fc9",
+            "id": "mem_302ef15ce9e2e355",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2532,14 +2532,14 @@
             "durable": true
           },
           {
-            "id": "mem_e4072c2c5e044e8f",
+            "id": "mem_d6c3f8dcb9ba3361",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2548,14 +2548,14 @@
             "durable": true
           },
           {
-            "id": "mem_81b791db070a20d2",
+            "id": "mem_32a55486808cf947",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3135,14 +3135,14 @@
             "durable": true
           },
           {
-            "id": "mem_52642c0bee47c9d8",
+            "id": "mem_db5610d7010a006c",
             "holder_id": "sophie_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3151,14 +3151,14 @@
             "durable": true
           },
           {
-            "id": "mem_26035e0534c0dda0",
+            "id": "mem_d6169a834a2470d3",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3167,14 +3167,14 @@
             "durable": true
           },
           {
-            "id": "mem_a62016eb6d0ad85e",
+            "id": "mem_37b2f4785213b8d6",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3183,14 +3183,14 @@
             "durable": true
           },
           {
-            "id": "mem_61635aef968e88e2",
+            "id": "mem_64ca7b5fc1624aea",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3199,14 +3199,14 @@
             "durable": true
           },
           {
-            "id": "mem_4b05b984432f0f85",
+            "id": "mem_025dc87f77cf5804",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3215,14 +3215,14 @@
             "durable": true
           },
           {
-            "id": "mem_e42df0f37667059d",
+            "id": "mem_5f2784490642192c",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3231,14 +3231,14 @@
             "durable": true
           },
           {
-            "id": "mem_334b027981301b6c",
+            "id": "mem_30007dd24c896ec1",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3247,14 +3247,14 @@
             "durable": true
           },
           {
-            "id": "mem_05e381d26240c8eb",
+            "id": "mem_bc8111d9a8b29e74",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3263,14 +3263,14 @@
             "durable": true
           },
           {
-            "id": "mem_fe9ee73b1d61dc67",
+            "id": "mem_ceb275261da48f01",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3279,14 +3279,14 @@
             "durable": true
           },
           {
-            "id": "mem_31016ea6aee2c7e4",
+            "id": "mem_c05b316f3534be56",
             "holder_id": "sophie_start",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -3295,14 +3295,14 @@
             "durable": true
           },
           {
-            "id": "mem_2ffb329a347efc9d",
+            "id": "mem_0877dea6f0dbbff0",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3311,14 +3311,14 @@
             "durable": true
           },
           {
-            "id": "mem_dcd9c3359a394523",
+            "id": "mem_daa654fe1d55586b",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3327,14 +3327,14 @@
             "durable": true
           },
           {
-            "id": "mem_40cd9b2a0e851280",
+            "id": "mem_9a77261db1f33963",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3914,14 +3914,14 @@
             "durable": true
           },
           {
-            "id": "mem_42de5597dcefea11",
+            "id": "mem_b5af946a469f94cd",
             "holder_id": "nia_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3930,14 +3930,14 @@
             "durable": true
           },
           {
-            "id": "mem_8da36b60216f1961",
+            "id": "mem_2395c821e71f3fa7",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3946,14 +3946,14 @@
             "durable": true
           },
           {
-            "id": "mem_d6634c18bdddb326",
+            "id": "mem_88ff035cec8c7a8e",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3962,14 +3962,14 @@
             "durable": true
           },
           {
-            "id": "mem_711a5f3212c78207",
+            "id": "mem_7d466ac1d3f41074",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3978,14 +3978,14 @@
             "durable": true
           },
           {
-            "id": "mem_38954c4d066bd29e",
+            "id": "mem_abfcb84dc4f59ef0",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3994,14 +3994,14 @@
             "durable": true
           },
           {
-            "id": "mem_32bcd30953ba3948",
+            "id": "mem_0706284ae7cafd72",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4010,14 +4010,14 @@
             "durable": true
           },
           {
-            "id": "mem_d31685220ddecb06",
+            "id": "mem_7a79ba03b0acb0ba",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4026,14 +4026,14 @@
             "durable": true
           },
           {
-            "id": "mem_7beb20351511bbe7",
+            "id": "mem_ec4071fadf158713",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4042,14 +4042,14 @@
             "durable": true
           },
           {
-            "id": "mem_c1067407cc3a23ba",
+            "id": "mem_3ac47f55b8284b7b",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4058,14 +4058,14 @@
             "durable": true
           },
           {
-            "id": "mem_c1ca66b1076e0d9b",
+            "id": "mem_2d0348731604daa7",
             "holder_id": "nia_start",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -4074,14 +4074,14 @@
             "durable": true
           },
           {
-            "id": "mem_e1798dc8b96bf09d",
+            "id": "mem_2eb3b36e756923db",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4090,14 +4090,14 @@
             "durable": true
           },
           {
-            "id": "mem_13f7d1ca606a4f81",
+            "id": "mem_c21e5c09f4d73ec5",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4106,14 +4106,14 @@
             "durable": true
           },
           {
-            "id": "mem_3342439954bbf36d",
+            "id": "mem_0a18b410a0915ad2",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4693,14 +4693,14 @@
             "durable": true
           },
           {
-            "id": "mem_c6dcbaeefafcf2df",
+            "id": "mem_2cbaf4e3c951cb01",
             "holder_id": "marcus_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4709,14 +4709,14 @@
             "durable": true
           },
           {
-            "id": "mem_099f8138baf671aa",
+            "id": "mem_1cb5c8a3e2013859",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4725,14 +4725,14 @@
             "durable": true
           },
           {
-            "id": "mem_8e6a5552db2f7fb8",
+            "id": "mem_04b030b639c26713",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4741,14 +4741,14 @@
             "durable": true
           },
           {
-            "id": "mem_7278477dce92f4a5",
+            "id": "mem_e863e5629b37785e",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4757,14 +4757,14 @@
             "durable": true
           },
           {
-            "id": "mem_15f15e94281f50e8",
+            "id": "mem_b60cf6e41d731860",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4773,14 +4773,14 @@
             "durable": true
           },
           {
-            "id": "mem_265a239ed6b19eb5",
+            "id": "mem_f44d52520d266737",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4789,14 +4789,14 @@
             "durable": true
           },
           {
-            "id": "mem_adfbbebf960080e9",
+            "id": "mem_3329454b95193b85",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4805,14 +4805,14 @@
             "durable": true
           },
           {
-            "id": "mem_92f45af1d0714783",
+            "id": "mem_ee75128dd830784c",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4821,14 +4821,14 @@
             "durable": true
           },
           {
-            "id": "mem_de18a00ac8d3c1b2",
+            "id": "mem_28ab4e25198f7fa0",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4837,14 +4837,14 @@
             "durable": true
           },
           {
-            "id": "mem_12b63cff5abf36aa",
+            "id": "mem_e24ccfffa7a64b2a",
             "holder_id": "marcus_start",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -4853,14 +4853,14 @@
             "durable": true
           },
           {
-            "id": "mem_954f4d27c2be98f9",
+            "id": "mem_32d34eec6018cd3a",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4869,14 +4869,14 @@
             "durable": true
           },
           {
-            "id": "mem_279ea0d30b865073",
+            "id": "mem_1dfdc196964dac28",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4885,14 +4885,14 @@
             "durable": true
           },
           {
-            "id": "mem_7492989a7026d2ee",
+            "id": "mem_d0591b6f89a5911c",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5344,7 +5344,7 @@
         "location_id": "firepit",
         "relationship": {
           "affection": 8,
-          "chemistry": 3,
+          "chemistry": 0,
           "trust": 0,
           "friendship": 3
         },
@@ -5472,14 +5472,14 @@
             "durable": true
           },
           {
-            "id": "mem_7dc7b141d441b483",
+            "id": "mem_8c328bc03801551e",
             "holder_id": "blake_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5488,14 +5488,14 @@
             "durable": true
           },
           {
-            "id": "mem_fd149c07f6846bc7",
+            "id": "mem_0c2b614fb9739ae8",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5504,14 +5504,14 @@
             "durable": true
           },
           {
-            "id": "mem_59a14a815245cdff",
+            "id": "mem_30cb1f226330c126",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5520,14 +5520,14 @@
             "durable": true
           },
           {
-            "id": "mem_0882e01ec33ef066",
+            "id": "mem_81fdc105b221a24c",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5536,14 +5536,14 @@
             "durable": true
           },
           {
-            "id": "mem_8c48add5c7c9ec99",
+            "id": "mem_b404d5c8e7cfb2e2",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5552,14 +5552,14 @@
             "durable": true
           },
           {
-            "id": "mem_45e2e263198313e0",
+            "id": "mem_937375e1e3c7c319",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5568,14 +5568,14 @@
             "durable": true
           },
           {
-            "id": "mem_2eceede9370bedca",
+            "id": "mem_acb37407c4d1153b",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5584,14 +5584,14 @@
             "durable": true
           },
           {
-            "id": "mem_6394edb0c008e9d7",
+            "id": "mem_28847ffa273d906a",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5600,14 +5600,14 @@
             "durable": true
           },
           {
-            "id": "mem_cc9c45677d294eac",
+            "id": "mem_91b488bc4a223dcc",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5616,14 +5616,14 @@
             "durable": true
           },
           {
-            "id": "mem_adcee0ec849ed00a",
+            "id": "mem_0fad382d9a72280b",
             "holder_id": "blake_start",
             "subject_id": "jordan_start",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 203,
+            "formed_on_turn": 205,
             "emotional_weight": 7,
             "tags": [
               "ceremony",
@@ -5632,14 +5632,14 @@
             "durable": true
           },
           {
-            "id": "mem_4b6208eb5b2bb14f",
+            "id": "mem_d53344d4e65f3209",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 227,
+            "formed_on_turn": 229,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5648,14 +5648,14 @@
             "durable": true
           },
           {
-            "id": "mem_a562b8d117214739",
+            "id": "mem_5e960833a2ee0506",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 232,
+            "formed_on_turn": 234,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5664,14 +5664,14 @@
             "durable": true
           },
           {
-            "id": "mem_d62e4a40e44d8dc3",
+            "id": "mem_6fa4ea127b649f60",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
-            "formed_on_turn": 256,
+            "formed_on_turn": 258,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6251,14 +6251,14 @@
             "durable": true
           },
           {
-            "id": "mem_d1678b3c21ec2048",
+            "id": "mem_380cd03078a28b5e",
             "holder_id": "jordan_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6267,14 +6267,14 @@
             "durable": true
           },
           {
-            "id": "mem_b4f5650fb2de136a",
+            "id": "mem_2d1dd8e6fc609b19",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6283,14 +6283,14 @@
             "durable": true
           },
           {
-            "id": "mem_1479ad0f18b487e5",
+            "id": "mem_569821c603124ada",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6299,14 +6299,14 @@
             "durable": true
           },
           {
-            "id": "mem_9411f6915a271311",
+            "id": "mem_7f2f6f8546e64ea2",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6315,14 +6315,14 @@
             "durable": true
           },
           {
-            "id": "mem_6f7cbb499a67e0ae",
+            "id": "mem_3e35250e3a196aaa",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 165,
+            "formed_on_turn": 167,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6331,14 +6331,14 @@
             "durable": true
           },
           {
-            "id": "mem_47ca161eba08b0c0",
+            "id": "mem_7d31ebb327c2fff6",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 189,
+            "formed_on_turn": 191,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6347,14 +6347,14 @@
             "durable": true
           },
           {
-            "id": "mem_b4f3e84030b0b173",
+            "id": "mem_2aa985fa66520cd6",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 190,
+            "formed_on_turn": 192,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6363,14 +6363,14 @@
             "durable": true
           },
           {
-            "id": "mem_6bb8b79c49ef955f",
+            "id": "mem_83962ddcb79cb18b",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 202,
+            "formed_on_turn": 204,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -6842,7 +6842,7 @@
         "rebound": false
       },
       {
-        "partner_a_id": "blake_start",
+        "partner_a_id": "liam",
         "partner_b_id": "sophie_start",
         "formed_on_day": 3,
         "formed_via": "ceremony",
@@ -6851,7 +6851,7 @@
         "rebound": false
       },
       {
-        "partner_a_id": "liam",
+        "partner_a_id": "blake_start",
         "partner_b_id": "nia_start",
         "formed_on_day": 3,
         "formed_via": "ceremony",
@@ -9553,7 +9553,7 @@
       "kind": "casa_announce",
       "event_id": "casa_amor_announce",
       "gather_location": "firepit",
-      "fires_on_turn": 257
+      "fires_on_turn": 259
     },
     "pending_group_date": {
       "id": "group_date_day3",
@@ -9681,7 +9681,7 @@
         "day": 3,
         "items": [
           {
-            "holder_id": "blake_start",
+            "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,
@@ -9701,7 +9701,7 @@
             ]
           },
           {
-            "holder_id": "sophie_start",
+            "holder_id": "player",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,
@@ -9711,7 +9711,7 @@
             ]
           },
           {
-            "holder_id": "player",
+            "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,
@@ -10229,12 +10229,12 @@
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 98
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 99
     },
     {
@@ -10349,17 +10349,17 @@
     },
     {
       "day": 2,
-      "phase": "text",
+      "phase": "afternoon",
       "turn": 122
     },
     {
       "day": 2,
-      "phase": "evening",
+      "phase": "afternoon",
       "turn": 123
     },
     {
       "day": 2,
-      "phase": "evening",
+      "phase": "text",
       "turn": 124
     },
     {
@@ -10413,13 +10413,13 @@
       "turn": 134
     },
     {
-      "day": 3,
-      "phase": "morning",
+      "day": 2,
+      "phase": "evening",
       "turn": 135
     },
     {
-      "day": 3,
-      "phase": "morning",
+      "day": 2,
+      "phase": "evening",
       "turn": 136
     },
     {
@@ -10534,12 +10534,12 @@
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "morning",
       "turn": 159
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "morning",
       "turn": 160
     },
     {
@@ -10564,12 +10564,12 @@
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 165
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 166
     },
     {
@@ -10684,17 +10684,17 @@
     },
     {
       "day": 3,
-      "phase": "text",
+      "phase": "afternoon",
       "turn": 189
     },
     {
       "day": 3,
-      "phase": "evening",
+      "phase": "afternoon",
       "turn": 190
     },
     {
       "day": 3,
-      "phase": "evening",
+      "phase": "text",
       "turn": 191
     },
     {
@@ -10753,13 +10753,13 @@
       "turn": 202
     },
     {
-      "day": 4,
-      "phase": "morning",
+      "day": 3,
+      "phase": "evening",
       "turn": 203
     },
     {
-      "day": 4,
-      "phase": "morning",
+      "day": 3,
+      "phase": "evening",
       "turn": 204
     },
     {
@@ -10874,12 +10874,12 @@
     },
     {
       "day": 4,
-      "phase": "challenge",
+      "phase": "morning",
       "turn": 227
     },
     {
       "day": 4,
-      "phase": "challenge",
+      "phase": "morning",
       "turn": 228
     },
     {
@@ -10899,12 +10899,12 @@
     },
     {
       "day": 4,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 232
     },
     {
       "day": 4,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 233
     },
     {
@@ -11019,8 +11019,18 @@
     },
     {
       "day": 4,
-      "phase": "text",
+      "phase": "afternoon",
       "turn": 256
+    },
+    {
+      "day": 4,
+      "phase": "afternoon",
+      "turn": 257
+    },
+    {
+      "day": 4,
+      "phase": "text",
+      "turn": 258
     }
   ],
   "rng_state": [

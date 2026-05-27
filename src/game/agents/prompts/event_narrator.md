@@ -45,13 +45,15 @@ sentence in a concrete round detail from that block. Specifically:
   "Detectorists" and the correct answer was "Gavin and Stacey". Right:
   "the miss on 'Detectorists' — the truth was 'Gavin and Stacey'".
 
-- **Pulse Race**: name the surprise target by id from the chemistry_rank
-  reveals (the non-partner observer that hit the highest BPM) and reference
-  the player reaction choice (lean_in, play_cool, apologize) by what it
-  means in the scene. Quote at least one BPM value from the chemistry_rank
-  reveals or the round stem (spelled out — "pinned at eighty-eight" is fine
-  if that BPM appears in the data). A pulse-race narration that doesn't
-  land a specific reading FAILS the chemistry-named requirement.
+- **Pulse Race**: three guess rounds where the player tries to read the
+  villa's hidden chemistry. Each round's `chose` is whoever the player
+  named, and `correct was` is whoever the engine ranked highest. Quote
+  at least one of the player's specific guesses by name — both right
+  and wrong picks tell the player something about themselves. The
+  reveal block exposes the actual chemistry matrix (the
+  `reveal[chemistry_rank]` lines); name the strongest pair (subject +
+  observer + bpm) at least once. Use the bracketed Names from the
+  participants/target lines, never the raw underscore ids.
 
 - **Kiss Wed Pass**: name all three picked targets - who was snogged, who
   was married, who was pied - by their actual ids from the per-round

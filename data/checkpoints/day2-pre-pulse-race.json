@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "ef186bc0a13b26be6fde721fd29ee4977280dbfde19e6aa2bd7ad12632eac716",
+  "state_hash": "24e5101b9ab7415945891963b66a1964ee26b6307eacc72dc6cad30a843dcdb4",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -5125,33 +5125,124 @@
       "rounds": [
         {
           "index": 0,
-          "prompt_id": "pulse_race_flat_2",
+          "prompt_id": "pulse_race_who_spiked_for_player_2",
           "target_id": "chloe",
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "The Pulse Race plays out and nobody's reading hits a real spike. The producers cut to Chloe watching you. How do you sell it?",
+          "stem": "When you did your reveal, whose pulse climbed the highest?",
           "choices": [
             {
-              "id": "lean_in",
-              "label": "Pull Chloe closer and own the calm.",
-              "fact_value": "lean_in",
-              "is_correct": true,
-              "distractor_source": "generator"
+              "id": "distractor_0",
+              "label": "Blake",
+              "fact_value": "blake_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
             },
             {
-              "id": "play_cool",
-              "label": "Crack a joke about no one fancying you.",
-              "fact_value": "play_cool",
-              "is_correct": true,
-              "distractor_source": "generator"
+              "id": "distractor_1",
+              "label": "Jordan",
+              "fact_value": "jordan_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
             },
             {
-              "id": "apologize",
-              "label": "Reassure Chloe that this means it's solid.",
-              "fact_value": "apologize",
+              "id": "correct",
+              "label": "Chloe",
+              "fact_value": "chloe",
               "is_correct": true,
-              "distractor_source": "generator"
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "distractor_2",
+              "label": "Liam",
+              "fact_value": "liam",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            }
+          ],
+          "chosen_id": null,
+          "points": 0,
+          "reveals": []
+        },
+        {
+          "index": 1,
+          "prompt_id": "pulse_race_who_spiked_for_partner_2",
+          "target_id": "blake_start",
+          "trait_key": null,
+          "tier": 0,
+          "mechanical": false,
+          "stem": "When Chloe did the bit, whose monitor climbed highest?",
+          "choices": [
+            {
+              "id": "distractor_2",
+              "label": "Marcus",
+              "fact_value": "marcus_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "distractor_0",
+              "label": "Jordan",
+              "fact_value": "jordan_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "distractor_1",
+              "label": "Liam",
+              "fact_value": "liam",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "correct",
+              "label": "Blake",
+              "fact_value": "blake_start",
+              "is_correct": true,
+              "distractor_source": "trait_card"
+            }
+          ],
+          "chosen_id": null,
+          "points": 0,
+          "reveals": []
+        },
+        {
+          "index": 2,
+          "prompt_id": "pulse_race_player_spiked_for_2",
+          "target_id": "chloe",
+          "trait_key": null,
+          "tier": 0,
+          "mechanical": false,
+          "stem": "Whose bit made your own monitor jump the most?",
+          "choices": [
+            {
+              "id": "distractor_0",
+              "label": "Blake",
+              "fact_value": "blake_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "correct",
+              "label": "Chloe",
+              "fact_value": "chloe",
+              "is_correct": true,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "distractor_2",
+              "label": "Liam",
+              "fact_value": "liam",
+              "is_correct": false,
+              "distractor_source": "trait_card"
+            },
+            {
+              "id": "distractor_1",
+              "label": "Jordan",
+              "fact_value": "jordan_start",
+              "is_correct": false,
+              "distractor_source": "trait_card"
             }
           ],
           "chosen_id": null,

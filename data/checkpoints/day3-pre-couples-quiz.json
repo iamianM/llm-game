@@ -1,11 +1,11 @@
 {
   "name": "day3-pre-couples-quiz",
   "seed": 7,
-  "state_hash": "3cda84146f425b666296cb51208f4ab88c1caead406c79dc62c3f7d58caeccd2",
+  "state_hash": "a8f195edd0c35663527023846d443e3596f682e4c7ee10b1938b4d96b6268a43",
   "state": {
     "schema_version": 26,
     "seed": 7,
-    "turn_index": 159,
+    "turn_index": 161,
     "day": 3,
     "phase": "challenge",
     "phase_clock": {
@@ -113,14 +113,14 @@
           "durable": true
         },
         {
-          "id": "mem_049e40db83602928",
+          "id": "mem_c15bb9c4afa2329b",
           "holder_id": "player",
           "subject_id": "villa",
-          "content": "Pulse Race ended in failure (60 pts).",
+          "content": "Pulse Race ended in failure (0 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 98,
+          "formed_on_turn": 100,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -129,14 +129,14 @@
           "durable": true
         },
         {
-          "id": "mem_f478e7fbac037036",
+          "id": "mem_79de62412cb21585",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for group date invite.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 122,
+          "formed_on_turn": 124,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -145,14 +145,14 @@
           "durable": true
         },
         {
-          "id": "mem_4dc479e4eab39047",
+          "id": "mem_eef47f2f6ddf648c",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 123,
+          "formed_on_turn": 125,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -161,14 +161,14 @@
           "durable": true
         },
         {
-          "id": "mem_679d10a1643c9b43",
+          "id": "mem_5c7a995ed9096dce",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Couples Quiz tested Banter and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 159,
+          "formed_on_turn": 161,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -624,14 +624,14 @@
             "durable": true
           },
           {
-            "id": "mem_7928f99695d1d1a0",
+            "id": "mem_2a1758fd1a2afd07",
             "holder_id": "chloe",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -640,14 +640,14 @@
             "durable": true
           },
           {
-            "id": "mem_c6127a3c274c2446",
+            "id": "mem_7c8f24fa8066e4f3",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -656,14 +656,14 @@
             "durable": true
           },
           {
-            "id": "mem_c99b8fa077ae1f25",
+            "id": "mem_f45736dfe8d4207e",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -672,14 +672,14 @@
             "durable": true
           },
           {
-            "id": "mem_3f448398011ce860",
+            "id": "mem_3c175f850f7e93af",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1259,14 +1259,14 @@
             "durable": true
           },
           {
-            "id": "mem_cc4e738d08b3f2fc",
+            "id": "mem_4d8ec5ccccd64439",
             "holder_id": "maya",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1275,14 +1275,14 @@
             "durable": true
           },
           {
-            "id": "mem_4bb0edf86cef8e84",
+            "id": "mem_17f18db4a0020bc6",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1291,14 +1291,14 @@
             "durable": true
           },
           {
-            "id": "mem_eb614a1aad121987",
+            "id": "mem_03bc1ece98bbff7d",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1307,14 +1307,14 @@
             "durable": true
           },
           {
-            "id": "mem_d707e0bfb56fed3d",
+            "id": "mem_a41377787607583a",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1894,14 +1894,14 @@
             "durable": true
           },
           {
-            "id": "mem_8f70edbc986ecbfd",
+            "id": "mem_23a4626f41956a8f",
             "holder_id": "liam",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1910,14 +1910,14 @@
             "durable": true
           },
           {
-            "id": "mem_93003b033ac8cab6",
+            "id": "mem_b5c82e7aa85819f2",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1926,14 +1926,14 @@
             "durable": true
           },
           {
-            "id": "mem_74ad8fe1edb16a2d",
+            "id": "mem_773ba5d7095c3ee4",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1942,14 +1942,14 @@
             "durable": true
           },
           {
-            "id": "mem_e687a67599e0ad7f",
+            "id": "mem_04d5eff6703acd88",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2529,14 +2529,14 @@
             "durable": true
           },
           {
-            "id": "mem_52642c0bee47c9d8",
+            "id": "mem_db5610d7010a006c",
             "holder_id": "sophie_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2545,14 +2545,14 @@
             "durable": true
           },
           {
-            "id": "mem_26035e0534c0dda0",
+            "id": "mem_d6169a834a2470d3",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2561,14 +2561,14 @@
             "durable": true
           },
           {
-            "id": "mem_a62016eb6d0ad85e",
+            "id": "mem_37b2f4785213b8d6",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2577,14 +2577,14 @@
             "durable": true
           },
           {
-            "id": "mem_61635aef968e88e2",
+            "id": "mem_64ca7b5fc1624aea",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3164,14 +3164,14 @@
             "durable": true
           },
           {
-            "id": "mem_42de5597dcefea11",
+            "id": "mem_b5af946a469f94cd",
             "holder_id": "nia_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3180,14 +3180,14 @@
             "durable": true
           },
           {
-            "id": "mem_8da36b60216f1961",
+            "id": "mem_2395c821e71f3fa7",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3196,14 +3196,14 @@
             "durable": true
           },
           {
-            "id": "mem_d6634c18bdddb326",
+            "id": "mem_88ff035cec8c7a8e",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3212,14 +3212,14 @@
             "durable": true
           },
           {
-            "id": "mem_711a5f3212c78207",
+            "id": "mem_7d466ac1d3f41074",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3799,14 +3799,14 @@
             "durable": true
           },
           {
-            "id": "mem_c6dcbaeefafcf2df",
+            "id": "mem_2cbaf4e3c951cb01",
             "holder_id": "marcus_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3815,14 +3815,14 @@
             "durable": true
           },
           {
-            "id": "mem_099f8138baf671aa",
+            "id": "mem_1cb5c8a3e2013859",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3831,14 +3831,14 @@
             "durable": true
           },
           {
-            "id": "mem_8e6a5552db2f7fb8",
+            "id": "mem_04b030b639c26713",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3847,14 +3847,14 @@
             "durable": true
           },
           {
-            "id": "mem_7278477dce92f4a5",
+            "id": "mem_e863e5629b37785e",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4306,7 +4306,7 @@
         "location_id": "firepit",
         "relationship": {
           "affection": 8,
-          "chemistry": 3,
+          "chemistry": 0,
           "trust": 0,
           "friendship": 3
         },
@@ -4434,14 +4434,14 @@
             "durable": true
           },
           {
-            "id": "mem_7dc7b141d441b483",
+            "id": "mem_8c328bc03801551e",
             "holder_id": "blake_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4450,14 +4450,14 @@
             "durable": true
           },
           {
-            "id": "mem_fd149c07f6846bc7",
+            "id": "mem_0c2b614fb9739ae8",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4466,14 +4466,14 @@
             "durable": true
           },
           {
-            "id": "mem_59a14a815245cdff",
+            "id": "mem_30cb1f226330c126",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4482,14 +4482,14 @@
             "durable": true
           },
           {
-            "id": "mem_0882e01ec33ef066",
+            "id": "mem_81fdc105b221a24c",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5069,14 +5069,14 @@
             "durable": true
           },
           {
-            "id": "mem_d1678b3c21ec2048",
+            "id": "mem_380cd03078a28b5e",
             "holder_id": "jordan_start",
             "subject_id": "villa",
-            "content": "Pulse Race ended in failure (60 pts).",
+            "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 98,
+            "formed_on_turn": 100,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5085,14 +5085,14 @@
             "durable": true
           },
           {
-            "id": "mem_b4f5650fb2de136a",
+            "id": "mem_2d1dd8e6fc609b19",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 122,
+            "formed_on_turn": 124,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5101,14 +5101,14 @@
             "durable": true
           },
           {
-            "id": "mem_1479ad0f18b487e5",
+            "id": "mem_569821c603124ada",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 123,
+            "formed_on_turn": 125,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5117,14 +5117,14 @@
             "durable": true
           },
           {
-            "id": "mem_9411f6915a271311",
+            "id": "mem_7f2f6f8546e64ea2",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 159,
+            "formed_on_turn": 161,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -8903,12 +8903,12 @@
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 98
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 99
     },
     {
@@ -9023,17 +9023,17 @@
     },
     {
       "day": 2,
-      "phase": "text",
+      "phase": "afternoon",
       "turn": 122
     },
     {
       "day": 2,
-      "phase": "evening",
+      "phase": "afternoon",
       "turn": 123
     },
     {
       "day": 2,
-      "phase": "evening",
+      "phase": "text",
       "turn": 124
     },
     {
@@ -9087,13 +9087,13 @@
       "turn": 134
     },
     {
-      "day": 3,
-      "phase": "morning",
+      "day": 2,
+      "phase": "evening",
       "turn": 135
     },
     {
-      "day": 3,
-      "phase": "morning",
+      "day": 2,
+      "phase": "evening",
       "turn": 136
     },
     {
@@ -9208,8 +9208,18 @@
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "morning",
       "turn": 159
+    },
+    {
+      "day": 3,
+      "phase": "morning",
+      "turn": 160
+    },
+    {
+      "day": 3,
+      "phase": "challenge",
+      "turn": 161
     }
   ],
   "rng_state": [
