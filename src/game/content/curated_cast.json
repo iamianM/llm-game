@@ -159,7 +159,7 @@
           "mechanical": false
         },
         "keepsake": {
-          "value": "a tiny ceramic apple from her first class",
+          "value": "a tiny ceramic apple",
           "tier": 0,
           "mechanical": false
         },
@@ -301,7 +301,7 @@
           "distractors": [
             "she is secretly in therapy",
             "she lied about her age",
-            "she still calls her ex"
+            "she still calls"
           ],
           "tier": 4
         }
@@ -492,7 +492,7 @@
           "mechanical": false
         },
         "keepsake": {
-          "value": "a cracked bicycle bell from his dad",
+          "value": "a cracked bicycle bell",
           "tier": 0,
           "mechanical": false
         },
@@ -1146,7 +1146,7 @@
           "distractors": [
             "he lied on his application",
             "he has never dated",
-            "he owes his ex money"
+            "he owes"
           ],
           "tier": 4
         }

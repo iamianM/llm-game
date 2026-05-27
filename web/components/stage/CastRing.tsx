@@ -60,15 +60,13 @@ export function CastRing({ state, narration, speakerName }: Props) {
   return (
     <div className="cast-ring" data-testid="cast-ring">
       <div className="standee-row" role="list" aria-label="Heartbreakers in the scene">
-        <Standee
-          id="player"
-          name={state.player.name || "You"}
-          image={playerImage}
-          role="you"
-          isPartner={false}
-          isSpeaking={false}
-          isPlayer
-        />
+        {/*
+          The player is the camera/viewer — they don't need their own tile
+          standing in the firepit. The lineup is who YOU are looking at.
+          We keep the archetype image computation around since it's the
+          fallback if we ever need a player avatar elsewhere.
+        */}
+        {void playerImage}
         {islanderTiles.map((islander) => (
           <Standee
             key={islander.id}

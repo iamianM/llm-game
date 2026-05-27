@@ -242,7 +242,42 @@ def _clean_trait_value(value: str) -> str:
     return cleaned or value.strip()
 
 
-def _polish_trait_cards(cards: dict[str, TraitCard]) -> None:
+_MALE_PRONOUN_RE = _re.compile(r"\b(?:his|him|he'?s?|himself)\b", _re.IGNORECASE)
+_FEMALE_PRONOUN_RE = _re.compile(r"\b(?:her|hers|she'?s?|herself)\b", _re.IGNORECASE)
+# Strip "from his/her/their X's Y" possessive tails — common when the model
+# bakes a personal relationship into the value, which would mis-gender or
+# mis-attribute when surfaced as another islander's distractor.
+_POSSESSIVE_TAIL_RE = _re.compile(
+    r"\s+(?:from\s+)?(?:his|her|their)\s+(?:dad|mum|mom|grandfather|grandmother|nan|gran|sister|brother|ex|first\s+class)\b[\w\s']*\.?$",
+    _re.IGNORECASE,
+)
+
+
+def _neutralize_for_distractor(value: str, target_gender: str | None) -> str | None:
+    """Prepare a peer islander's value for use as a distractor on someone
+    else's quiz card. Returns None if the value carries identity-specific
+    pronouns that can't be cleaned without changing meaning.
+
+    Example: "a cracked bicycle bell from his dad" with target_gender="woman"
+    -> None (the "his" can't be safely re-gendered).
+    Same value with target_gender="man" -> "a cracked bicycle bell" (we
+    strip the personal possessive tail because attributing one man's dad's
+    bell to another man also reads weird).
+    """
+    cleaned = _clean_trait_value(value)
+    cleaned = _POSSESSIVE_TAIL_RE.sub("", cleaned).strip()
+    if not cleaned:
+        return None
+    if target_gender == "woman" and _MALE_PRONOUN_RE.search(cleaned):
+        return None
+    if target_gender == "man" and _FEMALE_PRONOUN_RE.search(cleaned):
+        return None
+    return cleaned
+
+
+def _polish_trait_cards(
+    cards: dict[str, TraitCard], islander_genders: dict[str, str] | None = None
+) -> None:
     """Clean values + auto-fill distractors from peer islanders.
 
     Runs after the model has produced its raw Trait Cards. Two passes:
@@ -250,9 +285,10 @@ def _polish_trait_cards(cards: dict[str, TraitCard]) -> None:
     cards read as parallel nouns ("Stay by Rihanna", not "Stay by
     Rihanna every time"); (2) for any flavor trait whose distractors are
     empty, pick three peer islanders' cleaned values for the same key as
-    plausible wrong answers — the quiz selector already does this as a
-    fallback, but doing it here makes the saved Trait Card display-ready.
+    plausible wrong answers, preferring same-gender peers and stripping
+    or skipping values whose pronouns would mis-gender the target.
     """
+    islander_genders = islander_genders or {}
     for card in cards.values():
         for fact in card.core_traits.values():
             fact.value = _clean_trait_value(fact.value)
@@ -260,28 +296,60 @@ def _polish_trait_cards(cards: dict[str, TraitCard]) -> None:
         for fact in card.flavor_traits.values():
             fact.value = _clean_trait_value(fact.value)
             fact.distractors = [_clean_trait_value(d) for d in fact.distractors]
-    # Build a peer-value index keyed by flavor trait key so we can backfill.
-    peer_values: dict[str, list[str]] = {}
-    for card in cards.values():
+    # Build a peer-value index keyed by (flavor trait key, source_gender)
+    # so we can backfill with gender-aware filtering. Without this Chloe's
+    # keepsake distractors would include "a cracked bicycle bell from his
+    # dad" — a male islander's value that mis-genders her.
+    peer_by_gender_key: dict[tuple[str, str], list[str]] = {}
+    for islander_id, card in cards.items():
+        gender = islander_genders.get(islander_id)
+        if gender is None:
+            continue
         for key, fact in card.flavor_traits.items():
-            peer_values.setdefault(key, []).append(fact.value)
-    for card in cards.values():
+            peer_by_gender_key.setdefault((key, gender), []).append(fact.value)
+    all_by_key: dict[str, list[tuple[str, str]]] = {}
+    for islander_id, card in cards.items():
+        gender = islander_genders.get(islander_id) or ""
+        for key, fact in card.flavor_traits.items():
+            all_by_key.setdefault(key, []).append((gender, fact.value))
+    for islander_id, card in cards.items():
+        target_gender = islander_genders.get(islander_id) or None
         for key, fact in card.flavor_traits.items():
             if len(fact.distractors) >= 3:
                 continue
             seen = {fact.value, *fact.distractors}
-            for peer in peer_values.get(key, []):
+            # First: same-gender peers (preferred — voice/style matches).
+            same_gender = peer_by_gender_key.get((key, target_gender or ""), []) if target_gender else []
+            for peer in same_gender:
                 if peer in seen or not peer:
                     continue
-                fact.distractors.append(peer)
-                seen.add(peer)
+                cleaned = _neutralize_for_distractor(peer, target_gender)
+                if cleaned is None or cleaned in seen:
+                    continue
+                fact.distractors.append(cleaned)
+                seen.add(cleaned)
+                if len(fact.distractors) >= 3:
+                    break
+            if len(fact.distractors) >= 3:
+                continue
+            # Fall through to cross-gender peers, but only if the value can be
+            # cleanly neutralised (no opposite-gender pronoun left).
+            for source_gender, peer in all_by_key.get(key, []):
+                if peer in seen or source_gender == target_gender:
+                    continue
+                cleaned = _neutralize_for_distractor(peer, target_gender)
+                if cleaned is None or cleaned in seen:
+                    continue
+                fact.distractors.append(cleaned)
+                seen.add(cleaned)
                 if len(fact.distractors) >= 3:
                     break
 
 
 def assign_trait_cards(islanders: list[IslanderState], trait_cards: dict[str, TraitCard]) -> None:
     """Attach Trait Cards and persona backstory to matching islanders."""
-    _polish_trait_cards(trait_cards)
+    genders = {i.id: i.gender.value for i in islanders}
+    _polish_trait_cards(trait_cards, genders)
     for islander in islanders:
         card = trait_cards.get(islander.id)
         if card is None:

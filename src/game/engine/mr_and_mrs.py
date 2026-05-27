@@ -143,17 +143,28 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             if pi >= len(player_picks):
                 break
             prompt = player_picks[pi]
-            distractors = list(prompt.distractors)
-            # Pad distractors from same-key cross-islander values
+            from src.game.agents.trait_generator import _neutralize_for_distractor
+            target_gender = partner.gender.value if partner.gender else None
+            peer_genders = {i.id: (i.gender.value if i.gender else None) for i in state.islanders}
+            distractors = [
+                (_neutralize_for_distractor(d, target_gender) or d) for d in prompt.distractors
+            ]
+            # Pad distractors from same-key cross-islander values, preferring
+            # same-gender peers and stripping/skipping gendered tails so a
+            # woman's quiz doesn't show "from his dad" / "his bicycle bell".
             if len(distractors) < 3:
                 bank = state.question_bank.prompts.get("compatibility_quiz", [])
                 others = [o for o in bank if o.trait_key == prompt.trait_key and o.target_id != prompt.target_id]
-                others.sort(key=lambda p: p.id)
+                others.sort(key=lambda p: (peer_genders.get(p.target_id) != target_gender, p.id))
                 for o in others:
-                    if o.correct_value not in distractors and o.correct_value != prompt.correct_value:
-                        distractors.append(o.correct_value)
-                        if len(distractors) >= 3:
-                            break
+                    if o.correct_value == prompt.correct_value:
+                        continue
+                    cleaned = _neutralize_for_distractor(o.correct_value, target_gender)
+                    if cleaned is None or cleaned in distractors:
+                        continue
+                    distractors.append(cleaned)
+                    if len(distractors) >= 3:
+                        break
             round_rng = rng.fork(f"mr_and_mrs::round::{index}")
             _shuffle(distractors, round_rng)
             choices = [

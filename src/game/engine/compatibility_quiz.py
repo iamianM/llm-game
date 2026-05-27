@@ -117,25 +117,39 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
         # the trait card first, then from other islanders' values for the SAME
         # trait_key (so a "karaoke song" question's wrong answers are also
         # karaoke songs), and only as a last resort from other traits on the
-        # same target.
+        # same target. Cross-islander values get gender-filtered so a
+        # woman's quiz doesn't get "from his dad" distractors mixed in.
+        from src.game.agents.trait_generator import _neutralize_for_distractor
+        target_gender = target.gender.value if target.gender else None
+        peer_islander_genders = {i.id: (i.gender.value if i.gender else None) for i in state.islanders}
         distractors: list[str] = []
         for value in prompt.distractors:
             if value != prompt.correct_value and value not in distractors:
-                distractors.append(value)
+                cleaned = _neutralize_for_distractor(value, target_gender) or value
+                distractors.append(cleaned)
         if len(distractors) < 3:
+            # Prefer same-gender peer values; cross-gender values only if they
+            # can be cleanly neutralised.
             same_key_others = [
                 other
                 for other in full_bank
                 if other.trait_key == prompt.trait_key and other.target_id != prompt.target_id
             ]
-            same_key_others.sort(key=lambda p: p.id)
+            same_key_others.sort(key=lambda p: (peer_islander_genders.get(p.target_id) != target_gender, p.id))
             for other in same_key_others:
-                if other.correct_value in distractors or other.correct_value == prompt.correct_value:
+                if other.correct_value == prompt.correct_value:
                     continue
-                distractors.append(other.correct_value)
+                cleaned = _neutralize_for_distractor(
+                    other.correct_value,
+                    target_gender,
+                )
+                if cleaned is None or cleaned in distractors:
+                    continue
+                distractors.append(cleaned)
                 if len(distractors) >= 3:
                     break
-        # Final fallback: pad from any prompt of the same target.
+        # Final fallback: pad from any prompt of the same target (these are
+        # always gender-safe since they describe the same islander).
         if len(distractors) < 3:
             for other in pool:
                 if other.correct_value not in distractors and other.correct_value != prompt.correct_value:
