@@ -6,6 +6,10 @@ from src.game.engine.gossip import gossip_subjects_for
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
 
+_DEFLECTIVE_TONES = {"defensive", "cold", "suspicious", "anxious"}
+_VULNERABLE_TONES = {"vulnerable"}
+
+
 def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
     """Add deterministic gossip options from memory offers or Known Facts."""
     conversation = state.active_conversation
@@ -17,6 +21,13 @@ def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
     target = next((islander for islander in state.islanders if islander.id == conversation.target_id), None)
     if target is None or target.relationship.affection < 25:
         return menu
+    # Do not inject a topic-switching gossip option when the last exchange
+    # was vulnerable, deflective, or anxious — that beat needs on-topic
+    # continuation, not a pivot to a third party.
+    if conversation.exchanges:
+        last_tone = (conversation.exchanges[-1].npc_tone or "").lower()
+        if last_tone in _DEFLECTIVE_TONES or last_tone in _VULNERABLE_TONES:
+            return menu
     options = list(menu.options)
     if conversation.gossip_offers:
         for memory in conversation.gossip_offers:
@@ -55,10 +66,23 @@ def _insert_option(menu: FollowUpMenu, options: list[FollowUpOption], option: Fo
     if len(options) < 5:
         options.insert(max(0, len(options) - 1), option)
     else:
+        # When the menu is at cap, replace a low-value defensive option
+        # (apologize / defend_self / change_subject) rather than a content
+        # option that drives the conversation forward (deflect_with_humor /
+        # joke_back / go_deeper / escalate_flirt / honest_vulnerable /
+        # supportive_listen). Falling back to "first non-exit" used to delete
+        # the menu's flirt recovery in favor of gossip on every Day-1 chat
+        # that crossed the gossip threshold.
+        _DROPPABLE = {"apologize", "defend_self", "change_subject"}
         replace_at = next(
-            (index for index, existing_option in enumerate(options) if existing_option.category != "exit"),
-            0,
+            (i for i, existing in enumerate(options) if existing.intent_kind in _DROPPABLE),
+            None,
         )
+        if replace_at is None:
+            replace_at = next(
+                (i for i, existing in enumerate(options) if existing.category != "exit"),
+                0,
+            )
         options[replace_at] = option
     return menu.model_copy(update={"options": options})
 

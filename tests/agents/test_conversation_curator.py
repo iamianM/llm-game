@@ -43,14 +43,17 @@ def test_curator_context_lists_required_memory_holders() -> None:
     rendered = _render_context(state, conversation, [])
 
     assert "Required direct memory holders: maya, liam" in rendered
+    assert "- holder_id: maya" in rendered
+    assert "- holder_id: liam" in rendered
+    assert "Valid subject ids:" in rendered
 
 
-def test_curator_parse_budget_fits_three_output_schema() -> None:
-    """The expanded MemoryBatch shape needs enough tokens to avoid truncation."""
+def test_curator_request_uses_shared_reasoning_kwargs_without_token_cap() -> None:
+    """The curator request must not pass max_output_tokens or temperature."""
 
     class FakeResponses:
         def __init__(self) -> None:
-            self.kwargs = {}
+            self.kwargs: dict[str, object] = {}
 
         def parse(self, **kwargs):
             self.kwargs = kwargs
@@ -83,7 +86,9 @@ def test_curator_parse_budget_fits_three_output_schema() -> None:
 
     agent._generate_batch("context")
 
-    assert fake_client.responses.kwargs["max_output_tokens"] >= 1800
+    assert "max_output_tokens" not in fake_client.responses.kwargs
+    assert "temperature" not in fake_client.responses.kwargs
+    assert fake_client.responses.kwargs["reasoning"] == {"effort": "high", "summary": "detailed"}
 
 
 @pytest.mark.llm

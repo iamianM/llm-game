@@ -1,5 +1,8 @@
 # Build Plan: Phase H2 — Daily Challenges + Producer Texts
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 After H1, the run has a beginning (character creation) and an end (final vote). H2 fills the middle. The `CHALLENGE` phase fires actual challenges with mechanical outcomes and dramatic narration. The `TEXT` phase fires producer texts that announce dates, twists, and bombshells. Every phase becomes something the player reacts to, not a clock tick.
 
 **Design sources:** [12-Challenges-And-Events.md](../12-Challenges-And-Events.md), [08-Daily-Loop.md § The Four Phases](../08-Daily-Loop.md), [10-Elimination-System.md § Producer AI](../10-Elimination-System.md).

@@ -1,5 +1,8 @@
 # Build Plan: Phase H5 — Casa Amor
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 Casa Amor is the show's signature mid-run twist: the cast splits boys/girls and gets sent to a second villa with new arrivals. Loyalty is tested. The return ceremony reveals each side's choice simultaneously, producing the season's biggest drama beat. H5 implements the structural mechanic plus enough authored content for one full pass.
 
 **Design sources:** [12-Challenges-And-Events.md § Casa Amor](../12-Challenges-And-Events.md), [10-Elimination-System.md § Bombshell System](../10-Elimination-System.md), [09-Social-Dynamics.md](../09-Social-Dynamics.md).

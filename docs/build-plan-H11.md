@@ -1,5 +1,8 @@
 # Build Plan: Phase H11 — Review UX (Slides, Bookmarks, Checkpoints)
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 The game produces rich state but the review surface is wrong shape. Current `session.html` is a wall of turn cards with raw JSON artifacts behind links. The user can't quickly find the interesting moments, can't pop out detail without leaving the page, and can't test variations without replaying a full session.
 
 H11 fixes all three:

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.game.reporting.agent_trace_blocks import agent_trace_card
 from src.game.reporting.html_arrivals import arrival_roll_block
 from src.game.reporting.html_audience import audience_block
 from src.game.reporting.html_base import escape, index_page, page, table_page
@@ -99,6 +100,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"{interruption_block(record)}"
         f"{agent_commit_block(record.get('agent_commits'))}"
         f"{memory_block(record.get('agent_commits'))}"
+        f"{agent_trace_card(record)}"
         f"<p><b>Roll:</b> {escape(str(result.get('roll')))} vs "
         f"{escape(str(result.get('success_chance')))} "
         f"<span class='{outcome_class}'>{'Success' if result['success'] else 'Miss'}</span></p>"

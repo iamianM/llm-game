@@ -19,12 +19,21 @@ from src.game.agents.islander_voice_context import (
     new_turn_context,
     target_for_result,
 )
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import GameState, Mood
 
-ISLANDER_VOICE_MODEL = "gpt-4.1-mini"
+ISLANDER_VOICE_MODEL = GAME_AGENT_MODEL
+ISLANDER_VOICE_PROMPT = "src/game/agents/prompts/islander_voice.md"
 VALID_TONES = {
     "warm",
     "flirty",
@@ -62,12 +71,25 @@ class OpenAIIslanderVoice:
         rendered = build_voice_messages(state, state.active_conversation, new_turn_context(context))
         last_error: ValueError | None = None
         for attempt in range(3):
+            attempt_number = attempt + 1
             retry_context = rendered if last_error is None else _with_retry_message(rendered, last_error)
-            exchange = self._generate_exchange(retry_context)
+            attempt_token = begin_agent_attempt(attempt_number)
+            try:
+                try:
+                    exchange = self._generate_exchange(retry_context)
+                except Exception as exc:
+                    mark_agent_trace_validation_error("islander_voice", attempt_number, exc)
+                    last_error = ValueError(str(exc))
+                    if attempt == 2:
+                        raise
+                    continue
+            finally:
+                end_agent_attempt(attempt_token)
             try:
                 validate_exchange(exchange, context)
                 return exchange
             except ValueError as exc:
+                mark_agent_trace_validation_error("islander_voice", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
                     raise
@@ -77,14 +99,19 @@ class OpenAIIslanderVoice:
         """Request one parsed Exchange from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path("src/game/agents/prompts/islander_voice.md").read_text(
-                encoding="utf-8"
-            ),
+            instructions=Path(ISLANDER_VOICE_PROMPT).read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=Exchange,
-            max_output_tokens=320,
+            **reasoning_request_kwargs(),
         )
         exchange = response.output_parsed
+        record_agent_trace(
+            agent_name="islander_voice",
+            model=self._model,
+            prompt_path=ISLANDER_VOICE_PROMPT,
+            response=response,
+            output=exchange,
+        )
         if exchange is None:
             raise ValueError("Islander Voice returned no parsed Exchange")
         return exchange
@@ -110,16 +137,15 @@ def mock_islander_voice(state: GameState, result: MechanicalResult) -> Exchange:
 
 
 def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None:
-    """Fail loud if generated dialogue violates the exchange contract."""
+    """Fail loud if generated dialogue violates the agent boundary.
+
+    Only enforces the structural contract: dialogue must not mention an
+    Islander who is not present and not a legal gossip subject. Length, tone
+    of voice, and digit-vs-spelled-number preferences are conveyed via the
+    prompt, not enforced here.
+    """
     joined = f"{exchange.player_dialogue} {exchange.npc_dialogue}"
-    word_count = len(joined.split())
-    if not 20 <= word_count <= 150:
-        raise ValueError(
-            f"exchange word count out of bounds: {word_count}; exchange={exchange!r}"
-        )
-    if re.search(r"\d", joined):
-        raise ValueError(f"exchange contains digits; exchange={exchange!r}")
-    allowed = {context.npc_name, *context.others_present}
+    allowed = {context.npc_name, *context.others_present, *context.gossip_subject_names}
     cast = set(context.cast_names)
     hidden_mentions = sorted(
         name

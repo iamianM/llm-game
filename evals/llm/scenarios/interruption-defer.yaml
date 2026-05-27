@@ -1,0 +1,64 @@
+id: interruption-defer
+title: Conversation Interruption (Defer)
+goal: 'Prove an NPC interruption mid-conversation routes through the engine cleanly: the player picks "defer", the engine resolves the chance, the pending interruption clears, and the original conversation stays active.'
+seed: 1919
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_relationships:
+  chloe:
+    affection: 50
+    chemistry: 20
+    trust: 35
+    friendship: 20
+  liam:
+    affection: 35
+    trust: 25
+    friendship: 25
+judge_context:
+  - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
+  - The engine decides whether a deferral lands well based on stats and affection.
+  - Defer and ignore are engine-only interruption responses because they keep the original conversation in place. Accept is the path that starts a new voiced exchange.
+turns:
+  - id: defer-liam
+    arrange_player_location: pool
+    arrange_npc_locations:
+      chloe: pool
+      liam: pool
+    arrange_active_conversation:
+      target_id: chloe
+      started_on_turn: 0
+      started_on_day: 1
+      pending_interruption:
+        interrupter_id: liam
+        reason: needs_to_talk
+        urgency: polite
+    action:
+      kind: respond_with
+      target_id: liam
+      intent_id: defer_interruption
+    golden: >
+      Liam walks up polite, the player asks him for a beat, and the engine
+      keeps Chloe as the active conversation. The pending interruption clears
+      either way; whether Liam leaves easily is recorded by the chance roll
+      and relationship delta.
+    checks:
+      - interruption_cleared
+      - active_conversation_target_is:chloe
+      - relationship_delta:liam:affection:-1
+      - no_exchange
+    judge_checks:
+      - id: defer_grounded
+        criteria: >
+          The recorded relationship deltas and chance breakdown reflect a
+          deferral attempt by the player: a small affection cost to Liam and
+          no swap to the new conversation. Fail if the engine result reads
+          like an acceptance or an outright ignore.

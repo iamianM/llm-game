@@ -1,5 +1,8 @@
 # Build Plan: Phase H3 — NPC Personality Depth
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 Through G8, NPCs differ only by archetype label (sweetheart / joker / friend). The Islander Voice prompt sees archetype prose; mechanical math doesn't. H3 adds Big 5 OCEAN traits, attachment styles, and Type on Paper preferences to each NPC. Compatibility math becomes strategic: figuring out what an NPC likes is a real game layer.
 
 **Design sources:** [03-LLM-Architecture.md § Personality System](../03-LLM-Architecture.md), [02-Core-Mechanics.md § Success Calculation Details](../02-Core-Mechanics.md), [05-Interaction-System.md § Preference Matching](../05-Interaction-System.md).

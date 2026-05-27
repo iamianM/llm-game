@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.hideaway import apply_hideaway, hideaway_eligible
 from src.game.engine.rules import apply_action
+from src.game.engine.turn import run_turn
 from src.game.state.models import Couple, Location, Phase, new_game
 from src.game.state.rng import SeededRng
 
@@ -87,3 +88,15 @@ def test_hideaway_intent_kinds_dispatch_correctly() -> None:
 
     assert result.success is True
     assert result.relationship_deltas["chloe"].trust == 10
+
+
+def test_hideaway_turn_records_event_for_narration() -> None:
+    state = _eligible_state()
+
+    turn = run_turn(state, PlayerAction(kind=ActionKind.HIDEAWAY), SeededRng(1))
+
+    hideaway_events = [event for event in turn.ceremony_events if event.kind == "hideaway"]
+    assert hideaway_events
+    assert hideaway_events[0].islander_id == "chloe"
+    assert turn.event_narration is not None
+    assert "Chloe" in turn.event_narration.prose

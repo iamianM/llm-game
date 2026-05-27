@@ -1,5 +1,11 @@
 # Engine Issues — Review-Packet Findings (H11 Loyal Run)
 
+Historical playtest note. This file preserves the findings from the H11 loyal
+run review, but it is not the active backlog. Use
+[current-plan.md](current-plan.md) for current priorities and update the owning
+system docs when a behavior changes. If a detail here conflicts with present
+code or current docs, present code/current docs win.
+
 A pass over `.game_traces/h11-loyal.json` rendered in the redesigned review packet
 surfaced behaviors that are correct-per-spec but visibly wrong in play. This is a
 working list for the next engine iteration. Each item is grouped by area, with

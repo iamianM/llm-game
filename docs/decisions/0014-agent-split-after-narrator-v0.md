@@ -14,6 +14,12 @@ Keep the multi-agent split, but preserve the original boundary: agents narrate, 
 
 Each agent surface must stay typed and mockable. Non-LLM tests use mock agents or recorded traces by default.
 
+Agent context may include visible, engine-owned setup facts that the model must
+respond to, such as a successful pull for chat, pending proposal, or resolved
+event. Those facts are passed as structured context from `MechanicalResult` or
+canonical state; they are not agent decisions and they must not be inferred from
+free-text history when the engine already knows them.
+
 Real agent calls must request structured output through the typed contract when
 the provider supports it, validate the parsed Pydantic model, and retry only
 with explicit validation feedback. If the contract still fails, the call fails

@@ -1,0 +1,82 @@
+id: producer-casa-announce
+title: Producer Text And Flush Of Hearts Announce
+goal: Prove the Flush of Hearts twist lands with the right tension — the gather is called, the second-villa entry is described, and the narrator does not pre-decide whether anyone has stuck or twisted yet.
+seed: 606
+initial_day: 4
+initial_phase: afternoon
+live_villa_life: false
+character_creation:
+  archetype_id: heartthrob
+  gender: man
+  stats:
+    charm: 9
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 5
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 3
+initial_relationships:
+  chloe:
+    affection: 60
+    chemistry: 30
+    trust: 45
+    friendship: 20
+judge_context:
+  - Flush of Hearts is the major mid-run twist; the cast does not know the new arrivals yet at this point.
+  - The narrator preserves the deterministic state transition into the second villa and the original partner being the relationship that gets tested.
+  - The narrator must not pre-decide whether the player stays loyal, picks new, or returns single.
+turns:
+  - id: call-casa-gather
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      The producer text drops and the villa is called to the firepit for
+      Flush of Hearts. The narrator sets the tension: phones lighting up,
+      the cast clocking each other, the player and Chloe sharing a look
+      they can't read yet. Imagine: "Phones go off at exactly the same
+      second. The cast reads it twice. Chloe finds the player's eye across
+      the pool and neither of them speaks." The twist is announced; nothing
+      has resolved.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - pending_gather_waiting
+      - agent_traces_present
+    judge_checks:
+      - id: tension_specific
+        criteria: >
+          The prose lands a specific tension beat between the player and
+          Chloe (a look, a silence, a half-line) rather than narrating
+          generic villa-wide reactions only. Fail if Chloe disappears from
+          the prose.
+      - id: no_pre_resolution
+        criteria: >
+          The narration treats Flush of Hearts as just announced. It must
+          not claim the player has already decided to stick, twist, or stay
+          loyal, and must not name any Flush arrival by character.
+  - id: enter-casa-amor
+    action:
+      kind: join_gather
+    golden: >
+      The player walks into the second villa. The narrator establishes the
+      shift in scenery and stakes — the original couple separated, the new
+      cast in scope, the player's relationship with Chloe now the thing
+      being tested at a distance. Imagine: "Sunset Bay shrinks in the
+      rear-view. The second villa hums with strangers. Somewhere across
+      the water, Chloe is on her own version of this night."
+    checks:
+      - ceremony_events_present
+      - event_narration_present
+      - casa_active
+      - agent_traces_present
+    judge_checks:
+      - id: casa_transition_clear
+        criteria: >
+          The narration makes clear Flush of Hearts begins now — the player
+          has moved villas, the test of the original connection is the
+          stake. Fail if it claims the player has already chosen, or treats
+          this as a return / reveal rather than the entry.

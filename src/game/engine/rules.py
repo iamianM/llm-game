@@ -200,6 +200,9 @@ def _apply_intro(state: GameState, action: PlayerAction) -> MechanicalResult:
 def _apply_challenge_response(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
     if state.pending_challenge is None:
         raise ValueError("CHALLENGE_RESPONSE requires a pending challenge")
+    from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+    if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+        return _apply_round_based_minigame_response(state, action)
     choice = action.target_id
     resolved = resolve_challenge(state, state.pending_challenge, rng, choice=choice)
     state.pending_challenge = resolved
@@ -209,6 +212,136 @@ def _apply_challenge_response(state: GameState, action: PlayerAction, rng: Seede
         relationship_deltas=resolved.deltas,
         tags=["challenge", resolved.kind],
     )
+
+
+def _apply_round_based_minigame_response(state: GameState, action: PlayerAction) -> MechanicalResult:
+    """Submit one round choice; on the final round, score + apply side effects."""
+    assert state.pending_challenge is not None
+    if action.payload is None or "choice_id" not in action.payload:
+        raise ValueError("round-based CHALLENGE_RESPONSE requires payload.choice_id")
+    choice_id = str(action.payload["choice_id"])
+
+    if state.pending_challenge.kind == "final_couples":
+        from src.game.engine.final_couples import (
+            apply_final_couples_result, has_more_rounds as fc_has_more,
+            score_final_couples, submit_choice as fc_submit,
+        )
+        updated = fc_submit(state.pending_challenge, choice_id)
+        if fc_has_more(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
+        scored = score_final_couples(state, updated)
+        applied = apply_final_couples_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action, success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    if state.pending_challenge.kind == "lie_detector":
+        from src.game.engine.lie_detector import (
+            apply_lie_detector_result, has_more_rounds as ld_has_more,
+            score_lie_detector, submit_choice as ld_submit,
+        )
+        updated = ld_submit(state.pending_challenge, choice_id)
+        if ld_has_more(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
+        scored = score_lie_detector(state, updated)
+        applied = apply_lie_detector_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action, success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    if state.pending_challenge.kind == "mr_and_mrs":
+        from src.game.engine.mr_and_mrs import (
+            apply_mr_and_mrs_result, has_more_rounds as mam_has_more,
+            score_mr_and_mrs, submit_choice as mam_submit,
+        )
+        updated = mam_submit(state.pending_challenge, choice_id)
+        if mam_has_more(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
+        scored = score_mr_and_mrs(state, updated)
+        applied = apply_mr_and_mrs_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action, success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    if state.pending_challenge.kind == "snog_marry_pie":
+        from src.game.engine.snog_marry_pie import (
+            apply_snog_marry_pie_result,
+            has_more_rounds as smp_has_more,
+            score_snog_marry_pie,
+            submit_choice as smp_submit,
+        )
+        updated = smp_submit(state.pending_challenge, choice_id)
+        if smp_has_more(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
+        scored = score_snog_marry_pie(state, updated)
+        applied = apply_snog_marry_pie_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action,
+            success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    if state.pending_challenge.kind == "heart_rate":
+        from src.game.engine.pulse_race import (
+            apply_pulse_race_result,
+            has_more_rounds as pulse_has_more,
+            score_pulse_race,
+            submit_choice as pulse_submit,
+        )
+        updated = pulse_submit(state.pending_challenge, choice_id)
+        if pulse_has_more(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
+        scored = score_pulse_race(state, updated)
+        applied = apply_pulse_race_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action,
+            success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    if state.pending_challenge.kind == "compatibility_quiz":
+        from src.game.engine.compatibility_quiz import (
+            apply_compatibility_quiz_result,
+            attach_round_reaction,
+            has_more_rounds,
+            score_compatibility_quiz,
+            submit_choice,
+        )
+        updated = submit_choice(state.pending_challenge, choice_id)
+        # Attach the partner reaction to the round we just submitted so the
+        # CLI / browser can render texture between rounds, not only on wrap.
+        just_answered_index = updated.current_round_index - 1
+        updated = attach_round_reaction(state, updated, just_answered_index)
+        if has_more_rounds(updated):
+            state.pending_challenge = updated
+            return MechanicalResult(
+                action=action,
+                success=True,
+                tags=["minigame", updated.kind, "round_submitted"],
+            )
+        scored = score_compatibility_quiz(state, updated)
+        applied = apply_compatibility_quiz_result(state, scored)
+        state.pending_challenge = applied
+        return MechanicalResult(
+            action=action,
+            success=applied.classification != "failure",
+            relationship_deltas=applied.deltas,
+            tags=["minigame", applied.kind, applied.classification or "unknown"],
+        )
+    raise ValueError(f"unsupported round-based minigame: {state.pending_challenge.kind}")
 
 
 def _apply_hideaway(state: GameState, action: PlayerAction) -> MechanicalResult:

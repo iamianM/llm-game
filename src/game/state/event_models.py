@@ -38,8 +38,65 @@ class AudienceSnapshot(BaseModel):
     entries: list[AudienceEntry] = Field(default_factory=list)
 
 
+class MinigameChoice(BaseModel):
+    """One legal player choice in a minigame round.
+
+    See ``docs/minigame-system.md`` §3.1.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    label: str
+    fact_value: str | None = None
+    is_correct: bool = False
+    distractor_source: Literal["trait_card", "other_npc", "generator", "lie"] = "generator"
+
+
+class MinigameReveal(BaseModel):
+    """A visible side effect surfaced after a minigame round.
+
+    See ``docs/minigame-system.md`` §3.1.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: Literal["fact", "chemistry_rank", "reaction", "lie_caught", "truth_told"]
+    subject_id: str
+    payload: dict[str, str | int] = Field(default_factory=dict)
+
+
+class MinigameRound(BaseModel):
+    """One scored unit inside a minigame.
+
+    See ``docs/minigame-system.md`` §3.1.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    index: int
+    prompt_id: str
+    target_id: str | None = None
+    trait_key: str | None = None
+    tier: int = 0
+    mechanical: bool = True
+    stem: str = ""
+    choices: list[MinigameChoice] = Field(default_factory=list)
+    chosen_id: str | None = None
+    points: int = 0
+    reveals: list[MinigameReveal] = Field(default_factory=list)
+
+
 class Challenge(BaseModel):
-    """One scheduled daily challenge and its mechanical result."""
+    """One scheduled daily challenge and its mechanical result.
+
+    Legacy single-roll fields (``result``, ``player_choice``, ``deltas``) keep
+    their meaning for minigames that still resolve via the old
+    ``engine/challenges.py:resolve_challenge`` path. Round-based fields
+    (``rounds``, ``classification``, ``total_points``, ``audience_delta``)
+    are populated by minigames migrated to the shared harness defined in
+    ``docs/minigame-system.md``.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
@@ -51,6 +108,11 @@ class Challenge(BaseModel):
     player_choice: str | None = None
     result: Literal["success", "failure"] | None = None
     deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
+    rounds: list[MinigameRound] = Field(default_factory=list)
+    current_round_index: int = 0
+    total_points: int = 0
+    classification: Literal["success", "partial", "failure"] | None = None
+    audience_delta: int = 0
 
 
 class ProducerText(BaseModel):
@@ -76,3 +138,36 @@ class GroupDate(BaseModel):
     location: Literal["pool", "kitchen", "terrace", "bedroom"]
     day: int
     pending: bool = True
+
+
+class QuestionBankPrompt(BaseModel):
+    """One pre-generated prompt cached in the Question Bank.
+
+    See ``docs/minigame-system.md`` §3.4.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    minigame_kind: str
+    target_id: str
+    trait_key: str
+    tier: int = Field(ge=0, le=4)
+    mechanical: bool = True
+    stem: str
+    correct_value: str
+    distractors: list[str] = Field(default_factory=list)
+    flavor_tags: list[str] = Field(default_factory=list)
+
+
+class QuestionBank(BaseModel):
+    """Per-season cache of pre-generated minigame prompts.
+
+    See ``docs/minigame-system.md`` §3.4.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: int = 1
+    bank_seed: int
+    prompts: dict[str, list[QuestionBankPrompt]] = Field(default_factory=dict)

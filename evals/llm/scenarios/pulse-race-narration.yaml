@@ -1,0 +1,76 @@
+id: pulse-race-narration
+title: Pulse Race Reveal
+goal: Prove the Event Narrator dramatises a Pulse Race result while preserving the chemistry matrix and player choice exactly.
+seed: 707
+initial_day: 2
+initial_phase: morning
+live_villa_life: false
+character_creation:
+  archetype_id: heartthrob
+  gender: man
+  stats:
+    charm: 7
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 7
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 35
+    trust: 20
+    friendship: 15
+    chemistry: 50
+  maya:
+    affection: 25
+    trust: 10
+    friendship: 10
+    chemistry: 72  # surprise threshold is 70 — Maya pinging at 88 BPM
+judge_context:
+  - Pulse Race is a reveal-only minigame; the chemistry matrix is engine-computed and the narrator may not invent BPMs.
+  - The reaction round offers lean_in / play_cool / apologize. The narrator must name the picked option and the surprise target.
+turns:
+  - id: morning-to-pulse-race
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Morning burns out. Producer announces Pulse Race. The matrix is
+      computed and the reaction round is queued. pending_challenge.kind ==
+      "heart_rate"; surprise target is Maya at 88 BPM.
+    checks:
+      - ceremony_events_present
+  - id: reaction-lean-in
+    action:
+      kind: challenge_response
+      target_id: maya
+      payload:
+        choice_id: lean_in
+        round_index: 0
+    golden: >
+      The player leans into the Maya moment. The narrator lands the
+      reveal — pinned BPM, partner reaction, audience reading the room —
+      and explicitly names the lean_in choice. Classification is success;
+      audience swings positively (success +5 +3 lean_in bonus).
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: chemistry_named
+        criteria: >
+          The prose names a specific chemistry pair (player + surprise
+          target) and references the BPM or chemistry reveal. Generic
+          "the room got hot" without naming the pair fails.
+      - id: choice_named
+        criteria: >
+          The prose explicitly references the player's lean_in choice
+          and the resulting chemistry gain or partner reaction.
+      - id: no_invented_pairs
+        criteria: >
+          No invented chemistry pairs beyond the matrix entries actually
+          recorded on the round's reveals.

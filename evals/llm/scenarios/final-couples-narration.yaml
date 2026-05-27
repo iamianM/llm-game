@@ -1,0 +1,92 @@
+id: final-couples-narration
+title: Final Couples Finale
+goal: Prove the narrator delivers a finale-length wrap that ties together knowledge, chemistry, honesty, banter, and audacity facets without re-scoring.
+seed: 808
+initial_day: 6
+initial_phase: morning
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 6
+    banter: 6
+    eq: 7
+    graft: 5
+    loyalty: 6
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 65
+    trust: 50
+    friendship: 40
+    chemistry: 70  # high band -> chemistry_high pts in the chemistry facet
+  maya:
+    affection: 25
+    trust: 10
+    friendship: 10
+  blake_start:
+    affection: 5  # rival pool for audacity facet
+judge_context:
+  - Final Couples is a weighted-sum minigame across 5 facets (knowledge=4, chemistry=3, honesty=5, banter=3, audacity=3 weights).
+  - This is the finale. Narration should feel like a closing scene, naming at least three of the five facets and calling back to earlier days.
+turns:
+  - id: morning-to-finale
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Day 6 morning ends. The finale stage is set; pending_challenge.kind
+      == "final_couples"; 5 rounds queued across knowledge / chemistry /
+      honesty / banter / audacity facets.
+    checks:
+      - ceremony_events_present
+  - id: knowledge-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 0 } }
+    golden: Player nails the knowledge facet. Tier-dependent.
+    checks: []
+  - id: chemistry-kiss
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: chemistry_kiss, round_index: 1 } }
+    golden: Player picks the kiss memory. Chemistry facet uses partner.relationship.chemistry — high band.
+    checks: []
+  - id: honesty-truth
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 2 } }
+    golden: Player tells the truth.
+    checks: []
+  - id: banter-match
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: callback_inside_joke, round_index: 3 } }
+    golden: Player picks the inside-joke callback.
+    checks: []
+  - id: audacity-pie-rival
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: pie_blake_start, round_index: 4 } }
+    golden: >
+      Player pies the rival. Weighted sum lands in the success band.
+      Classification: success. Audience +8. Partner deltas affection+8
+      trust+4. The narrator delivers a finale wrap that names at least
+      three facets and calls back to a moment from earlier in the
+      season.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: finale_register
+        criteria: >
+          The narration reads like a closing scene — longer, slower
+          beats, season-spanning callback to one specific earlier
+          moment (a day name, a partner reveal, an earlier choice).
+          Status-print prose fails.
+      - id: facets_named
+        criteria: >
+          At least three of the five facets — knowledge, chemistry,
+          honesty, banter, audacity — are named (by word or clear
+          synonym) and tied to the player's specific pick.
+      - id: no_invented_outcome
+        criteria: >
+          The narrator does not invent a different classification,
+          different audience delta, or a relationship outcome not in
+          the engine record.

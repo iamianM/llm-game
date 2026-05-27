@@ -1,0 +1,82 @@
+id: couples-quiz-narration
+title: Couples Quiz Two-Sided Round
+goal: Prove the Event Narrator handles alternating player/partner rounds and names actual mismatches without inventing scoring.
+seed: 313
+initial_day: 3
+initial_phase: morning
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 6
+    graft: 5
+    loyalty: 8
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 45
+    trust: 30
+    friendship: 25
+judge_context:
+  - The Couples Quiz alternates direction. Even rounds quiz the player about the partner. Odd rounds ask the player to guess what the partner guessed about THEM.
+  - Match = 3 pts, mismatch = 0 pts. Three consecutive mismatches trigger a streak penalty.
+  - Narration must name at least one specific mismatch or match by question text or answer.
+turns:
+  - id: morning-to-couples-quiz
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Morning ends, the Couples Quiz scene begins. pending_challenge.kind
+      == "mr_and_mrs". Six rounds queued, alternating between
+      player-about-partner and partner-about-player.
+    checks:
+      - ceremony_events_present
+  - id: r1-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 0 } }
+    golden: Player correctly answers about partner. Round 0.
+    checks: []
+  - id: r2-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 1 } }
+    golden: Player correctly guesses partner's guess. Round 1.
+    checks: []
+  - id: r3-wrong
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: distractor_0, round_index: 2 } }
+    golden: Player misreads partner trait. Round 2.
+    checks: []
+  - id: r4-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 3 } }
+    golden: Player correctly guesses partner's guess. Round 3.
+    checks: []
+  - id: r5-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 4 } }
+    golden: Player correctly answers about partner. Round 4.
+    checks: []
+  - id: r6-correct
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 5 } }
+    golden: >
+      Final round resolves. With 5 of 6 matches, the couple lands in
+      success band; classification == success. Narrator dramatises the
+      flow — the one mismatch in round 3, the partner's reactions —
+      without inventing a different score.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: alternation_named
+        criteria: >
+          The prose acknowledges the two-sided structure — at least once
+          referring to the partner's pre-recorded guess about the player.
+      - id: mismatch_named
+        criteria: >
+          The single round-3 mismatch is named specifically (the question
+          subject or the wrong answer). Generic "you got most right"
+          without naming the miss fails.

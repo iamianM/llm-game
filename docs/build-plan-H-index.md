@@ -1,5 +1,8 @@
 # Build Plan H — Make It a Real Game
 
+> Historical build-plan index. This file is kept for implementation context
+> only. Current planning lives in [current-plan.md](current-plan.md).
+
 This is the index for the H-series of build plans. Each H phase has its own plan doc with full implementation detail, acceptance criteria, and evals. Codex executes them in the order below.
 
 The H series exists because v0 ships an engine, not a game. H makes it a game: it has a start (character creation), a middle (daily challenges and producer events), a climax (Casa Amor or recoupling drama), and an ending (the public vote). The engine systems built in F and G become the *substrate* for actual gameplay.

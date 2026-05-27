@@ -1,0 +1,111 @@
+id: challenge-result-narration
+title: Challenge Result Narration
+goal: Prove the Event Narrator makes a deterministic Compatibility Quiz result feel like a moment, without changing who scored what.
+seed: 505
+initial_phase: intros
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 45
+    trust: 30
+    friendship: 20
+judge_context:
+  - Compatibility Quiz scoring is deterministic engine output (see docs/minigame-system.md §5). The narrator describes the resolved outcome.
+  - The narrator may dramatise rounds, reveals, and cast reactions, but cannot change classification, total_points, audience_delta, or relationship deltas.
+  - Wrong-answer reveals expose the truth at reduced confidence (`KnownFact.source = "quiz_misread"`, `confidence = 0.5`); the narrator may reference this without inventing a different fact.
+turns:
+  - id: morning-to-challenge
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Morning ends and the producer announces the Compatibility Quiz.
+      pending_challenge.kind is compatibility_quiz and five rounds have
+      been built. No outcome yet — the rounds are waiting for the player.
+    checks:
+      - ceremony_events_present
+  - id: round-1-correct
+    action:
+      kind: challenge_response
+      target_id: chloe
+      payload:
+        choice_id: correct
+        round_index: 0
+    golden: First round, player picks correctly.
+    checks: []
+  - id: round-2-correct
+    action:
+      kind: challenge_response
+      target_id: chloe
+      payload:
+        choice_id: correct
+        round_index: 1
+    golden: Second round, correct.
+    checks: []
+  - id: round-3-correct
+    action:
+      kind: challenge_response
+      target_id: chloe
+      payload:
+        choice_id: correct
+        round_index: 2
+    golden: Third round, correct.
+    checks: []
+  - id: round-4-wrong
+    action:
+      kind: challenge_response
+      target_id: chloe
+      payload:
+        choice_id: distractor_0
+        round_index: 3
+    golden: Fourth round, player guesses wrong.
+    checks: []
+  - id: round-5-wrong
+    action:
+      kind: challenge_response
+      target_id: chloe
+      payload:
+        choice_id: distractor_0
+        round_index: 4
+    golden: >
+      Final round resolves; the Compatibility Quiz wraps. With 3 correct
+      and 2 wrong on a fresh Day-1 partner the classification is
+      `failure` or `partial` (engine math); the narrator lands it with a
+      villa-texture beat — laughter, wince, Chloe catching the player's
+      eye, the rest of the cast reacting — and names at least one
+      specific question/answer pair. No claim of a different score, prize,
+      or relationship outcome.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: challenge_outcome_faithful
+        criteria: >
+          The prose matches the resolved Compatibility Quiz classification
+          (success, partial, or failure) and the recorded audience_delta /
+          relationship deltas direction. No invented scoring rule, prize,
+          or different relationship result.
+      - id: minigame_reveal_named
+        criteria: >
+          The prose names at least one specific question or answer that
+          actually appeared in the rounds (trait_key or correct_value).
+          Generic "the quiz ended" prose fails this check.
+      - id: villa_reaction_specific
+        criteria: >
+          The prose includes a specific cast reaction beat — laughter,
+          side-eye, a one-line comment — not a flat status print.

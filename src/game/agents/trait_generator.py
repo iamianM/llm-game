@@ -12,12 +12,21 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.content.archetype_templates import ARCHETYPE_TEMPLATES, ArchetypeTemplate
 from src.game.content.trait_library import opening_trait_cards
 from src.game.state.models import Gender, IslanderState
 from src.game.state.traits import CORE_TRAIT_KEYS, PersonaSummary, TraitCard, TraitFact
 
-TRAIT_GENERATOR_MODEL = "gpt-5.4-mini"
+TRAIT_GENERATOR_MODEL = GAME_AGENT_MODEL
+TRAIT_GENERATOR_PROMPT = "src/game/agents/prompts/trait_generator.md"
 
 
 @dataclass(frozen=True)
@@ -79,6 +88,7 @@ class OpenAITraitGenerator:
         rendered = _render_seeds(seed_list)
         last_error: Exception | None = None
         for attempt in range(3):
+            attempt_number = attempt + 1
             input_text = rendered
             if last_error is not None:
                 input_text = (
@@ -87,25 +97,36 @@ class OpenAITraitGenerator:
                     "and 6-10 concrete flavor_traits."
                 )
             try:
-                parsed = self._generate_batch(input_text)
+                parsed = self._generate_batch(input_text, attempt_number)
                 cards: dict[str, TraitCard] = dict(parsed.cast)
                 validate_trait_cards(cards)
                 return cards
             except (ValueError, ValidationError, json.JSONDecodeError) as exc:
+                mark_agent_trace_validation_error("trait_generator", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
                     raise
         raise AssertionError("unreachable trait generator retry state")
 
-    def _generate_batch(self, input_text: str) -> TraitCardBatch:
+    def _generate_batch(self, input_text: str, attempt_number: int) -> TraitCardBatch:
         """Request one parsed Trait Card batch from the model."""
-        response = self._client.responses.create(
+        attempt_token = begin_agent_attempt(attempt_number)
+        try:
+            response = self._client.responses.create(
+                model=self._model,
+                instructions=Path(TRAIT_GENERATOR_PROMPT).read_text(encoding="utf-8"),
+                input=input_text,
+                text={"format": {"type": "json_object"}},
+                **reasoning_request_kwargs(),
+            )
+        finally:
+            end_agent_attempt(attempt_token)
+        record_agent_trace(
+            agent_name="trait_generator",
             model=self._model,
-            reasoning={"effort": "low"},
-            instructions=Path("src/game/agents/prompts/trait_generator.md").read_text(encoding="utf-8"),
-            input=input_text,
-            text={"format": {"type": "json_object"}},
-            max_output_tokens=12000,
+            prompt_path=TRAIT_GENERATOR_PROMPT,
+            response=response,
+            output=response.output_text,
         )
         return _parse_trait_batch(response.output_text)
 

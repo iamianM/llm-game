@@ -1,0 +1,64 @@
+id: interruption-ignore
+title: Conversation Interruption (Ignore)
+goal: 'Prove ignoring an interruption is engine-only: the original conversation stays active, the pending interruption clears, the interrupter takes the larger relationship hit, and the engine moves them away.'
+seed: 1921
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_relationships:
+  chloe:
+    affection: 50
+    chemistry: 20
+    trust: 35
+    friendship: 20
+  liam:
+    affection: 35
+    trust: 25
+    friendship: 25
+judge_context:
+  - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
+  - 'Ignore is a harsher engine-owned path than defer: it keeps Chloe active, clears the interruption, costs Liam more affection, and moves him away.'
+turns:
+  - id: ignore-liam
+    arrange_player_location: pool
+    arrange_npc_locations:
+      chloe: pool
+      liam: pool
+    arrange_active_conversation:
+      target_id: chloe
+      started_on_turn: 0
+      started_on_day: 1
+      pending_interruption:
+        interrupter_id: liam
+        reason: needs_to_talk
+        urgency: polite
+    action:
+      kind: respond_with
+      target_id: liam
+      intent_id: ignore_interruption
+    golden: >
+      The engine keeps Chloe as the active conversation, clears Liam's
+      pending interruption, records the harsher relationship penalty, and
+      moves Liam away from the pool. No LLM response is expected on this
+      engine-only turn.
+    checks:
+      - interruption_cleared
+      - active_conversation_target_is:chloe
+      - relationship_delta:liam:affection:-4
+      - forced_movement_present:liam:walks_away_after_snub
+      - no_exchange
+    judge_checks:
+      - id: ignore_grounded
+        criteria: >
+          The recorded mechanical result should read as an ignore path:
+          Chloe remains active, Liam takes the larger affection hit, and
+          Liam is moved away. Fail if it reads like an accepted interruption
+          or a polite defer.

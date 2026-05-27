@@ -123,6 +123,7 @@ class AvailableAction(BaseModel):
     audience_hint: Literal["+", "-", ""]
     risk: str | None
     stat_used: str | None
+    payload: dict[str, object] | None = None
     description: str | None = None
 
 
@@ -153,6 +154,7 @@ class SessionState(BaseModel):
     couples: list[CoupleSummary]
     audience: AudienceState
     pending_recouple_proposal: dict[str, object] | None
+    pending_challenge: dict[str, object] | None = None
     outcome: str | None
     active_conversation_target_id: str | None
     villa_snapshot: dict[str, list[str]]

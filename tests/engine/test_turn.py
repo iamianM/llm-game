@@ -42,7 +42,8 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
 
 
 def test_run_turn_ambient_wait_advances_phase() -> None:
-    """Scripted ambient wait can consume the remaining phase budget."""
+    """Ambient wait burns the morning budget; the round-based Day-1 quiz then
+    holds the phase on CHALLENGE until the player answers all five rounds."""
     state = new_game(1)
 
     result = run_turn(
@@ -51,7 +52,10 @@ def test_run_turn_ambient_wait_advances_phase() -> None:
         SeededRng(1),
     )
 
-    assert result.state.phase is Phase.AFTERNOON
+    assert result.state.phase is Phase.CHALLENGE
+    assert result.state.pending_challenge is not None
+    assert result.state.pending_challenge.kind == "compatibility_quiz"
+    assert len(result.state.pending_challenge.rounds) == 5
     assert result.state.turn_index == 1
 
 

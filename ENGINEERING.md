@@ -82,3 +82,13 @@ Reject changes that add:
 Prompt files under `src/game/agents/prompts/` are authored and edited only by the user (Claude in this collaboration drafts them; the user approves). When a build plan installs a prompt, it installs verbatim. Codex does not soften, shorten, restructure, or "improve" prompt wording without an explicit user request.
 
 If a prompt produces bad output, the response is to flag the problem and propose an edit — not to silently rewrite the prompt. Prompt drift is a content-quality heuristic in the same family as R7 and gets the same answer: the prompt is the heuristic; edits go through the prompt owner.
+
+## R18. No Arbitrary Limits On Agent I/O
+
+Agent request kwargs are limited to model, instructions, input, text/text_format, and the shared `reasoning_request_kwargs()` block. No `max_output_tokens`. No `temperature`. No `top_p`, `presence_penalty`, or other sampling overrides. Trust the model defaults and the prompt.
+
+Length, sentence count, option count, and word count are conveyed through the prompt and the typed schema. They are not enforced in validators that reject otherwise-valid output. The only validation a reject path may enforce is the structural agent boundary: enum values, schema shape, participant mention, third-person body language, no-leaked-engine-state, etc.
+
+Likewise, do not slice agent input or output with arbitrary `[:N]` / `[-N:]` caps. If the model needs to focus on recent context, say so in the prompt. The conversation engine already retains the last `MAX_RETAINED_EXCHANGES`; downstream agents see what the engine retained, not a second arbitrary truncation on top.
+
+This rule exists because: capping tokens prevents the model from finishing its work; setting temperature defeats reasoning effort; truncating context starves the agent of information that the engine already decided was relevant; rejecting output by length forces retries that waste tokens and never make the output better.

@@ -11,7 +11,6 @@ engine code validates the menu and resolves mechanics.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Callable
 from functools import cached_property
 from pathlib import Path
@@ -22,10 +21,19 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_gossip import with_gossip_options as with_gossip_options
 from src.game.agents.islander_voice import Exchange, load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
-CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"
+CONTEXTUAL_OPTIONS_MODEL = GAME_AGENT_MODEL
+CONTEXTUAL_OPTIONS_PROMPT = "src/game/agents/prompts/contextual_options.md"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
 FOLLOW_UP_CATEGORIES = {
     "friendly",
@@ -38,7 +46,6 @@ FOLLOW_UP_CATEGORIES = {
     "gossip_ring",
     "exit",
 }
-BESPOKE_LABEL_MAX_WORDS = 8
 ALLOWED_BESPOKE_INTENTS = {
     "honest_vulnerable", "escalate_flirt", "deflect_with_humor", "joke_back",
     "go_deeper", "ask_about_topic", "apologize", "defend_self", "change_subject",
@@ -71,11 +78,16 @@ class ContextualOptionsContext(BaseModel):
 
 
 class ContextualBespoke(BaseModel):
-    """Moment-specific additions to a partially-built follow-up wheel."""
+    """Moment-specific additions to a partially-built follow-up wheel.
+
+    The prompt instructs the model to produce one or two bespoke options;
+    the schema only enforces non-emptiness so assembly always has something
+    to merge.
+    """
 
     model_config = ConfigDict(extra="forbid")
 
-    options: list[FollowUpOption] = Field(min_length=1, max_length=2)
+    options: list[FollowUpOption] = Field(min_length=1)
     npc_will_leave: bool
     npc_exit_line: str | None = None
 
@@ -114,6 +126,7 @@ class ContextualOptionsAgent:
         rendered = _render_context(context)
         last_error: ValueError | None = None
         for attempt in range(3):
+            attempt_number = attempt + 1
             retry_context = rendered
             if last_error is not None:
                 retry_context = (
@@ -123,11 +136,23 @@ class ContextualOptionsAgent:
                     "Return a corrected ContextualBespoke with one or two specific options "
                     "that do not duplicate already_present."
                 )
-            bespoke = self._generate_bespoke(retry_context)
+            attempt_token = begin_agent_attempt(attempt_number)
+            try:
+                try:
+                    bespoke = self._generate_bespoke(retry_context)
+                except Exception as exc:
+                    mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
+                    last_error = ValueError(str(exc))
+                    if attempt == 2:
+                        raise
+                    continue
+            finally:
+                end_agent_attempt(attempt_token)
             try:
                 validate_contextual_bespoke(bespoke, context.already_present)
                 return bespoke
             except ValueError as exc:
+                mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
                     raise
@@ -137,14 +162,19 @@ class ContextualOptionsAgent:
         """Request one parsed bespoke option set from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path("src/game/agents/prompts/contextual_options.md").read_text(
-                encoding="utf-8"
-            ),
+            instructions=Path(CONTEXTUAL_OPTIONS_PROMPT).read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=ContextualBespoke,
-            max_output_tokens=360,
+            **reasoning_request_kwargs(),
         )
         bespoke = response.output_parsed
+        record_agent_trace(
+            agent_name="contextual_options",
+            model=self._model,
+            prompt_path=CONTEXTUAL_OPTIONS_PROMPT,
+            response=response,
+            output=bespoke,
+        )
         if bespoke is None:
             raise ValueError("Contextual Options returned no parsed ContextualBespoke")
         return bespoke
@@ -167,7 +197,7 @@ def contextual_options_context(
     if state.active_conversation is not None and state.active_conversation.exchanges:
         recent_history = "\n".join(
             f"- player tried {record.intent_id}; NPC tone {record.npc_tone}; success {record.success}"
-            for record in state.active_conversation.exchanges[-3:]
+            for record in state.active_conversation.exchanges
         )
     rel = target.relationship
     return ContextualOptionsContext(
@@ -243,9 +273,15 @@ def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool 
 
 
 def validate_follow_up_menu(menu: FollowUpMenu) -> None:
-    """Fail loud if a follow-up menu violates the prompt contract."""
-    if not 2 <= len(menu.options) <= 5:
-        raise ValueError(f"follow-up option count out of bounds: {len(menu.options)}")
+    """Fail loud if a follow-up menu violates the engine contract.
+
+    Only enforces the structural contract: exit is engine-owned (exactly one),
+    enum values, and unlock-threshold value ranges. Label length, option
+    count, and digit-vs-spelled-number preferences are conveyed via the
+    prompt, not enforced here.
+    """
+    if not menu.options:
+        raise ValueError("follow-up menu has no options")
     exit_count = sum(option.category == "exit" for option in menu.options)
     if exit_count != 1:
         raise ValueError(f"follow-up menu must contain exactly one exit category option: {menu}")
@@ -256,30 +292,27 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
             raise ValueError(f"unknown audience_hint: {option.audience_hint}")
         if option.category == "exit" and option.intent_kind not in EXIT_INTENT_KINDS:
             raise ValueError(f"exit option has non-exit intent_kind: {option.intent_kind}")
-        if len(option.label.split()) > BESPOKE_LABEL_MAX_WORDS:
-            raise ValueError(f"follow-up label too long: {option.label!r}")
-        if re.search(r"\d", option.label):
-            raise ValueError(f"follow-up label contains digits: {option.label!r}")
         if option.unlock_threshold is not None:
             for key, value in option.unlock_threshold.items():
                 if key not in {"affection", "chemistry", "trust", "friendship"}:
                     raise ValueError(f"unknown unlock threshold key: {key}")
                 if value < 0 or value > 100:
                     raise ValueError(f"unlock threshold out of range: {option.unlock_threshold}")
-    if menu.npc_will_leave:
-        if not menu.npc_exit_line:
-            raise ValueError("npc_exit_line is required when npc_will_leave is true")
-        if len(menu.npc_exit_line.split()) > 40:
-            raise ValueError(f"npc_exit_line too long: {menu.npc_exit_line!r}")
+    if menu.npc_will_leave and not menu.npc_exit_line:
+        raise ValueError("npc_exit_line is required when npc_will_leave is true")
 
 
 def validate_contextual_bespoke(
     bespoke: ContextualBespoke,
     already_present: list[str],
 ) -> None:
-    """Validate the slim Contextual Options output before assembly."""
-    if not 1 <= len(bespoke.options) <= 2:
-        raise ValueError(f"bespoke option count out of bounds: {len(bespoke.options)}")
+    """Validate the slim Contextual Options output before assembly.
+
+    Only enforces the structural contract: bespoke options must come from the
+    allowed intent set, must not provide the engine-owned exit, and must not
+    duplicate intents already present in the default menu. Label length and
+    digit-vs-spelled-number preferences are conveyed via the prompt.
+    """
     duplicates = set(already_present) & {option.intent_kind for option in bespoke.options}
     if duplicates:
         raise ValueError(f"bespoke duplicated already-present intents: {sorted(duplicates)}")
@@ -290,15 +323,8 @@ def validate_contextual_bespoke(
             raise ValueError(f"unknown bespoke category: {option.category}")
         if option.category == "exit":
             raise ValueError("bespoke options must not provide the engine-owned exit")
-        if len(option.label.split()) > BESPOKE_LABEL_MAX_WORDS:
-            raise ValueError(f"bespoke label too long: {option.label!r}")
-        if re.search(r"\d", option.label):
-            raise ValueError(f"bespoke label contains digits: {option.label!r}")
-    if bespoke.npc_will_leave:
-        if not bespoke.npc_exit_line:
-            raise ValueError("npc_exit_line is required when npc_will_leave is true")
-        if len(bespoke.npc_exit_line.split()) > 40:
-            raise ValueError(f"npc_exit_line too long: {bespoke.npc_exit_line!r}")
+    if bespoke.npc_will_leave and not bespoke.npc_exit_line:
+        raise ValueError("npc_exit_line is required when npc_will_leave is true")
 
 
 def _render_context(context: ContextualOptionsContext) -> str:

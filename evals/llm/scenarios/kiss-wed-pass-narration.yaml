@@ -1,0 +1,79 @@
+id: kiss-wed-pass-narration
+title: Kiss Wed Pass Allocation
+goal: Prove the narrator names each of the three allocations specifically and dramatises the pie pick.
+seed: 511
+initial_day: 5
+initial_phase: morning
+live_villa_life: false
+character_creation:
+  archetype_id: class_clown
+  gender: man
+  stats:
+    charm: 5
+    banter: 8
+    eq: 5
+    graft: 5
+    loyalty: 7
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 50
+    trust: 35
+    friendship: 25
+  maya:
+    affection: 30
+    trust: 10
+    friendship: 15
+    chemistry: 70  # makes Maya the top-chemistry non-partner pick
+  blake_start:
+    affection: 5   # lowest non-partner affection -> rival role
+    trust: 0
+    friendship: 0
+judge_context:
+  - Kiss Wed Pass has three sequential rounds (snog, marry, pie). The pool shrinks after each pick.
+  - The narrator must name the three picks by label and target. Pie-ing the rival is a power move; pie-ing the partner is a self-destruct.
+turns:
+  - id: morning-to-smp
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Morning ends. Producer announces Kiss Wed Pass. Three rounds queued
+      with three candidate targets: partner Chloe, top-chemistry Maya,
+      rival Blake.
+    checks:
+      - ceremony_events_present
+  - id: snog-maya
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_maya, round_index: 0 } }
+    golden: Player snogs Maya (chemistry pick). Pool shrinks for round 2.
+    checks: []
+  - id: marry-chloe
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_chloe, round_index: 1 } }
+    golden: Player marries Chloe (partner pick). Only Blake remains.
+    checks: []
+  - id: pie-blake
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake_start, round_index: 2 } }
+    golden: >
+      Player pies Blake (rival). Classification success (snog_chemistry
+      3 + marry_partner 3 + pie_rival 3 = 9 pts >= success threshold 6).
+      Audience +5. Narrator names all three picks specifically.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: all_three_picks_named
+        criteria: >
+          The prose names Maya as the snog, Chloe as the marry, and
+          Blake as the pie — by name. Generic "you made your picks"
+          fails.
+      - id: pie_dramatised
+        criteria: >
+          The pie of Blake (a rival) is dramatised as a power move with
+          a cast reaction or audience read. The narrator does not
+          paint it as cruel — the engine treats this as a positive
+          play.

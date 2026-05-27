@@ -29,6 +29,7 @@ _gamefeel/
 .game_saves/
 .game_sessions/
 .game_traces/
+.scratch/
 .py-server-*.txt
 .api-*.log
 .api-*.err

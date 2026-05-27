@@ -7,11 +7,12 @@ import pytest
 from src.game.agents.event_narrator import (
     EventNarration,
     OpenAIEventNarrator,
+    _render_context,
     mock_event_narration,
     validate_event_narration,
 )
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.models import new_game
+from src.game.state.models import Couple, new_game
 
 
 @pytest.mark.llm
@@ -63,3 +64,16 @@ def test_mock_event_narration_uses_player_facing_event_language() -> None:
     assert "Pairing Ceremony" in narration.prose
     assert "Jordan is Heart Out" in narration.prose
     assert "jordan_start" not in narration.prose
+
+
+def test_event_narrator_context_names_player_couple() -> None:
+    """Current couple context uses the canonical partner fields."""
+    state = new_game(1)
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+
+    rendered = _render_context(
+        state,
+        [CeremonyEvent(kind="recoupling", message="Chloe couples with the player.", islander_id="chloe")],
+    )
+
+    assert "Current player couple: player with chloe (Chloe)" in rendered

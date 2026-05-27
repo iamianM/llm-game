@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from src.game.reporting.agent_trace_blocks import agent_trace_detail
 from src.game.reporting.html_base import escape
 from src.game.reporting.scenes import Scene
 from src.game.reporting.slides.cast import display_name
@@ -58,6 +59,7 @@ def _ceremony_body(scene: Scene) -> str:
                 f"{prose_html}{messages_html}"
                 f"</div>"
             )
+    blocks.extend(_agent_trace_details(scene.records))
     if not blocks:
         return "<p class='muted'>No narration recorded for this ceremony.</p>"
     return "".join(blocks)
@@ -109,6 +111,7 @@ def _challenge_body(scene: Scene) -> str:
                     f"<div class='label'>Producer text</div>"
                     f"<div class='summary'>{escape(body)}</div></div>"
                 )
+    blocks.extend(_agent_trace_details(scene.records))
     return "".join(blocks) or "<p class='muted'>Challenge fired but no details recorded.</p>"
 
 
@@ -162,6 +165,7 @@ def _gather_body(scene: Scene) -> str:
                 blocks.append(
                     f"<div class='ceremony-feature'><div class='prose'>{escape(prose)}</div></div>"
                 )
+    blocks.extend(_agent_trace_details(scene.records))
     return "".join(blocks) or "<p class='muted'>The villa gathers.</p>"
 
 
@@ -215,6 +219,7 @@ def _background_body(scene: Scene) -> str:
                 f"<details class='inline-detail'><summary>Memories formed</summary>"
                 f"<div class='inline-body'>{mem_html}</div></details>"
             )
+    vignettes.extend(_agent_trace_details(scene.records))
     return "".join(vignettes) or "<p class='muted'>Quiet villa moment.</p>"
 
 
@@ -244,6 +249,7 @@ def _movement_body(scene: Scene) -> str:
                 f"<div class='line'>{escape(who)} drifts to the <b>{escape(where)}</b>"
                 f" <span class='muted'>· {escape(reason)}</span></div></div>"
             )
+    lines.extend(_agent_trace_details(scene.records))
     return "".join(lines) or "<p class='muted'>People shifting around the villa.</p>"
 
 
@@ -293,6 +299,7 @@ def _day_boundary_body(scene: Scene) -> str:
             f"<div class='recap-feature' style='border-left-color:var(--gold)'>"
             f"<h3>Audience standings</h3>{''.join(audience)}</div>"
         )
+    blocks.extend(_agent_trace_details(scene.records))
     return "".join(blocks) or "<p class='muted'>Day wraps quietly.</p>"
 
 
@@ -317,4 +324,9 @@ def _turn_body(scene: Scene) -> str:
             f"<span class='outcome-pill {outcome_class}'>"
             f"{('ok' if success else 'miss')}</span></div></div>"
         )
+    lines.extend(_agent_trace_details(scene.records))
     return "".join(lines)
+
+
+def _agent_trace_details(records: list[dict[str, Any]]) -> list[str]:
+    return [html for record in records if (html := agent_trace_detail(record))]

@@ -15,6 +15,7 @@ from src.game.state.models import (
     Gender,
     Location,
     NPCNPCConversation,
+    PendingRecoupleProposal,
     new_game,
 )
 from src.game.state.rng import SeededRng
@@ -108,6 +109,28 @@ def test_accepting_npc_proposal_forms_new_couple_and_leaves_singles() -> None:
     assert _partner_id(state, "chloe") is None
     assert _partner_id(state, "liam") is None
     assert turn.ceremony_events[0].kind == "npc_proposal_response"
+
+
+def test_npc_proposal_response_does_not_reopen_same_turn() -> None:
+    state = _proposal_state()
+    state.active_conversation = None
+    maya = state.islanders[1]
+    maya.relationship.affection = 80
+    maya.relationship.chemistry = 90
+    state.pending_recouple_proposal = PendingRecoupleProposal(
+        proposer_id="maya",
+        chance=60,
+        audience_hint_accept="",
+    )
+
+    turn = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="maya", intent_id="decline_harshly"),
+        SeededRng(4),
+    )
+
+    assert turn.state.pending_recouple_proposal is None
+    assert [event.kind for event in turn.ceremony_events] == ["npc_proposal_response"]
 
 
 def test_single_npc_background_flirt_can_form_rebound_couple() -> None:

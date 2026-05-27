@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -36,7 +36,7 @@ web-check:
 web-contracts:
 	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts
 
-qa: lint type-check content-lint test smoke determinism web-check web-contracts
+qa: lint type-check content-lint test smoke determinism llm-eval-mock web-check web-contracts
 
 play:
 	uv run python -m src.game.cli play
@@ -52,6 +52,15 @@ test-llm:
 
 smoke-real-llm:
 	uv run python -m src.game.cli play --record .game_traces/manual-real-g8.json
+
+llm-eval-mock:
+	uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
+
+llm-eval-real:
+	uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-real --real-llm
+
+llm-eval-real-judge:
+	uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-real-judge --real-llm --judge
 
 dev: dev-start
 

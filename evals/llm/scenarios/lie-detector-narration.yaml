@@ -1,0 +1,82 @@
+id: lie-detector-narration
+title: Lie Detector Truth Vs Lie
+goal: Prove the narrator dramatises detection outcomes while staying faithful to engine truth-vs-lie decisions.
+seed: 909
+initial_day: 4
+initial_phase: morning
+live_villa_life: false
+character_creation:
+  archetype_id: heartthrob
+  gender: man
+  stats:
+    charm: 6
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 8
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 40
+    trust: 25
+    friendship: 20
+  maya:
+    affection: 30
+    trust: 15
+    friendship: 15
+    chemistry: 65  # triggers the "still feel something for Maya?" prompt
+judge_context:
+  - Lie Detector compares the player's pick to event history and a detection roll. Caught lies write lie_caught reveals; truths write truth_told reveals.
+  - The narrator may dramatise the moment but cannot change which lies were caught or which truths were verified.
+turns:
+  - id: morning-to-lie-detector
+    action:
+      kind: ambient
+      target_id: ambient_wait
+    golden: >
+      Morning ends; the producer wires the player up. Five rounds
+      queued. pending_challenge.kind == "lie_detector".
+    checks:
+      - ceremony_events_present
+  - id: r1-truth
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 0 } }
+    golden: Player tells the truth about lingering feelings for Maya.
+    checks: []
+  - id: r2-lie-hard
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_hard, round_index: 1 } }
+    golden: Player tells a hard lie about partner satisfaction.
+    checks: []
+  - id: r3-truth
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 2 } }
+    golden: Truth about authenticity with cast.
+    checks: []
+  - id: r4-truth
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 3 } }
+    golden: Truth about strongest-connection self-assessment.
+    checks: []
+  - id: r5-lie-mild
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_mild, round_index: 4 } }
+    golden: >
+      Player shades the final answer. Quiz resolves; classification
+      depends on the detection rolls captured in the reveals. The
+      narrator names which lie was caught (if any) and which truth was
+      verified, in the partner's voice.
+    checks:
+      - ceremony_events_present
+      - event_narration_valid
+      - challenge_resolved
+      - agent_traces_present
+    judge_checks:
+      - id: belief_state_named
+        criteria: >
+          For at least one round the narrator names the partner's
+          belief outcome — believed, suspected, or caught — and
+          matches the engine's reveal.
+      - id: no_invented_evidence
+        criteria: >
+          The narrator does not invent a kiss, hideaway visit, or
+          recouple regret that isn't on the engine record. Lies are
+          dramatised against the reveal payloads only.

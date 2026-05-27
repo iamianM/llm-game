@@ -1,0 +1,85 @@
+id: npc-proposal-decline
+title: NPC Proposal Harsh Decline
+goal: Prove an NPC-initiated Heart Swap proposal can be declined without changing couples, while preserving the exact relationship and audience consequences.
+seed: 4
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: man
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+  - partner_a_id: maya
+    partner_b_id: liam
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 45
+    chemistry: 20
+    trust: 35
+    friendship: 20
+  maya:
+    affection: 80
+    chemistry: 90
+    trust: 5
+    friendship: 20
+judge_context:
+  - Maya is eligible to propose because her affection and chemistry with the player are high and her current couple is weak.
+  - A harsh decline is a resolved answer, not a pending ask and not a couple change.
+  - The engine applies the harsh-decline deltas to Maya and a small audience penalty to the player.
+turns:
+  - id: maya-asks
+    action:
+      kind: ambient
+      target_id: pool_people_watch
+    golden: >
+      Maya's proposal becomes a pending ask. The narration can frame the
+      charged moment, but it must not claim the player accepted, rejected,
+      or formed a new couple yet.
+    checks:
+      - pending_npc_proposal_from:maya
+      - ceremony_event_present:npc_proposal_incoming
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: pending_not_resolved
+        criteria: >
+          The narration treats Maya's proposal as a pending ask awaiting the
+          player's response. Fail if it says the proposal was accepted,
+          declined, or already changed the couples.
+  - id: decline-maya-harshly
+    action:
+      kind: npc_proposal_response
+      target_id: maya
+      intent_id: decline_harshly
+    golden: >
+      The response is a harsh decline. The narration can make the rejection
+      sting, but it must keep the existing couples intact, clear the pending
+      ask, and preserve the exact engine consequences for Maya and the
+      audience.
+    checks:
+      - proposal_outcome_is:rejected
+      - pending_npc_proposal_cleared
+      - ceremony_event_present:npc_proposal_response
+      - couple_present:player:chloe
+      - couple_present:maya:liam
+      - relationship_delta:maya:affection:-5
+      - relationship_delta:maya:chemistry:-5
+      - relationship_delta:maya:trust:-2
+      - audience_delta:-1
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: harsh_decline_faithful
+        criteria: >
+          The narration says the player declined Maya and does not form a new
+          couple. Fail if it treats the proposal as accepted, leaves it
+          pending, or swaps any partners.

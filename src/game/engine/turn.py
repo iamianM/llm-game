@@ -20,6 +20,11 @@ from src.game.agents.contextual_options import (
 from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
+from src.game.agents.runtime import (
+    AgentTrace,
+    begin_agent_trace_capture,
+    end_agent_trace_capture,
+)
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.arrival_rolls import ArrivalRoll
@@ -34,6 +39,7 @@ from src.game.engine.conversation import (
 from src.game.engine.daily_recap import append_daily_recap_if_needed
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
+from src.game.engine.hideaway import hideaway_event
 from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
@@ -90,6 +96,7 @@ class TurnResult(BaseModel):
     time_cost: int = 0
     auto_advance: bool = False
     arrival_rolls: list[ArrivalRoll] = Field(default_factory=list)
+    agent_traces: list[AgentTrace] = Field(default_factory=list)
 
 
 def run_turn(
@@ -104,6 +111,12 @@ def run_turn(
     background_dialogue: BackgroundDialogueFn | None = None,
 ) -> TurnResult:
     """Run one deterministic game turn."""
+    trace_token = begin_agent_trace_capture()
+
+    def finalize_turn(turn: TurnResult) -> TurnResult:
+        turn.agent_traces = end_agent_trace_capture(trace_token)
+        return turn
+
     starting_day = state.day
     pre_curator_batches: list[MemoryBatch] = []
     pull_attempt: PullAttempt | None = None
@@ -147,17 +160,19 @@ def run_turn(
                     advance_phase_with_events(state, rng)
                     auto_advance = True
                 append_daily_recap_if_needed(state, starting_day)
-                return TurnResult(
-                    state=state,
-                    mechanical_result=result,
-                    exchange=exchange,
-                    available_actions=available_actions(state),
-                    state_hash=state_hash(state_hash_payload(state)),
-                    curator_batches=pull_curator_batches,
-                    agent_commits=agent_commits,
-                    time_cost=time_cost,
-                    auto_advance=auto_advance,
-                    arrival_rolls=arrival_rolls,
+                return finalize_turn(
+                    TurnResult(
+                        state=state,
+                        mechanical_result=result,
+                        exchange=exchange,
+                        available_actions=available_actions(state),
+                        state_hash=state_hash(state_hash_payload(state)),
+                        curator_batches=pull_curator_batches,
+                        agent_commits=agent_commits,
+                        time_cost=time_cost,
+                        auto_advance=auto_advance,
+                        arrival_rolls=arrival_rolls,
+                    )
                 )
     result = apply_action(state, action, rng)
     time_cost = deduct_time(state, action)
@@ -165,6 +180,15 @@ def run_turn(
         result.pull_attempt = pull_attempt
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
+        # A pending recoupling gather means this RECOUPLE is the player's
+        # in-ceremony partner pick (Day 3 / Day 5). Resolve it the same way
+        # the gather would have — but with the player's chosen partner — and
+        # clear the gather so the player isn't asked to "join" afterwards.
+        is_ceremony_pick = (
+            state.pending_gather is not None
+            and state.pending_gather.kind == "ceremony"
+            and state.pending_gather.event_id.startswith("recoupling")
+        )
         ceremony = (
             initial_coupling(state, action.target_id)
             if state.day == 1 and not state.couples and action.target_id is not None
@@ -173,6 +197,10 @@ def run_turn(
         ceremony_events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
+        if is_ceremony_pick:
+            state.pending_gather = None
+            from src.game.engine.phases import advance_phase
+            advance_phase(state)
     if action.kind is ActionKind.CHALLENGE_RESPONSE and state.pending_challenge is not None:
         event = challenge_response_event(state)
         if event is not None:
@@ -186,6 +214,8 @@ def run_turn(
                 islander_id=action.target_id,
             )
         )
+    if action.kind is ActionKind.HIDEAWAY:
+        ceremony_events.append(hideaway_event(state))
     event = proposal_event(result)
     if event is not None:
         ceremony_events.append(event)
@@ -215,18 +245,20 @@ def run_turn(
             ceremony_events.extend(more_events)
             audience_snapshot = audience_snapshot or audience_after_auto
             auto_advance = True
-        return TurnResult(
-            state=state,
-            mechanical_result=result,
-            event_narration=event_narration,
-            available_actions=available_actions(state),
-            state_hash=state_hash(state_hash_payload(state)),
-            ceremony_events=ceremony_events,
-            curator_batches=gather_curator_batches,
-            audience_snapshot=audience_snapshot,
-            agent_commits=AgentCommits(curator_batches=gather_curator_batches),
-            time_cost=time_cost,
-            auto_advance=auto_advance,
+        return finalize_turn(
+            TurnResult(
+                state=state,
+                mechanical_result=result,
+                event_narration=event_narration,
+                available_actions=available_actions(state),
+                state_hash=state_hash(state_hash_payload(state)),
+                ceremony_events=ceremony_events,
+                curator_batches=gather_curator_batches,
+                audience_snapshot=audience_snapshot,
+                agent_commits=AgentCommits(curator_batches=gather_curator_batches),
+                time_cost=time_cost,
+                auto_advance=auto_advance,
+            )
         )
     if action.kind is ActionKind.RECOUPLE and state.day == 1 and state.phase is Phase.MORNING:
         state.phase = Phase.INTROS
@@ -334,16 +366,17 @@ def run_turn(
         )
         background_dialogues = villa_changes.background_dialogues
         curator_batches.extend(villa_changes.curator_batches)
-        incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
-        if incoming is not None:
-            ceremony_events.append(
-                CeremonyEvent(
-                    kind="npc_proposal_incoming",
-                    sub_kind="incoming",
-                    message=f"{incoming.proposer_id} wants to ask the player to recouple.",
-                    islander_id=incoming.proposer_id,
+        if action.kind is not ActionKind.NPC_PROPOSAL_RESPONSE:
+            incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
+            if incoming is not None:
+                ceremony_events.append(
+                    CeremonyEvent(
+                        kind="npc_proposal_incoming",
+                        sub_kind="incoming",
+                        message=f"{incoming.proposer_id} wants to ask the player to recouple.",
+                        islander_id=incoming.proposer_id,
+                    )
                 )
-            )
     agent_commits = AgentCommits(
         villa_update=villa_update_commit,
         background_dialogues=background_dialogues,
@@ -364,21 +397,23 @@ def run_turn(
         remember_ceremony_events(state, ceremony_events)
         narrate_event = mock_event_narration if event_narrator is None else event_narrator
         event_narration = narrate_event(state, ceremony_events)
-    return TurnResult(
-        state=state,
-        mechanical_result=result,
-        exchange=exchange,
-        event_narration=event_narration,
-        follow_up_menu=follow_up_menu,
-        available_actions=available_actions(state),
-        state_hash=state_hash(state_hash_payload(state)),
-        ceremony_events=ceremony_events,
-        curator_batches=curator_batches,
-        audience_snapshot=audience_snapshot,
-        agent_commits=agent_commits,
-        time_cost=time_cost,
-        auto_advance=auto_advance,
-        arrival_rolls=arrival_rolls,
+    return finalize_turn(
+        TurnResult(
+            state=state,
+            mechanical_result=result,
+            exchange=exchange,
+            event_narration=event_narration,
+            follow_up_menu=follow_up_menu,
+            available_actions=available_actions(state),
+            state_hash=state_hash(state_hash_payload(state)),
+            ceremony_events=ceremony_events,
+            curator_batches=curator_batches,
+            audience_snapshot=audience_snapshot,
+            agent_commits=agent_commits,
+            time_cost=time_cost,
+            auto_advance=auto_advance,
+            arrival_rolls=arrival_rolls,
+        )
     )
 
 

@@ -19,11 +19,20 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.engine.casa_amor import location_villa
 from src.game.state.autonomy import SummonReason
 from src.game.state.models import GameState, Location, NPCInterruption
 
-VILLA_ORCHESTRATOR_MODEL = "gpt-5.4-mini"
+VILLA_ORCHESTRATOR_MODEL = GAME_AGENT_MODEL
+VILLA_ORCHESTRATOR_PROMPT = "src/game/agents/prompts/villa_orchestrator.md"
 
 
 class NPCMovement(BaseModel):
@@ -107,6 +116,7 @@ class OpenAIVillaOrchestrator:
         rendered = _render_context(state)
         last_error: ValueError | None = None
         for attempt in range(3):
+            attempt_number = attempt + 1
             retry_context = rendered
             if last_error is not None:
                 retry_context = (
@@ -119,7 +129,18 @@ class OpenAIVillaOrchestrator:
                     "with npc_movements unless that same conversation is also listed in "
                     "conversation_ends or the NPC is listed in npc_summoned_elsewhere."
                 )
-            update = self._generate_update(retry_context)
+            attempt_token = begin_agent_attempt(attempt_number)
+            try:
+                try:
+                    update = self._generate_update(retry_context)
+                except Exception as exc:
+                    mark_agent_trace_validation_error("villa_orchestrator", attempt_number, exc)
+                    last_error = ValueError(str(exc))
+                    if attempt == 2:
+                        raise
+                    continue
+            finally:
+                end_agent_attempt(attempt_token)
             try:
                 from src.game.engine.villa_validation import (
                     normalize_villa_update,
@@ -130,6 +151,7 @@ class OpenAIVillaOrchestrator:
                 validate_villa_update(state, update)
                 return update
             except ValueError as exc:
+                mark_agent_trace_validation_error("villa_orchestrator", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
                     raise
@@ -139,15 +161,19 @@ class OpenAIVillaOrchestrator:
         """Request one parsed update from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            reasoning={"effort": "low"},
-            instructions=Path("src/game/agents/prompts/villa_orchestrator.md").read_text(
-                encoding="utf-8"
-            ),
+            instructions=Path(VILLA_ORCHESTRATOR_PROMPT).read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=VillaUpdate,
-            max_output_tokens=900,
+            **reasoning_request_kwargs(),
         )
         update = response.output_parsed
+        record_agent_trace(
+            agent_name="villa_orchestrator",
+            model=self._model,
+            prompt_path=VILLA_ORCHESTRATOR_PROMPT,
+            response=response,
+            output=update,
+        )
         if update is None:
             raise ValueError("Villa Orchestrator returned no parsed VillaUpdate")
         return update
@@ -258,4 +284,4 @@ def _ambient_context(state: GameState) -> str:
 def _recent_memories(memories: object) -> str:
     if not isinstance(memories, list) or not memories:
         return "none"
-    return " | ".join(getattr(memory, "content", "") for memory in memories[-3:])
+    return " | ".join(getattr(memory, "content", "") for memory in memories)

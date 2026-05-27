@@ -77,6 +77,20 @@ def available_actions(state: GameState) -> list[ActionSpec]:
 
     actions: list[ActionSpec] = []
     if state.pending_gather is not None:
+        # Recoupling ceremonies: surface a partner-pick menu so the player
+        # makes the central Day-3/Day-5 decision instead of having the engine
+        # auto-pair them with their current partner. Picking RECOUPLE in this
+        # context resolves the ceremony with the chosen partner; "Stay with"
+        # is the explicit no-op pick. If the player is eliminated or has no
+        # eligible opposite-sex islanders left, fall through to JOIN_GATHER.
+        if (
+            state.pending_gather.kind == "ceremony"
+            and state.pending_gather.event_id.startswith("recoupling")
+            and not state.player.eliminated
+        ):
+            picks = _recoupling_pick_actions(state)
+            if picks:
+                return picks
         return [
             ActionSpec(
                 action=PlayerAction(kind=ActionKind.JOIN_GATHER),
@@ -99,20 +113,29 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             for decision, target_id, label in casa_options
         ]
     if state.pending_challenge is not None and state.pending_challenge.result is None:
-        if state.pending_challenge.kind == "snog_marry_pie":
-            for islander in state.islanders:
-                if not islander.eliminated:
+        from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+        if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+            current_index = state.pending_challenge.current_round_index
+            if current_index < len(state.pending_challenge.rounds):
+                current = state.pending_challenge.rounds[current_index]
+                target_id = (
+                    state.pending_challenge.participants[1]
+                    if len(state.pending_challenge.participants) > 1
+                    else (current.target_id or "")
+                )
+                for choice in current.choices:
                     actions.append(
                         ActionSpec(
                             action=PlayerAction(
                                 kind=ActionKind.CHALLENGE_RESPONSE,
-                                target_id=islander.id,
-                                payload={"choice": islander.id},
+                                target_id=target_id,
+                                payload={"choice_id": choice.id, "round_index": current_index},
                             ),
-                            label=f"Snog Marry Pie: choose {islander.name}",
+                            label=f"Quiz r{current.index + 1}/{len(state.pending_challenge.rounds)}: {choice.label}",
                         )
                     )
-            return actions
+                return actions
+
     if needs_initial_coupling(state):
         return [
             ActionSpec(
@@ -228,6 +251,45 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     return actions
 
 
+def _recoupling_pick_actions(state: GameState) -> list[ActionSpec]:
+    """Return RECOUPLE picks for a pending recoupling gather.
+
+    Surfaces one option per eligible opposite-sex islander, plus an explicit
+    "Stay with <partner>" option when the player is currently coupled. The
+    target list mirrors `recoupling()`'s opposite-sex constraint.
+    """
+    eligible = [
+        islander
+        for islander in state.islanders
+        if not islander.eliminated and islander.gender != state.player.gender
+    ]
+    if not eligible:
+        return []
+    eligible.sort(key=lambda i: i.name)
+    current_partner_id: str | None = None
+    for couple in state.couples:
+        if state.player.id in {couple.partner_a_id, couple.partner_b_id}:
+            current_partner_id = (
+                couple.partner_b_id if couple.partner_a_id == state.player.id else couple.partner_a_id
+            )
+            break
+    picks: list[ActionSpec] = []
+    for islander in eligible:
+        is_current = islander.id == current_partner_id
+        label = (
+            f"Stay with {islander.name}"
+            if is_current
+            else f"Couple with {islander.name}"
+        )
+        picks.append(
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.RECOUPLE, target_id=islander.id),
+                label=label,
+            )
+        )
+    return picks
+
+
 def validate_action(state: GameState, action: PlayerAction) -> None:
     """Raise if ``action`` is not valid for ``state``."""
     if action.kind is ActionKind.CREATE_CHARACTER:
@@ -301,6 +363,18 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         if state.pending_challenge is None or state.pending_challenge.result is not None:
             raise ValueError("no challenge is waiting for a response")
+        from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+        if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+            if action.payload is None or "choice_id" not in action.payload:
+                raise ValueError("round-based CHALLENGE_RESPONSE requires payload.choice_id")
+            cur_index = state.pending_challenge.current_round_index
+            if cur_index >= len(state.pending_challenge.rounds):
+                raise ValueError("no active minigame round to respond to")
+            current = state.pending_challenge.rounds[cur_index]
+            choice_id = action.payload["choice_id"]
+            if not any(c.id == choice_id for c in current.choices):
+                raise ValueError(f"invalid choice_id for current round: {action.model_dump()}")
+            return
         if action.target_id is None:
             raise ValueError("CHALLENGE_RESPONSE requires target_id")
         _find_islander(state, action.target_id)

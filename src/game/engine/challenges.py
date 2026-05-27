@@ -1,8 +1,14 @@
-"""Deterministic daily challenge resolution."""
+"""Deterministic daily challenge resolution.
+
+Legacy challenges resolve via :func:`resolve_challenge` (single dice roll). New
+round-based minigames (currently only ``compatibility_quiz``) bypass that path
+and use the shared harness in ``docs/minigame-system.md``.
+"""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from typing import Literal, cast
 
 from src.game.engine.audience import player_couple
@@ -11,6 +17,27 @@ from src.game.state.models import Challenge, GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
 ChallengeStat = Literal["charm", "banter", "eq", "graft", "loyalty", "combined"]
+
+
+class MinigameKind(StrEnum):
+    """Canonical minigame discriminator."""
+
+    COMPATIBILITY_QUIZ = "compatibility_quiz"
+    HEART_RATE = "heart_rate"
+    MR_AND_MRS = "mr_and_mrs"
+    LIE_DETECTOR = "lie_detector"
+    SNOG_MARRY_PIE = "snog_marry_pie"
+    FINAL_COUPLES = "final_couples"
+
+
+ROUND_BASED_MINIGAMES: set[str] = {
+    MinigameKind.COMPATIBILITY_QUIZ.value,
+    MinigameKind.HEART_RATE.value,
+    MinigameKind.SNOG_MARRY_PIE.value,
+    MinigameKind.MR_AND_MRS.value,
+    MinigameKind.LIE_DETECTOR.value,
+    MinigameKind.FINAL_COUPLES.value,
+}
 
 
 @dataclass(frozen=True)
@@ -32,7 +59,20 @@ DAILY_CHALLENGE_SCHEDULE: dict[int, ChallengeDef] = {
     6: ChallengeDef("final_couples", 6, "final_couples", "combined"),
 }
 
-CHOICE_REQUIRED_CHALLENGES = {"snog_marry_pie"}
+CHOICE_REQUIRED_CHALLENGES = ROUND_BASED_MINIGAMES
+
+
+def apply_recovery_floor(state: GameState, audience_delta: int, classification: str) -> int:
+    """Shared minigame audience floor; see docs/minigame-system.md §5.2."""
+    from src.game.content.minigame_balance import load_minigame_balance
+    floor = load_minigame_balance().recovery_floor
+    if state.player.public_perception >= floor.audience_threshold:
+        return audience_delta
+    if classification == "partial":
+        return audience_delta + floor.partial_audience_bonus
+    if classification == "failure":
+        return min(0, audience_delta + floor.failure_audience_dampener)
+    return audience_delta
 
 
 def schedule_challenge(day: int) -> Challenge | None:
@@ -56,7 +96,7 @@ def resolve_challenge(
     *,
     choice: str | None = None,
 ) -> Challenge:
-    """Resolve and apply one scheduled challenge."""
+    """Legacy single-roll resolution (kept for non-migrated minigames)."""
     if challenge.result is not None:
         return challenge
     if challenge.kind in CHOICE_REQUIRED_CHALLENGES and not choice:
@@ -83,6 +123,11 @@ def resolve_challenge(
 
 def challenge_event_message(challenge: Challenge) -> str:
     """Return a concise narratable challenge event message."""
+    if challenge.classification is not None:
+        return (
+            f"{_challenge_label(challenge.kind)} ended in {challenge.classification} "
+            f"({challenge.total_points} pts)."
+        )
     result = "is still pending" if challenge.result is None else f"ended in {challenge.result}"
     return f"{_challenge_label(challenge.kind)} tested {_stat_label(challenge.stat_tested)} and {result}."
 

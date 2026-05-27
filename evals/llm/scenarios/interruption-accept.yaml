@@ -1,0 +1,69 @@
+id: interruption-accept
+title: Conversation Interruption (Accept)
+goal: Prove accepting an interruption closes the current chat, applies both relationship consequences, starts a new conversation with the interrupter, and voices the new exchange.
+seed: 1920
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: class_clown
+  gender: woman
+  stats:
+    charm: 6
+    banter: 9
+    eq: 5
+    graft: 5
+    loyalty: 5
+initial_relationships:
+  chloe:
+    affection: 45
+    chemistry: 20
+    trust: 30
+    friendship: 20
+  liam:
+    affection: 35
+    chemistry: 15
+    trust: 25
+    friendship: 25
+judge_context:
+  - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
+  - Accepting the interruption is the only interruption response that swaps the active conversation to the interrupter and calls Islander Voice.
+  - The engine applies the social cost to Chloe and the boost to Liam before the LLM writes the new exchange.
+turns:
+  - id: accept-liam
+    arrange_player_location: pool
+    arrange_npc_locations:
+      chloe: pool
+      liam: pool
+    arrange_active_conversation:
+      target_id: chloe
+      started_on_turn: 0
+      started_on_day: 1
+      pending_interruption:
+        interrupter_id: liam
+        reason: needs_to_talk
+        urgency: polite
+    action:
+      kind: respond_with
+      target_id: liam
+      intent_id: accept_interruption
+    golden: >
+      The player lets Liam in. Chloe should feel the social cost of being
+      dropped, while Liam gets the new voiced exchange. The active
+      conversation after the turn is with Liam, not Chloe.
+    checks:
+      - exchange_valid
+      - follow_up_menu_valid
+      - conversation_active
+      - interruption_cleared
+      - curator_memories_for:chloe
+      - relationship_delta:chloe:affection:-2
+      - relationship_delta:liam:affection:3
+      - agent_traces_present
+      - no_agent_validation_retries
+    judge_checks:
+      - id: accept_swap_grounded
+        criteria: >
+          The dialogue and menu should read like the player accepted Liam's
+          interruption and moved into Liam's conversation. Fail if Chloe
+          remains the active speaker or if Liam's arrival is treated as a
+          rejected or ignored interruption.

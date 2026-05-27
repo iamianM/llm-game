@@ -1,5 +1,8 @@
 # Build Plan: Phase H8 — Time Budget, NPC Autonomy, Pacing Evals
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 The H1–H7 phases built a complete game arc, but the autopilot loop Codex hit exposed three structural gaps:
 
 1. **No automatic phase progression.** Days only advance when the player picks `ADVANCE_PHASE`. A real Love Island day passes on its own — phases have time budgets. Without this, the autopilot (or any inefficient player) can spend 100+ turns inside Day 1 Morning.

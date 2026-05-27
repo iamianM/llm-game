@@ -12,7 +12,6 @@ timestamps, and applies the memories to canonical state.
 from __future__ import annotations
 
 import asyncio
-import re
 from collections.abc import Callable, Sequence
 from functools import cached_property
 from pathlib import Path
@@ -21,6 +20,14 @@ from openai import OpenAI
 from pydantic import ValidationError
 
 from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.runtime import (
+    GAME_AGENT_MODEL,
+    begin_agent_attempt,
+    end_agent_attempt,
+    mark_agent_trace_validation_error,
+    reasoning_request_kwargs,
+    record_agent_trace,
+)
 from src.game.state.models import (
     Conversation,
     GameState,
@@ -29,7 +36,8 @@ from src.game.state.models import (
     NPCNPCConversation,
 )
 
-CONVERSATION_CURATOR_MODEL = "gpt-5.4-mini"
+CONVERSATION_CURATOR_MODEL = GAME_AGENT_MODEL
+CONVERSATION_CURATOR_PROMPT = "src/game/agents/prompts/conversation_curator.md"
 
 CuratableConversation = Conversation | NPCNPCConversation
 ConversationCuratorFn = Callable[[GameState, CuratableConversation, Sequence[str]], MemoryBatch]
@@ -58,6 +66,7 @@ class OpenAIConversationCurator:
         bystander_set = set(bystander_ids)
         last_error: ValueError | None = None
         for attempt in range(3):
+            attempt_number = attempt + 1
             retry_context = rendered
             if last_error is not None:
                 required_holders = ", ".join(sorted(participant_ids))
@@ -70,10 +79,15 @@ class OpenAIConversationCurator:
                     f"You must include at least one direct memory for each participant holder: {required_holders}."
                 )
             try:
-                batch = self._generate_batch(retry_context)
+                attempt_token = begin_agent_attempt(attempt_number)
+                try:
+                    batch = self._generate_batch(retry_context)
+                finally:
+                    end_agent_attempt(attempt_token)
                 validate_memory_batch(batch, state, participant_ids, bystander_set)
                 return batch
             except (ValueError, ValidationError) as exc:
+                mark_agent_trace_validation_error("conversation_curator", attempt_number, exc)
                 last_error = ValueError(str(exc))
                 if attempt == 2:
                     raise
@@ -92,15 +106,19 @@ class OpenAIConversationCurator:
         """Request one parsed memory batch from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            reasoning={"effort": "low"},
-            instructions=Path("src/game/agents/prompts/conversation_curator.md").read_text(
-                encoding="utf-8"
-            ),
+            instructions=Path(CONVERSATION_CURATOR_PROMPT).read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=MemoryBatch,
-            max_output_tokens=1800,
+            **reasoning_request_kwargs(),
         )
         batch = response.output_parsed
+        record_agent_trace(
+            agent_name="conversation_curator",
+            model=self._model,
+            prompt_path=CONVERSATION_CURATOR_PROMPT,
+            response=response,
+            output=batch,
+        )
         if batch is None:
             raise ValueError("Conversation Curator returned no parsed MemoryBatch")
         return batch
@@ -175,19 +193,13 @@ def validate_memory_batch(
             raise ValueError(f"direct memory holder was not a participant: {memory.holder_id}")
         if memory.source == "witnessed" and memory.holder_id not in bystander_ids:
             raise ValueError(f"witnessed memory holder was not a bystander: {memory.holder_id}")
-        if re.search(r"\d", memory.content):
-            raise ValueError(f"memory content contains digits: {memory.content!r}")
         if not memory.tags:
             raise ValueError(f"memory has no tags: {memory}")
-    if batch.summary and re.search(r"\d", batch.summary):
-        raise ValueError(f"summary contains digits: {batch.summary!r}")
     for seed in batch.gossip_seeds:
         if seed.holder_id not in valid_ids:
             raise ValueError(f"unknown gossip seed holder_id: {seed.holder_id}")
         if seed.subject_id not in valid_ids and seed.subject_id != "villa":
             raise ValueError(f"unknown gossip seed subject_id: {seed.subject_id}")
-        if re.search(r"\d", seed.gist):
-            raise ValueError(f"gossip seed contains digits: {seed.gist!r}")
 
 
 def _render_context(
@@ -213,6 +225,11 @@ def _render_context(
             f"Participants: player, {conversation.target_id} ({target})",
             f"Bystanders: {_list_ids(bystander_ids)}",
             f"Required direct memory holders: player, {conversation.target_id}",
+            "Memory holder checklist:",
+            "- holder_id: player",
+            f"- holder_id: {conversation.target_id}",
+            f"Valid subject ids: {_valid_subject_ids(state)}",
+            f"Mentioned third-party ids: {_mentioned_third_party_ids(state, conversation)}",
             f"Conversation tags: {', '.join(conversation.accumulated_tags) or 'none'}",
             "Exchange history:",
             exchanges or "No exchange history.",
@@ -297,6 +314,11 @@ def _render_npc_context(
             f"Topic: {conversation.topic}",
             f"Bystanders: {_list_ids(bystander_ids)}",
             f"Required direct memory holders: {first_id}, {second_id}",
+            "Memory holder checklist:",
+            f"- holder_id: {first_id}",
+            f"- holder_id: {second_id}",
+            f"Valid subject ids: {_valid_subject_ids(state)}",
+            f"Mentioned third-party ids: {_mentioned_third_party_ids(state, conversation)}",
             "Exchange history:",
             exchanges or "No exchange history.",
             "Participant relationship states:",
@@ -329,3 +351,32 @@ def _name_for(state: GameState, holder_id: str) -> str:
 
 def _list_ids(ids: Sequence[str]) -> str:
     return ", ".join(ids) if ids else "none"
+
+
+def _valid_subject_ids(state: GameState) -> str:
+    ids = ["player", "villa", *(islander.id for islander in state.islanders if not islander.eliminated)]
+    return ", ".join(ids)
+
+
+def _mentioned_third_party_ids(state: GameState, conversation: CuratableConversation) -> str:
+    participant_ids = _participant_ids(conversation)
+    mentioned = []
+    text = _conversation_text(conversation).lower()
+    for islander in state.islanders:
+        if islander.id in participant_ids or islander.eliminated:
+            continue
+        if islander.name.lower() in text:
+            mentioned.append(f"{islander.id} ({islander.name})")
+    return ", ".join(mentioned) if mentioned else "none"
+
+
+def _conversation_text(conversation: CuratableConversation) -> str:
+    if isinstance(conversation, NPCNPCConversation):
+        return " ".join(
+            f"{exchange.speaker_a_line} {exchange.speaker_b_line}"
+            for exchange in conversation.exchanges
+        )
+    return " ".join(
+        f"{exchange.player_dialogue} {exchange.npc_dialogue}"
+        for exchange in conversation.exchanges
+    )

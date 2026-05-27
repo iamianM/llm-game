@@ -1,5 +1,8 @@
 # Build Plan: Phase G8 — Social Friction, Interruptions, Dashboard
 
+> Historical build plan. This file is kept for implementation context only.
+> Current planning lives in [current-plan.md](current-plan.md).
+
 Phase G shipped a living villa with conversations, memories, and gossip. G7 surfaced enough of that for the user to actually play and review. G8 fixes the four things the first real playthrough exposed:
 
 1. **Initial conversation rolls still uncapped.** Picking a Friendly intent with Banter 8 = 95% success regardless of risk. The cap added in G7 only applies to follow-up options. Conversations feel frictionless because they are.

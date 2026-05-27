@@ -1,0 +1,85 @@
+id: npc-proposal-incoming
+title: Incoming NPC Proposal And Accept
+goal: Prove the engine can surface an NPC-initiated Heart Swap proposal as a pending ask, then accept it with the exact engine-owned couple change and relationship deltas.
+seed: 4
+initial_location: pool
+live_villa_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: man
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    graft: 5
+    loyalty: 9
+initial_couples:
+  - partner_a_id: player
+    partner_b_id: chloe
+    formed_on_day: 1
+  - partner_a_id: maya
+    partner_b_id: liam
+    formed_on_day: 1
+initial_relationships:
+  chloe:
+    affection: 45
+    chemistry: 20
+    trust: 35
+    friendship: 20
+  maya:
+    affection: 80
+    chemistry: 90
+    trust: 5
+    friendship: 20
+judge_context:
+  - Maya is eligible to propose because her affection and chemistry with the player are high and her current couple is weak.
+  - The engine creates a pending proposal and forced response actions. The LLM must not narrate it as already accepted.
+  - Accepting the proposal is a separate engine-owned response. It clears the pending ask, forms the player/Maya couple, and applies exact deltas.
+turns:
+  - id: maya-asks
+    action:
+      kind: ambient
+      target_id: pool_people_watch
+    golden: >
+      Maya's proposal becomes a pending ask. The narration can frame the
+      charged moment, but it must not claim the player accepted, rejected,
+      or formed a new couple yet.
+    checks:
+      - pending_npc_proposal_from:maya
+      - ceremony_event_present:npc_proposal_incoming
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: pending_not_resolved
+        criteria: >
+          The narration treats Maya's proposal as a pending ask awaiting the
+          player's response. Fail if it says the proposal was accepted,
+          declined, or already changed the couples.
+  - id: accept-maya
+    action:
+      kind: npc_proposal_response
+      target_id: maya
+      intent_id: accept
+    golden: >
+      The response accepts Maya's Heart Swap proposal. The narrator can show
+      Chloe or Liam reacting, but the deterministic result is specific:
+      pending ask cleared, player/Maya couple formed, Maya gets the accepted
+      response deltas, and the audience does not move for this loyal-player
+      setup.
+    checks:
+      - proposal_outcome_is:accepted
+      - pending_npc_proposal_cleared
+      - ceremony_event_present:npc_proposal_response
+      - couple_present:player:maya
+      - relationship_delta:maya:affection:3
+      - relationship_delta:maya:chemistry:3
+      - relationship_delta:maya:trust:1
+      - audience_delta:0
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: accepted_response_faithful
+        criteria: >
+          The narration says the player accepted Maya's proposal and treats
+          player/Maya as the resulting couple. Fail if it leaves the ask
+          pending, says the player declined, or invents a different partner.

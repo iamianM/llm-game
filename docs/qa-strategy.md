@@ -21,8 +21,9 @@ The goal is for the CLI, browser, and tests to exercise the same engine with the
 | L5 E2E | `tests/scenarios/e2e/` | Full no-LLM day, save/load, API parity | yes | no |
 | L6 Narrator | `tests/agents/` | Narration quality and contract compliance | opt-in | yes |
 | L7 Docs Health | `scripts/docs-health.py` | Contract-sensitive files changed with their owning docs | local hook / targeted | no |
+| L8 Golden Eval | `evals/llm/scenarios/` | Authored scenarios through the real `run_turn` path with deterministic checks (mock) and optional judge (real) | yes (mock) / opt-in (real, judge) | mixed |
 
-L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
+L1-L5 and L8 (mock) are the current non-LLM gate. L6 is marked `llm` and opt-in. L8 in real-LLM/judge mode is opt-in.
 
 ## Required Gates
 
@@ -34,8 +35,14 @@ L1-L5 are the current non-LLM gate. L6 is marked `llm` and opt-in.
 4. `make test` (parallel non-LLM pytest via `pytest-xdist`)
 5. `make smoke`
 6. `make determinism`
-7. `make web-check`
-8. `make web-contracts`
+7. `make llm-eval-mock` (golden scenarios through `run_turn` in mock mode; see [docs/llm-eval-system.md](llm-eval-system.md))
+8. `make web-check`
+9. `make web-contracts`
+
+Opt-in:
+
+- `make llm-eval-real` — same scenarios with live OpenAI agents (`gpt-5.4-mini`, high reasoning, detailed summaries). Slow and billed.
+- `make llm-eval-real-judge` — adds the LLM judge for voice-fit / continuity / faithfulness checks. Even slower and more billed.
 
 `make docs-health` is a fast structural guard for contract-sensitive changes. It is intentionally outside the default gate until the map is tuned enough to stay low-friction.
 

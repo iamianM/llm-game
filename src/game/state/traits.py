@@ -67,7 +67,14 @@ class KnownFact(BaseModel):
 
     fact_key: str
     value: str
-    source: Literal["direct", "social_event", "gossip", "witnessed"]
+    source: Literal[
+        "direct",
+        "social_event",
+        "gossip",
+        "witnessed",
+        "compatibility_quiz",
+        "quiz_misread",
+    ]
     source_npc_id: str | None = None
     learned_on_day: int
     learned_on_turn: int
