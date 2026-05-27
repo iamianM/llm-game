@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import os
 from contextvars import ContextVar, Token
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
-GAME_AGENT_MODEL = "gpt-5.4-mini"
-GAME_AGENT_REASONING_EFFORT = "high"
-GAME_AGENT_REASONING_SUMMARY = "detailed"
+# Allow overrides via env var for eval / perf comparisons without touching
+# the source tree. Default to gpt-5.4-mini at high reasoning + detailed
+# summaries (the values we tuned the prompts against).
+GAME_AGENT_MODEL = os.environ.get("LLM_GAME_MODEL", "gpt-5.4-mini")
+GAME_AGENT_REASONING_EFFORT = os.environ.get("LLM_GAME_REASONING_EFFORT", "high")
+GAME_AGENT_REASONING_SUMMARY = os.environ.get("LLM_GAME_REASONING_SUMMARY", "detailed")
 GAME_AGENT_RESPONSE_INCLUDE = ["reasoning.encrypted_content"]
 
 
@@ -45,11 +49,16 @@ _active_traces: ContextVar[list[AgentTrace] | None] = ContextVar("active_agent_t
 _active_attempt: ContextVar[int] = ContextVar("active_agent_attempt", default=1)
 
 
-def reasoning_request_kwargs() -> dict[str, Any]:
-    """Return Responses API kwargs shared by all live game agents."""
+def reasoning_request_kwargs(effort: str | None = None) -> dict[str, Any]:
+    """Return Responses API kwargs shared by all live game agents.
+
+    ``effort`` lets a single agent (e.g. trait_generator) opt into a lower
+    reasoning effort than the project default — useful for creative-structured
+    work that doesn't need deep chain-of-thought.
+    """
     return {
         "reasoning": {
-            "effort": GAME_AGENT_REASONING_EFFORT,
+            "effort": effort or GAME_AGENT_REASONING_EFFORT,
             "summary": GAME_AGENT_REASONING_SUMMARY,
         },
         "include": GAME_AGENT_RESPONSE_INCLUDE,

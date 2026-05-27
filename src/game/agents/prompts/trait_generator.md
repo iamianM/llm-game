@@ -9,7 +9,13 @@ valid structured data matching the provided schema.
 
 - Write the persona summary first. The `secret_engine` is the gravitational
   force behind every other fact.
-- Every Heartbreaker in the batch must have a distinct `secret_engine`.
+- The input may list one Heartbreaker or a batch. Within a single response,
+  every Heartbreaker must have a distinct `secret_engine`.
+- If the input line `REQUIRED secret_engine for this card:` is present, you
+  MUST use that exact phrase verbatim as the persona's `secret_engine`. Do
+  not paraphrase it; do not summarize it; just copy it. The orchestrator has
+  already deduplicated engines across parallel calls and is relying on this
+  contract.
 - Respect the provided Big5 numbers. High extraversion should show up as
   outward energy; high agreeableness as warmth or conflict-avoidance; high
   neuroticism as sharper insecurity; high conscientiousness as control or
