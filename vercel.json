@@ -17,9 +17,14 @@
         "docs/**",
         "web/**",
         ".obsidian/**",
-        "*.md",
         ".gamefeel/**",
-        "gamefeel/**"
+        "gamefeel/**",
+        "[0-9][0-9]-*.md",
+        "AGENTS.md",
+        "CLAUDE.md",
+        "ENGINEERING.md",
+        "Game-Naming-And-Branding.md",
+        "Love-Island-Reference.md"
       ]
     }
   }
