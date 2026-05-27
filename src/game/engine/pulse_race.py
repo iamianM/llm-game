@@ -129,28 +129,45 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         if not islander.eliminated and islander.id != "player"
     ]
     rounds: list[MinigameRound] = []
+    partner_name = (
+        find_islander(state, partner_id).name
+        if partner_id and partner_id != "player" and any(i.id == partner_id for i in state.islanders)
+        else None
+    )
 
-    # Round 1 — observers ranked by chemistry toward the player.
+    # Round 1 — observers ranked by chemistry toward the player. Stems are
+    # self-contained: the player landed on the quiz screen without any
+    # producer-intro narration so each question needs to set its own scene.
     rounds.append(_build_guess_round(
         state,
         index=0,
         rng=rng.fork("pulse_race::round_0"),
         prompt_id=f"pulse_race_who_spiked_for_player_{state.day}",
-        stem="When you did your reveal, whose pulse climbed the highest?",
+        stem=(
+            "The Pulse Race is on. The cast files into the back garden in matching "
+            "heart-rate monitors and one by one they take turns doing a quick "
+            "flirty bit for each other — eye contact, a slow smile, a lean. "
+            "You're first. The monitors light up and the room watches the spikes. "
+            "Whose pulse climbed the highest while you were performing?"
+        ),
         ranked=_observers_for_player(state, cast_ids),
         decoys=cast_ids,
     ))
 
     # Round 2 — observers ranked by chemistry toward the partner.
-    if partner_id and partner_id != "player" and any(i.id == partner_id for i in state.islanders):
-        partner_name = find_islander(state, partner_id).name
+    if partner_name is not None and partner_id is not None:
         ranked_partner = _observers_for_npc(state, partner_id, cast_ids)
         rounds.append(_build_guess_round(
             state,
             index=1,
             rng=rng.fork("pulse_race::round_1"),
             prompt_id=f"pulse_race_who_spiked_for_partner_{state.day}",
-            stem=f"When {partner_name} did the bit, whose monitor climbed highest?",
+            stem=(
+                f"{partner_name} steps up next. They work the room with a soft "
+                f"flirty bit — same monitors on everyone, same camera tracking "
+                f"the screens. Reading the room: whose monitor climbed the "
+                f"highest watching {partner_name}?"
+            ),
             ranked=ranked_partner,
             decoys=[c for c in cast_ids if c != partner_id],
         ))
@@ -162,7 +179,12 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         index=len(rounds),
         rng=rng.fork("pulse_race::round_2"),
         prompt_id=f"pulse_race_player_spiked_for_{state.day}",
-        stem="Whose bit made your own monitor jump the most?",
+        stem=(
+            "Now everyone watches your monitor instead. Each Heartbreaker takes a "
+            "turn doing a flirty bit at you while you sit there with the strap on. "
+            "Your readings get projected. Out of the cast — whose bit made your "
+            "own pulse jump the most? Be honest, the screens already showed it."
+        ),
         ranked=_player_chemistry_ranked(state, cast_ids),
         decoys=cast_ids,
     ))

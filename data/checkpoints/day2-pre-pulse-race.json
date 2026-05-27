@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "24e5101b9ab7415945891963b66a1964ee26b6307eacc72dc6cad30a843dcdb4",
+  "state_hash": "930bf8a26e406ec48485fad397fa7739f33d80f3faef3a4a96f047b9b5a1d9e0",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -5130,7 +5130,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "When you did your reveal, whose pulse climbed the highest?",
+          "stem": "The Pulse Race is on. The cast files into the back garden in matching heart-rate monitors and one by one they take turns doing a quick flirty bit for each other \u2014 eye contact, a slow smile, a lean. You're first. The monitors light up and the room watches the spikes. Whose pulse climbed the highest while you were performing?",
           "choices": [
             {
               "id": "distractor_0",
@@ -5172,7 +5172,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "When Chloe did the bit, whose monitor climbed highest?",
+          "stem": "Chloe steps up next. They work the room with a soft flirty bit \u2014 same monitors on everyone, same camera tracking the screens. Reading the room: whose monitor climbed the highest watching Chloe?",
           "choices": [
             {
               "id": "distractor_2",
@@ -5214,7 +5214,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Whose bit made your own monitor jump the most?",
+          "stem": "Now everyone watches your monitor instead. Each Heartbreaker takes a turn doing a flirty bit at you while you sit there with the strap on. Your readings get projected. Out of the cast \u2014 whose bit made your own pulse jump the most? Be honest, the screens already showed it.",
           "choices": [
             {
               "id": "distractor_0",
