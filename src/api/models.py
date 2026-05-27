@@ -33,6 +33,31 @@ class NewSessionRequest(BaseModel):
     mock_llm: bool | None = None
 
 
+class CheckpointSummaryResponse(BaseModel):
+    """One main-menu entry for a loadable saved state."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    label: str
+    day: int
+    phase: str
+    source: Literal["bundled", "local"]
+
+
+class CheckpointListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    checkpoints: list[CheckpointSummaryResponse]
+
+
+class CheckpointStartRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    name: str
+    mock_llm: bool | None = None
+
+
 class TurnRequest(BaseModel):
     model_config = ConfigDict(extra="ignore")
 

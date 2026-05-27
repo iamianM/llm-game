@@ -2,6 +2,8 @@ import { requirePersisted, sessionStore } from "./storage";
 import type {
   AvailableAction,
   CastDetail,
+  CheckpointListResponse,
+  CheckpointSummary,
   Gender,
   NewSessionEnvelope,
   SessionResponse,
@@ -55,6 +57,20 @@ export async function newSession(archetype: string, gender: Gender, mockLlm: boo
   const envelope = await request<NewSessionEnvelope>("/session/new", {
     method: "POST",
     body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm })
+  });
+  sessionStore.save(envelope.persisted);
+  return envelope.view;
+}
+
+export async function listCheckpoints(): Promise<CheckpointSummary[]> {
+  const data = await request<CheckpointListResponse>("/checkpoints");
+  return data.checkpoints;
+}
+
+export async function sessionFromCheckpoint(name: string, mockLlm: boolean): Promise<SessionResponse> {
+  const envelope = await request<NewSessionEnvelope>("/session/from-checkpoint", {
+    method: "POST",
+    body: JSON.stringify({ name, mock_llm: mockLlm })
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;

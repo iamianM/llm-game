@@ -22,11 +22,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+from src.api.checkpoints import (
+    CheckpointSummary,
+    list_checkpoints,
+    load_named_checkpoint_payload,
+)
 from src.api.models import (
     ApiError,
     ApiErrorBody,
     CastDetail,
     CastRequest,
+    CheckpointListResponse,
+    CheckpointStartRequest,
+    CheckpointSummaryResponse,
     NewSessionEnvelope,
     NewSessionRequest,
     SessionResponse,
@@ -122,6 +130,64 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     except ValueError as exc:
         raise _http_error(400, "VALIDATION_ERROR", str(exc)) from exc
     rng = SeededRng(seed)
+    session_id = str(uuid4())
+    persisted = freeze(state, rng, session_id=session_id, user_id=None, mock_llm=mock)
+    view = SessionResponse(
+        session_id=session_id,
+        state=session_state(session_id, state),
+        available_actions=available_actions_api(state),
+    )
+    return NewSessionEnvelope(view=view, persisted=persisted)
+
+
+@app.get("/checkpoints", response_model=CheckpointListResponse)
+def checkpoints() -> CheckpointListResponse:
+    """Return loadable saved-state options for the main-menu picker."""
+    return CheckpointListResponse(
+        checkpoints=[
+            CheckpointSummaryResponse(
+                name=ck.name,
+                label=ck.label,
+                day=ck.day,
+                phase=ck.phase,
+                source=ck.source,
+            )
+            for ck in list_checkpoints()
+        ]
+    )
+
+
+@app.post("/session/from-checkpoint", response_model=NewSessionEnvelope, status_code=201)
+def session_from_checkpoint(req: CheckpointStartRequest) -> NewSessionEnvelope:
+    """Open a new session preloaded from a saved checkpoint.
+
+    The on-the-wire shape matches `POST /session/new` so the client can route
+    to the same `/play/[sessionId]` page after either path. The new
+    ``session_id`` is freshly minted (the checkpoint's own session_id is
+    intentionally not reused — multiple branches can spring off one save).
+    """
+    try:
+        payload = load_named_checkpoint_payload(req.name)
+    except KeyError as exc:
+        raise _http_error(
+            404,
+            "CHECKPOINT_NOT_FOUND",
+            f"No loadable checkpoint named {req.name!r} (it may be missing "
+            "or saved at an older schema version).",
+        ) from exc
+    state_payload = payload["state"]
+    if not isinstance(state_payload, dict):
+        raise _http_error(500, "CHECKPOINT_CORRUPT", "checkpoint state missing or not an object")
+    state = GameState.model_validate(state_payload)
+    seed = payload.get("seed")
+    if not isinstance(seed, int):
+        raise _http_error(500, "CHECKPOINT_CORRUPT", "checkpoint missing seed")
+    rng_state = payload.get("rng_state")
+    if isinstance(rng_state, list):
+        rng = SeededRng.from_snapshot(seed, rng_state)
+    else:
+        rng = SeededRng(seed)
+    mock = _mock_mode(req.mock_llm)
     session_id = str(uuid4())
     persisted = freeze(state, rng, session_id=session_id, user_id=None, mock_llm=mock)
     view = SessionResponse(

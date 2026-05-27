@@ -153,3 +153,15 @@ export type TurnResponseEnvelope = {
   view: TurnResponse;
   persisted: PersistedSession;
 };
+
+export type CheckpointSummary = {
+  name: string;
+  label: string;
+  day: number;
+  phase: string;
+  source: "bundled" | "local";
+};
+
+export type CheckpointListResponse = {
+  checkpoints: CheckpointSummary[];
+};

@@ -1,11 +1,11 @@
 "use client";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { newSession } from "../../lib/api";
+import { listCheckpoints, newSession, sessionFromCheckpoint } from "../../lib/api";
 import { rememberCurrentSession } from "../../lib/storage";
-import type { Gender } from "../../lib/types";
+import type { CheckpointSummary, Gender } from "../../lib/types";
 import { ArchetypeCard } from "../../components/chrome/ArchetypeCard";
 
 const ARCHETYPES = [
@@ -26,8 +26,21 @@ export default function NewRunPage() {
       router.push(`/play/${data.session_id}`);
     }
   });
+  const checkpointMutation = useMutation({
+    mutationFn: (name: string) => sessionFromCheckpoint(name, mockLlm),
+    onSuccess: (data) => {
+      rememberCurrentSession(data.session_id);
+      router.push(`/play/${data.session_id}`);
+    }
+  });
+  const checkpointQuery = useQuery({
+    queryKey: ["checkpoints"],
+    queryFn: listCheckpoints,
+    staleTime: 60_000
+  });
+  const checkpoints: CheckpointSummary[] = checkpointQuery.data ?? [];
 
-  if (mutation.isPending) {
+  if (mutation.isPending || checkpointMutation.isPending) {
     return <CastingLoader mockLlm={mockLlm} />;
   }
 
@@ -77,6 +90,33 @@ export default function NewRunPage() {
 
         {mutation.error ? (
           <p role="alert" className="error-banner">{mutation.error.message}</p>
+        ) : null}
+        {checkpointMutation.error ? (
+          <p role="alert" className="error-banner">{checkpointMutation.error.message}</p>
+        ) : null}
+
+        {checkpoints.length > 0 ? (
+          <section className="checkpoint-block" aria-label="Resume from a saved point">
+            <header className="checkpoint-header">
+              <span className="checkpoint-eyebrow">Or jump back in</span>
+              <span className="checkpoint-sub">Resume from a saved point</span>
+            </header>
+            <div className="checkpoint-grid">
+              {checkpoints.map((ck) => (
+                <button
+                  key={ck.name}
+                  className={`checkpoint-card${ck.source === "bundled" ? " bundled" : ""}`}
+                  onClick={() => checkpointMutation.mutate(ck.name)}
+                  disabled={checkpointMutation.isPending}
+                  type="button"
+                >
+                  <span className="checkpoint-day">Day {ck.day} · {ck.phase}</span>
+                  <span className="checkpoint-label">{ck.label}</span>
+                  <span className="checkpoint-source">{ck.source === "bundled" ? "Demo" : "Local"}</span>
+                </button>
+              ))}
+            </div>
+          </section>
         ) : null}
       </div>
 
@@ -205,6 +245,74 @@ export default function NewRunPage() {
           border: 1px solid rgba(193,75,58,.45);
           color: #f7c8c1;
           font-size: 13px;
+        }
+
+        .checkpoint-block {
+          margin-top: 14px;
+          padding: 12px 14px;
+          border-radius: var(--r-lg);
+          border: var(--frame-gold);
+          background: rgba(20,16,12,.55);
+          backdrop-filter: blur(8px);
+        }
+        .checkpoint-header {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 12px;
+          margin-bottom: 10px;
+        }
+        .checkpoint-eyebrow {
+          font-family: var(--font-hand);
+          color: var(--gold-soft);
+          font-size: 14px;
+          letter-spacing: .04em;
+        }
+        .checkpoint-sub {
+          font-size: 12px;
+          color: var(--ink-on-dark);
+          opacity: .65;
+        }
+        .checkpoint-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+          gap: 8px;
+        }
+        .checkpoint-card {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 10px 12px;
+          text-align: left;
+          cursor: pointer;
+          background: rgba(36,28,22,.55);
+          color: var(--ink-on-dark);
+          border: 1px solid rgba(212,166,99,.25);
+          border-radius: var(--r-md);
+          transition: transform .12s, border-color .12s, background .12s;
+        }
+        .checkpoint-card:hover:not([disabled]) {
+          transform: translateY(-1px);
+          border-color: rgba(212,166,99,.6);
+          background: rgba(48,36,28,.65);
+        }
+        .checkpoint-card[disabled] { opacity: .55; cursor: progress; }
+        .checkpoint-card.bundled { border-color: rgba(212,166,99,.4); }
+        .checkpoint-day {
+          font-family: var(--font-hand);
+          font-size: 13px;
+          color: var(--gold-soft);
+          letter-spacing: .03em;
+          text-transform: uppercase;
+        }
+        .checkpoint-label {
+          font-size: 14px;
+          font-weight: 500;
+        }
+        .checkpoint-source {
+          font-size: 11px;
+          color: var(--ink-on-dark);
+          opacity: .5;
         }
       `}</style>
     </main>
