@@ -389,8 +389,29 @@ def _pending_challenge_view(state: GameState) -> dict[str, object] | None:
     if challenge.kind not in ROUND_BASED_MINIGAMES:
         return None
     cur_index = challenge.current_round_index
+
+    def _round_view(round_) -> dict[str, object]:
+        chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
+        correct = next((c for c in round_.choices if c.is_correct), None)
+        reaction_line: str | None = None
+        for reveal in round_.reveals:
+            if reveal.kind == "reaction":
+                line = reveal.payload.get("line")
+                if isinstance(line, str):
+                    reaction_line = line
+                    break
+        return {
+            "round_index": round_.index,
+            "stem": round_.stem,
+            "chosen_label": chosen.label if chosen else None,
+            "correct_label": correct.label if correct else None,
+            "is_correct": bool(chosen and chosen.is_correct),
+            "points": round_.points,
+            "reaction_line": reaction_line,
+        }
+
+    answered = [_round_view(r) for r in challenge.rounds if r.chosen_id is not None]
     if cur_index >= len(challenge.rounds):
-        # Finished — surface classification + totals so the wrap UI can show them.
         return {
             "kind": challenge.kind,
             "finished": True,
@@ -398,6 +419,7 @@ def _pending_challenge_view(state: GameState) -> dict[str, object] | None:
             "total_points": challenge.total_points,
             "audience_delta": challenge.audience_delta,
             "round_count": len(challenge.rounds),
+            "answered_rounds": answered,
         }
     current = challenge.rounds[cur_index]
     return {
@@ -410,5 +432,6 @@ def _pending_challenge_view(state: GameState) -> dict[str, object] | None:
         "tier": current.tier,
         "mechanical": current.mechanical,
         "target_id": current.target_id,
+        "answered_rounds": answered,
     }
 

@@ -1,19 +1,19 @@
 {
   "name": "day6-casa-return-ceremony",
   "seed": 7,
-  "state_hash": "b5207308c797abb8d24764cce3619f4467e14f952718e1b47e8f148af275bd42",
+  "state_hash": "ea0c66db4150f196b4a0bc0552c597b4c0baf4e77b8a85ea1053cce01bc453a2",
   "state": {
     "schema_version": 26,
     "seed": 7,
-    "turn_index": 319,
-    "day": 5,
-    "phase": "text",
+    "turn_index": 330,
+    "day": 6,
+    "phase": "morning",
     "phase_clock": {
-      "phase": "text",
-      "budget_minutes": 30,
+      "phase": "morning",
+      "budget_minutes": 120,
       "elapsed_minutes": 0
     },
-    "location_id": "casa_kitchen",
+    "location_id": "casa_pool",
     "villa": "casa_amor",
     "player": {
       "id": "player",
@@ -29,7 +29,7 @@
       "archetype_id": "heartthrob",
       "character_created": true,
       "reroll_used": false,
-      "public_perception": 10,
+      "public_perception": 26,
       "eliminated": false,
       "memories": [
         {
@@ -399,6 +399,70 @@
             "challenge"
           ],
           "durable": true
+        },
+        {
+          "id": "mem_287c6c734f2e401b",
+          "holder_id": "player",
+          "subject_id": "blake",
+          "content": "I remember how Beau reacted when our supportive chat shifted.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 5,
+          "formed_on_turn": 322,
+          "emotional_weight": 5,
+          "tags": [
+            "player_conversation",
+            "supportive"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_888d26ca8136739b",
+          "holder_id": "player",
+          "subject_id": "chloe",
+          "content": "You chose to return loyal to your original connection.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 5,
+          "formed_on_turn": 323,
+          "emotional_weight": 5,
+          "tags": [
+            "casa_amor_decision",
+            "ceremony"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_25e4d42fb620b714",
+          "holder_id": "player",
+          "subject_id": "blake",
+          "content": "I remember how Beau reacted when our supportive chat shifted.",
+          "source": "direct",
+          "source_id": null,
+          "formed_on_day": 5,
+          "formed_on_turn": 330,
+          "emotional_weight": 5,
+          "tags": [
+            "player_conversation",
+            "supportive"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_0a1dfb13c2cb9760",
+          "holder_id": "player",
+          "subject_id": "villa",
+          "content": "Everyone is called to the firepit for the Sunset Bay return.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 6,
+          "formed_on_turn": 330,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "gather_scheduled"
+          ],
+          "durable": true
         }
       ],
       "known_facts": {
@@ -694,13 +758,33 @@
         },
         "chloe.keepsake": {
           "fact_key": "chloe.keepsake",
-          "value": "a tiny ceramic apple from her first class",
+          "value": "a tiny ceramic apple",
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
           "learned_on_turn": 166,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
+        },
+        "blake.age": {
+          "fact_key": "blake.age",
+          "value": "28",
+          "source": "direct",
+          "source_npc_id": null,
+          "learned_on_day": 5,
+          "learned_on_turn": 322,
+          "confidence": 1.0,
+          "citation": "Beau told you directly on Day 5."
+        },
+        "blake.hometown": {
+          "fact_key": "blake.hometown",
+          "value": "Brighton",
+          "source": "direct",
+          "source_npc_id": null,
+          "learned_on_day": 5,
+          "learned_on_turn": 330,
+          "confidence": 1.0,
+          "citation": "Beau told you directly on Day 5."
         }
       },
       "pull_attempts_this_phase": {}
@@ -716,7 +800,7 @@
         "relationship": {
           "affection": 6,
           "chemistry": 8,
-          "trust": 1,
+          "trust": 6,
           "friendship": 0
         },
         "public_perception": 50,
@@ -1148,6 +1232,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_f05282e9b954ca1e",
+            "holder_id": "chloe",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_70edbba6507fec89",
+            "holder_id": "chloe",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -1249,7 +1365,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "words of affirmation because she needs to know where she stands",
+              "value": "words of affirmation",
               "distractors": [
                 "physical touch",
                 "acts of service",
@@ -1355,7 +1471,7 @@
             },
             "keepsake": {
               "key": "keepsake",
-              "value": "a tiny ceramic apple from her first class",
+              "value": "a tiny ceramic apple",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -1991,6 +2107,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_bd36c4b9944aaf59",
+            "holder_id": "maya",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_b284da875177aa40",
+            "holder_id": "maya",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -2156,7 +2304,7 @@
               "distractors": [
                 "she is secretly in therapy",
                 "she lied about her age",
-                "she still calls her ex"
+                "she still calls"
               ],
               "tier": 4,
               "reveal_tags": [],
@@ -2834,6 +2982,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_0f4f91235655a329",
+            "holder_id": "liam",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_d1ba9dac50c7d446",
+            "holder_id": "liam",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -2923,7 +3103,7 @@
             },
             "biggest_fear": {
               "key": "biggest_fear",
-              "value": "being useful but not wanted",
+              "value": "being useful",
               "distractors": [
                 "failure",
                 "being alone",
@@ -2995,7 +3175,7 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "he still keeps her old voicemail because it is the only time she sounded sure",
+              "value": "he still keeps her old voicemail",
               "distractors": [
                 "he quit medicine once",
                 "he has a child",
@@ -3033,7 +3213,7 @@
             },
             "keepsake": {
               "key": "keepsake",
-              "value": "a cracked bicycle bell from his dad",
+              "value": "a cracked bicycle bell",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -3677,6 +3857,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_84d97377aa0341f4",
+            "holder_id": "sophie_start",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_a440bec800ca77b8",
+            "holder_id": "sophie_start",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -3868,7 +4080,7 @@
             },
             "comfort_show": {
               "key": "comfort_show",
-              "value": "Grand Designs because disaster has a schedule",
+              "value": "Grand Designs",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -4518,6 +4730,38 @@
             "tags": [
               "ceremony",
               "challenge"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_fa43b1b5ffe70e55",
+            "holder_id": "nia_start",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_860b697a13e60660",
+            "holder_id": "nia_start",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
             ],
             "durable": true
           }
@@ -5363,6 +5607,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_80b543771a952458",
+            "holder_id": "marcus_start",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_cf0e11ca4ab0496e",
+            "holder_id": "marcus_start",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -5464,7 +5740,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "acts of service but only giving",
+              "value": "acts of service",
               "distractors": [
                 "physical touch",
                 "quality time",
@@ -5512,7 +5788,7 @@
             },
             "past_heartbreak": {
               "key": "past_heartbreak",
-              "value": "an ex called him a good project but not a partner",
+              "value": "an ex called him a good project",
               "distractors": [
                 "was cheated on",
                 "was ghosted after a year",
@@ -6206,6 +6482,38 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_2319c65635802eee",
+            "holder_id": "blake_start",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_d67bc2b15e651c72",
+            "holder_id": "blake_start",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -6367,11 +6675,11 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "he wrote a breakup speech for himself because he knew she would not be kind",
+              "value": "he wrote a breakup speech for himself",
               "distractors": [
                 "he lied on his application",
                 "he has never dated",
-                "he owes his ex money"
+                "he owes"
               ],
               "tier": 4,
               "reveal_tags": [],
@@ -7104,7 +7412,7 @@
             },
             "unexpected_skill": {
               "key": "unexpected_skill",
-              "value": "can juggle badly but confidently",
+              "value": "can juggle badly",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -7357,10 +7665,10 @@
         "backstory": "Twenty-seven, cocktail bar owner from Bristol. Beau is smooth with strangers and private with friends. He is testing whether the player wants excitement or just reassurance.",
         "location_id": "casa_pool",
         "relationship": {
-          "affection": 16,
+          "affection": 26,
           "chemistry": 9,
-          "trust": 7,
-          "friendship": 7
+          "trust": 24,
+          "friendship": 16
         },
         "public_perception": 52,
         "eliminated": false,
@@ -7387,7 +7695,7 @@
             "game playing"
           ]
         },
-        "familiarity_with_player": 11,
+        "familiarity_with_player": 25,
         "memories": [
           {
             "id": "mem_bebacc76cac71d0f",
@@ -7484,6 +7792,124 @@
             "tags": [
               "ceremony",
               "challenge"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_ebe40dd162290d01",
+            "holder_id": "blake",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass ended in success (7 pts).",
+            "source": "told_by",
+            "source_id": "player",
+            "formed_on_day": 5,
+            "formed_on_turn": 321,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge",
+              "gossip",
+              "source_memory:mem_dc55c3a86299ab13"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_5ac18e7b36aada20",
+            "holder_id": "blake",
+            "subject_id": "player",
+            "content": "I remember the player making our supportive chat feel personal.",
+            "source": "direct",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 5,
+            "tags": [
+              "player_conversation",
+              "supportive"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_e5f6538bf239bea8",
+            "holder_id": "blake",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_902bac29fa566ce7",
+            "holder_id": "blake",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "told_by",
+            "source_id": "player",
+            "formed_on_day": 5,
+            "formed_on_turn": 325,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony",
+              "gossip",
+              "source_memory:mem_888d26ca8136739b"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_6631386f66bd2161",
+            "holder_id": "blake",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "told_by",
+            "source_id": "player",
+            "formed_on_day": 5,
+            "formed_on_turn": 328,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony",
+              "gossip",
+              "source_memory:mem_888d26ca8136739b"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_e7ed87c104b4c74c",
+            "holder_id": "blake",
+            "subject_id": "player",
+            "content": "I remember the player making our supportive chat feel personal.",
+            "source": "direct",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "player_conversation",
+              "supportive"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_00bf473830a78246",
+            "holder_id": "blake",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
             ],
             "durable": true
           }
@@ -7692,7 +8118,7 @@
             },
             "villa_tell": {
               "key": "villa_tell",
-              "value": "answers lightly but remembers exact dates",
+              "value": "answers lightly",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -7835,6 +8261,70 @@
             "tags": [
               "ceremony",
               "challenge"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_50f00e97690a4b15",
+            "holder_id": "jordan",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_9312370fca3ef629",
+            "holder_id": "jordan",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_2f33b8db5a9d7307",
+            "holder_id": "jordan",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_b397aba3b2848985",
+            "holder_id": "jordan",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
             ],
             "durable": true
           }
@@ -7997,7 +8487,7 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "she once sabotaged a stable relationship because it scared her",
+              "value": "she once sabotaged a stable relationship",
               "distractors": [
                 "she stole from an ex",
                 "she lied about age",
@@ -8186,6 +8676,70 @@
             "tags": [
               "ceremony",
               "challenge"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_29d6f21cc24e195c",
+            "holder_id": "marcus",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_05dce471c3e6bba5",
+            "holder_id": "marcus",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_88ed208783b4ddbe",
+            "holder_id": "marcus",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_67b93ac81240ea09",
+            "holder_id": "marcus",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
             ],
             "durable": true
           }
@@ -8539,6 +9093,70 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_00f830b57b632b31",
+            "holder_id": "sophie",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_77afa40659be03ab",
+            "holder_id": "sophie",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_f3c3e23489717621",
+            "holder_id": "sophie",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_dc1aaa1af0259eaa",
+            "holder_id": "sophie",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -8890,6 +9508,70 @@
               "challenge"
             ],
             "durable": true
+          },
+          {
+            "id": "mem_ac96cbaa50cb4bc7",
+            "holder_id": "zara",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_f8694474eee73156",
+            "holder_id": "zara",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_a93e552d56bb80f4",
+            "holder_id": "zara",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_c675ac78a1de12b5",
+            "holder_id": "zara",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
+            ],
+            "durable": true
           }
         ],
         "trait_card": {
@@ -9050,7 +9732,7 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "she once sabotaged a stable relationship because it scared her",
+              "value": "she once sabotaged a stable relationship",
               "distractors": [
                 "she stole from an ex",
                 "she lied about age",
@@ -9239,6 +9921,70 @@
             "tags": [
               "ceremony",
               "challenge"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_f9e675ad39bf99b2",
+            "holder_id": "nia",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 322,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_bb3433b59dfbce32",
+            "holder_id": "nia",
+            "subject_id": "chloe",
+            "content": "You chose to return loyal to your original connection.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 323,
+            "emotional_weight": 5,
+            "tags": [
+              "casa_amor_decision",
+              "ceremony"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_e44a85fe61d363a8",
+            "holder_id": "nia",
+            "subject_id": "blake",
+            "content": "I noticed Beau looked different after talking with the player.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 5,
+            "formed_on_turn": 330,
+            "emotional_weight": 4,
+            "tags": [
+              "supportive",
+              "witnessed"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_f366b9b0de8f814a",
+            "holder_id": "nia",
+            "subject_id": "villa",
+            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 6,
+            "formed_on_turn": 330,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "gather_scheduled"
             ],
             "durable": true
           }
@@ -9671,157 +10417,50 @@
             "is_player_couple": true
           }
         ]
+      },
+      {
+        "day": 5,
+        "entries": [
+          {
+            "rank": 1,
+            "couple": [
+              "blake_start",
+              "nia_start"
+            ],
+            "score": 50,
+            "is_player_couple": false
+          },
+          {
+            "rank": 2,
+            "couple": [
+              "liam",
+              "sophie_start"
+            ],
+            "score": 50,
+            "is_player_couple": false
+          },
+          {
+            "rank": 3,
+            "couple": [
+              "marcus_start",
+              "maya"
+            ],
+            "score": 50,
+            "is_player_couple": false
+          },
+          {
+            "rank": 4,
+            "couple": [
+              "player",
+              "chloe"
+            ],
+            "score": 38,
+            "is_player_couple": true
+          }
+        ]
       }
     ],
-    "pending_challenge": {
-      "id": "snog_marry_pie",
-      "day": 5,
-      "kind": "snog_marry_pie",
-      "stat_tested": "banter",
-      "participants": [
-        "player",
-        "chloe"
-      ],
-      "player_choice": null,
-      "result": "success",
-      "deltas": {
-        "chloe": {
-          "affection": 0,
-          "chemistry": 3,
-          "trust": 0,
-          "friendship": 0
-        },
-        "zara": {
-          "affection": 2,
-          "chemistry": 0,
-          "trust": 2,
-          "friendship": 0
-        },
-        "blake_start": {
-          "affection": 0,
-          "chemistry": 0,
-          "trust": 0,
-          "friendship": -2
-        }
-      },
-      "rounds": [
-        {
-          "index": 0,
-          "prompt_id": "smp_snog_5",
-          "target_id": null,
-          "trait_key": null,
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 1 of 3: Snog one.",
-          "choices": [
-            {
-              "id": "target_chloe",
-              "label": "Chloe",
-              "fact_value": "chloe",
-              "is_correct": true,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "target_zara",
-              "label": "Zara",
-              "fact_value": "zara",
-              "is_correct": true,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "target_blake_start",
-              "label": "Blake",
-              "fact_value": "blake_start",
-              "is_correct": true,
-              "distractor_source": "generator"
-            }
-          ],
-          "chosen_id": "target_chloe",
-          "points": 2,
-          "reveals": [
-            {
-              "kind": "reaction",
-              "subject_id": "chloe",
-              "payload": {
-                "label": "snog",
-                "role": "partner"
-              }
-            }
-          ]
-        },
-        {
-          "index": 1,
-          "prompt_id": "smp_marry_5",
-          "target_id": null,
-          "trait_key": null,
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 2 of 3: Marry one.",
-          "choices": [
-            {
-              "id": "target_zara",
-              "label": "Zara",
-              "fact_value": "zara",
-              "is_correct": true,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "target_blake_start",
-              "label": "Blake",
-              "fact_value": "blake_start",
-              "is_correct": true,
-              "distractor_source": "generator"
-            }
-          ],
-          "chosen_id": "target_zara",
-          "points": 2,
-          "reveals": [
-            {
-              "kind": "reaction",
-              "subject_id": "zara",
-              "payload": {
-                "label": "marry",
-                "role": "chemistry"
-              }
-            }
-          ]
-        },
-        {
-          "index": 2,
-          "prompt_id": "smp_pie_5",
-          "target_id": null,
-          "trait_key": null,
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 3 of 3: Pie one.",
-          "choices": [
-            {
-              "id": "target_blake_start",
-              "label": "Blake",
-              "fact_value": "blake_start",
-              "is_correct": true,
-              "distractor_source": "generator"
-            }
-          ],
-          "chosen_id": "target_blake_start",
-          "points": 3,
-          "reveals": [
-            {
-              "kind": "reaction",
-              "subject_id": "blake_start",
-              "payload": {
-                "label": "pie",
-                "role": "rival"
-              }
-            }
-          ]
-        }
-      ],
-      "current_round_index": 3,
-      "total_points": 7,
-      "classification": "success",
-      "audience_delta": 5
-    },
+    "pending_challenge": null,
     "quizzed_traits_this_run": {
       "chloe": [
         "drink_of_choice",
@@ -9911,11 +10550,11 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What's the one thing Blake is hiding from the villa?",
-            "correct_value": "he wrote a breakup speech for himself because he knew she would not be kind",
+            "correct_value": "he wrote a breakup speech for himself",
             "distractors": [
               "he lied on his application",
               "he has never dated",
-              "he owes his ex money"
+              "he owes"
             ],
             "flavor_tags": []
           },
@@ -10255,7 +10894,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Chloe's love language?",
-            "correct_value": "words of affirmation because she needs to know where she stands",
+            "correct_value": "words of affirmation",
             "distractors": [
               "physical touch",
               "acts of service",
@@ -10359,7 +10998,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Chloe's keepsake.",
-            "correct_value": "a tiny ceramic apple from her first class",
+            "correct_value": "a tiny ceramic apple",
             "distractors": [],
             "flavor_tags": []
           },
@@ -10675,7 +11314,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's unexpected skill.",
-            "correct_value": "can juggle badly but confidently",
+            "correct_value": "can juggle badly",
             "distractors": [],
             "flavor_tags": []
           },
@@ -10715,7 +11354,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Liam's biggest fear?",
-            "correct_value": "being useful but not wanted",
+            "correct_value": "being useful",
             "distractors": [
               "failure",
               "being alone",
@@ -10763,7 +11402,7 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What's the one thing Liam is hiding from the villa?",
-            "correct_value": "he still keeps her old voicemail because it is the only time she sounded sure",
+            "correct_value": "he still keeps her old voicemail",
             "distractors": [
               "he quit medicine once",
               "he has a child",
@@ -10931,7 +11570,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Liam's keepsake.",
-            "correct_value": "a cracked bicycle bell from his dad",
+            "correct_value": "a cracked bicycle bell",
             "distractors": [],
             "flavor_tags": []
           },
@@ -11107,7 +11746,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Marcus's love language?",
-            "correct_value": "acts of service but only giving",
+            "correct_value": "acts of service",
             "distractors": [
               "physical touch",
               "quality time",
@@ -11139,7 +11778,7 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What was Marcus's last heartbreak?",
-            "correct_value": "an ex called him a good project but not a partner",
+            "correct_value": "an ex called him a good project",
             "distractors": [
               "was cheated on",
               "was ghosted after a year",
@@ -11327,7 +11966,7 @@
             "distractors": [
               "she is secretly in therapy",
               "she lied about her age",
-              "she still calls her ex"
+              "she still calls"
             ],
             "flavor_tags": []
           },
@@ -12027,7 +12666,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Sophie's comfort show.",
-            "correct_value": "Grand Designs because disaster has a schedule",
+            "correct_value": "Grand Designs",
             "distractors": [],
             "flavor_tags": []
           },
@@ -12095,7 +12734,12 @@
       }
     },
     "pending_text": null,
-    "pending_gather": null,
+    "pending_gather": {
+      "kind": "ceremony",
+      "event_id": "casa_return",
+      "gather_location": "firepit",
+      "fires_on_turn": 331
+    },
     "pending_group_date": {
       "id": "group_date_day3",
       "participants": [
@@ -12327,6 +12971,61 @@
             ]
           }
         ]
+      },
+      {
+        "day": 5,
+        "items": [
+          {
+            "holder_id": "marcus",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass tested Banter and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          },
+          {
+            "holder_id": "zara",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass tested Banter and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          },
+          {
+            "holder_id": "sophie_start",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass tested Banter and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          },
+          {
+            "holder_id": "chloe",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass tested Banter and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          },
+          {
+            "holder_id": "player",
+            "subject_id": "villa",
+            "content": "Kiss Wed Pass tested Banter and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          }
+        ]
       }
     ],
     "hideaway": {
@@ -12356,12 +13055,12 @@
         "blake_start",
         "jordan_start"
       ],
-      "player_decision": null,
-      "chosen_partner_id": null,
+      "player_decision": "return_with_original",
+      "chosen_partner_id": "chloe",
       "returned": false,
       "partners_swapped": false,
       "player_perception_before": 0,
-      "player_perception_after": null
+      "player_perception_after": 23
     },
     "outcome": null
   },
@@ -13960,6 +14659,61 @@
       "day": 5,
       "phase": "text",
       "turn": 319
+    },
+    {
+      "day": 5,
+      "phase": "text",
+      "turn": 320
+    },
+    {
+      "day": 5,
+      "phase": "text",
+      "turn": 321
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 322
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 323
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 324
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 325
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 326
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 327
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 328
+    },
+    {
+      "day": 5,
+      "phase": "evening",
+      "turn": 329
+    },
+    {
+      "day": 6,
+      "phase": "morning",
+      "turn": 330
     }
   ],
   "rng_state": [
@@ -14589,7 +15343,7 @@
       3211712661,
       1320598276,
       935579968,
-      11
+      22
     ],
     null
   ]

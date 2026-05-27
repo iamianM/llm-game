@@ -12,4 +12,4 @@ actions:
   intent_id: honest_vulnerable
 - kind: respond_with
   intent_id: end_softly
-expected_hash: 5a6fa5a6a218085bb4995e7bc16d3e4668c4446d15bc88831d161919f417d602
+expected_hash: 9f03a1fe8bb120bf28f76172e640b07d66f890b639a2cb4f2d4ab36c6ef46b4d

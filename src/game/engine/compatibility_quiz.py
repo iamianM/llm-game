@@ -120,7 +120,8 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
         # same target. Cross-islander values get gender-filtered so a
         # woman's quiz doesn't get "from his dad" distractors mixed in.
         from src.game.agents.trait_generator import _neutralize_for_distractor
-        target_gender = target.gender.value if target.gender else None
+        round_target = find_islander(state, target_id)
+        target_gender = round_target.gender.value if round_target.gender else None
         peer_islander_genders = {i.id: (i.gender.value if i.gender else None) for i in state.islanders}
         distractors: list[str] = []
         for value in prompt.distractors:

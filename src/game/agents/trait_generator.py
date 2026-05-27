@@ -227,6 +227,16 @@ _VALUE_TRAIL_PATTERNS: tuple[_re.Pattern[str], ...] = (
     ),
     # "X that he/she does Y" relative clause trailing onto a noun.
     _re.compile(r"\s+that\s+(?:he|she|they)\s+\w[\w\s']*\.?$", _re.IGNORECASE),
+    # "X because Y" causal clause trailing onto an answer noun. Strips
+    # things like "Grand Designs because disaster has a schedule" -> "Grand
+    # Designs" so quiz options stay parallel.
+    _re.compile(r"\s+because\s+\w[\w\s',\.\-']*\.?$", _re.IGNORECASE),
+    # "X but Y" / "X but you know what" trailing reservation.
+    _re.compile(r"\s+but\s+\w[\w\s',\.\-']*\.?$", _re.IGNORECASE),
+    # "X for the X-th time" / "X for ages" trailing duration.
+    _re.compile(r"\s+for\s+the\s+\w[\w\s']*\s+time\.?$", _re.IGNORECASE),
+    # Trailing parenthetical aside, kept simple for one level of nesting.
+    _re.compile(r"\s*\([^)]+\)\.?$"),
 )
 
 

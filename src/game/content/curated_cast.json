@@ -83,7 +83,7 @@
           "tier": 3
         },
         "love_language": {
-          "value": "words of affirmation because she needs to know where she stands",
+          "value": "words of affirmation",
           "distractors": [
             "physical touch",
             "acts of service",
@@ -412,7 +412,7 @@
           "tier": 2
         },
         "biggest_fear": {
-          "value": "being useful but not wanted",
+          "value": "being useful",
           "distractors": [
             "failure",
             "being alone",
@@ -466,7 +466,7 @@
           "tier": 4
         },
         "hidden_secret": {
-          "value": "he still keeps her old voicemail because it is the only time she sounded sure",
+          "value": "he still keeps her old voicemail",
           "distractors": [
             "he quit medicine once",
             "he has a child",
@@ -656,7 +656,7 @@
           "mechanical": false
         },
         "comfort_show": {
-          "value": "Grand Designs because disaster has a schedule",
+          "value": "Grand Designs",
           "tier": 0,
           "mechanical": false
         },
@@ -928,7 +928,7 @@
           "tier": 3
         },
         "love_language": {
-          "value": "acts of service but only giving",
+          "value": "acts of service",
           "distractors": [
             "physical touch",
             "quality time",
@@ -964,7 +964,7 @@
           "tier": 4
         },
         "past_heartbreak": {
-          "value": "an ex called him a good project but not a partner",
+          "value": "an ex called him a good project",
           "distractors": [
             "was cheated on",
             "was ghosted after a year",
@@ -1142,7 +1142,7 @@
           "tier": 4
         },
         "hidden_secret": {
-          "value": "he wrote a breakup speech for himself because he knew she would not be kind",
+          "value": "he wrote a breakup speech for himself",
           "distractors": [
             "he lied on his application",
             "he has never dated",
@@ -1337,7 +1337,7 @@
           "mechanical": false
         },
         "unexpected_skill": {
-          "value": "can juggle badly but confidently",
+          "value": "can juggle badly",
           "tier": 0,
           "mechanical": false
         },
@@ -1522,7 +1522,7 @@
           "mechanical": false
         },
         "villa_tell": {
-          "value": "answers lightly but remembers exact dates",
+          "value": "answers lightly",
           "tier": 0,
           "mechanical": false
         },
@@ -1669,7 +1669,7 @@
           "tier": 4
         },
         "hidden_secret": {
-          "value": "she once sabotaged a stable relationship because it scared her",
+          "value": "she once sabotaged a stable relationship",
           "distractors": [
             "she stole from an ex",
             "she lied about age",

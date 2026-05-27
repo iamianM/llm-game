@@ -1,6 +1,6 @@
 name: producer-text-day2
 seed: 22
-expected_hash: dc9805d3ecbac4866e8755544181f3af6838264e7a449e9148581e69dc62bd61
+expected_hash: 48a3c37acbdb0d0cff9f789339d191ab529fe5a4d460b52bf338bc397bb0f801
 actions:
 - kind: ambient
   target_id: ambient_wait

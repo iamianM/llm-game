@@ -1,7 +1,7 @@
 {
   "name": "day3-recoupling-ceremony",
   "seed": 7,
-  "state_hash": "d567b8c80239c78f79cb561670a1a55b903d8525355139df8800359c375f504f",
+  "state_hash": "ef8f714ffbd7554f9be91910382371014c66a88008d25d3e9b491ad5967ebc6c",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -534,7 +534,7 @@
         },
         "chloe.keepsake": {
           "fact_key": "chloe.keepsake",
-          "value": "a tiny ceramic apple from her first class",
+          "value": "a tiny ceramic apple",
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
@@ -945,7 +945,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "words of affirmation because she needs to know where she stands",
+              "value": "words of affirmation",
               "distractors": [
                 "physical touch",
                 "acts of service",
@@ -1051,7 +1051,7 @@
             },
             "keepsake": {
               "key": "keepsake",
-              "value": "a tiny ceramic apple from her first class",
+              "value": "a tiny ceramic apple",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -1708,7 +1708,7 @@
               "distractors": [
                 "she is secretly in therapy",
                 "she lied about her age",
-                "she still calls her ex"
+                "she still calls"
               ],
               "tier": 4,
               "reveal_tags": [],
@@ -2331,7 +2331,7 @@
             },
             "biggest_fear": {
               "key": "biggest_fear",
-              "value": "being useful but not wanted",
+              "value": "being useful",
               "distractors": [
                 "failure",
                 "being alone",
@@ -2403,7 +2403,7 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "he still keeps her old voicemail because it is the only time she sounded sure",
+              "value": "he still keeps her old voicemail",
               "distractors": [
                 "he quit medicine once",
                 "he has a child",
@@ -2441,7 +2441,7 @@
             },
             "keepsake": {
               "key": "keepsake",
-              "value": "a cracked bicycle bell from his dad",
+              "value": "a cracked bicycle bell",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -3132,7 +3132,7 @@
             },
             "comfort_show": {
               "key": "comfort_show",
-              "value": "Grand Designs because disaster has a schedule",
+              "value": "Grand Designs",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -4440,7 +4440,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "acts of service but only giving",
+              "value": "acts of service",
               "distractors": [
                 "physical touch",
                 "quality time",
@@ -4488,7 +4488,7 @@
             },
             "past_heartbreak": {
               "key": "past_heartbreak",
-              "value": "an ex called him a good project but not a partner",
+              "value": "an ex called him a good project",
               "distractors": [
                 "was cheated on",
                 "was ghosted after a year",
@@ -5199,11 +5199,11 @@
             },
             "hidden_secret": {
               "key": "hidden_secret",
-              "value": "he wrote a breakup speech for himself because he knew she would not be kind",
+              "value": "he wrote a breakup speech for himself",
               "distractors": [
                 "he lied on his application",
                 "he has never dated",
-                "he owes his ex money"
+                "he owes"
               ],
               "tier": 4,
               "reveal_tags": [],
@@ -5936,7 +5936,7 @@
             },
             "unexpected_skill": {
               "key": "unexpected_skill",
-              "value": "can juggle badly but confidently",
+              "value": "can juggle badly",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -6364,15 +6364,15 @@
           "choices": [
             {
               "id": "distractor_0",
-              "label": "old wildlife documentaries",
-              "fact_value": "old wildlife documentaries",
+              "label": "Grand Designs",
+              "fact_value": "Grand Designs",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
             {
               "id": "distractor_1",
-              "label": "Detectorists",
-              "fact_value": "Detectorists",
+              "label": "Taskmaster clips watched under a blanket",
+              "fact_value": "Taskmaster clips watched under a blanket",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
@@ -6385,8 +6385,8 @@
             },
             {
               "id": "distractor_2",
-              "label": "old panel shows",
-              "fact_value": "old panel shows",
+              "label": "Bake Off reruns",
+              "fact_value": "Bake Off reruns",
               "is_correct": false,
               "distractor_source": "trait_card"
             }
@@ -6459,8 +6459,8 @@
           "choices": [
             {
               "id": "distractor_1",
-              "label": "The Scientist",
-              "fact_value": "The Scientist",
+              "label": "Murder on the Dancefloor with lethal eye contact",
+              "fact_value": "Murder on the Dancefloor with lethal eye contact",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
@@ -6473,15 +6473,15 @@
             },
             {
               "id": "distractor_2",
-              "label": "Valerie",
-              "fact_value": "Valerie",
+              "label": "Put Your Records On with no irony",
+              "fact_value": "Put Your Records On with no irony",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
             {
               "id": "distractor_0",
-              "label": "Mr. Brightside",
-              "fact_value": "Mr. Brightside",
+              "label": "Hot N Cold with full choreography",
+              "fact_value": "Hot N Cold with full choreography",
               "is_correct": false,
               "distractor_source": "trait_card"
             }
@@ -6540,29 +6540,29 @@
           "choices": [
             {
               "id": "distractor_2",
-              "label": "a photo booth strip with an ex he calls just a mate",
-              "fact_value": "a photo booth strip with an ex he calls just a mate",
+              "label": "the unsent letter folded inside a cookbook",
+              "fact_value": "the unsent letter folded inside a cookbook",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
             {
               "id": "distractor_0",
-              "label": "a notebook of jokes that are secretly diary entries",
-              "fact_value": "a notebook of jokes that are secretly diary entries",
+              "label": "a voice note from her little cousin saved as a ringtone",
+              "fact_value": "a voice note from her little cousin saved as a ringtone",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
             {
               "id": "distractor_1",
-              "label": "a cracked bicycle bell from his dad",
-              "fact_value": "a cracked bicycle bell from his dad",
+              "label": "a monogrammed planner full of crossed-out ex names",
+              "fact_value": "a monogrammed planner full of crossed-out ex names",
               "is_correct": false,
               "distractor_source": "trait_card"
             },
             {
               "id": "correct",
-              "label": "a tiny ceramic apple from her first class",
-              "fact_value": "a tiny ceramic apple from her first class",
+              "label": "a tiny ceramic apple",
+              "fact_value": "a tiny ceramic apple",
               "is_correct": true,
               "distractor_source": "trait_card"
             }
@@ -6712,11 +6712,11 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What's the one thing Blake is hiding from the villa?",
-            "correct_value": "he wrote a breakup speech for himself because he knew she would not be kind",
+            "correct_value": "he wrote a breakup speech for himself",
             "distractors": [
               "he lied on his application",
               "he has never dated",
-              "he owes his ex money"
+              "he owes"
             ],
             "flavor_tags": []
           },
@@ -7056,7 +7056,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Chloe's love language?",
-            "correct_value": "words of affirmation because she needs to know where she stands",
+            "correct_value": "words of affirmation",
             "distractors": [
               "physical touch",
               "acts of service",
@@ -7160,7 +7160,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Chloe's keepsake.",
-            "correct_value": "a tiny ceramic apple from her first class",
+            "correct_value": "a tiny ceramic apple",
             "distractors": [],
             "flavor_tags": []
           },
@@ -7476,7 +7476,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's unexpected skill.",
-            "correct_value": "can juggle badly but confidently",
+            "correct_value": "can juggle badly",
             "distractors": [],
             "flavor_tags": []
           },
@@ -7516,7 +7516,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Liam's biggest fear?",
-            "correct_value": "being useful but not wanted",
+            "correct_value": "being useful",
             "distractors": [
               "failure",
               "being alone",
@@ -7564,7 +7564,7 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What's the one thing Liam is hiding from the villa?",
-            "correct_value": "he still keeps her old voicemail because it is the only time she sounded sure",
+            "correct_value": "he still keeps her old voicemail",
             "distractors": [
               "he quit medicine once",
               "he has a child",
@@ -7732,7 +7732,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Liam's keepsake.",
-            "correct_value": "a cracked bicycle bell from his dad",
+            "correct_value": "a cracked bicycle bell",
             "distractors": [],
             "flavor_tags": []
           },
@@ -7908,7 +7908,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Marcus's love language?",
-            "correct_value": "acts of service but only giving",
+            "correct_value": "acts of service",
             "distractors": [
               "physical touch",
               "quality time",
@@ -7940,7 +7940,7 @@
             "tier": 4,
             "mechanical": true,
             "stem": "What was Marcus's last heartbreak?",
-            "correct_value": "an ex called him a good project but not a partner",
+            "correct_value": "an ex called him a good project",
             "distractors": [
               "was cheated on",
               "was ghosted after a year",
@@ -8128,7 +8128,7 @@
             "distractors": [
               "she is secretly in therapy",
               "she lied about her age",
-              "she still calls her ex"
+              "she still calls"
             ],
             "flavor_tags": []
           },
@@ -8828,7 +8828,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Sophie's comfort show.",
-            "correct_value": "Grand Designs because disaster has a schedule",
+            "correct_value": "Grand Designs",
             "distractors": [],
             "flavor_tags": []
           },
