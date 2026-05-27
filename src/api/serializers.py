@@ -309,6 +309,15 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
         target = "" if action.target_id is None else f": choose {find_name(state, action.target_id)}"
         return f"{display(state.pending_challenge.kind)}{target}"
     if action.kind.value == "recouple" and action.target_id is not None:
+        # During a pending recoupling ceremony, the engine already emits a
+        # specific label ("Stay with X" or "Couple with Y") that distinguishes
+        # the player's current partner from a swap. Keep it.
+        if (
+            state.pending_gather is not None
+            and state.pending_gather.kind == "ceremony"
+            and state.pending_gather.event_id.startswith("recoupling")
+        ):
+            return spec.label
         return f"Pair with {find_name(state, action.target_id)}"
     if action.kind.value == "propose_recouple" and action.target_id is not None:
         return f"Ask {find_name(state, action.target_id)} for a Heart Swap"

@@ -180,6 +180,15 @@ def run_turn(
         result.pull_attempt = pull_attempt
     ceremony_events: list[CeremonyEvent] = []
     if action.kind is ActionKind.RECOUPLE:
+        # A pending recoupling gather means this RECOUPLE is the player's
+        # in-ceremony partner pick (Day 3 / Day 5). Resolve it the same way
+        # the gather would have — but with the player's chosen partner — and
+        # clear the gather so the player isn't asked to "join" afterwards.
+        is_ceremony_pick = (
+            state.pending_gather is not None
+            and state.pending_gather.kind == "ceremony"
+            and state.pending_gather.event_id.startswith("recoupling")
+        )
         ceremony = (
             initial_coupling(state, action.target_id)
             if state.day == 1 and not state.couples and action.target_id is not None
@@ -188,6 +197,10 @@ def run_turn(
         ceremony_events.extend(recoupling_events(ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
+        if is_ceremony_pick:
+            state.pending_gather = None
+            from src.game.engine.phases import advance_phase
+            advance_phase(state)
     if action.kind is ActionKind.CHALLENGE_RESPONSE and state.pending_challenge is not None:
         event = challenge_response_event(state)
         if event is not None:
