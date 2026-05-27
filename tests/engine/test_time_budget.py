@@ -75,6 +75,9 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
 
     assert result.auto_advance is True
     assert result.time_cost == 20
-    assert state.phase is Phase.AFTERNOON
-    assert state.phase_clock.phase == Phase.AFTERNOON.value
-    assert state.phase_clock.elapsed_minutes == 0
+    # The round-based Compatibility Quiz holds CHALLENGE pending until the
+    # player has answered all five rounds.
+    assert state.phase is Phase.CHALLENGE
+    assert state.pending_challenge is not None
+    assert state.pending_challenge.kind == "compatibility_quiz"
+    assert len(state.pending_challenge.rounds) == 5

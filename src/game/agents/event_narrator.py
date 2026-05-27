@@ -168,19 +168,72 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
             "- If hideaway appears with gather_scheduled, narrate only the Hideaway. "
             "The scheduled gather is a later UI/state fact, not part of the private suite beat."
         )
-    return "\n".join(
-        [
-            f"Day: {state.day}",
-            f"Phase: {state.phase.value}",
-            f"Location: {state.location_id.value}",
-            f"Current player couple: {_player_couple(state)}",
-            "Event semantics:",
-            *semantics,
-            "Events:",
-            event_lines,
-            "Narrate these resolved events now.",
-        ]
-    )
+    sections = [
+        f"Day: {state.day}",
+        f"Phase: {state.phase.value}",
+        f"Location: {state.location_id.value}",
+        f"Current player couple: {_player_couple(state)}",
+        "Event semantics:",
+        *semantics,
+        "Events:",
+        event_lines,
+    ]
+    # If a round-based minigame just resolved, surface its per-round details so
+    # the narrator can name actual picks, reveals, and facets rather than
+    # writing generic "ended in success" prose. See docs/minigame-system.md
+    # §7 for the narration contract.
+    minigame_block = _render_minigame_details(state)
+    if minigame_block:
+        sections.append(minigame_block)
+    sections.append("Narrate these resolved events now. If a Minigame block is "
+                    "present above, ground at least one sentence in a concrete "
+                    "round detail — a picked answer, a named reveal, a facet, "
+                    "or a chemistry pair — using the exact labels shown.")
+    return "\n".join(sections)
+
+
+def _render_minigame_details(state: GameState) -> str:
+    """Render the per-round details for a just-resolved round-based minigame.
+
+    Returns an empty string if no round-based minigame is in pending_challenge,
+    or if the minigame has not yet been resolved.
+    """
+    challenge = state.pending_challenge
+    if challenge is None or challenge.classification is None or not challenge.rounds:
+        return ""
+    # Only round-based minigames carry meaningful per-round structure
+    # (legacy single-roll resolutions don\'t populate the `rounds` list).
+    lines = [
+        f"Minigame: {challenge.kind}",
+        f"  classification: {challenge.classification}",
+        f"  total_points: {challenge.total_points}",
+        f"  audience_delta: {challenge.audience_delta}",
+        f"  participants: {', '.join(challenge.participants)}",
+        "  rounds:",
+    ]
+    for round_ in challenge.rounds:
+        chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
+        correct = next((c for c in round_.choices if c.is_correct), None)
+        chosen_label = repr(chosen.label) if chosen else "(no answer)"
+        correct_label = repr(correct.label) if correct else "?"
+        outcome = "OK" if (chosen and chosen.is_correct) else "MISS"
+        round_meta = []
+        if round_.mechanical and round_.trait_key:
+            round_meta.append(f"trait={round_.trait_key}")
+            round_meta.append(f"tier={round_.tier}")
+        elif round_.trait_key:
+            round_meta.append(f"flavor_key={round_.trait_key}")
+        if round_.target_id:
+            round_meta.append(f"target={round_.target_id}")
+        meta_str = (" (" + ", ".join(round_meta) + ")") if round_meta else ""
+        lines.append(
+            f"    r{round_.index + 1} [{outcome}] {round_.stem!r}{meta_str}"
+        )
+        lines.append(f"        chose {chosen_label}; correct was {correct_label}; points {round_.points}")
+        for reveal in round_.reveals:
+            payload_summary = ", ".join(f"{k}={v}" for k, v in reveal.payload.items())
+            lines.append(f"        reveal[{reveal.kind}] subject={reveal.subject_id} {payload_summary}")
+    return "\n".join(lines)
 
 
 def _player_couple(state: GameState) -> str:

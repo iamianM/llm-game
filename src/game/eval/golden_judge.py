@@ -118,12 +118,26 @@ def build_judge_prompt(
 
 JUDGE_INSTRUCTIONS = (
     "You are judging generated dating-sim agent output against an authored golden. "
-    "Use the golden as the main expected intent, not as exact wording. "
-    "Return pass when the actual output is a reasonable semantic match and does not violate the criterion. "
+    "Use the golden as expected INTENT and shape, not as a script. "
+    "CRITICAL: The fields under `actual` named `ceremony_events`, `challenge`, "
+    "`mechanical_result`, `producer_text`, `pending_gather`, `audience_snapshot`, "
+    "`revealed_preferences`, `daily_recaps`, `villa_snapshot`, `location`, "
+    "`day`, and `phase` are the engine's deterministic ground truth. When a "
+    "judge criterion asks whether the narrator 'matches the recorded outcome' "
+    "(winner, couples, eliminated islander, classification, BPMs, proposal "
+    "result, etc.), compare ONLY against those engine fields — never against "
+    "names that appear in the golden's 'Imagine:' illustrative example. The "
+    "illustrative example shows the desired shape and tone of prose, not which "
+    "specific islanders should win or lose. If the engine recorded `player and "
+    "chloe win` and the narration says the same, that passes a "
+    "final_outcome_faithful check even if the golden's Imagine: paragraph "
+    "named different islanders. "
+    "Return pass when the actual output is a reasonable semantic match to the "
+    "criterion AND consistent with engine ground truth. "
     "Return fail only for a material mismatch grounded in the visible actual output. "
     "Return cannot_determine when the artifact lacks enough evidence. "
-    "For memory or close-turn checks, compare curator memories against prior_turns player exchanges, "
-    "not against unrelated background_dialogues. "
+    "For memory or close-turn checks, compare curator memories against prior_turns "
+    "player exchanges, not against unrelated background_dialogues. "
     "Do not invent hidden game state."
 )
 
@@ -154,6 +168,22 @@ def _actual_payload(record: dict[str, object]) -> dict[str, object]:
         "agent_commits": record.get("agent_commits"),
         "agent_traces": record.get("agent_traces"),
         "mechanical_result": record.get("mechanical_result"),
+        # Deterministic engine outputs. The judge MUST use these as ground truth
+        # for "did the narrator stay faithful to the recorded outcome" checks.
+        # When the golden's prose includes an illustrative "Imagine:" example,
+        # ignore those names — these fields are the engine's authoritative record.
+        "ceremony_events": record.get("ceremony_events"),
+        "challenge": record.get("challenge"),
+        "producer_text": record.get("producer_text"),
+        "pending_gather": record.get("pending_gather"),
+        "audience_snapshot": record.get("audience_snapshot"),
+        "revealed_preferences": record.get("revealed_preferences"),
+        "daily_recaps": record.get("daily_recaps"),
+        "visible_state": record.get("visible_state"),
+        "villa_snapshot": record.get("villa_snapshot"),
+        "location": record.get("location"),
+        "day": record.get("day"),
+        "phase": record.get("phase"),
     }
 
 

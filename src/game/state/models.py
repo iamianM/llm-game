@@ -24,7 +24,22 @@ from src.game.state.event_models import (
     GroupDate as GroupDate,
 )
 from src.game.state.event_models import (
+    MinigameChoice as MinigameChoice,
+)
+from src.game.state.event_models import (
+    MinigameReveal as MinigameReveal,
+)
+from src.game.state.event_models import (
+    MinigameRound as MinigameRound,
+)
+from src.game.state.event_models import (
     ProducerText as ProducerText,
+)
+from src.game.state.event_models import (
+    QuestionBank as QuestionBank,
+)
+from src.game.state.event_models import (
+    QuestionBankPrompt as QuestionBankPrompt,
 )
 from src.game.state.event_models import (
     RelationshipDelta as RelationshipDelta,
@@ -40,7 +55,7 @@ from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
 from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 25
+SCHEMA_VERSION = 26
 
 
 class Phase(StrEnum):
@@ -374,6 +389,8 @@ class GameState(BaseModel):
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
     pending_challenge: Challenge | None = None
+    quizzed_traits_this_run: dict[str, list[str]] = Field(default_factory=dict)
+    question_bank: QuestionBank | None = None
     pending_text: ProducerText | None = None
     pending_gather: PendingGather | None = None
     pending_group_date: GroupDate | None = None

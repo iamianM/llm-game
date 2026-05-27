@@ -1,0 +1,31 @@
+name: compatibility-quiz-vertical
+seed: 21
+expected_hash: 16cc854e11e11bc1284875179c9e24614385a3b15a9884ab2de10747ba5e73ff
+actions:
+- kind: ambient
+  target_id: ambient_wait
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice_id: correct
+    round_index: 0
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice_id: correct
+    round_index: 1
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice_id: correct
+    round_index: 2
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice_id: correct
+    round_index: 3
+- kind: challenge_response
+  target_id: chloe
+  payload:
+    choice_id: correct
+    round_index: 4

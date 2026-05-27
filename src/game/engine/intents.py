@@ -98,13 +98,25 @@ def get_intent(intent_id: str) -> Intent:
 
 
 def available_intents_for(state: GameState, target_id: str) -> list[Intent]:
-    """Return unlocked intents for a visible target."""
+    """Return unlocked intents for a visible target.
+
+    If the target is the player's current partner, drop the unlock threshold
+    by 10 — being coupled implies enough closeness that the affection bar
+    for flirty / deep options should ease down, even if the underlying
+    affection score is still catching up to it.
+    """
     target = _find_visible_target(state, target_id)
     affection = target.relationship.affection
+    effective_affection = affection
+    for couple in state.couples:
+        members = {couple.partner_a_id, couple.partner_b_id}
+        if "player" in members and target_id in members:
+            effective_affection = affection + 10
+            break
     return [
         intent
         for intent in load_intents()
-        if affection >= intent.unlock_affection and _gender_pair_allows(state.player.gender, target.gender, intent.category)
+        if effective_affection >= intent.unlock_affection and _gender_pair_allows(state.player.gender, target.gender, intent.category)
     ]
 
 

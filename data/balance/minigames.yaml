@@ -1,0 +1,131 @@
+# Minigame balance data.
+# Schema: src/game/content/minigame_balance.py
+# Contract: docs/minigame-system.md §5.1, §5.2
+
+recovery_floor:
+  audience_threshold: 35
+  partial_audience_bonus: 2
+  failure_audience_dampener: 2
+
+compatibility_quiz:
+  rounds: 5
+  per_round_points:
+    correct_tier1: 2
+    correct_tier2: 3
+    correct_tier3: 4
+    correct_tier4: 5
+    correct_flavor: 1
+    incorrect: 0
+  thresholds:
+    success: 14
+    partial: 8
+  audience:
+    # Bumped so the moment carries weight. Recovery floor (§5.2) still
+    # softens failure for low-audience players: partial +2 bonus, failure
+    # dampens up to zero. Even with bonus the swing reads as a real beat.
+    success: 6
+    partial: 2
+    failure: -5
+heart_rate:
+  reaction_rounds: 1
+  thresholds:
+    surprise_chemistry: 70
+  per_round_points:
+    lean_in: 0
+    play_cool: 0
+    apologize: 0
+  audience:
+    success: 5         # surprise revealed AND player engaged
+    partial: 2         # surprise on partner side, not player
+    failure: -1        # flat week, no chemistry crests
+    lean_in_bonus: 3
+    apologize_penalty: -2
+
+snog_marry_pie:
+  rounds: 3
+  per_round_points:
+    snog_partner: 2
+    snog_chemistry: 3
+    snog_friend: 1
+    marry_partner: 3
+    marry_chemistry: 2
+    marry_friend: 1
+    pie_rival: 3
+    pie_friend: -3
+    pie_partner: -5
+  thresholds:
+    success: 6
+    partial: 2
+  audience:
+    success: 5
+    partial: 2
+    failure: -4
+    pie_partner_extra: -3
+
+mr_and_mrs:
+  rounds: 6
+  per_round_points:
+    both_match: 3
+    one_correct: 1
+    mismatch: 0
+  thresholds:
+    success: 14
+    partial: 8
+  audience:
+    success: 6
+    partial: 2
+    failure: -4
+    streak_three_mismatch_penalty: -2
+
+lie_detector:
+  rounds: 5
+  per_round_points:
+    truth_verified: 3
+    truth_unverified: 1
+    lie_undetected: 2
+    lie_caught: -4
+    lie_caught_high_stakes_extra: -3
+  thresholds:
+    success: 10
+    partial: 4
+  audience:
+    success: 4
+    partial: 1
+    failure: -5
+    truth_unverified_bonus: 1
+  detection:
+    base_chance: 30
+    familiarity_factor_max: 35
+    visibility_factor_max: 25
+    floor: 0
+    ceiling: 95
+
+final_couples:
+  rounds: 5
+  facet_weights:
+    knowledge: 4
+    chemistry: 3
+    honesty: 5
+    banter: 3
+    audacity: 3
+  per_round_points:
+    knowledge_correct: 1
+    knowledge_incorrect: 0
+    chemistry_high: 1
+    chemistry_low: 0
+    honesty_truth: 1
+    honesty_lie_undetected: 1
+    honesty_lie_caught: -2
+    banter_match: 1
+    banter_miss: 0
+    audacity_rival_pie: 1
+    audacity_friend_pie: -1
+    audacity_partner_pie: -3
+  thresholds:
+    success: 12
+    partial: 6
+  audience:
+    success: 8
+    partial: 3
+    failure: -4
+

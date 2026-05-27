@@ -2,7 +2,7 @@ intents:
   - id: friendly_ask_feelings
     reveal_tier: 1
     category: friendly
-    label: "Ask how she's feeling"
+    label: "Ask how they're feeling"
     stat_used: eq
     tags: [supportive, sincere]
     unlock_affection: 0
@@ -22,7 +22,7 @@ intents:
   - id: friendly_compliment_personality
     reveal_tier: 2
     category: friendly
-    label: "Compliment her personality"
+    label: "Compliment their personality"
     stat_used: charm
     tags: [warm, sincere]
     unlock_affection: 0
@@ -32,7 +32,7 @@ intents:
   - id: flirty_compliment_looks
     reveal_tier: 1
     category: flirty
-    label: "Compliment her looks"
+    label: "Compliment their looks"
     stat_used: charm
     tags: [flirty, surface]
     unlock_affection: 20
@@ -60,7 +60,7 @@ intents:
   - id: deep_ask_life
     reveal_tier: 3
     category: deep
-    label: "Ask about her life back home"
+    label: "Ask about their life back home"
     stat_used: eq
     tags: [deep, vulnerable]
     unlock_affection: 40

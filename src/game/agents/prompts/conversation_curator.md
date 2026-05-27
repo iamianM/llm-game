@@ -46,15 +46,19 @@ Each `Memory`:
 - `content` — one first-person sentence in the holder's voice, capturing the emotional residue. Specific to *this* conversation.
 - `source` — `"direct"` if the holder participated, `"witnessed"` if the holder was a bystander.
 - `emotional_weight` — integer 1-10. Trivial joke: 2-3. Flirt with chemistry: 5-6. Vulnerable confession: 7-8. Kiss or betrayal: 9-10. Witness memories sit one to two points below direct memories of the same event.
-- `tags` — three to six short snake_case tags. Use existing words where possible: `vulnerable`, `trust_built`, `she_seemed_warm`, `joke_that_landed`, `awkward_silence`, `flirty`, `talked_about_aisha`, `felt_seen`, `pushed_too_hard`, `saw_them_close`, `uncertain`. These drive gossip surfacing later.
+- `tags` — three to six short snake_case tags. Use existing words where possible: `vulnerable`, `trust_built`, `she_seemed_warm`, `joke_that_landed`, `awkward_silence`, `flirty`, `felt_seen`, `pushed_too_hard`, `saw_them_close`, `uncertain`. You may also coin tags of the form `talked_about_<name>` when a specific third party was discussed (use the actual islander's id, never copy a placeholder name) — but only if that person actually came up in the visible dialogue. These drive gossip surfacing later.
 - `durable` — usually `true`. Set `false` only if the memory is small enough to fade.
 
 ## Hard rules
 
-- **First-person, in the holder's voice.** Chloe's memories say "I"; the player's memories say "I."
-- **Specific.** Reference an actual moment, line, or feeling from the exchanges. Generic content ("we chatted") is wrong.
+- **First-person, in the holder's voice.** Chloe's memories say "I"; the player's memories say "I." Wrong: a memory with `holder_id: "marcus_start"` whose content reads *"I told Marcus..."* — that "I" is the player's, not Marcus's. The holder's `I` is the holder. If `holder_id` is `marcus_start`, the content's `I` is Marcus.
+- **Do not invent dialogue.** A memory may reflect on what was said, but it must not put words into the exchange that did not appear there. "I told them I'm trying to keep standards up after my knee packed in" is wrong if neither the player nor Marcus said anything about a knee.
+- **Name the other participant.** Every memory must explicitly name the other person it is about — by their first name ("Chloe", "Liam") or as "the player". Pronouns alone ("he", "she", "they asked", "they opened up") are not enough. Wrong: *"I noticed he opened with a bold compliment."* Right: *"I noticed the player opened with a bold compliment."*
+- **Specific.** Reference an actual moment, line, or feeling from the exchanges. Generic content ("we chatted") is wrong. Outcome-summary memories — *"Player proposed to recouple with Maya, and Maya rejected"*, *"We had a fight and she walked off"* — are also wrong. The memory must capture **how** it happened: a phrase someone used, the silence between two lines, the look on their face, the moment that landed or didn't. The mechanical outcome (couple formed, proposal rejected, conversation ended) is given to you — your job is to write what the holder will remember about the *moment*, not to restate the outcome.
 - **No digits.** No numerical stats, ages, or game mechanics in the content.
+- **Stay inside the visible exchange.** A memory may reference what was said, the holder's interior reaction, and the documented mood — nothing else. Do not add a location, a third-party witness watching from across the room, body language not described in the exchange, or any off-screen action ("by the pool", "while Sophie watched", "before he walked over"). The setting is already established by the scene; do not re-narrate it inside the memory.
 - **No invented people.** Only reference participants, listed bystanders, or third parties named in the dialogue.
+- **Witness rule.** Only write a `witnessed` memory for an islander the user message lists as a bystander at this scene. Do not invent an off-screen observer. If no bystanders are listed, do not produce witnessed memories.
 - **Calibrate weight honestly.** A friendly opener is not weight 8. A vulnerable moment is not weight 2.
 - **Asymmetric perspectives are good.** Two participants often remember the same moment differently. Don't make their memories mirror each other.
 - **Bystanders see surface, not interior.** A bystander can write "Maya looked tense when Liam laughed" but not "Maya was thinking about her ex." Bystanders observe; they don't read minds.
@@ -64,6 +68,7 @@ Each `Memory`:
 - A **specific moment** the holder noticed.
 - **Emotional texture** — how it felt to the holder, not what mechanically happened.
 - **A handle for gossip** — phrased so that if the holder later mentions it to someone, the listener can react. "Chloe is scared of being lied to" is useful gossip. "Chloe was friendly" is not.
+- **Name substantive third parties.** When the conversation's central content was about another islander (the holder shared who they're eyeing, who they distrust, who they kissed), at least one memory must reference that third party by name. Wrong: *"I told them who I was actually eyeing."* Right: *"I told them I'm actually eyeing Sophie — the listening thing got me."*
 
 ## Context
 

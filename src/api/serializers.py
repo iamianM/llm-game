@@ -65,6 +65,7 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
         pending_recouple_proposal=(
             None if state.pending_recouple_proposal is None else state.pending_recouple_proposal.model_dump(mode="json")
         ),
+        pending_challenge=_pending_challenge_view(state),
         outcome=None if state.outcome is None else state.outcome.value,
         active_conversation_target_id=(
             None if state.active_conversation is None else state.active_conversation.target_id
@@ -118,6 +119,7 @@ def available_action(
         risk=risk,
         stat_used=stat,
         description=description,
+        payload=action.payload,
     )
 
 
@@ -298,6 +300,12 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
     if action.kind.value == "join_gather" and state.pending_gather is not None:
         return f"Join gather at {display(state.pending_gather.gather_location.value)}"
     if action.kind.value == "challenge_response" and state.pending_challenge is not None:
+        # Round-based minigames (e.g. compatibility_quiz) already carry a rich
+        # per-round label from the engine ("Quiz r2/5: Liverpool"). Use it
+        # verbatim so the player can see which round and choice they're picking.
+        from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+        if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+            return spec.label
         target = "" if action.target_id is None else f": choose {find_name(state, action.target_id)}"
         return f"{display(state.pending_challenge.kind)}{target}"
     if action.kind.value == "recouple" and action.target_id is not None:
@@ -350,3 +358,43 @@ def _model_dump(value: BaseModel) -> dict[str, object]:
 
 def partner_id_for_player(state: GameState) -> str | None:
     return partner_id(state, "player")
+
+
+def _pending_challenge_view(state: GameState) -> dict[str, object] | None:
+    """Browser-facing view of a round-based pending minigame.
+
+    Returns a compact dict (kind, current round + stem + tier + choices) for
+    round-based minigames so the browser can render the question text above
+    the choice list. Legacy single-roll challenges return ``None`` because
+    they have no per-round state.
+    """
+    from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+    challenge = state.pending_challenge
+    if challenge is None:
+        return None
+    if challenge.kind not in ROUND_BASED_MINIGAMES:
+        return None
+    cur_index = challenge.current_round_index
+    if cur_index >= len(challenge.rounds):
+        # Finished — surface classification + totals so the wrap UI can show them.
+        return {
+            "kind": challenge.kind,
+            "finished": True,
+            "classification": challenge.classification,
+            "total_points": challenge.total_points,
+            "audience_delta": challenge.audience_delta,
+            "round_count": len(challenge.rounds),
+        }
+    current = challenge.rounds[cur_index]
+    return {
+        "kind": challenge.kind,
+        "finished": False,
+        "round_index": cur_index,
+        "round_count": len(challenge.rounds),
+        "stem": current.stem,
+        "trait_key": current.trait_key,
+        "tier": current.tier,
+        "mechanical": current.mechanical,
+        "target_id": current.target_id,
+    }
+

@@ -13,6 +13,7 @@ from src.game.engine.ceremonies import (
     recoupling,
 )
 from src.game.engine.challenges import (
+    ROUND_BASED_MINIGAMES,
     challenge_event_message,
     resolve_challenge,
     schedule_challenge,
@@ -60,6 +61,19 @@ def advance_phase_with_events(
     ):
         advance_phase(state)
         events.extend(_scheduled_phase_events(state, rng))
+    # Clear a fully-resolved challenge once we cross into a NEW DAY. We
+    # intentionally keep it alive within the same day so eval check
+    # `challenge_resolved` can inspect the post-resolution state and so the
+    # narrator/render can surface the wrap once. The CLI renderer in
+    # play_render.py keys its minigame view off state.pending_challenge but
+    # tolerates the lingering wrap; without this clear it would re-render
+    # the wrap every turn for the rest of the run.
+    if (
+        state.pending_challenge is not None
+        and state.pending_challenge.result is not None
+        and state.pending_challenge.day != state.day
+    ):
+        state.pending_challenge = None
     return events, audience_snapshot
 
 
@@ -96,7 +110,12 @@ def resolve_pending_gather(
     elif gather.kind == "challenge":
         challenge = schedule_challenge(state.day)
         if challenge is not None:
-            state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
+            if challenge.kind in ROUND_BASED_MINIGAMES:
+                state.pending_challenge = _prepare_round_based_minigame(
+                    state, challenge, rng.fork(f"challenge-{state.day}")
+                )
+            else:
+                state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
             events.append(
                 CeremonyEvent(
                     kind="challenge",
@@ -162,7 +181,11 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
         challenge = schedule_challenge(state.day)
         if challenge is not None:
             state.pending_challenge = challenge
-            if challenge.kind != "snog_marry_pie":
+            if challenge.kind in ROUND_BASED_MINIGAMES:
+                state.pending_challenge = _prepare_round_based_minigame(
+                    state, challenge, rng.fork(f"challenge-{state.day}")
+                )
+            elif challenge.kind != "snog_marry_pie":
                 state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
             events.append(
                 CeremonyEvent(
@@ -209,3 +232,58 @@ def _event_label(event_id: str) -> str:
     if event_id.startswith("recoupling"):
         return "a Pairing Ceremony"
     return event_id.replace("_", " ")
+
+
+def _prepare_round_based_minigame(
+    state, challenge, rng,
+):
+    """Build rounds and participants for a round-based minigame.
+
+    Currently dispatches only ``compatibility_quiz``; new minigames join the
+    ``ROUND_BASED_MINIGAMES`` set in :mod:`src.game.engine.challenges` and add
+    their own branch here.
+    """
+    if challenge.kind == "compatibility_quiz":
+        from src.game.engine.compatibility_quiz import build_rounds, quiz_partner_id
+        from src.game.engine.question_bank import ensure_question_bank
+        ensure_question_bank(state)
+        partner = quiz_partner_id(state)
+        rounds = build_rounds(state, partner, rng)
+        return challenge.model_copy(
+            update={"rounds": rounds, "participants": ["player", partner]}
+        )
+    if challenge.kind == "heart_rate":
+        from src.game.engine.pulse_race import build_rounds as pulse_build, _partner_id as pulse_partner, _surprise_target_id
+        partner = pulse_partner(state) or "chloe"
+        rounds = pulse_build(state, partner, rng)
+        surprise, _ = _surprise_target_id(state)
+        return challenge.model_copy(
+            update={"rounds": rounds, "participants": ["player", surprise or partner]}
+        )
+    if challenge.kind == "snog_marry_pie":
+        from src.game.engine.snog_marry_pie import build_rounds as smp_build, _partner_id as smp_partner
+        rounds = smp_build(state, rng)
+        return challenge.model_copy(
+            update={"rounds": rounds, "participants": ["player", smp_partner(state) or ""]}
+        )
+    if challenge.kind == "mr_and_mrs":
+        from src.game.engine.mr_and_mrs import build_rounds as mam_build, _partner_id as mam_partner
+        from src.game.engine.question_bank import ensure_question_bank
+        ensure_question_bank(state)
+        partner = mam_partner(state) or "chloe"
+        rounds = mam_build(state, partner, rng)
+        return challenge.model_copy(update={"rounds": rounds, "participants": ["player", partner]})
+    if challenge.kind == "lie_detector":
+        from src.game.engine.lie_detector import build_rounds as ld_build, _partner_id as ld_partner
+        partner = ld_partner(state) or "chloe"
+        rounds = ld_build(state, partner, rng)
+        return challenge.model_copy(update={"rounds": rounds, "participants": ["player", partner]})
+    if challenge.kind == "final_couples":
+        from src.game.engine.final_couples import build_rounds as fc_build, _partner_id as fc_partner
+        from src.game.engine.question_bank import ensure_question_bank
+        ensure_question_bank(state)
+        partner = fc_partner(state) or "chloe"
+        rounds = fc_build(state, partner, rng)
+        return challenge.model_copy(update={"rounds": rounds, "participants": ["player", partner]})
+    raise ValueError(f"unsupported round-based minigame: {challenge.kind}")
+

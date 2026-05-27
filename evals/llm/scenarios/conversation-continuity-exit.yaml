@@ -90,8 +90,12 @@ turns:
           first — a callback, a deeper turn, or a small consequence. Fail if
           it reads as a fresh greeting.
   - id: close-conversation
+    # Soft exit via the "End on a good note" option, not the bail-out
+    # end_conversation action — that one is the deliberately-rude ghost-out.
     action:
-      kind: end_conversation
+      kind: respond_with
+      target_id: chloe
+      intent_id: end_softly
     golden: >
       A real social close. The player should leave with a line that
       acknowledges what was shared — not just "bye". Memories should be

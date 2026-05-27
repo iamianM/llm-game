@@ -189,11 +189,18 @@ def _choose(args: argparse.Namespace) -> int:
         mode=TraceMode.MANUAL,
         persona="manual-subagent",
     )
-    print_turn(turn)
     if state.is_terminal:
+        print_turn(turn)
         print("session terminal")
     else:
-        _print_current(state)
+        # Print state first, then the turn result and action menu underneath
+        # so the freshest text on the player's screen is "what just happened
+        # in the scene" and the menu — not the big stat dump.
+        print_state(state)
+        print("\n--- this turn ---")
+        print_turn(turn)
+        print()
+        print_actions(available_actions(state))
     return 0
 
 

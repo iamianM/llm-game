@@ -4,7 +4,12 @@
 **Player-facing name:** Compatibility Quiz
 **Scheduled day:** 1
 **Rollout step:** 1 (vertical slice — proves the shared harness)
-**Status:** Spec authored; implementation pending. See [current-plan.md](../current-plan.md).
+**Status:** Shipped (engine + API + CLI). Browser stem rendering is the
+follow-up item under "Browser Loop Polish" in
+[../current-plan.md](../current-plan.md). 25 unit tests live at
+`tests/engine/test_compatibility_quiz.py`; scenario fixture at
+`tests/scenarios/fixtures/compatibility-quiz-vertical.yaml`; golden eval at
+`evals/llm/scenarios/challenge-result-narration.yaml`. SCHEMA_VERSION 26.
 
 This is the first minigame and the proving ground for everything in
 [../minigame-system.md](../minigame-system.md). When it works, the other five
@@ -66,7 +71,7 @@ The round selector pulls in this priority order:
    but possible mid-season.
 
 This means a typical Day-1 quiz mixes three Tier-1 mechanical questions
-with two flavor questions, and the *ceiling* is around 11 points if the
+with two flavor questions, and the *ceiling* is 8 points if the
 player guesses everything correctly (3 × 2 + 2 × 1) — well inside the
 `partial` band and meaningfully below the `success` threshold of 14. To
 hit `success` on Day 1 the player must have actively pushed familiarity
@@ -112,7 +117,7 @@ by the shared recovery floor in system doc §5.2):
 
 A perfect five-correct round records a `perfect_quiz` memory on the couple
 and unlocks a bonus reveal in the wrap (see §5). Note that with the Day-1
-pool composition described in §2, hitting "perfect" caps around 11 points
+pool composition described in §2, hitting "perfect" caps at 8 points
 unless the player has pushed familiarity above 25 before the quiz fires.
 That's intended — the perfect-quiz bonus is a *real* hero moment that
 requires investment, not a Day-1 freebie.

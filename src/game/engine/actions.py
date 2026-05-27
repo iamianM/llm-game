@@ -99,20 +99,29 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             for decision, target_id, label in casa_options
         ]
     if state.pending_challenge is not None and state.pending_challenge.result is None:
-        if state.pending_challenge.kind == "snog_marry_pie":
-            for islander in state.islanders:
-                if not islander.eliminated:
+        from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+        if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+            current_index = state.pending_challenge.current_round_index
+            if current_index < len(state.pending_challenge.rounds):
+                current = state.pending_challenge.rounds[current_index]
+                target_id = (
+                    state.pending_challenge.participants[1]
+                    if len(state.pending_challenge.participants) > 1
+                    else (current.target_id or "")
+                )
+                for choice in current.choices:
                     actions.append(
                         ActionSpec(
                             action=PlayerAction(
                                 kind=ActionKind.CHALLENGE_RESPONSE,
-                                target_id=islander.id,
-                                payload={"choice": islander.id},
+                                target_id=target_id,
+                                payload={"choice_id": choice.id, "round_index": current_index},
                             ),
-                            label=f"Snog Marry Pie: choose {islander.name}",
+                            label=f"Quiz r{current.index + 1}/{len(state.pending_challenge.rounds)}: {choice.label}",
                         )
                     )
-            return actions
+                return actions
+
     if needs_initial_coupling(state):
         return [
             ActionSpec(
@@ -301,6 +310,18 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         if state.pending_challenge is None or state.pending_challenge.result is not None:
             raise ValueError("no challenge is waiting for a response")
+        from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+        if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
+            if action.payload is None or "choice_id" not in action.payload:
+                raise ValueError("round-based CHALLENGE_RESPONSE requires payload.choice_id")
+            cur_index = state.pending_challenge.current_round_index
+            if cur_index >= len(state.pending_challenge.rounds):
+                raise ValueError("no active minigame round to respond to")
+            current = state.pending_challenge.rounds[cur_index]
+            choice_id = action.payload["choice_id"]
+            if not any(c.id == choice_id for c in current.choices):
+                raise ValueError(f"invalid choice_id for current round: {action.model_dump()}")
+            return
         if action.target_id is None:
             raise ValueError("CHALLENGE_RESPONSE requires target_id")
         _find_islander(state, action.target_id)

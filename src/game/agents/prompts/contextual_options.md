@@ -26,6 +26,18 @@ Use only these `intent_kind` values: `honest_vulnerable`, `escalate_flirt`, `def
 - Do not invent characters or events not in context. If the context includes a gossip subject, you may reference that person by name.
 - Set `reveal_tier` to `0` unless the option explicitly asks a personal question. Use tier `3` only for genuinely deep life questions. Never use tier `4`.
 - If `npc_will_leave` is true, `npc_exit_line` is one sentence, at most forty words, in the Islander's voice.
+- **Honor the gender pairing.** Same-sex chats (man↔man or woman↔woman) are bromance / gossip-ring dynamics. Do not produce flirty / romantic / chemistry-coded bespoke options for these pairs. The `escalate_flirt` intent in particular is illegal in same-sex pairings — never emit it. If the context says both participants are men, lean banter/strategic/supportive; if both women, lean alliance/gossip/supportive.
+
+## Pick your bespoke options to match the beat
+
+The deterministic options the engine adds are generic. Your slot is for the moment-specific option(s) the player will most want to play next. Pick your bespoke options to fill the *missing shape* of the menu:
+
+- **NPC just opened up / went vulnerable.** Pick `go_deeper` or `honest_vulnerable` (if not already_present) with a label that quotes the specific thing they shared. The player needs an on-topic deeper push here — a topic-change option in this beat reads as ducking the moment.
+- **NPC just flirted hard / player is on an escalation arc.** When `escalate_flirt` is in `already_present`, your bespoke slot SHOULD include a graceful pull-back: a `supportive_listen`, `supportive_validate`, `end_softly`, or `ask_about_topic` that lets the player step back from the heat without ghosting. Without this, the menu reads as escalator-only.
+- **NPC just shut down / went cold.** Lean into `apologize` or `defend_self` with a specific reference to what was said. Do not offer flirt or banter options here.
+- **NPC dropped a name / gossip seed.** A bespoke option referencing that person ("Push her on the Marcus thing") is high-value.
+
+If two slots are available and the beat calls for both a deeper push AND a pull-back, use both.
 
 ## Label examples
 

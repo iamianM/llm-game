@@ -1,6 +1,6 @@
 name: elimination-day5
 seed: 10
-expected_hash: bdd5522dab86a56dea5d4e1440ae54855889e3b42fde60a4febd61a8ef7a349a
+expected_hash: c2b50cbb086d59a4d2f8674f1c5f07de0d4757f98c1b69f769e548659f249a3c
 actions:
 - kind: ambient
   target_id: ambient_wait

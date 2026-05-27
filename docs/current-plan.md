@@ -95,50 +95,6 @@ mock eval plus report inspection for harness changes.
 filter to failing scenarios, compare authored golden intent to actual output,
 read reasoning summaries, and understand why each fix was made.
 
-### Compatibility Quiz Vertical Slice
-
-**Problem:** The knowledge foundation has trait cards and known facts, but the
-player needs an interactive payoff that makes learning about Heartbreakers
-matter. The current `src/game/engine/challenges.py` resolves every daily
-challenge with a single dice roll (flagged as the biggest unfinished gameplay
-surface in [engine-issues-from-h11-review.md §8](engine-issues-from-h11-review.md)).
-
-**Player value:** Conversations and fact reveals become strategy. Remembering
-someone's details helps the player in a social challenge instead of only filling
-a profile panel. This is also the proving ground for the shared minigame
-harness that the other five daily challenges will reuse.
-
-**Smallest slice:** Build the shared minigame harness defined in
-[minigame-system.md](minigame-system.md) and ship Compatibility Quiz as its
-first instance ([minigames/compatibility-quiz.md](minigames/compatibility-quiz.md)).
-The harness includes: extended `Challenge` schema with rounds/choices/reveals,
-`MinigameKind` enum, `MINIGAME_RESPONSE` action, session-start Question Bank
-agent, deterministic scoring split from delta application, narration payload
-extension, and CLI + browser round rendering. Compatibility Quiz then plugs
-into that harness with five quiz rounds, threshold-based classification, and
-fact-reveal side effects.
-
-**Surfaces:** `src/game/engine/knowledge.py`, `src/game/engine/challenges.py`,
-`src/game/engine/actions.py`, `src/game/engine/turn.py`,
-`src/game/state/event_models.py`, `src/game/state/traits.py`,
-`src/game/agents/question_bank.py` (new),
-`src/game/agents/prompts/question_bank.md` (new),
-`src/game/agents/event_narrator.py`, `content/challenges/compatibility_quiz.md`,
-`data/balance/minigames.yaml` (new), CLI rendering, browser
-`ChoiceMenu`/`GameStage`, review packet scene rendering,
-`docs/minigame-system.md`, `docs/minigames/compatibility-quiz.md`, and
-`12-Challenges-And-Events.md`.
-
-**Eval:** unit tests for scoring, eligibility, distractor stability, and the
-Question Bank determinism contract; a deterministic scenario fixture covering
-`success`/`partial`/`failure` paths; a golden LLM eval for Compatibility Quiz
-narration that grades faithfulness to engine reveals; a Playwright walk-through
-of the browser flow.
-
-**Acceptance:** A reviewer can see which facts were tested, which answers the
-player chose, why the deterministic classification changed, and that the
-narrator named the actual reveals without inventing facts or scores.
-
 ### Browser Loop Polish For Day 1 Through Day 3
 
 **Problem:** The browser is the player-facing surface, but the engine has added
@@ -149,7 +105,10 @@ CLI or raw traces to understand what happened.
 
 **Smallest slice:** Review the browser through character creation, opening
 coupling, first chats, interruption/pull moments, challenge, recoupling warning,
-and Day-3 recoupling. Fix only the confusing or unreachable surfaces.
+and Day-3 recoupling. Fix only the confusing or unreachable surfaces. Includes
+wiring the round-based Compatibility Quiz view that the API now exposes
+(`pending_challenge.stem`, `round_index`, `round_count`, `choices[]` with
+`{choice_id, round_index}` payloads).
 
 **Surfaces:** `web/`, `src/api/`, CLI/browser shared action vocabulary, and
 `docs/phase3-ui-spec.md`.
@@ -160,8 +119,6 @@ and a review packet for the same action path when useful.
 **Acceptance:** Every legal engine action in the covered path is reachable in
 the browser, the player can tell why the villa state changed, and no important
 result is visible only in raw JSON.
-
-## Next
 
 ### Remaining Five Minigames
 

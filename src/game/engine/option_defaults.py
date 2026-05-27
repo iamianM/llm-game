@@ -135,12 +135,37 @@ def default_options(state: GameState, result: MechanicalResult, exchange: Exchan
     """Return deterministic always-on options for the current beat."""
     target = _target(state, result)
     options = [_exit_option(exchange.npc_tone)]
+    intent_tags = set(result.tags or [])
+    deep_intent = "deep" in intent_tags or "vulnerable" in intent_tags
+    flirty_intent = "flirty" in intent_tags or "flirt" in intent_tags
+    # On a missed deep beat: lead with honest_vulnerable (recovery on-topic)
+    # before the defensive fallbacks, so the player sees a path forward
+    # that continues the thread, not only "apologize / defend".
+    if not result.success and deep_intent:
+        options.append(_template("honest_vulnerable"))
+    # On a missed flirt: offer a flirty recovery so the menu still has a
+    # forward-on-topic option, not only defensive fallbacks. Use
+    # deflect_with_humor (playful self-recovery) plus a re-escalate when the
+    # gender pairing supports it.
+    if not result.success and flirty_intent:
+        options.append(_template("deflect_with_humor"))
+        if _flirty_allowed(state, target.id):
+            options.append(_template("escalate_flirt"))
     if not result.success or exchange.npc_tone in {"cold", "defensive", "suspicious"}:
         options.extend([_template("apologize"), _template("defend_self")])
     if result.success and target.relationship.affection >= 25:
         options.append(_template("go_deeper"))
         if _flirty_allowed(state, target.id):
             options.append(_template("escalate_flirt"))
+            # When escalation is being offered on a flirty beat, also offer a
+            # graceful pull-back so the menu isn't escalator-only. Relabel the
+            # supportive_listen template here so the player reads it as a
+            # genuine "cool the heat" choice instead of generic "Just listen".
+            if exchange.npc_tone in {"flirty", "playful"}:
+                pull_back = _template("supportive_listen").model_copy(
+                    update={"label": "Cool the heat — slow it down"}
+                )
+                options.append(pull_back)
     options.append(_template("joke_back"))
     gossip = _player_shareable_memory(state, target.id)
     if gossip is not None:
@@ -178,10 +203,27 @@ def assemble_follow_up_menu(
     npc_exit_line: str | None,
 ) -> FollowUpMenu:
     """Combine defaults, tone reactions, and bespoke options into one wheel."""
+    # Defaults first guarantee an exit option exists; bespoke options come
+    # second so they survive the cap over generic tone reactions. Dedupe by
+    # intent_kind keeps the first occurrence, so a bespoke option that shares
+    # an intent_kind with a default keeps the default's label — which is fine
+    # because default labels are stable. The cap then preserves bespoke
+    # specifics that fill an otherwise-empty beat (pull-back, on-topic gossip).
+    base_defaults = default_options(state, result, exchange)
+    tone_options = tone_reaction_options(state, exchange)
+    # When the bespoke options already provide a specific on-topic deeper
+    # push, suppress the generic "Ask something real" default — the bespoke
+    # label ("Ask if she wants kids", "Ask why Cardiff") is concretely more
+    # playable, and stacking them clutters the menu. Filter both defaults
+    # and tone reactions because tone_reactions can also surface go_deeper.
+    bespoke_kinds = {opt.intent_kind for opt in bespoke_options}
+    if bespoke_kinds & {"go_deeper", "ask_about_topic", "honest_vulnerable"}:
+        base_defaults = [opt for opt in base_defaults if opt.intent_kind != "go_deeper"]
+        tone_options = [opt for opt in tone_options if opt.intent_kind != "go_deeper"]
     options = [
-        *default_options(state, result, exchange),
-        *tone_reaction_options(state, exchange),
+        *base_defaults,
         *bespoke_options,
+        *tone_options,
     ]
     assembled = [
         _with_audience_hint(_with_reveal_default(option))
