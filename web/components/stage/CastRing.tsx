@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Avatar } from "../ui/Avatar";
+import Image from "next/image";
 import type { IslanderSummary, SessionResponse } from "../../lib/types";
 
 type Props = {
@@ -10,12 +10,34 @@ type Props = {
   speakerName?: string | null;
 };
 
+const CHARACTER_IMAGE: Record<string, string> = {
+  chloe: "/images/characters/chloe.webp",
+  maya: "/images/characters/maya.webp",
+  liam: "/images/characters/liam.webp",
+  sophie_start: "/images/characters/sophie_start.webp",
+  nia_start: "/images/characters/nia_start.webp",
+  marcus_start: "/images/characters/marcus_start.webp",
+  blake_start: "/images/characters/blake_start.webp",
+  jordan_start: "/images/characters/jordan_start.webp",
+  sam_ht: "/images/characters/sam_ht.webp",
+  riley_ht: "/images/characters/riley_ht.webp",
+  ellis_ht: "/images/characters/ellis_ht.webp",
+  talia_ht: "/images/characters/talia_ht.webp",
+};
+
+const ARCHETYPE_IMAGE: Record<string, string> = {
+  heartthrob: "/images/archetypes/heartthrob.webp",
+  class_clown: "/images/archetypes/class_clown.webp",
+  loyal_friend: "/images/archetypes/loyal_friend.webp",
+};
+
 /**
- * Replaces the old static "Sunset Bay / Firepit / Look around..." location
- * card. Shows the player + every NPC currently in the same location laid
- * out in a horizontal ring, with the latest narration scrolling underneath.
- * Gives the player a real sense of who's actually in the scene rather than
- * a place-name and a generic prompt.
+ * Replaces the static "Sunset Bay / Firepit / Look around..." card. Renders
+ * the cast as standing figures lined up in front of the firepit. Each
+ * islander is a portrait-orientation standee that fades into the floor at
+ * the bottom; their name sits beneath. The player gets the same treatment
+ * using the chosen archetype's portrait. Latest narration scrolls in
+ * underneath the figures.
  */
 export function CastRing({ state, narration, speakerName }: Props) {
   const partners = new Map<string, string>();
@@ -23,13 +45,9 @@ export function CastRing({ state, narration, speakerName }: Props) {
     partners.set(couple.partner_a_id, couple.partner_b_id);
     partners.set(couple.partner_b_id, couple.partner_a_id);
   }
-  // Filter islanders to whoever shares the player's current location and is
-  // still in the game. villa_snapshot keys by display label, not id, so we
-  // can't index into it — read location_id off each IslanderSummary instead.
   const islanderTiles: IslanderSummary[] = state.islanders.filter(
     (i) => !i.eliminated && i.location_id === state.location_id && i.id !== "player",
   );
-  // Sort: partner first, then alphabetical by name.
   const playerPartnerId = partners.get("player");
   islanderTiles.sort((a, b) => {
     if (a.id === playerPartnerId) return -1;
@@ -37,16 +55,30 @@ export function CastRing({ state, narration, speakerName }: Props) {
     return a.name.localeCompare(b.name);
   });
 
+  const playerImage = ARCHETYPE_IMAGE[state.player.archetype_id] ?? null;
+
   return (
     <div className="cast-ring" data-testid="cast-ring">
-      <div className="ring-row" role="list" aria-label="Heartbreakers in the scene">
-        <PlayerTile state={state} />
+      <div className="standee-row" role="list" aria-label="Heartbreakers in the scene">
+        <Standee
+          id="player"
+          name={state.player.name || "You"}
+          image={playerImage}
+          role="you"
+          isPartner={false}
+          isSpeaking={false}
+          isPlayer
+        />
         {islanderTiles.map((islander) => (
-          <CastTile
+          <Standee
             key={islander.id}
-            islander={islander}
+            id={islander.id}
+            name={islander.name}
+            image={CHARACTER_IMAGE[islander.id] ?? null}
+            role={islander.id === playerPartnerId ? "partner" : ""}
             isPartner={islander.id === playerPartnerId}
             isSpeaking={Boolean(speakerName && speakerName === islander.name)}
+            isPlayer={false}
           />
         ))}
       </div>
@@ -58,152 +90,169 @@ export function CastRing({ state, narration, speakerName }: Props) {
           height: 100%;
           display: grid;
           grid-template-rows: 1fr auto;
-          gap: 12px;
-          padding: 16px 24px;
+          gap: 0;
         }
-        .ring-row {
+        .standee-row {
           display: flex;
-          flex-wrap: wrap;
           justify-content: center;
           align-items: end;
-          gap: 14px;
-          padding: 8px 4px;
+          gap: clamp(2px, 0.6vw, 8px);
+          padding: 0 16px 0;
           align-self: end;
+          overflow-x: auto;
+          overflow-y: hidden;
+          scrollbar-width: thin;
+          scrollbar-color: rgba(217,167,58,.3) transparent;
         }
-        @media (max-width: 720px) {
-          .cast-ring { padding: 10px 12px; }
-          .ring-row { gap: 8px; }
+        .standee-row::-webkit-scrollbar { height: 4px; }
+        .standee-row::-webkit-scrollbar-thumb { background: rgba(217,167,58,.3); }
+        @media (max-width: 900px) {
+          .standee-row { padding: 0 8px; }
         }
       `}</style>
     </div>
   );
 }
 
-function PlayerTile({ state }: { state: SessionResponse["state"] }) {
+function Standee({
+  id,
+  name,
+  image,
+  role,
+  isPartner,
+  isSpeaking,
+  isPlayer,
+}: {
+  id: string;
+  name: string;
+  image: string | null;
+  role: string;
+  isPartner: boolean;
+  isSpeaking: boolean;
+  isPlayer: boolean;
+}) {
+  const classes = [
+    "standee",
+    isPartner ? "is-partner" : "",
+    isSpeaking ? "is-speaking" : "",
+    isPlayer ? "is-player" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   return (
-    <div className="tile player-tile" role="listitem" aria-label={`${state.player.name} (you)`}>
-      <div className="halo halo-player" aria-hidden />
-      <div className="avatar-wrap"><Avatar id="player" name={state.player.name} size="responsive" /></div>
-      <span className="name">{state.player.name || "You"}</span>
-      <span className="role">you</span>
+    <div className={classes} role="listitem" aria-label={`${name}${role ? ` (${role})` : ""}`}>
+      <div className="figure">
+        {image ? (
+          <Image
+            src={image}
+            alt={name}
+            fill
+            sizes="(max-width: 900px) 90px, 140px"
+            className="figure-image"
+            style={{ objectFit: "cover", objectPosition: "50% 12%" }}
+            aria-hidden
+          />
+        ) : (
+          <div className="figure-fallback" aria-hidden>
+            {name.split(/\s+/).map((p) => p[0]).join("").slice(0, 2).toUpperCase()}
+          </div>
+        )}
+        <div className="figure-fade" aria-hidden />
+        {role ? <span className={`badge badge-${role.replace(/\s/g, "-")}`}>{role.toUpperCase()}</span> : null}
+      </div>
+      <span className="name">{name}</span>
       <style jsx>{`
-        .tile {
+        .standee {
+          --w: clamp(72px, 9vw, 132px);
+          --h: calc(var(--w) * 1.55);
           position: relative;
           display: grid;
-          grid-template-rows: auto auto auto;
+          grid-template-rows: auto auto;
           justify-items: center;
           gap: 4px;
-          --tile-size: clamp(64px, 9vh, 96px);
+          transition: transform .25s cubic-bezier(.22,.61,.36,1);
         }
-        .player-tile { transform: translateY(-4px); }
-        .halo {
-          position: absolute;
-          left: 50%; top: 0;
-          transform: translateX(-50%);
-          width: calc(var(--tile-size) + 14px);
-          height: calc(var(--tile-size) + 14px);
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(217,167,58,.30) 0%, transparent 60%);
-          z-index: 0;
-        }
-        .avatar-wrap {
+        .figure {
           position: relative;
-          z-index: 1;
-          width: var(--tile-size);
-          height: var(--tile-size);
-          border-radius: 999px;
+          width: var(--w);
+          height: var(--h);
+          border-radius: 14px 14px 8px 8px;
           overflow: hidden;
-          border: 2px solid rgba(217,167,58,.7);
-          box-shadow: 0 6px 14px rgba(0,0,0,.45);
+          box-shadow: 0 14px 30px -10px rgba(0,0,0,.7);
+          background: linear-gradient(180deg, rgba(28,22,16,.5), rgba(28,22,16,.2));
+          border: 1px solid rgba(248,236,210,.10);
         }
-        .name {
+        :global(.figure-image) {
+          transform-origin: center top;
+        }
+        .figure-fallback {
+          position: absolute; inset: 0;
+          display: grid; place-items: center;
+          background: linear-gradient(180deg, rgba(217,167,58,.35), rgba(120,80,40,.45));
+          color: var(--card);
           font-family: var(--font-display);
           font-weight: 600;
-          font-size: 14px;
-          color: var(--card);
+          font-size: calc(var(--w) * 0.45);
+          font-style: italic;
         }
-        .role {
-          font-family: var(--font-hand);
-          font-size: 11px;
-          letter-spacing: .08em;
-          text-transform: uppercase;
-          color: var(--gold-soft);
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function CastTile({ islander, isPartner, isSpeaking }: { islander: IslanderSummary; isPartner: boolean; isSpeaking: boolean }) {
-  const role = isPartner ? "partner" : "";
-  return (
-    <div
-      className={`tile${isPartner ? " partner-tile" : ""}${isSpeaking ? " speaking" : ""}`}
-      role="listitem"
-      aria-label={`${islander.name}${isPartner ? " (partner)" : ""}`}
-    >
-      <div className="halo" aria-hidden />
-      <div className="avatar-wrap"><Avatar id={islander.id} name={islander.name} size="responsive" /></div>
-      <span className="name">{islander.name}</span>
-      {role ? <span className="role">{role}</span> : <span className="role-spacer" aria-hidden />}
-      <style jsx>{`
-        .tile {
-          position: relative;
-          display: grid;
-          grid-template-rows: auto auto auto;
-          justify-items: center;
-          gap: 4px;
-          --tile-size: clamp(56px, 8vh, 84px);
-          transition: transform .2s;
-        }
-        .partner-tile { --tile-size: clamp(60px, 8.5vh, 90px); }
-        .speaking { transform: translateY(-6px); }
-        .halo {
+        .figure-fade {
           position: absolute;
-          left: 50%; top: 0;
+          left: 0; right: 0; bottom: 0;
+          height: 40%;
+          background: linear-gradient(180deg, transparent 0%, rgba(8,6,4,.55) 60%, rgba(8,6,4,.95) 100%);
+          pointer-events: none;
+        }
+        .badge {
+          position: absolute;
+          left: 50%;
+          top: 8px;
           transform: translateX(-50%);
-          width: calc(var(--tile-size) + 10px);
-          height: calc(var(--tile-size) + 10px);
-          border-radius: 999px;
-          background: radial-gradient(circle, rgba(248,236,210,.10) 0%, transparent 60%);
-          z-index: 0;
+          padding: 2px 8px;
+          font-family: var(--font-hand);
+          font-size: 10px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          border-radius: 99px;
+          background: rgba(8,6,4,.65);
+          backdrop-filter: blur(4px);
+          color: var(--gold-soft);
+          border: 1px solid rgba(217,167,58,.45);
         }
-        .partner-tile .halo {
-          background: radial-gradient(circle, rgba(212,99,62,.30) 0%, transparent 60%);
+        .badge-partner {
+          color: #f7e2dd;
+          border-color: rgba(212,99,62,.65);
+          background: rgba(193,75,58,.30);
         }
-        .speaking .halo {
-          background: radial-gradient(circle, rgba(217,167,58,.30) 0%, transparent 60%);
-        }
-        .avatar-wrap {
-          position: relative;
-          z-index: 1;
-          width: var(--tile-size);
-          height: var(--tile-size);
-          border-radius: 999px;
-          overflow: hidden;
-          border: 1px solid rgba(248,236,210,.30);
-          box-shadow: 0 4px 10px rgba(0,0,0,.4);
-        }
-        .partner-tile .avatar-wrap {
-          border-color: rgba(212,99,62,.6);
-        }
-        .speaking .avatar-wrap {
-          border-color: rgba(217,167,58,.8);
+        .badge-you {
+          color: #fff0d0;
+          border-color: rgba(217,167,58,.85);
+          background: rgba(40,28,16,.7);
         }
         .name {
           font-family: var(--font-display);
           font-weight: 500;
-          font-size: 13px;
+          font-size: clamp(11px, 1.1vw, 14px);
           color: var(--card);
+          letter-spacing: .01em;
+          text-shadow: 0 2px 8px rgba(0,0,0,.7);
         }
-        .role {
-          font-family: var(--font-hand);
-          font-size: 10px;
-          letter-spacing: .1em;
-          text-transform: uppercase;
-          color: var(--gold-soft);
+        /* Player gets a gold glow + a slight forward lift. */
+        .is-player .figure {
+          border-color: rgba(217,167,58,.7);
+          box-shadow: 0 18px 34px -10px rgba(217,167,58,.4), 0 14px 30px -10px rgba(0,0,0,.7);
         }
-        .role-spacer { height: 13px; }
+        .is-player { transform: translateY(-4px); }
+        /* Partner gets warm rim light. */
+        .is-partner .figure {
+          border-color: rgba(212,99,62,.55);
+          box-shadow: 0 18px 30px -10px rgba(193,75,58,.35), 0 14px 30px -10px rgba(0,0,0,.7);
+        }
+        /* Currently speaking islander lifts and gold-glows. */
+        .is-speaking { transform: translateY(-8px); }
+        .is-speaking .figure {
+          border-color: rgba(217,167,58,.85);
+          box-shadow: 0 22px 40px -10px rgba(217,167,58,.5), 0 14px 30px -10px rgba(0,0,0,.7);
+        }
       `}</style>
     </div>
   );
@@ -229,7 +278,6 @@ function NarrationScroll({ text }: { text: string | null }) {
             color: var(--muted-on-dark);
             font-size: 13px;
             font-style: italic;
-            border-top: 1px solid rgba(217,167,58,.18);
           }
           .narration-empty p { margin: 0; max-width: 54ch; text-align: center; }
         `}</style>
@@ -241,11 +289,11 @@ function NarrationScroll({ text }: { text: string | null }) {
       <p className="narration-text">{display}</p>
       <style jsx>{`
         .narration-scroll {
-          padding: 10px 18px;
-          background: linear-gradient(180deg, rgba(8,6,4,.65), rgba(8,6,4,.85));
+          padding: 12px 24px;
+          background: linear-gradient(180deg, rgba(8,6,4,.85), rgba(8,6,4,.95));
           border-top: 1px solid rgba(217,167,58,.22);
           backdrop-filter: blur(6px);
-          max-height: 26vh;
+          max-height: 22vh;
           overflow-y: auto;
           animation: drift-in 0.5s cubic-bezier(.22,.61,.36,1) both;
         }
@@ -254,7 +302,7 @@ function NarrationScroll({ text }: { text: string | null }) {
           max-width: 880px;
           color: var(--card);
           font-size: 15px;
-          line-height: 1.5;
+          line-height: 1.55;
           font-style: italic;
         }
         @keyframes drift-in {
