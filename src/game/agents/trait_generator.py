@@ -199,8 +199,89 @@ def mock_opening_trait_cards() -> dict[str, TraitCard]:
     return opening_trait_cards()
 
 
+# Trailing performance descriptors that the low-reasoning model sometimes
+# tacks onto otherwise-clean trait values. Stripped before the values
+# appear as multiple-choice quiz options so cards read as parallel nouns
+# instead of half-sentences. The patterns match a leading space + the
+# descriptor anywhere at the end of the value.
+import re as _re
+_VALUE_TRAIL_PATTERNS: tuple[_re.Pattern[str], ...] = (
+    _re.compile(r"\s+(?:every time|every single time|each time)\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+(?:always|deliberately|on purpose|absolutely|honestly)\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+(?:for hours|for ages|all night|all day|all the time)\.?$", _re.IGNORECASE),
+    _re.compile(
+        r"\s+when\s+(?:no\s+one|nobody|she|he|they|everyone\s+else|the\s+camera|nobody'?s?)\s+(?:is\s+)?(?:looking|watching|home|asleep|around|alone|sleeps)\.?$",
+        _re.IGNORECASE,
+    ),
+    _re.compile(r"\s+(?:sung|sang|played|performed)\s+\w[\w\s]*\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+with improvised crowd work\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+deliberately\s+\w[\w\s]*\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+half a beat\s+(?:late|early|behind)\.?$", _re.IGNORECASE),
+    _re.compile(r"\s+a beat (?:late|early)\.?$", _re.IGNORECASE),
+    # "X too much/often/loudly" trailing modifier on otherwise-OK noun.
+    # Combines the optional "that" relative connector so "westerns that he
+    # repeats too much" -> "westerns" in one pass.
+    _re.compile(
+        r"\s+(?:that\s+)?(?:he|she|they|him|her|them|i)\s+\w[\w\s']*?\s+too\s+(?:much|often|loudly)\.?$",
+        _re.IGNORECASE,
+    ),
+    # "X that he/she does Y" relative clause trailing onto a noun.
+    _re.compile(r"\s+that\s+(?:he|she|they)\s+\w[\w\s']*\.?$", _re.IGNORECASE),
+)
+
+
+def _clean_trait_value(value: str) -> str:
+    """Strip trailing performance descriptors from a trait value."""
+    cleaned = value.strip()
+    for _ in range(4):  # apply repeatedly so chained trails are all stripped
+        prev = cleaned
+        for pattern in _VALUE_TRAIL_PATTERNS:
+            cleaned = pattern.sub("", cleaned).strip()
+        if cleaned == prev:
+            break
+    return cleaned or value.strip()
+
+
+def _polish_trait_cards(cards: dict[str, TraitCard]) -> None:
+    """Clean values + auto-fill distractors from peer islanders.
+
+    Runs after the model has produced its raw Trait Cards. Two passes:
+    (1) trim trailing performance descriptors off every value so quiz
+    cards read as parallel nouns ("Stay by Rihanna", not "Stay by
+    Rihanna every time"); (2) for any flavor trait whose distractors are
+    empty, pick three peer islanders' cleaned values for the same key as
+    plausible wrong answers — the quiz selector already does this as a
+    fallback, but doing it here makes the saved Trait Card display-ready.
+    """
+    for card in cards.values():
+        for fact in card.core_traits.values():
+            fact.value = _clean_trait_value(fact.value)
+            fact.distractors = [_clean_trait_value(d) for d in fact.distractors]
+        for fact in card.flavor_traits.values():
+            fact.value = _clean_trait_value(fact.value)
+            fact.distractors = [_clean_trait_value(d) for d in fact.distractors]
+    # Build a peer-value index keyed by flavor trait key so we can backfill.
+    peer_values: dict[str, list[str]] = {}
+    for card in cards.values():
+        for key, fact in card.flavor_traits.items():
+            peer_values.setdefault(key, []).append(fact.value)
+    for card in cards.values():
+        for key, fact in card.flavor_traits.items():
+            if len(fact.distractors) >= 3:
+                continue
+            seen = {fact.value, *fact.distractors}
+            for peer in peer_values.get(key, []):
+                if peer in seen or not peer:
+                    continue
+                fact.distractors.append(peer)
+                seen.add(peer)
+                if len(fact.distractors) >= 3:
+                    break
+
+
 def assign_trait_cards(islanders: list[IslanderState], trait_cards: dict[str, TraitCard]) -> None:
     """Attach Trait Cards and persona backstory to matching islanders."""
+    _polish_trait_cards(trait_cards)
     for islander in islanders:
         card = trait_cards.get(islander.id)
         if card is None:

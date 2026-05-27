@@ -1,6 +1,6 @@
 name: challenge-day1
 seed: 21
-expected_hash: 4b5245d62be18ff3a1bae7160db78e4c07b03a8c30309714443a441d5914ebbf
+expected_hash: c807208a1c732bce036a99ec5d6897c2d305a67623c3b2684d46ce081c876f3e
 actions:
 - kind: ambient
   target_id: ambient_wait

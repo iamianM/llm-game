@@ -139,7 +139,7 @@
       },
       "flavor_traits": {
         "karaoke_song": {
-          "value": "Stay by Rihanna every time",
+          "value": "Stay by Rihanna",
           "tier": 0,
           "mechanical": false
         },
@@ -421,7 +421,7 @@
           "tier": 3
         },
         "love_language": {
-          "value": "acts of service that he wishes someone would return",
+          "value": "acts of service",
           "distractors": [
             "gifts",
             "words of affirmation",
@@ -487,7 +487,7 @@
           "mechanical": false
         },
         "karaoke_song": {
-          "value": "The Scientist sung too quietly",
+          "value": "The Scientist",
           "tier": 0,
           "mechanical": false
         },
@@ -590,7 +590,7 @@
           "tier": 3
         },
         "love_language": {
-          "value": "quality time that she pretends is logistics",
+          "value": "quality time",
           "distractors": [
             "gifts",
             "acts of service",
@@ -1158,7 +1158,7 @@
           "mechanical": false
         },
         "karaoke_song": {
-          "value": "Mr. Brightside deliberately half a beat late",
+          "value": "Mr. Brightside",
           "tier": 0,
           "mechanical": false
         },
@@ -1327,12 +1327,12 @@
           "mechanical": false
         },
         "karaoke_song": {
-          "value": "Valerie with improvised crowd work",
+          "value": "Valerie",
           "tier": 0,
           "mechanical": false
         },
         "comfort_show": {
-          "value": "old panel shows he quotes too much",
+          "value": "old panel shows",
           "tier": 0,
           "mechanical": false
         },
@@ -1685,7 +1685,7 @@
           "mechanical": false
         },
         "karaoke_song": {
-          "value": "Toxic performed like a dare",
+          "value": "Toxic",
           "tier": 0,
           "mechanical": false
         },

@@ -123,20 +123,22 @@ export function GameStage({ sessionId }: { sessionId: string }) {
                 {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} phase={state.phase} />}
               </VillaBackground>
             </div>
-            <DialogueBox
-              speaker={dialogueSpeaker}
-              playerLine={playerLine}
-              text={dialogueText}
-              complete={!mutation.isPending}
-              audienceDelta={lastTurn?.audience_delta}
-              audienceReason={lastTurn?.audience_delta_reason}
-              onAdvance={() => {
-                if (deferredCeremony) {
-                  setDeferredCeremony(false);
-                  setShowCeremony(true);
-                }
-              }}
-            />
+            {!isQuizActive(state) ? (
+              <DialogueBox
+                speaker={dialogueSpeaker}
+                playerLine={playerLine}
+                text={dialogueText}
+                complete={!mutation.isPending}
+                audienceDelta={lastTurn?.audience_delta}
+                audienceReason={lastTurn?.audience_delta_reason}
+                onAdvance={() => {
+                  if (deferredCeremony) {
+                    setDeferredCeremony(false);
+                    setShowCeremony(true);
+                  }
+                }}
+              />
+            ) : null}
             <QuizHeader pendingChallenge={state.pending_challenge as PendingChallengeView | null | undefined} />
             <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
           </>
@@ -309,6 +311,11 @@ type PendingChallengeView = {
   mechanical?: boolean;
   target_id?: string | null;
 };
+
+function isQuizActive(state: SessionResponse["state"]): boolean {
+  const pc = state.pending_challenge as PendingChallengeView | null | undefined;
+  return Boolean(pc && !pc.finished && typeof pc.stem === "string" && pc.stem.length > 0);
+}
 
 function QuizHeader({ pendingChallenge }: { pendingChallenge: PendingChallengeView | null | undefined }) {
   if (!pendingChallenge || pendingChallenge.finished) return null;

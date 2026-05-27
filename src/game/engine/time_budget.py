@@ -51,6 +51,19 @@ def deduct_time(state: GameState, action: PlayerAction) -> int:
 
 
 def check_auto_advance(state: GameState) -> bool:
-    """Return whether the current phase clock has expired."""
+    """Return whether the current phase clock has expired.
+
+    Holds the auto-advance while a round-based minigame is mid-round —
+    otherwise the phase header flips from "Challenge" to "Afternoon"
+    while the player is still answering the quiz, which reads as broken.
+    """
     ensure_phase_clock(state)
-    return state.phase_clock.expired
+    if not state.phase_clock.expired:
+        return False
+    if (
+        state.pending_challenge is not None
+        and state.pending_challenge.result is None
+        and state.pending_challenge.current_round_index < len(state.pending_challenge.rounds)
+    ):
+        return False
+    return True

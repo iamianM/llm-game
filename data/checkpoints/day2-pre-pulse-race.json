@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "138c70c23fdb40644472e102433dcab90813560bde0eb997325a1616e42ece14",
+  "state_hash": "ef186bc0a13b26be6fde721fd29ee4977280dbfde19e6aa2bd7ad12632eac716",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -41,70 +41,6 @@
           "source_id": null,
           "formed_on_day": 1,
           "formed_on_turn": 31,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_59d7d1bb388fc974",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Compatibility Quiz tested Eq and is still pending.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 32,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_653e77333a2acd84",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Compatibility Quiz tested Eq and is still pending.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 33,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_e7c4153e71a1a4d8",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Compatibility Quiz tested Eq and is still pending.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 34,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_ccd02bc9893d37d1",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Compatibility Quiz tested Eq and is still pending.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 1,
-          "formed_on_turn": 35,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -509,70 +445,6 @@
             "durable": true
           },
           {
-            "id": "mem_3a25a9587d0048b8",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_93a1e87eadbe9ed4",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b2b869c730a08792",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c1865800e9ed8481",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "caught_unprepared::chloe::favorite_food::1::35",
             "holder_id": "chloe",
             "subject_id": "player",
@@ -861,7 +733,7 @@
           "flavor_traits": {
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Stay by Rihanna every time",
+              "value": "Stay by Rihanna",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -1187,70 +1059,6 @@
             "source_id": null,
             "formed_on_day": 1,
             "formed_on_turn": 31,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_277a160778d141b4",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_52ae5b556c7061cb",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2375e7d13ce2baa8",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_9ca1d03928e57503",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1830,70 +1638,6 @@
             "durable": true
           },
           {
-            "id": "mem_ff5abb5c9db52469",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_3eef6f4b8d3ebd4a",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2ebde1a81179674f",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_73edb9d7aa6d66fc",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "mem_6320b07abe1449f4",
             "holder_id": "liam",
             "subject_id": "villa",
@@ -2057,7 +1801,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "acts of service that he wishes someone would return",
+              "value": "acts of service",
               "distractors": [
                 "gifts",
                 "words of affirmation",
@@ -2147,7 +1891,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "The Scientist sung too quietly",
+              "value": "The Scientist",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -2465,70 +2209,6 @@
             "durable": true
           },
           {
-            "id": "mem_0d46d868606b435e",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_26514de650f7437c",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f6860ffbcd05c8b5",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_34f9d6baf25e7744",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "mem_ebb3dca1b94e2443",
             "holder_id": "sophie_start",
             "subject_id": "villa",
@@ -2692,7 +2372,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "quality time that she pretends is logistics",
+              "value": "quality time",
               "distractors": [
                 "gifts",
                 "acts of service",
@@ -3092,70 +2772,6 @@
             "source_id": null,
             "formed_on_day": 1,
             "formed_on_turn": 31,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_bf5164ceaff5c1ea",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6f815e0d51e71212",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_fbccb4d114a640dd",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6a81c1aa34901b7b",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3735,70 +3351,6 @@
             "durable": true
           },
           {
-            "id": "mem_8438e43c59d5316c",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_4e48bb5f6d9bcc22",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_7573695d4c5c0d04",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_fb24bd906c8dd538",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "mem_e1347126e7ed5adb",
             "holder_id": "marcus_start",
             "subject_id": "villa",
@@ -4370,70 +3922,6 @@
             "durable": true
           },
           {
-            "id": "mem_b5cc898ac9879401",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d1c3793b82505fe8",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_389275b6f18b3781",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6eac72b91066af8f",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "mem_bb2e6432cc901325",
             "holder_id": "blake_start",
             "subject_id": "villa",
@@ -4679,7 +4167,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Mr. Brightside deliberately half a beat late",
+              "value": "Mr. Brightside",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -5005,70 +4493,6 @@
             "durable": true
           },
           {
-            "id": "mem_81d0dd3cf7816e36",
-            "holder_id": "jordan_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 32,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a5aab67b8adde57f",
-            "holder_id": "jordan_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 33,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_23c52f312b516210",
-            "holder_id": "jordan_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 34,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ff0a49a16c251245",
-            "holder_id": "jordan_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 1,
-            "formed_on_turn": 35,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
             "id": "mem_24c2f14893084d74",
             "holder_id": "jordan_start",
             "subject_id": "villa",
@@ -5314,7 +4738,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Valerie with improvised crowd work",
+              "value": "Valerie",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -5322,7 +4746,7 @@
             },
             "comfort_show": {
               "key": "comfort_show",
-              "value": "old panel shows he quotes too much",
+              "value": "old panel shows",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -5982,7 +5406,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Blake's karaoke song.",
-            "correct_value": "Mr. Brightside deliberately half a beat late",
+            "correct_value": "Mr. Brightside",
             "distractors": [],
             "flavor_tags": []
           },
@@ -6262,7 +5686,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Chloe's karaoke song.",
-            "correct_value": "Stay by Rihanna every time",
+            "correct_value": "Stay by Rihanna",
             "distractors": [],
             "flavor_tags": []
           },
@@ -6530,7 +5954,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's comfort show.",
-            "correct_value": "old panel shows he quotes too much",
+            "correct_value": "old panel shows",
             "distractors": [],
             "flavor_tags": []
           },
@@ -6542,7 +5966,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's karaoke song.",
-            "correct_value": "Valerie with improvised crowd work",
+            "correct_value": "Valerie",
             "distractors": [],
             "flavor_tags": []
           },
@@ -6742,7 +6166,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Liam's love language?",
-            "correct_value": "acts of service that he wishes someone would return",
+            "correct_value": "acts of service",
             "distractors": [
               "gifts",
               "words of affirmation",
@@ -6834,7 +6258,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Liam's karaoke song.",
-            "correct_value": "The Scientist sung too quietly",
+            "correct_value": "The Scientist",
             "distractors": [],
             "flavor_tags": []
           },
@@ -7862,7 +7286,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Sophie's love language?",
-            "correct_value": "quality time that she pretends is logistics",
+            "correct_value": "quality time",
             "distractors": [
               "gifts",
               "acts of service",
@@ -8235,22 +7659,22 @@
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 32
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 33
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 34
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "challenge",
       "turn": 35
     },
     {

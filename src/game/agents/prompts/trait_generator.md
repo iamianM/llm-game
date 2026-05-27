@@ -32,7 +32,23 @@ valid structured data matching the provided schema.
 - Tier one facts are surface facts. Tier two facts are everyday preferences.
   Tier three facts are emotional truths. Tier four facts are private wounds.
 - `hidden_secret` is tier four and must never be something trivial.
-- Distractors must be plausible, wrong, and different from the true value.
+- **Quiz-ready `value` fields.** Every core_traits and flavor_traits `value`
+  is shown to the player as a multiple-choice option. It must read as a
+  clean, short, parallel noun phrase — NOT a sentence with a descriptive
+  trail. Right: `"Stay by Rihanna"`, `"Gavin and Stacey"`, `"keeps an
+  unsent letter from her ex in a book"`. Wrong: `"Stay by Rihanna every
+  time"`, `"Mr. Brightside deliberately half a beat late"`, `"reads
+  romance novels on Sundays when no one's looking"`. The "every time" /
+  "deliberately half a beat late" / "when no one's looking" trails are
+  performance descriptions — drop them. Five to twelve words max.
+- **Every trait MUST include 3 `distractors`** — three short, plausible,
+  wrong values formatted exactly the same way as the correct value. They
+  appear as the wrong answers in the quiz. If `value` is `"Liverpool"`,
+  distractors are other UK cities (`["Manchester", "Cardiff", "Leeds"]`).
+  If `value` is `"Gavin and Stacey"`, distractors are other British
+  comfort shows (`["Detectorists", "Fleabag", "Friday Night Dinner"]`).
+  Distractors must be wrong but plausible enough that a stranger to this
+  Heartbreaker could believably guess them.
 - Do not use Love Island terms. Use Paradise Hearts language when the show is
   mentioned: Heartbreaker, Sunset Bay, Heart Throb, Flush of Hearts, Pulse.
 - Return only one JSON object with a top-level `cast` object keyed by slot_id.

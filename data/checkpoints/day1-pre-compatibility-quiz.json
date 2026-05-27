@@ -1,7 +1,7 @@
 {
   "name": "day1-pre-compatibility-quiz",
   "seed": 7,
-  "state_hash": "0d3d88fa89522718170ea4203394561b42a129ffb85f7cdcf8672c04ac338559",
+  "state_hash": "906336ca222186ba66a13f411247d5f92f1c26598ffb5ab0ea9dc7243342db8d",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -524,7 +524,7 @@
           "flavor_traits": {
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Stay by Rihanna every time",
+              "value": "Stay by Rihanna",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -1464,7 +1464,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "acts of service that he wishes someone would return",
+              "value": "acts of service",
               "distractors": [
                 "gifts",
                 "words of affirmation",
@@ -1554,7 +1554,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "The Scientist sung too quietly",
+              "value": "The Scientist",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -1971,7 +1971,7 @@
             },
             "love_language": {
               "key": "love_language",
-              "value": "quality time that she pretends is logistics",
+              "value": "quality time",
               "distractors": [
                 "gifts",
                 "acts of service",
@@ -3574,7 +3574,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Mr. Brightside deliberately half a beat late",
+              "value": "Mr. Brightside",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -4081,7 +4081,7 @@
             },
             "karaoke_song": {
               "key": "karaoke_song",
-              "value": "Valerie with improvised crowd work",
+              "value": "Valerie",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -4089,7 +4089,7 @@
             },
             "comfort_show": {
               "key": "comfort_show",
-              "value": "old panel shows he quotes too much",
+              "value": "old panel shows",
               "distractors": [],
               "tier": 0,
               "reveal_tags": [],
@@ -4882,7 +4882,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Blake's karaoke song.",
-            "correct_value": "Mr. Brightside deliberately half a beat late",
+            "correct_value": "Mr. Brightside",
             "distractors": [],
             "flavor_tags": []
           },
@@ -5162,7 +5162,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Chloe's karaoke song.",
-            "correct_value": "Stay by Rihanna every time",
+            "correct_value": "Stay by Rihanna",
             "distractors": [],
             "flavor_tags": []
           },
@@ -5430,7 +5430,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's comfort show.",
-            "correct_value": "old panel shows he quotes too much",
+            "correct_value": "old panel shows",
             "distractors": [],
             "flavor_tags": []
           },
@@ -5442,7 +5442,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Jordan's karaoke song.",
-            "correct_value": "Valerie with improvised crowd work",
+            "correct_value": "Valerie",
             "distractors": [],
             "flavor_tags": []
           },
@@ -5642,7 +5642,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Liam's love language?",
-            "correct_value": "acts of service that he wishes someone would return",
+            "correct_value": "acts of service",
             "distractors": [
               "gifts",
               "words of affirmation",
@@ -5734,7 +5734,7 @@
             "tier": 0,
             "mechanical": false,
             "stem": "Tell us about Liam's karaoke song.",
-            "correct_value": "The Scientist sung too quietly",
+            "correct_value": "The Scientist",
             "distractors": [],
             "flavor_tags": []
           },
@@ -6762,7 +6762,7 @@
             "tier": 3,
             "mechanical": true,
             "stem": "What's Sophie's love language?",
-            "correct_value": "quality time that she pretends is logistics",
+            "correct_value": "quality time",
             "distractors": [
               "gifts",
               "acts of service",

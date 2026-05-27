@@ -1,6 +1,6 @@
 name: recoupling-day3
 seed: 8
-expected_hash: 9154c739f55cd9334f41ec0af882348524f368e2196258df0312604ce4f47ba4
+expected_hash: 48e43d6235a3a11f620cf9ce06f4cd422247fbc43ade5e9747bd279bc0ef06ff
 actions:
 - kind: ambient
   target_id: ambient_wait
