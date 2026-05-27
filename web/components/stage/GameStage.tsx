@@ -9,6 +9,7 @@ import { useUiStore } from "../../lib/store";
 import { CeremonyOverlay } from "../ceremony/CeremonyOverlay";
 import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
+import { CastRing } from "./CastRing";
 import { ChoiceMenu } from "./ChoiceMenu";
 import { DialogueBox } from "./DialogueBox";
 import { IntroPanel } from "./IntroPanel";
@@ -120,7 +121,21 @@ export function GameStage({ sessionId }: { sessionId: string }) {
           <>
             <div className="flex-1 min-h-0 flex">
               <VillaBackground location={state.location_id}>
-                {speaker ? <NpcPortrait npc={speaker} /> : <IdleStage location={state.location_label} phase={state.phase} />}
+                {speaker ? (
+                  <NpcPortrait npc={speaker} />
+                ) : (
+                  <CastRing
+                    state={state}
+                    narration={
+                      (typeof lastTurn?.event_narration?.prose === "string"
+                        ? lastTurn.event_narration.prose
+                        : null) ??
+                      lastTurn?.exchange?.npc_dialogue ??
+                      null
+                    }
+                    speakerName={dialogue?.speaker_name ?? null}
+                  />
+                )}
               </VillaBackground>
             </div>
             {!isQuizActive(state) ? (

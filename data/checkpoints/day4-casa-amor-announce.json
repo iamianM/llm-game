@@ -1,7 +1,7 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "eabb829c90fd03356e638d92431e428140bb41d6ac24f67bd1a46a2f9087c06e",
+  "state_hash": "26e4d4845f0aff404e1f3b01a2bbaa29585e19c4cf7b34d60214b64b2ba609e9",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -7000,25 +7000,25 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Are you still glad you paired with your current partner?",
+          "stem": "The cast files into the firepit pit area for the Lie Detector. Every Heartbreaker straps a sensor pad to two fingers and the big screen lights up next to Chloe. You're in the hot seat \u2014 the host reads a question and you pick how you answer. Truth, soft spin, or outright lie. The needle decides what the villa believes. Are you still glad you paired with your current partner?",
           "choices": [
             {
               "id": "truth",
-              "label": "Tell the truth: 'No.'",
+              "label": "Truth",
               "fact_value": "no",
               "is_correct": true,
               "distractor_source": "trait_card"
             },
             {
               "id": "lie_mild",
-              "label": "Shade it: 'Not really.'",
+              "label": "Spin it: 'Not really.'",
               "fact_value": "not really",
               "is_correct": false,
               "distractor_source": "lie"
             },
             {
               "id": "lie_hard",
-              "label": "Outright: 'Yes.'",
+              "label": "Bald-faced: 'Yes.'",
               "fact_value": "yes",
               "is_correct": false,
               "distractor_source": "lie"
@@ -7054,25 +7054,25 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Have you been authentic with the rest of the cast this week?",
+          "stem": "Same hot seat, same sensor pad on your fingers, Chloe still watching the needle. Host moves on to the next question. Have you been authentic with the rest of the cast this week?",
           "choices": [
             {
               "id": "truth",
-              "label": "Tell the truth: 'Yes.'",
+              "label": "Truth",
               "fact_value": "yes",
               "is_correct": true,
               "distractor_source": "trait_card"
             },
             {
               "id": "lie_mild",
-              "label": "Shade it: 'Not really.'",
+              "label": "Spin it: 'Not really.'",
               "fact_value": "not really",
               "is_correct": false,
               "distractor_source": "lie"
             },
             {
               "id": "lie_hard",
-              "label": "Outright: 'No.'",
+              "label": "Bald-faced: 'No.'",
               "fact_value": "no",
               "is_correct": false,
               "distractor_source": "lie"
@@ -7108,25 +7108,25 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Do you think you're the strongest connection on the island?",
+          "stem": "Same hot seat, same sensor pad on your fingers, Chloe still watching the needle. Host moves on to the next question. Do you think you're the strongest connection on the island?",
           "choices": [
             {
               "id": "truth",
-              "label": "Tell the truth: 'No.'",
+              "label": "Truth",
               "fact_value": "no",
               "is_correct": true,
               "distractor_source": "trait_card"
             },
             {
               "id": "lie_mild",
-              "label": "Shade it: 'Not really.'",
+              "label": "Spin it: 'Not really.'",
               "fact_value": "not really",
               "is_correct": false,
               "distractor_source": "lie"
             },
             {
               "id": "lie_hard",
-              "label": "Outright: 'Yes.'",
+              "label": "Bald-faced: 'Yes.'",
               "fact_value": "yes",
               "is_correct": false,
               "distractor_source": "lie"
@@ -7162,25 +7162,25 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "If a Heart Throb walked in today, would you stay loyal?",
+          "stem": "Same hot seat, same sensor pad on your fingers, Chloe still watching the needle. Host moves on to the next question. If a Heart Throb walked in today, would you stay loyal?",
           "choices": [
             {
               "id": "truth",
-              "label": "Tell the truth: 'Yes.'",
+              "label": "Truth",
               "fact_value": "yes",
               "is_correct": true,
               "distractor_source": "trait_card"
             },
             {
               "id": "lie_mild",
-              "label": "Shade it: 'Not really.'",
+              "label": "Spin it: 'Not really.'",
               "fact_value": "not really",
               "is_correct": false,
               "distractor_source": "lie"
             },
             {
               "id": "lie_hard",
-              "label": "Outright: 'No.'",
+              "label": "Bald-faced: 'No.'",
               "fact_value": "no",
               "is_correct": false,
               "distractor_source": "lie"
@@ -7216,25 +7216,25 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Are you here for love or for the show?",
+          "stem": "Same hot seat, same sensor pad on your fingers, Chloe still watching the needle. Host moves on to the next question. Are you here for love or for the show?",
           "choices": [
             {
               "id": "truth",
-              "label": "Tell the truth: 'Yes.'",
+              "label": "Truth",
               "fact_value": "yes",
               "is_correct": true,
               "distractor_source": "trait_card"
             },
             {
               "id": "lie_mild",
-              "label": "Shade it: 'Not really.'",
+              "label": "Spin it: 'Not really.'",
               "fact_value": "not really",
               "is_correct": false,
               "distractor_source": "lie"
             },
             {
               "id": "lie_hard",
-              "label": "Outright: 'No.'",
+              "label": "Bald-faced: 'No.'",
               "fact_value": "no",
               "is_correct": false,
               "distractor_source": "lie"

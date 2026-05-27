@@ -91,25 +91,45 @@ def _event_truths(state: GameState) -> list[dict[str, object]]:
 
 def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[MinigameRound]:
     events = _event_truths(state)
+    partner_name = (
+        find_islander(state, partner_id).name if partner_id and partner_id != "player" else "your partner"
+    )
     rounds: list[MinigameRound] = []
     for index, ev in enumerate(events):
         truth = ev["truth"]
-        # Choices: truth, mild lie ("not really"), hard lie (opposite)
         opposite = "no" if truth == "yes" else "yes"
         choices = [
             MinigameChoice(
-                id="truth", label=f"Tell the truth: '{truth.capitalize()}.'",
-                fact_value=truth, is_correct=True, distractor_source="trait_card",
+                id="truth", label="Truth", fact_value=truth,
+                is_correct=True, distractor_source="trait_card",
             ),
             MinigameChoice(
-                id="lie_mild", label=f"Shade it: 'Not really.'",
+                id="lie_mild", label="Spin it: 'Not really.'",
                 fact_value="not really", is_correct=False, distractor_source="lie",
             ),
             MinigameChoice(
-                id="lie_hard", label=f"Outright: '{opposite.capitalize()}.'",
+                id="lie_hard", label=f"Bald-faced: '{opposite.capitalize()}.'",
                 fact_value=opposite, is_correct=False, distractor_source="lie",
             ),
         ]
+        # Stem sets the lie-detector scene each round, then asks the
+        # question. The host's stage direction makes the format obvious
+        # even to a player who's never seen the show.
+        if index == 0:
+            scene = (
+                "The cast files into the firepit pit area for the Lie Detector. "
+                "Every Heartbreaker straps a sensor pad to two fingers and the "
+                f"big screen lights up next to {partner_name}. You're in the hot "
+                "seat — the host reads a question and you pick how you answer. "
+                "Truth, soft spin, or outright lie. The needle decides what the "
+                "villa believes."
+            )
+        else:
+            scene = (
+                f"Same hot seat, same sensor pad on your fingers, {partner_name} "
+                "still watching the needle. Host moves on to the next question."
+            )
+        stem = f"{scene} {ev['prompt']}"
         rounds.append(MinigameRound(
             index=index,
             prompt_id=f"lie_d{state.day}_r{index}",
@@ -117,7 +137,7 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             trait_key=None,
             tier=0,
             mechanical=False,
-            stem=str(ev["prompt"]),
+            stem=stem,
             choices=choices,
             reveals=[
                 MinigameReveal(

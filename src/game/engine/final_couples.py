@@ -44,50 +44,71 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         rounds.append(MinigameRound(
             index=0, prompt_id=knowledge_prompt.id, target_id=partner_id,
             trait_key=knowledge_prompt.trait_key, tier=knowledge_prompt.tier, mechanical=knowledge_prompt.mechanical,
-            stem=f"FINALE — Knowledge: {knowledge_prompt.stem}", choices=choices,
+            stem=(
+                "The Final Couples Challenge starts at the firepit. The host walks "
+                "the surviving couples through five facets — knowledge, chemistry, "
+                "honesty, banter, audacity. Round one: **Knowledge**. The host "
+                f"reads a fact about {partner.name} and you pick the right answer "
+                "from the choices. This is everything you should have learned this "
+                f"season. {knowledge_prompt.stem}"
+            ),
+            choices=choices,
         ))
-    # Round 1 — Chemistry: pick a moment
     chem = partner.relationship.chemistry
     rounds.append(MinigameRound(
         index=1, prompt_id="final_chemistry", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
-        stem=f"FINALE — Chemistry: pick the moment that defined you and {partner.name}.",
+        stem=(
+            "Round two of five: **Chemistry**. The host asks you to point to the "
+            f"single moment that defined you and {partner.name} as a couple — "
+            "no committee, no take-back. The room watches you decide."
+        ),
         choices=[
             MinigameChoice(id="chemistry_kiss", label="The kiss after the recoupling.", fact_value="kiss", is_correct=True, distractor_source="generator"),
             MinigameChoice(id="chemistry_quiet", label="A quiet morning, just talking.", fact_value="quiet", is_correct=True, distractor_source="generator"),
         ],
         reveals=[MinigameReveal(kind="fact", subject_id=partner_id, payload={"chemistry": chem})],
     ))
-    # Round 2 — Honesty: a truth/lie pick about a partner-related event
     rounds.append(MinigameRound(
         index=2, prompt_id="final_honesty", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
-        stem=f"FINALE — Honesty: have you been completely honest with {partner.name}?",
+        stem=(
+            "Round three: **Honesty**. Microphones are open and the audience is "
+            f"voting at home. The host turns to you: have you been completely "
+            f"honest with {partner.name} this whole season?"
+        ),
         choices=[
-            MinigameChoice(id="truth", label="Tell the truth.", fact_value="truth", is_correct=True, distractor_source="trait_card"),
-            MinigameChoice(id="lie_mild", label="Soften it.", fact_value="lie_mild", is_correct=False, distractor_source="lie"),
+            MinigameChoice(id="truth", label="Yes — tell the truth.", fact_value="truth", is_correct=True, distractor_source="trait_card"),
+            MinigameChoice(id="lie_mild", label="Soften it — mostly.", fact_value="lie_mild", is_correct=False, distractor_source="lie"),
             MinigameChoice(id="lie_hard", label="Deny everything.", fact_value="lie_hard", is_correct=False, distractor_source="lie"),
         ],
     ))
-    # Round 3 — Banter: one Couples-Quiz-style match
     rounds.append(MinigameRound(
         index=3, prompt_id="final_banter", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
-        stem=f"FINALE — Banter: what's the punchline {partner.name} keeps coming back to?",
+        stem=(
+            "Round four: **Banter**. The host plays back three soundbites the "
+            f"villa heard from {partner.name} this week and asks which one is "
+            "the inside joke only the two of you actually get."
+        ),
         choices=[
             MinigameChoice(id="callback_inside_joke", label="The one only you two get.", fact_value="match", is_correct=True, distractor_source="generator"),
             MinigameChoice(id="callback_crowd", label="The crowd-pleaser.", fact_value="miss", is_correct=False, distractor_source="generator"),
             MinigameChoice(id="callback_safe", label="The safe one.", fact_value="miss", is_correct=False, distractor_source="generator"),
         ],
     ))
-    # Round 4 — Audacity: SMP-style pie against a rival
     non_partners = sorted([i for i in state.islanders if not i.eliminated and i.id != "player" and i.id != partner_id], key=lambda i: i.relationship.affection)
     rival = non_partners[0].id if non_partners else partner_id
     friend = non_partners[-1].id if len(non_partners) > 1 else partner_id
     rounds.append(MinigameRound(
         index=4, prompt_id="final_audacity", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
-        stem="FINALE — Audacity: who do you pie?",
+        stem=(
+            "Round five — **Audacity**. The producer wheels out a tray of pies "
+            "for the season's traditional last laugh. You get exactly one and "
+            "you have to pick someone to pie. The room knows everyone you've "
+            "ever clashed with this season; the cameras are waiting."
+        ),
         choices=[
-            MinigameChoice(id=f"pie_{rival}", label=f"Pie {find_islander(state, rival).name}.", fact_value=f"rival:{rival}", is_correct=True, distractor_source="generator"),
-            MinigameChoice(id=f"pie_{friend}", label=f"Pie {find_islander(state, friend).name}.", fact_value=f"friend:{friend}", is_correct=False, distractor_source="generator"),
-            MinigameChoice(id=f"pie_{partner_id}", label=f"Pie {partner.name}.", fact_value=f"partner:{partner_id}", is_correct=False, distractor_source="generator"),
+            MinigameChoice(id=f"pie_{rival}", label=f"{find_islander(state, rival).name}", fact_value=f"rival:{rival}", is_correct=True, distractor_source="generator"),
+            MinigameChoice(id=f"pie_{friend}", label=f"{find_islander(state, friend).name}", fact_value=f"friend:{friend}", is_correct=False, distractor_source="generator"),
+            MinigameChoice(id=f"pie_{partner_id}", label=f"{partner.name}", fact_value=f"partner:{partner_id}", is_correct=False, distractor_source="generator"),
         ],
     ))
     return rounds

@@ -162,6 +162,17 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             for d_index, val in enumerate(distractors[:3]):
                 choices.append(MinigameChoice(id=f"distractor_{d_index}", label=val, fact_value=val, is_correct=False, distractor_source="trait_card"))
             _shuffle(choices, round_rng)
+            if index == 0:
+                scene = (
+                    f"The Couples Quiz starts. {partner.name} is sat in the soundproof "
+                    "booth on one side; you're at the firepit with a clipboard. The "
+                    "host alternates — odd rounds you guess what {partner_name} would "
+                    "say, even rounds you guess what they wrote about you. Round one is "
+                    f"about {partner.name}: "
+                ).replace("{partner_name}", partner.name)
+                stem = f"{scene}{prompt.stem}"
+            else:
+                stem = f"Round {index + 1} — about {partner.name}: {prompt.stem}"
             rounds.append(MinigameRound(
                 index=index,
                 prompt_id=prompt.id,
@@ -169,7 +180,7 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
                 trait_key=prompt.trait_key,
                 tier=prompt.tier,
                 mechanical=prompt.mechanical,
-                stem=prompt.stem,
+                stem=stem,
                 choices=choices,
             ))
             state.quizzed_traits_this_run.setdefault(partner_id, []).append(prompt.trait_key)
@@ -223,9 +234,9 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
                 ))
             _shuffle(choices, round_rng)
             stem_question = {
-                "archetype": f"What did {partner.name} guess about your villa type?",
-                "gender": f"What did {partner.name} write down about you?",
-                "perception": f"How did {partner.name} read your audience standing?",
+                "archetype": f"In the booth, {partner.name} was asked what villa type you came in as — what did they write down?",
+                "gender": f"In the booth, {partner.name} was asked what they wrote about you on the form — what did they say?",
+                "perception": f"In the booth, the host asked {partner.name} how the audience reads you — what did they say?",
             }.get(fact_key, f"What did {partner.name} guess about your {fact_key}?")
             rounds.append(MinigameRound(
                 index=index,
@@ -234,7 +245,10 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
                 trait_key=f"player_{fact_key}",
                 tier=0,
                 mechanical=False,
-                stem=f"{stem_question} (Pick what they said, not what's true.)",
+                stem=(
+                    f"Round {index + 1} — partner's turn. {stem_question} (Pick what "
+                    f"{partner.name} actually said, not what's true.)"
+                ),
                 choices=choices,
                 reveals=[
                     MinigameReveal(

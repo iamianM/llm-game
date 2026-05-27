@@ -1,20 +1,20 @@
 {
   "name": "day6-pre-final-vote",
   "seed": 7,
-  "state_hash": "14ed14fdae80d3b840e15629c3a696c138689b38e5cf68d7361cfaf0b62da2cb",
+  "state_hash": "b5207308c797abb8d24764cce3619f4467e14f952718e1b47e8f148af275bd42",
   "state": {
     "schema_version": 26,
     "seed": 7,
-    "turn_index": 391,
-    "day": 6,
-    "phase": "evening",
+    "turn_index": 319,
+    "day": 5,
+    "phase": "text",
     "phase_clock": {
-      "phase": "evening",
-      "budget_minutes": 60,
-      "elapsed_minutes": 60
+      "phase": "text",
+      "budget_minutes": 30,
+      "elapsed_minutes": 0
     },
-    "location_id": "firepit",
-    "villa": "main",
+    "location_id": "casa_kitchen",
+    "villa": "casa_amor",
     "player": {
       "id": "player",
       "name": "Demo",
@@ -29,7 +29,7 @@
       "archetype_id": "heartthrob",
       "character_created": true,
       "reroll_used": false,
-      "public_perception": 0,
+      "public_perception": 10,
       "eliminated": false,
       "memories": [
         {
@@ -399,182 +399,6 @@
             "challenge"
           ],
           "durable": true
-        },
-        {
-          "id": "mem_287c6c734f2e401b",
-          "holder_id": "player",
-          "subject_id": "blake",
-          "content": "I remember how Beau reacted when our supportive chat shifted.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 5,
-          "formed_on_turn": 322,
-          "emotional_weight": 5,
-          "tags": [
-            "player_conversation",
-            "supportive"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_888d26ca8136739b",
-          "holder_id": "player",
-          "subject_id": "chloe",
-          "content": "You chose to return loyal to your original connection.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 5,
-          "formed_on_turn": 323,
-          "emotional_weight": 5,
-          "tags": [
-            "casa_amor_decision",
-            "ceremony"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_25e4d42fb620b714",
-          "holder_id": "player",
-          "subject_id": "blake",
-          "content": "I remember how Beau reacted when our supportive chat shifted.",
-          "source": "direct",
-          "source_id": null,
-          "formed_on_day": 5,
-          "formed_on_turn": 330,
-          "emotional_weight": 5,
-          "tags": [
-            "player_conversation",
-            "supportive"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_0a1dfb13c2cb9760",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for the Sunset Bay return.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 330,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "gather_scheduled"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_4906db986f054a11",
-          "holder_id": "player",
-          "subject_id": "chloe",
-          "content": "You chose to return loyal to your original connection.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 330,
-          "emotional_weight": 5,
-          "tags": [
-            "casa_amor_return_reveal",
-            "ceremony"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_96b7e8b6163cab81",
-          "holder_id": "player",
-          "subject_id": "chloe",
-          "content": "You chose to return loyal to your original connection.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 331,
-          "emotional_weight": 5,
-          "tags": [
-            "casa_amor_return_reveal",
-            "ceremony"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_57dd7d4cd60fb5b3",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 349,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_bf636209172c40dd",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Final Couples Challenge ended in success (15 pts).",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 354,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "challenge"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_fda4c6566b0074dd",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for final vote announce.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 378,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "gather_scheduled"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_675a95e87a5ffddf",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 379,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "producer_text"
-          ],
-          "durable": true
-        },
-        {
-          "id": "mem_865218d1ff1c78ed",
-          "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for the Final Vote.",
-          "source": "witnessed",
-          "source_id": null,
-          "formed_on_day": 6,
-          "formed_on_turn": 391,
-          "emotional_weight": 5,
-          "tags": [
-            "ceremony",
-            "gather_scheduled"
-          ],
-          "durable": true
         }
       ],
       "known_facts": {
@@ -877,26 +701,6 @@
           "learned_on_turn": 166,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
-        },
-        "blake.age": {
-          "fact_key": "blake.age",
-          "value": "28",
-          "source": "direct",
-          "source_npc_id": null,
-          "learned_on_day": 5,
-          "learned_on_turn": 322,
-          "confidence": 1.0,
-          "citation": "Beau told you directly on Day 5."
-        },
-        "blake.hometown": {
-          "fact_key": "blake.hometown",
-          "value": "Brighton",
-          "source": "direct",
-          "source_npc_id": null,
-          "learned_on_day": 5,
-          "learned_on_turn": 330,
-          "confidence": 1.0,
-          "citation": "Beau told you directly on Day 5."
         }
       },
       "pull_attempts_this_phase": {}
@@ -910,9 +714,9 @@
         "backstory": "Twenty-six, primary school teacher from Liverpool. She has been living with her older sister since her ex moved out six months ago. Her sister is pregnant, and Chloe keeps wondering whether she wants children before thirty.",
         "location_id": "firepit",
         "relationship": {
-          "affection": 14,
+          "affection": 6,
           "chemistry": 8,
-          "trust": 10,
+          "trust": 1,
           "friendship": 0
         },
         "public_perception": 50,
@@ -1342,166 +1146,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f05282e9b954ca1e",
-            "holder_id": "chloe",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_70edbba6507fec89",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0deecbcf1b7b0bad",
-            "holder_id": "chloe",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_cfc9677b212e7a0b",
-            "holder_id": "chloe",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ed5ff79937892f49",
-            "holder_id": "chloe",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_57142811cc80e989",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_619613650d1e41f8",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_96d6fc8011407f8c",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c2deaf45ba003d5e",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_41d9e3a69075ad23",
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -2347,166 +1991,6 @@
               "challenge"
             ],
             "durable": true
-          },
-          {
-            "id": "mem_bd36c4b9944aaf59",
-            "holder_id": "maya",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b284da875177aa40",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_063431ae7bdfc534",
-            "holder_id": "maya",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_accad9b885fb7b34",
-            "holder_id": "maya",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_4c46a39498b9b022",
-            "holder_id": "maya",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0f53fac21a3f35ec",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b79c1c900aa4321d",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_4407e039feb85867",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a396682101c85fa0",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2e80c56bd123ffbf",
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
           }
         ],
         "trait_card": {
@@ -3348,166 +2832,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0f4f91235655a329",
-            "holder_id": "liam",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d1ba9dac50c7d446",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f0b3eabe01edfed9",
-            "holder_id": "liam",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a002edf336dc99b5",
-            "holder_id": "liam",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c23980b2f79fc086",
-            "holder_id": "liam",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0df1ef78da3c5c1e",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e165a96c2f7a16ce",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_487b9199ae3b9aba",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_dac8b23d8d1a8923",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_01edbb58147a6b4b",
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -4353,166 +3677,6 @@
               "challenge"
             ],
             "durable": true
-          },
-          {
-            "id": "mem_84d97377aa0341f4",
-            "holder_id": "sophie_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a440bec800ca77b8",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_bbee4ee21af17d97",
-            "holder_id": "sophie_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_3d9711aa4c1f802f",
-            "holder_id": "sophie_start",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2af69c612d82b4b0",
-            "holder_id": "sophie_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5a548d1557203254",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0ee59b896ccf3c98",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2b3ddcf0765a56d4",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ebe0bbb2d15c5e5a",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d93ffe7539c39101",
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
           }
         ],
         "trait_card": {
@@ -5354,166 +4518,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_fa43b1b5ffe70e55",
-            "holder_id": "nia_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_860b697a13e60660",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b01a0cd1985e43c5",
-            "holder_id": "nia_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_cbc08fc911a8ec1b",
-            "holder_id": "nia_start",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_dcfbd129967aa075",
-            "holder_id": "nia_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_505d4dec1ec4983e",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6cc2991b3dae28bb",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6ba854e01df041e3",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d14bf166663650f3",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b6757f6c04d6bbcd",
-            "holder_id": "nia_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -6359,166 +5363,6 @@
               "challenge"
             ],
             "durable": true
-          },
-          {
-            "id": "mem_80b543771a952458",
-            "holder_id": "marcus_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_cf0e11ca4ab0496e",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b092fea196c2158a",
-            "holder_id": "marcus_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e110e1ea8170da6c",
-            "holder_id": "marcus_start",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_abf84597bd8c6e39",
-            "holder_id": "marcus_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_9ef3a153ded17362",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_49c5ef798fd5a432",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a97cc6e1091cb6b0",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_7617f4aca8a4e354",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b831e89e0714ecd1",
-            "holder_id": "marcus_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
           }
         ],
         "trait_card": {
@@ -7360,166 +6204,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2319c65635802eee",
-            "holder_id": "blake_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d67bc2b15e651c72",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_02895e8f8477b9ea",
-            "holder_id": "blake_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_3432747110700e46",
-            "holder_id": "blake_start",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_87dc5e381e123272",
-            "holder_id": "blake_start",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5f931ce9bffabcbc",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0bedf3bed5fe5928",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_aa03aba303fab51f",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5cd1c4aa81f8ff51",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a0c25e64c3deecf4",
-            "holder_id": "blake_start",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -8671,12 +7355,12 @@
         "gender": "man",
         "archetype": "smooth",
         "backstory": "Twenty-seven, cocktail bar owner from Bristol. Beau is smooth with strangers and private with friends. He is testing whether the player wants excitement or just reassurance.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
-          "affection": 26,
+          "affection": 16,
           "chemistry": 9,
-          "trust": 24,
-          "friendship": 16
+          "trust": 7,
+          "friendship": 7
         },
         "public_perception": 52,
         "eliminated": false,
@@ -8703,7 +7387,7 @@
             "game playing"
           ]
         },
-        "familiarity_with_player": 25,
+        "familiarity_with_player": 11,
         "memories": [
           {
             "id": "mem_bebacc76cac71d0f",
@@ -8800,252 +7484,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ebe40dd162290d01",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass ended in success (7 pts).",
-            "source": "told_by",
-            "source_id": "player",
-            "formed_on_day": 5,
-            "formed_on_turn": 321,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge",
-              "gossip",
-              "source_memory:mem_dc55c3a86299ab13"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5ac18e7b36aada20",
-            "holder_id": "blake",
-            "subject_id": "player",
-            "content": "I remember the player making our supportive chat feel personal.",
-            "source": "direct",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 5,
-            "tags": [
-              "player_conversation",
-              "supportive"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e5f6538bf239bea8",
-            "holder_id": "blake",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_902bac29fa566ce7",
-            "holder_id": "blake",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "told_by",
-            "source_id": "player",
-            "formed_on_day": 5,
-            "formed_on_turn": 325,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony",
-              "gossip",
-              "source_memory:mem_888d26ca8136739b"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6631386f66bd2161",
-            "holder_id": "blake",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "told_by",
-            "source_id": "player",
-            "formed_on_day": 5,
-            "formed_on_turn": 328,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony",
-              "gossip",
-              "source_memory:mem_888d26ca8136739b"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e7ed87c104b4c74c",
-            "holder_id": "blake",
-            "subject_id": "player",
-            "content": "I remember the player making our supportive chat feel personal.",
-            "source": "direct",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "player_conversation",
-              "supportive"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_00bf473830a78246",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_3d05e81a76f18741",
-            "holder_id": "blake",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_980aa4d3e41f64e2",
-            "holder_id": "blake",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_dac22071ca342a8a",
-            "holder_id": "blake",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_667513e004fd237b",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c28c78aa6f6cef9b",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a09eefb7f1ae407c",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_286d132b4b2dd7db",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c70119be86f97b2f",
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -9286,7 +7724,7 @@
         "gender": "man",
         "archetype": "sweetheart",
         "backstory": "Twenty-four, trainee paramedic from Sheffield. Jules is sweet under pressure and awkward when he has to sell himself. He notices kindness quickly and remembers dismissiveness longer.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
           "affection": 12,
           "chemistry": 7,
@@ -9397,198 +7835,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_50f00e97690a4b15",
-            "holder_id": "jordan",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_9312370fca3ef629",
-            "holder_id": "jordan",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2f33b8db5a9d7307",
-            "holder_id": "jordan",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_b397aba3b2848985",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2725e14641dcb433",
-            "holder_id": "jordan",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_8ceeb4410e5e8df1",
-            "holder_id": "jordan",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a71a7776531eb263",
-            "holder_id": "jordan",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6a526ba8cc6307f1",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_90b42a1e06874fcb",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2ed69012fe4b1b55",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f5ca642e48672fca",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_bd20060a8b4832db",
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -9829,7 +8075,7 @@
         "gender": "man",
         "archetype": "heartthrob",
         "backstory": "Twenty-eight, personal trainer from Manchester. Mateo knows exactly how he looks and is tired of people assuming that is all there is. He talks about his nephew when he trusts someone.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
           "affection": 12,
           "chemistry": 10,
@@ -9940,198 +8186,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_29d6f21cc24e195c",
-            "holder_id": "marcus",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_05dce471c3e6bba5",
-            "holder_id": "marcus",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_88ed208783b4ddbe",
-            "holder_id": "marcus",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_67b93ac81240ea09",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_53e1fb4b8aa744dd",
-            "holder_id": "marcus",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_6b751a1850baddd1",
-            "holder_id": "marcus",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_80622c0f6991c6a4",
-            "holder_id": "marcus",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_bb8e105419aa2067",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f3d94049b71efef7",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_0a0fd56dadcb59f8",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_d0dcf16b81207aef",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_4d2d2fbe8e90a9bc",
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -10372,7 +8426,7 @@
         "gender": "woman",
         "archetype": "joker",
         "backstory": "Twenty-five, fashion buyer from London. Sasha has a sharp eye for insecurity and a softer side she hides behind jokes. She likes people who can keep up without performing.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
           "affection": 12,
           "chemistry": 8,
@@ -10483,198 +8537,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_00f830b57b632b31",
-            "holder_id": "sophie",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_77afa40659be03ab",
-            "holder_id": "sophie",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f3c3e23489717621",
-            "holder_id": "sophie",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_dc1aaa1af0259eaa",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_af5715df5adbc10a",
-            "holder_id": "sophie",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_10e2d3573c092b24",
-            "holder_id": "sophie",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_21bab04462df0130",
-            "holder_id": "sophie",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_33593597c5d33c14",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_8c1eb938f6bcb1f7",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_4ff55d1de6fa38f6",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5494572b905e3b1f",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c04b16a483cfd5d4",
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -10915,7 +8777,7 @@
         "gender": "woman",
         "archetype": "bombshell",
         "backstory": "Twenty-six, club promoter from Essex. Zara treats flirting like a chessboard and hates predictable moves. She wants someone bold enough to surprise her without trying to manage her.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
           "affection": 14,
           "chemistry": 12,
@@ -11026,198 +8888,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ac96cbaa50cb4bc7",
-            "holder_id": "zara",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f8694474eee73156",
-            "holder_id": "zara",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a93e552d56bb80f4",
-            "holder_id": "zara",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c675ac78a1de12b5",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_5526dce500e6d8fb",
-            "holder_id": "zara",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e93f2f28d4e87254",
-            "holder_id": "zara",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_186124b98c566473",
-            "holder_id": "zara",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_7fcfcaf68f016848",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a440d0066e34f1b2",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_992dec7d555454a6",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_8d083d1a216ce0ed",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_8081a972d9796b25",
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -11458,7 +9128,7 @@
         "gender": "woman",
         "archetype": "friend",
         "backstory": "Twenty-three, graduate student from Nottingham. Noor is observant, warm, and more strategic than she first appears. She listens for what people avoid saying.",
-        "location_id": "firepit",
+        "location_id": "casa_pool",
         "relationship": {
           "affection": 12,
           "chemistry": 6,
@@ -11569,198 +9239,6 @@
             "tags": [
               "ceremony",
               "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f9e675ad39bf99b2",
-            "holder_id": "nia",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 322,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_bb3433b59dfbce32",
-            "holder_id": "nia",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 323,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_decision",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_e44a85fe61d363a8",
-            "holder_id": "nia",
-            "subject_id": "blake",
-            "content": "I noticed Beau looked different after talking with the player.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 5,
-            "formed_on_turn": 330,
-            "emotional_weight": 4,
-            "tags": [
-              "supportive",
-              "witnessed"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_f366b9b0de8f814a",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_211fc6e9738e4b71",
-            "holder_id": "nia",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_2beb7d8b7546908e",
-            "holder_id": "nia",
-            "subject_id": "player",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 330,
-            "emotional_weight": 9,
-            "tags": [
-              "casa_amor",
-              "return_reveal"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_a7d3bf90a74b8d05",
-            "holder_id": "nia",
-            "subject_id": "chloe",
-            "content": "You chose to return loyal to your original connection.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 331,
-            "emotional_weight": 5,
-            "tags": [
-              "casa_amor_return_reveal",
-              "ceremony"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_c9d69f7d1355364e",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge tested combined couple energy and is still pending.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 349,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_ce33dd67b8a55c69",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Final Couples Challenge ended in success (15 pts).",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 354,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_48cd90d56ea21e03",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 378,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_96289f6664537f49",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 379,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "producer_text"
-            ],
-            "durable": true
-          },
-          {
-            "id": "mem_417074868b93c300",
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
-            "source": "witnessed",
-            "source_id": null,
-            "formed_on_day": 6,
-            "formed_on_turn": 391,
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "gather_scheduled"
             ],
             "durable": true
           }
@@ -12000,8 +9478,8 @@
       {
         "partner_a_id": "player",
         "partner_b_id": "chloe",
-        "formed_on_day": 6,
-        "formed_via": "casa_return",
+        "formed_on_day": 3,
+        "formed_via": "ceremony",
         "has_used_hideaway": false,
         "last_steal_attempt_chance": null,
         "rebound": false
@@ -12034,8 +9512,8 @@
         "rebound": false
       }
     ],
-    "active_ambient_id": "firepit_sit_quietly",
-    "consecutive_ambient_turns": 12,
+    "active_ambient_id": null,
+    "consecutive_ambient_turns": 0,
     "intro_completed_ids": [
       "maya",
       "liam",
@@ -12193,54 +9671,13 @@
             "is_player_couple": true
           }
         ]
-      },
-      {
-        "day": 5,
-        "entries": [
-          {
-            "rank": 1,
-            "couple": [
-              "blake_start",
-              "nia_start"
-            ],
-            "score": 50,
-            "is_player_couple": false
-          },
-          {
-            "rank": 2,
-            "couple": [
-              "liam",
-              "sophie_start"
-            ],
-            "score": 50,
-            "is_player_couple": false
-          },
-          {
-            "rank": 3,
-            "couple": [
-              "marcus_start",
-              "maya"
-            ],
-            "score": 50,
-            "is_player_couple": false
-          },
-          {
-            "rank": 4,
-            "couple": [
-              "player",
-              "chloe"
-            ],
-            "score": 38,
-            "is_player_couple": true
-          }
-        ]
       }
     ],
     "pending_challenge": {
-      "id": "final_couples",
-      "day": 6,
-      "kind": "final_couples",
-      "stat_tested": "combined",
+      "id": "snog_marry_pie",
+      "day": 5,
+      "kind": "snog_marry_pie",
+      "stat_tested": "banter",
       "participants": [
         "player",
         "chloe"
@@ -12249,245 +9686,141 @@
       "result": "success",
       "deltas": {
         "chloe": {
-          "affection": 8,
-          "chemistry": 0,
-          "trust": 4,
+          "affection": 0,
+          "chemistry": 3,
+          "trust": 0,
           "friendship": 0
+        },
+        "zara": {
+          "affection": 2,
+          "chemistry": 0,
+          "trust": 2,
+          "friendship": 0
+        },
+        "blake_start": {
+          "affection": 0,
+          "chemistry": 0,
+          "trust": 0,
+          "friendship": -2
         }
       },
       "rounds": [
         {
           "index": 0,
-          "prompt_id": "cq_chloe_biggest_fear",
-          "target_id": "chloe",
-          "trait_key": "biggest_fear",
-          "tier": 3,
-          "mechanical": true,
-          "stem": "FINALE \u2014 Knowledge: What's Chloe's biggest fear?",
+          "prompt_id": "smp_snog_5",
+          "target_id": null,
+          "trait_key": null,
+          "tier": 0,
+          "mechanical": false,
+          "stem": "Round 1 of 3: Snog one.",
           "choices": [
             {
-              "id": "correct",
-              "label": "being chosen and then unchosen",
-              "fact_value": "being chosen and then unchosen",
+              "id": "target_chloe",
+              "label": "Chloe",
+              "fact_value": "chloe",
               "is_correct": true,
-              "distractor_source": "trait_card"
+              "distractor_source": "generator"
             },
             {
-              "id": "distractor_0",
-              "label": "being alone forever",
-              "fact_value": "being alone forever",
-              "is_correct": false,
-              "distractor_source": "trait_card"
+              "id": "target_zara",
+              "label": "Zara",
+              "fact_value": "zara",
+              "is_correct": true,
+              "distractor_source": "generator"
             },
             {
-              "id": "distractor_1",
-              "label": "intimacy",
-              "fact_value": "intimacy",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_2",
-              "label": "being boring",
-              "fact_value": "being boring",
-              "is_correct": false,
-              "distractor_source": "trait_card"
+              "id": "target_blake_start",
+              "label": "Blake",
+              "fact_value": "blake_start",
+              "is_correct": true,
+              "distractor_source": "generator"
             }
           ],
-          "chosen_id": "correct",
-          "points": 4,
+          "chosen_id": "target_chloe",
+          "points": 2,
           "reveals": [
             {
-              "kind": "fact",
+              "kind": "reaction",
               "subject_id": "chloe",
               "payload": {
-                "facet": "knowledge",
-                "round_index": 0
+                "label": "snog",
+                "role": "partner"
               }
             }
           ]
         },
         {
           "index": 1,
-          "prompt_id": "final_chemistry",
-          "target_id": "chloe",
+          "prompt_id": "smp_marry_5",
+          "target_id": null,
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "FINALE \u2014 Chemistry: pick the moment that defined you and Chloe.",
+          "stem": "Round 2 of 3: Marry one.",
           "choices": [
             {
-              "id": "chemistry_kiss",
-              "label": "The kiss after the recoupling.",
-              "fact_value": "kiss",
+              "id": "target_zara",
+              "label": "Zara",
+              "fact_value": "zara",
               "is_correct": true,
               "distractor_source": "generator"
             },
             {
-              "id": "chemistry_quiet",
-              "label": "A quiet morning, just talking.",
-              "fact_value": "quiet",
+              "id": "target_blake_start",
+              "label": "Blake",
+              "fact_value": "blake_start",
               "is_correct": true,
               "distractor_source": "generator"
             }
           ],
-          "chosen_id": "chemistry_kiss",
-          "points": 0,
+          "chosen_id": "target_zara",
+          "points": 2,
           "reveals": [
             {
-              "kind": "fact",
-              "subject_id": "chloe",
+              "kind": "reaction",
+              "subject_id": "zara",
               "payload": {
-                "chemistry": 8
-              }
-            },
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "facet": "chemistry",
-                "round_index": 1
+                "label": "marry",
+                "role": "chemistry"
               }
             }
           ]
         },
         {
           "index": 2,
-          "prompt_id": "final_honesty",
-          "target_id": "chloe",
+          "prompt_id": "smp_pie_5",
+          "target_id": null,
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "FINALE \u2014 Honesty: have you been completely honest with Chloe?",
+          "stem": "Round 3 of 3: Pie one.",
           "choices": [
             {
-              "id": "truth",
-              "label": "Tell the truth.",
-              "fact_value": "truth",
+              "id": "target_blake_start",
+              "label": "Blake",
+              "fact_value": "blake_start",
               "is_correct": true,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "lie_mild",
-              "label": "Soften it.",
-              "fact_value": "lie_mild",
-              "is_correct": false,
-              "distractor_source": "lie"
-            },
-            {
-              "id": "lie_hard",
-              "label": "Deny everything.",
-              "fact_value": "lie_hard",
-              "is_correct": false,
-              "distractor_source": "lie"
-            }
-          ],
-          "chosen_id": "truth",
-          "points": 5,
-          "reveals": [
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "facet": "honesty",
-                "round_index": 2
-              }
-            }
-          ]
-        },
-        {
-          "index": 3,
-          "prompt_id": "final_banter",
-          "target_id": "chloe",
-          "trait_key": null,
-          "tier": 0,
-          "mechanical": false,
-          "stem": "FINALE \u2014 Banter: what's the punchline Chloe keeps coming back to?",
-          "choices": [
-            {
-              "id": "callback_inside_joke",
-              "label": "The one only you two get.",
-              "fact_value": "match",
-              "is_correct": true,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "callback_crowd",
-              "label": "The crowd-pleaser.",
-              "fact_value": "miss",
-              "is_correct": false,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "callback_safe",
-              "label": "The safe one.",
-              "fact_value": "miss",
-              "is_correct": false,
               "distractor_source": "generator"
             }
           ],
-          "chosen_id": "callback_inside_joke",
+          "chosen_id": "target_blake_start",
           "points": 3,
           "reveals": [
             {
-              "kind": "fact",
-              "subject_id": "chloe",
+              "kind": "reaction",
+              "subject_id": "blake_start",
               "payload": {
-                "facet": "banter",
-                "round_index": 3
-              }
-            }
-          ]
-        },
-        {
-          "index": 4,
-          "prompt_id": "final_audacity",
-          "target_id": "chloe",
-          "trait_key": null,
-          "tier": 0,
-          "mechanical": false,
-          "stem": "FINALE \u2014 Audacity: who do you pie?",
-          "choices": [
-            {
-              "id": "pie_liam",
-              "label": "Pie Liam.",
-              "fact_value": "rival:liam",
-              "is_correct": true,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "pie_blake",
-              "label": "Pie Beau.",
-              "fact_value": "friend:blake",
-              "is_correct": false,
-              "distractor_source": "generator"
-            },
-            {
-              "id": "pie_chloe",
-              "label": "Pie Chloe.",
-              "fact_value": "partner:chloe",
-              "is_correct": false,
-              "distractor_source": "generator"
-            }
-          ],
-          "chosen_id": "pie_liam",
-          "points": 3,
-          "reveals": [
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "facet": "audacity",
-                "round_index": 4
+                "label": "pie",
+                "role": "rival"
               }
             }
           ]
         }
       ],
-      "current_round_index": 5,
-      "total_points": 15,
+      "current_round_index": 3,
+      "total_points": 7,
       "classification": "success",
-      "audience_delta": 8
+      "audience_delta": 5
     },
     "quizzed_traits_this_run": {
       "chloe": [
@@ -14762,12 +12095,7 @@
       }
     },
     "pending_text": null,
-    "pending_gather": {
-      "kind": "ceremony",
-      "event_id": "final_vote",
-      "gather_location": "firepit",
-      "fires_on_turn": 392
-    },
+    "pending_gather": null,
     "pending_group_date": {
       "id": "group_date_day3",
       "participants": [
@@ -14999,61 +12327,6 @@
             ]
           }
         ]
-      },
-      {
-        "day": 5,
-        "items": [
-          {
-            "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "player",
-            "subject_id": "villa",
-            "content": "Kiss Wed Pass tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          }
-        ]
       }
     ],
     "hideaway": {
@@ -15083,12 +12356,12 @@
         "blake_start",
         "jordan_start"
       ],
-      "player_decision": "return_with_original",
-      "chosen_partner_id": "chloe",
-      "returned": true,
+      "player_decision": null,
+      "chosen_partner_id": null,
+      "returned": false,
       "partners_swapped": false,
       "player_perception_before": 0,
-      "player_perception_after": 23
+      "player_perception_after": null
     },
     "outcome": null
   },
@@ -16687,366 +13960,6 @@
       "day": 5,
       "phase": "text",
       "turn": 319
-    },
-    {
-      "day": 5,
-      "phase": "text",
-      "turn": 320
-    },
-    {
-      "day": 5,
-      "phase": "text",
-      "turn": 321
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 322
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 323
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 324
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 325
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 326
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 327
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 328
-    },
-    {
-      "day": 5,
-      "phase": "evening",
-      "turn": 329
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 330
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 331
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 332
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 333
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 334
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 335
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 336
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 337
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 338
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 339
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 340
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 341
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 342
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 343
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 344
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 345
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 346
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 347
-    },
-    {
-      "day": 6,
-      "phase": "morning",
-      "turn": 348
-    },
-    {
-      "day": 6,
-      "phase": "challenge",
-      "turn": 349
-    },
-    {
-      "day": 6,
-      "phase": "challenge",
-      "turn": 350
-    },
-    {
-      "day": 6,
-      "phase": "challenge",
-      "turn": 351
-    },
-    {
-      "day": 6,
-      "phase": "challenge",
-      "turn": 352
-    },
-    {
-      "day": 6,
-      "phase": "challenge",
-      "turn": 353
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 354
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 355
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 356
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 357
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 358
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 359
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 360
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 361
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 362
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 363
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 364
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 365
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 366
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 367
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 368
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 369
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 370
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 371
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 372
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 373
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 374
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 375
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 376
-    },
-    {
-      "day": 6,
-      "phase": "afternoon",
-      "turn": 377
-    },
-    {
-      "day": 6,
-      "phase": "text",
-      "turn": 378
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 379
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 380
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 381
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 382
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 383
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 384
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 385
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 386
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 387
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 388
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 389
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 390
-    },
-    {
-      "day": 6,
-      "phase": "evening",
-      "turn": 391
     }
   ],
   "rng_state": [
@@ -17676,7 +14589,7 @@
       3211712661,
       1320598276,
       935579968,
-      22
+      11
     ],
     null
   ]

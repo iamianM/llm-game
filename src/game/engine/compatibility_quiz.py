@@ -166,6 +166,18 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
             )
         _shuffle_in_place(choices, round_rng)
 
+        if index == 0:
+            partner_name = find_islander(state, target_id).name
+            scene = (
+                f"The Compatibility Quiz starts. {partner_name} is sat across "
+                "from you on the bench while the host reads five questions about "
+                "them and you pick the right answer. Get them right, win audience "
+                "love; get them wrong and the truth pops up after the answer. "
+                "Round one: "
+            )
+            stem = f"{scene}{prompt.stem}"
+        else:
+            stem = f"Round {index + 1}: {prompt.stem}"
         rounds.append(
             MinigameRound(
                 index=index,
@@ -174,7 +186,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
                 trait_key=prompt.trait_key,
                 tier=prompt.tier,
                 mechanical=prompt.mechanical,
-                stem=prompt.stem,
+                stem=stem,
                 choices=choices,
             )
         )

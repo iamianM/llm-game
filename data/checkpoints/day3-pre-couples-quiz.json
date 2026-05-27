@@ -1,7 +1,7 @@
 {
   "name": "day3-pre-couples-quiz",
   "seed": 7,
-  "state_hash": "a8f195edd0c35663527023846d443e3596f682e4c7ee10b1938b4d96b6268a43",
+  "state_hash": "77ea51eb0c05004c8a4f9ac912996febe03035c7196493c574695329cbdad1b8",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -5747,7 +5747,7 @@
           "trait_key": "comfort_show",
           "tier": 0,
           "mechanical": false,
-          "stem": "Tell us about Chloe's comfort show.",
+          "stem": "The Couples Quiz starts. Chloe is sat in the soundproof booth on one side; you're at the firepit with a clipboard. The host alternates \u2014 odd rounds you guess what Chloe would say, even rounds you guess what they wrote about you. Round one is about Chloe: Tell us about Chloe's comfort show.",
           "choices": [
             {
               "id": "distractor_0",
@@ -5789,7 +5789,7 @@
           "trait_key": "player_archetype",
           "tier": 0,
           "mechanical": false,
-          "stem": "What did Chloe guess about your villa type? (Pick what they said, not what's true.)",
+          "stem": "Round 2 \u2014 partner's turn. In the booth, Chloe was asked what villa type you came in as \u2014 what did they write down? (Pick what Chloe actually said, not what's true.)",
           "choices": [
             {
               "id": "distractor_2",
@@ -5842,7 +5842,7 @@
           "trait_key": "karaoke_song",
           "tier": 0,
           "mechanical": false,
-          "stem": "Tell us about Chloe's karaoke song.",
+          "stem": "Round 3 \u2014 about Chloe: Tell us about Chloe's karaoke song.",
           "choices": [
             {
               "id": "distractor_1",
@@ -5884,7 +5884,7 @@
           "trait_key": "player_gender",
           "tier": 0,
           "mechanical": false,
-          "stem": "What did Chloe write down about you? (Pick what they said, not what's true.)",
+          "stem": "Round 4 \u2014 partner's turn. In the booth, Chloe was asked what they wrote about you on the form \u2014 what did they say? (Pick what Chloe actually said, not what's true.)",
           "choices": [
             {
               "id": "distractor_0",
@@ -5923,7 +5923,7 @@
           "trait_key": "keepsake",
           "tier": 0,
           "mechanical": false,
-          "stem": "Tell us about Chloe's keepsake.",
+          "stem": "Round 5 \u2014 about Chloe: Tell us about Chloe's keepsake.",
           "choices": [
             {
               "id": "distractor_2",
@@ -5965,7 +5965,7 @@
           "trait_key": "player_perception",
           "tier": 0,
           "mechanical": false,
-          "stem": "How did Chloe read your audience standing? (Pick what they said, not what's true.)",
+          "stem": "Round 6 \u2014 partner's turn. In the booth, the host asked Chloe how the audience reads you \u2014 what did they say? (Pick what Chloe actually said, not what's true.)",
           "choices": [
             {
               "id": "correct",

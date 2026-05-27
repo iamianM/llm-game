@@ -1,6 +1,6 @@
 name: type-on-paper-reveal
 seed: 31
-expected_hash: 989953e95cd18873c1b8406063e4ab5ddf887d2301b8305ba674c0842c929825
+expected_hash: 729cfeb8327b4309bfc7b87ccc8e2cb975a755504ed57215c829a46d8bca79d5
 actions:
 - kind: ambient
   target_id: ambient_wait

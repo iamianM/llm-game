@@ -1,7 +1,7 @@
 {
   "name": "day1-pre-compatibility-quiz",
   "seed": 7,
-  "state_hash": "906336ca222186ba66a13f411247d5f92f1c26598ffb5ab0ea9dc7243342db8d",
+  "state_hash": "4e6d1e842f183b4cfdd8dcadfcc9ab6d0aa3afd51fced99810c05674a49284f5",
   "state": {
     "schema_version": 26,
     "seed": 7,
@@ -4431,7 +4431,7 @@
           "trait_key": "drink_of_choice",
           "tier": 2,
           "mechanical": true,
-          "stem": "What's Chloe's drink of choice?",
+          "stem": "The Compatibility Quiz starts. Chloe is sat across from you on the bench while the host reads five questions about them and you pick the right answer. Get them right, win audience love; get them wrong and the truth pops up after the answer. Round one: What's Chloe's drink of choice?",
           "choices": [
             {
               "id": "correct",
@@ -4473,7 +4473,7 @@
           "trait_key": "favorite_food",
           "tier": 2,
           "mechanical": true,
-          "stem": "What's Chloe's favourite meal?",
+          "stem": "Round 2: What's Chloe's favourite meal?",
           "choices": [
             {
               "id": "distractor_0",
@@ -4515,7 +4515,7 @@
           "trait_key": "hobby",
           "tier": 2,
           "mechanical": true,
-          "stem": "How does Chloe actually like to spend a Sunday?",
+          "stem": "Round 3: How does Chloe actually like to spend a Sunday?",
           "choices": [
             {
               "id": "correct",
@@ -4557,7 +4557,7 @@
           "trait_key": "age",
           "tier": 1,
           "mechanical": true,
-          "stem": "How old is Chloe?",
+          "stem": "Round 4: How old is Chloe?",
           "choices": [
             {
               "id": "distractor_2",
@@ -4599,7 +4599,7 @@
           "trait_key": "hometown",
           "tier": 1,
           "mechanical": true,
-          "stem": "Where is Chloe from?",
+          "stem": "Round 5: Where is Chloe from?",
           "choices": [
             {
               "id": "distractor_0",

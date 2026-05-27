@@ -1,6 +1,6 @@
 name: time-budget-expiry
 seed: 31
-expected_hash: e890725c82c93f8fa5fef60ea1360e4b0de3fdbb75038326d5b09c8ddc60356a
+expected_hash: 7f52316231903bf03534c93aee6a055bb01933766eeb37a9d0c3b3c7d577ea2f
 actions:
 - kind: start_conversation
   target_id: chloe

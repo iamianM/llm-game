@@ -86,6 +86,7 @@ export type SessionState = {
   couples: CoupleSummary[];
   audience: { public_perception: number; recent_delta: number | null; trend: string };
   pending_recouple_proposal: Record<string, unknown> | null;
+  pending_challenge: Record<string, unknown> | null;
   outcome: string | null;
   active_conversation_target_id: string | null;
   villa_snapshot: Record<string, string[]>;

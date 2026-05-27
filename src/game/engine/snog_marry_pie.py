@@ -74,11 +74,30 @@ def build_rounds(state: GameState, rng: SeededRng) -> list[MinigameRound]:
     # one MinigameRound per label; pool-shrinking happens at submit_choice
     # time by re-emitting available choices from the remaining pool.
     target_roles = {tid: role for tid, role in targets}
+    label_stems: dict[str, str] = {
+        "kiss": (
+            "Kiss Wed Pass time. The cast is laid out shoulder-to-shoulder on the "
+            "firepit benches. The producer hands you three name cards from the "
+            "Heartbreaker pool — you have to use each card exactly once. The "
+            "rest of the villa watches every pick. First card: **kiss**. Of "
+            "these three, who do you walk over and kiss?"
+        ),
+        "wed": (
+            "Two cards left. You already used your kiss. Same Heartbreakers in "
+            "front of you, same audience. Second card: **wed**. Which of the "
+            "remaining two are you committing to, real-relationship?"
+        ),
+        "pass": (
+            "Last card. One Heartbreaker left from your three. The cast knows "
+            "what's coming. The producer hands you the **pass** card — give it "
+            "to the only person you haven't picked yet."
+        ),
+    }
     for index, label in enumerate(LABELS):
         choices = [
             MinigameChoice(
                 id=f"target_{tid}",
-                label=f"{label.capitalize()} {find_islander(state, tid).name}",
+                label=find_islander(state, tid).name,
                 fact_value=tid,
                 is_correct=True,  # all picks are 'legal' — scoring varies
                 distractor_source="generator",
@@ -93,7 +112,7 @@ def build_rounds(state: GameState, rng: SeededRng) -> list[MinigameRound]:
                 trait_key=None,
                 tier=0,
                 mechanical=False,
-                stem=f"Kiss Wed Pass — round {index+1}/3: {label.capitalize()} one of them.",
+                stem=label_stems.get(label, f"Round {index + 1} of 3: {label.capitalize()} one."),
                 choices=choices,
             )
         )
