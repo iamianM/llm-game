@@ -54,6 +54,14 @@ async def apply_villa_turn_async(
     if state.pending_gather is not None:
         villa_update = VillaUpdate()
         return villa_update, AppliedVillaChanges(villa_update=villa_update), []
+    # Intros are a tight scripted meet-and-greet — the cast watches the
+    # player work the room, so there's no value in firing the orchestrator
+    # (background NPC movements / new NPC-NPC chats) per intro turn. Skip
+    # it during INTROS to cut ~10-15s of LLM latency per intro.
+    from src.game.state.models import Phase
+    if state.phase is Phase.INTROS:
+        villa_update = VillaUpdate()
+        return villa_update, AppliedVillaChanges(villa_update=villa_update), []
     orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
     villa_update = _merge_pending_summon(state, orchestrate(state))
     pre_locations = {islander.id: islander.location_id for islander in state.islanders}

@@ -33,6 +33,13 @@ from src.game.agents.runtime import (
 from src.game.state.models import GameState, NPCNPCConversation
 
 BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
+# Background NPC-NPC chitchat is texture, not a player-facing scene. Default
+# to low reasoning effort so multiple parallel bg calls per turn don't add
+# 30s of latency.
+import os as _os
+BACKGROUND_DIALOGUE_REASONING_EFFORT = _os.environ.get(
+    "LLM_BACKGROUND_DIALOGUE_REASONING_EFFORT", "low"
+)
 BACKGROUND_DIALOGUE_PROMPT = "src/game/agents/prompts/background_dialogue.md"
 _BACKGROUND_DIALOGUE_PROMPT_FILE = Path(__file__).parent / "prompts" / "background_dialogue.md"
 
@@ -96,7 +103,7 @@ class OpenAIBackgroundDialogue:
                         instructions=_BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8"),
                         input=context,
                         text_format=BackgroundExchange,
-                        **reasoning_request_kwargs(),
+                        **reasoning_request_kwargs(effort=BACKGROUND_DIALOGUE_REASONING_EFFORT),
                     )
                 except Exception as exc:
                     last_error = ValueError(str(exc))

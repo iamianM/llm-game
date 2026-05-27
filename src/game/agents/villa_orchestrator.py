@@ -32,6 +32,13 @@ from src.game.state.autonomy import SummonReason
 from src.game.state.models import GameState, Location, NPCInterruption
 
 VILLA_ORCHESTRATOR_MODEL = GAME_AGENT_MODEL
+# Background villa life — movement / interruption decisions — doesn't need
+# the deep chain-of-thought the player-facing dialogue agents do. Default to
+# low effort so each turn doesn't carry 15-30s of orchestrator latency.
+import os as _os
+VILLA_ORCHESTRATOR_REASONING_EFFORT = _os.environ.get(
+    "LLM_VILLA_ORCHESTRATOR_REASONING_EFFORT", "low"
+)
 VILLA_ORCHESTRATOR_PROMPT = "src/game/agents/prompts/villa_orchestrator.md"
 _VILLA_ORCHESTRATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "villa_orchestrator.md"
 
@@ -165,7 +172,7 @@ class OpenAIVillaOrchestrator:
             instructions=_VILLA_ORCHESTRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=VillaUpdate,
-            **reasoning_request_kwargs(),
+            **reasoning_request_kwargs(effort=VILLA_ORCHESTRATOR_REASONING_EFFORT),
         )
         update = response.output_parsed
         record_agent_trace(
