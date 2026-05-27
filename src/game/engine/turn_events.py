@@ -165,8 +165,17 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
 
 
 def challenge_response_event(state: GameState) -> CeremonyEvent | None:
-    """Return a narratable event for a completed challenge response."""
+    """Return a narratable event for a fully-resolved minigame.
+
+    Round-based minigames advance through several rounds; only fire the
+    ceremony event (which triggers the Event Narrator to write a wrap)
+    once the challenge has actually resolved. Otherwise every round's
+    response would generate a "the quiz hangs over the villa..." wrap
+    paragraph mid-quiz, which reads as broken.
+    """
     if state.pending_challenge is None:
+        return None
+    if state.pending_challenge.result is None:
         return None
     return CeremonyEvent(
         kind="challenge",

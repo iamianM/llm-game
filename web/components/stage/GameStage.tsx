@@ -137,6 +137,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
                 }
               }}
             />
+            <QuizHeader pendingChallenge={state.pending_challenge as PendingChallengeView | null | undefined} />
             <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
           </>
         )}
@@ -295,4 +296,74 @@ function displayEventName(value: string) {
     snog_marry_pie: "Kiss Wed Pass",
   };
   return names[value] ?? value.replaceAll("_", " ").replace(/\b\w/g, (match) => match.toUpperCase());
+}
+
+type PendingChallengeView = {
+  kind: string;
+  finished?: boolean;
+  round_index?: number;
+  round_count?: number;
+  stem?: string;
+  trait_key?: string | null;
+  tier?: number;
+  mechanical?: boolean;
+  target_id?: string | null;
+};
+
+function QuizHeader({ pendingChallenge }: { pendingChallenge: PendingChallengeView | null | undefined }) {
+  if (!pendingChallenge || pendingChallenge.finished) return null;
+  const { stem, round_index, round_count, kind } = pendingChallenge;
+  if (!stem) return null;
+  const title = displayEventName(kind);
+  return (
+    <div className="quiz-header" data-testid="quiz-header">
+      <div className="quiz-row">
+        <span className="quiz-title">{title}</span>
+        {typeof round_index === "number" && typeof round_count === "number" ? (
+          <span className="quiz-round">Round {round_index + 1} of {round_count}</span>
+        ) : null}
+      </div>
+      <h2 className="quiz-stem">{stem}</h2>
+      <style jsx>{`
+        .quiz-header {
+          padding: 10px 18px 0;
+          background: linear-gradient(180deg, rgba(8,6,4,.95), rgba(8,6,4,.95));
+          border-top: 1px solid rgba(217,167,58,.18);
+        }
+        .quiz-row {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 14px;
+          max-width: 1180px;
+          margin: 0 auto 4px;
+        }
+        .quiz-title {
+          font-family: var(--font-hand);
+          color: var(--gold-soft);
+          font-size: 13px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+        }
+        .quiz-round {
+          font-size: 12px;
+          color: var(--muted-on-dark);
+          letter-spacing: .04em;
+        }
+        .quiz-stem {
+          max-width: 1180px;
+          margin: 0 auto;
+          font-family: var(--font-display);
+          font-size: 20px;
+          line-height: 1.3;
+          color: var(--ink-on-dark);
+          padding-bottom: 6px;
+        }
+        @media (max-width: 700px) {
+          .quiz-header { padding: 8px 12px 0; }
+          .quiz-stem { font-size: 17px; }
+        }
+      `}</style>
+    </div>
+  );
 }

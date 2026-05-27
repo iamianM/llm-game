@@ -1,6 +1,6 @@
 name: compatibility-quiz-vertical
 seed: 21
-expected_hash: 16cc854e11e11bc1284875179c9e24614385a3b15a9884ab2de10747ba5e73ff
+expected_hash: ca8fea06532480e395deddbb9ef503ee29ccdfee186cb0d65205b1cffaa90c91
 actions:
 - kind: ambient
   target_id: ambient_wait

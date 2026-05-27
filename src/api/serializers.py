@@ -300,12 +300,17 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
     if action.kind.value == "join_gather" and state.pending_gather is not None:
         return f"Join gather at {display(state.pending_gather.gather_location.value)}"
     if action.kind.value == "challenge_response" and state.pending_challenge is not None:
-        # Round-based minigames (e.g. compatibility_quiz) already carry a rich
-        # per-round label from the engine ("Quiz r2/5: Liverpool"). Use it
-        # verbatim so the player can see which round and choice they're picking.
+        # Round-based minigames: the engine label is "Quiz rN/M: <choice>".
+        # The browser renders the round counter + question stem in a panel
+        # above the menu (see GameStage.QuizHeader), so strip the redundant
+        # round prefix here and surface just the choice text on the card —
+        # otherwise the buttons read as a bag of fragments with no question.
         from src.game.engine.challenges import ROUND_BASED_MINIGAMES
         if state.pending_challenge.kind in ROUND_BASED_MINIGAMES:
-            return spec.label
+            label = spec.label
+            if ":" in label:
+                label = label.split(":", 1)[1].strip()
+            return label
         target = "" if action.target_id is None else f": choose {find_name(state, action.target_id)}"
         return f"{display(state.pending_challenge.kind)}{target}"
     if action.kind.value == "recouple" and action.target_id is not None:
