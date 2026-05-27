@@ -33,6 +33,7 @@ from src.game.state.models import GameState, Location, NPCInterruption
 
 VILLA_ORCHESTRATOR_MODEL = GAME_AGENT_MODEL
 VILLA_ORCHESTRATOR_PROMPT = "src/game/agents/prompts/villa_orchestrator.md"
+_VILLA_ORCHESTRATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "villa_orchestrator.md"
 
 
 class NPCMovement(BaseModel):
@@ -161,7 +162,7 @@ class OpenAIVillaOrchestrator:
         """Request one parsed update from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path(VILLA_ORCHESTRATOR_PROMPT).read_text(encoding="utf-8"),
+            instructions=_VILLA_ORCHESTRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=VillaUpdate,
             **reasoning_request_kwargs(),

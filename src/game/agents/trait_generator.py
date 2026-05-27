@@ -26,7 +26,12 @@ from src.game.state.models import Gender, IslanderState
 from src.game.state.traits import CORE_TRAIT_KEYS, PersonaSummary, TraitCard, TraitFact
 
 TRAIT_GENERATOR_MODEL = GAME_AGENT_MODEL
+# Repo-relative identifier used in trace records (stable across hosts).
 TRAIT_GENERATOR_PROMPT = "src/game/agents/prompts/trait_generator.md"
+# Filesystem path resolved relative to this module so the prompt opens
+# regardless of process cwd (Vercel runs lambdas from /var/task; local
+# CLI runs from the repo root).
+_TRAIT_GENERATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "trait_generator.md"
 
 
 @dataclass(frozen=True)
@@ -114,7 +119,7 @@ class OpenAITraitGenerator:
         try:
             response = self._client.responses.create(
                 model=self._model,
-                instructions=Path(TRAIT_GENERATOR_PROMPT).read_text(encoding="utf-8"),
+                instructions=_TRAIT_GENERATOR_PROMPT_FILE.read_text(encoding="utf-8"),
                 input=input_text,
                 text={"format": {"type": "json_object"}},
                 **reasoning_request_kwargs(),

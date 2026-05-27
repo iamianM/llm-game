@@ -34,6 +34,7 @@ from src.game.state.models import GameState, Mood
 
 ISLANDER_VOICE_MODEL = GAME_AGENT_MODEL
 ISLANDER_VOICE_PROMPT = "src/game/agents/prompts/islander_voice.md"
+_ISLANDER_VOICE_PROMPT_FILE = Path(__file__).parent / "prompts" / "islander_voice.md"
 VALID_TONES = {
     "warm",
     "flirty",
@@ -99,7 +100,7 @@ class OpenAIIslanderVoice:
         """Request one parsed Exchange from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path(ISLANDER_VOICE_PROMPT).read_text(encoding="utf-8"),
+            instructions=_ISLANDER_VOICE_PROMPT_FILE.read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=Exchange,
             **reasoning_request_kwargs(),

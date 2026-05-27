@@ -34,6 +34,7 @@ from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memor
 
 CONTEXTUAL_OPTIONS_MODEL = GAME_AGENT_MODEL
 CONTEXTUAL_OPTIONS_PROMPT = "src/game/agents/prompts/contextual_options.md"
+_CONTEXTUAL_OPTIONS_PROMPT_FILE = Path(__file__).parent / "prompts" / "contextual_options.md"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
 FOLLOW_UP_CATEGORIES = {
     "friendly",
@@ -162,7 +163,7 @@ class ContextualOptionsAgent:
         """Request one parsed bespoke option set from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path(CONTEXTUAL_OPTIONS_PROMPT).read_text(encoding="utf-8"),
+            instructions=_CONTEXTUAL_OPTIONS_PROMPT_FILE.read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=ContextualBespoke,
             **reasoning_request_kwargs(),

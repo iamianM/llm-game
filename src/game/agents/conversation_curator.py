@@ -38,6 +38,7 @@ from src.game.state.models import (
 
 CONVERSATION_CURATOR_MODEL = GAME_AGENT_MODEL
 CONVERSATION_CURATOR_PROMPT = "src/game/agents/prompts/conversation_curator.md"
+_CONVERSATION_CURATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "conversation_curator.md"
 
 CuratableConversation = Conversation | NPCNPCConversation
 ConversationCuratorFn = Callable[[GameState, CuratableConversation, Sequence[str]], MemoryBatch]
@@ -106,7 +107,7 @@ class OpenAIConversationCurator:
         """Request one parsed memory batch from the model."""
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path(CONVERSATION_CURATOR_PROMPT).read_text(encoding="utf-8"),
+            instructions=_CONVERSATION_CURATOR_PROMPT_FILE.read_text(encoding="utf-8"),
             input=rendered_context,
             text_format=MemoryBatch,
             **reasoning_request_kwargs(),

@@ -34,6 +34,7 @@ from src.game.state.models import GameState, NPCNPCConversation
 
 BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
 BACKGROUND_DIALOGUE_PROMPT = "src/game/agents/prompts/background_dialogue.md"
+_BACKGROUND_DIALOGUE_PROMPT_FILE = Path(__file__).parent / "prompts" / "background_dialogue.md"
 
 
 class BackgroundExchange(BaseModel):
@@ -92,7 +93,7 @@ class OpenAIBackgroundDialogue:
                 try:
                     response = self._client.responses.parse(
                         model=self._model,
-                        instructions=Path(BACKGROUND_DIALOGUE_PROMPT).read_text(encoding="utf-8"),
+                        instructions=_BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8"),
                         input=context,
                         text_format=BackgroundExchange,
                         **reasoning_request_kwargs(),

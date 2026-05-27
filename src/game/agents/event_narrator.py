@@ -30,6 +30,7 @@ from src.game.state.models import GameState
 
 EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
 EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
+_EVENT_NARRATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "event_narrator.md"
 
 
 class EventNarration(BaseModel):
@@ -60,7 +61,7 @@ class OpenAIEventNarrator:
             raise ValueError("event narration requires at least one ceremony event")
         response = self._client.responses.parse(
             model=self._model,
-            instructions=Path(EVENT_NARRATOR_PROMPT).read_text(encoding="utf-8"),
+            instructions=_EVENT_NARRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
             input=_render_context(state, events),
             text_format=EventNarration,
             **reasoning_request_kwargs(),
