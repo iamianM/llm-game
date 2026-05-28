@@ -126,7 +126,6 @@ async function streamTurn(
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
-  let envelope: TurnResponseEnvelope | null = null;
   while (true) {
     const { value, done } = await reader.read();
     buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
@@ -139,18 +138,28 @@ async function streamTurn(
       if (parsed.event === "dialogue_start")
         handlers.onDialogueStart?.(String(parsed.data?.speaker_name ?? "Producer"));
       if (parsed.event === "dialogue_chunk") handlers.onDialogueChunk?.(String(parsed.data?.text ?? ""));
-      if (parsed.event === "response") envelope = parsed.data as unknown as TurnResponseEnvelope;
+      if (parsed.event === "response") {
+        const envelope = parsed.data as unknown as TurnResponseEnvelope;
+        sessionStore.save(envelope.persisted);
+        return envelope.view;
+      }
     }
     if (done) break;
   }
-  if (!envelope) throw new Error("stream ended without a turn response");
-  sessionStore.save(envelope.persisted);
-  return envelope.view;
+  throw new Error("stream ended without a turn response");
 }
 
 function parseSseFrame(frame: string): { event: string; data: Record<string, unknown> | null } | null {
-  const event = frame.match(/^event:\s*(.+)$/m)?.[1]?.trim();
-  const data = frame.match(/^data:\s*(.+)$/m)?.[1]?.trim();
+  let event = "";
+  let data = "";
+  for (const line of frame.split("\n")) {
+    const separator = line.indexOf(":");
+    if (separator < 0) continue;
+    const field = line.slice(0, separator);
+    const value = line.slice(separator + 1).trimStart();
+    if (field === "event") event = value.trim();
+    if (field === "data") data += data ? `\n${value}` : value;
+  }
   if (!event || !data) return null;
   return { event, data: JSON.parse(data) as Record<string, unknown> };
 }

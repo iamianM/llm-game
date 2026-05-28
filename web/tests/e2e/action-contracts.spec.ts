@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const SESSION_ID = "contract-session";
-const API = "http://127.0.0.1:8000";
+const API = process.env.PLAYWRIGHT_API_BASE ?? "http://127.0.0.1:8000";
 
 test("choice menu exposes every API action and keeps memory keys stable", async ({ page }) => {
   const consoleIssues: string[] = [];
@@ -14,7 +14,7 @@ test("choice menu exposes every API action and keeps memory keys stable", async 
 
   await page.goto(`/play/${SESSION_ID}`);
 
-  await expect(page.getByTestId("choice-menu")).toBeVisible();
+  await expect(page.getByTestId("choice-fan")).toBeVisible();
   await expect(page.getByTestId("choice")).toHaveCount(8);
   await expect(page.getByRole("button", { name: "Choice eight" })).toBeVisible();
   expect(consoleIssues).toEqual([]);
@@ -122,7 +122,6 @@ test("public first screens do not expose development controls", async ({ page })
   await page.goto("/new-run");
   await expect(page.getByText("Test mode")).toHaveCount(0);
   await expect(page.getByText("Real mode")).toHaveCount(0);
-  await expect(page.getByText("Resume from a saved point")).toHaveCount(0);
 });
 
 test("challenge spectacle keeps choices usable on a short viewport", async ({ page }) => {
@@ -156,7 +155,7 @@ test("challenge spectacle keeps choices usable on a short viewport", async ({ pa
   await page.goto(`/play/${SESSION_ID}`);
 
   await expect(page.getByTestId("challenge-spectacle")).toBeVisible();
-  await expect(page.getByTestId("choice-menu")).toBeVisible();
+  await expect(page.getByTestId("choice-fan")).toBeVisible();
   await expect(page.getByRole("button", { name: "Hold Liam's gaze" })).toBeVisible();
 });
 

@@ -73,10 +73,45 @@ export function TopBar({ state, onRail, onSettings }: Props) {
           border-right: 1px solid rgba(248,236,210,.1);
         }
         @media (max-width: 700px) {
-          .brand { padding-right: 8px; }
+          .topbar {
+            gap: 7px;
+            padding: 0 8px;
+          }
+          .icon-btn {
+            width: 30px;
+            height: 30px;
+            flex: 0 0 auto;
+          }
+          .brand {
+            padding-right: 4px;
+            border-right: 0;
+          }
           .brand-text { display: none; }
           .turn-chip { display: none; }
           .phase-chip { font-size: 12px; }
+          .hud-row {
+            gap: 6px;
+            min-width: 0;
+          }
+          .day-chip {
+            gap: 4px;
+            padding: 4px 9px;
+          }
+          .divider {
+            display: none;
+          }
+          .hud-right {
+            gap: 6px;
+            min-width: 0;
+          }
+        }
+        @media (max-width: 420px) {
+          .phase-chip {
+            max-width: 72px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
         }
         .brand-dot {
           width: 8px; height: 8px;

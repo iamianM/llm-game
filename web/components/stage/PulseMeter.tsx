@@ -76,6 +76,24 @@ export function PulseMeter({ score, delta }: Props) {
         }
         .pulse-delta.up { background: rgba(45,106,63,.3); color: var(--good-soft); border: 1px solid rgba(164,205,177,.4); }
         .pulse-delta.down { background: rgba(193,75,58,.3); color: var(--bad-soft); border: 1px solid rgba(247,226,221,.4); }
+        @media (max-width: 700px) {
+          .pulse {
+            gap: 6px;
+            padding: 4px 8px;
+          }
+          .pulse-label,
+          .pulse-num {
+            display: none;
+          }
+          .pulse-bar {
+            width: 78px;
+          }
+        }
+        @media (max-width: 380px) {
+          .pulse-bar {
+            width: 58px;
+          }
+        }
       `}</style>
     </div>
   );

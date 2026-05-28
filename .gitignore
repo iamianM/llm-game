@@ -46,6 +46,9 @@ _shots*/
 web/node_modules/
 web/.next/
 web/.next-dev/
+web/.next-playwright*/
+web/.playwright-results/
+web/.playwright-runtime/
 web/dist/
 web/playwright-report/
 web/test-results/

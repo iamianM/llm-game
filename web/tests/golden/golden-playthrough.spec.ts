@@ -78,7 +78,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await page.waitForURL(/\/play\/.+/);
   // Wait for the stage HUD + initial action menu to be visible.
-  await expect(page.getByTestId("choice-menu")).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId("choice-fan")).toBeVisible({ timeout: 15_000 });
   // Speed up animations + typewriter for the rest of the showcase.
   await page.getByLabel("Open settings").click();
   await page.getByLabel("Typewriter speed").selectOption("fast");
@@ -204,20 +204,20 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
     }
     break;
   }
-  // We should now be on the main stage (DialogueBox + ChoiceMenu).
-  await expect(page.getByTestId("choice-menu")).toBeVisible();
+  // We should now be on the main scene-dialogue stage.
+  await expect(page.getByTestId("choice-fan")).toBeVisible();
   await page.waitForTimeout(220);
   await shot(
     page,
     "Main stage",
-    "Sunset Bay, afternoon. Conversation choice menu with audience hints, risk badges, and stat callouts. Each choice card has a gold-accent reveal on hover."
+    "Sunset Bay, afternoon. The player remains visible while response bubbles fan out from the bottom of the scene."
   );
 
   // ─── 13. CONVERSATION IN PROGRESS ──────────────────────────
   // Click first available choice (likely a Spark with the partner).
   const firstChoice = page.locator('[data-testid="choice"]:not([disabled])').first();
   await firstChoice.click();
-  await page.waitForSelector('[data-state="dialogue-complete"], [data-screen="ceremony"]', { timeout: 15_000 });
+  await page.waitForSelector('[data-testid="choice-fan"], [data-screen="ceremony"]', { timeout: 15_000 });
   await page.waitForTimeout(280);
   if (await page.locator('[data-screen="ceremony"]').count() === 0) {
     await shot(
@@ -293,7 +293,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
     }
     await buttons.nth(pick).click({ force: true, timeout: 5_000 }).catch(() => undefined);
     try {
-      await page.waitForSelector('[data-state="dialogue-complete"], [data-screen="ceremony"], [data-screen="day-recap"], [data-screen="finale"]', { timeout: 8_000 });
+      await page.waitForSelector('[data-testid="choice-fan"], [data-screen="ceremony"], [data-screen="day-recap"], [data-screen="finale"]', { timeout: 8_000 });
     } catch { /* loop will handle */ }
     if (turn > 0 && turn % 40 === 0) {
       // Defensive break if the loop is spinning without progress (e.g. stuck dialog).

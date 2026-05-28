@@ -44,3 +44,15 @@ test("mobile casting carousel fits the viewport", async ({ page }) => {
   await page.getByRole("button", { name: "Next archetype" }).click();
   await expect(page.getByRole("tab", { name: "Class Clown" })).toHaveAttribute("aria-selected", "true");
 });
+
+test("mobile can open checkpoints from casting", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 740 });
+  await page.goto("/new-run");
+
+  await page.getByRole("button", { name: "Checkpoints" }).click();
+
+  const dialog = page.getByRole("dialog", { name: "Resume from checkpoint" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Choose a checkpoint" })).toBeVisible();
+  await expect(dialog.locator(".checkpoint-card").first()).toBeVisible();
+});

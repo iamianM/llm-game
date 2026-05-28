@@ -14,7 +14,7 @@ test("captures primary screen snapshots", async ({ page }) => {
   await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await expect(page.locator('[data-screen="stage"]')).toBeVisible();
-  await page.waitForSelector('[data-state="dialogue-complete"]', { timeout: 15_000 });
+  await page.waitForSelector('[data-testid="choice-fan"]', { timeout: 15_000 });
   await page.screenshot({ path: out("stage-start.png"), fullPage: true });
 
   await page.getByLabel("Open right rail").click();
@@ -50,10 +50,22 @@ test("captures primary screen snapshots", async ({ page }) => {
       await page.getByRole("button", { name: "Continue" }).click();
       continue;
     }
-    const choices = page.getByTestId("choice-menu").getByRole("button");
+    const choices = page.locator('[data-testid="choice"]:not([disabled])');
     if ((await choices.count()) === 0) break;
     await choices.first().click();
-    await page.waitForSelector('[data-state="dialogue-complete"], [data-screen="ceremony"]', { timeout: 15_000 });
+    await advanceScene(page);
   }
   await page.screenshot({ path: out("play-day1-ambient.png"), fullPage: true });
 });
+
+async function advanceScene(page: import("@playwright/test").Page) {
+  for (let step = 0; step < 8; step += 1) {
+    await page.waitForTimeout(160);
+    if (await page.locator('[data-testid="choice-fan"], [data-screen="ceremony"], [data-screen="day-recap"], [data-screen="finale"]').count()) return;
+    if (await page.locator('[data-testid="player-bubble"], [data-testid="speech-bubble"], [data-testid="narrator-bubble"]').count()) {
+      await page.getByTestId("scene-stage").click({ force: true });
+      continue;
+    }
+    return;
+  }
+}

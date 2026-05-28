@@ -21,6 +21,7 @@ export default function NewRunPage() {
   const [archetype, setArchetype] = useState("heartthrob");
   const [gender, setGender] = useState<Gender>("man");
   const [mockLlm, setMockLlm] = useState(false);
+  const [checkpointPickerOpen, setCheckpointPickerOpen] = useState(false);
   const selectedIndex = Math.max(0, ARCHETYPES.findIndex((item) => item.id === archetype));
   const swipeStartX = useRef<number | null>(null);
   const router = useRouter();
@@ -44,8 +45,7 @@ export default function NewRunPage() {
   const checkpointQuery = useQuery({
     queryKey: ["checkpoints"],
     queryFn: listCheckpoints,
-    staleTime: 60_000,
-    enabled: SHOW_DEBUG_TOOLS
+    staleTime: 60_000
   });
   const checkpoints: CheckpointSummary[] = checkpointQuery.data ?? [];
 
@@ -151,6 +151,16 @@ export default function NewRunPage() {
             <span className="cta-label">{mutation.isPending ? "Opening..." : "Step into Sunset Bay"}</span>
             <span className="cta-arrow">→</span>
           </button>
+
+          {checkpoints.length > 0 ? (
+            <button
+              type="button"
+              className="checkpoint-trigger"
+              onClick={() => setCheckpointPickerOpen(true)}
+            >
+              Checkpoints
+            </button>
+          ) : null}
         </div>
 
         {mutation.error ? (
@@ -160,13 +170,21 @@ export default function NewRunPage() {
           <p role="alert" className="error-banner">{checkpointMutation.error.message}</p>
         ) : null}
 
-        {SHOW_DEBUG_TOOLS && checkpoints.length > 0 ? (
-          <section className="checkpoint-block" aria-label="Resume from a saved point">
-            <header className="checkpoint-header">
-              <span className="checkpoint-eyebrow">Or jump back in</span>
-              <span className="checkpoint-sub">Resume from a saved point</span>
+      </div>
+
+      {checkpointPickerOpen && checkpoints.length > 0 ? (
+        <div className="checkpoint-overlay" role="dialog" aria-modal="true" aria-label="Resume from checkpoint">
+          <div className="checkpoint-sheet">
+            <header className="sheet-header">
+              <div>
+                <span className="checkpoint-eyebrow">Jump into the villa</span>
+                <h2 className="sheet-title">Choose a checkpoint</h2>
+              </div>
+              <button type="button" className="sheet-close" onClick={() => setCheckpointPickerOpen(false)}>
+                Close
+              </button>
             </header>
-            <div className="checkpoint-grid">
+            <div className="checkpoint-grid sheet-grid">
               {checkpoints.map((ck) => (
                 <button
                   key={ck.name}
@@ -181,9 +199,9 @@ export default function NewRunPage() {
                 </button>
               ))}
             </div>
-          </section>
-        ) : null}
-      </div>
+          </div>
+        </div>
+      ) : null}
 
       <style jsx>{`
         .newrun-stage {
@@ -260,7 +278,7 @@ export default function NewRunPage() {
           align-items: center;
         }
         .config-row.is-simple {
-          grid-template-columns: minmax(260px, 420px) auto;
+          grid-template-columns: minmax(260px, 420px) auto auto;
           justify-content: center;
         }
         @media (max-width: 760px) {
@@ -315,6 +333,23 @@ export default function NewRunPage() {
         .enter-cta[disabled] { opacity: .55; cursor: progress; }
         .cta-arrow { font-size: 20px; font-style: normal; transition: transform .2s; }
         .enter-cta:hover:not([disabled]) .cta-arrow { transform: translateX(4px); }
+        .checkpoint-trigger {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 44px;
+          padding: 10px 16px;
+          border-radius: var(--r-pill);
+          border: 1px solid rgba(217,167,58,.38);
+          background: rgba(20,16,12,.64);
+          color: var(--gold-soft);
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: .12em;
+          text-transform: uppercase;
+          box-shadow: var(--inset-gold);
+          cursor: pointer;
+        }
 
         .error-banner {
           position: absolute;
@@ -327,31 +362,11 @@ export default function NewRunPage() {
           font-size: 13px;
         }
 
-        .checkpoint-block {
-          margin-top: 14px;
-          padding: 12px 14px;
-          border-radius: var(--r-lg);
-          border: var(--frame-gold);
-          background: rgba(20,16,12,.55);
-          backdrop-filter: blur(8px);
-        }
-        .checkpoint-header {
-          display: flex;
-          align-items: baseline;
-          justify-content: space-between;
-          gap: 12px;
-          margin-bottom: 10px;
-        }
         .checkpoint-eyebrow {
           font-family: var(--font-hand);
           color: var(--gold-soft);
           font-size: 14px;
           letter-spacing: .04em;
-        }
-        .checkpoint-sub {
-          font-size: 12px;
-          color: var(--ink-on-dark);
-          opacity: .65;
         }
         .checkpoint-grid {
           display: grid;
@@ -393,6 +408,58 @@ export default function NewRunPage() {
           font-size: 11px;
           color: var(--ink-on-dark);
           opacity: .5;
+        }
+        .checkpoint-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 20;
+          display: grid;
+          place-items: end center;
+          padding: 14px;
+          background: rgba(5,3,2,.68);
+          backdrop-filter: blur(8px);
+        }
+        .checkpoint-sheet {
+          width: min(720px, 100%);
+          max-height: min(78vh, 660px);
+          display: grid;
+          grid-template-rows: auto minmax(0, 1fr);
+          gap: 12px;
+          padding: 14px;
+          border-radius: var(--r-xl);
+          border: var(--frame-gold);
+          background: linear-gradient(180deg, rgba(20,16,12,.96), rgba(8,6,4,.98));
+          box-shadow: var(--shadow-lg), var(--inset-gold);
+        }
+        .sheet-header {
+          display: flex;
+          align-items: start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+        .sheet-title {
+          margin: 2px 0 0;
+          font-family: var(--font-display);
+          font-size: 28px;
+          font-weight: 600;
+          color: var(--ink-on-dark);
+        }
+        .sheet-close {
+          min-height: 36px;
+          padding: 8px 13px;
+          border-radius: var(--r-pill);
+          border: 1px solid rgba(248,236,210,.14);
+          background: rgba(248,236,210,.06);
+          color: var(--ink-on-dark);
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: .08em;
+          text-transform: uppercase;
+          cursor: pointer;
+        }
+        .sheet-grid {
+          overflow-y: auto;
+          padding-right: 2px;
         }
 
         @media (max-width: 760px) {
@@ -496,8 +563,23 @@ export default function NewRunPage() {
             padding: 11px 18px;
             font-size: 17px;
           }
-          .checkpoint-block {
-            display: none;
+          .checkpoint-trigger {
+            width: 100%;
+          }
+          .checkpoint-overlay {
+            align-items: end;
+            padding: 10px;
+          }
+          .checkpoint-sheet {
+            max-height: 82vh;
+            border-bottom-left-radius: var(--r-lg);
+            border-bottom-right-radius: var(--r-lg);
+          }
+          .sheet-title {
+            font-size: 25px;
+          }
+          .sheet-grid {
+            grid-template-columns: 1fr;
           }
         }
       `}</style>

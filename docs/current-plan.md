@@ -73,6 +73,42 @@ If an item cannot name its eval evidence, it is probably still design work.
 
 ## Now
 
+### Scene-Dialogue Stage (Visual-Novel Browser Rewrite)
+
+**Problem:** The current browser stage is a dashboard: left-side dialogue box,
+right-side choice menu, idle CastRing. The player can't see themselves and the
+mobile layout fights between dialogue text and choice buttons for bottom-screen
+space. Conversation never feels staged.
+
+**Player value:** A staged scene where the player's character is always visible
+at the bottom-center, NPCs stand in the environment, dialogue floats as
+speech bubbles anchored to whoever is talking, the narrator gets a distinct
+top-anchored bubble, and player choices fan out near the player's tile. The
+same scene grammar carries minigames via embedded `ChallengeSpectacle` boards
+with character-driven camera cuts (NPCs strut on/off, focus moves between
+two-shots and group reactions).
+
+**Smallest slice:** Hard-replace `GameStage`'s dashboard branch with a new
+`SceneDialogueStage` (no feature flag). Keep the engine, API, and
+`ChallengeSpectacle` minigame board logic; refactor `ChallengeSpectacle` to
+mount inside the scene rather than full-screen. Add six new player cutouts
+(per archetype × gender) and replace existing NPC images with
+transparent-background cutouts. Delete `DialogueBox`, `ChoiceMenu`,
+`CastRing`, `NpcPortrait` in the final commit.
+
+**Surfaces:** `web/components/scene/` (new), `web/components/stage/GameStage.tsx`,
+`web/components/stage/ChallengeSpectacle.tsx`, `web/public/images/characters/`,
+`web/public/images/player/` (new), `web/lib/scene/` (new).
+
+**Eval:** `cd web && npx playwright test` including new
+`scene-dialogue.spec.ts`; `cd web && npx tsc --noEmit`; `uv run pytest tests/
+--ignore=tests/agents`; `uv run python -m src.game.cli verify --all`; manual
+checkpoint walkthroughs.
+
+**Acceptance:** Implementation contract is
+[docs/scene-dialogue/IMPLEMENTATION-HANDOFF.md](scene-dialogue/IMPLEMENTATION-HANDOFF.md);
+codex implements, Claude reviews against the doc's success criteria (§10).
+
 ### Real Eval Review And Failure-Driven Fixes
 
 **Problem:** The golden LLM eval system exists, but its value comes from using it

@@ -1,5 +1,12 @@
 # Phase 3 — Paradise Hearts Player UI (MVP)
 
+> **Superseded for stage layout (2026-05-27):** the dashboard-style stage
+> described here (left dialogue box + right choice menu + idle CastRing) is
+> being replaced by a staged visual-novel scene. See
+> [docs/scene-dialogue/IMPLEMENTATION-HANDOFF.md](scene-dialogue/IMPLEMENTATION-HANDOFF.md).
+> The rest of this doc — character creation, top bar, ceremony overlay, day
+> recap, settings — is still current.
+
 This is the spec for the first playable interface. The deterministic Python
 engine is the asset; this phase wraps it in a Next.js visual-novel UI so the
 game becomes something a person can *play* instead of inspect via the review

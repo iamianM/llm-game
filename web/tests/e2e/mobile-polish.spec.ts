@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const SESSION_ID = "mobile-polish-session";
-const API = "http://127.0.0.1:8000";
+const API = process.env.PLAYWRIGHT_API_BASE ?? "http://127.0.0.1:8000";
 
 test("mobile right rail opens as a full-width drawer", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 740 });
