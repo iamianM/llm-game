@@ -65,7 +65,9 @@ async function errorMessage(response: Response): Promise<string> {
 export async function newSession(archetype: string, gender: Gender, mockLlm: boolean): Promise<SessionResponse> {
   const envelope = await request<NewSessionEnvelope>("/session/new", {
     method: "POST",
-    body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm ? true : null })
+    // Send the explicit boolean so the server uses the user's pick rather
+    // than its env-var default. Sending null falls back to PARADISE_MOCK_LLM.
+    body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm })
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;
@@ -79,7 +81,7 @@ export async function listCheckpoints(): Promise<CheckpointSummary[]> {
 export async function sessionFromCheckpoint(name: string, mockLlm: boolean): Promise<SessionResponse> {
   const envelope = await request<NewSessionEnvelope>("/session/from-checkpoint", {
     method: "POST",
-    body: JSON.stringify({ name, mock_llm: mockLlm ? true : null })
+    body: JSON.stringify({ name, mock_llm: mockLlm })
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;
