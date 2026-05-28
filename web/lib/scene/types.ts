@@ -22,6 +22,7 @@ export type Position = {
   y: number;
   scale: number;
   dimmed?: boolean;
+  hidden?: boolean;
 };
 
 export type ChoiceFanSpec = {

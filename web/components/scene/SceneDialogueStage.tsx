@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
 import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
-import { ChallengeSpectacle, type PendingChallengeView } from "../stage/ChallengeSpectacle";
+import { type PendingChallengeView } from "../stage/ChallengeSpectacle";
 import { CharacterLayer } from "./CharacterLayer";
 import { ChoiceFan } from "./ChoiceFan";
 import { NarratorBubble } from "./NarratorBubble";
@@ -70,9 +70,7 @@ export function SceneDialogueStage({
     <SceneLayer location={state.location_id} onTap={advance}>
       <CharacterLayer state={state} focusedId={focusedId} speakerPose={speakerPose} />
       {state.pending_challenge ? (
-        <div className="minigame-slot" data-testid="scene-minigame-board">
-          <ChallengeSpectacle state={state} pendingChallenge={state.pending_challenge as PendingChallengeView} />
-        </div>
+        <ChallengeBanner pending={state.pending_challenge as PendingChallengeView} />
       ) : null}
       {activeBeat?.kind === "narrator" ? (
         <NarratorBubble text={activeBeat.text} canAdvance={hasLaterBeat(plannedBeats, beatIndex)} />
@@ -93,26 +91,6 @@ export function SceneDialogueStage({
       {activeBeat?.kind === "choice_fan" ? (
         <ChoiceFan actions={activeBeat.spec.actions} locked={locked} onChoose={onChoose} />
       ) : null}
-      <style jsx>{`
-        .minigame-slot {
-          position: absolute;
-          z-index: 4;
-          left: 50%;
-          top: 43%;
-          width: min(960px, calc(100vw - 24px));
-          transform: translate(-50%, -50%) scale(.86);
-          pointer-events: none;
-        }
-        .minigame-slot :global(*) {
-          pointer-events: none;
-        }
-        @media (max-width: 760px) {
-          .minigame-slot {
-            top: 38%;
-            transform: translate(-50%, -50%) scale(.62);
-          }
-        }
-      `}</style>
     </SceneLayer>
   );
 }
@@ -142,10 +120,11 @@ function cameraFor(beats: SceneBeat[], activeIndex: number) {
 }
 
 function focusFor(activeBeat: SceneBeat | undefined, camera: SceneBeat | null, state: SessionState): string | null {
-  if (activeBeat?.kind === "speech") return activeBeat.speakerId;
+  if (activeBeat?.kind === "speech" && activeBeat.speakerId !== state.player.id) return activeBeat.speakerId;
   if (activeBeat?.kind === "reaction") return activeBeat.reactorId;
   if (camera?.kind === "camera" && camera.focusIds[0]) return camera.focusIds[0];
-  return state.active_conversation_target_id;
+  const pendingTarget = (state.pending_challenge as { target_id?: string | null } | null)?.target_id;
+  return state.active_conversation_target_id ?? pendingTarget ?? null;
 }
 
 function poseFor(activeBeat: SceneBeat | undefined): CharacterPose {
@@ -209,6 +188,87 @@ function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_
           from { opacity: 0; transform: translate(-50%, -30%) scale(.92); }
           20% { opacity: 1; }
           to { opacity: 0; transform: translate(-50%, -90%) scale(1.03); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+const CHALLENGE_TITLES: Record<string, string> = {
+  compatibility_quiz: "Compatibility Quiz",
+  heart_rate: "Pulse Race",
+  mr_and_mrs: "The Couples Quiz",
+  lie_detector: "Lie Detector",
+  snog_marry_pie: "Kiss · Wed · Pass",
+  final_couples: "Final Couples",
+};
+
+function ChallengeBanner({ pending }: { pending: PendingChallengeView }) {
+  const title = CHALLENGE_TITLES[pending.kind] ?? "Challenge";
+  const total = pending.round_count ?? 1;
+  const current = Math.min(total, (pending.round_index ?? 0) + 1);
+  const pct = pending.finished ? 100 : Math.max(0, Math.min(100, ((pending.round_index ?? 0) / Math.max(1, total)) * 100));
+  return (
+    <div className="challenge-banner" data-testid="challenge-banner">
+      <span className="challenge-banner-kicker">{title}</span>
+      <span className="challenge-banner-round">
+        {pending.finished ? "Wrap" : `Round ${current} / ${total}`}
+      </span>
+      <span className="challenge-banner-bar"><span style={{ width: `${pct}%` }} /></span>
+      <style jsx>{`
+        .challenge-banner {
+          position: absolute;
+          z-index: 11;
+          top: 10px;
+          left: 14px;
+          display: grid;
+          grid-template-columns: auto auto;
+          column-gap: 12px;
+          row-gap: 3px;
+          align-items: baseline;
+          padding: 7px 13px 8px;
+          border-radius: var(--r-pill);
+          background: rgba(20,16,12,.78);
+          border: 1px solid rgba(217,167,58,.4);
+          color: var(--card);
+          box-shadow: var(--shadow-md), var(--inset-gold);
+          font-family: var(--font-display);
+          pointer-events: none;
+          backdrop-filter: blur(8px);
+        }
+        .challenge-banner-kicker {
+          font-size: 13px;
+          font-weight: 650;
+          letter-spacing: .04em;
+        }
+        .challenge-banner-round {
+          font-size: 11px;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          color: var(--gold-soft);
+        }
+        .challenge-banner-bar {
+          grid-column: 1 / -1;
+          width: 100%;
+          height: 3px;
+          border-radius: var(--r-pill);
+          background: rgba(217,167,58,.15);
+          overflow: hidden;
+        }
+        .challenge-banner-bar > span {
+          display: block;
+          height: 100%;
+          background: linear-gradient(90deg, var(--accent), var(--gold));
+          transition: width .35s ease;
+        }
+        @media (max-width: 520px) {
+          .challenge-banner {
+            top: 6px;
+            left: 8px;
+            padding: 5px 9px 6px;
+          }
+          .challenge-banner-kicker { font-size: 12px; }
+          .challenge-banner-round { font-size: 10px; }
         }
       `}</style>
     </div>

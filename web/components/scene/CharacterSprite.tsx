@@ -41,6 +41,7 @@ type Props = {
 
 export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", position, pose, active }: Props) {
   const reduce = useReducedMotion();
+  if (position.hidden) return null;
   const src = role === "player" ? playerSprite(archetypeId, gender) : NPC_IMAGE_BY_ID[id];
   const sizeClass = role === "player" ? "is-player" : "is-npc";
   const style = {
@@ -126,31 +127,39 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           filter: drop-shadow(0 18px 20px rgba(0,0,0,.42));
         }
         .is-player {
-          --sprite-width: clamp(154px, 32vw, 300px);
-          --sprite-height: clamp(210px, 38vh, 420px);
-          z-index: 5;
+          --sprite-width: clamp(120px, 22vw, 220px);
+          --sprite-height: clamp(170px, 28vh, 320px);
+          z-index: 4;
         }
         .is-npc {
-          --sprite-width: clamp(108px, 19vw, 230px);
-          --sprite-height: clamp(168px, 31vh, 360px);
+          --sprite-width: clamp(96px, 17vw, 200px);
+          --sprite-height: clamp(150px, 27vh, 320px);
+        }
+        .is-npc.is-active {
+          z-index: 6;
         }
         .sprite-name {
           position: relative;
           z-index: 2;
-          margin-top: -12px;
-          padding: 3px 11px 5px;
+          margin-top: -10px;
+          padding: 3px 10px 5px;
           border-radius: var(--r-pill);
-          background: rgba(8,6,4,.56);
-          border: 1px solid rgba(217,167,58,.25);
+          background: rgba(8,6,4,.62);
+          border: 1px solid rgba(217,167,58,.28);
           color: var(--ink-on-dark);
           font-family: var(--font-display);
-          font-size: 15px;
+          font-size: 14px;
           line-height: 1;
           text-shadow: 0 2px 8px rgba(0,0,0,.6);
+          white-space: nowrap;
+          max-width: min(150px, 28vw);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          opacity: 0;
+          transition: opacity .18s ease;
         }
-        .is-player .sprite-name {
-          display: none;
-        }
+        .is-active .sprite-name { opacity: 1; }
+        .is-player .sprite-name { display: none; }
         .pose-talking .sprite-image {
           animation: talking-sway 1.5s ease-in-out infinite;
         }
@@ -169,15 +178,16 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
         }
         @media (max-width: 520px) {
           .is-player {
-            --sprite-width: clamp(142px, 42vw, 190px);
-            --sprite-height: clamp(196px, 35vh, 290px);
+            --sprite-width: clamp(108px, 32vw, 160px);
+            --sprite-height: clamp(152px, 26vh, 240px);
           }
           .is-npc {
-            --sprite-width: clamp(82px, 23vw, 132px);
-            --sprite-height: clamp(136px, 28vh, 218px);
+            --sprite-width: clamp(78px, 22vw, 138px);
+            --sprite-height: clamp(124px, 25vh, 220px);
           }
           .sprite-name {
-            font-size: 13px;
+            font-size: 12px;
+            max-width: 100px;
           }
         }
       `}</style>

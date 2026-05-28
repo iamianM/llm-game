@@ -68,11 +68,11 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           position: absolute;
           z-index: 10;
           left: 50%;
-          bottom: clamp(82px, 13vh, 130px);
-          width: min(720px, calc(100vw - 28px));
+          bottom: clamp(14px, 3vh, 28px);
+          width: min(880px, calc(100vw - 24px));
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 10px;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 8px;
           transform: translateX(-50%);
           pointer-events: auto;
         }
@@ -84,12 +84,12 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         }
         .choice-bubble {
           position: relative;
-          min-height: 58px;
+          min-height: 48px;
           display: grid;
           align-content: center;
-          gap: 5px;
-          padding: 12px 15px;
-          border-radius: 22px;
+          gap: 4px;
+          padding: 9px 13px 10px;
+          border-radius: 18px;
           border: 1px solid rgba(217,167,58,.42);
           background:
             linear-gradient(180deg, rgba(248,246,239,.98), rgba(238,226,201,.96)),
@@ -114,7 +114,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         }
         .choice-text {
           font-family: var(--font-display);
-          font-size: 17px;
+          font-size: 15px;
           font-weight: 650;
           line-height: 1.22;
         }
@@ -136,21 +136,23 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         .hint-bad { color: var(--accent-deep) !important; }
         @media (max-width: 520px) {
           .choice-fan {
-            bottom: 72px;
-            grid-template-columns: 1fr;
-            gap: 8px;
-            width: min(342px, calc(100vw - 28px));
-            max-height: min(34vh, 276px);
+            bottom: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            width: calc(100vw - 16px);
+            max-height: min(38vh, 320px);
             overflow-y: auto;
           }
           .choice-bubble {
-            min-height: 52px;
-            padding: 10px 13px;
-            border-radius: 19px;
+            min-height: 42px;
+            padding: 7px 10px 8px;
+            border-radius: 14px;
           }
           .choice-text {
-            font-size: 16px;
+            font-size: 13px;
+            line-height: 1.18;
           }
+          .choice-meta i { font-size: 9px; }
         }
       `}</style>
     </motion.div>

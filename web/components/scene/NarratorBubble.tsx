@@ -6,24 +6,29 @@ import { motion, useReducedMotion } from "framer-motion";
 export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance: boolean }) {
   const reduce = useReducedMotion();
   return (
-    <motion.div
-      data-testid="narrator-bubble"
-      className="narrator-bubble"
-      initial={reduce ? false : { opacity: 0, y: -10, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={reduce ? { duration: 0.06 } : { duration: 0.2, ease: "easeOut" }}
-    >
-      <span>The Producer</span>
-      <p>{text}</p>
-      {canAdvance ? <ChevronRight className="advance" size={18} /> : null}
+    <div data-testid="narrator-bubble" className="narrator-shell">
+      <motion.div
+        className="narrator-bubble"
+        initial={reduce ? false : { opacity: 0, y: -10, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={reduce ? { duration: 0.06 } : { duration: 0.2, ease: "easeOut" }}
+      >
+        <span>The Producer</span>
+        <p>{text}</p>
+        {canAdvance ? <ChevronRight className="advance" size={18} /> : null}
+      </motion.div>
       <style jsx global>{`
-        .narrator-bubble {
+        .narrator-shell {
           position: absolute;
           z-index: 9;
           top: 12px;
           left: 50%;
           transform: translateX(-50%);
-          width: min(760px, calc(100vw - 28px));
+          width: min(680px, calc(100vw - 28px));
+          pointer-events: none;
+        }
+        .narrator-bubble {
+          position: relative;
           padding: 12px 18px 14px;
           border-radius: var(--r-xl);
           background:
@@ -32,39 +37,45 @@ export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance:
           border: 1px solid rgba(217,167,58,.5);
           color: var(--ink);
           box-shadow: var(--shadow-lg), var(--inset-gold);
-          pointer-events: none;
           text-align: center;
         }
-        span {
+        .narrator-bubble > span {
+          display: block;
           font-family: var(--font-hand);
           color: var(--accent-deep);
-          font-size: 14px;
+          font-size: 13px;
           letter-spacing: .12em;
           text-transform: uppercase;
         }
-        p {
+        .narrator-bubble > p {
           margin: 4px 0 0;
           font-family: var(--font-display);
           font-style: italic;
-          font-size: clamp(18px, 2.4vw, 25px);
-          line-height: 1.28;
+          font-size: clamp(16px, 2.2vw, 22px);
+          line-height: 1.3;
         }
-        .advance {
+        .narrator-bubble .advance {
           position: absolute;
           right: 12px;
           bottom: 10px;
           color: var(--accent);
           opacity: .55;
+          animation: nudge 1.1s ease-in-out infinite;
         }
         @media (max-width: 520px) {
+          .narrator-shell { top: 8px; }
           .narrator-bubble {
-            top: 9px;
-            padding: 10px 14px 12px;
+            padding: 9px 12px 11px;
             border-radius: var(--r-lg);
           }
-          p { font-size: 17px; }
+          .narrator-bubble > p { font-size: 15px; }
+          .narrator-bubble > span { font-size: 11px; }
+        }
+        @keyframes nudge {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(3px); }
         }
       `}</style>
-    </motion.div>
+    </div>
   );
 }
