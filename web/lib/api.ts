@@ -14,11 +14,20 @@ import type {
 // On Vercel, `vercel.json` routes /api/* to the FastAPI service and strips the
 // `/api` prefix before invoking the function — so the backend's routes are
 // defined at root (`/session/new`), and the browser reaches them via `/api/*`.
-// Locally, the FastAPI dev server is reached at `http://127.0.0.1:8000/...`
-// without any prefix.
+// Locally, the FastAPI dev server is reached at `http://<host>:8000/...`
+// without any prefix. We mirror the browser's current hostname so a Next
+// dev server reached over Tailscale (e.g. http://100.x.y.z:3001) talks to
+// the FastAPI server on the same host (http://100.x.y.z:8000) instead of
+// trying to call localhost on the phone.
+function devApiBase(): string {
+  if (typeof window === "undefined") return "http://127.0.0.1:8000";
+  const host = window.location.hostname || "127.0.0.1";
+  return `http://${host}:8000`;
+}
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE ??
-  (process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000" : "/api");
+  (process.env.NODE_ENV === "development" ? devApiBase() : "/api");
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   let response: Response;
