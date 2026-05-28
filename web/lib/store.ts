@@ -17,17 +17,17 @@ type UiStore = {
 
 const LLM_KEY = "paradise.settings.useLiveLlm";
 
-function initialLiveLlm(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.localStorage.getItem(LLM_KEY) === "1";
-}
-
+// NOTE: the initial value MUST be the same on server and client to avoid
+// hydration mismatches; React 18 silently keeps the server HTML when it
+// detects the toggle's aria-pressed differs, and the user gets stuck
+// looking at Demo even when localStorage has Live picked. Components hydrate
+// this value from localStorage via useEffect after mount instead.
 export const useUiStore = create<UiStore>((set) => ({
   rightRailOpen: false,
   settingsOpen: false,
   reduceMotion: false,
   typewriterSpeed: "normal",
-  useLiveLlm: initialLiveLlm(),
+  useLiveLlm: false,
   setRail: (open) => set({ rightRailOpen: open }),
   setSettings: (open) => set({ settingsOpen: open }),
   setReduceMotion: (value) => set({ reduceMotion: value }),

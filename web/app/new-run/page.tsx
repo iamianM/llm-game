@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { listCheckpoints, newSession, sessionFromCheckpoint } from "../../lib/api";
 import { rememberCurrentSession } from "../../lib/storage";
 import { useUiStore } from "../../lib/store";
@@ -23,6 +23,13 @@ export default function NewRunPage() {
   const [gender, setGender] = useState<Gender>("man");
   const useLive = useUiStore((s) => s.useLiveLlm);
   const setUseLive = useUiStore((s) => s.setUseLiveLlm);
+  // SSR renders with useLive=false (no window). Sync from localStorage on
+  // mount so the visible toggle matches what the user picked in Settings.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = window.localStorage.getItem("paradise.settings.useLiveLlm");
+    if (stored === "1" && !useLive) setUseLive(true);
+  }, [useLive, setUseLive]);
   const mockLlm = !useLive;
   const [checkpointPickerOpen, setCheckpointPickerOpen] = useState(false);
   const selectedIndex = Math.max(0, ARCHETYPES.findIndex((item) => item.id === archetype));
