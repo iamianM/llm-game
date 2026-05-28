@@ -2,6 +2,10 @@ import type { Position } from "./types";
 
 export const PLAYER_ANCHOR: Position = { x: 50, y: 92, scale: 1 };
 
+// Wide-group positions — the firepit ring. Used during intros, ceremonies,
+// idle scenes, and as the *base* layout for focused conversations (we
+// nudge the focused islander forward but keep everyone else right where
+// they were so the ring stays intact).
 const WIDE_LAYOUTS: Position[][] = [
   [],
   [{ x: 50, y: 52, scale: 1 }],
@@ -22,20 +26,35 @@ const WIDE_LAYOUTS: Position[][] = [
   ],
 ];
 
+// Tuning constants for the "emphasize the speaker without hiding the rest"
+// composition. The focused islander gets a step forward + a scale bump; the
+// rest stay in their wide_group slot, just slightly dimmed so the eye knows
+// where to look.
+const FOCUS_Y_OFFSET = 4;     // pull focused NPC forward in the scene
+const FOCUS_SCALE_BONUS = 0.18; // bump scale on top of the wide-group base
+const UNFOCUSED_OPACITY_HINT = true; // dim the rest via the dimmed flag
+
 export function npcPositions(count: number, focusedIndex: number | null): Position[] {
   if (count <= 0) return [];
-  if (focusedIndex === null || focusedIndex < 0 || focusedIndex >= count) return widePositions(count);
+  const base = widePositions(count);
+  if (focusedIndex === null || focusedIndex < 0 || focusedIndex >= count) return base;
 
-  // When a target is in focus, give the stage to them + at most two flanking
-  // peers (one left, one right). Everyone else is pushed off-stage so the
-  // scene reads as a focused two-shot, not a crowd.
-  return Array.from({ length: count }, (_, index) => {
-    if (index === focusedIndex) return { x: 50, y: 48, scale: 1.08 };
-    const sideIndex = index < focusedIndex ? index : index - 1;
-    if (sideIndex === 0) return { x: 18, y: 56, scale: 0.74, dimmed: true };
-    if (sideIndex === 1) return { x: 82, y: 56, scale: 0.74, dimmed: true };
-    // Past the first flanker on each side, hide off-stage.
-    return { x: 50, y: 56, scale: 0.7, dimmed: true, hidden: true };
+  return base.map((position, index) => {
+    if (index === focusedIndex) {
+      // Pull the speaker forward + scale them up. We keep their x so the
+      // ring composition doesn't shuffle every focus change.
+      return {
+        x: position.x,
+        y: Math.max(40, position.y - FOCUS_Y_OFFSET),
+        scale: position.scale + FOCUS_SCALE_BONUS,
+      };
+    }
+    // Everyone else stays put but reads as "background" — dimmed so the
+    // focused one pops, no longer hidden off-stage.
+    return {
+      ...position,
+      dimmed: UNFOCUSED_OPACITY_HINT,
+    };
   });
 }
 

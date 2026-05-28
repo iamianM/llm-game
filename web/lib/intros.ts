@@ -100,7 +100,11 @@ function fnv1a(input: string): number {
   return hash >>> 0;
 }
 
-/** Templated NPC greetings tailored loosely by archetype. */
+/** Templated NPC greetings tailored loosely by archetype.
+ * Each line MUST be self-introducing — the speaker is the NPC, the player
+ * is being greeted. Lines like "Hey, {name}." are ambiguous (sounds like
+ * the NPC is addressing the player by name) so we always anchor with "I'm".
+ */
 const ARCHETYPE_GREETINGS: Record<string, string[]> = {
   sweetheart: [
     "Hi — I was hoping you'd come over. I'm {name}.",
@@ -108,19 +112,19 @@ const ARCHETYPE_GREETINGS: Record<string, string[]> = {
     "Oh, you. Come here. I'm {name}, by the way.",
   ],
   alpha: [
-    "{name}. Pleasure. So, what's the read on you so far?",
-    "Hey — {name}. Skip the small talk, what are you actually about?",
-    "{name}. I've been waiting to see who you'd talk to first.",
+    "I'm {name}. Pleasure. So, what's the read on you so far?",
+    "Hey — I'm {name}. Skip the small talk, what are you actually about?",
+    "I'm {name}. I've been waiting to see who you'd talk to first.",
   ],
   joker: [
     "Right, settle in. I'm {name}. We're absolutely doing this.",
-    "Oh god, finally someone interesting. {name}. Hi.",
-    "{name}. Be warned, I peaked socially around age twelve.",
+    "Oh god, finally someone interesting. I'm {name}. Hi.",
+    "I'm {name}. Be warned, I peaked socially around age twelve.",
   ],
   friend: [
     "Hi — I'm {name}. Was hoping we'd get to talk before things get wild.",
-    "Hey. {name}. You look like you're about to be hugely outnumbered.",
-    "{name}. Honestly relieved to be chatting with someone calm.",
+    "I'm {name}. You look like you're about to be hugely outnumbered. Solidarity.",
+    "I'm {name}. Honestly relieved to be chatting with someone calm.",
   ],
 };
 

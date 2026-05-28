@@ -2,11 +2,13 @@
 
 import { ChevronRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTypewriter } from "../../lib/scene/typewriter";
 
 export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance: boolean }) {
   const reduce = useReducedMotion();
+  const { rendered, complete } = useTypewriter(text);
   return (
-    <div data-testid="narrator-bubble" className="narrator-shell">
+    <div data-testid="narrator-bubble" data-stream-complete={complete ? "true" : "false"} className="narrator-shell">
       <motion.div
         className="narrator-bubble"
         initial={reduce ? false : { opacity: 0, y: -10, scale: 0.98 }}
@@ -14,8 +16,11 @@ export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance:
         transition={reduce ? { duration: 0.06 } : { duration: 0.2, ease: "easeOut" }}
       >
         <span>The Producer</span>
-        <p>{text}</p>
-        {canAdvance ? <ChevronRight className="advance" size={18} /> : null}
+        <p>
+          {rendered}
+          {!complete ? <span className="narrator-cursor" aria-hidden>▍</span> : null}
+        </p>
+        {canAdvance && complete ? <ChevronRight className="advance" size={18} /> : null}
       </motion.div>
       <style jsx global>{`
         .narrator-shell {
@@ -53,6 +58,17 @@ export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance:
           font-style: italic;
           font-size: clamp(16px, 2.2vw, 22px);
           line-height: 1.3;
+        }
+        .narrator-cursor {
+          display: inline-block;
+          margin-left: 1px;
+          font-style: normal;
+          font-weight: 400;
+          opacity: .5;
+          animation: narrator-cursor-blink 1.1s steps(2, end) infinite;
+        }
+        @keyframes narrator-cursor-blink {
+          50% { opacity: 0; }
         }
         .narrator-bubble .advance {
           position: absolute;

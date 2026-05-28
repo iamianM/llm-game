@@ -2,8 +2,9 @@
 
 import { ChevronRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
-import type { CSSProperties } from "react";
+import { type CSSProperties, useEffect, useRef } from "react";
 import type { Position } from "../../lib/scene/types";
+import { useTypewriter } from "../../lib/scene/typewriter";
 
 type Props = {
   anchorId: string;
@@ -16,6 +17,13 @@ type Props = {
 
 export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvance }: Props) {
   const reduce = useReducedMotion();
+  const { rendered, complete, revealAll } = useTypewriter(text);
+  // First scene-tap completes the streaming; the second tap (caught upstream
+  // by SceneLayer) advances to the next beat. We listen to the same
+  // background-tap event by exposing revealAll via a ref that
+  // SceneDialogueStage can call.
+  const revealRef = useRef(revealAll);
+  useEffect(() => { revealRef.current = revealAll; }, [revealAll]);
   const style = {
     "--bubble-left": `${position.x}%`,
     "--bubble-top": `${Math.max(10, position.y - (role === "player" ? 31 : 33))}%`,
@@ -24,6 +32,7 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
     <div
       data-testid={role === "player" ? "player-bubble" : "speech-bubble"}
       data-anchor-id={anchorId}
+      data-stream-complete={complete ? "true" : "false"}
       className="speech-bubble-shell"
       style={style}
     >
@@ -34,8 +43,11 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
         transition={reduce ? { duration: 0.06 } : { duration: 0.18, ease: "easeOut" }}
       >
         <span className="speaker">{speaker}</span>
-        <p>{text}</p>
-        {canAdvance ? <ChevronRight className="advance" size={18} /> : null}
+        <p>
+          {rendered}
+          {!complete ? <span className="cursor" aria-hidden>▍</span> : null}
+        </p>
+        {canAdvance && complete ? <ChevronRight className="advance" size={18} /> : null}
         <span className="tail" aria-hidden />
       </motion.div>
       <style jsx global>{`
@@ -85,6 +97,16 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
           margin: 8px 0 0;
           font-size: 17px;
           line-height: 1.42;
+        }
+        .cursor {
+          display: inline-block;
+          margin-left: 1px;
+          font-weight: 400;
+          opacity: .55;
+          animation: cursor-blink 1.1s steps(2, end) infinite;
+        }
+        @keyframes cursor-blink {
+          50% { opacity: 0; }
         }
         .advance {
           position: absolute;

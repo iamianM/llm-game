@@ -98,6 +98,19 @@ export function SceneDialogueStage({
   const positionById = useMemo(() => spritePositions(state, focusedId), [focusedId, state]);
   const advance = useCallback(() => {
     if (!activeBeat || activeBeat.kind === "choice_fan") return;
+    // First tap completes any mid-stream bubble (typewriter reveal-all);
+    // the user needs a second tap to actually move to the next beat.
+    if (typeof document !== "undefined") {
+      const streaming = document.querySelector(
+        '[data-testid="speech-bubble"][data-stream-complete="false"], ' +
+        '[data-testid="player-bubble"][data-stream-complete="false"], ' +
+        '[data-testid="narrator-bubble"][data-stream-complete="false"]',
+      );
+      if (streaming) {
+        window.dispatchEvent(new CustomEvent("paradise:reveal-all"));
+        return;
+      }
+    }
     const remaining = plannedBeats.slice(beatIndex + 1);
     const moreDialogue = remaining.some((beat) => beat.kind === "speech" || beat.kind === "narrator");
     if (!moreDialogue) onAdvance?.();
