@@ -56,7 +56,7 @@ async function errorMessage(response: Response): Promise<string> {
 export async function newSession(archetype: string, gender: Gender, mockLlm: boolean): Promise<SessionResponse> {
   const envelope = await request<NewSessionEnvelope>("/session/new", {
     method: "POST",
-    body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm })
+    body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm ? true : null })
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;
@@ -70,7 +70,7 @@ export async function listCheckpoints(): Promise<CheckpointSummary[]> {
 export async function sessionFromCheckpoint(name: string, mockLlm: boolean): Promise<SessionResponse> {
   const envelope = await request<NewSessionEnvelope>("/session/from-checkpoint", {
     method: "POST",
-    body: JSON.stringify({ name, mock_llm: mockLlm })
+    body: JSON.stringify({ name, mock_llm: mockLlm ? true : null })
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;
@@ -104,18 +104,7 @@ export async function submitTurnStream(
   action: AvailableAction,
   handlers: StreamHandlers = {}
 ): Promise<TurnResponse> {
-  // The SSE endpoint can fail at the TLS/proxy layer (e.g.
-  // ERR_SSL_BAD_RECORD_MAC_ALERT on some Vercel edges, function timeouts).
-  // We try the stream first for the typewriter feel and fall back to the
-  // non-streaming turn endpoint on any failure so gameplay is uninterrupted.
-  try {
-    return await streamTurn(sessionId, action, handlers);
-  } catch (err) {
-    if (typeof console !== "undefined") {
-      console.warn("Streaming turn failed, falling back to non-streaming:", err);
-    }
-    return await submitTurn(sessionId, action);
-  }
+  return streamTurn(sessionId, action, handlers);
 }
 
 async function streamTurn(

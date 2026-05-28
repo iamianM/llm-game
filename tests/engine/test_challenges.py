@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.challenges import (
     challenge_event_message,
     resolve_challenge,
     schedule_challenge,
 )
-from src.game.state.models import Couple, new_game
+from src.game.engine.turn import run_turn
+from src.game.state.models import Challenge, Couple, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -143,3 +145,27 @@ def test_challenge_event_message_uses_player_facing_labels() -> None:
     message = challenge_event_message(challenge)
 
     assert message == "Kiss Wed Pass tested Banter and is still pending."
+
+
+def test_resolved_challenge_clears_after_wrap_turn() -> None:
+    """Resolved minigames stay for their wrap, then leave the playable surface."""
+    state = new_game(1)
+    state.pending_challenge = Challenge(
+        id="final_couples",
+        day=6,
+        kind="final_couples",
+        stat_tested="combined",
+        participants=["player", "chloe"],
+        result="success",
+        classification="success",
+        total_points=20,
+    )
+
+    result = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="pool_lounge"),
+        SeededRng(1),
+    )
+
+    assert result.state.pending_challenge is None
+    assert not any(event.kind == "challenge" for event in result.ceremony_events)

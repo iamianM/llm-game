@@ -5,7 +5,6 @@ from __future__ import annotations
 from src.game.engine.gossip import gossip_subjects_for
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
-
 _DEFLECTIVE_TONES = {"defensive", "cold", "suspicious", "anxious"}
 _VULNERABLE_TONES = {"vulnerable"}
 

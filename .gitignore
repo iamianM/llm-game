@@ -45,6 +45,7 @@ _shots*/
 # Frontend
 web/node_modules/
 web/.next/
+web/.next-dev/
 web/dist/
 web/playwright-report/
 web/test-results/

@@ -48,8 +48,9 @@ export function ArchetypeCard({ id, title, bonus, advantage, selected, onSelect 
           src={vibe.image}
           alt=""
           fill
-          sizes="(max-width: 760px) 94vw, 31vw"
-          style={{ objectFit: "cover", objectPosition: "50% 45%" }}
+          priority={selected}
+          sizes="(max-width: 760px) 82vw, 31vw"
+          style={{ objectFit: "cover", objectPosition: "50% 34%" }}
         />
         <div className="hero-glow" />
         <div className="hero-tag">{vibe.tag}</div>
@@ -68,6 +69,9 @@ export function ArchetypeCard({ id, title, bonus, advantage, selected, onSelect 
           position: relative;
           display: grid;
           grid-template-rows: minmax(120px, 22vh) 1fr;
+          width: 100%;
+          min-width: 0;
+          height: 100%;
           border-radius: var(--r-xl);
           border: 1px solid rgba(248,236,210,.12);
           background: rgba(20,16,12,.7);
@@ -125,6 +129,7 @@ export function ArchetypeCard({ id, title, bonus, advantage, selected, onSelect 
           padding: 14px 16px 16px;
           display: grid;
           gap: 6px;
+          min-width: 0;
         }
         .card-title {
           font-family: var(--font-display);
@@ -175,7 +180,38 @@ export function ArchetypeCard({ id, title, bonus, advantage, selected, onSelect 
         }
         @media (max-width: 760px) {
           .archetype-card {
-            grid-template-rows: 118px auto;
+            grid-template-rows: minmax(210px, 56%) minmax(0, 1fr);
+            border-radius: var(--r-xl);
+            transform: none;
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(217,167,58,.18);
+          }
+          .archetype-card:hover,
+          .archetype-card.is-selected {
+            transform: none;
+          }
+          .card-body {
+            align-content: start;
+            padding: 14px 15px 15px;
+            gap: 7px;
+            overflow: hidden;
+          }
+          .card-title {
+            font-size: 23px;
+          }
+          .card-bonus {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+          }
+          .card-blurb {
+            font-size: 13px;
+            line-height: 1.42;
+            margin: 2px 0 4px;
+          }
+          .hero-tag {
+            left: 13px;
+            right: 13px;
+            bottom: 11px;
+            font-size: 14px;
           }
         }
       `}</style>

@@ -11,6 +11,8 @@ known_facts about the player. See ``docs/minigames/couples-quiz.md``.
 
 from __future__ import annotations
 
+from typing import TypeVar
+
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
@@ -24,10 +26,10 @@ from src.game.state.event_models import (
 )
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
-from src.game.state.traits import KnownFact, TIER_THRESHOLDS
-
+from src.game.state.traits import TIER_THRESHOLDS, KnownFact
 
 ROUNDS = 6
+T = TypeVar("T")
 
 
 def _partner_id(state: GameState) -> str | None:
@@ -44,7 +46,7 @@ def _bank_for(state: GameState, target_id: str) -> list[QuestionBankPrompt]:
     return [p for p in bank.prompts.get("compatibility_quiz", []) if p.target_id == target_id]
 
 
-def _shuffle(items: list, rng: SeededRng) -> None:
+def _shuffle(items: list[T], rng: SeededRng) -> None:
     for i in range(len(items) - 1, 0, -1):
         j = rng.randint(0, i)
         items[i], items[j] = items[j], items[i]
@@ -303,7 +305,8 @@ def score_mr_and_mrs(state: GameState, challenge: Challenge) -> Challenge:
     for r in challenge.rounds:
         chosen = next((c for c in r.choices if c.id == r.chosen_id), None)
         if chosen is None:
-            new_rounds.append(r); continue
+            new_rounds.append(r)
+            continue
         if r.index % 2 == 0:
             # Player round: simple correct/incorrect
             matched = chosen.is_correct

@@ -10,6 +10,7 @@ import { CeremonyOverlay } from "../ceremony/CeremonyOverlay";
 import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
 import { CastRing } from "./CastRing";
+import { ChallengeSpectacle, type PendingChallengeView } from "./ChallengeSpectacle";
 import { ChoiceMenu } from "./ChoiceMenu";
 import { DialogueBox } from "./DialogueBox";
 import { IntroPanel } from "./IntroPanel";
@@ -62,7 +63,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         setShowRecap(true);
         setSeenRecaps(data.state.daily_recaps.length);
       }
-      // Intros just ended with a final-NPC exchange → hold the IntroPanel mounted
+      // Intros just ended with a final-NPC exchange; hold the IntroPanel mounted
       // so the player can read that reply before the regular play UI takes over.
       if (prevPhase === "intros" && data.state.phase !== "intros" && data.exchange) {
         setHoldIntrosForFinalReply(true);
@@ -121,7 +122,12 @@ export function GameStage({ sessionId }: { sessionId: string }) {
           <>
             <div className="flex-1 min-h-0 flex">
               <VillaBackground location={state.location_id}>
-                {speaker ? (
+                {state.pending_challenge ? (
+                  <ChallengeSpectacle
+                    state={state}
+                    pendingChallenge={state.pending_challenge as PendingChallengeView}
+                  />
+                ) : speaker ? (
                   <NpcPortrait npc={speaker} />
                 ) : (
                   <CastRing
@@ -156,6 +162,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
             ) : null}
             <QuizHeader pendingChallenge={state.pending_challenge as PendingChallengeView | null | undefined} />
             <QuizWrap pendingChallenge={state.pending_challenge as PendingChallengeView | null | undefined} />
+            {mutation.error ? (
+              <p role="alert" className="turn-error">
+                That choice did not land. Try it again in a moment.
+              </p>
+            ) : null}
             <ChoiceMenu actions={actions} locked={mutation.isPending} onChoose={(action) => mutation.mutate(action)} />
           </>
         )}
@@ -173,6 +184,24 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         />
       ) : null}
       {showRecap && latestRecap && !showCeremony ? <DayRecap recap={latestRecap} onClose={() => setShowRecap(false)} /> : null}
+      <style jsx>{`
+        .turn-error {
+          position: fixed;
+          left: 50%;
+          bottom: calc(var(--choice-height, 120px) + 18px);
+          z-index: 50;
+          transform: translateX(-50%);
+          max-width: min(520px, calc(100vw - 28px));
+          margin: 0;
+          padding: 10px 14px;
+          border: 1px solid rgba(217,167,58,.42);
+          border-radius: var(--r-md);
+          background: rgba(20,16,12,.92);
+          box-shadow: var(--shadow-md), var(--inset-gold);
+          color: var(--card);
+          text-align: center;
+        }
+      `}</style>
     </main>
   );
 }
@@ -238,11 +267,12 @@ function IdleStage({ location, phase }: { location: string; phase: string }) {
   );
 }
 
-function stagePrompt(state: { phase: string }, speakerName?: string) {
+function stagePrompt(state: { phase: string; day?: number }, speakerName?: string) {
   if (speakerName) return `You're chatting with ${speakerName}. Choose your next response.`;
   if (state.phase === "intros") return "Day-1 introductions: meet each Heartbreaker once before free time opens.";
-  if (state.phase === "morning") return "Choose your First Spark partner and see how the opening couples land.";
-  return "Look around, Spark with someone, or let the day move.";
+  if (state.phase === "morning" && state.day === 1) return "Choose your First Spark partner and see how the opening couples land.";
+  if (state.phase === "morning") return "Morning in the villa: pick who gets your first real moment of the day.";
+  return "Choose who to talk to, move around the villa, or let the day move.";
 }
 
 const CASA_KINDS = new Set(["casa_amor_arrival", "casa_amor_decision"]);
@@ -315,32 +345,6 @@ function displayEventName(value: string) {
   };
   return names[value] ?? value.replaceAll("_", " ").replace(/\b\w/g, (match) => match.toUpperCase());
 }
-
-type AnsweredRoundView = {
-  round_index: number;
-  stem: string;
-  chosen_label: string | null;
-  correct_label: string | null;
-  is_correct: boolean;
-  points: number;
-  reaction_line: string | null;
-};
-
-type PendingChallengeView = {
-  kind: string;
-  finished?: boolean;
-  round_index?: number;
-  round_count?: number;
-  stem?: string;
-  trait_key?: string | null;
-  tier?: number;
-  mechanical?: boolean;
-  target_id?: string | null;
-  classification?: string | null;
-  total_points?: number;
-  audience_delta?: number;
-  answered_rounds?: AnsweredRoundView[];
-};
 
 function isQuizActive(state: SessionResponse["state"]): boolean {
   const pc = state.pending_challenge as PendingChallengeView | null | undefined;

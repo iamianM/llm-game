@@ -12,7 +12,7 @@ def test_new_session_returns_view_and_persisted_envelope() -> None:
 
     created = client.post(
         "/session/new",
-        json={"archetype": "heartthrob", "player_gender": "man", "seed": 42},
+        json={"archetype": "heartthrob", "player_gender": "man", "seed": 42, "mock_llm": True},
     )
 
     assert created.status_code == 201
@@ -34,7 +34,7 @@ def test_view_session_rehydrates_persisted_envelope() -> None:
 
     created = client.post(
         "/session/new",
-        json={"archetype": "heartthrob", "player_gender": "man", "seed": 42},
+        json={"archetype": "heartthrob", "player_gender": "man", "seed": 42, "mock_llm": True},
     ).json()
 
     rehydrated = client.post("/session/view", json=created["persisted"])
@@ -44,3 +44,18 @@ def test_view_session_rehydrates_persisted_envelope() -> None:
     assert body["session_id"] == created["view"]["session_id"]
     assert body["state"]["seed"] == 42
     assert body["available_actions"]
+
+
+def test_tailscale_dev_origin_is_allowed() -> None:
+    client = TestClient(app)
+
+    response = client.options(
+        "/healthz",
+        headers={
+            "Origin": "http://100.119.27.119:3001",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://100.119.27.119:3001"

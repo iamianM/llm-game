@@ -54,13 +54,9 @@ export function TitleScreen() {
               <span className="cta-sub">No run in progress</span>
             </button>
           )}
-          <button className="cta cta-secondary" disabled>
-            <span className="cta-label">The Reunion</span>
-            <span className="cta-sub">Unlocks in Phase 4</span>
-          </button>
         </div>
 
-        <div className="title-footer flourish">MVP build</div>
+        <div className="title-footer flourish">Tonight, everything counts</div>
       </section>
 
       <style jsx>{`

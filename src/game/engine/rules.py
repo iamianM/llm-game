@@ -223,8 +223,14 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
 
     if state.pending_challenge.kind == "final_couples":
         from src.game.engine.final_couples import (
-            apply_final_couples_result, has_more_rounds as fc_has_more,
-            score_final_couples, submit_choice as fc_submit,
+            apply_final_couples_result,
+            score_final_couples,
+        )
+        from src.game.engine.final_couples import (
+            has_more_rounds as fc_has_more,
+        )
+        from src.game.engine.final_couples import (
+            submit_choice as fc_submit,
         )
         updated = fc_submit(state.pending_challenge, choice_id)
         if fc_has_more(updated):
@@ -240,8 +246,14 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
         )
     if state.pending_challenge.kind == "lie_detector":
         from src.game.engine.lie_detector import (
-            apply_lie_detector_result, has_more_rounds as ld_has_more,
-            score_lie_detector, submit_choice as ld_submit,
+            apply_lie_detector_result,
+            score_lie_detector,
+        )
+        from src.game.engine.lie_detector import (
+            has_more_rounds as ld_has_more,
+        )
+        from src.game.engine.lie_detector import (
+            submit_choice as ld_submit,
         )
         updated = ld_submit(state.pending_challenge, choice_id)
         if ld_has_more(updated):
@@ -257,8 +269,14 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
         )
     if state.pending_challenge.kind == "mr_and_mrs":
         from src.game.engine.mr_and_mrs import (
-            apply_mr_and_mrs_result, has_more_rounds as mam_has_more,
-            score_mr_and_mrs, submit_choice as mam_submit,
+            apply_mr_and_mrs_result,
+            score_mr_and_mrs,
+        )
+        from src.game.engine.mr_and_mrs import (
+            has_more_rounds as mam_has_more,
+        )
+        from src.game.engine.mr_and_mrs import (
+            submit_choice as mam_submit,
         )
         updated = mam_submit(state.pending_challenge, choice_id)
         if mam_has_more(updated):
@@ -275,8 +293,12 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
     if state.pending_challenge.kind == "snog_marry_pie":
         from src.game.engine.snog_marry_pie import (
             apply_snog_marry_pie_result,
-            has_more_rounds as smp_has_more,
             score_snog_marry_pie,
+        )
+        from src.game.engine.snog_marry_pie import (
+            has_more_rounds as smp_has_more,
+        )
+        from src.game.engine.snog_marry_pie import (
             submit_choice as smp_submit,
         )
         updated = smp_submit(state.pending_challenge, choice_id)
@@ -295,8 +317,12 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
     if state.pending_challenge.kind == "heart_rate":
         from src.game.engine.pulse_race import (
             apply_pulse_race_result,
-            has_more_rounds as pulse_has_more,
             score_pulse_race,
+        )
+        from src.game.engine.pulse_race import (
+            has_more_rounds as pulse_has_more,
+        )
+        from src.game.engine.pulse_race import (
             submit_choice as pulse_submit,
         )
         updated = pulse_submit(state.pending_challenge, choice_id)

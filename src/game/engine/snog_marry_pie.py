@@ -1,8 +1,8 @@
 """Kiss Wed Pass (snog_marry_pie) minigame.
 
-Three rounds — snog, marry, pie. Each round narrows the pool by one. Targets
+Three rounds: kiss, wed, pass. Each round narrows the pool by one. Targets
 are chosen from current relationship state: partner, top-chemistry non-partner,
-lowest-affection non-partner. Pie-partner is the season-defining self-destruct.
+lowest-affection non-partner. Passing the partner is the self-destruct choice.
 
 See ``docs/minigames/snog-marry-pie.md``.
 """
@@ -10,15 +10,19 @@ See ``docs/minigames/snog-marry-pie.md``.
 from __future__ import annotations
 
 from src.game.content.minigame_balance import load_minigame_balance
-from src.game.engine.challenges import apply_recovery_floor
 from src.game.engine.audience import player_couple
+from src.game.engine.challenges import apply_recovery_floor
 from src.game.engine.state_access import apply_relationship_delta, find_islander
 from src.game.state.event_models import Challenge, MinigameChoice, MinigameReveal, MinigameRound
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
-
-LABELS = ["snog", "marry", "pie"]
+LABELS = ["kiss", "wed", "pass"]
+BALANCE_LABELS = {
+    "kiss": "snog",
+    "wed": "marry",
+    "pass": "pie",
+}
 
 
 def _partner_id(state: GameState) -> str | None:
@@ -73,23 +77,22 @@ def build_rounds(state: GameState, rng: SeededRng) -> list[MinigameRound]:
     # We do NOT shrink the pool inside build_rounds because the engine builds
     # one MinigameRound per label; pool-shrinking happens at submit_choice
     # time by re-emitting available choices from the remaining pool.
-    target_roles = {tid: role for tid, role in targets}
     label_stems: dict[str, str] = {
         "kiss": (
             "Kiss Wed Pass time. The cast is laid out shoulder-to-shoulder on the "
             "firepit benches. The producer hands you three name cards from the "
-            "Heartbreaker pool — you have to use each card exactly once. The "
-            "rest of the villa watches every pick. First card: **kiss**. Of "
+            "Heartbreaker pool. You have to use each card exactly once. The "
+            "rest of the villa watches every pick. First card: Kiss. Of "
             "these three, who do you walk over and kiss?"
         ),
         "wed": (
             "Two cards left. You already used your kiss. Same Heartbreakers in "
-            "front of you, same audience. Second card: **wed**. Which of the "
+            "front of you, same audience. Second card: Wed. Which of the "
             "remaining two are you committing to, real-relationship?"
         ),
         "pass": (
             "Last card. One Heartbreaker left from your three. The cast knows "
-            "what's coming. The producer hands you the **pass** card — give it "
+            "what's coming. The producer hands you the Pass card. Give it "
             "to the only person you haven't picked yet."
         ),
     }
@@ -99,7 +102,7 @@ def build_rounds(state: GameState, rng: SeededRng) -> list[MinigameRound]:
                 id=f"target_{tid}",
                 label=find_islander(state, tid).name,
                 fact_value=tid,
-                is_correct=True,  # all picks are 'legal' — scoring varies
+                is_correct=True,  # all picks are legal; scoring varies
                 distractor_source="generator",
             )
             for tid, _ in targets
@@ -157,26 +160,32 @@ def _role_for(state: GameState, target_id: str) -> str:
     return "friend"
 
 
+def _chosen_target_id(round_: MinigameRound) -> str:
+    if round_.chosen_id is None:
+        raise ValueError("round has no chosen target")
+    target_id = next((choice.fact_value for choice in round_.choices if choice.id == round_.chosen_id), None)
+    if target_id is None:
+        raise ValueError(f"round choice has no target: {round_.chosen_id}")
+    return target_id
+
+
 def score_snog_marry_pie(state: GameState, challenge: Challenge) -> Challenge:
     bal = load_minigame_balance().snog_marry_pie
     p = bal.per_round_points
     total = 0
     new_rounds: list[MinigameRound] = []
-    pie_partner = False
-    pie_friend = False
+    passed_partner = False
     for r in challenge.rounds:
         label = LABELS[r.index]
         if r.chosen_id is None:
             new_rounds.append(r.model_copy(update={"points": 0}))
             continue
-        target_id = next(c.fact_value for c in r.choices if c.id == r.chosen_id)
+        target_id = _chosen_target_id(r)
         role = _role_for(state, target_id)
-        key = f"{label}_{role}"
+        key = f"{BALANCE_LABELS[label]}_{role}"
         pts = getattr(p, key, 0)
-        if label == "pie" and role == "partner":
-            pie_partner = True
-        if label == "pie" and role in {"friend"}:
-            pie_friend = True
+        if label == "pass" and role == "partner":
+            passed_partner = True
         total += pts
         new_rounds.append(r.model_copy(update={"points": pts}))
     if total >= bal.thresholds.success:
@@ -186,7 +195,7 @@ def score_snog_marry_pie(state: GameState, challenge: Challenge) -> Challenge:
     else:
         classification = "failure"
     audience = getattr(bal.audience, classification)
-    if pie_partner:
+    if passed_partner:
         audience += bal.audience.pie_partner_extra
     audience = apply_recovery_floor(state, audience, classification)
     return challenge.model_copy(
@@ -205,15 +214,15 @@ def apply_snog_marry_pie_result(state: GameState, challenge: Challenge) -> Chall
     for r in challenge.rounds:
         if r.chosen_id is None:
             continue
-        target_id = next(c.fact_value for c in r.choices if c.id == r.chosen_id)
+        target_id = _chosen_target_id(r)
         label = LABELS[r.index]
         role = _role_for(state, target_id)
         target = find_islander(state, target_id)
-        if label == "snog":
+        if label == "kiss":
             delta = RelationshipDelta(chemistry=3)
-        elif label == "marry":
+        elif label == "wed":
             delta = RelationshipDelta(affection=2, trust=2)
-        else:  # pie
+        else:  # pass
             if role == "partner":
                 delta = RelationshipDelta(affection=-5, trust=-5)
             elif role == "rival":
@@ -233,4 +242,8 @@ def apply_snog_marry_pie_result(state: GameState, challenge: Challenge) -> Chall
     state.player.public_perception = max(
         0, min(100, state.player.public_perception + challenge.audience_delta)
     )
-    return challenge.model_copy(update={"deltas": deltas, "participants": ["player", _partner_id(state) or ""]})
+    participants = ["player"]
+    partner = _partner_id(state)
+    if partner is not None:
+        participants.append(partner)
+    return challenge.model_copy(update={"deltas": deltas, "participants": participants})

@@ -71,10 +71,17 @@ export function ChoiceMenu({ actions, locked, onChoose }: Props) {
         }
         @media (max-width: 700px) {
           .choice-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+          .choice-card { min-height: 86px; padding: 10px 11px 12px; }
+          .choice-label { font-size: 14px; }
         }
         @media (max-width: 480px) {
           .choice-row { grid-template-columns: 1fr 1fr; gap: 6px; }
           .choice-stage { padding: 10px 10px 14px; }
+        }
+        @media (max-height: 720px) {
+          .choice-stage { max-height: min(30vh, 220px); padding: 10px 14px 14px; }
+          .choice-card { min-height: 78px; gap: 6px; }
+          .choice-top { min-height: 0; }
         }
         .choice-card {
           position: relative;

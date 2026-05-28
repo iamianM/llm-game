@@ -12,6 +12,7 @@ Orchestrator; memory extraction comes from the Curator.
 from __future__ import annotations
 
 import asyncio
+import os
 import re
 from collections.abc import Callable
 from functools import cached_property
@@ -36,8 +37,7 @@ BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
 # Background NPC-NPC chitchat is texture, not a player-facing scene. Default
 # to low reasoning effort so multiple parallel bg calls per turn don't add
 # 30s of latency.
-import os as _os
-BACKGROUND_DIALOGUE_REASONING_EFFORT = _os.environ.get(
+BACKGROUND_DIALOGUE_REASONING_EFFORT = os.environ.get(
     "LLM_BACKGROUND_DIALOGUE_REASONING_EFFORT", "low"
 )
 BACKGROUND_DIALOGUE_PROMPT = "src/game/agents/prompts/background_dialogue.md"

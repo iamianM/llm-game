@@ -19,6 +19,12 @@ const CHARACTER_IMAGE: Record<string, string> = {
   marcus_start: "/images/characters/marcus_start.webp",
   blake_start: "/images/characters/blake_start.webp",
   jordan_start: "/images/characters/jordan_start.webp",
+  blake: "/images/characters/blake_start.webp",
+  jordan: "/images/characters/jordan_start.webp",
+  marcus: "/images/characters/marcus_start.webp",
+  sophie: "/images/characters/sophie_start.webp",
+  zara: "/images/characters/talia_ht.webp",
+  nia: "/images/characters/nia_start.webp",
   sam_ht: "/images/characters/sam_ht.webp",
   riley_ht: "/images/characters/riley_ht.webp",
   ellis_ht: "/images/characters/ellis_ht.webp",
@@ -61,7 +67,7 @@ export function CastRing({ state, narration, speakerName }: Props) {
     <div className="cast-ring" data-testid="cast-ring">
       <div className="standee-row" role="list" aria-label="Heartbreakers in the scene">
         {/*
-          The player is the camera/viewer — they don't need their own tile
+          The player is the camera/viewer, so they don't need their own tile
           standing in the firepit. The lineup is who YOU are looking at.
           We keep the archetype image computation around since it's the
           fallback if we ever need a player avatar elsewhere.
@@ -268,7 +274,7 @@ function NarrationScroll({ text }: { text: string | null }) {
   if (!display) {
     return (
       <div className="narration-empty">
-        <p>Listen to the room — pick a Heartbreaker to talk to, move villas, or let the producers move the day.</p>
+        <p>Listen to the room. Pick a Heartbreaker to talk to, move villas, or let the producers move the day.</p>
         <style jsx>{`
           .narration-empty {
             display: grid; place-items: center;

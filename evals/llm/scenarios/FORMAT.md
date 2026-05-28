@@ -113,6 +113,8 @@ vocabulary (per ENGINEERING.md R7 and R18).
 - **Engine state:**
   - `pending_gather_waiting` — `state.pending_gather` is set.
   - `challenge_resolved` — pending challenge has a result.
+  - `challenge_cleared` — a resolved challenge no longer owns the playable
+    surface after its wrap turn.
   - `casa_active` — Flush of Hearts is active.
   - `run_outcome_present` — final outcome is set.
   - `location_is:<id>` — player location matches.

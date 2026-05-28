@@ -23,7 +23,6 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 from src.api.checkpoints import (
-    CheckpointSummary,
     list_checkpoints,
     load_named_checkpoint_payload,
 )
@@ -78,6 +77,10 @@ app.add_middleware(
         "http://localhost:3002",
         "http://127.0.0.1:3002",
     ],
+    allow_origin_regex=os.environ.get(
+        "PARADISE_ALLOWED_ORIGIN_REGEX",
+        r"^http://(localhost|127\.0\.0\.1|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\.\d{1,3}\.\d{1,3}|[a-zA-Z0-9.-]+\.ts\.net):\d+$",
+    ),
     allow_methods=["*"],
     allow_headers=["*"],
 )

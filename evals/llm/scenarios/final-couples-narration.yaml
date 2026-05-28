@@ -90,3 +90,12 @@ turns:
           The narrator does not invent a different classification,
           different audience delta, or a relationship outcome not in
           the engine record.
+  - id: post-final-wrap-breath
+    action: { kind: ambient, target_id: ambient_wait }
+    golden: >
+      The resolved finale challenge leaves the playable surface after
+      its wrap; the next turn should feel like forward villa pacing, not
+      a replay of the challenge result.
+    checks:
+      - challenge_cleared
+      - no_exchange

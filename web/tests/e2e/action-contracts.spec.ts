@@ -114,6 +114,62 @@ test("challenge overlays use challenge titles without showing stale pairings", a
   await expect(page.getByTestId("pairing-list")).toHaveCount(0);
 });
 
+test("public first screens do not expose development controls", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByText("MVP build")).toHaveCount(0);
+  await expect(page.getByText("Phase 4")).toHaveCount(0);
+
+  await page.goto("/new-run");
+  await expect(page.getByText("Test mode")).toHaveCount(0);
+  await expect(page.getByText("Real mode")).toHaveCount(0);
+  await expect(page.getByText("Resume from a saved point")).toHaveCount(0);
+});
+
+test("challenge spectacle keeps choices usable on a short viewport", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await installSession(
+    page,
+    fakeState({
+      pending_challenge: {
+        kind: "heart_rate",
+        finished: false,
+        round_index: 1,
+        round_count: 3,
+        stem: "Whose pulse jumps when you walk past?",
+        target_id: "liam",
+        answered_rounds: [
+          {
+            round_index: 0,
+            stem: "First walkout",
+            chosen_label: "Liam",
+            correct_label: "Liam",
+            is_correct: true,
+            points: 3,
+            reaction_line: "The villa notices."
+          }
+        ]
+      }
+    }),
+    [action("challenge_response", "Hold Liam's gaze", "liam")],
+  );
+
+  await page.goto(`/play/${SESSION_ID}`);
+
+  await expect(page.getByTestId("challenge-spectacle")).toBeVisible();
+  await expect(page.getByTestId("choice-menu")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Hold Liam's gaze" })).toBeVisible();
+});
+
+test("finale screen avoids placeholder copy", async ({ page }) => {
+  await installSession(page, fakeState({ outcome: "runner_up_couple" }), []);
+
+  await page.goto(`/play/${SESSION_ID}/finale`);
+
+  await expect(page.getByRole("heading", { name: "You made the final two" })).toBeVisible();
+  await expect(page.getByText("next build")).toHaveCount(0);
+  await expect(page.getByText("Phase 4")).toHaveCount(0);
+});
+
 async function installSession(page: Page, state: Record<string, unknown>, actions: Array<Record<string, unknown>>) {
   await page.addInitScript(
     ({ sessionId, persisted }) => {

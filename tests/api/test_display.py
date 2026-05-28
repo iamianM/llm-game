@@ -4,11 +4,19 @@ from __future__ import annotations
 
 import pytest
 
+from src.api.checkpoints import _humanize
 from src.api.display import display
 from src.api.serializers import action_label, available_actions_api, hide_redundant_hint, memory_api
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction
 from src.game.engine.memory import create_memory
-from src.game.state.models import Conversation, FollowUpMenu, FollowUpOption, new_game
+from src.game.state.models import (
+    Conversation,
+    FollowUpMenu,
+    FollowUpOption,
+    Location,
+    PendingGather,
+    new_game,
+)
 
 
 def test_display_translates_protected_terms() -> None:
@@ -101,6 +109,28 @@ def test_action_label_falls_back_to_spec_label_for_unmatched_branches() -> None:
     )
 
     assert action_label(state, spec) == "Wait by the pool"
+
+
+def test_join_gather_action_label_is_player_facing() -> None:
+    state = new_game(1)
+    state.pending_gather = PendingGather(
+        kind="casa_announce",
+        event_id="casa_amor_announce",
+        gather_location=Location.FIREPIT,
+        fires_on_turn=state.turn_index,
+    )
+    spec = ActionSpec(
+        action=PlayerAction(kind=ActionKind.JOIN_GATHER),
+        label="fallback",
+    )
+
+    assert action_label(state, spec) == "Join everyone at Firepit"
+
+
+def test_checkpoint_labels_hide_engine_event_names() -> None:
+    assert _humanize("day3-recoupling-ceremony") == "Day 3 Pairing Ceremony"
+    assert _humanize("day4-casa-amor-announce") == "Day 4 Flush of Hearts Announce"
+    assert _humanize("day1-pre-compatibility-quiz") == "Day 1 Before Compatibility Quiz"
 
 
 def test_hide_redundant_hint_drops_both_pinned_ends() -> None:

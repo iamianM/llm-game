@@ -79,7 +79,7 @@ def test_bombshell_arrival_is_idempotent() -> None:
 def test_recoupling_pick_surfaces_eligible_partners() -> None:
     """When a recoupling gather is pending, the action menu offers partner picks."""
     from src.game.engine.actions import available_actions
-    from src.game.state.models import PendingGather, Location
+    from src.game.state.models import Location, PendingGather
 
     state = new_game(2)
     state.day = 3
@@ -110,7 +110,7 @@ def test_recoupling_pick_surfaces_eligible_partners() -> None:
 def test_recoupling_pick_applies_player_choice() -> None:
     """Applying a RECOUPLE during a pending recoupling gather resolves it."""
     from src.game.engine.turn import run_turn
-    from src.game.state.models import PendingGather, Location
+    from src.game.state.models import Location, PendingGather
 
     state = new_game(2)
     state.day = 3

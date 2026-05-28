@@ -11,6 +11,7 @@ not mutate GameState; engine/villa.py validates and applies the commit.
 
 from __future__ import annotations
 
+import os
 from collections.abc import Callable
 from functools import cached_property
 from pathlib import Path
@@ -35,8 +36,7 @@ VILLA_ORCHESTRATOR_MODEL = GAME_AGENT_MODEL
 # Background villa life — movement / interruption decisions — doesn't need
 # the deep chain-of-thought the player-facing dialogue agents do. Default to
 # low effort so each turn doesn't carry 15-30s of orchestrator latency.
-import os as _os
-VILLA_ORCHESTRATOR_REASONING_EFFORT = _os.environ.get(
+VILLA_ORCHESTRATOR_REASONING_EFFORT = os.environ.get(
     "LLM_VILLA_ORCHESTRATOR_REASONING_EFFORT", "low"
 )
 VILLA_ORCHESTRATOR_PROMPT = "src/game/agents/prompts/villa_orchestrator.md"

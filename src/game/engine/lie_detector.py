@@ -10,6 +10,8 @@ See ``docs/minigames/lie-detector.md``.
 
 from __future__ import annotations
 
+from typing import TypedDict
+
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
@@ -23,8 +25,14 @@ from src.game.state.event_models import (
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
-
 ROUNDS = 5
+
+
+class LieEvent(TypedDict):
+    prompt: str
+    truth: str
+    severity: str
+    visibility: int
 
 
 def _partner_id(state: GameState) -> str | None:
@@ -34,13 +42,13 @@ def _partner_id(state: GameState) -> str | None:
     return couple.partner_b_id if couple.partner_a_id == "player" else couple.partner_a_id
 
 
-def _event_truths(state: GameState) -> list[dict[str, object]]:
+def _event_truths(state: GameState) -> list[LieEvent]:
     """Synthesise the season's lie-worthy events from explicit state.
 
     Each entry is a dict with a prompt, the truthful answer, severity, and a
     visibility score (0..100) used by the detection model.
     """
-    entries: list[dict[str, object]] = []
+    entries: list[LieEvent] = []
     partner = _partner_id(state)
     # 1. Hideaway: was anyone else in the hideaway?
     used = state.hideaway.used_on_day is not None
@@ -117,10 +125,10 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         # even to a player who's never seen the show.
         if index == 0:
             scene = (
-                "The cast files into the firepit pit area for the Lie Detector. "
+                "The cast files into the firepit for the Lie Detector. "
                 "Every Heartbreaker straps a sensor pad to two fingers and the "
                 f"big screen lights up next to {partner_name}. You're in the hot "
-                "seat — the host reads a question and you pick how you answer. "
+                "seat. The host reads a question and you pick how you answer. "
                 "Truth, soft spin, or outright lie. The needle decides what the "
                 "villa believes."
             )
@@ -188,7 +196,8 @@ def score_lie_detector(state: GameState, challenge: Challenge) -> Challenge:
     for r in challenge.rounds:
         chosen = next((c for c in r.choices if c.id == r.chosen_id), None)
         if chosen is None:
-            new_rounds.append(r); continue
+            new_rounds.append(r)
+            continue
         # Extract event visibility from reveals
         visibility = 30
         severity = "low"

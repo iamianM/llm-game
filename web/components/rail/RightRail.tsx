@@ -92,6 +92,21 @@ export function RightRail({ state, open, sessionId, onClose }: Props) {
           display: grid;
           gap: 14px;
         }
+        @media (max-width: 720px) {
+          .rail {
+            left: 0;
+            width: 100vw;
+            border-left: 0;
+            border-top: 1px solid rgba(217,167,58,.28);
+            transform: translateY(100%);
+          }
+          .rail.is-open { transform: translateY(0); }
+          .rail-head { padding: 14px 16px 12px; }
+          .rail-body {
+            padding: 12px 12px 40px;
+            gap: 10px;
+          }
+        }
       `}</style>
     </>
   );

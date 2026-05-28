@@ -118,6 +118,8 @@ def run_turn(
         return turn
 
     starting_day = state.day
+    if action.kind is not ActionKind.CHALLENGE_RESPONSE:
+        _clear_resolved_challenge_after_wrap(state)
     pre_curator_batches: list[MemoryBatch] = []
     pull_attempt: PullAttempt | None = None
     exchange: Exchange | None = None
@@ -422,3 +424,9 @@ def _is_wheel_exit(result: MechanicalResult) -> bool:
         result.action.kind is ActionKind.RESPOND_WITH
         and result.action.intent_id in EXIT_INTENT_KINDS
     )
+
+
+def _clear_resolved_challenge_after_wrap(state: GameState) -> None:
+    challenge = state.pending_challenge
+    if challenge is not None and challenge.result is not None:
+        state.pending_challenge = None

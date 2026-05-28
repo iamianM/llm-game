@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 90_000,
   expect: { timeout: 10_000 },
   use: {
-    baseURL: "http://127.0.0.1:3001",
+    baseURL: "http://127.0.0.1:3210",
     trace: "retain-on-failure"
   },
   webServer: [
@@ -17,8 +17,8 @@ export default defineConfig({
       timeout: 120_000
     },
     {
-      command: "npm run dev -- --hostname 127.0.0.1 --port 3001",
-      url: "http://127.0.0.1:3001",
+      command: "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$env:NEXT_DIST_DIR='.next-playwright'; npm run dev -- --hostname 127.0.0.1 --port 3210\"",
+      url: "http://127.0.0.1:3210",
       reuseExistingServer: true,
       timeout: 120_000
     }

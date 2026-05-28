@@ -13,6 +13,12 @@ const IMAGE_BY_ID: Record<string, string> = {
   marcus_start: "/images/characters/marcus_start.webp",
   blake_start: "/images/characters/blake_start.webp",
   jordan_start: "/images/characters/jordan_start.webp",
+  blake: "/images/characters/blake_start.webp",
+  jordan: "/images/characters/jordan_start.webp",
+  marcus: "/images/characters/marcus_start.webp",
+  sophie: "/images/characters/sophie_start.webp",
+  zara: "/images/characters/talia_ht.webp",
+  nia: "/images/characters/nia_start.webp",
   sam_ht: "/images/characters/sam_ht.webp",
   riley_ht: "/images/characters/riley_ht.webp",
   ellis_ht: "/images/characters/ellis_ht.webp",
@@ -72,7 +78,7 @@ function imageSizes(size: Size) {
 
 function initials(name: string) {
   if (name.toLowerCase() === "you") return "You";
-  return name.split(/\s+/).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
+  return name.trim().split(" ").filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase();
 }
 
 function hash(value: string) {

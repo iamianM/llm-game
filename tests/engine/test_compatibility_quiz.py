@@ -6,8 +6,8 @@ import pytest
 
 from src.game.content.minigame_balance import load_minigame_balance, reset_balance_cache
 from src.game.engine.challenges import (
-    MinigameKind,
     ROUND_BASED_MINIGAMES,
+    MinigameKind,
     apply_recovery_floor,
     schedule_challenge,
 )

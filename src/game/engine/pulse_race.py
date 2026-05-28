@@ -10,8 +10,8 @@ See ``docs/minigames/heart-rate.md`` and ``docs/minigame-system.md``.
 from __future__ import annotations
 
 from src.game.content.minigame_balance import load_minigame_balance
-from src.game.engine.challenges import apply_recovery_floor
 from src.game.engine.audience import player_couple
+from src.game.engine.challenges import apply_recovery_floor
 from src.game.engine.state_access import apply_relationship_delta, find_islander
 from src.game.state.event_models import (
     Challenge,
@@ -21,7 +21,6 @@ from src.game.state.event_models import (
 )
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
-
 
 CHEMISTRY_KNOWN_THRESHOLD = 50  # write KnownFact when chemistry >= this
 

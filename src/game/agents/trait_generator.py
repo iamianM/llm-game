@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections.abc import Iterable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -204,39 +205,38 @@ def mock_opening_trait_cards() -> dict[str, TraitCard]:
 # appear as multiple-choice quiz options so cards read as parallel nouns
 # instead of half-sentences. The patterns match a leading space + the
 # descriptor anywhere at the end of the value.
-import re as _re
-_VALUE_TRAIL_PATTERNS: tuple[_re.Pattern[str], ...] = (
-    _re.compile(r"\s+(?:every time|every single time|each time)\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+(?:always|deliberately|on purpose|absolutely|honestly)\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+(?:for hours|for ages|all night|all day|all the time)\.?$", _re.IGNORECASE),
-    _re.compile(
+_VALUE_TRAIL_PATTERNS: tuple[re.Pattern[str], ...] = (
+    re.compile(r"\s+(?:every time|every single time|each time)\.?$", re.IGNORECASE),
+    re.compile(r"\s+(?:always|deliberately|on purpose|absolutely|honestly)\.?$", re.IGNORECASE),
+    re.compile(r"\s+(?:for hours|for ages|all night|all day|all the time)\.?$", re.IGNORECASE),
+    re.compile(
         r"\s+when\s+(?:no\s+one|nobody|she|he|they|everyone\s+else|the\s+camera|nobody'?s?)\s+(?:is\s+)?(?:looking|watching|home|asleep|around|alone|sleeps)\.?$",
-        _re.IGNORECASE,
+        re.IGNORECASE,
     ),
-    _re.compile(r"\s+(?:sung|sang|played|performed)\s+\w[\w\s]*\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+with improvised crowd work\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+deliberately\s+\w[\w\s]*\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+half a beat\s+(?:late|early|behind)\.?$", _re.IGNORECASE),
-    _re.compile(r"\s+a beat (?:late|early)\.?$", _re.IGNORECASE),
+    re.compile(r"\s+(?:sung|sang|played|performed)\s+\w[\w\s]*\.?$", re.IGNORECASE),
+    re.compile(r"\s+with improvised crowd work\.?$", re.IGNORECASE),
+    re.compile(r"\s+deliberately\s+\w[\w\s]*\.?$", re.IGNORECASE),
+    re.compile(r"\s+half a beat\s+(?:late|early|behind)\.?$", re.IGNORECASE),
+    re.compile(r"\s+a beat (?:late|early)\.?$", re.IGNORECASE),
     # "X too much/often/loudly" trailing modifier on otherwise-OK noun.
     # Combines the optional "that" relative connector so "westerns that he
     # repeats too much" -> "westerns" in one pass.
-    _re.compile(
+    re.compile(
         r"\s+(?:that\s+)?(?:he|she|they|him|her|them|i)\s+\w[\w\s']*?\s+too\s+(?:much|often|loudly)\.?$",
-        _re.IGNORECASE,
+        re.IGNORECASE,
     ),
     # "X that he/she does Y" relative clause trailing onto a noun.
-    _re.compile(r"\s+that\s+(?:he|she|they)\s+\w[\w\s']*\.?$", _re.IGNORECASE),
+    re.compile(r"\s+that\s+(?:he|she|they)\s+\w[\w\s']*\.?$", re.IGNORECASE),
     # "X because Y" causal clause trailing onto an answer noun. Strips
     # things like "Grand Designs because disaster has a schedule" -> "Grand
     # Designs" so quiz options stay parallel.
-    _re.compile(r"\s+because\s+\w[\w\s',\.\-']*\.?$", _re.IGNORECASE),
+    re.compile(r"\s+because\s+\w[\w\s',\.\-']*\.?$", re.IGNORECASE),
     # "X but Y" / "X but you know what" trailing reservation.
-    _re.compile(r"\s+but\s+\w[\w\s',\.\-']*\.?$", _re.IGNORECASE),
+    re.compile(r"\s+but\s+\w[\w\s',\.\-']*\.?$", re.IGNORECASE),
     # "X for the X-th time" / "X for ages" trailing duration.
-    _re.compile(r"\s+for\s+the\s+\w[\w\s']*\s+time\.?$", _re.IGNORECASE),
+    re.compile(r"\s+for\s+the\s+\w[\w\s']*\s+time\.?$", re.IGNORECASE),
     # Trailing parenthetical aside, kept simple for one level of nesting.
-    _re.compile(r"\s*\([^)]+\)\.?$"),
+    re.compile(r"\s*\([^)]+\)\.?$"),
 )
 
 
@@ -252,14 +252,14 @@ def _clean_trait_value(value: str) -> str:
     return cleaned or value.strip()
 
 
-_MALE_PRONOUN_RE = _re.compile(r"\b(?:his|him|he'?s?|himself)\b", _re.IGNORECASE)
-_FEMALE_PRONOUN_RE = _re.compile(r"\b(?:her|hers|she'?s?|herself)\b", _re.IGNORECASE)
+_MALE_PRONOUN_RE = re.compile(r"\b(?:his|him|he'?s?|himself)\b", re.IGNORECASE)
+_FEMALE_PRONOUN_RE = re.compile(r"\b(?:her|hers|she'?s?|herself)\b", re.IGNORECASE)
 # Strip "from his/her/their X's Y" possessive tails — common when the model
 # bakes a personal relationship into the value, which would mis-gender or
 # mis-attribute when surfaced as another islander's distractor.
-_POSSESSIVE_TAIL_RE = _re.compile(
+_POSSESSIVE_TAIL_RE = re.compile(
     r"\s+(?:from\s+)?(?:his|her|their)\s+(?:dad|mum|mom|grandfather|grandmother|nan|gran|sister|brother|ex|first\s+class)\b[\w\s']*\.?$",
-    _re.IGNORECASE,
+    re.IGNORECASE,
 )
 
 

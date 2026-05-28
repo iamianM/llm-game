@@ -413,7 +413,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 0,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "You learned the basics while coupling with Chloe."
         },
         "maya.age": {
@@ -423,7 +423,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 24,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Maya told you during Day One introductions."
         },
         "maya.hometown": {
@@ -433,7 +433,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 24,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Maya told you during Day One introductions."
         },
         "maya.occupation": {
@@ -443,7 +443,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 24,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Maya told you during Day One introductions."
         },
         "liam.age": {
@@ -453,7 +453,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 25,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Liam told you during Day One introductions."
         },
         "liam.hometown": {
@@ -463,7 +463,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 25,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Liam told you during Day One introductions."
         },
         "liam.occupation": {
@@ -473,7 +473,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 25,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Liam told you during Day One introductions."
         },
         "sophie_start.age": {
@@ -483,7 +483,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 26,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Sophie told you during Day One introductions."
         },
         "sophie_start.hometown": {
@@ -493,7 +493,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 26,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Sophie told you during Day One introductions."
         },
         "sophie_start.occupation": {
@@ -503,7 +503,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 26,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Sophie told you during Day One introductions."
         },
         "nia_start.age": {
@@ -513,7 +513,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 27,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Nia told you during Day One introductions."
         },
         "nia_start.hometown": {
@@ -523,7 +523,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 27,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Nia told you during Day One introductions."
         },
         "nia_start.occupation": {
@@ -533,7 +533,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 27,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Nia told you during Day One introductions."
         },
         "marcus_start.age": {
@@ -543,7 +543,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 28,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Marcus told you during Day One introductions."
         },
         "marcus_start.hometown": {
@@ -553,7 +553,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 28,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Marcus told you during Day One introductions."
         },
         "marcus_start.occupation": {
@@ -563,7 +563,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 28,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Marcus told you during Day One introductions."
         },
         "blake_start.age": {
@@ -573,7 +573,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 29,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Blake told you during Day One introductions."
         },
         "blake_start.hometown": {
@@ -583,7 +583,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 29,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Blake told you during Day One introductions."
         },
         "blake_start.occupation": {
@@ -593,7 +593,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 29,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Blake told you during Day One introductions."
         },
         "jordan_start.age": {
@@ -603,7 +603,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 30,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Jordan told you during Day One introductions."
         },
         "jordan_start.hometown": {
@@ -613,7 +613,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 30,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Jordan told you during Day One introductions."
         },
         "jordan_start.occupation": {
@@ -623,7 +623,7 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 30,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "Jordan told you during Day One introductions."
         },
         "chloe.drink_of_choice": {
@@ -633,7 +633,7 @@
           "source_npc_id": "chloe",
           "learned_on_day": 1,
           "learned_on_turn": 35,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "compatibility_quiz day 1"
         },
         "chloe.favorite_food": {
@@ -653,7 +653,7 @@
           "source_npc_id": "chloe",
           "learned_on_day": 1,
           "learned_on_turn": 35,
-          "confidence": 1.0,
+          "confidence": 1,
           "citation": "compatibility_quiz day 1"
         },
         "chloe.comfort_show": {
@@ -1347,7 +1347,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -1357,7 +1357,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -1367,7 +1367,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -1377,7 +1377,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -1387,7 +1387,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -1397,7 +1397,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -1407,7 +1407,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -1417,7 +1417,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -1427,7 +1427,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -1437,7 +1437,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -1447,7 +1447,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -1457,7 +1457,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -1467,7 +1467,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -1477,7 +1477,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -1487,7 +1487,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -1497,7 +1497,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -1507,7 +1507,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -1517,7 +1517,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -1527,7 +1527,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -1537,7 +1537,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -1547,7 +1547,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -2174,7 +2174,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -2184,7 +2184,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -2194,7 +2194,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "liam.occupation": {
@@ -2204,7 +2204,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -2214,7 +2214,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -2224,7 +2224,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -2234,7 +2234,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -2244,7 +2244,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -2254,7 +2254,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -2264,7 +2264,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -2274,7 +2274,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -2284,7 +2284,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -2294,7 +2294,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -2304,7 +2304,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -2314,7 +2314,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -2324,7 +2324,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -2334,7 +2334,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -2344,7 +2344,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -2354,7 +2354,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -2364,7 +2364,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -2374,7 +2374,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -3001,7 +3001,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -3011,7 +3011,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -3021,7 +3021,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -3031,7 +3031,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -3041,7 +3041,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -3051,7 +3051,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "sophie_start.occupation": {
@@ -3061,7 +3061,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -3071,7 +3071,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -3081,7 +3081,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -3091,7 +3091,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -3101,7 +3101,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -3111,7 +3111,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -3121,7 +3121,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -3131,7 +3131,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -3141,7 +3141,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -3151,7 +3151,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -3161,7 +3161,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -3171,7 +3171,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -3181,7 +3181,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -3191,7 +3191,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -3201,7 +3201,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -3828,7 +3828,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -3838,7 +3838,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -3848,7 +3848,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -3858,7 +3858,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -3868,7 +3868,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -3878,7 +3878,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -3888,7 +3888,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -3898,7 +3898,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -3908,7 +3908,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "nia_start.occupation": {
@@ -3918,7 +3918,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -3928,7 +3928,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -3938,7 +3938,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -3948,7 +3948,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -3958,7 +3958,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -3968,7 +3968,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -3978,7 +3978,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -3988,7 +3988,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -3998,7 +3998,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -4008,7 +4008,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -4018,7 +4018,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -4028,7 +4028,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -4655,7 +4655,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -4665,7 +4665,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -4675,7 +4675,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -4685,7 +4685,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -4695,7 +4695,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -4705,7 +4705,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -4715,7 +4715,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -4725,7 +4725,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -4735,7 +4735,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -4745,7 +4745,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -4755,7 +4755,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -4765,7 +4765,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "marcus_start.occupation": {
@@ -4775,7 +4775,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -4785,7 +4785,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -4795,7 +4795,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -4805,7 +4805,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -4815,7 +4815,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -4825,7 +4825,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -4835,7 +4835,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -4845,7 +4845,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -4855,7 +4855,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -5482,7 +5482,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -5492,7 +5492,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -5502,7 +5502,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -5512,7 +5512,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -5522,7 +5522,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -5532,7 +5532,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -5542,7 +5542,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -5552,7 +5552,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -5562,7 +5562,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -5572,7 +5572,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -5582,7 +5582,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -5592,7 +5592,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -5602,7 +5602,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -5612,7 +5612,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -5622,7 +5622,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "blake_start.occupation": {
@@ -5632,7 +5632,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -5642,7 +5642,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -5652,7 +5652,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -5662,7 +5662,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -5672,7 +5672,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -5682,7 +5682,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -6309,7 +6309,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -6319,7 +6319,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -6329,7 +6329,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -6339,7 +6339,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -6349,7 +6349,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -6359,7 +6359,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -6369,7 +6369,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -6379,7 +6379,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -6389,7 +6389,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -6399,7 +6399,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -6409,7 +6409,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -6419,7 +6419,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -6429,7 +6429,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -6439,7 +6439,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -6449,7 +6449,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -6459,7 +6459,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -6469,7 +6469,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -6479,7 +6479,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "jordan_start.occupation": {
@@ -6489,7 +6489,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -6499,7 +6499,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -6509,7 +6509,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -7016,7 +7016,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -7026,7 +7026,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -7036,7 +7036,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -7046,7 +7046,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -7056,7 +7056,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -7066,7 +7066,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -7076,7 +7076,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -7086,7 +7086,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -7096,7 +7096,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -7106,7 +7106,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -7116,7 +7116,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -7126,7 +7126,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -7136,7 +7136,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -7146,7 +7146,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -7156,7 +7156,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -7166,7 +7166,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -7176,7 +7176,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -7186,7 +7186,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -7196,7 +7196,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -7206,7 +7206,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -7216,7 +7216,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1.0,
+            "confidence": 1,
             "citation": "Preseason chatter about Blake"
           }
         }
@@ -9469,7 +9469,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Round 1 of 3: Snog one.",
+          "stem": "Kiss Wed Pass time. The cast is laid out shoulder-to-shoulder on the firepit benches. The producer hands you three name cards from the Heartbreaker pool. You have to use each card exactly once. The rest of the villa watches every pick. First card: Kiss. Of these three, who do you walk over and kiss?",
           "choices": [
             {
               "id": "target_chloe",
@@ -9504,7 +9504,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Round 2 of 3: Marry one.",
+          "stem": "Two cards left. You already used your kiss. Same Heartbreakers in front of you, same audience. Second card: Wed. Which of the remaining two are you committing to, real-relationship?",
           "choices": [
             {
               "id": "target_chloe",
@@ -9539,7 +9539,7 @@
           "trait_key": null,
           "tier": 0,
           "mechanical": false,
-          "stem": "Round 3 of 3: Pie one.",
+          "stem": "Last card. One Heartbreaker left from your three. The cast knows what's coming. The producer hands you the Pass card. Give it to the only person you haven't picked yet.",
           "choices": [
             {
               "id": "target_chloe",

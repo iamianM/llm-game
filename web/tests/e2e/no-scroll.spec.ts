@@ -31,7 +31,6 @@ test("new-run fits viewport without scroll", async ({ page }) => {
 
 test("stage fits viewport without scroll", async ({ page }) => {
   await page.goto("/new-run");
-  await page.getByRole("button", { name: "Test mode" }).click();
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await expect(page.getByTestId("choice-menu").or(page.getByText("Day-1 Introductions"))).toBeVisible();
   const m = await bodyScroll(page);

@@ -22,6 +22,7 @@ from src.game.engine.phases import advance_phase
 from src.game.engine.producer_events import producer_text_event_message, schedule_producer_text
 from src.game.state.models import (
     AudienceSnapshot,
+    Challenge,
     GameState,
     Location,
     PendingGather,
@@ -244,8 +245,10 @@ def _event_label(event_id: str) -> str:
 
 
 def _prepare_round_based_minigame(
-    state, challenge, rng,
-):
+    state: GameState,
+    challenge: Challenge,
+    rng: SeededRng,
+) -> Challenge:
     """Build rounds and participants for a round-based minigame.
 
     Currently dispatches only ``compatibility_quiz``; new minigames join the
@@ -262,7 +265,9 @@ def _prepare_round_based_minigame(
             update={"rounds": rounds, "participants": ["player", partner]}
         )
     if challenge.kind == "heart_rate":
-        from src.game.engine.pulse_race import build_rounds as pulse_build, _partner_id as pulse_partner, _surprise_target_id
+        from src.game.engine.pulse_race import _partner_id as pulse_partner
+        from src.game.engine.pulse_race import _surprise_target_id
+        from src.game.engine.pulse_race import build_rounds as pulse_build
         partner = pulse_partner(state) or "chloe"
         rounds = pulse_build(state, partner, rng)
         surprise, _ = _surprise_target_id(state)
@@ -270,25 +275,29 @@ def _prepare_round_based_minigame(
             update={"rounds": rounds, "participants": ["player", surprise or partner]}
         )
     if challenge.kind == "snog_marry_pie":
-        from src.game.engine.snog_marry_pie import build_rounds as smp_build, _partner_id as smp_partner
+        from src.game.engine.snog_marry_pie import _partner_id as smp_partner
+        from src.game.engine.snog_marry_pie import build_rounds as smp_build
         rounds = smp_build(state, rng)
         return challenge.model_copy(
             update={"rounds": rounds, "participants": ["player", smp_partner(state) or ""]}
         )
     if challenge.kind == "mr_and_mrs":
-        from src.game.engine.mr_and_mrs import build_rounds as mam_build, _partner_id as mam_partner
+        from src.game.engine.mr_and_mrs import _partner_id as mam_partner
+        from src.game.engine.mr_and_mrs import build_rounds as mam_build
         from src.game.engine.question_bank import ensure_question_bank
         ensure_question_bank(state)
         partner = mam_partner(state) or "chloe"
         rounds = mam_build(state, partner, rng)
         return challenge.model_copy(update={"rounds": rounds, "participants": ["player", partner]})
     if challenge.kind == "lie_detector":
-        from src.game.engine.lie_detector import build_rounds as ld_build, _partner_id as ld_partner
+        from src.game.engine.lie_detector import _partner_id as ld_partner
+        from src.game.engine.lie_detector import build_rounds as ld_build
         partner = ld_partner(state) or "chloe"
         rounds = ld_build(state, partner, rng)
         return challenge.model_copy(update={"rounds": rounds, "participants": ["player", partner]})
     if challenge.kind == "final_couples":
-        from src.game.engine.final_couples import build_rounds as fc_build, _partner_id as fc_partner
+        from src.game.engine.final_couples import _partner_id as fc_partner
+        from src.game.engine.final_couples import build_rounds as fc_build
         from src.game.engine.question_bank import ensure_question_bank
         ensure_question_bank(state)
         partner = fc_partner(state) or "chloe"

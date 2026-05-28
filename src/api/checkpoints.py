@@ -3,7 +3,7 @@
 Surfaces both the bundled `data/checkpoints/*.json` demo set (which ships
 with the lambda) and any locally-saved `.game_saves/named/*.json` (which
 only exist in the developer's working tree). Both must be at the current
-`SCHEMA_VERSION` to be returnable — stale checkpoints are filtered out so
+`SCHEMA_VERSION` to be returnable. Stale checkpoints are filtered out so
 the UI never offers a load that's going to crash.
 """
 
@@ -12,7 +12,6 @@ from __future__ import annotations
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 from src.game.state.models import SCHEMA_VERSION
 
@@ -110,14 +109,24 @@ def _summarize(path: Path, source: str) -> CheckpointSummary | None:
 
 def _humanize(slug: str) -> str:
     import re
-    # Split CamelCase, snake_case, kebab-case, AND alpha/digit boundaries —
+    # Split CamelCase, snake_case, kebab-case, and alpha/digit boundaries:
     # "day1-end-with-chloe" -> "Day 1 End With Chloe", "playtest_bravo_day3"
     # -> "Playtest Bravo Day 3".
     normalized = slug.replace("_", "-")
     spaced = re.sub(r"([a-zA-Z])(\d)", r"\1 \2", normalized)
     spaced = re.sub(r"(\d)([a-zA-Z])", r"\1 \2", spaced)
     parts = [part for part in spaced.split("-") if part]
-    return " ".join(part.capitalize() for part in parts)
+    label = " ".join(part.capitalize() for part in parts)
+    # Whole-word terminology pass: avoids mangling slugs like "Prelude"/"Casarica".
+    replacements = {
+        r"\bCasa Amor\b": "Flush of Hearts",
+        r"\bCasa\b": "Flush of Hearts",
+        r"\bRecoupling\b": "Pairing",
+        r"\bPre\b": "Before",
+    }
+    for pattern, new in replacements.items():
+        label = re.sub(pattern, new, label)
+    return label
 
 
 __all__ = (

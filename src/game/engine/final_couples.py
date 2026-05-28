@@ -11,9 +11,7 @@ from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
 from src.game.engine.state_access import apply_relationship_delta, find_islander
-from src.game.state.event_models import (
-    Challenge, MinigameChoice, MinigameReveal, MinigameRound, QuestionBankPrompt,
-)
+from src.game.state.event_models import Challenge, MinigameChoice, MinigameReveal, MinigameRound
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -46,8 +44,8 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             trait_key=knowledge_prompt.trait_key, tier=knowledge_prompt.tier, mechanical=knowledge_prompt.mechanical,
             stem=(
                 "The Final Couples Challenge starts at the firepit. The host walks "
-                "the surviving couples through five facets — knowledge, chemistry, "
-                "honesty, banter, audacity. Round one: **Knowledge**. The host "
+                "the surviving couples through five facets: knowledge, chemistry, "
+                "honesty, banter, audacity. Round one is Knowledge. The host "
                 f"reads a fact about {partner.name} and you pick the right answer "
                 "from the choices. This is everything you should have learned this "
                 f"season. {knowledge_prompt.stem}"
@@ -58,12 +56,12 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
     rounds.append(MinigameRound(
         index=1, prompt_id="final_chemistry", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
-            "Round two of five: **Chemistry**. The host asks you to point to the "
-            f"single moment that defined you and {partner.name} as a couple — "
+            "Round two of five is Chemistry. The host asks you to point to the "
+            f"single moment that defined you and {partner.name} as a couple: "
             "no committee, no take-back. The room watches you decide."
         ),
         choices=[
-            MinigameChoice(id="chemistry_kiss", label="The kiss after the recoupling.", fact_value="kiss", is_correct=True, distractor_source="generator"),
+            MinigameChoice(id="chemistry_kiss", label="The kiss after the Pairing Ceremony.", fact_value="kiss", is_correct=True, distractor_source="generator"),
             MinigameChoice(id="chemistry_quiet", label="A quiet morning, just talking.", fact_value="quiet", is_correct=True, distractor_source="generator"),
         ],
         reveals=[MinigameReveal(kind="fact", subject_id=partner_id, payload={"chemistry": chem})],
@@ -71,20 +69,20 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
     rounds.append(MinigameRound(
         index=2, prompt_id="final_honesty", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
-            "Round three: **Honesty**. Microphones are open and the audience is "
+            "Round three is Honesty. Microphones are open and the audience is "
             f"voting at home. The host turns to you: have you been completely "
             f"honest with {partner.name} this whole season?"
         ),
         choices=[
-            MinigameChoice(id="truth", label="Yes — tell the truth.", fact_value="truth", is_correct=True, distractor_source="trait_card"),
-            MinigameChoice(id="lie_mild", label="Soften it — mostly.", fact_value="lie_mild", is_correct=False, distractor_source="lie"),
+            MinigameChoice(id="truth", label="Yes - tell the truth.", fact_value="truth", is_correct=True, distractor_source="trait_card"),
+            MinigameChoice(id="lie_mild", label="Soften it - mostly.", fact_value="lie_mild", is_correct=False, distractor_source="lie"),
             MinigameChoice(id="lie_hard", label="Deny everything.", fact_value="lie_hard", is_correct=False, distractor_source="lie"),
         ],
     ))
     rounds.append(MinigameRound(
         index=3, prompt_id="final_banter", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
-            "Round four: **Banter**. The host plays back three soundbites the "
+            "Round four is Banter. The host plays back three soundbites the "
             f"villa heard from {partner.name} this week and asks which one is "
             "the inside joke only the two of you actually get."
         ),
@@ -100,7 +98,7 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
     rounds.append(MinigameRound(
         index=4, prompt_id="final_audacity", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
-            "Round five — **Audacity**. The producer wheels out a tray of pies "
+            "Round five is Audacity. The producer wheels out a tray of pies "
             "for the season's traditional last laugh. You get exactly one and "
             "you have to pick someone to pie. The room knows everyone you've "
             "ever clashed with this season; the cameras are waiting."

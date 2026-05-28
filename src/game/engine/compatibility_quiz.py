@@ -8,6 +8,9 @@ for this minigame's contract.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from typing import TypeVar
+
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
@@ -19,14 +22,16 @@ from src.game.state.event_models import (
     MinigameRound,
     QuestionBankPrompt,
 )
-from src.game.state.models import GameState, RelationshipDelta
+from src.game.state.models import GameState, IslanderState, RelationshipDelta
 from src.game.state.rng import SeededRng
-from src.game.state.traits import KnownFact, TIER_THRESHOLDS
+from src.game.state.traits import TIER_THRESHOLDS, KnownFact
 
 QUIZ_ROUNDS = 5
 ROUND_KIND = "compatibility_quiz"
+T = TypeVar("T")
 
-def _shuffle_in_place(items: list, rng: SeededRng) -> None:
+
+def _shuffle_in_place(items: list[T], rng: SeededRng) -> None:
     """Deterministic in-place Fisher-Yates shuffle using SeededRng.randint."""
     n = len(items)
     for i in range(n - 1, 0, -1):
@@ -74,7 +79,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
     pool = [p for p in state.question_bank.prompts.get("compatibility_quiz", []) if p.target_id == target_id]
     eligible = [p for p in pool if is_prompt_eligible(state, p)]
 
-    def bucket(predicate):
+    def bucket(predicate: Callable[[QuestionBankPrompt], bool]) -> list[QuestionBankPrompt]:
         items = [p for p in eligible if predicate(p)]
         items.sort(key=lambda p: p.id)
         return items
@@ -140,13 +145,13 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
             for other in same_key_others:
                 if other.correct_value == prompt.correct_value:
                     continue
-                cleaned = _neutralize_for_distractor(
+                cleaned_peer = _neutralize_for_distractor(
                     other.correct_value,
                     target_gender,
                 )
-                if cleaned is None or cleaned in distractors:
+                if cleaned_peer is None or cleaned_peer in distractors:
                     continue
-                distractors.append(cleaned)
+                distractors.append(cleaned_peer)
                 if len(distractors) >= 3:
                     break
         # Final fallback: pad from any prompt of the same target (these are
@@ -333,7 +338,6 @@ def apply_compatibility_quiz_result(state: GameState, challenge: Challenge) -> C
         0, min(100, state.player.public_perception + challenge.audience_delta)
     )
 
-    reveals_added: list[MinigameReveal] = []
     new_rounds = list(challenge.rounds)
     for index, r in enumerate(new_rounds):
         if r.trait_key is None:
@@ -403,7 +407,7 @@ def apply_compatibility_quiz_result(state: GameState, challenge: Challenge) -> C
 
 
 def _familiarity_gap_hint(
-    state: GameState, target, challenge: Challenge
+    state: GameState, target: IslanderState, challenge: Challenge
 ) -> MinigameReveal | None:
     """Surface a producer-aside if the player was close to unlocking Tier 2.
 
@@ -435,7 +439,9 @@ def _familiarity_gap_hint(
     )
 
 
-def _record_caught_unprepared(target, trait_key: str, day: int, turn_index: int) -> None:
+def _record_caught_unprepared(
+    target: IslanderState, trait_key: str, day: int, turn_index: int
+) -> None:
     """Attach a ``caught_unprepared`` memory to the partner.
 
     Tag-only memory so the producer and Conversation Curator can reference it

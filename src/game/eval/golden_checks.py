@@ -96,6 +96,10 @@ def run_deterministic_check(
             if challenge is None or challenge.result is None:
                 return _fail(check_id, "challenge is not resolved", turn_spec.id)
             return _pass(check_id, f"challenge result: {challenge.result}", turn_spec.id)
+        if check_id == "challenge_cleared":
+            if turn.state.pending_challenge is not None:
+                return _fail(check_id, "resolved challenge is still visible", turn_spec.id)
+            return _pass(check_id, "resolved challenge is no longer visible", turn_spec.id)
         if check_id == "casa_active":
             if turn.state.casa_amor_state is None or turn.state.casa_amor_state.returned:
                 return _fail(check_id, "Casa Amor is not active", turn_spec.id)
