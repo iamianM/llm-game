@@ -60,7 +60,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
       data-role={role}
       data-position={role === "player" ? "bottom" : "stage"}
       data-pose={pose}
-      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}`}
+      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}`}
       style={style}
     >
       <motion.div
@@ -155,9 +155,10 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           max-width: min(150px, 28vw);
           overflow: hidden;
           text-overflow: ellipsis;
-          opacity: 0;
+          opacity: 1;
           transition: opacity .18s ease;
         }
+        .is-dimmed .sprite-name { opacity: 0; }
         .is-active .sprite-name { opacity: 1; }
         .is-player .sprite-name { display: none; }
         .pose-talking .sprite-image {

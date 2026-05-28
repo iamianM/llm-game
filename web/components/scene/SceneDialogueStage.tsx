@@ -69,7 +69,7 @@ export function SceneDialogueStage({
   return (
     <SceneLayer location={state.location_id} onTap={advance}>
       <CharacterLayer state={state} focusedId={focusedId} speakerPose={speakerPose} />
-      {state.pending_challenge ? (
+      {showBanner(state.pending_challenge, actions) ? (
         <ChallengeBanner pending={state.pending_challenge as PendingChallengeView} />
       ) : null}
       {activeBeat?.kind === "narrator" ? (
@@ -150,6 +150,15 @@ function speakerName(state: SessionState, speakerId: string) {
 
 function hasLaterBeat(beats: SceneBeat[], index: number) {
   return index < beats.length - 1;
+}
+
+function showBanner(pending: SessionState["pending_challenge"], actions: AvailableAction[]) {
+  if (!pending) return false;
+  const finished = (pending as { finished?: boolean }).finished === true;
+  if (!finished) return true;
+  // Hide a wrapped challenge once the engine has moved on to a non-challenge
+  // action set (e.g. recoupling picks) — the banner would otherwise mislead.
+  return actions.some((action) => action.kind === "challenge_response");
 }
 
 function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_pop" }>; position: Position }) {

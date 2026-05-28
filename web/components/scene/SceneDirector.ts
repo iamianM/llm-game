@@ -47,7 +47,8 @@ export function planScene(
     beats.push({ kind: "camera", shot: "wide_group", focusIds: [], durationMs: 120 });
   }
 
-  const lastAnswered = lastAnsweredRound(pending);
+  const stillInChallengeForFeedback = availableActions.some((action) => action.kind === "challenge_response");
+  const lastAnswered = stillInChallengeForFeedback ? lastAnsweredRound(pending) : null;
   if (lastAnswered) {
     beats.push({
       kind: "reaction",
@@ -111,8 +112,11 @@ export function planScene(
   }
 
   if (pending?.finished) {
-    const wrap = wrapNarration(pending);
-    if (wrap) beats.push({ kind: "narrator", text: wrap });
+    const stillInChallenge = availableActions.some((action) => action.kind === "challenge_response");
+    if (stillInChallenge) {
+      const wrap = wrapNarration(pending);
+      if (wrap) beats.push({ kind: "narrator", text: wrap });
+    }
   }
 
   if (availableActions.length > 0) {

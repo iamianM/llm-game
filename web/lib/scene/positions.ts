@@ -42,13 +42,12 @@ export function npcPositions(count: number, focusedIndex: number | null): Positi
 function widePositions(count: number): Position[] {
   const preset = WIDE_LAYOUTS[count];
   if (preset) return preset;
-  const startX = 14;
-  const endX = 86;
+  const startX = 12;
+  const endX = 88;
   const span = endX - startX;
   return Array.from({ length: count }, (_, index) => ({
     x: startX + (span / Math.max(1, count - 1)) * index,
     y: 53 + (index % 3) * 2,
-    scale: count > 10 ? 0.58 : 0.68,
-    dimmed: count > 6,
+    scale: count > 10 ? 0.62 : count > 6 ? 0.7 : 0.78,
   }));
 }
