@@ -192,6 +192,16 @@ export default function NewRunPage() {
                 Close
               </button>
             </header>
+            <div className="sheet-engine-row">
+              <span className="config-label">Jump in with</span>
+              <div className="toggle-group">
+                <Toggle on={!useLive} onClick={() => setUseLive(false)}>Demo engine</Toggle>
+                <Toggle on={useLive} onClick={() => setUseLive(true)}>Live LLM</Toggle>
+              </div>
+              <span className="sheet-engine-hint">
+                {useLive ? "Real OpenAI dialogue from this save." : "Scripted demo lines from this save."}
+              </span>
+            </div>
             <div className="checkpoint-grid sheet-grid">
               {checkpoints.map((ck) => (
                 <button
@@ -431,7 +441,7 @@ export default function NewRunPage() {
           width: min(720px, 100%);
           max-height: min(78vh, 660px);
           display: grid;
-          grid-template-rows: auto minmax(0, 1fr);
+          grid-template-rows: auto auto minmax(0, 1fr);
           gap: 12px;
           padding: 14px;
           border-radius: var(--r-xl);
@@ -468,6 +478,32 @@ export default function NewRunPage() {
         .sheet-grid {
           overflow-y: auto;
           padding-right: 2px;
+        }
+        .sheet-engine-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+          padding: 8px 12px;
+          border-radius: var(--r-md);
+          border: 1px solid rgba(217,167,58,.22);
+          background: rgba(36,28,22,.45);
+        }
+        .sheet-engine-row .toggle-group {
+          margin-left: 0;
+        }
+        .sheet-engine-hint {
+          font-size: 12px;
+          font-style: italic;
+          color: var(--muted-on-dark);
+          opacity: .85;
+          margin-left: auto;
+        }
+        @media (max-width: 760px) {
+          .sheet-engine-hint {
+            width: 100%;
+            margin-left: 0;
+          }
         }
 
         @media (max-width: 760px) {
