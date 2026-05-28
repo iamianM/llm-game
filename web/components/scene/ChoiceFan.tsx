@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { useState } from "react";
 import type { AvailableAction } from "../../lib/types";
+import { CATEGORY_SHORT, categoryFor, type IntentCategory } from "../../lib/scene/intents";
 
 type Props = {
   actions: AvailableAction[];
@@ -56,6 +57,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           >
             <span className="choice-text">{action.label}</span>
             <span className="choice-meta">
+              {categoryChip(action)}
               {hint ? <i className={`hint hint-${hint.tone}`}>{hint.label}</i> : null}
               {action.risk ? <i>{action.risk}</i> : null}
               {action.stat_used ? <i>{action.stat_used}</i> : null}
@@ -154,7 +156,33 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           }
           .choice-meta i { font-size: 9px; }
         }
+        .choice-chip {
+          font-style: normal !important;
+          font-size: 10px !important;
+          font-weight: 700;
+          letter-spacing: .08em;
+          padding: 1px 7px 2px !important;
+          border-radius: var(--r-pill);
+          color: rgba(73,57,42,.85) !important;
+        }
+        .choice-chip.cat-friendly { background: rgba(212,168,122,.35); }
+        .choice-chip.cat-flirty   { background: rgba(212,99,62,.32); color: var(--accent-deep) !important; }
+        .choice-chip.cat-deep     { background: rgba(193,154,79,.42); color: rgba(60,42,18,.9) !important; }
+        .choice-chip.cat-banter   { background: rgba(138,165,128,.38); color: rgba(46,68,40,.92) !important; }
       `}</style>
     </motion.div>
   );
+}
+
+function categoryChip(action: AvailableAction) {
+  // Only show chips when the action is a conversation-style turn — minigame
+  // answers, recoupling picks, and ceremony joins shouldn't get a category tag.
+  const conversational = new Set([
+    "introduce_to",
+    "start_conversation",
+    "respond_with",
+  ]);
+  if (!conversational.has(action.kind)) return null;
+  const category: IntentCategory = categoryFor(action.intent_id);
+  return <i className={`choice-chip cat-${category}`}>{CATEGORY_SHORT[category]}</i>;
 }

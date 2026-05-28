@@ -1,9 +1,9 @@
 {
   "name": "day3-recoupling-ceremony",
   "seed": 7,
-  "state_hash": "bbc474be0b7f960d7ea2d2612721135c8720e24fbb03bb5e84b1c2136e6fe4df",
+  "state_hash": "fc65ffb66ed8f9484a801b8eba284ee49d9a43eb41eaf7f18000543f0c375749",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 182,
     "day": 3,
@@ -6494,6 +6494,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": null,
     "quizzed_traits_this_run": {
       "chloe": [

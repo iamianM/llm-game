@@ -1,9 +1,9 @@
 {
   "name": "day5-pre-kiss-wed-pass",
   "seed": 7,
-  "state_hash": "bd2bdf297bf23a6d70c7e3e9dfe217f9f17aeaa53a5405bd93678baf6eb0f2ad",
+  "state_hash": "e6081f31d8458463a3478e669de4a7d78336ed9dd82ba4e8dda5b765f0c7be0e",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 270,
     "day": 5,
@@ -13,7 +13,7 @@
       "budget_minutes": 0,
       "elapsed_minutes": 0
     },
-    "location_id": "casa_pool",
+    "location_id": "casa_kitchen",
     "villa": "casa_amor",
     "player": {
       "id": "player",
@@ -9610,6 +9610,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": {
       "id": "snog_marry_pie",
       "day": 5,

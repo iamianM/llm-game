@@ -91,6 +91,7 @@ export type SessionState = {
   active_conversation_target_id: string | null;
   villa_snapshot: Record<string, string[]>;
   daily_recaps: Array<Record<string, unknown>>;
+  intros_greetings: Record<string, string>;
 };
 
 export type SessionResponse = {

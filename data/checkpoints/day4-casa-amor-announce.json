@@ -1,9 +1,9 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "9c71c6ac061aece9381291955c83d1fe51381ba7778303095040b8dbf37acac0",
+  "state_hash": "9dda686a5398f259388870f4d5285fb47fc9eefcce32c6e3c605e8c66a297c2d",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 236,
     "day": 4,
@@ -7134,6 +7134,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": null,
     "quizzed_traits_this_run": {
       "chloe": [

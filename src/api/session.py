@@ -9,6 +9,7 @@ from src.game.agents.contextual_options import ContextualOptionsAgent, Contextua
 from src.game.agents.conversation_curator import ConversationCuratorFn, OpenAIConversationCurator
 from src.game.agents.event_narrator import EventNarratorFn, OpenAIEventNarrator
 from src.game.agents.islander_voice import IslanderVoiceFn, OpenAIIslanderVoice
+from src.game.agents.npc_greeter import NpcGreeterFn, OpenAINpcGreeter
 from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator, VillaOrchestratorFn
 
 
@@ -22,6 +23,7 @@ class AgentBundle:
     conversation_curator: ConversationCuratorFn | None = None
     villa_orchestrator: VillaOrchestratorFn | None = None
     background_dialogue: BackgroundDialogueFn | None = None
+    npc_greeter: NpcGreeterFn | None = None
 
     @classmethod
     def mock(cls) -> AgentBundle:
@@ -36,4 +38,5 @@ class AgentBundle:
             conversation_curator=OpenAIConversationCurator().curate,
             villa_orchestrator=OpenAIVillaOrchestrator().decide,
             background_dialogue=OpenAIBackgroundDialogue().generate,
+            npc_greeter=OpenAINpcGreeter().generate,
         )

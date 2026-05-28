@@ -132,6 +132,21 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
         )
     except ValueError as exc:
         raise _http_error(400, "VALIDATION_ERROR", str(exc)) from exc
+    # Live mode pre-generates the greeting circle in parallel so the player
+    # hears voice-true opening lines per islander instead of templates.
+    if not mock:
+        try:
+            from src.game.agents.npc_greeter import OpenAINpcGreeter
+            from src.game.state.models import IntrosState
+            greetings = OpenAINpcGreeter().generate(state)
+            state.intros = IntrosState(greetings=greetings)
+        except Exception as exc:
+            logger.exception("real-mode greeter failed")
+            raise _http_error(
+                502,
+                "STORY_ENGINE_ERROR",
+                f"Real mode could not warm up the Heartbreakers; the greeter raised {type(exc).__name__}.",
+            ) from exc
     rng = SeededRng(seed)
     session_id = str(uuid4())
     persisted = freeze(state, rng, session_id=session_id, user_id=None, mock_llm=mock)

@@ -1,6 +1,6 @@
 name: day6-full-run
 seed: 6
-expected_hash: bcb1514337fe9831e237266edc0cd4e06c318913bf5f9547efbf22dbc05ac6e3
+expected_hash: bd5f3621e9a6c394afbd8f9f701452f5b404acec9aad91cca9559c625fb202b8
 actions:
 - kind: ambient
   target_id: ambient_wait

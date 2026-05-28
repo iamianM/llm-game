@@ -1,10 +1,18 @@
 "use client";
 
-import { MapPin, X } from "lucide-react";
+import { ChevronLeft, Lock, MapPin, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
 import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
+import {
+  CATEGORY_LABEL,
+  CATEGORY_LOCK_HINT,
+  CATEGORY_SHORT,
+  ORDERED_CATEGORIES,
+  categoryFor,
+  type IntentCategory,
+} from "../../lib/scene/intents";
 import { type PendingChallengeView } from "../stage/ChallengeSpectacle";
 import { CharacterLayer, visibleNpcs } from "./CharacterLayer";
 import { ChoiceFan } from "./ChoiceFan";
@@ -525,6 +533,12 @@ function CharacterMenu({
 }) {
   const left = position ? Math.min(80, Math.max(20, position.x)) : 50;
   const top = position ? Math.min(72, Math.max(14, position.y - 22)) : 38;
+  // Two-level tree: pick a category, then a specific intent. Intros are flat
+  // (their 4 dynamics ARE the leaves) — auto-fire when there's only one
+  // option per category.
+  const grouped = useMemo(() => groupActionsByCategory(actions), [actions]);
+  const [openCategory, setOpenCategory] = useState<IntentCategory | null>(null);
+  const subActions = openCategory ? grouped[openCategory] : [];
   return (
     <div
       data-testid="character-menu"
@@ -533,34 +547,84 @@ function CharacterMenu({
       onClick={(e) => e.stopPropagation()}
     >
       <header>
-        <span className="char-menu-eyebrow">Talk to</span>
+        {openCategory ? (
+          <button
+            type="button"
+            className="char-menu-back"
+            aria-label="Back to categories"
+            onClick={() => setOpenCategory(null)}
+          >
+            <ChevronLeft size={14} /> Back
+          </button>
+        ) : (
+          <span className="char-menu-eyebrow">Talk to</span>
+        )}
         <h3>{name}</h3>
         <button type="button" className="char-menu-close" onClick={onClose} aria-label="Close">
           <X size={14} />
         </button>
       </header>
-      <ul role="menu">
-        {actions.map((action, index) => (
-          <li key={`${action.kind}-${action.intent_id}-${index}`} role="none">
-            <button
-              role="menuitem"
-              type="button"
-              className="char-menu-item"
-              disabled={locked}
-              onClick={() => onChoose(action)}
-            >
-              <span className="char-menu-label">{stripTalkPrefix(action.label, name)}</span>
-              {action.audience_hint || action.risk ? (
-                <span className="char-menu-meta">
-                  {action.audience_hint === "+" ? <i className="hint hint-good">Pulse +</i> : null}
-                  {action.audience_hint === "-" ? <i className="hint hint-bad">Pulse -</i> : null}
-                  {action.risk ? <i>{action.risk}</i> : null}
-                </span>
-              ) : null}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {openCategory ? (
+        <ul role="menu" data-level="sub">
+          {subActions.map((action, index) => (
+            <li key={`${action.kind}-${action.intent_id}-${index}`} role="none">
+              <button
+                role="menuitem"
+                type="button"
+                className="char-menu-item"
+                disabled={locked}
+                onClick={() => onChoose(action)}
+              >
+                <span className="char-menu-label">{stripTalkPrefix(action.label, name)}</span>
+                {action.audience_hint || action.risk ? (
+                  <span className="char-menu-meta">
+                    {action.audience_hint === "+" ? <i className="hint hint-good">Pulse +</i> : null}
+                    {action.audience_hint === "-" ? <i className="hint hint-bad">Pulse -</i> : null}
+                    {action.risk ? <i>{action.risk}</i> : null}
+                  </span>
+                ) : null}
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul role="menu" data-level="categories">
+          {ORDERED_CATEGORIES.map((category) => {
+            const categoryActions = grouped[category];
+            const hasOptions = categoryActions.length > 0;
+            const hint = CATEGORY_LOCK_HINT[category];
+            // If a category has exactly one option, fire directly on click
+            // (skip the sub-level). Otherwise expand.
+            const onClick = !hasOptions
+              ? undefined
+              : categoryActions.length === 1
+                ? () => onChoose(categoryActions[0])
+                : () => setOpenCategory(category);
+            return (
+              <li key={category} role="none">
+                <button
+                  role="menuitem"
+                  type="button"
+                  className={`char-menu-item char-menu-category cat-${category}${hasOptions ? "" : " is-locked"}`}
+                  disabled={locked || !hasOptions}
+                  data-category={category}
+                  onClick={onClick}
+                >
+                  <span className="char-menu-row">
+                    <span className="char-menu-label">{CATEGORY_LABEL[category]} {name}</span>
+                    {hasOptions ? (
+                      <span className="char-menu-count">{categoryActions.length}</span>
+                    ) : (
+                      <Lock size={13} aria-hidden />
+                    )}
+                  </span>
+                  {!hasOptions && hint ? <span className="char-menu-hint">{hint}</span> : null}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <style jsx>{`
         .char-menu {
           position: absolute;
@@ -643,10 +707,77 @@ function CharacterMenu({
         }
         .hint-good { color: #316844 !important; }
         .hint-bad { color: var(--accent-deep) !important; }
+        .char-menu-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        .char-menu-count {
+          font-size: 11px;
+          font-weight: 700;
+          padding: 2px 7px;
+          border-radius: var(--r-pill);
+          background: rgba(73,57,42,.12);
+          color: rgba(73,57,42,.7);
+          letter-spacing: .04em;
+        }
+        .char-menu-hint {
+          display: block;
+          margin-top: 4px;
+          font-size: 11.5px;
+          color: rgba(73,57,42,.7);
+          font-style: italic;
+          letter-spacing: .02em;
+        }
+        .char-menu-category.is-locked {
+          opacity: .55;
+          cursor: not-allowed;
+        }
+        .char-menu-category.is-locked .char-menu-label {
+          color: rgba(73,57,42,.7);
+        }
+        .char-menu-category.cat-friendly { box-shadow: inset 3px 0 0 #d4a87a; }
+        .char-menu-category.cat-flirty   { box-shadow: inset 3px 0 0 var(--accent); }
+        .char-menu-category.cat-deep     { box-shadow: inset 3px 0 0 #c19a4f; }
+        .char-menu-category.cat-banter   { box-shadow: inset 3px 0 0 #8aa580; }
+        .char-menu-back {
+          background: transparent;
+          border: 0;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 0;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: .04em;
+          text-transform: uppercase;
+          color: var(--accent-deep);
+          cursor: pointer;
+        }
+        .char-menu-back:hover { color: var(--ink); }
       `}</style>
     </div>
   );
 }
+
+function groupActionsByCategory(
+  actions: AvailableAction[],
+): Record<IntentCategory, AvailableAction[]> {
+  const grouped: Record<IntentCategory, AvailableAction[]> = {
+    friendly: [],
+    flirty: [],
+    deep: [],
+    banter: [],
+  };
+  for (const action of actions) {
+    grouped[categoryFor(action.intent_id)].push(action);
+  }
+  return grouped;
+}
+
+// Quiet reference to keep CATEGORY_SHORT exported usage intact.
+void CATEGORY_SHORT;
 
 function stripTalkPrefix(label: string, name: string): string {
   return label

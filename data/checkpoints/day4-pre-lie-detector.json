@@ -1,9 +1,9 @@
 {
   "name": "day4-pre-lie-detector",
   "seed": 7,
-  "state_hash": "675d2b81ca09f2509a735e7f3f364aa4341695677bc02bcbfd388a6003518f46",
+  "state_hash": "fe2edd9f19c4db2e7816f9e7a4b1264f6abf9ff85690e52376104b6646ae3bbc",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 207,
     "day": 4,
@@ -6878,6 +6878,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": {
       "id": "lie_detector",
       "day": 4,

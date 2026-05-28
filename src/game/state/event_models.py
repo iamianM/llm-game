@@ -171,3 +171,16 @@ class QuestionBank(BaseModel):
     schema_version: int = 1
     bank_seed: int
     prompts: dict[str, list[QuestionBankPrompt]] = Field(default_factory=dict)
+
+
+class IntrosState(BaseModel):
+    """Per-NPC content generated once at the start of Day-1 intros.
+
+    Populated by the npc_greeter agent (live mode) or left empty (mock).
+    Mock-mode callers fall back to template greetings in
+    ``web/lib/intros.ts`` so the UX is identical either way.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    greetings: dict[str, str] = Field(default_factory=dict)

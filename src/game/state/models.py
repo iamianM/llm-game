@@ -24,6 +24,9 @@ from src.game.state.event_models import (
     GroupDate as GroupDate,
 )
 from src.game.state.event_models import (
+    IntrosState as IntrosState,
+)
+from src.game.state.event_models import (
     MinigameChoice as MinigameChoice,
 )
 from src.game.state.event_models import (
@@ -55,7 +58,7 @@ from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
 from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 26
+SCHEMA_VERSION = 27
 
 
 class Phase(StrEnum):
@@ -388,6 +391,7 @@ class GameState(BaseModel):
     heart_throb_briefs: list[dict[str, str]] = Field(default_factory=list)
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
+    intros: IntrosState | None = None
     pending_challenge: Challenge | None = None
     quizzed_traits_this_run: dict[str, list[str]] = Field(default_factory=dict)
     question_bank: QuestionBank | None = None

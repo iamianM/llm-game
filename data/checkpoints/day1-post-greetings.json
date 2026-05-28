@@ -1,9 +1,9 @@
 {
   "name": "day1-post-greetings",
   "seed": 7,
-  "state_hash": "646250264c79404984d62d315c0fa357083a29ebc246562bb7a4a3389be1b6f1",
+  "state_hash": "f4be237088f9d22cd420007f1590005818fe488ebe245c53c935755783d68dca",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 8,
     "day": 1,
@@ -4246,6 +4246,7 @@
       "rerolled": false
     },
     "audience_snapshots": [],
+    "intros": null,
     "pending_challenge": null,
     "quizzed_traits_this_run": {},
     "question_bank": null,

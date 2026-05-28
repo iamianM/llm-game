@@ -1,6 +1,6 @@
 name: day1-full-stats
 seed: 3
-expected_hash: f93eb993dc2548103d81fad6ba49fcf87935b3aa6b1577133fc8d956cadde889
+expected_hash: 9ae0f9f6697753aa70d4d2c45a528b0278ea150220fd82ab4bc884455db360a9
 actions:
 - kind: start_conversation
   target_id: chloe

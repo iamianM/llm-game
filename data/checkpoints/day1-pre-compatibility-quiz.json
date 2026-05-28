@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-compatibility-quiz",
   "seed": 7,
-  "state_hash": "e5b2d3859565cd4d2d45f1ab908796dbaf5f6a1543815d25ee118846bb9db8f4",
+  "state_hash": "4bd327743f70f6284513da47fd162462cb75c1cbb570a427fd6e3a2a1838fba3",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 9,
     "day": 1,
@@ -4572,6 +4572,7 @@
       "rerolled": false
     },
     "audience_snapshots": [],
+    "intros": null,
     "pending_challenge": {
       "id": "compatibility_quiz",
       "day": 1,

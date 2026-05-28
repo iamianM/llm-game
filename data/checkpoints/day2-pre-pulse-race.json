@@ -1,9 +1,9 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "abc6894f7174179a6f1e90c2a11ad37e58c0438f748377e49ede8a6899dd13c8",
+  "state_hash": "41e9f25294bc05fcbf7b57f4db90b789967e193f6d021220a96c0c43d75c55e9",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 75,
     "day": 2,
@@ -5271,6 +5271,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": {
       "id": "heart_rate",
       "day": 2,

@@ -1,14 +1,7 @@
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { SceneBeat } from "../../lib/scene/types";
 import { paginate } from "../../lib/scene/pagination";
-import {
-  INTRO_DYNAMICS,
-  greetingFor,
-  introActionsForTarget,
-  nextIntroTarget,
-  responseFor,
-  type IntroDynamic,
-} from "../../lib/intros";
+import { greetingFor, nextIntroTarget } from "../../lib/intros";
 
 type PendingChallenge = {
   kind?: string;
@@ -221,21 +214,24 @@ function planIntroScene(
     return beats;
   }
 
-  // Frame the next islander, NPC greets first, then the player picks a tone.
+  // Frame the next islander, NPC greets first, then the player picks an intent.
   beats.push({ kind: "camera", shot: "two_shot", focusIds: [nextTarget.id], durationMs: 160 });
-  beats.push({ kind: "speech", speakerId: nextTarget.id, text: greetingFor(nextTarget), pose: "talking" });
+  // Prefer dynamically-generated greetings (live mode); fall back to per-archetype
+  // templates so demo mode and pre-feature checkpoints still read cleanly.
+  const dynamicGreeting = state.intros_greetings?.[nextTarget.id];
+  const greeting = dynamicGreeting && dynamicGreeting.trim().length > 0
+    ? dynamicGreeting
+    : greetingFor(nextTarget);
+  beats.push({ kind: "speech", speakerId: nextTarget.id, text: greeting, pose: "talking" });
 
-  // Build the 4 intent options as scripted player lines for this NPC.
-  const introActions = introActionsForTarget(availableActions, nextTarget.id);
-  const choices: AvailableAction[] = [];
-  for (const dynamic of INTRO_DYNAMICS) {
-    const base = introActions[dynamic as IntroDynamic];
-    if (!base) continue;
-    const line = responseFor(nextTarget, dynamic as IntroDynamic);
-    choices.push({ ...base, label: line });
-  }
-  if (choices.length > 0) {
-    beats.push({ kind: "choice_fan", spec: { actions: choices } });
+  // Show the engine's intent-labeled choices ("Be friendly with X", etc.)
+  // unchanged — no preview-line rewriting. The bubble shows the *intent dial*,
+  // the engine's islander_voice writes the actual line on click.
+  const introChoices = availableActions.filter(
+    (a) => a.kind === "introduce_to" && a.target_id === nextTarget.id,
+  );
+  if (introChoices.length > 0) {
+    beats.push({ kind: "choice_fan", spec: { actions: introChoices } });
   }
   return beats;
 }

@@ -184,6 +184,9 @@ class SessionState(BaseModel):
     active_conversation_target_id: str | None
     villa_snapshot: dict[str, list[str]]
     daily_recaps: list[dict[str, object]]
+    # Dynamically-generated NPC greetings keyed by islander id. Empty in mock
+    # mode; the UI falls back to templated greetings in web/lib/intros.ts.
+    intros_greetings: dict[str, str] = {}
 
 
 class SessionResponse(BaseModel):

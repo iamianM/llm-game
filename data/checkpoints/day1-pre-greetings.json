@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-greetings",
   "seed": 7,
-  "state_hash": "6db3d583140da4c824c493d66dd02abb7f94b50d52ecc30e44a24fab4b10c56d",
+  "state_hash": "4e0a2eca1456df1cc197f24ecc4e6c1e5879872bca5ab92750c39105f79fd27a",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 0,
     "day": 1,
@@ -3860,6 +3860,7 @@
       "rerolled": false
     },
     "audience_snapshots": [],
+    "intros": null,
     "pending_challenge": null,
     "quizzed_traits_this_run": {},
     "question_bank": null,

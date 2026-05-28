@@ -72,6 +72,7 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
         ),
         villa_snapshot=villa_snapshot(state),
         daily_recaps=[_model_dump(recap) for recap in state.daily_recaps],
+        intros_greetings=dict(state.intros.greetings) if state.intros is not None else {},
     )
 
 
@@ -348,13 +349,13 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
     if action.kind.value == "move" and action.target_id is not None:
         return f"Move to {display(action.target_id)}"
     if action.kind.value == "introduce_to" and action.target_id is not None:
-        intro_style = {
-            "intro_friendly": "friendly",
-            "intro_flirty": "flirty",
-            "intro_deep": "deep",
-            "intro_banter": "banter",
-        }.get(action.intent_id or "", "warmly")
-        return f"Spark {intro_style} with {find_name(state, action.target_id)}"
+        verb = {
+            "intro_friendly": "Be friendly with",
+            "intro_flirty": "Flirt with",
+            "intro_deep": "Get deep with",
+            "intro_banter": "Banter with",
+        }.get(action.intent_id or "", "Greet")
+        return f"{verb} {find_name(state, action.target_id)}"
     if action.kind.value == "start_conversation" and action.target_id is not None:
         return f"Talk to {find_name(state, action.target_id)}"
     if action.kind.value == "end_conversation":

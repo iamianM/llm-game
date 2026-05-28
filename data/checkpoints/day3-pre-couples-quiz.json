@@ -1,9 +1,9 @@
 {
   "name": "day3-pre-couples-quiz",
   "seed": 7,
-  "state_hash": "9f58b443ee9b70d95aed5601c1041d2a9bb23ab7860ea690aed9611d842cd244",
+  "state_hash": "fb1a0db48efa6742bcb73d2c97431c59752d16722952912d240314303d4e023c",
   "state": {
-    "schema_version": 26,
+    "schema_version": 27,
     "seed": 7,
     "turn_index": 139,
     "day": 3,
@@ -5888,6 +5888,7 @@
         ]
       }
     ],
+    "intros": null,
     "pending_challenge": {
       "id": "mr_and_mrs",
       "day": 3,
