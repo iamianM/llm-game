@@ -1,11 +1,11 @@
 {
   "name": "day3-recoupling-ceremony",
   "seed": 7,
-  "state_hash": "ef8f714ffbd7554f9be91910382371014c66a88008d25d3e9b491ad5967ebc6c",
+  "state_hash": "bbc474be0b7f960d7ea2d2612721135c8720e24fbb03bb5e84b1c2136e6fe4df",
   "state": {
     "schema_version": 26,
     "seed": 7,
-    "turn_index": 204,
+    "turn_index": 182,
     "day": 3,
     "phase": "evening",
     "phase_clock": {
@@ -33,14 +33,30 @@
       "eliminated": false,
       "memories": [
         {
-          "id": "mem_f7bf55708fb7bacd",
+          "id": "mem_cb1d1f6a31a43898",
+          "holder_id": "player",
+          "subject_id": "villa",
+          "content": "The Pairing Ceremony locks in the next couples.",
+          "source": "witnessed",
+          "source_id": null,
+          "formed_on_day": 1,
+          "formed_on_turn": 9,
+          "emotional_weight": 5,
+          "tags": [
+            "ceremony",
+            "recoupling"
+          ],
+          "durable": true
+        },
+        {
+          "id": "mem_f6248b78d5efe016",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Compatibility Quiz tested Eq and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 31,
+          "formed_on_turn": 9,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -49,14 +65,14 @@
           "durable": true
         },
         {
-          "id": "mem_30ecf5f7932a3035",
+          "id": "mem_4d4ad059ee5d0f48",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Compatibility Quiz ended in failure (6 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 36,
+          "formed_on_turn": 14,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -65,14 +81,14 @@
           "durable": true
         },
         {
-          "id": "mem_3f5ec463dc4b825d",
+          "id": "mem_9268d7453c64626f",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for welcome.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 60,
+          "formed_on_turn": 38,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -81,14 +97,14 @@
           "durable": true
         },
         {
-          "id": "mem_cb82df0e9226e618",
+          "id": "mem_ed28071b13211056",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
-          "formed_on_turn": 61,
+          "formed_on_turn": 39,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -97,14 +113,14 @@
           "durable": true
         },
         {
-          "id": "mem_4a43402d9a95595c",
+          "id": "mem_602170c088d4c073",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Pulse Race tested Charm and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 97,
+          "formed_on_turn": 75,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -113,14 +129,14 @@
           "durable": true
         },
         {
-          "id": "mem_c15bb9c4afa2329b",
+          "id": "mem_7c1fb3ca9fe1f112",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Pulse Race ended in failure (0 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 100,
+          "formed_on_turn": 78,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -129,14 +145,14 @@
           "durable": true
         },
         {
-          "id": "mem_79de62412cb21585",
+          "id": "mem_ed74f1c34f2c698d",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for group date invite.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 124,
+          "formed_on_turn": 102,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -145,14 +161,14 @@
           "durable": true
         },
         {
-          "id": "mem_eef47f2f6ddf648c",
+          "id": "mem_9b429bdbb46d2e6f",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
-          "formed_on_turn": 125,
+          "formed_on_turn": 103,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -161,14 +177,14 @@
           "durable": true
         },
         {
-          "id": "mem_5c7a995ed9096dce",
+          "id": "mem_e9493b5ac3a93059",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Couples Quiz tested Banter and is still pending.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 161,
+          "formed_on_turn": 139,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -177,14 +193,14 @@
           "durable": true
         },
         {
-          "id": "mem_281b10822ab76ffb",
+          "id": "mem_1106e84e21607396",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "The Couples Quiz ended in failure (3 pts).",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 167,
+          "formed_on_turn": 145,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -193,14 +209,14 @@
           "durable": true
         },
         {
-          "id": "mem_cd8a37eaf25ab468",
+          "id": "mem_d2d2694226ad7b22",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for coupling warning.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 191,
+          "formed_on_turn": 169,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -209,14 +225,14 @@
           "durable": true
         },
         {
-          "id": "mem_65065f871d6f354c",
+          "id": "mem_d99d8b5113142e95",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 192,
+          "formed_on_turn": 170,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -225,14 +241,14 @@
           "durable": true
         },
         {
-          "id": "mem_b13cdd5a6b5133f3",
+          "id": "mem_479a3c632bbdc903",
           "holder_id": "player",
           "subject_id": "villa",
           "content": "Everyone is called to the firepit for a Pairing Ceremony.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
-          "formed_on_turn": 204,
+          "formed_on_turn": 182,
           "emotional_weight": 5,
           "tags": [
             "ceremony",
@@ -248,7 +264,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 1,
-          "learned_on_turn": 35,
+          "learned_on_turn": 13,
           "confidence": 0.5,
           "citation": "compatibility_quiz day 1"
         },
@@ -258,7 +274,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 1,
-          "learned_on_turn": 35,
+          "learned_on_turn": 13,
           "confidence": 0.5,
           "citation": "compatibility_quiz day 1"
         },
@@ -269,8 +285,8 @@
           "source_npc_id": null,
           "learned_on_day": 1,
           "learned_on_turn": 0,
-          "confidence": 1,
-          "citation": "You learned the basics while coupling with Chloe."
+          "confidence": 1.0,
+          "citation": "Chloe told you during Day One introductions."
         },
         "maya.age": {
           "fact_key": "maya.age",
@@ -278,8 +294,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 24,
-          "confidence": 1,
+          "learned_on_turn": 1,
+          "confidence": 1.0,
           "citation": "Maya told you during Day One introductions."
         },
         "maya.hometown": {
@@ -288,8 +304,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 24,
-          "confidence": 1,
+          "learned_on_turn": 1,
+          "confidence": 1.0,
           "citation": "Maya told you during Day One introductions."
         },
         "maya.occupation": {
@@ -298,8 +314,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 24,
-          "confidence": 1,
+          "learned_on_turn": 1,
+          "confidence": 1.0,
           "citation": "Maya told you during Day One introductions."
         },
         "liam.age": {
@@ -308,8 +324,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 25,
-          "confidence": 1,
+          "learned_on_turn": 2,
+          "confidence": 1.0,
           "citation": "Liam told you during Day One introductions."
         },
         "liam.hometown": {
@@ -318,8 +334,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 25,
-          "confidence": 1,
+          "learned_on_turn": 2,
+          "confidence": 1.0,
           "citation": "Liam told you during Day One introductions."
         },
         "liam.occupation": {
@@ -328,8 +344,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 25,
-          "confidence": 1,
+          "learned_on_turn": 2,
+          "confidence": 1.0,
           "citation": "Liam told you during Day One introductions."
         },
         "sophie_start.age": {
@@ -338,8 +354,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 26,
-          "confidence": 1,
+          "learned_on_turn": 3,
+          "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
         "sophie_start.hometown": {
@@ -348,8 +364,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 26,
-          "confidence": 1,
+          "learned_on_turn": 3,
+          "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
         "sophie_start.occupation": {
@@ -358,8 +374,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 26,
-          "confidence": 1,
+          "learned_on_turn": 3,
+          "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
         "nia_start.age": {
@@ -368,8 +384,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 27,
-          "confidence": 1,
+          "learned_on_turn": 4,
+          "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
         "nia_start.hometown": {
@@ -378,8 +394,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 27,
-          "confidence": 1,
+          "learned_on_turn": 4,
+          "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
         "nia_start.occupation": {
@@ -388,8 +404,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 27,
-          "confidence": 1,
+          "learned_on_turn": 4,
+          "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
         "marcus_start.age": {
@@ -398,8 +414,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 28,
-          "confidence": 1,
+          "learned_on_turn": 5,
+          "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
         "marcus_start.hometown": {
@@ -408,8 +424,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 28,
-          "confidence": 1,
+          "learned_on_turn": 5,
+          "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
         "marcus_start.occupation": {
@@ -418,8 +434,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 28,
-          "confidence": 1,
+          "learned_on_turn": 5,
+          "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
         "blake_start.age": {
@@ -428,8 +444,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 29,
-          "confidence": 1,
+          "learned_on_turn": 6,
+          "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
         "blake_start.hometown": {
@@ -438,8 +454,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 29,
-          "confidence": 1,
+          "learned_on_turn": 6,
+          "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
         "blake_start.occupation": {
@@ -448,8 +464,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 29,
-          "confidence": 1,
+          "learned_on_turn": 6,
+          "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
         "jordan_start.age": {
@@ -458,8 +474,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 30,
-          "confidence": 1,
+          "learned_on_turn": 7,
+          "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
         "jordan_start.hometown": {
@@ -468,8 +484,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 30,
-          "confidence": 1,
+          "learned_on_turn": 7,
+          "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
         "jordan_start.occupation": {
@@ -478,8 +494,8 @@
           "source": "direct",
           "source_npc_id": null,
           "learned_on_day": 1,
-          "learned_on_turn": 30,
-          "confidence": 1,
+          "learned_on_turn": 7,
+          "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
         "chloe.drink_of_choice": {
@@ -488,8 +504,8 @@
           "source": "compatibility_quiz",
           "source_npc_id": "chloe",
           "learned_on_day": 1,
-          "learned_on_turn": 35,
-          "confidence": 1,
+          "learned_on_turn": 13,
+          "confidence": 1.0,
           "citation": "compatibility_quiz day 1"
         },
         "chloe.favorite_food": {
@@ -498,7 +514,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 1,
-          "learned_on_turn": 35,
+          "learned_on_turn": 13,
           "confidence": 0.5,
           "citation": "compatibility_quiz day 1"
         },
@@ -508,8 +524,8 @@
           "source": "compatibility_quiz",
           "source_npc_id": "chloe",
           "learned_on_day": 1,
-          "learned_on_turn": 35,
-          "confidence": 1,
+          "learned_on_turn": 13,
+          "confidence": 1.0,
           "citation": "compatibility_quiz day 1"
         },
         "chloe.comfort_show": {
@@ -518,7 +534,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 166,
+          "learned_on_turn": 144,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         },
@@ -528,7 +544,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 166,
+          "learned_on_turn": 144,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         },
@@ -538,7 +554,7 @@
           "source": "quiz_misread",
           "source_npc_id": "chloe",
           "learned_on_day": 3,
-          "learned_on_turn": 166,
+          "learned_on_turn": 144,
           "confidence": 0.5,
           "citation": "mr_and_mrs day 3"
         }
@@ -554,7 +570,7 @@
         "backstory": "Twenty-six, primary school teacher from Liverpool. She has been living with her older sister since her ex moved out six months ago. Her sister is pregnant, and Chloe keeps wondering whether she wants children before thirty.",
         "location_id": "firepit",
         "relationship": {
-          "affection": 6,
+          "affection": 8,
           "chemistry": 5,
           "trust": 0,
           "friendship": 0
@@ -587,14 +603,46 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_c5c175fd5175ad53",
+            "id": "mem_21893b26f4772042",
+            "holder_id": "chloe",
+            "subject_id": "player",
+            "content": "I properly met the player during Day One intros and got a real first read.",
+            "source": "direct",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 8,
+            "emotional_weight": 4,
+            "tags": [
+              "day_one",
+              "intro"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_7fd2f5f46fa966e2",
+            "holder_id": "chloe",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_2cb942d2bf6474f1",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -603,14 +651,14 @@
             "durable": true
           },
           {
-            "id": "caught_unprepared::chloe::favorite_food::1::35",
+            "id": "caught_unprepared::chloe::favorite_food::1::13",
             "holder_id": "chloe",
             "subject_id": "player",
             "content": "Player guessed wrong about my favorite food in the Compatibility Quiz.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 35,
+            "formed_on_turn": 13,
             "emotional_weight": 4,
             "tags": [
               "caught_unprepared",
@@ -620,14 +668,14 @@
             "durable": true
           },
           {
-            "id": "caught_unprepared::chloe::age::1::35",
+            "id": "caught_unprepared::chloe::age::1::13",
             "holder_id": "chloe",
             "subject_id": "player",
             "content": "Player guessed wrong about my age in the Compatibility Quiz.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 35,
+            "formed_on_turn": 13,
             "emotional_weight": 4,
             "tags": [
               "caught_unprepared",
@@ -637,14 +685,14 @@
             "durable": true
           },
           {
-            "id": "caught_unprepared::chloe::hometown::1::35",
+            "id": "caught_unprepared::chloe::hometown::1::13",
             "holder_id": "chloe",
             "subject_id": "player",
             "content": "Player guessed wrong about my hometown in the Compatibility Quiz.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 35,
+            "formed_on_turn": 13,
             "emotional_weight": 4,
             "tags": [
               "caught_unprepared",
@@ -654,14 +702,14 @@
             "durable": true
           },
           {
-            "id": "mem_ef9f541adcff9f91",
+            "id": "mem_22ab7a0443e86655",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -670,14 +718,14 @@
             "durable": true
           },
           {
-            "id": "mem_12c53dd3919d4175",
+            "id": "mem_6346daa8bf3b161d",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -686,14 +734,14 @@
             "durable": true
           },
           {
-            "id": "mem_162963d5a702a174",
+            "id": "mem_4e43a280e7f864f9",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -702,14 +750,14 @@
             "durable": true
           },
           {
-            "id": "mem_713e12853d3f64da",
+            "id": "mem_f9dbdeaa9c9943da",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -718,14 +766,14 @@
             "durable": true
           },
           {
-            "id": "mem_2a1758fd1a2afd07",
+            "id": "mem_c94640ad84ea1eb6",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -734,14 +782,14 @@
             "durable": true
           },
           {
-            "id": "mem_7c8f24fa8066e4f3",
+            "id": "mem_c64b952021f2c581",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -750,14 +798,14 @@
             "durable": true
           },
           {
-            "id": "mem_f45736dfe8d4207e",
+            "id": "mem_9a770f8bda49f377",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -766,14 +814,14 @@
             "durable": true
           },
           {
-            "id": "mem_3c175f850f7e93af",
+            "id": "mem_c967569e47f274b1",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -782,14 +830,14 @@
             "durable": true
           },
           {
-            "id": "mem_088728eb568d2c1e",
+            "id": "mem_873e5cd327e47efb",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -798,14 +846,14 @@
             "durable": true
           },
           {
-            "id": "mem_a17bcd461784bf18",
+            "id": "mem_ee751ca8581e2757",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -814,14 +862,14 @@
             "durable": true
           },
           {
-            "id": "mem_265069366cc28adf",
+            "id": "mem_3dc9f1aa1d93e7ad",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -830,14 +878,14 @@
             "durable": true
           },
           {
-            "id": "mem_e833d4a7f6f92913",
+            "id": "mem_c3f21e74d30cefd1",
             "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1075,7 +1123,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -1085,7 +1133,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -1095,7 +1143,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -1105,7 +1153,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -1115,7 +1163,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -1125,7 +1173,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -1135,7 +1183,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -1145,7 +1193,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -1155,7 +1203,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -1165,7 +1213,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -1175,7 +1223,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -1185,7 +1233,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -1195,7 +1243,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -1205,7 +1253,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -1215,7 +1263,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -1225,7 +1273,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -1235,7 +1283,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -1245,7 +1293,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -1255,7 +1303,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -1265,7 +1313,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -1275,7 +1323,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -1321,14 +1369,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_2118cd661c48c0ee",
+            "id": "mem_6a2a5b2595f393f2",
             "holder_id": "maya",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -1337,14 +1385,30 @@
             "durable": true
           },
           {
-            "id": "mem_1cd27e98328637bc",
+            "id": "mem_b2829f17ddd1e1ca",
+            "holder_id": "maya",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_d78452a8494a430b",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1353,14 +1417,14 @@
             "durable": true
           },
           {
-            "id": "mem_f2b628e8b9dc0da5",
+            "id": "mem_abd4a98a41ee10b2",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1369,14 +1433,14 @@
             "durable": true
           },
           {
-            "id": "mem_059460669beaa0f7",
+            "id": "mem_868320429348dcb9",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1385,14 +1449,14 @@
             "durable": true
           },
           {
-            "id": "mem_25c6e748c7ce9033",
+            "id": "mem_58f6f3e0e512428e",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1401,14 +1465,14 @@
             "durable": true
           },
           {
-            "id": "mem_7330a6b5e992e7c6",
+            "id": "mem_50976e54b08c9a0f",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1417,14 +1481,14 @@
             "durable": true
           },
           {
-            "id": "mem_4d8ec5ccccd64439",
+            "id": "mem_1b645d1036539038",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1433,14 +1497,14 @@
             "durable": true
           },
           {
-            "id": "mem_17f18db4a0020bc6",
+            "id": "mem_cdea7cd1967af281",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1449,14 +1513,14 @@
             "durable": true
           },
           {
-            "id": "mem_03bc1ece98bbff7d",
+            "id": "mem_9dadb509c4ef2bf4",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1465,14 +1529,14 @@
             "durable": true
           },
           {
-            "id": "mem_a41377787607583a",
+            "id": "mem_738a4470a554acbe",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1481,14 +1545,14 @@
             "durable": true
           },
           {
-            "id": "mem_fa2542bdaec546f0",
+            "id": "mem_a9afc8f815b5f3ae",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1497,14 +1561,14 @@
             "durable": true
           },
           {
-            "id": "mem_0ef099ae083c9d1a",
+            "id": "mem_5af517b82cf50c04",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1513,14 +1577,14 @@
             "durable": true
           },
           {
-            "id": "mem_38929cd9429b9d3e",
+            "id": "mem_8cbcd43599c09e29",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1529,14 +1593,14 @@
             "durable": true
           },
           {
-            "id": "mem_37002bc531220366",
+            "id": "mem_31f9f53702c9086e",
             "holder_id": "maya",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -1774,7 +1838,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -1784,7 +1848,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -1794,7 +1858,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "liam.occupation": {
@@ -1804,7 +1868,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -1814,7 +1878,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -1824,7 +1888,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -1834,7 +1898,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -1844,7 +1908,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -1854,7 +1918,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -1864,7 +1928,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -1874,7 +1938,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -1884,7 +1948,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -1894,7 +1958,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -1904,7 +1968,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -1914,7 +1978,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -1924,7 +1988,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -1934,7 +1998,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -1944,7 +2008,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -1954,7 +2018,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -1964,7 +2028,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -1974,7 +2038,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -2020,14 +2084,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_dc3ce0226be25734",
+            "id": "mem_f651a1df633efe56",
             "holder_id": "liam",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -2036,14 +2100,30 @@
             "durable": true
           },
           {
-            "id": "mem_59f93c5aa1aa0040",
+            "id": "mem_34037131594dd190",
+            "holder_id": "liam",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_bdad7c39aafaf717",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2052,14 +2132,14 @@
             "durable": true
           },
           {
-            "id": "mem_6320b07abe1449f4",
+            "id": "mem_934befd6d3a3ae52",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2068,14 +2148,14 @@
             "durable": true
           },
           {
-            "id": "mem_56faa17e22aee85a",
+            "id": "mem_5ee7750120a1a484",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2084,14 +2164,14 @@
             "durable": true
           },
           {
-            "id": "mem_e6948b7f4794423e",
+            "id": "mem_24df3cf7d07cba5e",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2100,14 +2180,14 @@
             "durable": true
           },
           {
-            "id": "mem_33645f68f62bd9c5",
+            "id": "mem_2aebe2b24e44cb52",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2116,14 +2196,14 @@
             "durable": true
           },
           {
-            "id": "mem_23a4626f41956a8f",
+            "id": "mem_08defa20094575d4",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2132,14 +2212,14 @@
             "durable": true
           },
           {
-            "id": "mem_b5c82e7aa85819f2",
+            "id": "mem_0c077d4905ac894a",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2148,14 +2228,14 @@
             "durable": true
           },
           {
-            "id": "mem_773ba5d7095c3ee4",
+            "id": "mem_53291830cbd414ae",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2164,14 +2244,14 @@
             "durable": true
           },
           {
-            "id": "mem_04d5eff6703acd88",
+            "id": "mem_349c69b02e188ae9",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2180,14 +2260,14 @@
             "durable": true
           },
           {
-            "id": "mem_ccb8bc92af1a1920",
+            "id": "mem_7d24b16d2c315b83",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2196,14 +2276,14 @@
             "durable": true
           },
           {
-            "id": "mem_464aa4a4c4b46cb4",
+            "id": "mem_97338e1aad597071",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2212,14 +2292,14 @@
             "durable": true
           },
           {
-            "id": "mem_2dccd7ebe28afed2",
+            "id": "mem_b90f63cf4f092fba",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2228,14 +2308,14 @@
             "durable": true
           },
           {
-            "id": "mem_f91e57637f31b3fd",
+            "id": "mem_63bd58d4a7d5a4ae",
             "holder_id": "liam",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2473,7 +2553,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -2483,7 +2563,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -2493,7 +2573,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -2503,7 +2583,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -2513,7 +2593,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -2523,7 +2603,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "sophie_start.occupation": {
@@ -2533,7 +2613,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -2543,7 +2623,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -2553,7 +2633,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -2563,7 +2643,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -2573,7 +2653,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -2583,7 +2663,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -2593,7 +2673,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -2603,7 +2683,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -2613,7 +2693,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -2623,7 +2703,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -2633,7 +2713,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -2643,7 +2723,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -2653,7 +2733,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -2663,7 +2743,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -2673,7 +2753,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -2719,14 +2799,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_b00c9c347ec4bc47",
+            "id": "mem_a92c6129d566cb0f",
             "holder_id": "sophie_start",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -2735,14 +2815,30 @@
             "durable": true
           },
           {
-            "id": "mem_15ababf7d4cb319d",
+            "id": "mem_16a2ec52bc1845a0",
+            "holder_id": "sophie_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_9f02e6dab40a6cfa",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2751,14 +2847,14 @@
             "durable": true
           },
           {
-            "id": "mem_ebb3dca1b94e2443",
+            "id": "mem_41d73d5d3d1d17eb",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2767,14 +2863,14 @@
             "durable": true
           },
           {
-            "id": "mem_68d320df01fb6c3b",
+            "id": "mem_bc825b3dddfc9320",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2783,14 +2879,14 @@
             "durable": true
           },
           {
-            "id": "mem_108d21920b9a026e",
+            "id": "mem_999e7136f5d1dcd0",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2799,14 +2895,14 @@
             "durable": true
           },
           {
-            "id": "mem_63a9f12db86f6b65",
+            "id": "mem_5fb1de16b30d8370",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2815,14 +2911,14 @@
             "durable": true
           },
           {
-            "id": "mem_db5610d7010a006c",
+            "id": "mem_a8ed47bf91a7d78a",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2831,14 +2927,14 @@
             "durable": true
           },
           {
-            "id": "mem_d6169a834a2470d3",
+            "id": "mem_4a9a699add7ae1ae",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2847,14 +2943,14 @@
             "durable": true
           },
           {
-            "id": "mem_37b2f4785213b8d6",
+            "id": "mem_58dfae4928065d9e",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2863,14 +2959,14 @@
             "durable": true
           },
           {
-            "id": "mem_64ca7b5fc1624aea",
+            "id": "mem_fc85f250a7a0a1c2",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2879,14 +2975,14 @@
             "durable": true
           },
           {
-            "id": "mem_025dc87f77cf5804",
+            "id": "mem_aa94dc913f9bdfd7",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2895,14 +2991,14 @@
             "durable": true
           },
           {
-            "id": "mem_5f2784490642192c",
+            "id": "mem_5f16d57818c81e43",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2911,14 +3007,14 @@
             "durable": true
           },
           {
-            "id": "mem_30007dd24c896ec1",
+            "id": "mem_eecd785016eb777a",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -2927,14 +3023,14 @@
             "durable": true
           },
           {
-            "id": "mem_bc8111d9a8b29e74",
+            "id": "mem_20e705ae89f24b49",
             "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3172,7 +3268,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -3182,7 +3278,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -3192,7 +3288,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -3202,7 +3298,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -3212,7 +3308,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -3222,7 +3318,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -3232,7 +3328,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -3242,7 +3338,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -3252,7 +3348,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "nia_start.occupation": {
@@ -3262,7 +3358,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -3272,7 +3368,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -3282,7 +3378,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -3292,7 +3388,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -3302,7 +3398,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -3312,7 +3408,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -3322,7 +3418,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -3332,7 +3428,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -3342,7 +3438,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -3352,7 +3448,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -3362,7 +3458,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -3372,7 +3468,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -3418,14 +3514,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_3ad2a03a6d042dd5",
+            "id": "mem_9190c022112ae2a3",
             "holder_id": "nia_start",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -3434,14 +3530,30 @@
             "durable": true
           },
           {
-            "id": "mem_3ed0887911d2200f",
+            "id": "mem_7ecc909791f08b65",
+            "holder_id": "nia_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_a8989f68975cce98",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3450,14 +3562,14 @@
             "durable": true
           },
           {
-            "id": "mem_9a3815b8caeba597",
+            "id": "mem_524054a97292b4db",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3466,14 +3578,14 @@
             "durable": true
           },
           {
-            "id": "mem_6ee9aab45f0ccfed",
+            "id": "mem_fc51c303f41b440e",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3482,14 +3594,14 @@
             "durable": true
           },
           {
-            "id": "mem_1466b1e8a5e02787",
+            "id": "mem_92cf4da2699046dc",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3498,14 +3610,14 @@
             "durable": true
           },
           {
-            "id": "mem_e40ddefe4349458b",
+            "id": "mem_93b6dd474187ca73",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3514,14 +3626,14 @@
             "durable": true
           },
           {
-            "id": "mem_b5af946a469f94cd",
+            "id": "mem_8ee8c8dbc4ec7867",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3530,14 +3642,14 @@
             "durable": true
           },
           {
-            "id": "mem_2395c821e71f3fa7",
+            "id": "mem_0645c28386360830",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3546,14 +3658,14 @@
             "durable": true
           },
           {
-            "id": "mem_88ff035cec8c7a8e",
+            "id": "mem_334dc0fb63e8ac5f",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3562,14 +3674,14 @@
             "durable": true
           },
           {
-            "id": "mem_7d466ac1d3f41074",
+            "id": "mem_7911cfafe44fdcf4",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3578,14 +3690,14 @@
             "durable": true
           },
           {
-            "id": "mem_abfcb84dc4f59ef0",
+            "id": "mem_db7ca6c2007bd3d0",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3594,14 +3706,14 @@
             "durable": true
           },
           {
-            "id": "mem_0706284ae7cafd72",
+            "id": "mem_8f29834848ab83a6",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3610,14 +3722,14 @@
             "durable": true
           },
           {
-            "id": "mem_7a79ba03b0acb0ba",
+            "id": "mem_d28f8849d6ebda6f",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3626,14 +3738,14 @@
             "durable": true
           },
           {
-            "id": "mem_ec4071fadf158713",
+            "id": "mem_ff4864912823c05c",
             "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -3871,7 +3983,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -3881,7 +3993,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -3891,7 +4003,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -3901,7 +4013,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -3911,7 +4023,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -3921,7 +4033,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -3931,7 +4043,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -3941,7 +4053,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -3951,7 +4063,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -3961,7 +4073,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -3971,7 +4083,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -3981,7 +4093,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "marcus_start.occupation": {
@@ -3991,7 +4103,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -4001,7 +4113,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -4011,7 +4123,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -4021,7 +4133,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -4031,7 +4143,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -4041,7 +4153,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -4051,7 +4163,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -4061,7 +4173,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -4071,7 +4183,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -4117,14 +4229,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_40fd89e91b80e3d3",
+            "id": "mem_3b0100dc648e1ee0",
             "holder_id": "marcus_start",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -4133,14 +4245,30 @@
             "durable": true
           },
           {
-            "id": "mem_7fd83026fd29f243",
+            "id": "mem_bb8c89b8963184a5",
+            "holder_id": "marcus_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_457328f03cc5abe8",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4149,14 +4277,14 @@
             "durable": true
           },
           {
-            "id": "mem_e1347126e7ed5adb",
+            "id": "mem_4a97a7d6280d52ed",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4165,14 +4293,14 @@
             "durable": true
           },
           {
-            "id": "mem_b6784d81ea30afe0",
+            "id": "mem_fd942d4773fef1d8",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4181,14 +4309,14 @@
             "durable": true
           },
           {
-            "id": "mem_2ac38e371564aef2",
+            "id": "mem_08c1d9f08f263fa2",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4197,14 +4325,14 @@
             "durable": true
           },
           {
-            "id": "mem_2bc02564d68f0f7f",
+            "id": "mem_992840511f600693",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4213,14 +4341,14 @@
             "durable": true
           },
           {
-            "id": "mem_2cbaf4e3c951cb01",
+            "id": "mem_1dc1289721f58526",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4229,14 +4357,14 @@
             "durable": true
           },
           {
-            "id": "mem_1cb5c8a3e2013859",
+            "id": "mem_abded58fdfa090b2",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4245,14 +4373,14 @@
             "durable": true
           },
           {
-            "id": "mem_04b030b639c26713",
+            "id": "mem_d8861022a1188f1b",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4261,14 +4389,14 @@
             "durable": true
           },
           {
-            "id": "mem_e863e5629b37785e",
+            "id": "mem_e94894fc58a5f28a",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4277,14 +4405,14 @@
             "durable": true
           },
           {
-            "id": "mem_b60cf6e41d731860",
+            "id": "mem_9817dd101f0dec2e",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4293,14 +4421,14 @@
             "durable": true
           },
           {
-            "id": "mem_f44d52520d266737",
+            "id": "mem_c947606953541319",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4309,14 +4437,14 @@
             "durable": true
           },
           {
-            "id": "mem_3329454b95193b85",
+            "id": "mem_a4dac0d714c9e5ef",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4325,14 +4453,14 @@
             "durable": true
           },
           {
-            "id": "mem_ee75128dd830784c",
+            "id": "mem_4a5dec11539816c7",
             "holder_id": "marcus_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4570,7 +4698,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -4580,7 +4708,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -4590,7 +4718,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -4600,7 +4728,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -4610,7 +4738,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -4620,7 +4748,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -4630,7 +4758,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -4640,7 +4768,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -4650,7 +4778,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -4660,7 +4788,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -4670,7 +4798,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -4680,7 +4808,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -4690,7 +4818,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -4700,7 +4828,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -4710,7 +4838,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "blake_start.occupation": {
@@ -4720,7 +4848,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -4730,7 +4858,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -4740,7 +4868,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "jordan_start.occupation": {
@@ -4750,7 +4878,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -4760,7 +4888,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -4770,7 +4898,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -4816,14 +4944,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_9d7c5e2962c5635c",
+            "id": "mem_7f3b3a65a473d869",
             "holder_id": "blake_start",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -4832,14 +4960,30 @@
             "durable": true
           },
           {
-            "id": "mem_6cdccbb57d04e2cd",
+            "id": "mem_48ebb88b9d689f14",
+            "holder_id": "blake_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_1e04265ce0bd9ff9",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4848,14 +4992,14 @@
             "durable": true
           },
           {
-            "id": "mem_bb2e6432cc901325",
+            "id": "mem_1306bd909e50368d",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4864,14 +5008,14 @@
             "durable": true
           },
           {
-            "id": "mem_63d06b2167120c15",
+            "id": "mem_dd30a3db250c6e73",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4880,14 +5024,14 @@
             "durable": true
           },
           {
-            "id": "mem_87b6cf3e5b532c2a",
+            "id": "mem_5326798b5c98156d",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4896,14 +5040,14 @@
             "durable": true
           },
           {
-            "id": "mem_a322fbbd754a6b09",
+            "id": "mem_ecfc4ecb8c6fca38",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4912,14 +5056,14 @@
             "durable": true
           },
           {
-            "id": "mem_8c328bc03801551e",
+            "id": "mem_9af48595ecd33d78",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4928,14 +5072,14 @@
             "durable": true
           },
           {
-            "id": "mem_0c2b614fb9739ae8",
+            "id": "mem_1f87e0b13caa9708",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4944,14 +5088,14 @@
             "durable": true
           },
           {
-            "id": "mem_30cb1f226330c126",
+            "id": "mem_85fd703d893f7d85",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4960,14 +5104,14 @@
             "durable": true
           },
           {
-            "id": "mem_81fdc105b221a24c",
+            "id": "mem_358e0a05cfdea476",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4976,14 +5120,14 @@
             "durable": true
           },
           {
-            "id": "mem_b404d5c8e7cfb2e2",
+            "id": "mem_8806b6cfa314adbf",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -4992,14 +5136,14 @@
             "durable": true
           },
           {
-            "id": "mem_937375e1e3c7c319",
+            "id": "mem_fcfdf89c970b9421",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5008,14 +5152,14 @@
             "durable": true
           },
           {
-            "id": "mem_acb37407c4d1153b",
+            "id": "mem_1381c67fd212d911",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5024,14 +5168,14 @@
             "durable": true
           },
           {
-            "id": "mem_28847ffa273d906a",
+            "id": "mem_bc39557f38af44e1",
             "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5269,7 +5413,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -5279,7 +5423,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -5289,7 +5433,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -5299,7 +5443,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -5309,7 +5453,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -5319,7 +5463,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -5329,7 +5473,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -5339,7 +5483,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -5349,7 +5493,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -5359,7 +5503,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -5369,7 +5513,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -5379,7 +5523,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -5389,7 +5533,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -5399,7 +5543,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -5409,7 +5553,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -5419,7 +5563,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -5429,7 +5573,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -5439,7 +5583,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "jordan_start.occupation": {
@@ -5449,7 +5593,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.hometown": {
@@ -5459,7 +5603,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
           "jordan_start.age": {
@@ -5469,7 +5613,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           }
         }
@@ -5515,14 +5659,14 @@
         "familiarity_with_player": 25,
         "memories": [
           {
-            "id": "mem_0ae65bd2ae205fda",
+            "id": "mem_28be1941a8e6b046",
             "holder_id": "jordan_start",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 8,
             "emotional_weight": 4,
             "tags": [
               "day_one",
@@ -5531,14 +5675,30 @@
             "durable": true
           },
           {
-            "id": "mem_157df8b91744b152",
+            "id": "mem_34fb148fe58b47e3",
+            "holder_id": "jordan_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "source": "witnessed",
+            "source_id": null,
+            "formed_on_day": 1,
+            "formed_on_turn": 9,
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
+            ],
+            "durable": true
+          },
+          {
+            "id": "mem_dcc8f69980514a74",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 31,
+            "formed_on_turn": 9,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5547,14 +5707,14 @@
             "durable": true
           },
           {
-            "id": "mem_24c2f14893084d74",
+            "id": "mem_8210ecd5eef6232a",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 36,
+            "formed_on_turn": 14,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5563,14 +5723,14 @@
             "durable": true
           },
           {
-            "id": "mem_882e7b9568d627c2",
+            "id": "mem_0b864fb17bb96c9d",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 60,
+            "formed_on_turn": 38,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5579,14 +5739,14 @@
             "durable": true
           },
           {
-            "id": "mem_2ed61a09f50e0f2b",
+            "id": "mem_c582895dd3ddf6d3",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
-            "formed_on_turn": 61,
+            "formed_on_turn": 39,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5595,14 +5755,14 @@
             "durable": true
           },
           {
-            "id": "mem_7ee4911ca6386c40",
+            "id": "mem_f752f20ad02ac779",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 97,
+            "formed_on_turn": 75,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5611,14 +5771,14 @@
             "durable": true
           },
           {
-            "id": "mem_380cd03078a28b5e",
+            "id": "mem_39e8cc125dc4f693",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 100,
+            "formed_on_turn": 78,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5627,14 +5787,14 @@
             "durable": true
           },
           {
-            "id": "mem_2d1dd8e6fc609b19",
+            "id": "mem_455067df2e777be7",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 124,
+            "formed_on_turn": 102,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5643,14 +5803,14 @@
             "durable": true
           },
           {
-            "id": "mem_569821c603124ada",
+            "id": "mem_835d88e78e5e8c60",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
-            "formed_on_turn": 125,
+            "formed_on_turn": 103,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5659,14 +5819,14 @@
             "durable": true
           },
           {
-            "id": "mem_7f2f6f8546e64ea2",
+            "id": "mem_afc20c31cb72c785",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 161,
+            "formed_on_turn": 139,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5675,14 +5835,14 @@
             "durable": true
           },
           {
-            "id": "mem_3e35250e3a196aaa",
+            "id": "mem_c9ddae190c1ba0fd",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 167,
+            "formed_on_turn": 145,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5691,14 +5851,14 @@
             "durable": true
           },
           {
-            "id": "mem_7d31ebb327c2fff6",
+            "id": "mem_d99bfae61a09b787",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 191,
+            "formed_on_turn": 169,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5707,14 +5867,14 @@
             "durable": true
           },
           {
-            "id": "mem_2aa985fa66520cd6",
+            "id": "mem_52e0523f9433fccb",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 192,
+            "formed_on_turn": 170,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5723,14 +5883,14 @@
             "durable": true
           },
           {
-            "id": "mem_83962ddcb79cb18b",
+            "id": "mem_4d07202c8c975cac",
             "holder_id": "jordan_start",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
-            "formed_on_turn": 204,
+            "formed_on_turn": 182,
             "emotional_weight": 5,
             "tags": [
               "ceremony",
@@ -5976,7 +6136,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.hometown": {
@@ -5986,7 +6146,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "chloe.age": {
@@ -5996,7 +6156,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Chloe"
           },
           "maya.occupation": {
@@ -6006,7 +6166,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.hometown": {
@@ -6016,7 +6176,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "maya.age": {
@@ -6026,7 +6186,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
           "liam.occupation": {
@@ -6036,7 +6196,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.hometown": {
@@ -6046,7 +6206,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "liam.age": {
@@ -6056,7 +6216,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
           "sophie_start.occupation": {
@@ -6066,7 +6226,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.hometown": {
@@ -6076,7 +6236,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "sophie_start.age": {
@@ -6086,7 +6246,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
           "nia_start.occupation": {
@@ -6096,7 +6256,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.hometown": {
@@ -6106,7 +6266,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "nia_start.age": {
@@ -6116,7 +6276,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
           "marcus_start.occupation": {
@@ -6126,7 +6286,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.hometown": {
@@ -6136,7 +6296,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "marcus_start.age": {
@@ -6146,7 +6306,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
           "blake_start.occupation": {
@@ -6156,7 +6316,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.hometown": {
@@ -6166,7 +6326,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
           "blake_start.age": {
@@ -6176,7 +6336,7 @@
             "source_npc_id": "preseason",
             "learned_on_day": 1,
             "learned_on_turn": 0,
-            "confidence": 1,
+            "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           }
         }
@@ -6223,6 +6383,7 @@
     "active_ambient_id": "firepit_sit_quietly",
     "consecutive_ambient_turns": 12,
     "intro_completed_ids": [
+      "chloe",
       "maya",
       "liam",
       "sophie_start",
@@ -6333,296 +6494,7 @@
         ]
       }
     ],
-    "pending_challenge": {
-      "id": "mr_and_mrs",
-      "day": 3,
-      "kind": "mr_and_mrs",
-      "stat_tested": "banter",
-      "participants": [
-        "player",
-        "chloe"
-      ],
-      "player_choice": null,
-      "result": "failure",
-      "deltas": {
-        "chloe": {
-          "affection": -2,
-          "chemistry": 0,
-          "trust": 0,
-          "friendship": -3
-        }
-      },
-      "rounds": [
-        {
-          "index": 0,
-          "prompt_id": "cq_chloe_comfort_show",
-          "target_id": "chloe",
-          "trait_key": "comfort_show",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "The Couples Quiz starts. Chloe is sat in the soundproof booth on one side; you're at the firepit with a clipboard. The host alternates — odd rounds you guess what Chloe would say, even rounds you guess what they wrote about you. Round one is about Chloe: Tell us about Chloe's comfort show.",
-          "choices": [
-            {
-              "id": "distractor_0",
-              "label": "Grand Designs",
-              "fact_value": "Grand Designs",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_1",
-              "label": "Taskmaster clips watched under a blanket",
-              "fact_value": "Taskmaster clips watched under a blanket",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "correct",
-              "label": "Gavin and Stacey",
-              "fact_value": "Gavin and Stacey",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_2",
-              "label": "Bake Off reruns",
-              "fact_value": "Bake Off reruns",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "distractor_0",
-          "points": 0,
-          "reveals": []
-        },
-        {
-          "index": 1,
-          "prompt_id": "mrandmrs_partner_archetype",
-          "target_id": "chloe",
-          "trait_key": "player_archetype",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 2 — partner's turn. In the booth, Chloe was asked what villa type you came in as — what did they write down? (Pick what Chloe actually said, not what's true.)",
-          "choices": [
-            {
-              "id": "distractor_2",
-              "label": "the Loyal Friend",
-              "fact_value": "loyal_friend",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "correct",
-              "label": "the Heartthrob",
-              "fact_value": "heartthrob",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_0",
-              "label": "all-rounder",
-              "fact_value": "balanced",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_1",
-              "label": "the Class Clown",
-              "fact_value": "class_clown",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "distractor_2",
-          "points": 0,
-          "reveals": [
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "partner_guess": "heartthrob",
-                "truth": "heartthrob",
-                "fact_key": "archetype",
-                "direction": "partner_about_player"
-              }
-            }
-          ]
-        },
-        {
-          "index": 2,
-          "prompt_id": "cq_chloe_karaoke_song",
-          "target_id": "chloe",
-          "trait_key": "karaoke_song",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 3 — about Chloe: Tell us about Chloe's karaoke song.",
-          "choices": [
-            {
-              "id": "distractor_1",
-              "label": "Murder on the Dancefloor with lethal eye contact",
-              "fact_value": "Murder on the Dancefloor with lethal eye contact",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "correct",
-              "label": "Stay by Rihanna",
-              "fact_value": "Stay by Rihanna",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_2",
-              "label": "Put Your Records On with no irony",
-              "fact_value": "Put Your Records On with no irony",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_0",
-              "label": "Hot N Cold with full choreography",
-              "fact_value": "Hot N Cold with full choreography",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "distractor_1",
-          "points": 0,
-          "reveals": []
-        },
-        {
-          "index": 3,
-          "prompt_id": "mrandmrs_partner_gender",
-          "target_id": "chloe",
-          "trait_key": "player_gender",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 4 — partner's turn. In the booth, Chloe was asked what they wrote about you on the form — what did they say? (Pick what Chloe actually said, not what's true.)",
-          "choices": [
-            {
-              "id": "distractor_0",
-              "label": "a woman",
-              "fact_value": "woman",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "correct",
-              "label": "a man",
-              "fact_value": "man",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "distractor_0",
-          "points": 0,
-          "reveals": [
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "partner_guess": "man",
-                "truth": "man",
-                "fact_key": "gender",
-                "direction": "partner_about_player"
-              }
-            }
-          ]
-        },
-        {
-          "index": 4,
-          "prompt_id": "cq_chloe_keepsake",
-          "target_id": "chloe",
-          "trait_key": "keepsake",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 5 — about Chloe: Tell us about Chloe's keepsake.",
-          "choices": [
-            {
-              "id": "distractor_2",
-              "label": "the unsent letter folded inside a cookbook",
-              "fact_value": "the unsent letter folded inside a cookbook",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_0",
-              "label": "a voice note from her little cousin saved as a ringtone",
-              "fact_value": "a voice note from her little cousin saved as a ringtone",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_1",
-              "label": "a monogrammed planner full of crossed-out ex names",
-              "fact_value": "a monogrammed planner full of crossed-out ex names",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "correct",
-              "label": "a tiny ceramic apple",
-              "fact_value": "a tiny ceramic apple",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "distractor_2",
-          "points": 0,
-          "reveals": []
-        },
-        {
-          "index": 5,
-          "prompt_id": "mrandmrs_partner_perception",
-          "target_id": "chloe",
-          "trait_key": "player_perception",
-          "tier": 0,
-          "mechanical": false,
-          "stem": "Round 6 — partner's turn. In the booth, the host asked Chloe how the audience reads you — what did they say? (Pick what Chloe actually said, not what's true.)",
-          "choices": [
-            {
-              "id": "correct",
-              "label": "audience cool on them",
-              "fact_value": "low",
-              "is_correct": true,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_1",
-              "label": "audience steady",
-              "fact_value": "mid",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            },
-            {
-              "id": "distractor_0",
-              "label": "audience favourite",
-              "fact_value": "high",
-              "is_correct": false,
-              "distractor_source": "trait_card"
-            }
-          ],
-          "chosen_id": "correct",
-          "points": 3,
-          "reveals": [
-            {
-              "kind": "fact",
-              "subject_id": "chloe",
-              "payload": {
-                "partner_guess": "low",
-                "truth": "low",
-                "fact_key": "perception",
-                "direction": "partner_about_player"
-              }
-            }
-          ]
-        }
-      ],
-      "current_round_index": 6,
-      "total_points": 3,
-      "classification": "failure",
-      "audience_delta": -4
-    },
+    "pending_challenge": null,
     "quizzed_traits_this_run": {
       "chloe": [
         "drink_of_choice",
@@ -8900,7 +8772,7 @@
       "kind": "ceremony",
       "event_id": "recoupling_day_3",
       "gather_location": "firepit",
-      "fires_on_turn": 205
+      "fires_on_turn": 183
     },
     "pending_group_date": {
       "id": "group_date_day3",
@@ -8918,27 +8790,17 @@
         "day": 1,
         "items": [
           {
-            "holder_id": "jordan_start",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
             "holder_id": "sophie_start",
             "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
+            "content": "The Pairing Ceremony locks in the next couples.",
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "challenge"
+              "recoupling"
             ]
           },
           {
-            "holder_id": "maya",
+            "holder_id": "blake_start",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "emotional_weight": 5,
@@ -8948,7 +8810,7 @@
             ]
           },
           {
-            "holder_id": "nia_start",
+            "holder_id": "chloe",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "emotional_weight": 5,
@@ -8960,11 +8822,21 @@
           {
             "holder_id": "liam",
             "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
+            "content": "The Pairing Ceremony locks in the next couples.",
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "challenge"
+              "recoupling"
+            ]
+          },
+          {
+            "holder_id": "jordan_start",
+            "subject_id": "villa",
+            "content": "The Pairing Ceremony locks in the next couples.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "recoupling"
             ]
           }
         ]
@@ -8973,7 +8845,7 @@
         "day": 2,
         "items": [
           {
-            "holder_id": "marcus_start",
+            "holder_id": "liam",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "emotional_weight": 5,
@@ -8983,7 +8855,17 @@
             ]
           },
           {
-            "holder_id": "liam",
+            "holder_id": "maya",
+            "subject_id": "villa",
+            "content": "Pulse Race tested Charm and is still pending.",
+            "emotional_weight": 5,
+            "tags": [
+              "ceremony",
+              "challenge"
+            ]
+          },
+          {
+            "holder_id": "sophie_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "emotional_weight": 5,
@@ -9003,17 +8885,7 @@
             ]
           },
           {
-            "holder_id": "sophie_start",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "chloe",
+            "holder_id": "nia_start",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "emotional_weight": 5,
@@ -9036,37 +8908,37 @@
   "trace_records": [
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 1
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 2
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 3
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 4
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 5
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 6
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "intros",
       "turn": 7
     },
     {
@@ -9076,137 +8948,137 @@
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 9
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 10
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 11
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 12
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 13
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 14
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 15
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 16
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 17
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 18
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 19
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 20
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 21
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 22
     },
     {
       "day": 1,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 23
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 24
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 25
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 26
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 27
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 28
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 29
     },
     {
       "day": 1,
-      "phase": "intros",
+      "phase": "afternoon",
       "turn": 30
     },
     {
       "day": 1,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 31
     },
     {
       "day": 1,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 32
     },
     {
       "day": 1,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 33
     },
     {
       "day": 1,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 34
     },
     {
       "day": 1,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 35
     },
     {
@@ -9221,177 +9093,177 @@
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "text",
       "turn": 38
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 39
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 40
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 41
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 42
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 43
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 44
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 45
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 46
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 47
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 48
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 49
     },
     {
       "day": 1,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 50
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 51
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 52
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 53
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 54
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 55
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 56
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 57
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 58
     },
     {
-      "day": 1,
-      "phase": "afternoon",
+      "day": 2,
+      "phase": "morning",
       "turn": 59
     },
     {
-      "day": 1,
-      "phase": "text",
+      "day": 2,
+      "phase": "morning",
       "turn": 60
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 61
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 62
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 63
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 64
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 65
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 66
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 67
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 68
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 69
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 70
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 71
     },
     {
-      "day": 1,
-      "phase": "evening",
+      "day": 2,
+      "phase": "morning",
       "turn": 72
     },
     {
@@ -9406,127 +9278,127 @@
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 75
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 76
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 77
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 78
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 79
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 80
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 81
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 82
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 83
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 84
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 85
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 86
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 87
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 88
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 89
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 90
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 91
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 92
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 93
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 94
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 95
     },
     {
       "day": 2,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 96
     },
     {
       "day": 2,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 97
     },
     {
       "day": 2,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 98
     },
     {
       "day": 2,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 99
     },
     {
@@ -9541,177 +9413,177 @@
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "text",
       "turn": 102
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 103
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 104
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 105
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 106
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 107
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 108
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 109
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 110
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 111
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 112
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 113
     },
     {
       "day": 2,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 114
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 115
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 116
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 117
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 118
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 119
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 120
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 121
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 122
     },
     {
-      "day": 2,
-      "phase": "afternoon",
+      "day": 3,
+      "phase": "morning",
       "turn": 123
     },
     {
-      "day": 2,
-      "phase": "text",
+      "day": 3,
+      "phase": "morning",
       "turn": 124
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 125
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 126
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 127
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 128
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 129
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 130
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 131
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 132
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 133
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 134
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 135
     },
     {
-      "day": 2,
-      "phase": "evening",
+      "day": 3,
+      "phase": "morning",
       "turn": 136
     },
     {
@@ -9726,142 +9598,142 @@
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 139
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 140
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 141
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 142
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 143
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "challenge",
       "turn": 144
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 145
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 146
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 147
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 148
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 149
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 150
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 151
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 152
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 153
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 154
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 155
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 156
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 157
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 158
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 159
     },
     {
       "day": 3,
-      "phase": "morning",
+      "phase": "afternoon",
       "turn": 160
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 161
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 162
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 163
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 164
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 165
     },
     {
       "day": 3,
-      "phase": "challenge",
+      "phase": "afternoon",
       "turn": 166
     },
     {
@@ -9876,183 +9748,73 @@
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "text",
       "turn": 169
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 170
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 171
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 172
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 173
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 174
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 175
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 176
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 177
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 178
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 179
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 180
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 181
     },
     {
       "day": 3,
-      "phase": "afternoon",
+      "phase": "evening",
       "turn": 182
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 183
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 184
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 185
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 186
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 187
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 188
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 189
-    },
-    {
-      "day": 3,
-      "phase": "afternoon",
-      "turn": 190
-    },
-    {
-      "day": 3,
-      "phase": "text",
-      "turn": 191
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 192
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 193
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 194
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 195
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 196
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 197
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 198
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 199
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 200
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 201
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 202
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 203
-    },
-    {
-      "day": 3,
-      "phase": "evening",
-      "turn": 204
     }
   ],
   "rng_state": [

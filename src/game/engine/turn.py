@@ -263,10 +263,11 @@ def run_turn(
             )
         )
     if action.kind is ActionKind.RECOUPLE and state.day == 1 and state.phase is Phase.MORNING:
-        # Intros already ran before First Spark, so drop straight into the
-        # first Challenge instead of looping back to INTROS.
-        state.phase = Phase.CHALLENGE
-        state.phase_clock = PhaseClock(phase=Phase.CHALLENGE.value, budget_minutes=0)
+        # Intros already ran before First Spark, so the next legal beat is
+        # the Day-1 Challenge. Mark MORNING fully spent and let auto-advance
+        # roll into CHALLENGE through advance_phase so the challenge gets
+        # scheduled via the standard _scheduled_phase_events path.
+        state.phase_clock.elapsed_minutes = state.phase_clock.budget_minutes
     state.turn_index += 1
     follow_up_menu = None
     curator_batches: list[MemoryBatch] = [*pre_curator_batches]
