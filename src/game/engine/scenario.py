@@ -93,6 +93,19 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
             stats=script.character_creation.stats,
             rerolled=script.character_creation.rerolled,
         )
+        # Day-1 now starts with the greeting circle (INTROS). Scripts that
+        # don't open with an INTRODUCE_TO action assume the legacy flow that
+        # ran First Spark first, so fast-forward past intros for them.
+        first = script.actions[0] if script.actions else None
+        opens_with_intro = first is not None and first.kind is ActionKind.INTRODUCE_TO
+        if state.phase is Phase.INTROS and not opens_with_intro:
+            from src.game.state.phase_clock import PhaseClock as _PhaseClock
+            state.phase = Phase.MORNING
+            state.phase_clock = _PhaseClock(phase=Phase.MORNING.value, budget_minutes=PHASE_BUDGETS[Phase.MORNING])
+            state.intro_completed_ids = [
+                islander.id for islander in state.islanders if not islander.eliminated
+            ]
+            state.intro_memory_created = True
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
     contextual_options = _scripted_contextual_options(script.actions, script.villa_updates)

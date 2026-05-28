@@ -263,8 +263,10 @@ def run_turn(
             )
         )
     if action.kind is ActionKind.RECOUPLE and state.day == 1 and state.phase is Phase.MORNING:
-        state.phase = Phase.INTROS
-        state.phase_clock = PhaseClock(phase=Phase.INTROS.value, budget_minutes=180)
+        # Intros already ran before First Spark, so drop straight into the
+        # first Challenge instead of looping back to INTROS.
+        state.phase = Phase.CHALLENGE
+        state.phase_clock = PhaseClock(phase=Phase.CHALLENGE.value, budget_minutes=0)
     state.turn_index += 1
     follow_up_menu = None
     curator_batches: list[MemoryBatch] = [*pre_curator_batches]

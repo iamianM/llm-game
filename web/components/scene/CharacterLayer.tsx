@@ -61,10 +61,13 @@ function fallbackNpcPosition(index: number): Position {
 
 // Only show islanders in the player's current location. The focused NPC (if
 // any) is always included so quiz scenes work even when the target's room
-// differs (e.g. a Producer-text gather).
+// differs (e.g. a Producer-text gather). During Day-1 intros the entire
+// cast appears at the firepit visually regardless of their canonical room.
 export function visibleNpcs(state: Props["state"], focusedId: string | null) {
+  const allHere = state.phase === "intros";
   return state.islanders.filter((islander) => {
     if (islander.eliminated) return false;
+    if (allHere) return true;
     if (focusedId && islander.id === focusedId) return true;
     return islander.location_id === state.location_id;
   });

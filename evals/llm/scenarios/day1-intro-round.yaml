@@ -13,27 +13,27 @@ character_creation:
     loyalty: 5
 live_villa_life: false
 judge_context:
-  - The player has just picked Chloe as the opening partner; the rest of the day is first hellos.
+  - Day-1 opens with the greeting circle at the firepit before First Spark; intros run first, then the player picks an opening partner.
   - These are intros, not deep conversations — quick, voice-true, leave the door open.
   - The Islander Voice agent should make each intro sound like a different person, not the same template with a new name.
 turns:
-  - id: opening-couple-chloe
+  - id: intro-chloe
     action:
-      kind: recouple
+      kind: introduce_to
       target_id: chloe
+      intent_id: intro_friendly
     golden: >
-      Narration places the player and Chloe at the firepit as the first
-      couple of the season. Reality-TV beats: the villa registering, Chloe
-      catching the player's eye, the night settling into something specific.
-      The narrator does not pre-cast anyone as dumped.
-    checks:
-      - event_narration_valid
+      A warm friendly hello with Chloe. She is the sweetheart — the opener
+      should leave space and Chloe's reply lands soft, specific, and
+      curious. Imagine: "I was hoping you'd say hi. I'm Chloe."
+    checks: &intro_checks
+      - exchange_valid
       - agent_traces_present
     judge_checks:
-      - id: opening_choice_preserved
+      - id: chloe_intro_specific
         criteria: >
-          The narration names the player choosing Chloe and never invents a
-          different partner, a vote, a dumping, or a Flush of Hearts twist.
+          Chloe sounds warm, specific, and a touch shy; fail if she reads as
+          flirty alpha or generic sweetheart filler.
   - id: intro-maya
     action:
       kind: introduce_to
@@ -44,9 +44,7 @@ turns:
       first thing she says is a joke that's also a question. Imagine:
       "Right, who told you I'd be the funny one? Was it me?" Player line
       should set up the joke; Maya's reply should crack it.
-    checks: &intro_checks
-      - exchange_valid
-      - agent_traces_present
+    checks: *intro_checks
     judge_checks:
       - id: maya_intro_specific
         criteria: >
@@ -147,3 +145,20 @@ turns:
         criteria: >
           Jordan sounds eager and self-deprecating under the banter; fail if
           he sounds identical to Maya or like a generic flirt.
+  - id: opening-couple-chloe
+    action:
+      kind: recouple
+      target_id: chloe
+    golden: >
+      With introductions done, the player crosses the firepit and stops in
+      front of Chloe. Reality-TV beats: the villa registering the choice,
+      Chloe catching the player's eye, the night settling into a first
+      couple. The narrator does not pre-cast anyone as dumped.
+    checks:
+      - event_narration_valid
+      - agent_traces_present
+    judge_checks:
+      - id: opening_choice_preserved
+        criteria: >
+          The narration names the player choosing Chloe and never invents a
+          different partner, a vote, a dumping, or a Flush of Hearts twist.

@@ -9,9 +9,11 @@ from src.game.state.models import (
     CharacterCreation,
     GameState,
     Gender,
+    Phase,
     PlayerStats,
     RelationshipDelta,
 )
+from src.game.state.phase_clock import PhaseClock
 
 
 @dataclass(frozen=True)
@@ -90,6 +92,12 @@ def create_character(
     state.player.reroll_used = rerolled
     state.character_creation = creation
     _apply_starter_advantage(state, definition)
+    # Day 1 begins with the greeting circle (INTROS phase). The narrator
+    # frames it as the firepit; the UI surfaces all islanders regardless of
+    # their canonical location while INTROS is active, so we don't need to
+    # reassign locations here.
+    state.phase = Phase.INTROS
+    state.phase_clock = PhaseClock(phase=Phase.INTROS.value, budget_minutes=180)
     return creation
 
 

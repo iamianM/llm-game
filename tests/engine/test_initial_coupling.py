@@ -5,7 +5,8 @@ from __future__ import annotations
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.character_creation import create_character
 from src.game.engine.turn import run_turn
-from src.game.state.models import Couple, GameState, Gender, PlayerStats, new_game
+from src.game.state.models import Couple, GameState, Gender, Phase, PlayerStats, new_game
+from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
 
 
@@ -50,4 +51,12 @@ def _created_state(gender: Gender) -> GameState:
         gender=gender,
         stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
     )
+    # Day-1 now starts in INTROS for the greeting circle. Skip past them for
+    # tests that focus on the First Spark / coupling flow.
+    state.phase = Phase.MORNING
+    state.phase_clock = PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
+    state.intro_completed_ids = [
+        islander.id for islander in state.islanders if not islander.eliminated
+    ]
+    state.intro_memory_created = True
     return state

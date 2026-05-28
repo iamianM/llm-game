@@ -218,6 +218,8 @@ def _run_scenario(
 
 def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
     state = new_game(scenario.seed, player_stats=scenario.player_stats)
+    intended_phase = scenario.initial_phase
+    intended_phase_budget = scenario.initial_phase_budget_minutes
     if scenario.initial_day is not None:
         state.day = scenario.initial_day
     if scenario.initial_phase is not None:
@@ -250,6 +252,33 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
             stats=scenario.character_creation.stats,
             rerolled=scenario.character_creation.rerolled,
         )
+        # Day-1 starts in INTROS (greeting circle). Eval scenarios written
+        # against the legacy flow open straight into First Spark or later
+        # turns; fast-forward past intros unless the first scripted turn IS
+        # an intro action so we don't break authored expectations.
+        from src.game.engine.actions import ActionKind as _ActionKind
+        from src.game.engine.phases import PHASE_BUDGETS as _PHASE_BUDGETS
+        from src.game.state.models import Phase as _Phase
+        from src.game.state.phase_clock import PhaseClock as _PhaseClock
+        first_turn = scenario.turns[0] if scenario.turns else None
+        opens_with_intro = (
+            first_turn is not None
+            and first_turn.action is not None
+            and first_turn.action.kind is _ActionKind.INTRODUCE_TO
+        )
+        if state.phase is _Phase.INTROS and not opens_with_intro:
+            target_phase = intended_phase if intended_phase is not None else _Phase.MORNING
+            budget = (
+                intended_phase_budget
+                if intended_phase_budget is not None
+                else _PHASE_BUDGETS[target_phase]
+            )
+            state.phase = target_phase
+            state.phase_clock = _PhaseClock(phase=target_phase.value, budget_minutes=budget)
+            state.intro_completed_ids = [
+                islander.id for islander in state.islanders if not islander.eliminated
+            ]
+            state.intro_memory_created = True
     return state
 
 

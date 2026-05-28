@@ -54,6 +54,12 @@ def advance_phase(state: GameState) -> None:
             state.phase = Phase.CHALLENGE
         _reset_phase_clock(state)
         return
+    if state.phase is Phase.INTROS and state.day == 1 and not state.couples:
+        # Day-1 intros are the greeting circle that precedes First Spark.
+        # Once everyone is met, drop into MORNING so the coupling actions fire.
+        state.phase = Phase.MORNING
+        _reset_phase_clock(state)
+        return
     index = PHASE_ORDER.index(state.phase)
     state.phase = PHASE_ORDER[index + 1]
     _reset_phase_clock(state)

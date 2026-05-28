@@ -1,6 +1,14 @@
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { SceneBeat } from "../../lib/scene/types";
 import { paginate } from "../../lib/scene/pagination";
+import {
+  INTRO_DYNAMICS,
+  greetingFor,
+  introActionsForTarget,
+  nextIntroTarget,
+  responseFor,
+  type IntroDynamic,
+} from "../../lib/intros";
 
 type PendingChallenge = {
   kind?: string;
@@ -25,6 +33,9 @@ export function planScene(
   availableActions: AvailableAction[],
 ): SceneBeat[] {
   void prev;
+  if (next.phase === "intros") {
+    return planIntroScene(next, lastTurn, availableActions);
+  }
   const beats: SceneBeat[] = [];
   const pending = next.pending_challenge as PendingChallenge | null;
   const exchange = lastTurn?.exchange;
@@ -163,4 +174,68 @@ function wrapNarration(pending: PendingChallenge): string | null {
   if (!answered.length) return null;
   const right = answered.filter((r) => r.is_correct).length;
   return `Wrap: ${right} of ${answered.length} right. Tap to continue.`;
+}
+
+/**
+ * Day-1 intros: NPCs greet the player one at a time, in the firepit.
+ * After each pick, the engine response is surfaced as a narrator beat then
+ * we auto-cycle to the next target. Once everyone is met, the engine
+ * transitions phase and the next planScene call covers what comes after.
+ */
+function planIntroScene(
+  state: SessionState,
+  lastTurn: TurnResponse | null,
+  availableActions: AvailableAction[],
+): SceneBeat[] {
+  const beats: SceneBeat[] = [];
+  const exchange = lastTurn?.exchange;
+  const justFinished = exchange?.speaker_id ?? null;
+  const introTargets = availableActions
+    .filter((a) => a.kind === "introduce_to" && a.target_id)
+    .map((a) => a.target_id as string);
+  const nextTarget = nextIntroTarget(state.islanders, availableActions, state.player.id);
+
+  // Show the just-finished exchange first (player line then NPC reply) so the
+  // user can read the response before the camera swings to the next islander.
+  if (exchange?.player_dialogue) {
+    for (const page of paginate(exchange.player_dialogue)) {
+      beats.push({ kind: "speech", speakerId: state.player.id, text: page, pose: "talking" });
+    }
+  }
+  if (exchange?.npc_dialogue && justFinished) {
+    beats.push({ kind: "camera", shot: "two_shot", focusIds: [justFinished], durationMs: 140 });
+    for (const page of paginate(exchange.npc_dialogue)) {
+      beats.push({ kind: "speech", speakerId: justFinished, text: page, pose: "talking" });
+    }
+  }
+
+  if (!nextTarget) {
+    if (introTargets.length === 0) {
+      // No more intros available — the engine has moved on; let normal
+      // planScene logic run by emitting a wide-group beat + choice fan.
+      beats.push({ kind: "camera", shot: "wide_group", focusIds: [], durationMs: 120 });
+      if (availableActions.length > 0) {
+        beats.push({ kind: "choice_fan", spec: { actions: availableActions } });
+      }
+    }
+    return beats;
+  }
+
+  // Frame the next islander, NPC greets first, then the player picks a tone.
+  beats.push({ kind: "camera", shot: "two_shot", focusIds: [nextTarget.id], durationMs: 160 });
+  beats.push({ kind: "speech", speakerId: nextTarget.id, text: greetingFor(nextTarget), pose: "talking" });
+
+  // Build the 4 intent options as scripted player lines for this NPC.
+  const introActions = introActionsForTarget(availableActions, nextTarget.id);
+  const choices: AvailableAction[] = [];
+  for (const dynamic of INTRO_DYNAMICS) {
+    const base = introActions[dynamic as IntroDynamic];
+    if (!base) continue;
+    const line = responseFor(nextTarget, dynamic as IntroDynamic);
+    choices.push({ ...base, label: line });
+  }
+  if (choices.length > 0) {
+    beats.push({ kind: "choice_fan", spec: { actions: choices } });
+  }
+  return beats;
 }

@@ -11,8 +11,19 @@ from src.game.engine.option_defaults import OPTION_TEMPLATES
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
 from src.game.state.models import Conversation, Gender, Phase, PlayerStats, new_game
+from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
 from src.game.state.traits import KnownFact
+
+
+def _skip_intros(state) -> None:
+    """Fast-forward past the Day-1 greeting circle for tests that begin at First Spark."""
+    state.phase = Phase.MORNING
+    state.phase_clock = PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
+    state.intro_completed_ids = [
+        islander.id for islander in state.islanders if not islander.eliminated
+    ]
+    state.intro_memory_created = True
 
 
 def test_starting_cast_has_distinct_trait_cards() -> None:
@@ -32,6 +43,7 @@ def test_opening_coupling_reveals_partner_surface_facts() -> None:
         gender=Gender.MAN,
         stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
     )
+    _skip_intros(state)
     run_turn(
         state,
         PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"),
@@ -48,6 +60,7 @@ def test_successful_proposal_reveals_new_partner_surface_facts() -> None:
         gender=Gender.MAN,
         stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
     )
+    _skip_intros(state)
     run_turn(state, PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"), SeededRng(1))
     maya = next(islander for islander in state.islanders if islander.id == "maya")
     maya.relationship.affection = 100

@@ -49,7 +49,11 @@ export function SceneDialogueStage({
   // doesn't have to hunt for them.
   const inDialogue = state.active_conversation_target_id !== null;
   const inChallenge = state.pending_challenge !== null;
-  const useLanedActions = !inDialogue && !inChallenge;
+  const inIntros = state.phase === "intros";
+  // The character-tap + location-switcher menus only make sense during
+  // free-time. During intros / conversations / minigames we keep every
+  // legal action in the bottom ChoiceFan / scripted beat queue.
+  const useLanedActions = !inDialogue && !inChallenge && !inIntros;
   const characterActions = useMemo(
     () => useLanedActions ? actions.filter((a) => PER_CHARACTER_KINDS.has(a.kind) && a.target_id) : [],
     [actions, useLanedActions],
@@ -114,8 +118,9 @@ export function SceneDialogueStage({
     [characterActions, openCharacterId],
   );
 
+  const sceneLocation = state.phase === "intros" ? "firepit" : state.location_id;
   return (
-    <SceneLayer location={state.location_id} onTap={() => {
+    <SceneLayer location={sceneLocation} onTap={() => {
       if (openCharacterId) { setOpenCharacterId(null); return; }
       if (moveOpen) { setMoveOpen(false); return; }
       advance();

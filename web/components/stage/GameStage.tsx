@@ -11,7 +11,6 @@ import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
 import { RightRail } from "../rail/RightRail";
 import { SceneDialogueStage } from "../scene/SceneDialogueStage";
-import { IntroPanel } from "./IntroPanel";
 import { TopBar } from "./TopBar";
 
 export function GameStage({ sessionId }: { sessionId: string }) {
@@ -24,7 +23,6 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [streamSpeaker, setStreamSpeaker] = useState("Producer");
   const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
   const [deferredCeremony, setDeferredCeremony] = useState(false);
-  const [holdIntrosForFinalReply, setHoldIntrosForFinalReply] = useState(false);
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -42,7 +40,6 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       });
     },
     onSuccess: (data) => {
-      const prevPhase = lastTurn?.state.phase ?? query.data?.state.phase;
       setLastTurn(data);
       setStreamText("");
       setPendingActionLabel(null);
@@ -53,9 +50,6 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       if (data.state.daily_recaps.length > seenRecaps) {
         setShowRecap(true);
         setSeenRecaps(data.state.daily_recaps.length);
-      }
-      if (prevPhase === "intros" && data.state.phase !== "intros" && data.exchange) {
-        setHoldIntrosForFinalReply(true);
       }
       if (data.state.outcome) router.push(`/play/${sessionId}/finale`);
     },
@@ -73,61 +67,37 @@ export function GameStage({ sessionId }: { sessionId: string }) {
 
   const state = lastTurn?.state ?? query.data.state;
   const actions = lastTurn?.available_actions ?? query.data.available_actions;
-  const dialogue = lastTurn?.exchange;
   const event = lastTurn?.ceremony_events[0];
   const narration = ceremonyNarration(lastTurn, state);
   const latestRecap = state.daily_recaps[state.daily_recaps.length - 1];
-  const isIntros = state.phase === "intros" || holdIntrosForFinalReply;
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
       <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} />
       <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
-        {isIntros ? (
-          <IntroPanel
+        <div className="flex-1 min-h-0">
+          <SceneDialogueStage
             state={state}
             actions={actions}
-            pending={mutation.isPending}
-            lastExchange={
-              dialogue
-                ? {
-                    speakerId: dialogue.speaker_id,
-                    playerLine: dialogue.player_dialogue,
-                    npcLine: dialogue.npc_dialogue,
-                  }
-                : null
-            }
-            onChoose={(action, playerLine) => {
-              const enriched: AvailableAction = { ...action, label: playerLine };
-              mutation.mutate(enriched);
+            lastTurn={lastTurn}
+            locked={mutation.isPending}
+            pendingActionLabel={pendingActionLabel}
+            streamText={streamText}
+            streamSpeaker={streamSpeaker}
+            onChoose={(action) => mutation.mutate(action)}
+            onAdvance={() => {
+              if (deferredCeremony) {
+                setDeferredCeremony(false);
+                setShowCeremony(true);
+              }
             }}
-            onIntrosDone={() => setHoldIntrosForFinalReply(false)}
           />
-        ) : (
-          <div className="flex-1 min-h-0">
-            <SceneDialogueStage
-              state={state}
-              actions={actions}
-              lastTurn={lastTurn}
-              locked={mutation.isPending}
-              pendingActionLabel={pendingActionLabel}
-              streamText={streamText}
-              streamSpeaker={streamSpeaker}
-              onChoose={(action) => mutation.mutate(action)}
-              onAdvance={() => {
-                if (deferredCeremony) {
-                  setDeferredCeremony(false);
-                  setShowCeremony(true);
-                }
-              }}
-            />
-            {mutation.error ? (
-              <p role="alert" className="turn-error">
-                That choice did not land. Try it again in a moment.
-              </p>
-            ) : null}
-          </div>
-        )}
+          {mutation.error ? (
+            <p role="alert" className="turn-error">
+              That choice did not land. Try it again in a moment.
+            </p>
+          ) : null}
+        </div>
       </div>
       <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} />
       <SettingsMenu />
