@@ -9,10 +9,12 @@ type Props = {
   state: SessionState;
   focusedId: string | null;
   speakerPose: CharacterPose;
+  tappableIds?: Set<string>;
+  onCharacterTap?: (id: string) => void;
 };
 
-export function CharacterLayer({ state, focusedId, speakerPose }: Props) {
-  const npcs = state.islanders.filter((islander) => !islander.eliminated);
+export function CharacterLayer({ state, focusedId, speakerPose, tappableIds, onCharacterTap }: Props) {
+  const npcs = visibleNpcs(state, focusedId);
   const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
   const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
   return (
@@ -27,6 +29,8 @@ export function CharacterLayer({ state, focusedId, speakerPose }: Props) {
           position={positions[index] ?? fallbackNpcPosition(index)}
           pose={focusedId === npc.id ? speakerPose : "listening"}
           active={focusedId === npc.id}
+          tappable={tappableIds?.has(npc.id) ?? false}
+          onTap={onCharacterTap ? () => onCharacterTap(npc.id) : undefined}
         />
       ))}
       <CharacterSprite
@@ -53,4 +57,15 @@ export function CharacterLayer({ state, focusedId, speakerPose }: Props) {
 
 function fallbackNpcPosition(index: number): Position {
   return { x: 22 + index * 7, y: 58, scale: 0.62, dimmed: true };
+}
+
+// Only show islanders in the player's current location. The focused NPC (if
+// any) is always included so quiz scenes work even when the target's room
+// differs (e.g. a Producer-text gather).
+export function visibleNpcs(state: Props["state"], focusedId: string | null) {
+  return state.islanders.filter((islander) => {
+    if (islander.eliminated) return false;
+    if (focusedId && islander.id === focusedId) return true;
+    return islander.location_id === state.location_id;
+  });
 }

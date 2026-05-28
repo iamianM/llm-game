@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { listCheckpoints, newSession, sessionFromCheckpoint } from "../../lib/api";
 import { rememberCurrentSession } from "../../lib/storage";
+import { useUiStore } from "../../lib/store";
 import type { CheckpointSummary, Gender } from "../../lib/types";
 import { ArchetypeCard } from "../../components/chrome/ArchetypeCard";
 
@@ -20,7 +21,9 @@ const SHOW_DEBUG_TOOLS = process.env.NEXT_PUBLIC_SHOW_DEBUG_TOOLS === "1";
 export default function NewRunPage() {
   const [archetype, setArchetype] = useState("heartthrob");
   const [gender, setGender] = useState<Gender>("man");
-  const [mockLlm, setMockLlm] = useState(false);
+  const useLive = useUiStore((s) => s.useLiveLlm);
+  const setUseLive = useUiStore((s) => s.setUseLiveLlm);
+  const mockLlm = !useLive;
   const [checkpointPickerOpen, setCheckpointPickerOpen] = useState(false);
   const selectedIndex = Math.max(0, ARCHETYPES.findIndex((item) => item.id === archetype));
   const swipeStartX = useRef<number | null>(null);
@@ -124,7 +127,7 @@ export default function NewRunPage() {
           </div>
         </div>
 
-        <div className={`config-row${SHOW_DEBUG_TOOLS ? "" : " is-simple"}`}>
+        <div className="config-row">
           <section className="config-card">
             <span className="config-label">You walk in as</span>
             <div className="toggle-group">
@@ -133,15 +136,13 @@ export default function NewRunPage() {
             </div>
           </section>
 
-          {SHOW_DEBUG_TOOLS ? (
-            <section className="config-card">
-              <span className="config-label">Story engine</span>
-              <div className="toggle-group">
-                <Toggle on={mockLlm} onClick={() => setMockLlm(true)}>Test mode</Toggle>
-                <Toggle on={!mockLlm} onClick={() => setMockLlm(false)}>Real mode</Toggle>
-              </div>
-            </section>
-          ) : null}
+          <section className="config-card">
+            <span className="config-label">Story engine</span>
+            <div className="toggle-group">
+              <Toggle on={!useLive} onClick={() => setUseLive(false)}>Demo</Toggle>
+              <Toggle on={useLive} onClick={() => setUseLive(true)}>Live LLM</Toggle>
+            </div>
+          </section>
 
           <button
             disabled={mutation.isPending}

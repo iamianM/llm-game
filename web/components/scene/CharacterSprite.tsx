@@ -37,9 +37,11 @@ type Props = {
   position: Position;
   pose: CharacterPose;
   active: boolean;
+  tappable?: boolean;
+  onTap?: () => void;
 };
 
-export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", position, pose, active }: Props) {
+export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", position, pose, active, tappable, onTap }: Props) {
   const reduce = useReducedMotion();
   if (position.hidden) return null;
   const src = role === "player" ? playerSprite(archetypeId, gender) : NPC_IMAGE_BY_ID[id];
@@ -60,7 +62,15 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
       data-role={role}
       data-position={role === "player" ? "bottom" : "stage"}
       data-pose={pose}
-      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}`}
+      data-tappable={tappable ? "true" : undefined}
+      role={tappable ? "button" : undefined}
+      tabIndex={tappable ? 0 : undefined}
+      aria-label={tappable ? `Open options for ${name}` : undefined}
+      onClick={tappable && onTap ? (e) => { e.stopPropagation(); onTap(); } : undefined}
+      onKeyDown={tappable && onTap ? (e) => {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); }
+      } : undefined}
+      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}${tappable ? " is-tappable" : ""}`}
       style={style}
     >
       <motion.div
@@ -90,6 +100,19 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           display: grid;
           justify-items: center;
           pointer-events: none;
+        }
+        .character-sprite.is-tappable {
+          pointer-events: auto;
+          cursor: pointer;
+        }
+        .character-sprite.is-tappable:hover .sprite-image,
+        .character-sprite.is-tappable:focus-visible .sprite-image {
+          filter: drop-shadow(0 0 18px rgba(217,167,58,.55));
+          transform: translateY(-2px);
+          transition: filter .18s, transform .18s;
+        }
+        .character-sprite.is-tappable:focus-visible {
+          outline: none;
         }
         .character-motion {
           position: relative;

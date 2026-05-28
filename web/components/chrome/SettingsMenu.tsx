@@ -12,6 +12,8 @@ export function SettingsMenu() {
   const setSpeed = useUiStore((s) => s.setTypewriterSpeed);
   const reduce = useUiStore((s) => s.reduceMotion);
   const setReduce = useUiStore((s) => s.setReduceMotion);
+  const useLive = useUiStore((s) => s.useLiveLlm);
+  const setUseLive = useUiStore((s) => s.setUseLiveLlm);
   if (!open) return null;
   return (
     <div className="settings-root">
@@ -52,7 +54,23 @@ export function SettingsMenu() {
               </label>
             </div>
 
-            <p className="setting-hint">Audio controls arrive in a later phase.</p>
+            <div className="setting-row">
+              <span className="setting-label">
+                Live LLM dialogue
+                <span className="setting-sub">{useLive ? "Real OpenAI calls" : "Scripted demo lines"}</span>
+              </span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={useLive}
+                  onChange={(event) => setUseLive(event.target.checked)}
+                  aria-label="Use live LLM"
+                />
+                <span className="track"><span className="dot" /></span>
+              </label>
+            </div>
+
+            <p className="setting-hint">New sessions started after toggling Live LLM use the new mode. Active runs keep their original mode.</p>
 
             <button
               type="button"
@@ -142,6 +160,15 @@ export function SettingsMenu() {
           font-size: 14px;
           color: var(--ink-on-dark);
           letter-spacing: .02em;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+        .setting-sub {
+          font-size: 11px;
+          letter-spacing: .04em;
+          color: var(--muted-on-dark);
+          font-style: italic;
         }
         .setting-select {
           padding: 8px 12px;
