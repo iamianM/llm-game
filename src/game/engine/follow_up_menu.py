@@ -79,7 +79,10 @@ def _request_contextual_options(
         return mock_contextual_bespoke()
     call = cast(Any, contextual_options)
     if "already_present" in inspect.signature(contextual_options).parameters:
-        return call(state, result, exchange, probability, already_present=already_present)
+        return cast(
+            ContextualOptionsResult,
+            call(state, result, exchange, probability, already_present=already_present),
+        )
     return contextual_options(state, result, exchange, probability)
 
 

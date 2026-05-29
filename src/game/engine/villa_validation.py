@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.villa_orchestrator import EndConversation, NPCSummon, VillaUpdate
 from src.game.engine.casa_amor import location_villa, locations_for_villa
-from src.game.state.models import GameState, Location, NPCNPCConversation
+from src.game.state.models import GameState, IslanderState, Location, NPCNPCConversation
 
 
 def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate:
@@ -107,7 +107,7 @@ def _resolve_npc_ids(state: GameState, update: VillaUpdate) -> VillaUpdate:
     )
 
 
-def _canonical_npc_id(token: str, active: list, known_ids: set[str]) -> str:
+def _canonical_npc_id(token: str, active: list[IslanderState], known_ids: set[str]) -> str:
     """Best-effort map a possibly-near-miss token to a canonical active id.
 
     Precedence: exact id, case-insensitive id, display name, leading id segment

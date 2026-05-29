@@ -223,7 +223,7 @@ def contextual_options_context(
         loyalty=stats.loyalty,
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
-        explored_threads=_explored_threads(state, target_id),
+        explored_threads=_explored_threads(state, target.id),
         already_present=already_present or [],
     )
 
