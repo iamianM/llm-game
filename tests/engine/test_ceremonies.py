@@ -147,6 +147,50 @@ def test_recoupling_pick_applies_player_choice() -> None:
     assert other == "maya"
 
 
+def test_recoupling_events_emit_display_safe_messages() -> None:
+    """Ceremony event producers resolve ids to display names at the source.
+
+    Regression for the leak where mock/static-mode surfaces a recoupling event
+    message verbatim: a steal attempt, partner-stolen, and elimination built
+    from raw starting-cast ids (``blake_start`` etc.) must render bare display
+    names — never a raw id, the meta phrase "the player", or the internal
+    ``(roll X vs Y)`` dice digits (ENGINEERING R7 — typed at the source).
+    """
+    from src.game.engine.ceremonies import RecouplingResult
+    from src.game.engine.couples import StealAttempt
+    from src.game.engine.turn_events import recoupling_events
+    from src.game.state.models import Couple
+
+    state = new_game(1)
+    state.player.name = "Demo"
+    ceremony = RecouplingResult(
+        couples=[Couple(partner_a_id="blake_start", partner_b_id="sophie_start", formed_on_day=3)],
+        eliminated_id="nia_start",
+        steal_attempts=[
+            StealAttempt(
+                bombshell_id="blake_start",
+                target_id="sophie_start",
+                abandoned_id="jordan_start",
+                chance=55,
+                roll=20,
+                success=True,
+            )
+        ],
+    )
+
+    messages = " || ".join(event.message for event in recoupling_events(state, ceremony))
+
+    for raw_id in ("blake_start", "sophie_start", "jordan_start", "nia_start"):
+        assert raw_id not in messages
+    assert "the player" not in messages.lower()
+    assert "(roll" not in messages
+    # Bare display names are present.
+    assert "Blake" in messages
+    assert "Sophie" in messages
+    assert "Jordan" in messages
+    assert "Nia" in messages
+
+
 def test_public_perception_bounds() -> None:
     """Perception changes stay in the 0-100 range."""
     state = new_game(1)
