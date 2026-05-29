@@ -9,6 +9,7 @@ import { rememberCurrentSession } from "../../lib/storage";
 import { useUiStore } from "../../lib/store";
 import type { CheckpointSummary, Gender } from "../../lib/types";
 import { ArchetypeCard } from "../../components/chrome/ArchetypeCard";
+import { DEFAULT_USE_LIVE_LLM } from "../../lib/store";
 
 const ARCHETYPES = [
   { id: "heartthrob", title: "Heartthrob", bonus: "+3 Charm", advantage: "Walk into Sunset Bay with instant spark." },
@@ -29,6 +30,8 @@ export default function NewRunPage() {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("paradise.settings.useLiveLlm");
     if (stored === "1" && !useLive) setUseLive(true);
+    if (stored === "0" && useLive) setUseLive(false);
+    if (stored === null && DEFAULT_USE_LIVE_LLM && !useLive) setUseLive(true);
   }, [useLive, setUseLive]);
   const mockLlm = !useLive;
   const [checkpointPickerOpen, setCheckpointPickerOpen] = useState(false);

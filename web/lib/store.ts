@@ -16,6 +16,7 @@ type UiStore = {
 };
 
 const LLM_KEY = "paradise.settings.useLiveLlm";
+export const DEFAULT_USE_LIVE_LLM = process.env.NEXT_PUBLIC_DEFAULT_LIVE_LLM === "1";
 
 // NOTE: the initial value MUST be the same on server and client to avoid
 // hydration mismatches; React 18 silently keeps the server HTML when it
@@ -27,7 +28,7 @@ export const useUiStore = create<UiStore>((set) => ({
   settingsOpen: false,
   reduceMotion: false,
   typewriterSpeed: "normal",
-  useLiveLlm: false,
+  useLiveLlm: DEFAULT_USE_LIVE_LLM,
   setRail: (open) => set({ rightRailOpen: open }),
   setSettings: (open) => set({ settingsOpen: open }),
   setReduceMotion: (value) => set({ reduceMotion: value }),

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import asyncio
 import os
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import cached_property
 from pathlib import Path
@@ -179,7 +179,7 @@ def _intro_targets(state: GameState) -> list[IslanderState]:
 
 def _render_context(state: GameState, target: IslanderState) -> str:
     persona = (
-        target.trait_card.persona.summary
+        target.trait_card.persona.one_line
         if target.trait_card and target.trait_card.persona
         else ""
     )

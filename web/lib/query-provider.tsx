@@ -2,7 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useUiStore } from "./store";
+import { DEFAULT_USE_LIVE_LLM, useUiStore } from "./store";
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
   const [client] = useState(() => new QueryClient());
@@ -15,6 +15,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("paradise.settings.useLiveLlm");
     if (stored === "1") setUseLive(true);
+    if (stored === "0") setUseLive(false);
+    if (stored === null && DEFAULT_USE_LIVE_LLM) setUseLive(true);
   }, [setUseLive]);
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 }

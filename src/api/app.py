@@ -360,7 +360,10 @@ def _agents_for(mock_llm: bool) -> AgentBundle:
 def _mock_mode(override: bool | None = None) -> bool:
     if override is not None:
         return override
-    return os.environ.get("PARADISE_MOCK_LLM", "1") != "0"
+    configured = os.environ.get("PARADISE_MOCK_LLM")
+    if configured is not None:
+        return configured != "0"
+    return not bool(os.environ.get("OPENAI_API_KEY"))
 
 
 def _load_local_env() -> None:

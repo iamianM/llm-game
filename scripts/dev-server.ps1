@@ -19,6 +19,39 @@ $ApiErr = Join-Path $Root ".api-dev.err"
 $WebOut = Join-Path $Root ".web-dev.log"
 $WebErr = Join-Path $Root ".web-dev.err"
 
+function Import-LocalEnv {
+    $envPath = Join-Path $Root ".env.local"
+    if (-not (Test-Path $envPath)) {
+        return
+    }
+
+    Get-Content $envPath | ForEach-Object {
+        $line = $_.Trim()
+        if (-not $line -or $line.StartsWith("#")) {
+            return
+        }
+        $separator = $line.IndexOf("=")
+        if ($separator -lt 1) {
+            return
+        }
+        $key = $line.Substring(0, $separator).Trim()
+        $value = $line.Substring($separator + 1).Trim().Trim('"').Trim("'")
+        if (-not [Environment]::GetEnvironmentVariable($key, "Process")) {
+            [Environment]::SetEnvironmentVariable($key, $value, "Process")
+        }
+    }
+}
+
+function Initialize-LlmSettings {
+    Import-LocalEnv
+    $hasOpenAiKey = -not [string]::IsNullOrWhiteSpace($env:OPENAI_API_KEY)
+    if ($hasOpenAiKey -and [string]::IsNullOrWhiteSpace($env:PARADISE_MOCK_LLM)) {
+        $env:PARADISE_MOCK_LLM = "0"
+    }
+    $liveByDefault = $hasOpenAiKey -and $env:PARADISE_MOCK_LLM -eq "0"
+    $env:NEXT_PUBLIC_DEFAULT_LIVE_LLM = if ($liveByDefault) { "1" } else { "0" }
+}
+
 function Get-ListenerPids([int]$Port) {
     @(Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
         Where-Object { $_.State -eq "Listen" } |
@@ -181,6 +214,7 @@ function Start-Web {
 }
 
 function Start-DevServers {
+    Initialize-LlmSettings
     Initialize-NetworkSettings
     Start-Api
     if (-not (Wait-Url $ApiHealthUrl 30)) {
@@ -197,6 +231,7 @@ function Start-DevServers {
     Write-Host "Paradise Hearts is running:"
     Write-Host "  UI:  $WebUrl"
     Write-Host "  API: $ApiUrl"
+    Write-Host "  Story engine default: $(if ($env:NEXT_PUBLIC_DEFAULT_LIVE_LLM -eq '1') { 'Live LLM' } else { 'Demo/mock' })"
     if ($Network -eq "tailscale") {
         Write-Host "  Local UI: http://127.0.0.1:3001"
         Write-Host "  Local API: http://127.0.0.1:8000"
@@ -204,6 +239,7 @@ function Start-DevServers {
 }
 
 function Show-Status {
+    Initialize-LlmSettings
     Initialize-NetworkSettings
     $apiPids = Get-ListenerPids 8000
     $webPids = Get-ListenerPids 3001
@@ -215,6 +251,7 @@ function Show-Status {
     Write-Host "  Network: $Network"
     Write-Host "  API 8000: $apiState $ApiUrl $(if ($apiPids.Count -gt 0) { '(pid ' + ($apiPids -join ', ') + ')' })"
     Write-Host "  UI  3001: $webState $WebUrl $(if ($webPids.Count -gt 0) { '(pid ' + ($webPids -join ', ') + ')' })"
+    Write-Host "  Story engine default: $(if ($env:NEXT_PUBLIC_DEFAULT_LIVE_LLM -eq '1') { 'Live LLM' } else { 'Demo/mock' })"
 }
 
 switch ($Action) {
