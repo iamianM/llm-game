@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import PlayerAction
 from src.game.engine.pull import PullAttempt
 from src.game.state.models import Location, RelationshipDelta
+
+# Closed set of non-fatal engine anomalies worth surfacing in the review packet.
+# These are degradations the engine handled gracefully (no dead-screen) but that
+# should still be *countable* rather than silently swallowed (ENGINEERING R16).
+MechanicalAnomaly = Literal["gossip_stale_noop"]
 
 
 class ChanceBreakdown(BaseModel):
@@ -62,3 +69,4 @@ class MechanicalResult(BaseModel):
     audience_delta: int = 0
     audience_reason: str | None = None
     proposal_outcome: dict[str, object] | None = None
+    anomalies: list[MechanicalAnomaly] = Field(default_factory=list)

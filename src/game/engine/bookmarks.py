@@ -31,6 +31,17 @@ def bookmarks_for_turn(turn: TurnResult) -> list[Bookmark]:
                 note=f"{pull.target_id} declined the pull.",
             )
         )
+    if "gossip_stale_noop" in turn.mechanical_result.anomalies:
+        bookmarks.append(
+            Bookmark(
+                turn=turn_index,
+                kind="gossip_stale_noop",
+                category="anomaly",
+                title="Stale gossip no-op",
+                note="A gossip menu option resolved to a memory that no longer "
+                "existed, so the turn degraded to a neutral no-op.",
+            )
+        )
     active = turn.state.active_conversation
     if active is not None and active.pending_interruption is not None:
         bookmarks.append(

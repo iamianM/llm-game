@@ -134,17 +134,92 @@ def test_share_gossip_miss_still_suppresses_reoffer() -> None:
 
     assert _player_shareable_memory(state, "chloe") is not None
 
-    delta = apply_share_gossip_follow_up(
+    result = apply_share_gossip_follow_up(
         state, "chloe", f"share_gossip:{memory.id}", success=False
     )
 
-    assert delta.trust == -1
+    assert result.delta.trust == -1
+    assert result.stale is False
     chloe = next(islander for islander in state.islanders if islander.id == "chloe")
     recorded = [m for m in chloe.memories if f"source_memory:{memory.id}" in m.tags]
     assert recorded and "gossip_unconvinced" in recorded[0].tags
     assert recorded[0].emotional_weight < memory.emotional_weight
     # The same gossip must no longer be surfaced to chloe.
     assert _player_shareable_memory(state, "chloe") is None
+
+
+def test_stale_share_gossip_is_observable_noop() -> None:
+    """A share_gossip option pointing at a vanished memory degrades to a neutral
+    no-op, but flags ``stale`` so the engine can surface a countable anomaly
+    instead of silently swallowing it (ENGINEERING R16)."""
+    from src.game.engine.gossip import apply_share_gossip_follow_up
+
+    state = new_game(1)
+    state.active_conversation = Conversation(
+        target_id="chloe", started_on_turn=1, started_on_day=1
+    )
+
+    # The memory id never existed in the player's memory list.
+    result = apply_share_gossip_follow_up(
+        state, "chloe", "share_gossip:does_not_exist", success=True
+    )
+
+    assert result.stale is True
+    assert result.delta == result.delta.__class__()  # neutral delta
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    assert chloe.memories == []
+
+
+def test_stale_gossip_followup_emits_anomaly_bookmark() -> None:
+    """A stale gossip follow-up surfaces a ``gossip_stale_noop`` anomaly on the
+    mechanical result, which the deterministic bookmark builder lifts into a
+    countable review-packet anomaly."""
+    from src.game.engine.bookmarks import bookmarks_for_turn
+    from src.game.engine.followups import apply_follow_up
+    from src.game.engine.turn import TurnResult
+    from src.game.state.models import FollowUpMenu, FollowUpOption
+
+    state = new_game(1)
+    # Stand up a conversation whose pending menu offers a stale share_gossip option.
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        pending_options=FollowUpMenu(
+            npc_will_leave=False,
+            options=[
+                FollowUpOption(
+                    label="Tell Chloe about Maya",
+                    intent_kind="share_gossip:does_not_exist",
+                    category="gossip",
+                    risk="low",
+                    tone="warm",
+                    stat_used="charm",
+                )
+            ],
+        ),
+    )
+
+    result = apply_follow_up(
+        state,
+        PlayerAction(kind=ActionKind.RESPOND_WITH, option_index=0),
+        SeededRng(1),
+    )
+
+    assert "gossip_stale_noop" in result.anomalies
+
+    # The deterministic bookmark builder lifts the anomaly into the review packet.
+    turn_result = TurnResult(
+        state=state,
+        mechanical_result=result,
+        available_actions=[],
+        state_hash="",
+    )
+    bookmarks = bookmarks_for_turn(turn_result)
+    assert any(
+        bookmark.kind == "gossip_stale_noop" and bookmark.category == "anomaly"
+        for bookmark in bookmarks
+    )
 
 
 def test_gossip_locked_below_affection_threshold() -> None:

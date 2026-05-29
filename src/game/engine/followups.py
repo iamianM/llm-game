@@ -14,7 +14,7 @@ from src.game.engine.interruptions import (
     INTERRUPTION_INTENT_KINDS,
     apply_interruption_response,
 )
-from src.game.engine.results import MechanicalResult
+from src.game.engine.results import MechanicalAnomaly, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_islander
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
@@ -123,10 +123,21 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
     breakdown = follow_up_success_breakdown(state, target, option.stat_used, option.risk)
     roll = rng.randint(1, 100)
     success = roll <= breakdown.final_chance
+    anomalies: list[MechanicalAnomaly] = []
     if option.intent_kind.startswith("ask_gossip:"):
-        delta = apply_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
+        gossip_result = apply_gossip_follow_up(
+            state, conversation.target_id, option.intent_kind, success
+        )
+        delta = gossip_result.delta
+        if gossip_result.stale:
+            anomalies.append("gossip_stale_noop")
     elif option.intent_kind.startswith("share_gossip:"):
-        delta = apply_share_gossip_follow_up(state, conversation.target_id, option.intent_kind, success)
+        gossip_result = apply_share_gossip_follow_up(
+            state, conversation.target_id, option.intent_kind, success
+        )
+        delta = gossip_result.delta
+        if gossip_result.stale:
+            anomalies.append("gossip_stale_noop")
     else:
         delta = follow_up_delta(option.intent_kind, option.risk, success)
     attachment_delta = attachment_delta_modifier(target, option.intent_kind, success)
@@ -147,6 +158,7 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
         chance_breakdown=breakdown.model_copy(update={"attachment_delta": attachment_delta}),
         relationship_deltas={target.id: delta},
         tags=[option.intent_kind, option.risk, option.tone],
+        anomalies=anomalies,
     )
 
 

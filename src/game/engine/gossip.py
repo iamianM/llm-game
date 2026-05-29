@@ -2,10 +2,26 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass, field
+
 from src.game.engine.memory import add_memory, create_memory
 from src.game.state.models import GameState, IslanderState, RelationshipDelta
 from src.game.state.rng import SeededRng
 from src.game.state.traits import KnownFact
+
+
+@dataclass(frozen=True)
+class GossipFollowUpResult:
+    """Outcome of a gossip follow-up.
+
+    ``stale`` is the single source of truth for "the offered memory no longer
+    resolved, so this was a graceful no-op". The follow-up builder lifts it into
+    a typed ``MechanicalResult`` anomaly so the no-op is countable in the review
+    packet instead of being silently swallowed (ENGINEERING R16).
+    """
+
+    delta: RelationshipDelta = field(default_factory=RelationshipDelta)
+    stale: bool = False
 
 
 def apply_gossip_follow_up(
@@ -13,12 +29,12 @@ def apply_gossip_follow_up(
     source_id: str,
     intent_kind: str,
     success: bool,
-) -> RelationshipDelta:
+) -> GossipFollowUpResult:
     """Apply a gossip follow-up and transfer the memory on success."""
     if intent_kind.startswith("ask_gossip:about_"):
         if success:
             share_gossip(state, source_id, intent_kind.removeprefix("ask_gossip:about_"))
-        return RelationshipDelta(trust=2 if success else 0)
+        return GossipFollowUpResult(delta=RelationshipDelta(trust=2 if success else 0))
     memory_id = intent_kind.removeprefix("ask_gossip:")
     conversation = state.active_conversation
     if conversation is None:
@@ -30,10 +46,11 @@ def apply_gossip_follow_up(
     if source_memory is None:
         # The offered memory is no longer resolvable (e.g. a stale menu after a
         # phase shift). Degrade to a neutral no-op rather than hard-crashing the
-        # turn — a player-facing menu option must never dead-screen the game.
-        return RelationshipDelta()
+        # turn — a player-facing menu option must never dead-screen the game —
+        # but flag it stale so the no-op is observable downstream.
+        return GossipFollowUpResult(stale=True)
     if not success:
-        return RelationshipDelta()
+        return GossipFollowUpResult()
     add_memory(
         state,
         create_memory(
@@ -48,7 +65,7 @@ def apply_gossip_follow_up(
             content=source_memory.content,
         ),
     )
-    return RelationshipDelta(trust=2)
+    return GossipFollowUpResult(delta=RelationshipDelta(trust=2))
 
 
 def apply_share_gossip_follow_up(
@@ -56,7 +73,7 @@ def apply_share_gossip_follow_up(
     target_id: str,
     intent_kind: str,
     success: bool,
-) -> RelationshipDelta:
+) -> GossipFollowUpResult:
     """Apply player-shared gossip and transfer the player's memory on success."""
     memory_id = intent_kind.removeprefix("share_gossip:")
     source_memory = next(
@@ -67,8 +84,9 @@ def apply_share_gossip_follow_up(
         # The shareable memory is no longer in the player's memory list (e.g. a
         # stale menu carried across a phase shift). Degrade to a neutral no-op
         # rather than hard-crashing the turn — a player-facing menu option must
-        # never dead-screen the game.
-        return RelationshipDelta()
+        # never dead-screen the game — but flag it stale so the no-op is observable
+        # downstream (ENGINEERING R16).
+        return GossipFollowUpResult(stale=True)
     if not success:
         # The share landed badly, but the player *did* say it. Record a lighter
         # "unconvinced" memory on the target so the same gossip is not re-offered
@@ -89,7 +107,7 @@ def apply_share_gossip_follow_up(
                 content=source_memory.content,
             ),
         )
-        return RelationshipDelta(trust=-1)
+        return GossipFollowUpResult(delta=RelationshipDelta(trust=-1))
     add_memory(
         state,
         create_memory(
@@ -104,7 +122,7 @@ def apply_share_gossip_follow_up(
             content=source_memory.content,
         ),
     )
-    return RelationshipDelta(trust=1, friendship=1)
+    return GossipFollowUpResult(delta=RelationshipDelta(trust=1, friendship=1))
 
 
 def share_gossip(state: GameState, speaker_id: str, subject_id: str) -> KnownFact | None:
