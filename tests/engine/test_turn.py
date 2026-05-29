@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import pytest
+
 from src.game.agents.contextual_options import mock_follow_up_menu
+from src.game.agents.runtime import AgentGenerationError, AgentValidationError
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.rules import apply_action
@@ -48,7 +51,7 @@ def test_run_turn_survives_islander_voice_raise() -> None:
     state = new_game(1)
 
     def boom(*_args, **_kwargs):
-        raise ValueError("islander voice exhausted retries")
+        raise AgentValidationError("islander voice exhausted retries")
 
     result = run_turn(
         state,
@@ -68,6 +71,55 @@ def test_run_turn_survives_islander_voice_raise() -> None:
     assert result.state.active_conversation is not None
 
 
+def test_run_turn_records_degraded_trace_on_islander_voice_failure() -> None:
+    """Degrading to the mock voice must leave an observable footprint: a distinct
+    degraded=True trace, so "we served a mock this turn" is a first-class countable
+    signal in the review packet rather than a silent swallow (ENGINEERING.md R16)."""
+    state = new_game(1)
+
+    def boom(*_args, **_kwargs):
+        raise AgentValidationError("islander voice exhausted retries")
+
+    result = run_turn(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+        islander_voice=boom,
+    )
+
+    degraded = [trace for trace in result.agent_traces if trace.degraded]
+    assert [trace.agent_name for trace in degraded] == ["islander_voice"]
+    assert degraded[0].output_type == "degraded_to_mock"
+    assert "exhausted retries" in (degraded[0].validation_error or "")
+
+
+def test_run_turn_propagates_non_agent_error_from_islander_voice() -> None:
+    """Only AgentError degrades to a mock. A genuine engine bug (here a KeyError)
+    must propagate loud instead of being silently swallowed into a fallback —
+    that boundary is exactly what the typed AgentError taxonomy protects
+    (ENGINEERING.md R2/R16)."""
+    state = new_game(1)
+
+    def kaboom(*_args, **_kwargs):
+        raise KeyError("genuine engine bug, not an agent failure")
+
+    with pytest.raises(KeyError):
+        run_turn(
+            state,
+            PlayerAction(
+                kind=ActionKind.START_CONVERSATION,
+                target_id="chloe",
+                intent_id="friendly_chat_villa",
+            ),
+            SeededRng(1),
+            islander_voice=kaboom,
+        )
+
+
 def test_narrated_events_survives_event_narrator_raise() -> None:
     """A ceremony beat must not dead-screen if the Event Narrator exhausts its
     retries and raises — narration degrades to deterministic mock prose that still
@@ -79,7 +131,7 @@ def test_narrated_events_survives_event_narrator_raise() -> None:
     events = [CeremonyEvent(kind="recoupling", message="Chloe was chosen.", islander_id="chloe")]
 
     def boom(*_args, **_kwargs):
-        raise ValueError("event narrator exhausted retries")
+        raise AgentGenerationError("event narrator exhausted retries")
 
     narration = _narrated_events(state, events, boom)
 

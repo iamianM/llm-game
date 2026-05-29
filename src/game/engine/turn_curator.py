@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
+from src.game.agents.runtime import AgentError, record_agent_degradation
 from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.intents import get_intent
 from src.game.engine.knowledge import emit_fact_reveal, emit_fact_reveal_by_tier
@@ -77,7 +78,8 @@ def _safe_curate(
     curate = mock_conversation_curator if curator is None else curator
     try:
         return curate(state, conversation, bystander_ids)
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("conversation_curator", exc)
         return mock_conversation_curator(state, conversation, bystander_ids)
 
 

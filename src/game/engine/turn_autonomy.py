@@ -6,6 +6,11 @@ import asyncio
 
 from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.conversation_curator import ConversationCuratorFn
+from src.game.agents.runtime import (
+    AgentError,
+    AgentValidationError,
+    record_agent_degradation,
+)
 from src.game.agents.villa_orchestrator import (
     NPCMovement,
     VillaOrchestratorFn,
@@ -77,7 +82,7 @@ async def apply_villa_turn_async(
         # summon this turn) if it no longer holds.
         try:
             validate_villa_update(state, villa_update)
-        except Exception:
+        except ValueError:
             villa_update = base_update
     pre_locations = {islander.id: islander.location_id for islander in state.islanders}
     villa_changes = await apply_villa_update_async(
@@ -107,9 +112,16 @@ def _safe_orchestrate(state: GameState, orchestrate: VillaOrchestratorFn) -> Vil
     try:
         update = orchestrate(state)
         update = normalize_villa_update(state, update)
-        validate_villa_update(state, update)
+        try:
+            validate_villa_update(state, update)
+        except ValueError as exc:
+            # The orchestrator's own update failed the engine contract even after
+            # near-miss id repair; treat it as an agent-validation degradation so
+            # the villa holds still for a turn instead of dead-screening.
+            raise AgentValidationError(str(exc)) from exc
         return update
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("villa_orchestrator", exc)
         return VillaUpdate()
 
 

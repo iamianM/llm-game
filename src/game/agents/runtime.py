@@ -42,7 +42,27 @@ class AgentTrace(BaseModel):
     output_type: str | None = None
     output: Any = None
     validation_error: str | None = None
+    degraded: bool = False
     reasoning_summaries: list[ReasoningSummary] = Field(default_factory=list)
+
+
+class AgentError(Exception):
+    """A live agent failed in a way the engine may safely degrade past.
+
+    Agents raise a subclass only after exhausting their retries. The turn
+    pipeline catches ``AgentError`` (never bare ``Exception``) at the narration
+    call sites and degrades to a deterministic mock, so the player never dead-
+    screens — while genuine engine bugs (``KeyError``, ``TypeError``, bad state
+    mutation) still propagate and surface loud per ENGINEERING.md R2.
+    """
+
+
+class AgentGenerationError(AgentError):
+    """The model call failed or returned nothing parseable after all retries."""
+
+
+class AgentValidationError(AgentError):
+    """Model output violated the agent's structural contract after all retries."""
 
 
 _active_traces: ContextVar[list[AgentTrace] | None] = ContextVar("active_agent_traces", default=None)
@@ -152,6 +172,38 @@ def mark_agent_trace_validation_error(
             attempt=attempt,
             prompt_path=prompt_path or "",
             validation_error=str(error),
+        )
+    )
+
+
+def record_agent_degradation(
+    agent_name: str,
+    error: Exception,
+    *,
+    prompt_path: str = "",
+) -> None:
+    """Record that the turn served a deterministic mock instead of the live agent.
+
+    The per-attempt validation errors are already captured (see
+    ``mark_agent_trace_validation_error``); this appends a distinct, countable
+    ``degraded=True`` trace so "we fell back to a mock this turn" is a first-class
+    observable signal in the review packet rather than something inferred from a
+    run of failed attempts. Keeps the no-dead-screen fallback from being a
+    *silent* swallow under ENGINEERING.md R2/R16.
+    """
+    traces = _active_traces.get()
+    if traces is None:
+        return
+    traces.append(
+        AgentTrace(
+            agent_name=agent_name,
+            model=GAME_AGENT_MODEL,
+            reasoning_effort=GAME_AGENT_REASONING_EFFORT,
+            attempt=0,
+            prompt_path=prompt_path,
+            output_type="degraded_to_mock",
+            validation_error=str(error),
+            degraded=True,
         )
     )
 

@@ -77,11 +77,11 @@ Reject changes that add:
 - content frontmatter fields that encode gameplay logic
 - free-text string matching checks for docs, content, prompts, or player-facing vocabulary
 
-## R17. Prompts Are User-Owned
+## R17. Prompts Are Claude-Owned, Codex-Read-Only
 
-Prompt files under `src/game/agents/prompts/` are authored and edited only by the user (Claude in this collaboration drafts them; the user approves). When a build plan installs a prompt, it installs verbatim. Codex does not soften, shorten, restructure, or "improve" prompt wording without an explicit user request.
+Prompt files under `src/game/agents/prompts/` are owned by Claude in this collaboration: Claude may author and edit them directly as part of normal prompt-quality work. Codex may **not** edit prompt wording — it does not soften, shorten, restructure, or "improve" a prompt under any circumstances. When Codex installs a prompt from a build plan, it installs verbatim; if Codex believes a prompt is wrong, it flags the problem and proposes an edit for Claude (or the user) to make, and never rewrites it itself.
 
-If a prompt produces bad output, the response is to flag the problem and propose an edit — not to silently rewrite the prompt. Prompt drift is a content-quality heuristic in the same family as R7 and gets the same answer: the prompt is the heuristic; edits go through the prompt owner.
+For Codex, prompt drift is a content-quality heuristic in the same family as R7 and gets the same answer: the prompt is the heuristic; edits go through Claude. For Claude, editing the prompt *is* the sanctioned response to bad output — tighten the prompt rather than adding a code-side string-matching workaround.
 
 ## R18. No Arbitrary Limits On Agent I/O
 

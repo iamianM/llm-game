@@ -22,6 +22,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -145,7 +147,7 @@ class OpenAIVillaOrchestrator:
                     mark_agent_trace_validation_error("villa_orchestrator", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
-                        raise
+                        raise AgentGenerationError(str(exc)) from exc
                     continue
             finally:
                 end_agent_attempt(attempt_token)
@@ -162,7 +164,7 @@ class OpenAIVillaOrchestrator:
                 mark_agent_trace_validation_error("villa_orchestrator", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
-                    raise
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable Villa Orchestrator retry state")
 
     def _generate_update(self, rendered_context: str) -> VillaUpdate:

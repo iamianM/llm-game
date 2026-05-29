@@ -17,11 +17,12 @@ from functools import cached_property
 from pathlib import Path
 
 from openai import OpenAI
-from pydantic import ValidationError
 
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -79,19 +80,26 @@ class OpenAIConversationCurator:
                     "not display names. "
                     f"You must include at least one direct memory for each participant holder: {required_holders}."
                 )
+            attempt_token = begin_agent_attempt(attempt_number)
             try:
-                attempt_token = begin_agent_attempt(attempt_number)
                 try:
                     batch = self._generate_batch(retry_context)
-                finally:
-                    end_agent_attempt(attempt_token)
+                except Exception as exc:
+                    mark_agent_trace_validation_error("conversation_curator", attempt_number, exc)
+                    last_error = ValueError(str(exc))
+                    if attempt == 2:
+                        raise AgentGenerationError(str(exc)) from exc
+                    continue
+            finally:
+                end_agent_attempt(attempt_token)
+            try:
                 validate_memory_batch(batch, state, participant_ids, bystander_set)
                 return batch
-            except (ValueError, ValidationError) as exc:
+            except ValueError as exc:
                 mark_agent_trace_validation_error("conversation_curator", attempt_number, exc)
-                last_error = ValueError(str(exc))
+                last_error = exc
                 if attempt == 2:
-                    raise
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable curator retry state")
 
     async def curate_async(

@@ -26,6 +26,7 @@ from src.game.agents.conversation_curator import (
     ConversationCuratorFn,
     mock_conversation_curator,
 )
+from src.game.agents.runtime import AgentError, record_agent_degradation
 from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
 from src.game.engine.memory import add_memory_batch
 from src.game.engine.proposals import maybe_form_single_npc_couple_from_conversation
@@ -191,7 +192,8 @@ async def _call_background_dialogue(
         if async_generate is not None:
             return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
         return await asyncio.to_thread(speak, state, conversation, nudge)
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("background_dialogue", exc)
         return mock_background_dialogue(state, conversation, nudge)
 
 
@@ -213,7 +215,8 @@ async def _call_curator(
         if async_curate is not None:
             return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
         return await asyncio.to_thread(curate, state, conversation, bystanders)
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("conversation_curator", exc)
         return mock_conversation_curator(state, conversation, bystanders)
 
 

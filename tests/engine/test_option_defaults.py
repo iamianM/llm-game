@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.contextual_options import ContextualBespoke
 from src.game.agents.islander_voice import Exchange
+from src.game.agents.runtime import AgentValidationError
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.memory import add_memory, create_memory
@@ -329,7 +330,7 @@ def test_generate_follow_up_menu_survives_agent_raise() -> None:
     state, result, exchange = _context(success=True, tone="warm")
 
     def boom(*_args, **_kwargs) -> ContextualBespoke:
-        raise ValueError("contextual options exhausted retries")
+        raise AgentValidationError("contextual options exhausted retries")
 
     menu = generate_follow_up_menu(state, result, exchange, 20, boom)
 

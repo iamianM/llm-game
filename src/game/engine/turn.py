@@ -21,9 +21,11 @@ from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
 from src.game.agents.islander_voice import Exchange, IslanderVoiceFn, mock_islander_voice
 from src.game.agents.runtime import (
+    AgentError,
     AgentTrace,
     begin_agent_trace_capture,
     end_agent_trace_capture,
+    record_agent_degradation,
 )
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
@@ -119,7 +121,8 @@ def _voiced_exchange(
         return mock_islander_voice(state, result)
     try:
         return islander_voice(state, result)
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("islander_voice", exc)
         return mock_islander_voice(state, result)
 
 
@@ -141,7 +144,8 @@ def _narrated_events(
         return mock_event_narration(state, events)
     try:
         return event_narrator(state, events)
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("event_narrator", exc)
         return mock_event_narration(state, events)
 
 

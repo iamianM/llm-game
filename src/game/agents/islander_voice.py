@@ -21,6 +21,8 @@ from src.game.agents.islander_voice_context import (
 )
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -82,7 +84,7 @@ class OpenAIIslanderVoice:
                     mark_agent_trace_validation_error("islander_voice", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
-                        raise
+                        raise AgentGenerationError(str(exc)) from exc
                     continue
             finally:
                 end_agent_attempt(attempt_token)
@@ -93,7 +95,7 @@ class OpenAIIslanderVoice:
                 mark_agent_trace_validation_error("islander_voice", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
-                    raise
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable Islander Voice retry state")
 
     def _generate_exchange(self, rendered_context: Any) -> Exchange:

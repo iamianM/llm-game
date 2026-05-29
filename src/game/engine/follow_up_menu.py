@@ -14,6 +14,11 @@ from src.game.agents.contextual_options import (
     with_gossip_options,
 )
 from src.game.agents.islander_voice import Exchange
+from src.game.agents.runtime import (
+    AgentError,
+    AgentValidationError,
+    record_agent_degradation,
+)
 from src.game.engine.option_defaults import already_present_intents, assemble_follow_up_menu
 from src.game.engine.results import MechanicalResult
 from src.game.state.models import FollowUpMenu, GameState
@@ -43,9 +48,19 @@ def generate_follow_up_menu(
             state, result, exchange, probability, contextual_options, already_present
         )
         menu = _assemble_menu(state, result, exchange, raw)
-        validate_follow_up_menu(menu)
+        try:
+            validate_follow_up_menu(menu)
+        except ValueError as exc:
+            # The assembled menu fused the agent's bespoke options with engine
+            # defaults; if it fails the engine contract, the bespoke half is the
+            # variable, so treat it as an agent-validation degradation (the
+            # engine-default wheel always validates). A genuine engine bug inside
+            # _assemble_menu (e.g. a TypeError from the gossip/option builders) is
+            # not an AgentError and is left to surface loud per R2.
+            raise AgentValidationError(str(exc)) from exc
         return menu
-    except Exception:
+    except AgentError as exc:
+        record_agent_degradation("contextual_options", exc)
         return _default_follow_up_menu(state, result, exchange)
 
 
@@ -88,7 +103,10 @@ def _assemble_menu(
             ),
             state,
         )
-    raise TypeError(f"unknown contextual options result: {type(raw)!r}")
+    # The only producers of `raw` are the contextual-options agent callable and
+    # the always-typed mock; an unexpected type is therefore an agent-contract
+    # violation (unusable output), so degrade rather than dead-screen the wheel.
+    raise AgentValidationError(f"unknown contextual options result: {type(raw)!r}")
 
 
 def _default_follow_up_menu(

@@ -11,6 +11,7 @@ from src.game.agents.conversation_curator import (
     mock_conversation_curator,
     validate_memory_batch,
 )
+from src.game.agents.runtime import AgentValidationError
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.turn import run_turn
 from src.game.state.models import Location, MemoryBatch, MemoryDraft, NPCNPCConversation, new_game
@@ -42,7 +43,7 @@ def test_curate_player_conversation_survives_curator_raise() -> None:
     assert conversation is not None
 
     def boom(*_args, **_kwargs) -> MemoryBatch:
-        raise ValueError("curator exhausted retries")
+        raise AgentValidationError("curator exhausted retries")
 
     batch = curate_player_conversation(state, conversation, boom)
 

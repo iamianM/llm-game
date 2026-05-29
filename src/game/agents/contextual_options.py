@@ -23,6 +23,8 @@ from src.game.agents.contextual_gossip import with_gossip_options as with_gossip
 from src.game.agents.islander_voice import Exchange, load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -146,7 +148,7 @@ class ContextualOptionsAgent:
                     mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
-                        raise
+                        raise AgentGenerationError(str(exc)) from exc
                     continue
             finally:
                 end_agent_attempt(attempt_token)
@@ -157,7 +159,7 @@ class ContextualOptionsAgent:
                 mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
-                    raise
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable contextual options retry state")
 
     def _generate_bespoke(self, rendered_context: str) -> ContextualBespoke:

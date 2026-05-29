@@ -22,6 +22,8 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -82,25 +84,16 @@ class OpenAIEventNarrator:
                 )
             attempt_token = begin_agent_attempt(attempt_number)
             try:
-                response = self._client.responses.parse(
-                    model=self._model,
-                    instructions=_EVENT_NARRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
-                    input=retry_context,
-                    text_format=EventNarration,
-                    **reasoning_request_kwargs(),
-                )
+                try:
+                    narration = self._generate_narration(retry_context)
+                except Exception as exc:
+                    mark_agent_trace_validation_error("event_narrator", attempt_number, exc)
+                    last_error = ValueError(str(exc))
+                    if attempt == 2:
+                        raise AgentGenerationError(str(exc)) from exc
+                    continue
             finally:
                 end_agent_attempt(attempt_token)
-            narration = response.output_parsed
-            record_agent_trace(
-                agent_name="event_narrator",
-                model=self._model,
-                prompt_path=EVENT_NARRATOR_PROMPT,
-                response=response,
-                output=narration,
-            )
-            if narration is None:
-                raise ValueError("Event Narrator returned no parsed EventNarration")
             try:
                 validate_event_narration(narration, events)
                 return narration
@@ -108,8 +101,29 @@ class OpenAIEventNarrator:
                 mark_agent_trace_validation_error("event_narrator", attempt_number, exc)
                 last_error = ValueError(str(exc))
                 if attempt == 2:
-                    raise
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable event narrator retry state")
+
+    def _generate_narration(self, rendered_context: str) -> EventNarration:
+        """Request one parsed EventNarration from the model."""
+        response = self._client.responses.parse(
+            model=self._model,
+            instructions=_EVENT_NARRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
+            input=rendered_context,
+            text_format=EventNarration,
+            **reasoning_request_kwargs(),
+        )
+        narration = response.output_parsed
+        record_agent_trace(
+            agent_name="event_narrator",
+            model=self._model,
+            prompt_path=EVENT_NARRATOR_PROMPT,
+            response=response,
+            output=narration,
+        )
+        if narration is None:
+            raise ValueError("Event Narrator returned no parsed EventNarration")
+        return narration
 
 
 def mock_event_narration(state: GameState, events: list[CeremonyEvent]) -> EventNarration:

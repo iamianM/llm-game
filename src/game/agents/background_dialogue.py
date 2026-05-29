@@ -25,6 +25,8 @@ from pydantic import BaseModel, ConfigDict
 from src.game.agents.islander_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
+    AgentGenerationError,
+    AgentValidationError,
     begin_agent_attempt,
     end_agent_attempt,
     mark_agent_trace_validation_error,
@@ -98,42 +100,45 @@ class OpenAIBackgroundDialogue:
             attempt_token = begin_agent_attempt(attempt_number)
             try:
                 try:
-                    response = self._client.responses.parse(
-                        model=self._model,
-                        instructions=_BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8"),
-                        input=context,
-                        text_format=BackgroundExchange,
-                        **reasoning_request_kwargs(effort=BACKGROUND_DIALOGUE_REASONING_EFFORT),
-                    )
+                    exchange = self._generate_exchange(context)
                 except Exception as exc:
-                    last_error = ValueError(str(exc))
                     mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
+                    last_error = ValueError(str(exc))
                     if attempt == 1:
-                        raise
+                        raise AgentGenerationError(str(exc)) from exc
                     continue
             finally:
                 end_agent_attempt(attempt_token)
-            exchange = response.output_parsed
-            record_agent_trace(
-                agent_name="background_dialogue",
-                model=self._model,
-                prompt_path=BACKGROUND_DIALOGUE_PROMPT,
-                response=response,
-                output=exchange,
-            )
-            if exchange is None:
-                last_error = ValueError("Background Dialogue returned no parsed BackgroundExchange")
-                mark_agent_trace_validation_error("background_dialogue", attempt_number, last_error)
-            else:
-                try:
-                    validate_background_exchange(exchange)
-                    return exchange
-                except ValueError as exc:
-                    last_error = exc
-                    mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
-            if attempt == 1 and last_error is not None:
-                raise last_error
+            try:
+                validate_background_exchange(exchange)
+                return exchange
+            except ValueError as exc:
+                mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
+                last_error = exc
+                if attempt == 1:
+                    raise AgentValidationError(str(exc)) from exc
         raise AssertionError("unreachable background dialogue retry state")
+
+    def _generate_exchange(self, rendered_context: str) -> BackgroundExchange:
+        """Request one parsed BackgroundExchange from the model."""
+        response = self._client.responses.parse(
+            model=self._model,
+            instructions=_BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8"),
+            input=rendered_context,
+            text_format=BackgroundExchange,
+            **reasoning_request_kwargs(effort=BACKGROUND_DIALOGUE_REASONING_EFFORT),
+        )
+        exchange = response.output_parsed
+        record_agent_trace(
+            agent_name="background_dialogue",
+            model=self._model,
+            prompt_path=BACKGROUND_DIALOGUE_PROMPT,
+            response=response,
+            output=exchange,
+        )
+        if exchange is None:
+            raise ValueError("Background Dialogue returned no parsed BackgroundExchange")
+        return exchange
 
     async def generate_async(
         self,

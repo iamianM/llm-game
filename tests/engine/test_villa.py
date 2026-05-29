@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from src.game.agents.runtime import AgentGenerationError, AgentValidationError
 from src.game.agents.villa_orchestrator import (
     ContinueConversation,
     EndConversation,
@@ -160,7 +161,7 @@ def test_npc_conversation_close_survives_curator_raise() -> None:
     )
 
     def boom(*_args, **_kwargs):
-        raise ValueError("curator exhausted retries")
+        raise AgentValidationError("curator exhausted retries")
 
     changes = apply_villa_update(state, update, SeededRng(1), conversation_curator=boom)
 
@@ -209,7 +210,7 @@ def test_conversation_start_survives_background_dialogue_raise() -> None:
     )
 
     def boom(*_args, **_kwargs):
-        raise ValueError("background dialogue exhausted retries")
+        raise AgentGenerationError("background dialogue exhausted retries")
 
     changes = apply_villa_update(state, update, SeededRng(1), background_dialogue=boom)
 
@@ -276,7 +277,7 @@ def test_apply_villa_turn_survives_orchestrator_raise() -> None:
     before = {islander.id: islander.location_id for islander in state.islanders}
 
     def boom(_state: GameState) -> VillaUpdate:
-        raise ValueError("unknown or eliminated NPC in VillaUpdate: jordan")
+        raise AgentValidationError("unknown or eliminated NPC in VillaUpdate: jordan")
 
     villa_update, changes, arrival_rolls = apply_villa_turn(
         state, SeededRng(1), boom, background_dialogue=None, conversation_curator=None
