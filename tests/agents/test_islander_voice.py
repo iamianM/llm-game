@@ -68,6 +68,48 @@ def test_islander_voice_context_includes_backstory() -> None:
     assert "primary school teacher" in context.npc_backstory
 
 
+def test_islander_voice_context_signals_established_rapport() -> None:
+    """A high-familiarity target should be flagged as already-known so the opener
+    of a re-started conversation does not cold-open like a first meeting."""
+    state = new_game(1)
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe.familiarity_with_player = 70
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    context = islander_voice_context(state, result)
+
+    assert "familiarity 70/100" in context.relationship_summary
+    assert "know the player well" in context.relationship_summary
+    assert "stranger" in context.relationship_summary
+
+
+def test_islander_voice_context_signals_fresh_introduction() -> None:
+    """A near-zero-familiarity target keeps the early getting-to-know-you framing
+    so genuine first meetings still open like first meetings."""
+    state = new_game(1)
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    context = islander_voice_context(state, result)
+
+    assert "barely know the player yet" in context.relationship_summary
+
+
 def test_islander_voice_retries_after_validation_failure() -> None:
     """Validation feedback gives the model a chance to fix contract slips."""
     state = new_game(1)
@@ -200,6 +242,94 @@ def test_islander_voice_allows_gossip_subject_mentions() -> None:
     )
 
     assert context.gossip_subject_names == ["Blake"]
+    validate_exchange(exchange, context)
+
+
+def test_islander_voice_allows_share_gossip_subject_mentions() -> None:
+    """Sharing a player memory whitelists its subject so the natural mention
+    of that subject does not trip validate_exchange (the live share_gossip
+    'That choice did not land' crash)."""
+    from src.game.engine.memory import add_memory, create_memory
+
+    state = new_game(1)
+    memory = create_memory(
+        holder_id="player",
+        subject_id="maya",
+        source="witnessed",
+        day=1,
+        turn=1,
+        weight=7,
+        tags=["gossip"],
+        content="Maya looked rattled after Liam pulled away.",
+    )
+    add_memory(state, memory)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="chloe",
+            intent_id=f"share_gossip:{memory.id}",
+        ),
+        success=True,
+        tags=["gossip"],
+    )
+
+    context = islander_voice_context(state, result)
+    exchange = Exchange(
+        player_dialogue="Chloe, can I tell you something? I saw Maya look really rattled earlier.",
+        npc_dialogue=(
+            "Oh? I had not clocked that about Maya. Tell me what you noticed, I am listening."
+        ),
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    # The subject (Maya) plus any other cast named in the gossip content (Liam)
+    # are whitelisted, so the NPC can echo either without tripping the leak guard.
+    assert context.gossip_subject_names == ["Maya", "Liam"]
+    assert context.intent_category == "gossip"
+    validate_exchange(exchange, context)
+
+
+def test_islander_voice_allows_share_gossip_mentioning_absent_second_cast() -> None:
+    """Real gossip often names more than its subject (e.g. "Maya and Jordan").
+    Every cast member named in the gossip content must be whitelisted, even when
+    absent, or the NPC echoing the second name dead-screens the turn."""
+    from src.game.engine.memory import add_memory, create_memory
+
+    state = new_game(1)
+    memory = create_memory(
+        holder_id="player",
+        subject_id="maya",
+        source="witnessed",
+        day=1,
+        turn=1,
+        weight=7,
+        tags=["gossip"],
+        content="I watched Maya and Blake trade cheeky lines in the kitchen.",
+    )
+    add_memory(state, memory)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="chloe",
+            intent_id=f"share_gossip:{memory.id}",
+        ),
+        success=True,
+        tags=["gossip"],
+    )
+
+    context = islander_voice_context(state, result)
+    # Blake is absent (not in the conversation) but is named in the gossip the
+    # player is sharing, so the NPC may mention them back without it counting as
+    # a leaked hidden Islander.
+    assert "Blake" in context.gossip_subject_names
+    assert "Blake" not in context.others_present
+    exchange = Exchange(
+        player_dialogue="I saw Maya and Blake flirting in the kitchen earlier.",
+        npc_dialogue="Oh, Maya and Blake? *grins* I had a feeling about those two.",
+        npc_tone="amused",
+        npc_mood_after=Mood.HAPPY,
+    )
     validate_exchange(exchange, context)
 
 

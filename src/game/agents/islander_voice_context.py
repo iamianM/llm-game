@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Literal, cast
 
 from pydantic import BaseModel, ConfigDict
@@ -113,11 +114,26 @@ def islander_voice_context(
             stat_used = "graft"
         else:
             intent_category = "gossip" if gossip is not None else "contextual"
-            intent_label = (
-                f"Ask about {_subject_name(state, gossip.subject_id)}: {gossip.content}"
-                if gossip is not None
-                else intent_id.replace("_", " ")
-            )
+            if gossip is None:
+                intent_label = intent_id.replace("_", " ")
+            elif intent_id.startswith("share_gossip:"):
+                subject_is_islander = any(
+                    islander.id == gossip.subject_id for islander in state.islanders
+                )
+                if subject_is_islander:
+                    intent_label = (
+                        f"Share with {target.name} the gossip you heard about "
+                        f"{_subject_name(state, gossip.subject_id)}: {gossip.content}"
+                    )
+                else:
+                    intent_label = (
+                        f"Tell {target.name} about something you witnessed in the "
+                        f"villa: {gossip.content}"
+                    )
+            else:
+                intent_label = (
+                    f"Ask about {_subject_name(state, gossip.subject_id)}: {gossip.content}"
+                )
             stat_used = "contextual"
         tags = result.tags
     index = content if content is not None else load_content()
@@ -211,12 +227,72 @@ def build_voice_messages(
     """Build OpenAI message input with prior exchanges as native turns."""
     del state
     messages = [{"role": "user", "content": current.scene}]
+    guard: str | None = None
     if conversation is not None:
         for record in conversation.exchanges:
             messages.append({"role": "user", "content": _prior_turn_user_message(record)})
             messages.append({"role": "assistant", "content": _prior_exchange_json(record)})
-    messages.append({"role": "user", "content": current.turn})
+        guard = _avoid_repetition_directive(conversation)
+    messages.append({"role": "user", "content": _turn_with_guard(current.turn, guard)})
     return messages
+
+
+def _turn_with_guard(turn: str, guard: str | None) -> str:
+    """Splice an anti-repetition guard in just before the final write cue.
+
+    The nano model does not reliably self-regulate against re-running the same
+    sentence opening turn after turn even though the prior exchanges are right
+    there in the thread, so we name the already-used openings explicitly. Keep
+    the message count and roles unchanged so the chain contract holds.
+    """
+    if not guard:
+        return turn
+    marker = "Write the exchange now."
+    if turn.endswith(marker):
+        return f"{turn[: -len(marker)]}{guard}\n{marker}"
+    return f"{turn}\n{guard}"
+
+
+def _avoid_repetition_directive(conversation: Conversation, *, max_items: int = 8) -> str | None:
+    """List opening phrases already used this conversation so the model varies.
+
+    Returns ``None`` for a fresh conversation (nothing to avoid yet)."""
+    openings: list[str] = []
+    for record in conversation.exchanges:
+        for line in (record.player_dialogue, record.npc_dialogue):
+            opening = _line_opening(line)
+            if opening:
+                openings.append(opening)
+    distinct = list(dict.fromkeys(openings))
+    if not distinct:
+        return None
+    if len(distinct) > max_items:
+        distinct = distinct[-max_items:]
+    quoted = "; ".join(f'"{opening}"' for opening in distinct)
+    return (
+        "Anti-repetition guard. Lines already used these openings this "
+        f"conversation: {quoted}. Do NOT begin player_dialogue or npc_dialogue "
+        'with those same words or sentence shapes (no second "You don\'t...", '
+        '"You\'re not...", or other reused frame). Open differently — a specific '
+        "observation, a small joke, a shared memory, or a concrete offer. Also do "
+        "NOT re-state a personal fact or anecdote you have already shared earlier "
+        "in this conversation (your job, your ex, your family, the same metaphor) — "
+        "assume the player remembers it. Build on it, react to what was just said, "
+        "or reveal a new detail instead of repeating the same line."
+    )
+
+
+def _line_opening(line: str, *, words: int = 4) -> str:
+    """First few words of a line, ignoring a leading italic stage direction."""
+    text = line.strip()
+    if text.startswith("*"):
+        close = text.find("*", 1)
+        if close != -1:
+            text = text[close + 1 :].strip()
+    tokens = text.split()
+    if not tokens:
+        return ""
+    return " ".join(tokens[:words])
 
 
 def target_for_result(state: GameState, result: MechanicalResult) -> IslanderState:
@@ -261,10 +337,35 @@ def _prior_exchange_json(record: ExchangeRecord) -> str:
 
 def _relationship_summary(target: IslanderState) -> str:
     relationship = target.relationship
+    familiarity = target.familiarity_with_player
     return (
         f"affection {relationship.affection}, chemistry {relationship.chemistry}, "
-        f"trust {relationship.trust}, friendship {relationship.friendship}"
+        f"trust {relationship.trust}, friendship {relationship.friendship}, "
+        f"familiarity {familiarity}/100. {_rapport_phrase(familiarity)}"
     )
+
+
+def _rapport_phrase(familiarity: int) -> str:
+    """Tell the voice whether this is a stranger or someone already known.
+
+    Without this the opener of a *re-started* conversation (the player walking
+    back up after an earlier chat closed) only sees raw relationship numbers and
+    tends to cold-open like a first meeting. Familiarity is the same 0-100 signal
+    every other system uses, so a high value should warm the re-greeting."""
+    if familiarity >= 60:
+        return (
+            "You already know the player well from earlier conversations — if you are "
+            "opening a new chat, greet them like someone you have real history with, "
+            "not a stranger you just met."
+        )
+    if familiarity >= 25:
+        return (
+            "You have already met the player and talked before — you are past first "
+            "introductions. If you are opening a new chat, pick up like people who "
+            "already know each other; do not re-introduce yourself or greet them like a "
+            "stranger."
+        )
+    return "You barely know the player yet — you are still in the early, getting-to-know-you stage."
 
 
 def _big5_summary(target: IslanderState) -> str:
@@ -353,6 +454,16 @@ def _intent_label(intent_id: str | None) -> str:
 
 
 def _gossip_memory_for_intent(state: GameState, intent_id: str) -> Memory | None:
+    if intent_id.startswith("share_gossip:"):
+        # Player-shared gossip: the source memory lives in the player's own
+        # memory list. Resolving it lets the voice prompt name the subject and
+        # whitelists that subject so validate_exchange never treats the natural
+        # subject mention as a leaked hidden Islander.
+        memory_id = intent_id.removeprefix("share_gossip:")
+        for memory in state.player.memories:
+            if memory.id == memory_id:
+                return memory
+        return None
     if not intent_id.startswith("ask_gossip:") or state.active_conversation is None:
         return None
     memory_id = intent_id.removeprefix("ask_gossip:")
@@ -380,6 +491,17 @@ def _gossip_subject_names_for_intent(
     if intent_id.startswith("ask_gossip:about_"):
         subject_ids.append(intent_id.removeprefix("ask_gossip:about_"))
     names = [_subject_name(state, subject_id) for subject_id in subject_ids]
+    # Any cast member named in the gossip's own content is fair game for the NPC
+    # to mention back — the player is the one bringing them up. Whitelist them so
+    # validate_exchange never treats a natural echo as a leaked hidden Islander
+    # (which would otherwise burn every retry and dead-screen the turn). Match the
+    # validator's own word-boundary detection so the two stay in lockstep.
+    if gossip is not None:
+        for islander in state.islanders:
+            if islander.name in names:
+                continue
+            if re.search(rf"\b{re.escape(islander.name)}\b", gossip.content):
+                names.append(islander.name)
     return list(dict.fromkeys(names))
 
 

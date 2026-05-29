@@ -99,6 +99,52 @@ class TurnResult(BaseModel):
     agent_traces: list[AgentTrace] = Field(default_factory=list)
 
 
+def _voiced_exchange(
+    state: GameState,
+    result: MechanicalResult,
+    islander_voice: IslanderVoiceFn | None,
+) -> Exchange:
+    """Produce the turn's spoken exchange without ever dead-screening the player.
+
+    Islander Voice is the only turn agent whose output *is* the payload the player
+    came for, and it runs on every conversation beat. The live agent retries on
+    validation failure and then raises (each failed attempt is recorded in the
+    agent trace). A raise here would crash the conversation mid-beat, discarding
+    the player's action. On exhaustion we fall back to the deterministic mock voice
+    — contract-valid by construction, and it only ever names the present partner so
+    it cannot leak hidden cast — so the beat lands a little generically for one turn
+    instead of throwing a dead screen.
+    """
+    if islander_voice is None:
+        return mock_islander_voice(state, result)
+    try:
+        return islander_voice(state, result)
+    except Exception:
+        return mock_islander_voice(state, result)
+
+
+def _narrated_events(
+    state: GameState,
+    events: list[CeremonyEvent],
+    event_narrator: EventNarratorFn | None,
+) -> EventNarration:
+    """Narrate ceremony events without dead-screening the moment.
+
+    The Event Narrator retries on validation failure and then raises (each failed
+    attempt is recorded in the agent trace). Ceremonies are high-stakes beats, so a
+    raise here would crash the player out of a recoupling or result reveal. On
+    exhaustion we fall back to the deterministic mock narration — built straight
+    from event data, so it always names every participant and never leaks engine
+    tokens — letting the ceremony resolve with plainer prose instead of throwing.
+    """
+    if event_narrator is None:
+        return mock_event_narration(state, events)
+    try:
+        return event_narrator(state, events)
+    except Exception:
+        return mock_event_narration(state, events)
+
+
 def run_turn(
     state: GameState,
     action: PlayerAction,
@@ -140,8 +186,7 @@ def run_turn(
                 result = pull_rejected_result(state, action, pull_attempt)
                 time_cost = deduct_time(state, action)
                 state.turn_index += 1
-                speak = mock_islander_voice if islander_voice is None else islander_voice
-                exchange = speak(state, result)
+                exchange = _voiced_exchange(state, result, islander_voice)
                 pull_attempt.deflection_line = exchange.npc_dialogue
                 remember_pull_rejection(state, pull_attempt)
                 villa_update, villa_changes, arrival_rolls = apply_villa_turn(
@@ -239,8 +284,7 @@ def run_turn(
         event_narration = None
         if ceremony_events:
             remember_ceremony_events(state, ceremony_events)
-            narrate_event = mock_event_narration if event_narrator is None else event_narrator
-            event_narration = narrate_event(state, ceremony_events)
+            event_narration = _narrated_events(state, ceremony_events, event_narrator)
         auto_advance = False
         if check_auto_advance(state):
             more_events, audience_after_auto = advance_phase_with_events(state, rng)
@@ -279,8 +323,7 @@ def run_turn(
         curator_batches.append(batch)
         close_conversation(state, "player_exit")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
-        speak = mock_islander_voice if islander_voice is None else islander_voice
-        exchange = speak(state, result)
+        exchange = _voiced_exchange(state, result, islander_voice)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
@@ -304,8 +347,7 @@ def run_turn(
         if result.action.target_id is None:
             raise ValueError("engage_approach requires a target")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
-        speak = mock_islander_voice if islander_voice is None else islander_voice
-        exchange = speak(state, result)
+        exchange = _voiced_exchange(state, result, islander_voice)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
@@ -333,8 +375,7 @@ def run_turn(
                 raise ValueError("RESPOND_WITH requires active conversation")
             conversation = active
             conversation.pending_options = None
-        speak = mock_islander_voice if islander_voice is None else islander_voice
-        exchange = speak(state, result)
+        exchange = _voiced_exchange(state, result, islander_voice)
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, conversation.target_id, 1)
         if _is_wheel_exit(result):
@@ -357,8 +398,7 @@ def run_turn(
                 curator_batches.append(batch)
                 close_conversation(state, "npc_left")
     elif action.kind is ActionKind.INTRODUCE_TO:
-        speak = mock_islander_voice if islander_voice is None else islander_voice
-        exchange = speak(state, result)
+        exchange = _voiced_exchange(state, result, islander_voice)
         if action.target_id is not None:
             bump_target_familiarity(state, action.target_id, 0)
         if intro_segment_complete(state):
@@ -440,8 +480,7 @@ def run_turn(
     event_narration = None
     if ceremony_events:
         remember_ceremony_events(state, ceremony_events)
-        narrate_event = mock_event_narration if event_narrator is None else event_narrator
-        event_narration = narrate_event(state, ceremony_events)
+        event_narration = _narrated_events(state, ceremony_events, event_narrator)
     return finalize_turn(
         TurnResult(
             state=state,

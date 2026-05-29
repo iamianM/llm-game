@@ -151,6 +151,13 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         interruption = state.active_conversation.pending_interruption
         if interruption is not None:
             interrupter = _find_islander(state, interruption.interrupter_id)
+            iname = interrupter.name
+            accept_label = {
+                "jealous": f"Turn and hear {iname} out",
+                "has_gossip": f"Turn to {iname} for the gossip",
+                "drawn_to_topic": f"Bring {iname} into the chat",
+                "needs_to_talk": f"Give {iname} your attention",
+            }.get(interruption.reason, f"Turn and welcome {iname}")
             actions.extend(
                 [
                     ActionSpec(
@@ -159,10 +166,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                             target_id=interrupter.id,
                             intent_id="accept_interruption",
                         ),
-                        label=(
-                            f"Interruption: Welcome them ({interrupter.name}, "
-                            f"{interruption.reason}, {interruption.urgency})"
-                        ),
+                        label=accept_label,
                     ),
                     ActionSpec(
                         action=PlayerAction(
@@ -170,7 +174,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                             target_id=interrupter.id,
                             intent_id="defer_interruption",
                         ),
-                        label="Interruption: Politely defer",
+                        label=f"Ask {iname} for a minute",
                     ),
                     ActionSpec(
                         action=PlayerAction(
@@ -178,7 +182,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                             target_id=interrupter.id,
                             intent_id="ignore_interruption",
                         ),
-                        label="Interruption: Ignore them",
+                        label=f"Ignore {iname} and keep talking",
                     ),
                 ]
             )
@@ -216,6 +220,13 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     if state.pending_npc_approach is not None:
         approach = state.pending_npc_approach
         approacher = _find_islander(state, approach.npc_id)
+        name = approacher.name
+        engage_label = {
+            "wants_to_chat": f"Welcome {name} over for a chat",
+            "has_gossip": f"Lean in — let {name} spill the gossip",
+            "flirty": f"Flirt back with {name}",
+            "curious": f"See what {name} wants",
+        }.get(approach.reason, f"Welcome {name} over")
         return [
             ActionSpec(
                 action=PlayerAction(
@@ -223,10 +234,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     target_id=approacher.id,
                     intent_id="engage_approach",
                 ),
-                label=(
-                    f"{approacher.name} comes over: Welcome them "
-                    f"({approach.reason}, {approach.warmth})"
-                ),
+                label=engage_label,
             ),
             ActionSpec(
                 action=PlayerAction(
@@ -234,7 +242,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     target_id=approacher.id,
                     intent_id="wave_off_politely",
                 ),
-                label=f"{approacher.name} comes over: Not right now (polite)",
+                label=f"Wave {name} off gently",
             ),
             ActionSpec(
                 action=PlayerAction(
@@ -242,7 +250,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     target_id=approacher.id,
                     intent_id="wave_off_firmly",
                 ),
-                label=f"{approacher.name} comes over: Brush them off",
+                label=f"Brush {name} off",
             ),
             ActionSpec(
                 action=PlayerAction(
@@ -250,7 +258,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     target_id=approacher.id,
                     intent_id="ignore_approach",
                 ),
-                label=f"{approacher.name} comes over: Pretend not to notice",
+                label=f"Pretend not to notice {name}",
             ),
         ]
 
@@ -259,12 +267,23 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             continue
         if location_villa(islander.location_id) is not state.villa:
             continue
-        actions.append(
-            ActionSpec(
-                action=PlayerAction(kind=ActionKind.START_CONVERSATION, target_id=islander.id),
-                label=f"Talk to {islander.name}",
+        # Surface one categorized opener per unlocked intent so the free-time
+        # CharacterMenu tree (Friendly / Flirty / Deep / Banter) populates from
+        # real intents instead of a single generic "Talk to X" that buckets
+        # into Banter and leaves the other categories falsely locked. The web
+        # groups these by category and drills to a sub-intent; the bottom fan /
+        # LLM decider see the self-contained "Talk to X — <opener>" label.
+        for intent in available_intents_for(state, islander.id):
+            actions.append(
+                ActionSpec(
+                    action=PlayerAction(
+                        kind=ActionKind.START_CONVERSATION,
+                        target_id=islander.id,
+                        intent_id=intent.id,
+                    ),
+                    label=f"Talk to {islander.name} — {intent.label}",
+                )
             )
-        )
     if hideaway_eligible(state):
         partner_id = hideaway_partner_id(state)
         partner = _find_islander(state, partner_id) if partner_id is not None else None

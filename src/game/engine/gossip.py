@@ -28,7 +28,10 @@ def apply_gossip_follow_up(
         None,
     )
     if source_memory is None:
-        raise ValueError(f"gossip memory not offered: {memory_id}")
+        # The offered memory is no longer resolvable (e.g. a stale menu after a
+        # phase shift). Degrade to a neutral no-op rather than hard-crashing the
+        # turn — a player-facing menu option must never dead-screen the game.
+        return RelationshipDelta()
     if not success:
         return RelationshipDelta()
     add_memory(
@@ -61,8 +64,31 @@ def apply_share_gossip_follow_up(
         None,
     )
     if source_memory is None:
-        raise ValueError(f"player gossip memory not found: {memory_id}")
+        # The shareable memory is no longer in the player's memory list (e.g. a
+        # stale menu carried across a phase shift). Degrade to a neutral no-op
+        # rather than hard-crashing the turn — a player-facing menu option must
+        # never dead-screen the game.
+        return RelationshipDelta()
     if not success:
+        # The share landed badly, but the player *did* say it. Record a lighter
+        # "unconvinced" memory on the target so the same gossip is not re-offered
+        # in the menu — otherwise it loops forever and the NPC reacts as if hearing
+        # it fresh every time. The reduced weight + gossip_unconvinced tag mark that
+        # the target did not buy it, so it does not propagate like believed gossip.
+        add_memory(
+            state,
+            create_memory(
+                holder_id=target_id,
+                subject_id=source_memory.subject_id,
+                source="told_by",
+                source_id="player",
+                day=state.day,
+                turn=state.turn_index,
+                weight=max(2, source_memory.emotional_weight - 3),
+                tags=["gossip", "gossip_unconvinced", f"source_memory:{source_memory.id}"],
+                content=source_memory.content,
+            ),
+        )
         return RelationshipDelta(trust=-1)
     add_memory(
         state,

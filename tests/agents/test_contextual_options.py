@@ -9,6 +9,7 @@ import pytest
 from src.game.agents.contextual_options import (
     ContextualBespoke,
     ContextualOptionsAgent,
+    contextual_options_context,
     mock_follow_up_menu,
     validate_contextual_bespoke,
     validate_follow_up_menu,
@@ -17,7 +18,7 @@ from src.game.agents.islander_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import FollowUpOption, Mood, RelationshipDelta, new_game
+from src.game.state.models import FollowUpOption, Memory, Mood, RelationshipDelta, new_game
 
 Tone = Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
 
@@ -166,6 +167,85 @@ def test_follow_up_menu_accepts_specific_longer_labels() -> None:
     )
 
     validate_follow_up_menu(menu)
+
+
+def test_explored_threads_only_includes_memories_about_the_target() -> None:
+    """Cross-conversation topic memory: the context surfaces topics the player
+    has already explored with *this* NPC (so the agent can avoid re-opening
+    them), and excludes memories about other islanders."""
+    state = new_game(1)
+    state.player.memories.extend(
+        [
+            Memory(
+                id="m1",
+                holder_id="player",
+                subject_id="chloe",
+                content="I learned Chloe wants kids before she turns thirty.",
+                source="direct",
+                formed_on_day=1,
+                formed_on_turn=2,
+                emotional_weight=6,
+                tags=["deep", "talked_about_future"],
+            ),
+            Memory(
+                id="m2",
+                holder_id="player",
+                subject_id="maya",
+                content="Maya teased me about my dancing.",
+                source="direct",
+                formed_on_day=1,
+                formed_on_turn=3,
+                emotional_weight=4,
+                tags=["banter"],
+            ),
+        ]
+    )
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        success=True,
+        relationship_deltas={"chloe": RelationshipDelta(affection=2)},
+        tags=["friendly"],
+    )
+    exchange = Exchange(
+        player_dialogue="Hey, good to see you.",
+        npc_dialogue="You too.",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    ctx = contextual_options_context(state, result, exchange, 10)
+
+    assert "wants kids before she turns thirty" in ctx.explored_threads
+    assert "Maya teased" not in ctx.explored_threads
+
+
+def test_explored_threads_defaults_when_no_prior_memories() -> None:
+    """A brand-new connection reports fresh ground rather than an empty blob."""
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        success=True,
+        relationship_deltas={"chloe": RelationshipDelta(affection=2)},
+        tags=["friendly"],
+    )
+    exchange = Exchange(
+        player_dialogue="Hi.",
+        npc_dialogue="Hey.",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    ctx = contextual_options_context(state, result, exchange, 10)
+
+    assert "fresh ground" in ctx.explored_threads
 
 
 @pytest.mark.llm

@@ -124,7 +124,7 @@ test("public first screens do not expose development controls", async ({ page })
   await expect(page.getByText("Real mode")).toHaveCount(0);
 });
 
-test("challenge spectacle keeps choices usable on a short viewport", async ({ page }) => {
+test("challenge banner keeps choices usable on a short viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 700 });
   await installSession(
     page,
@@ -154,7 +154,12 @@ test("challenge spectacle keeps choices usable on a short viewport", async ({ pa
 
   await page.goto(`/play/${SESSION_ID}`);
 
-  await expect(page.getByTestId("challenge-spectacle")).toBeVisible();
+  await expect(page.getByTestId("challenge-banner")).toBeVisible();
+  for (let attempt = 0; attempt < 8 && (await page.getByTestId("choice-fan").count()) === 0; attempt += 1) {
+    await page.evaluate(() => window.dispatchEvent(new CustomEvent("paradise:reveal-all")));
+    await page.getByTestId("scene-stage").click({ position: { x: 190, y: 320 }, force: true });
+    await page.waitForTimeout(100);
+  }
   await expect(page.getByTestId("choice-fan")).toBeVisible();
   await expect(page.getByRole("button", { name: "Hold Liam's gaze" })).toBeVisible();
 });

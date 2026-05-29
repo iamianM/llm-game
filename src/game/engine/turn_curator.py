@@ -25,8 +25,7 @@ def curate_player_conversation(
     """Curate a closed player conversation exactly once."""
     bump_target_familiarity(state, conversation.target_id, 2)
     bystander_ids = conversation_bystanders(state, conversation.target_id)
-    curate = mock_conversation_curator if curator is None else curator
-    batch = curate(state, conversation, bystander_ids)
+    batch = _safe_curate(state, conversation, bystander_ids, curator)
     batch.kind = "player"
     conversation.summary = batch.summary or None
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
@@ -51,12 +50,35 @@ def curate_npc_conversation(
     ]
     if state.location_id == conversation.location_id:
         bystander_ids.append("player")
-    curate = mock_conversation_curator if curator is None else curator
-    batch = curate(state, conversation, bystander_ids)
+    batch = _safe_curate(state, conversation, bystander_ids, curator)
     batch.kind = "background"
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
     return batch
+
+
+def _safe_curate(
+    state: GameState,
+    conversation: Conversation | NPCNPCConversation,
+    bystander_ids: list[str],
+    curator: ConversationCuratorFn | None,
+) -> MemoryBatch:
+    """Curate a closed conversation without ever dead-screening the turn.
+
+    The curator only records *memories* of a conversation that has already closed;
+    the live agent retries on validation failure and then raises (every failed
+    attempt is recorded in the agent trace). That raise fires on conversation
+    close — after the player has already acted and seen the NPC's line — so letting
+    it propagate would crash the whole turn over flavor that degrades safely. On
+    any failure we fall back to the deterministic mock curator, which is
+    code-controlled, always contract-valid, and still records a generic memory for
+    each participant so memory continuity survives. Only the LLM's nuance is lost.
+    """
+    curate = mock_conversation_curator if curator is None else curator
+    try:
+        return curate(state, conversation, bystander_ids)
+    except Exception:
+        return mock_conversation_curator(state, conversation, bystander_ids)
 
 
 def conversation_bystanders(state: GameState, target_id: str) -> list[str]:

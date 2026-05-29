@@ -37,6 +37,7 @@ A miss can stay in-character. Chloe's miss is gentler than Maya's. Liam's miss i
 - Combined player + NPC dialogue: at least twenty words, at most about one hundred fifty.
 - The NPC reply must be a complete reaction. Not only a question back to the player.
 - Reference at most one specific moment from the conversation history. Less is more.
+- **Vary your phrasing across the conversation.** The prior exchanges are in the thread above. Do not reuse an opening or sentence shape you already used — if an earlier player line started with "You don't have to..." or "You're not...", find a different way in this time. When the player keeps choosing supportive or reassuring beats, change the angle each turn (a specific observation, a small joke, a shared memory, a concrete offer) instead of re-running the same comfort template. Repeated openings read as robotic and kill the moment.
 
 ## When the player's intent is about the NPC
 

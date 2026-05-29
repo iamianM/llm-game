@@ -75,6 +75,7 @@ class ContextualOptionsContext(BaseModel):
     loyalty: int
     departure_probability: int
     gossip_memories: str
+    explored_threads: str = "None yet — this is fresh ground."
     already_present: list[str] = Field(default_factory=list)
 
 
@@ -220,6 +221,7 @@ def contextual_options_context(
         loyalty=stats.loyalty,
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
+        explored_threads=_explored_threads(state, target_id),
         already_present=already_present or [],
     )
 
@@ -345,9 +347,30 @@ def _render_context(context: ContextualOptionsContext) -> str:
             f"Departure probability: {context.departure_probability}",
             f"already_present: {', '.join(context.already_present) or 'none'}",
             f"Gossip-eligible memories: {context.gossip_memories}",
+            f"Already explored with this Islander (past chats — do not re-open):\n{context.explored_threads}",
             "Write the bespoke follow-up additions now.",
         ]
     )
+
+def _explored_threads(state: GameState, target_id: str) -> str:
+    """Summarize topics the player has already dug into with this NPC.
+
+    Sourced from the player's own memories about this NPC, which persist
+    across conversations (unlike ``active_conversation`` history, which resets
+    every time the player re-approaches). This lets the agent advance to fresh
+    ground instead of re-opening the same single most-salient backstory beat
+    on the first turn of every new chat. Returns the most recent few in
+    chronological order (oldest first, newest last).
+    """
+    threads = [
+        memory.content.strip()
+        for memory in state.player.memories
+        if memory.subject_id == target_id and memory.content and memory.content.strip()
+    ]
+    if not threads:
+        return "None yet — this is fresh ground."
+    return "\n".join(f"- {content}" for content in threads[-5:])
+
 
 def _gossip_memory_context(state: GameState) -> str:
     conversation = state.active_conversation

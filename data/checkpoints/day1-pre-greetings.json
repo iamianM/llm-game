@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-greetings",
   "seed": 7,
-  "state_hash": "4e0a2eca1456df1cc197f24ecc4e6c1e5879872bca5ab92750c39105f79fd27a",
+  "state_hash": "0721f69402dddb86508bfd4f863826461cf9022ad6ca61bcf4fe035d8db1a1bd",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 0,
     "day": 1,
@@ -3845,6 +3845,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

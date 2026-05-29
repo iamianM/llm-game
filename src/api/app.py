@@ -61,6 +61,7 @@ from src.game.engine.actions import PlayerAction
 from src.game.engine.character_creation import DEFAULT_ARCHETYPE_STATS, create_character
 from src.game.engine.intents import available_intents_for
 from src.game.engine.turn import TurnResult, run_turn
+from src.game.engine.turn_events import settle_to_playable
 from src.game.state.models import SCHEMA_VERSION, GameState, Gender, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -205,6 +206,10 @@ def session_from_checkpoint(req: CheckpointStartRequest) -> NewSessionEnvelope:
         rng = SeededRng.from_snapshot(seed, rng_state)
     else:
         rng = SeededRng(seed)
+    # A checkpoint can be saved on a transient zero-action boundary (e.g. a
+    # pre-event TEXT phase). Walk it forward to the next playable beat so the
+    # main-menu picker never loads the player onto a dead screen.
+    settle_to_playable(state, rng)
     mock = _mock_mode(req.mock_llm)
     session_id = str(uuid4())
     persisted = freeze(state, rng, session_id=session_id, user_id=None, mock_llm=mock)

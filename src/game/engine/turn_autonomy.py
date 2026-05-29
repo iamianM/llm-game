@@ -18,6 +18,7 @@ from src.game.engine.villa import (
     apply_villa_update_async,
     pending_to_summon,
 )
+from src.game.engine.villa_validation import normalize_villa_update, validate_villa_update
 from src.game.state.autonomy import PendingNPCSummon
 from src.game.state.models import GameState, IslanderState, Location, NPCInterruption
 from src.game.state.rng import SeededRng
@@ -63,7 +64,21 @@ async def apply_villa_turn_async(
         villa_update = VillaUpdate()
         return villa_update, AppliedVillaChanges(villa_update=villa_update), []
     orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
-    villa_update = _merge_pending_summon(state, orchestrate(state))
+    base_update = _safe_orchestrate(state, orchestrate)
+    villa_update = _merge_pending_summon(state, base_update)
+    if villa_update is not base_update:
+        # _merge_pending_summon spliced in a pending summon. The base update and
+        # the summon are each valid alone, but together they can conflict — e.g.
+        # the orchestrator validly moved the active partner this turn while the
+        # summon also pulls that same partner away ("cannot summon and move the
+        # same NPC"). That clash would otherwise surface inside
+        # apply_villa_update_async and dead-screen the turn, so re-validate the
+        # combined update and fall back to the already-valid base (skip the
+        # summon this turn) if it no longer holds.
+        try:
+            validate_villa_update(state, villa_update)
+        except Exception:
+            villa_update = base_update
     pre_locations = {islander.id: islander.location_id for islander in state.islanders}
     villa_changes = await apply_villa_update_async(
         state,
@@ -74,6 +89,28 @@ async def apply_villa_turn_async(
     )
     arrival_rolls = _roll_arrivals_for_movements(state, villa_update.npc_movements, pre_locations, rng)
     return villa_update, villa_changes, arrival_rolls
+
+
+def _safe_orchestrate(state: GameState, orchestrate: VillaOrchestratorFn) -> VillaUpdate:
+    """Run the villa orchestrator without ever dead-screening the player's turn.
+
+    The orchestrator only drives *ambient* flavor — background NPC movement and
+    NPC-NPC chatter. The live agent retries on validation failure and then
+    raises (every failed attempt is already recorded in the agent trace). A raise
+    propagating up here would crash the whole turn and discard the player's
+    actual exchange, so on any failure — the agent giving up, or an update that
+    still fails validation even after near-miss id repair — we degrade to an
+    empty update. The villa simply holds still for one turn instead of throwing a
+    dead screen. Validating here (before the summon is merged in) also keeps a
+    pending summon intact even when the LLM's own movement/chatter is unusable.
+    """
+    try:
+        update = orchestrate(state)
+        update = normalize_villa_update(state, update)
+        validate_villa_update(state, update)
+        return update
+    except Exception:
+        return VillaUpdate()
 
 
 def _merge_pending_summon(state: GameState, villa_update: VillaUpdate) -> VillaUpdate:

@@ -25,6 +25,8 @@ from src.game.agents.islander_voice_context import Exchange
 from src.game.engine.actions import ActionSpec, available_actions
 from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.couples import couple_strength, partner_for
+from src.game.engine.daily_recap import humanize_player_reference
+from src.game.engine.intents import get_intent
 from src.game.engine.results import MechanicalResult
 from src.game.state.memory import Memory
 from src.game.state.models import FollowUpOption, GameState, IslanderState
@@ -71,7 +73,7 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
             None if state.active_conversation is None else state.active_conversation.target_id
         ),
         villa_snapshot=villa_snapshot(state),
-        daily_recaps=[_model_dump(recap) for recap in state.daily_recaps],
+        daily_recaps=[_recap_view(recap) for recap in state.daily_recaps],
         intros_greetings=dict(state.intros.greetings) if state.intros is not None else {},
     )
 
@@ -357,7 +359,19 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
         }.get(action.intent_id or "", "Greet")
         return f"{verb} {find_name(state, action.target_id)}"
     if action.kind.value == "start_conversation" and action.target_id is not None:
-        return f"Talk to {find_name(state, action.target_id)}"
+        name = find_name(state, action.target_id)
+        # Free-time openers carry an intent_id; surface the opener line so the
+        # label is self-contained in the bottom fan / LLM decider. The web
+        # CharacterMenu strips the "Talk to {name} — " prefix and shows just
+        # the opener inside the matching category branch.
+        if action.intent_id is not None:
+            try:
+                opener = get_intent(action.intent_id).label
+            except ValueError:
+                opener = None
+            if opener:
+                return f"Talk to {name} — {opener}"
+        return f"Talk to {name}"
     if action.kind.value == "end_conversation":
         return "Walk away"
     return spec.label
@@ -369,6 +383,25 @@ def audience_delta(result: MechanicalResult) -> int | None:
 
 def _model_dump(value: BaseModel) -> dict[str, object]:
     return value.model_dump(mode="json")
+
+
+def _recap_view(recap: BaseModel) -> dict[str, object]:
+    """Serialize a daily recap, humanizing any "the player" label for the reader.
+
+    Recaps are surfaced verbatim from islander memories, which are written in a
+    name-agnostic voice ("the player"). The recap is read *by* the player, so we
+    rewrite that label to second person at the view boundary. This also cleans
+    recaps already baked into older checkpoints, where the substitution could
+    not have run at generation time.
+    """
+    data = _model_dump(recap)
+    items = data.get("items")
+    if isinstance(items, list):
+        for item in items:
+            content = item.get("content") if isinstance(item, dict) else None
+            if isinstance(content, str):
+                item["content"] = humanize_player_reference(content)
+    return data
 
 
 def partner_id_for_player(state: GameState) -> str | None:

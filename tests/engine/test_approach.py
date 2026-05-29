@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.engine.approach import (
     APPROACH_INTENT_KINDS,
     apply_approach_response,
@@ -9,7 +10,6 @@ from src.game.engine.approach import (
     approach_chance,
     roll_ambient_approach,
 )
-from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.state.models import (
     GameState,
     Location,
@@ -196,6 +196,49 @@ def test_all_intent_kinds_clear_pending() -> None:
             SeededRng(1),
         )
         assert state.pending_npc_approach is None, intent
+
+
+def test_approach_response_labels_are_clean_and_named() -> None:
+    """The four approach responses surface player-facing copy with no enum leak.
+
+    Regression guard: labels must name the approacher and must NOT expose raw
+    internal tags like ``(wants_to_chat, keen)`` or ``(polite)``. We assert the
+    serialized AvailableAction labels (what the web renders), not the raw spec.
+    """
+    from src.game.engine.actions import available_actions
+    from src.api.serializers import available_action
+
+    engage_by_reason = {
+        "wants_to_chat": "Welcome Chloe over for a chat",
+        "has_gossip": "Lean in — let Chloe spill the gossip",
+        "flirty": "Flirt back with Chloe",
+        "curious": "See what Chloe wants",
+    }
+    leak_tokens = ["wants_to_chat", "has_gossip", "flirty", "curious",
+                   "casual", "keen", "intense", "polite", "engage_approach",
+                   "wave_off", "ignore_approach"]
+
+    for reason, expected_engage in engage_by_reason.items():
+        state = new_game(1)
+        state.phase = Phase.AFTERNOON
+        _place_with_player(state, "chloe")
+        pending = _force_pending(state, "chloe")
+        pending.reason = reason  # type: ignore[assignment]
+        state.pending_npc_approach = pending
+
+        specs = available_actions(state)
+        labels = [available_action(state, spec).label for spec in specs]
+
+        assert labels == [
+            expected_engage,
+            "Wave Chloe off gently",
+            "Brush Chloe off",
+            "Pretend not to notice Chloe",
+        ], (reason, labels)
+        for label in labels:
+            assert "Chloe" in label, label
+            for token in leak_tokens:
+                assert token not in label, (reason, token, label)
 
 
 def test_deterministic_for_same_seed() -> None:

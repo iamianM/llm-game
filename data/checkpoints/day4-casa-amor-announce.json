@@ -1,9 +1,9 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "9dda686a5398f259388870f4d5285fb47fc9eefcce32c6e3c605e8c66a297c2d",
+  "state_hash": "4ad36141119d15b490218a0404ae81cbac86903a08dc0c0f66a75a3dce6731d6",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 236,
     "day": 4,
@@ -7036,6 +7036,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

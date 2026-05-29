@@ -105,14 +105,20 @@ def test_final_vote_ties_break_deterministically_by_couple_key() -> None:
 
 
 def test_final_vote_message_names_player_partner() -> None:
-    """Winning message names the player's partner id."""
+    """Winning message names the player and partner by display name, never raw ids."""
     state = new_game(1)
     state.player.public_perception = 95
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5)]
 
     result = final_vote(state)
+    message = final_vote_message(result, state)
 
-    assert "chloe" in final_vote_message(result)
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    assert chloe.name in message
+    assert state.player.name in message
+    # The raw, name-agnostic label and lowercase ids never reach the player.
+    assert "the player" not in message
+    assert "chloe" not in message
 
 
 def test_final_vote_emits_ceremony_event() -> None:

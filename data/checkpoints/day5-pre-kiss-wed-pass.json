@@ -1,9 +1,9 @@
 {
   "name": "day5-pre-kiss-wed-pass",
   "seed": 7,
-  "state_hash": "e6081f31d8458463a3478e669de4a7d78336ed9dd82ba4e8dda5b765f0c7be0e",
+  "state_hash": "54a156a5e1277c5a385c927b22ea6d42d883a45fb5a841bb95f5bf6bb543c5dd",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 270,
     "day": 5,
@@ -9464,6 +9464,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [
       {

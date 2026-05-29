@@ -1,9 +1,9 @@
 {
   "name": "day6-pre-final-vote",
   "seed": 7,
-  "state_hash": "e0d773aa4f295ce57ac2fb0846d63cf79d75f72717533fa6d7410ab93961e638",
+  "state_hash": "ea1b4cfa8a1c5b2eb04e6da1fe19fae7e1a3e0fd9cf22a48592dea935730eeed",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 297,
     "day": 5,
@@ -9688,6 +9688,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [
       {

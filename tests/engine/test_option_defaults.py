@@ -79,6 +79,124 @@ def test_default_options_include_share_gossip_when_player_holds_memory() -> None
     assert any(option.intent_kind.startswith("share_gossip:") for option in options)
 
 
+def test_ceremony_memory_not_offered_as_share_gossip() -> None:
+    """Ceremony / producer / system bookkeeping memories are 'witnessed' villa
+    events but are not interpersonal gossip; offering them surfaces raw internal
+    tokens and can dead-screen the voice agent, so they must be filtered out."""
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id="villa",
+            source="witnessed",
+            day=1,
+            turn=1,
+            weight=5,
+            tags=["ceremony", "gather_scheduled"],
+            content="Everyone is called to the firepit for group_date_invite.",
+        ),
+    )
+
+    options = default_options(state, result, exchange)
+
+    assert all(not option.intent_kind.startswith("share_gossip:") for option in options)
+
+
+def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    first = create_memory(
+        holder_id="player",
+        subject_id="maya",
+        source="witnessed",
+        day=1,
+        turn=1,
+        weight=7,
+        tags=["gossip"],
+        content="Maya looked rattled after Liam pulled away.",
+    )
+    add_memory(state, first)
+
+    before = default_options(state, result, exchange)
+    assert any(option.intent_kind == f"share_gossip:{first.id}" for option in before)
+
+    # Record that the player already told chloe this exact memory, exactly as
+    # apply_share_gossip_follow_up would. It must no longer be offered.
+    add_memory(
+        state,
+        create_memory(
+            holder_id="chloe",
+            subject_id="maya",
+            source="told_by",
+            source_id="player",
+            day=1,
+            turn=2,
+            weight=7,
+            tags=["gossip", f"source_memory:{first.id}"],
+            content="Maya looked rattled after Liam pulled away.",
+        ),
+    )
+
+    after = default_options(state, result, exchange)
+    assert all(not option.intent_kind.startswith("share_gossip:") for option in after)
+
+
+def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    older = create_memory(
+        holder_id="player",
+        subject_id="maya",
+        source="witnessed",
+        day=1,
+        turn=1,
+        weight=7,
+        tags=["gossip"],
+        content="Maya looked rattled after Liam pulled away.",
+    )
+    newer = create_memory(
+        holder_id="player",
+        subject_id="liam",
+        source="witnessed",
+        day=1,
+        turn=3,
+        weight=7,
+        tags=["gossip"],
+        content="Liam went quiet after the challenge.",
+    )
+    add_memory(state, older)
+    add_memory(state, newer)
+
+    first_offer = next(
+        option for option in default_options(state, result, exchange)
+        if option.intent_kind.startswith("share_gossip:")
+    )
+    assert first_offer.intent_kind == f"share_gossip:{newer.id}"
+
+    add_memory(
+        state,
+        create_memory(
+            holder_id="chloe",
+            subject_id="liam",
+            source="told_by",
+            source_id="player",
+            day=1,
+            turn=4,
+            weight=7,
+            tags=["gossip", f"source_memory:{newer.id}"],
+            content="Liam went quiet after the challenge.",
+        ),
+    )
+
+    second_offer = next(
+        option for option in default_options(state, result, exchange)
+        if option.intent_kind.startswith("share_gossip:")
+    )
+    assert second_offer.intent_kind == f"share_gossip:{older.id}"
+
+
 def test_tone_reaction_includes_escalate_for_flirty() -> None:
     state, _result, exchange = _context(success=True, tone="flirty")
     state.player.gender = Gender.MAN
@@ -202,6 +320,37 @@ def test_generate_follow_up_menu_uses_bespoke_and_defaults() -> None:
 
     assert any(option.label == "Ask about Liverpool" for option in menu.options)
     assert sum(option.category == "exit" for option in menu.options) == 1
+
+
+def test_generate_follow_up_menu_survives_agent_raise() -> None:
+    """The bespoke agent giving up (its live 3-retry exhaustion) must not dead-screen
+    the turn after the NPC has already spoken — the wheel falls back to engine
+    defaults so the player always keeps a usable, valid set of options."""
+    state, result, exchange = _context(success=True, tone="warm")
+
+    def boom(*_args, **_kwargs) -> ContextualBespoke:
+        raise ValueError("contextual options exhausted retries")
+
+    menu = generate_follow_up_menu(state, result, exchange, 20, boom)
+
+    assert sum(option.category == "exit" for option in menu.options) == 1
+    assert any(option.category != "exit" for option in menu.options)
+    # Default wheel keeps the NPC in the chat rather than silently ending it.
+    assert menu.npc_will_leave is False
+
+
+def test_generate_follow_up_menu_survives_invalid_agent_return() -> None:
+    """An agent return the engine cannot assemble or validate (here: the wrong type)
+    degrades to the default wheel rather than propagating the error up the turn."""
+    state, result, exchange = _context(success=True, tone="warm")
+
+    def garbage(*_args, **_kwargs):
+        return "not a menu"
+
+    menu = generate_follow_up_menu(state, result, exchange, 20, garbage)
+
+    assert sum(option.category == "exit" for option in menu.options) == 1
+    assert any(option.category != "exit" for option in menu.options)
 
 
 def _context(*, success: bool, tone: str):

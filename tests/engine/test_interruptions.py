@@ -107,9 +107,9 @@ def test_pending_interruption_injects_three_wheel_options() -> None:
     labels = [spec.label for spec in available_actions(state)]
 
     assert labels[:3] == [
-        "Interruption: Welcome them (Maya, jealous, insistent)",
-        "Interruption: Politely defer",
-        "Interruption: Ignore them",
+        "Turn and hear Maya out",
+        "Ask Maya for a minute",
+        "Ignore Maya and keep talking",
     ]
 
 

@@ -1,9 +1,9 @@
 {
   "name": "day4-pre-lie-detector",
   "seed": 7,
-  "state_hash": "fe2edd9f19c4db2e7816f9e7a4b1264f6abf9ff85690e52376104b6646ae3bbc",
+  "state_hash": "2cba4c243e74fb955ea1780e7ef7d1126c5a43fbb05f6e9327c66ea6fc43e298",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 207,
     "day": 4,
@@ -6780,6 +6780,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

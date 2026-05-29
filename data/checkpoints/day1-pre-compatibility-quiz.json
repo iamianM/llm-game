@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-compatibility-quiz",
   "seed": 7,
-  "state_hash": "4bd327743f70f6284513da47fd162462cb75c1cbb570a427fd6e3a2a1838fba3",
+  "state_hash": "c290e5b148f05afe9ffaf5861604a02207e3fa23028daff24b52329fdcd0b936",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 9,
     "day": 1,
@@ -4557,6 +4557,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

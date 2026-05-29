@@ -1,9 +1,9 @@
 {
   "name": "day3-pre-couples-quiz",
   "seed": 7,
-  "state_hash": "fb1a0db48efa6742bcb73d2c97431c59752d16722952912d240314303d4e023c",
+  "state_hash": "5c0499e6308874a513ef5db0fe1f168a57b2d7623e933f219a45e06b3867b4d6",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 139,
     "day": 3,
@@ -5790,6 +5790,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

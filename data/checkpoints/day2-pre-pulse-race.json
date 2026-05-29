@@ -1,9 +1,9 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "41e9f25294bc05fcbf7b57f4db90b789967e193f6d021220a96c0c43d75c55e9",
+  "state_hash": "e86f80421cdd6e149d5bcb97ce03c4d0c915d4186ff05c75941906eeac873c92",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 75,
     "day": 2,
@@ -5214,6 +5214,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

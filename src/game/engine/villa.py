@@ -179,13 +179,20 @@ async def _call_background_dialogue(
     conversation: NPCNPCConversation,
     nudge: str,
 ) -> BackgroundExchange:
-    if inspect.iscoroutinefunction(speak):
-        return cast(BackgroundExchange, await speak(state, conversation, nudge))
-    owner = getattr(speak, "__self__", None)
-    async_generate = getattr(owner, "generate_async", None)
-    if async_generate is not None:
-        return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
-    return await asyncio.to_thread(speak, state, conversation, nudge)
+    # NPC-NPC chatter is pure ambient flavor. The live agent retries then raises
+    # (each attempt is in the agent trace); letting that propagate out of the villa
+    # turn would dead-screen the player's own turn, so degrade to deterministic mock
+    # dialogue on any failure.
+    try:
+        if inspect.iscoroutinefunction(speak):
+            return cast(BackgroundExchange, await speak(state, conversation, nudge))
+        owner = getattr(speak, "__self__", None)
+        async_generate = getattr(owner, "generate_async", None)
+        if async_generate is not None:
+            return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
+        return await asyncio.to_thread(speak, state, conversation, nudge)
+    except Exception:
+        return mock_background_dialogue(state, conversation, nudge)
 
 
 async def _call_curator(
@@ -194,13 +201,20 @@ async def _call_curator(
     conversation: Conversation | NPCNPCConversation,
     bystanders: list[str],
 ) -> MemoryBatch:
-    if inspect.iscoroutinefunction(curate):
-        return cast(MemoryBatch, await curate(state, conversation, bystanders))
-    owner = getattr(curate, "__self__", None)
-    async_curate = getattr(owner, "curate_async", None)
-    if async_curate is not None:
-        return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
-    return await asyncio.to_thread(curate, state, conversation, bystanders)
+    # Curating a closed NPC-NPC conversation only records ambient memories. The
+    # live agent retries then raises (each attempt is in the agent trace); that
+    # raise fires inside the villa turn and would dead-screen the player's turn, so
+    # degrade to the deterministic mock curator (always contract-valid) on failure.
+    try:
+        if inspect.iscoroutinefunction(curate):
+            return cast(MemoryBatch, await curate(state, conversation, bystanders))
+        owner = getattr(curate, "__self__", None)
+        async_curate = getattr(owner, "curate_async", None)
+        if async_curate is not None:
+            return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
+        return await asyncio.to_thread(curate, state, conversation, bystanders)
+    except Exception:
+        return mock_conversation_curator(state, conversation, bystanders)
 
 
 def pending_to_summon(pending: PendingNPCSummon) -> NPCSummon:

@@ -30,6 +30,28 @@ def test_mock_curator_returns_participant_memories() -> None:
     assert {memory.holder_id for memory in batch.memories} == {"player", "chloe"}
 
 
+def test_curate_player_conversation_survives_curator_raise() -> None:
+    """A curator that exhausts its retries and raises must not dead-screen the turn
+    on conversation close — curation degrades to the deterministic mock so the
+    player and target still record a memory instead of the turn crashing."""
+    from src.game.engine.turn_curator import curate_player_conversation
+
+    state = new_game(1)
+    _start_conversation(state)
+    conversation = state.active_conversation
+    assert conversation is not None
+
+    def boom(*_args, **_kwargs) -> MemoryBatch:
+        raise ValueError("curator exhausted retries")
+
+    batch = curate_player_conversation(state, conversation, boom)
+
+    assert batch.kind == "player"
+    holders = {memory.holder_id for memory in batch.memories}
+    assert "player" in holders
+    assert conversation.target_id in holders
+
+
 def test_curator_context_lists_required_memory_holders() -> None:
     state = new_game(1)
     conversation = NPCNPCConversation(

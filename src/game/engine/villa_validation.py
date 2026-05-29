@@ -8,7 +8,8 @@ from src.game.state.models import GameState, Location, NPCNPCConversation
 
 
 def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate:
-    """Make implicit conversation exits explicit before validation."""
+    """Repair near-miss NPC ids, then make implicit conversation exits explicit."""
+    update = _resolve_npc_ids(state, update)
     current_locations = {
         islander.id: islander.location_id for islander in state.islanders if not islander.eliminated
     }
@@ -43,6 +44,94 @@ def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate
             "conversation_ends": [*update.conversation_ends, *implied_ends],
         }
     )
+
+
+def _resolve_npc_ids(state: GameState, update: VillaUpdate) -> VillaUpdate:
+    """Repair near-miss NPC ids (e.g. bare ``jordan`` -> canonical ``jordan_start``).
+
+    The Orchestrator model occasionally emits an islander's display name or a
+    suffix-stripped id instead of the canonical id it was handed in context. A
+    single such slip would otherwise dead-screen the whole turn via
+    ``_ensure_known_npc``. Map every recoverable token back to its canonical id
+    before validation; leave genuinely unknown tokens untouched so validation
+    still rejects them clearly.
+    """
+    active = [islander for islander in state.islanders if not islander.eliminated]
+    known_ids = {islander.id for islander in active}
+
+    def resolve(token: str) -> str:
+        return _canonical_npc_id(token, active, known_ids)
+
+    changed = False
+    movements = []
+    for movement in update.npc_movements:
+        resolved = resolve(movement.npc_id)
+        if resolved != movement.npc_id:
+            changed = True
+            movement = movement.model_copy(update={"npc_id": resolved})
+        movements.append(movement)
+
+    starts = []
+    for start in update.conversation_starts:
+        participants = [resolve(participant) for participant in start.participants]
+        if participants != list(start.participants):
+            changed = True
+            start = start.model_copy(update={"participants": participants})
+        starts.append(start)
+
+    interruptions = []
+    for interruption in update.npc_interruptions:
+        resolved = resolve(interruption.interrupter_id)
+        if resolved != interruption.interrupter_id:
+            changed = True
+            interruption = interruption.model_copy(update={"interrupter_id": resolved})
+        interruptions.append(interruption)
+
+    summons = []
+    for summon in update.npc_summoned_elsewhere:
+        resolved = resolve(summon.npc_id)
+        if resolved != summon.npc_id:
+            changed = True
+            summon = summon.model_copy(update={"npc_id": resolved})
+        summons.append(summon)
+
+    if not changed:
+        return update
+    return update.model_copy(
+        update={
+            "npc_movements": movements,
+            "conversation_starts": starts,
+            "npc_interruptions": interruptions,
+            "npc_summoned_elsewhere": summons,
+        }
+    )
+
+
+def _canonical_npc_id(token: str, active: list, known_ids: set[str]) -> str:
+    """Best-effort map a possibly-near-miss token to a canonical active id.
+
+    Precedence: exact id, case-insensitive id, display name, leading id segment
+    (``jordan`` -> ``jordan_start``), then first-name token. ``player`` and any
+    truly unknown token are returned unchanged so validation rejects them.
+    """
+    if token in known_ids:
+        return token
+    lowered = token.strip().lower()
+    if not lowered:
+        return token
+    for islander in active:
+        if islander.id.lower() == lowered:
+            return islander.id
+    for islander in active:
+        if islander.name.lower() == lowered:
+            return islander.id
+    for islander in active:
+        if islander.id.lower().split("_", 1)[0] == lowered:
+            return islander.id
+    for islander in active:
+        if islander.name.lower().split(" ", 1)[0] == lowered:
+            return islander.id
+    return token
 
 
 def validate_villa_update(state: GameState, update: VillaUpdate) -> None:

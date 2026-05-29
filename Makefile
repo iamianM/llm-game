@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -61,6 +61,10 @@ llm-eval-real:
 
 llm-eval-real-judge:
 	uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-real-judge --real-llm --judge
+
+playtest-live:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-server.ps1 start
+	node scripts/playtest-director.mjs --visible --persona loyal-chloe --stopAfter free-chat --checkpoint day1-post-greetings
 
 dev: dev-start
 

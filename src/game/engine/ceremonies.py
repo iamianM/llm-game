@@ -200,7 +200,7 @@ def _eligible_modes(card_id: str) -> set[str]:
 def final_vote_ceremony(state: GameState) -> CeremonyEvent:
     """Resolve the final vote and return a visible event."""
     result = final_vote(state)
-    return CeremonyEvent(kind="final_vote", message=final_vote_message(result))
+    return CeremonyEvent(kind="final_vote", message=final_vote_message(result, state))
 
 
 def _partner_score(islander: IslanderState) -> int:

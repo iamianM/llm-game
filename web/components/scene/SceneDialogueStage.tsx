@@ -56,7 +56,14 @@ export function SceneDialogueStage({
   // conversation is in flight, all actions stay in the ChoiceFan so the user
   // doesn't have to hunt for them.
   const inDialogue = state.active_conversation_target_id !== null;
-  const inChallenge = state.pending_challenge !== null;
+  // A *finished* round-based minigame lingers in `pending_challenge` for the
+  // wrap turn (so results can render), but the engine has already handed back
+  // free-time actions. Treat only an *unfinished* challenge as in-flight, so
+  // laning resumes immediately and free-roam openers reach the per-character
+  // CharacterMenu instead of flooding the flat ChoiceFan.
+  const inChallenge =
+    state.pending_challenge !== null
+    && (state.pending_challenge as { finished?: boolean }).finished !== true;
   const inIntros = state.phase === "intros";
   // The character-tap + location-switcher menus only make sense during
   // free-time. During intros / conversations / minigames we keep every
@@ -87,9 +94,16 @@ export function SceneDialogueStage({
   );
   const [beatIndex, setBeatIndex] = useState(0);
   const sceneKey = `${state.turn_index}:${state.phase}:${lastTurn?.state_hash ?? "start"}:${locked ? "locked" : "ready"}:${actions.length}`;
+  // The beat list is rebuilt when `locked` toggles (optimistic pendingBeats vs.
+  // resolved planScene), so beatIndex must reset on the full key. The open menu,
+  // however, should survive a transient lock toggle: closing it whenever the UI
+  // briefly locks (e.g. a background turn resolving) yanks the menu out from
+  // under the player/harness mid-interaction. Reset menus only on a *real* scene
+  // change — a new turn, phase, or resolved state — never on lock alone.
+  const menuResetKey = `${state.turn_index}:${state.phase}:${lastTurn?.state_hash ?? "start"}`;
 
   useEffect(() => setBeatIndex(0), [sceneKey]);
-  useEffect(() => { setOpenCharacterId(null); setMoveOpen(false); }, [sceneKey]);
+  useEffect(() => { setOpenCharacterId(null); setMoveOpen(false); }, [menuResetKey]);
 
   const activeBeat = plannedBeats[Math.min(beatIndex, Math.max(0, plannedBeats.length - 1))];
   const currentCamera = cameraFor(plannedBeats, beatIndex);

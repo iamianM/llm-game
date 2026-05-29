@@ -1,9 +1,9 @@
 {
   "name": "day3-recoupling-ceremony",
   "seed": 7,
-  "state_hash": "fc65ffb66ed8f9484a801b8eba284ee49d9a43eb41eaf7f18000543f0c375749",
+  "state_hash": "e3e59a375b0cfb17c2541b713b6e41902fea62e5338ce200e2e0deaef26d1e5c",
   "state": {
-    "schema_version": 27,
+    "schema_version": 28,
     "seed": 7,
     "turn_index": 182,
     "day": 3,
@@ -6396,6 +6396,7 @@
     "active_conversation": null,
     "npc_conversations": [],
     "pending_npc_summon": null,
+    "pending_npc_approach": null,
     "pending_recouple_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {

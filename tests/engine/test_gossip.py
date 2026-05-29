@@ -112,6 +112,41 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
     )
 
 
+def test_share_gossip_miss_still_suppresses_reoffer() -> None:
+    """A failed share records a lighter 'unconvinced' memory on the target so the
+    same gossip is not re-offered (the live turn-3/turn-6 duplicate-share defect)."""
+    from src.game.engine.gossip import apply_share_gossip_follow_up
+    from src.game.engine.option_defaults import _player_shareable_memory
+
+    state = new_game(1)
+    memory = create_memory(
+        holder_id="player",
+        subject_id="maya",
+        source="witnessed",
+        day=1,
+        turn=1,
+        weight=7,
+        tags=["gossip"],
+        content="Maya turned the pool flirting into a kiss challenge with Jordan.",
+    )
+    add_memory(state, memory)
+    state.active_conversation = Conversation(target_id="chloe", started_on_turn=1, started_on_day=1)
+
+    assert _player_shareable_memory(state, "chloe") is not None
+
+    delta = apply_share_gossip_follow_up(
+        state, "chloe", f"share_gossip:{memory.id}", success=False
+    )
+
+    assert delta.trust == -1
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    recorded = [m for m in chloe.memories if f"source_memory:{memory.id}" in m.tags]
+    assert recorded and "gossip_unconvinced" in recorded[0].tags
+    assert recorded[0].emotional_weight < memory.emotional_weight
+    # The same gossip must no longer be surfaced to chloe.
+    assert _player_shareable_memory(state, "chloe") is None
+
+
 def test_gossip_locked_below_affection_threshold() -> None:
     """NPCs do not share gossip before enough affection is built."""
     state = _state_with_chloe_gossip(affection=22)

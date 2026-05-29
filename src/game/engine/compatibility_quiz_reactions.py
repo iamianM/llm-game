@@ -68,13 +68,13 @@ _BUCKETS: dict[tuple[bool, bool, str], list[str]] = {
     # mechanical, wrong
     (True, False, "low"): [
         "{name} laughs, but it lands a little flat. 'Mate, that's the basics.'",
-        "{name} pulls a face. 'I told you that on day one.'",
+        "{name} pulls a face. 'I literally already told you that.'",
         "{name} blinks. 'Genuinely? That's where you went?'",
     ],
     (True, False, "mid"): [
         "{name} tilts her head. 'I mean, you've never *asked*, so fair.'",
         "{name} shrugs, but her eyes do a thing. 'Cool. Okay. Noted.'",
-        "{name} forces a smile. 'No worries, it's only been four days.'",
+        "{name} forces a smile. 'No worries, it's still early days.'",
     ],
     (True, False, "high"):[
         "{name} goes very still. 'That's not me at all. Not even close.'",

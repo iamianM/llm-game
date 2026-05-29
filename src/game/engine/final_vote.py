@@ -48,27 +48,44 @@ def final_vote(state: GameState) -> FinalVoteResult:
     )
 
 
-def final_vote_message(result: FinalVoteResult) -> str:
-    """Return a concise ceremony message."""
+def final_vote_message(result: FinalVoteResult, state: GameState) -> str:
+    """Return a concise, player-facing ceremony message.
+
+    This string is surfaced verbatim in mock/static mode (the event narrator
+    only runs in real-LLM mode), so it must already read in display terms — the
+    player's name and the partner's display name, never the raw "the player"
+    label or a lowercase islander id.
+    """
+    player = state.player.name
     if result.outcome is RunOutcome.WON_AS_COUPLE:
-        partner = _player_partner(result.winner)
-        return f"Final vote: the player and {partner} win as the top couple."
+        partner = _player_partner(result.winner, state)
+        return f"Final vote: {player} and {partner} win as the top couple."
     if result.outcome is RunOutcome.RUNNER_UP_COUPLE:
-        return "Final vote: the player finishes as a runner-up couple."
+        return f"Final vote: {player} finishes as a runner-up couple."
     if result.outcome is RunOutcome.LEFT_SINGLE:
-        return "Final vote: the player reaches the finale single."
-    return "Final vote: the player was already dumped from the island."
+        return f"Final vote: {player} reaches the finale single."
+    return f"Final vote: {player} was already dumped from the island."
 
 
 def _couple_key(couple: Couple) -> str:
     return "|".join(sorted([couple.partner_a_id, couple.partner_b_id]))
 
 
-def _player_partner(couple: Couple | None) -> str:
+def _player_partner(couple: Couple | None, state: GameState) -> str:
     if couple is None:
         return "their partner"
-    if couple.partner_a_id == "player":
-        return couple.partner_b_id
-    if couple.partner_b_id == "player":
-        return couple.partner_a_id
-    return "their partner"
+    partner_id: str | None = None
+    if couple.partner_a_id == state.player.id:
+        partner_id = couple.partner_b_id
+    elif couple.partner_b_id == state.player.id:
+        partner_id = couple.partner_a_id
+    if partner_id is None:
+        return "their partner"
+    return _islander_name(state, partner_id)
+
+
+def _islander_name(state: GameState, islander_id: str) -> str:
+    for islander in state.islanders:
+        if islander.id == islander_id:
+            return islander.name
+    return islander_id

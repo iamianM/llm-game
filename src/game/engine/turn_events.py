@@ -62,6 +62,14 @@ def advance_phase_with_events(
     ):
         advance_phase(state)
         events.extend(_scheduled_phase_events(state, rng))
+    # Skip an empty TEXT phase. Some days (e.g. Day 5, mid-Flush-of-Hearts)
+    # have no scheduled producer text, so nothing gets queued: no pending_text
+    # to gather around and no gather. Landing here strands the player on a
+    # zero-action screen. Step straight through to EVENING, where the real
+    # beat (the Flush-of-Hearts return decision / Pairing Ceremony) surfaces.
+    if state.phase is Phase.TEXT and state.pending_text is None and state.pending_gather is None:
+        advance_phase(state)
+        events.extend(_scheduled_phase_events(state, rng))
     # Clear a fully-resolved challenge once we cross into a NEW DAY. We
     # intentionally keep it alive within the same day so eval check
     # `challenge_resolved` can inspect the post-resolution state and so the
@@ -76,6 +84,25 @@ def advance_phase_with_events(
     ):
         state.pending_challenge = None
     return events, audience_snapshot
+
+
+def settle_to_playable(state: GameState, rng: SeededRng, *, max_steps: int = 24) -> None:
+    """Walk a non-terminal, zero-action state forward until it is playable.
+
+    The live turn pipeline never *serves* a non-terminal state with no
+    available actions — it auto-advances within the turn. A freshly loaded
+    checkpoint, however, has not run a turn yet, so it can surface on a
+    transient boundary (e.g. a pre-event TEXT phase saved before its gather was
+    scheduled). This steps the deterministic phase machine forward so the
+    main-menu picker can never drop the player onto a dead screen. Bounded by
+    ``max_steps`` as a guard against an unforeseen non-terminating state.
+    """
+    from src.game.engine.actions import available_actions
+
+    steps = 0
+    while not state.is_terminal and not available_actions(state) and steps < max_steps:
+        advance_phase_with_events(state, rng)
+        steps += 1
 
 
 def resolve_pending_gather(

@@ -41,6 +41,51 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
     assert len(result.state_hash) == 64
 
 
+def test_run_turn_survives_islander_voice_raise() -> None:
+    """If Islander Voice exhausts its retries and raises, the conversation beat must
+    not dead-screen the player — the turn falls back to the deterministic mock voice
+    and still returns a usable exchange plus a follow-up wheel."""
+    state = new_game(1)
+
+    def boom(*_args, **_kwargs):
+        raise ValueError("islander voice exhausted retries")
+
+    result = run_turn(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+        islander_voice=boom,
+    )
+
+    assert result.exchange is not None
+    assert result.exchange.npc_dialogue
+    assert result.available_actions
+    # The conversation opened despite the agent failure (no propagated crash).
+    assert result.state.active_conversation is not None
+
+
+def test_narrated_events_survives_event_narrator_raise() -> None:
+    """A ceremony beat must not dead-screen if the Event Narrator exhausts its
+    retries and raises — narration degrades to deterministic mock prose that still
+    names the participant rather than throwing the player out of the reveal."""
+    from src.game.engine.ceremonies import CeremonyEvent
+    from src.game.engine.turn import _narrated_events
+
+    state = new_game(1)
+    events = [CeremonyEvent(kind="recoupling", message="Chloe was chosen.", islander_id="chloe")]
+
+    def boom(*_args, **_kwargs):
+        raise ValueError("event narrator exhausted retries")
+
+    narration = _narrated_events(state, events, boom)
+
+    assert narration.prose.strip()
+
+
 def test_run_turn_ambient_wait_advances_phase() -> None:
     """Ambient wait burns the morning budget; the round-based Day-1 quiz then
     holds the phase on CHALLENGE until the player answers all five rounds."""

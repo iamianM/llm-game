@@ -337,15 +337,55 @@ def _flirty_allowed(state: GameState, target_id: str) -> bool:
     return False
 
 
+# Ceremony / producer / system bookkeeping memories are recorded as
+# "witnessed" villa events, but they are not interpersonal gossip: their content
+# carries raw internal tokens (e.g. "group_date_invite", "mr_and_mrs") and
+# narrating them invites the voice model to name absent cast, which both reads as
+# nonsense and can dead-screen the turn via the leak guard. Never offer them.
+_SYSTEM_MEMORY_TAGS = frozenset(
+    {"ceremony", "producer_text", "gather_scheduled", "recoupling", "system"}
+)
+
+
 def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
+    already_shared = _gossip_shared_with(state, target_id)
     for memory in reversed(state.player.memories):
-        if memory.subject_id in {"player", target_id}:
+        if memory.subject_id in {"player", target_id, "villa"}:
             continue
         if memory.emotional_weight < 4:
+            continue
+        if _SYSTEM_MEMORY_TAGS.intersection(memory.tags):
+            continue
+        if memory.id in already_shared:
+            # Don't re-offer gossip the player has already told this person.
+            # Otherwise the same memory loops in the menu forever and the NPC
+            # reacts as if hearing it fresh each time; suppressing it lets the
+            # next-most-recent piece of gossip surface instead.
             continue
         if "gossip" in memory.tags or memory.source in {"witnessed", "told_by"}:
             return memory
     return None
+
+
+def _gossip_shared_with(state: GameState, target_id: str) -> set[str]:
+    """Source-memory ids the player has already shared with this target.
+
+    ``apply_share_gossip_follow_up`` records a memory on the target tagged
+    ``source_memory:<id>`` (with ``source_id == "player"``) whenever the player
+    shares gossip, so repeats can be detected without any extra schema.
+    """
+    prefix = "source_memory:"
+    for islander in state.islanders:
+        if islander.id != target_id:
+            continue
+        return {
+            tag.removeprefix(prefix)
+            for memory in islander.memories
+            if memory.source_id == "player"
+            for tag in memory.tags
+            if tag.startswith(prefix)
+        }
+    return set()
 
 
 def _subject_name(state: GameState, memory: Memory) -> str:
