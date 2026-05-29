@@ -20,6 +20,7 @@ from src.game.engine.challenges import (
 )
 from src.game.engine.phases import advance_phase
 from src.game.engine.producer_events import producer_text_event_message, schedule_producer_text
+from src.game.engine.state_access import display_name
 from src.game.state.models import (
     AudienceSnapshot,
     Challenge,
@@ -123,7 +124,7 @@ def resolve_pending_gather(
         state.pending_text = None
     elif gather.kind == "ceremony" and gather.event_id.startswith("recoupling"):
         ceremony = recoupling(state)
-        events.extend(recoupling_events(ceremony))
+        events.extend(recoupling_events(state, ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
         audience_snapshot = record_audience_snapshot(state)
@@ -157,7 +158,7 @@ def resolve_pending_gather(
     return events, audience_snapshot
 
 
-def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
+def recoupling_events(state: GameState, ceremony: RecouplingResult) -> list[CeremonyEvent]:
     """Create recoupling and optional dumping events."""
     events = [CeremonyEvent(kind="recoupling", message="The Pairing Ceremony locks in the next couples.")]
     for attempt in ceremony.steal_attempts:
@@ -166,9 +167,9 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
             CeremonyEvent(
                 kind="steal_attempt",
                 message=(
-                    f"Heart Throb steal attempt: {attempt.bombshell_id} tries to steal "
-                    f"{attempt.target_id} from {attempt.abandoned_id} and {outcome} "
-                    f"(roll {attempt.roll} vs {attempt.chance})."
+                    f"Heart Throb steal attempt: {display_name(state, attempt.bombshell_id)} "
+                    f"tries to steal {display_name(state, attempt.target_id)} from "
+                    f"{display_name(state, attempt.abandoned_id)} and {outcome}."
                 ),
                 islander_id=attempt.bombshell_id,
             )
@@ -177,7 +178,10 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
             events.append(
                 CeremonyEvent(
                     kind="partner_stolen",
-                    message=f"Partner stolen: {attempt.target_id} pairs with {attempt.bombshell_id}.",
+                    message=(
+                        f"Partner stolen: {display_name(state, attempt.target_id)} "
+                        f"pairs with {display_name(state, attempt.bombshell_id)}."
+                    ),
                     islander_id=attempt.target_id,
                 )
             )
@@ -185,7 +189,7 @@ def recoupling_events(ceremony: RecouplingResult) -> list[CeremonyEvent]:
         events.append(
             CeremonyEvent(
                 kind="elimination",
-                message=f"Heart Out: {ceremony.eliminated_id} leaves Sunset Bay.",
+                message=f"Heart Out: {display_name(state, ceremony.eliminated_id)} leaves Sunset Bay.",
                 islander_id=ceremony.eliminated_id,
             )
         )

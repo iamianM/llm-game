@@ -9,10 +9,10 @@ from src.game.agents.event_narrator import (
     OpenAIEventNarrator,
     _render_context,
     _render_minigame_details,
-    _sanitize_event_message,
     mock_event_narration,
     validate_event_narration,
 )
+from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.state.event_models import (
     Challenge,
@@ -175,15 +175,55 @@ def test_event_narrator_context_names_player_couple() -> None:
     state.player.name = "Demo"
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
 
+    # Producers now emit display-safe messages (names, not ids or "the player"),
+    # so the narrator context can trust the message verbatim.
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="recoupling", message="Chloe couples with the player.", islander_id="chloe")],
+        [CeremonyEvent(kind="recoupling", message="Chloe couples with Demo.", islander_id="chloe")],
     )
 
     assert "Current player couple: Demo is coupled with Chloe" in rendered
-    # The third-person player name replaces the meta "the player" and raw ids.
-    assert "player with chloe" not in rendered
     assert "(Chloe)" not in rendered
+
+
+def test_event_producers_emit_display_safe_messages() -> None:
+    """Engine event producers resolve ids and the player to display names at the
+    source, so no raw id or "the player" meta-token reaches a rendered message,
+    a memory, or the narrator context (ENGINEERING R7 — typed at the source,
+    never regex-scrubbed downstream)."""
+    from src.game.engine.hideaway import hideaway_event
+    from src.game.engine.results import MechanicalResult
+    from src.game.engine.turn_proposals import proposal_event
+    from src.game.state.models import Couple
+
+    state = new_game(1)
+    state.player.name = "Demo"
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+    state.hideaway.partner_id = "chloe"
+
+    hideaway = hideaway_event(state)
+    assert "the player" not in hideaway.message.lower()
+    assert "Demo" in hideaway.message
+    assert "Chloe" in hideaway.message
+
+    # A recoupling proposal from a starting-cast NPC (raw id "blake_start").
+    result = MechanicalResult(
+        action=PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="player"),
+        success=True,
+        tags=["npc_proposal_response"],
+        proposal_outcome={
+            "proposer_id": "blake_start",
+            "target_id": "player",
+            "accepted": True,
+            "chance": 60,
+            "roll": 30,
+        },
+    )
+    event = proposal_event(state, result)
+    assert event is not None
+    assert "blake_start" not in event.message
+    assert "Blake" in event.message
+    assert "Demo" in event.message
 
 
 def test_event_narrator_context_names_player_in_third_person() -> None:
@@ -197,19 +237,3 @@ def test_event_narrator_context_names_player_in_third_person() -> None:
     )
 
     assert "named Demo" in rendered
-
-
-def test_sanitize_event_message_resolves_ids_and_player() -> None:
-    """Raw ids and "the player" in engine messages become human names."""
-    state = new_game(1)
-    state.player.name = "Demo"
-
-    # Mirrors hideaway.py / turn.py message phrasing.
-    assert (
-        _sanitize_event_message(state, "The player and chloe leave for a private night.")
-        == "Demo and Chloe leave for a private night."
-    )
-    assert (
-        _sanitize_event_message(state, "blake_start wants to ask the player to recouple.")
-        == "Blake wants to ask Demo to recouple."
-    )

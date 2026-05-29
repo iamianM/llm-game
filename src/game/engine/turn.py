@@ -47,6 +47,7 @@ from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.pull_turn import pull_rejected_result, remember_pull_rejection
+from src.game.engine.state_access import display_name, player_display_name
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
 from src.game.engine.time_budget import check_auto_advance, deduct_time
 from src.game.engine.turn_autonomy import apply_villa_turn
@@ -245,7 +246,7 @@ def run_turn(
             if state.day == 1 and not state.couples and action.target_id is not None
             else recoupling(state, action.target_id)
         )
-        ceremony_events.extend(recoupling_events(ceremony))
+        ceremony_events.extend(recoupling_events(state, ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
         if is_ceremony_pick:
@@ -267,7 +268,7 @@ def run_turn(
         )
     if action.kind is ActionKind.HIDEAWAY:
         ceremony_events.append(hideaway_event(state))
-    event = proposal_event(result)
+    event = proposal_event(state, result)
     if event is not None:
         ceremony_events.append(event)
     if action.kind is ActionKind.JOIN_GATHER:
@@ -446,7 +447,10 @@ def run_turn(
                     CeremonyEvent(
                         kind="npc_proposal_incoming",
                         sub_kind="incoming",
-                        message=f"{incoming.proposer_id} wants to ask the player to recouple.",
+                        message=(
+                            f"{display_name(state, incoming.proposer_id)} wants to ask "
+                            f"{player_display_name(state)} to recouple."
+                        ),
                         islander_id=incoming.proposer_id,
                     )
                 )

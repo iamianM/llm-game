@@ -8,11 +8,12 @@ from src.game.engine.conversation import close_conversation
 from src.game.engine.memory import add_memory_batch, propagate_gossip_seeds
 from src.game.engine.proposals import ProposalOutcome, proposal_memory_batch
 from src.game.engine.results import MechanicalResult
+from src.game.engine.state_access import display_name
 from src.game.engine.turn_curator import curate_player_conversation
 from src.game.state.models import GameState, MemoryBatch
 
 
-def proposal_event(result: MechanicalResult) -> CeremonyEvent | None:
+def proposal_event(state: GameState, result: MechanicalResult) -> CeremonyEvent | None:
     """Return the visible event for a proposal result."""
     if result.proposal_outcome is None:
         return None
@@ -23,7 +24,10 @@ def proposal_event(result: MechanicalResult) -> CeremonyEvent | None:
     return CeremonyEvent(
         kind=kind,
         sub_kind=sub_kind,
-        message=f"Recoupling proposal {sub_kind}: {proposal.proposer_id} asked {proposal.target_id}.",
+        message=(
+            f"Recoupling proposal {sub_kind}: {display_name(state, proposal.proposer_id)} "
+            f"asked {display_name(state, proposal.target_id)}."
+        ),
         islander_id=islander_id,
     )
 

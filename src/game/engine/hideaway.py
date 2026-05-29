@@ -5,7 +5,11 @@ from __future__ import annotations
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import couple_strength, partner_for, player_couple
 from src.game.engine.memory import add_memory, create_memory
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import (
+    apply_relationship_delta,
+    find_islander,
+    player_display_name,
+)
 from src.game.state.models import GameState, Location, Phase, RelationshipDelta
 
 HIDEAWAY_THRESHOLD = 70
@@ -64,7 +68,7 @@ def hideaway_event(state: GameState) -> CeremonyEvent:
     partner = find_islander(state, partner_id)
     return CeremonyEvent(
         kind="hideaway",
-        message=f"The player and {partner.name} leave for a private Paradise Suite night.",
+        message=f"{player_display_name(state)} and {partner.name} leave for a private Paradise Suite night.",
         islander_id=partner.id,
     )
 

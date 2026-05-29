@@ -204,32 +204,6 @@ def _name_for(state: GameState, actor_id: str | None) -> str:
     return actor_id
 
 
-def _sanitize_event_message(state: GameState, message: str) -> str:
-    """Replace raw ids and "player"/"the player" in an engine event message
-    with human names.
-
-    Engine event messages are factual scaffolding written for code, so they
-    embed raw islander ids ("blake_start") and the meta token "the player".
-    Resolving them to names here — the single point where every event flows
-    into the narrator prompt — keeps those tokens out of the model's context
-    entirely, regardless of which builder produced the message.
-    """
-    if not message:
-        return message
-    text = message
-    # Longest ids first so a short id can't partially shadow a longer one.
-    for raw, name in sorted(
-        ((isl.id, isl.name) for isl in state.islanders),
-        key=lambda kv: len(kv[0]),
-        reverse=True,
-    ):
-        text = re.sub(rf"\b{re.escape(raw)}\b", name, text)
-    player = _player_name(state)
-    text = re.sub(r"\bthe player\b", player, text, flags=re.IGNORECASE)
-    text = re.sub(r"\bplayer\b", player, text)
-    return text
-
-
 def _player_name(state: GameState) -> str:
     """Third-person name for the human player.
 
@@ -259,7 +233,7 @@ def _event_label(kind: str) -> str:
 
 def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_lines = "\n".join(
-        f"- {event.kind}: {_sanitize_event_message(state, event.message)}"
+        f"- {event.kind}: {event.message}"
         + (f" (about {_name_for(state, event.islander_id)})" if event.islander_id else " (no named islander)")
         for event in events
     )
