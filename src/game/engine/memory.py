@@ -10,6 +10,7 @@ metadata are deterministic so traces and replays remain stable.
 from __future__ import annotations
 
 import hashlib
+import re
 from collections.abc import Sequence
 from typing import Literal
 
@@ -48,11 +49,35 @@ def create_memory(
 
 
 def add_memory(state: GameState, memory: Memory) -> None:
-    """Add a memory to the correct holder if it is not already present."""
+    """Add a memory to the correct holder if it is not already present.
+
+    Derives ``mentioned_subject_ids`` here — the single storage choke point that
+    has the live cast roster — so every stored memory carries the typed list the
+    voice context reads instead of regex-scanning content at exchange time
+    (ENGINEERING R18: derive at the boundary, store typed, read structurally).
+    """
     holder = _holder_memory_list(state, memory.holder_id)
     if any(existing.id == memory.id for existing in holder):
         return
+    if not memory.mentioned_subject_ids:
+        memory.mentioned_subject_ids = _mentioned_subject_ids(state, memory.content)
     holder.append(memory)
+
+
+def _mentioned_subject_ids(state: GameState, content: str) -> list[str]:
+    """Cast ids whose display name appears (word-boundary) in ``content``.
+
+    Deterministic over the live cast in roster order. This is the boundary-side
+    home of the word-boundary match the exchange validator uses, so the two stay
+    in lockstep without the voice context re-scanning prose at read time.
+    """
+    if not content:
+        return []
+    mentioned: list[str] = []
+    for islander in state.islanders:
+        if re.search(rf"\b{re.escape(islander.name)}\b", content):
+            mentioned.append(islander.id)
+    return mentioned
 
 
 def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: int) -> list[Memory]:

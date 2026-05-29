@@ -83,6 +83,10 @@ def _strip_memory_content(memories: object) -> None:
     for memory in memories:
         if isinstance(memory, dict):
             memory.pop("content", None)
+            # Derived from ``content`` (see memory._mentioned_subject_ids), so it
+            # inherits the same LLM-wording nondeterminism and must be excluded
+            # from the deterministic state hash alongside the prose it came from.
+            memory.pop("mentioned_subject_ids", None)
 
 
 def save_snapshot(path: Path, payload: dict[str, object]) -> None:

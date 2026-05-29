@@ -23,6 +23,13 @@ class Memory(BaseModel):
     emotional_weight: int = Field(ge=1, le=10)
     tags: list[str] = Field(default_factory=list)
     durable: bool = True
+    # Cast ids (besides ``subject_id``) named in ``content``, derived
+    # deterministically at the memory-creation boundary. The voice context reads
+    # this structurally to whitelist natural subject echoes for the exchange
+    # validator — no regex content-scan at read time. Excluded from the state
+    # hash (see snapshot._strip_memory_content) because it is flavor-derived and
+    # therefore LLM-nondeterministic, exactly like ``content`` itself.
+    mentioned_subject_ids: list[str] = Field(default_factory=list)
 
 
 class MemoryDraft(BaseModel):

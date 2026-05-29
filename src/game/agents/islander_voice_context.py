@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 from typing import Literal, cast
 
 from pydantic import BaseModel, ConfigDict
@@ -488,20 +487,17 @@ def _gossip_subject_names_for_intent(
     subject_ids: list[str] = []
     if gossip is not None:
         subject_ids.append(gossip.subject_id)
+        # Any cast member named in the gossip's own content is fair game for the
+        # NPC to mention back — the player is the one bringing them up. Whitelist
+        # them so validate_exchange never treats a natural echo as a leaked hidden
+        # Islander (which would otherwise burn every retry and dead-screen the
+        # turn). These ids are derived once at the memory-creation boundary
+        # (memory._mentioned_subject_ids) and read structurally here — no regex
+        # scan of prose at exchange time.
+        subject_ids.extend(gossip.mentioned_subject_ids)
     if intent_id.startswith("ask_gossip:about_"):
         subject_ids.append(intent_id.removeprefix("ask_gossip:about_"))
     names = [_subject_name(state, subject_id) for subject_id in subject_ids]
-    # Any cast member named in the gossip's own content is fair game for the NPC
-    # to mention back — the player is the one bringing them up. Whitelist them so
-    # validate_exchange never treats a natural echo as a leaked hidden Islander
-    # (which would otherwise burn every retry and dead-screen the turn). Match the
-    # validator's own word-boundary detection so the two stay in lockstep.
-    if gossip is not None:
-        for islander in state.islanders:
-            if islander.name in names:
-                continue
-            if re.search(rf"\b{re.escape(islander.name)}\b", gossip.content):
-                names.append(islander.name)
     return list(dict.fromkeys(names))
 
 
