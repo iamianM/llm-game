@@ -27,6 +27,7 @@ from src.game.agents.runtime import (
 )
 from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
+from src.game.engine.approach import APPROACH_INTENT_KINDS, roll_ambient_approach
 from src.game.engine.arrival_rolls import ArrivalRoll
 from src.game.engine.casa_amor import casa_decision_message
 from src.game.engine.ceremonies import CeremonyEvent, initial_coupling, recoupling
@@ -72,7 +73,6 @@ from src.game.state.models import (
     Phase,
     RunOutcome,
 )
-from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -297,6 +297,30 @@ def run_turn(
         follow_up_menu = (
             None if state.active_conversation is None else state.active_conversation.pending_options
         )
+    elif result.action.intent_id == "engage_approach":
+        # The player welcomed an NPC who sought them out while idling. Open a
+        # fresh conversation just as accept_interruption re-opens one — the
+        # approacher becomes the active conversation target.
+        if result.action.target_id is None:
+            raise ValueError("engage_approach requires a target")
+        new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
+        speak = mock_islander_voice if islander_voice is None else islander_voice
+        exchange = speak(state, result)
+        append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
+        bump_target_familiarity(state, new_conversation.target_id, 1)
+        probability = departure_probability(new_conversation, state)
+        new_conversation.departure_probability_last = probability
+        follow_up_menu = generate_follow_up_menu(
+            state,
+            result,
+            exchange,
+            probability,
+            contextual_options,
+        )
+        new_conversation.pending_options = follow_up_menu
+    elif result.action.intent_id in APPROACH_INTENT_KINDS:
+        # Waved off / ignored: no conversation opens, the player stays idle.
+        follow_up_menu = None
     elif action.kind in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
         conversation: Conversation
         if action.kind is ActionKind.START_CONVERSATION:
@@ -382,6 +406,22 @@ def run_turn(
                         islander_id=incoming.proposer_id,
                     )
                 )
+    # Being "sought after": when the player chooses to idle (an AMBIENT turn),
+    # a co-located NPC may walk up to them. Only after the villa has settled
+    # into its needs-driven positions, never while another demand is pending,
+    # and never on the cusp of a phase change (the approach would be stranded).
+    if (
+        action.kind is ActionKind.AMBIENT
+        and not auto_advance
+        and state.active_conversation is None
+        and state.pending_npc_approach is None
+        and state.pending_npc_summon is None
+        and state.pending_recouple_proposal is None
+        and state.pending_gather is None
+        and state.pending_challenge is None
+        and not check_auto_advance(state)
+    ):
+        roll_ambient_approach(state, rng.fork(f"approach-turn-{state.turn_index}"))
     agent_commits = AgentCommits(
         villa_update=villa_update_commit,
         background_dialogues=background_dialogues,

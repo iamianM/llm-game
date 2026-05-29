@@ -213,6 +213,47 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         )
         return actions
 
+    if state.pending_npc_approach is not None:
+        approach = state.pending_npc_approach
+        approacher = _find_islander(state, approach.npc_id)
+        return [
+            ActionSpec(
+                action=PlayerAction(
+                    kind=ActionKind.RESPOND_WITH,
+                    target_id=approacher.id,
+                    intent_id="engage_approach",
+                ),
+                label=(
+                    f"{approacher.name} comes over: Welcome them "
+                    f"({approach.reason}, {approach.warmth})"
+                ),
+            ),
+            ActionSpec(
+                action=PlayerAction(
+                    kind=ActionKind.RESPOND_WITH,
+                    target_id=approacher.id,
+                    intent_id="wave_off_politely",
+                ),
+                label=f"{approacher.name} comes over: Not right now (polite)",
+            ),
+            ActionSpec(
+                action=PlayerAction(
+                    kind=ActionKind.RESPOND_WITH,
+                    target_id=approacher.id,
+                    intent_id="wave_off_firmly",
+                ),
+                label=f"{approacher.name} comes over: Brush them off",
+            ),
+            ActionSpec(
+                action=PlayerAction(
+                    kind=ActionKind.RESPOND_WITH,
+                    target_id=approacher.id,
+                    intent_id="ignore_approach",
+                ),
+                label=f"{approacher.name} comes over: Pretend not to notice",
+            ),
+        ]
+
     for islander in state.islanders:
         if islander.location_id != state.location_id or islander.eliminated:
             continue
@@ -241,6 +282,12 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                     )
                 )
     if state.phase in {Phase.MORNING, Phase.AFTERNOON, Phase.EVENING}:
+        actions.append(
+            ActionSpec(
+                action=PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+                label="Let the villa move on",
+            )
+        )
         for ambient_option in ambient_options_for(state.location_id):
             actions.append(
                 ActionSpec(
@@ -315,6 +362,20 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
             raise ValueError(f"intent is locked or unavailable: {action.model_dump()}")
         return
     if action.kind is ActionKind.RESPOND_WITH:
+        if action.intent_id in {
+            "engage_approach",
+            "wave_off_politely",
+            "wave_off_firmly",
+            "ignore_approach",
+        }:
+            if state.pending_npc_approach is None:
+                raise ValueError("no NPC approach is waiting")
+            if (
+                action.target_id is not None
+                and action.target_id != state.pending_npc_approach.npc_id
+            ):
+                raise ValueError("approach response target must be the approacher")
+            return
         conversation = state.active_conversation
         if conversation is None:
             raise ValueError("cannot respond without an active conversation")

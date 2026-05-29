@@ -7,6 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from src.game.state.autonomy import PendingNPCApproach as PendingNPCApproach
 from src.game.state.autonomy import PendingNPCSummon as PendingNPCSummon
 from src.game.state.casa import CasaAmorState as CasaAmorState
 from src.game.state.casa import CasaDecision as CasaDecision
@@ -58,7 +59,7 @@ from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
 from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 27
+SCHEMA_VERSION = 28
 
 
 class Phase(StrEnum):
@@ -387,6 +388,7 @@ class GameState(BaseModel):
     active_conversation: Conversation | None = None
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     pending_npc_summon: PendingNPCSummon | None = None
+    pending_npc_approach: PendingNPCApproach | None = None
     pending_recouple_proposal: PendingRecoupleProposal | None = None
     heart_throb_briefs: list[dict[str, str]] = Field(default_factory=list)
     character_creation: CharacterCreation | None = None

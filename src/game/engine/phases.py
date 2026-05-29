@@ -31,10 +31,16 @@ PHASE_BUDGETS: dict[Phase, int] = {
 
 
 def advance_phase(state: GameState) -> None:
-    """Advance the multi-day v0 clock."""
+    """Advance the multi-day v0 clock and disperse NPCs into the new phase."""
     state.player.pull_attempts_this_phase = {}
     state.active_ambient_id = None
     state.consecutive_ambient_turns = 0
+    state.pending_npc_approach = None
+    _advance_phase_clock(state)
+    _disperse_into_phase(state)
+
+
+def _advance_phase_clock(state: GameState) -> None:
     if state.phase is Phase.COMPLETE:
         _reset_phase_clock(state)
         return
@@ -63,6 +69,21 @@ def advance_phase(state: GameState) -> None:
     index = PHASE_ORDER.index(state.phase)
     state.phase = PHASE_ORDER[index + 1]
     _reset_phase_clock(state)
+
+
+def _disperse_into_phase(state: GameState) -> None:
+    """Scatter free NPCs to where the new time of day motivates them.
+
+    The Sims-style needs layer only advertises during free-roam phases, so this
+    is a no-op during CHALLENGE / INTROS / COMPLETE. It is the single chokepoint
+    that makes the cast leave the firepit after an event and re-cluster by phase
+    (morning -> bedroom/kitchen, afternoon -> pool, night -> terrace/firepit).
+    Deterministic: the jitter rng is forked from the seed, day, and new phase.
+    """
+    from src.game.engine.needs import plan_and_apply
+    from src.game.state.rng import SeededRng
+
+    plan_and_apply(state, SeededRng(f"{state.seed}:disperse:{state.day}:{state.phase.value}"))
 
 
 def _reset_phase_clock(state: GameState) -> None:

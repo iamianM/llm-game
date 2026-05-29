@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.content.ambient import get_ambient_option
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
+from src.game.engine.approach import APPROACH_INTENT_KINDS, apply_approach_response
 from src.game.engine.casa_amor import apply_casa_decision
 from src.game.engine.challenges import resolve_challenge
 from src.game.engine.chance import (
@@ -49,6 +50,10 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         update_public_perception(state, action, result)
         return result
     if action.kind is ActionKind.RESPOND_WITH:
+        if action.intent_id in APPROACH_INTENT_KINDS:
+            result = apply_approach_response(state, action, rng)
+            update_public_perception(state, action, result)
+            return result
         result = apply_follow_up(state, action, rng)
         update_public_perception(state, action, result)
         return result

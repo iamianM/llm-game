@@ -18,6 +18,7 @@ def test_available_actions_include_visible_conversation_targets_and_ambient() ->
     assert PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="maya") not in actions
     assert PlayerAction(kind=ActionKind.MOVE, target_id="kitchen") in actions
     assert PlayerAction(kind=ActionKind.MOVE, target_id="terrace") in actions
+    assert PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait") in actions
     assert any(action.kind is ActionKind.AMBIENT for action in actions)
     assert PlayerAction(kind=ActionKind.END_CONVERSATION) not in actions
 
