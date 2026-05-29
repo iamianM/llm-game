@@ -105,6 +105,58 @@ def test_ceremony_memory_not_offered_as_share_gossip() -> None:
     assert all(not option.intent_kind.startswith("share_gossip:") for option in options)
 
 
+def test_real_subject_ceremony_memory_not_offered_without_gossip_flag() -> None:
+    """The eligibility check is a positive allowlist, not a tag blacklist: a
+    witnessed ceremony memory about a *real cast member* (so it survives subject
+    resolution) is still excluded because it lacks the ``gossip`` flag. This is
+    the case a tag blacklist would miss whenever a new ceremony kind ships with
+    a tag nobody remembered to deny-list."""
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id="maya",
+            source="witnessed",
+            day=1,
+            turn=1,
+            weight=7,
+            # A brand-new ceremony kind the blacklist never heard of.
+            tags=["surprise_dumping", "ceremony"],
+            content="Maya was sent home in a shock dumping.",
+        ),
+    )
+
+    options = default_options(state, result, exchange)
+
+    assert all(not option.intent_kind.startswith("share_gossip:") for option in options)
+
+
+def test_witnessed_memory_offered_when_flagged_gossip() -> None:
+    """No regression: a witnessed observation of two other islanders that the
+    curator flagged ``gossip`` is still offered as shareable gossip."""
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id="maya",
+            source="witnessed",
+            day=1,
+            turn=1,
+            weight=5,
+            tags=["background", "witnessed", "gossip"],
+            content="I noticed Maya and Liam looked wrapped up in each other.",
+        ),
+    )
+
+    options = default_options(state, result, exchange)
+
+    assert any(option.intent_kind.startswith("share_gossip:") for option in options)
+
+
 def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
     state, result, exchange = _context(success=True, tone="warm")
     state.player.memories.clear()

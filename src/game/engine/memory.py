@@ -97,7 +97,11 @@ def propagate_gossip_seeds(
                 day=day,
                 turn=turn,
                 weight=max(2, seed.emotional_weight - 2),
-                tags=[*seed.tags, "told_by", "gossip_spread"],
+                # "gossip" is the positive flag the follow-up menu's
+                # shareable-gossip allowlist keys on; propagated seeds are
+                # gossip by definition, so tag them explicitly rather than
+                # relying on the curator to have set it on every seed.
+                tags=[*seed.tags, "told_by", "gossip_spread", "gossip"],
                 content=seed.gist,
             )
             add_memory(state, memory)

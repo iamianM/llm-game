@@ -337,24 +337,36 @@ def _flirty_allowed(state: GameState, target_id: str) -> bool:
     return False
 
 
-# Ceremony / producer / system bookkeeping memories are recorded as
-# "witnessed" villa events, but they are not interpersonal gossip: their content
-# carries raw internal tokens (e.g. "group_date_invite", "mr_and_mrs") and
-# narrating them invites the voice model to name absent cast, which both reads as
-# nonsense and can dead-screen the turn via the leak guard. Never offer them.
-_SYSTEM_MEMORY_TAGS = frozenset(
-    {"ceremony", "producer_text", "gather_scheduled", "recoupling", "system"}
-)
-
-
 def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
+    """Return the most recent memory the player can share as gossip with target.
+
+    Eligibility is a *positive allowlist*, not a blacklist of known-bad system
+    tags. A memory is shareable interpersonal gossip only when both hold:
+
+    1. Its ``subject_id`` resolves to a real cast islander — never the player,
+       the current listener, or a non-cast pseudo-subject like ``"villa"`` /
+       ``"producers"``. This alone drops ceremony bookkeeping recorded against
+       the villa.
+    2. It is explicitly flagged ``gossip``. Ceremony / producer / system
+       memories are "witnessed" villa events that carry their own kind tags
+       (``ceremony``, ``elimination``, ``gather_scheduled``, ...) and never the
+       ``gossip`` flag, so they fall outside the allowlist automatically —
+       *including future system event kinds nobody remembered to blacklist*.
+
+    Sharing one would otherwise surface raw engine tokens and invite the voice
+    model to name absent cast, which reads as nonsense and can dead-screen the
+    turn via the leak guard. A missed piece of real gossip (false negative) is
+    a far safer failure than leaking an engine token (false positive), so the
+    allowlist is deliberately conservative.
+    """
+    shareable_subjects = _cast_ids(state) - {"player", target_id}
     already_shared = _gossip_shared_with(state, target_id)
     for memory in reversed(state.player.memories):
-        if memory.subject_id in {"player", target_id, "villa"}:
+        if memory.subject_id not in shareable_subjects:
             continue
         if memory.emotional_weight < 4:
             continue
-        if _SYSTEM_MEMORY_TAGS.intersection(memory.tags):
+        if "gossip" not in memory.tags:
             continue
         if memory.id in already_shared:
             # Don't re-offer gossip the player has already told this person.
@@ -362,9 +374,17 @@ def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
             # reacts as if hearing it fresh each time; suppressing it lets the
             # next-most-recent piece of gossip surface instead.
             continue
-        if "gossip" in memory.tags or memory.source in {"witnessed", "told_by"}:
-            return memory
+        return memory
     return None
+
+
+def _cast_ids(state: GameState) -> set[str]:
+    """Return every real islander id (eliminated or not).
+
+    Membership here is the structural gate that keeps non-cast subjects
+    (``"villa"`` and other engine pseudo-subjects) out of shareable gossip.
+    """
+    return {islander.id for islander in state.islanders}
 
 
 def _gossip_shared_with(state: GameState, target_id: str) -> set[str]:

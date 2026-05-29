@@ -47,6 +47,7 @@ Each `Memory`:
 - `source` — `"direct"` if the holder participated, `"witnessed"` if the holder was a bystander.
 - `emotional_weight` — integer 1-10. Trivial joke: 2-3. Flirt with chemistry: 5-6. Vulnerable confession: 7-8. Kiss or betrayal: 9-10. Witness memories sit one to two points below direct memories of the same event.
 - `tags` — three to six short snake_case tags. Use existing words where possible: `vulnerable`, `trust_built`, `she_seemed_warm`, `joke_that_landed`, `awkward_silence`, `flirty`, `felt_seen`, `pushed_too_hard`, `saw_them_close`, `uncertain`. You may also coin tags of the form `talked_about_<name>` when a specific third party was discussed (use the actual islander's id, never copy a placeholder name) — but only if that person actually came up in the visible dialogue. These drive gossip surfacing later.
+  - **Add the literal tag `gossip`** whenever the memory is repeatable talk *about a real third party* (someone other than the holder and the person they were talking to) or a `witnessed` bystander observation of two other islanders. That flag is the single signal the game uses to decide a memory can later be offered as "share gossip" — without it, genuinely juicy gossip will never resurface. Do **not** tag a holder's own first-person feeling, or a memory about the listener themselves, as `gossip`.
 - `durable` — usually `true`. Set `false` only if the memory is small enough to fade.
 
 ## Hard rules

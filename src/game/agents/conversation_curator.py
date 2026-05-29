@@ -290,7 +290,7 @@ def _mock_npc_conversation_memory(
                 content=f"I noticed {first_name} and {second_name} looked wrapped up in each other.",
                 source="witnessed",
                 emotional_weight=4,
-                tags=["background", "witnessed"],
+                tags=["background", "witnessed", "gossip"],
             )
         )
     return MemoryBatch(
