@@ -107,5 +107,5 @@ turns:
       - id: no_raw_ids
         criteria: >
           The prose uses Names ("Maya", "Chloe", "Blake") and never raw
-          underscore ids ("blake_start", "nia_start"). Fails on any
+          underscore ids ("blake", "nia"). Fails on any
           underscore-suffixed id in the output.

@@ -225,31 +225,31 @@ def test_conversation_start_survives_background_dialogue_raise() -> None:
     assert len(changes.background_dialogues) == 1
 
 
-def test_normalize_resolves_bare_name_movement() -> None:
-    """A suffix-stripped id (the live 'jordan' vs 'jordan_start' slip) is repaired
+def test_normalize_resolves_wrong_case_movement() -> None:
+    """A wrong-case id (the live 'Jordan' vs 'jordan' slip) is repaired
     before validation instead of dead-screening the turn."""
     state = new_game(1)
     update = VillaUpdate(
-        npc_movements=[NPCMovement(npc_id="jordan", target_location=Location.KITCHEN, reason="drift")]
+        npc_movements=[NPCMovement(npc_id="Jordan", target_location=Location.KITCHEN, reason="drift")]
     )
 
     normalized = normalize_villa_update(state, update)
 
-    assert normalized.npc_movements[0].npc_id == "jordan_start"
+    assert normalized.npc_movements[0].npc_id == "jordan"
     validate_villa_update(state, normalized)
 
 
-def test_normalize_resolves_bare_name_in_conversation_start() -> None:
-    """Conversation-start participants given by bare/display name (the exact live
-    crash site) resolve to canonical ids so the start validates."""
+def test_normalize_resolves_display_name_in_conversation_start() -> None:
+    """Conversation-start participants given by display name / wrong case (the exact
+    live crash site) resolve to canonical ids so the start validates."""
     state = new_game(1)
     for islander in state.islanders:
-        if islander.id in {"jordan_start", "sophie_start"}:
+        if islander.id in {"jordan", "sophie"}:
             islander.location_id = Location.POOL
     update = VillaUpdate(
         conversation_starts=[
             NewConversation(
-                participants=["jordan", "Sophie"],
+                participants=["Jordan", "Sophie"],
                 location=Location.POOL,
                 topic="comparing notes",
             )
@@ -258,7 +258,7 @@ def test_normalize_resolves_bare_name_in_conversation_start() -> None:
 
     normalized = normalize_villa_update(state, update)
 
-    assert normalized.conversation_starts[0].participants == ["jordan_start", "sophie_start"]
+    assert normalized.conversation_starts[0].participants == ["jordan", "sophie"]
     validate_villa_update(state, normalized)
 
 

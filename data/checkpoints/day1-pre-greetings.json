@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-greetings",
   "seed": 7,
-  "state_hash": "0721f69402dddb86508bfd4f863826461cf9022ad6ca61bcf4fe035d8db1a1bd",
+  "state_hash": "96f0d2537417cd7dacfa714a13775e706abc2703d1adcbc65bf8474c54b4a5c8",
   "state": {
-    "schema_version": 28,
+    "schema_version": 29,
     "seed": 7,
     "turn_index": 0,
     "day": 1,
@@ -1459,7 +1459,7 @@
         }
       },
       {
-        "id": "sophie_start",
+        "id": "sophie",
         "name": "Sophie",
         "gender": "woman",
         "archetype": "alpha",
@@ -1933,7 +1933,7 @@
         }
       },
       {
-        "id": "nia_start",
+        "id": "nia",
         "name": "Nia",
         "gender": "woman",
         "archetype": "sweetheart",
@@ -2407,7 +2407,7 @@
         }
       },
       {
-        "id": "marcus_start",
+        "id": "marcus",
         "name": "Marcus",
         "gender": "man",
         "archetype": "alpha",
@@ -2881,7 +2881,7 @@
         }
       },
       {
-        "id": "blake_start",
+        "id": "blake",
         "name": "Blake",
         "gender": "man",
         "archetype": "friend",
@@ -3355,7 +3355,7 @@
         }
       },
       {
-        "id": "jordan_start",
+        "id": "jordan",
         "name": "Jordan",
         "gender": "man",
         "archetype": "joker",

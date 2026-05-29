@@ -20,8 +20,8 @@ def test_day1_initial_coupling_offered_to_player() -> None:
     assert {spec.action.target_id for spec in actions} == {
         "chloe",
         "maya",
-        "sophie_start",
-        "nia_start",
+        "sophie",
+        "nia",
     }
 
 

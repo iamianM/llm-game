@@ -63,8 +63,8 @@ def test_audience_ranking_displays_1_of_4() -> None:
     state.couples = [
         Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1),
         Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=1),
-        Couple(partner_a_id="sophie_start", partner_b_id="marcus_start", formed_on_day=1),
-        Couple(partner_a_id="nia_start", partner_b_id="blake_start", formed_on_day=1),
+        Couple(partner_a_id="sophie", partner_b_id="marcus", formed_on_day=1),
+        Couple(partner_a_id="nia", partner_b_id="blake", formed_on_day=1),
     ]
 
     snapshot = audience_snapshot(state)

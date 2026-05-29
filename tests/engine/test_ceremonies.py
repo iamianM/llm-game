@@ -152,7 +152,7 @@ def test_recoupling_events_emit_display_safe_messages() -> None:
 
     Regression for the leak where mock/static-mode surfaces a recoupling event
     message verbatim: a steal attempt, partner-stolen, and elimination built
-    from raw starting-cast ids (``blake_start`` etc.) must render bare display
+    from raw starting-cast ids (``blake`` etc.) must render bare display
     names — never a raw id, the meta phrase "the player", or the internal
     ``(roll X vs Y)`` dice digits (ENGINEERING R7 — typed at the source).
     """
@@ -164,13 +164,13 @@ def test_recoupling_events_emit_display_safe_messages() -> None:
     state = new_game(1)
     state.player.name = "Demo"
     ceremony = RecouplingResult(
-        couples=[Couple(partner_a_id="blake_start", partner_b_id="sophie_start", formed_on_day=3)],
-        eliminated_id="nia_start",
+        couples=[Couple(partner_a_id="blake", partner_b_id="sophie", formed_on_day=3)],
+        eliminated_id="nia",
         steal_attempts=[
             StealAttempt(
-                bombshell_id="blake_start",
-                target_id="sophie_start",
-                abandoned_id="jordan_start",
+                bombshell_id="blake",
+                target_id="sophie",
+                abandoned_id="jordan",
                 chance=55,
                 roll=20,
                 success=True,
@@ -180,7 +180,7 @@ def test_recoupling_events_emit_display_safe_messages() -> None:
 
     messages = " || ".join(event.message for event in recoupling_events(state, ceremony))
 
-    for raw_id in ("blake_start", "sophie_start", "jordan_start", "nia_start"):
+    for raw_id in ("blake", "sophie", "jordan", "nia"):
         assert raw_id not in messages
     assert "the player" not in messages.lower()
     assert "(roll" not in messages

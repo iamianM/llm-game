@@ -250,7 +250,7 @@ function fakeState(overrides: Record<string, unknown> = {}) {
       islander("liam", "Liam", "man"),
       islander("chloe", "Chloe", "woman"),
       islander("maya", "Maya", "woman"),
-      islander("marcus_start", "Marcus", "man"),
+      islander("marcus", "Marcus", "man"),
       islander("beau", "Beau", "man"),
       islander("zara", "Zara", "woman"),
     ],
@@ -296,10 +296,10 @@ function memory(id: string, subjectId: string, turn: number) {
 function sixCouples() {
   const pairs = [
     ["player", "liam", "You", "Liam", true],
-    ["marcus_start", "chloe", "Marcus", "Chloe", false],
+    ["marcus", "chloe", "Marcus", "Chloe", false],
     ["beau", "zara", "Beau", "Zara", false],
-    ["jordan_start", "maya", "Jordan", "Maya", false],
-    ["blake_start", "nia_start", "Blake", "Nia", false],
+    ["jordan", "maya", "Jordan", "Maya", false],
+    ["blake", "nia", "Blake", "Nia", false],
     ["mateo", "sasha", "Mateo", "Sasha", false],
   ] as const;
   return pairs.map(([aId, bId, aName, bName, isPlayer], index) => ({

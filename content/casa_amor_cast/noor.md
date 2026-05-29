@@ -1,5 +1,5 @@
 ---
-id: nia
+id: noor
 name: Noor
 gender: f
 archetype: friend

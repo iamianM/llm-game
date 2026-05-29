@@ -47,14 +47,15 @@ def normalize_villa_update(state: GameState, update: VillaUpdate) -> VillaUpdate
 
 
 def _resolve_npc_ids(state: GameState, update: VillaUpdate) -> VillaUpdate:
-    """Repair near-miss NPC ids (e.g. bare ``jordan`` -> canonical ``jordan_start``).
+    """Repair near-miss NPC ids (e.g. ``Sophie`` -> ``sophie``, ``sam`` -> ``sam_ht``).
 
-    The Orchestrator model occasionally emits an islander's display name or a
-    suffix-stripped id instead of the canonical id it was handed in context. A
-    single such slip would otherwise dead-screen the whole turn via
-    ``_ensure_known_npc``. Map every recoverable token back to its canonical id
-    before validation; leave genuinely unknown tokens untouched so validation
-    still rejects them clearly.
+    Starting-cast ids are now bare first names (``jordan``, ``sophie``), so the
+    Orchestrator usually emits them verbatim. Repair still covers the residual
+    slips: a display name or wrong casing (``Sophie`` -> ``sophie``) and Casa
+    Amor bombshells named by first name only (``sam`` -> ``sam_ht``). A single
+    such slip would otherwise dead-screen the whole turn via ``_ensure_known_npc``.
+    Map every recoverable token back to its canonical id before validation; leave
+    genuinely unknown tokens untouched so validation still rejects them clearly.
     """
     active = [islander for islander in state.islanders if not islander.eliminated]
     known_ids = {islander.id for islander in active}
@@ -111,8 +112,8 @@ def _canonical_npc_id(token: str, active: list[IslanderState], known_ids: set[st
     """Best-effort map a possibly-near-miss token to a canonical active id.
 
     Precedence: exact id, case-insensitive id, display name, leading id segment
-    (``jordan`` -> ``jordan_start``), then first-name token. ``player`` and any
-    truly unknown token are returned unchanged so validation rejects them.
+    (``sam`` -> ``sam_ht``), then first-name token. ``player`` and any truly
+    unknown token are returned unchanged so validation rejects them.
     """
     if token in known_ids:
         return token

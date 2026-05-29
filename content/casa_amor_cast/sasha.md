@@ -1,5 +1,5 @@
 ---
-id: sophie
+id: sasha
 name: Sasha
 gender: f
 archetype: joker

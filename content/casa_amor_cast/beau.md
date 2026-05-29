@@ -1,5 +1,5 @@
 ---
-id: blake
+id: beau
 name: Beau
 gender: m
 archetype: smooth

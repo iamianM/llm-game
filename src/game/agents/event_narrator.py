@@ -140,7 +140,7 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
     Enforces two contracts:
     1. Every named ceremony participant must appear in the prose.
     2. No engine-internal token leaks into player-facing prose: raw
-       snake_case keys/ids (e.g. "drink_of_choice", "blake_start") and
+       snake_case keys/ids (e.g. "drink_of_choice", "sam_ht") and
        bracketed `key=value` metadata are forbidden. Prose length, sentence
        count, and digit preferences are conveyed via the prompt, not enforced
        here.
@@ -159,7 +159,7 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
 
 
 # A snake_case token: two or more lowercase/digit runs joined by underscores
-# (e.g. "drink_of_choice", "blake_start"). Natural prose never contains these.
+# (e.g. "drink_of_choice", "sam_ht"). Natural prose never contains these.
 _SNAKE_TOKEN = re.compile(r"\b[a-z0-9]+(?:_[a-z0-9]+)+\b")
 # Bracketed key=value metadata that should have been translated to prose.
 _KV_TOKEN = re.compile(r"\b[a-zA-Z]\w*=")
@@ -173,9 +173,12 @@ def _leaked_tokens(prose: str) -> list[str]:
 
 
 def _mentions_participant(lower_prose: str, islander_id: str) -> bool:
-    aliases = {islander_id.lower(), islander_id.lower().replace("_", " ")}
-    if islander_id.endswith("_start"):
-        aliases.add(islander_id.removesuffix("_start").lower())
+    base = islander_id.lower()
+    aliases = {base, base.replace("_", " ")}
+    # Starting-cast ids are bare first names; Casa Amor bombshells keep an
+    # "_ht" suffix (e.g. "sam_ht"). Strip any suffix segment so the first-name
+    # display form the narrator actually writes is matched either way.
+    aliases.add(base.split("_", 1)[0])
     return any(alias in lower_prose for alias in aliases)
 
 
@@ -293,7 +296,7 @@ def _render_minigame_details(state: GameState) -> str:
     # Resolve every islander id to a human *name* (third person, including the
     # player). We never feed raw ids or the "id (Name)" format here: the model
     # grounds prose in this block and will copy whatever token we hand it —
-    # including a leaked raw id like "blake_start" or a doubled "Chloe (Chloe)".
+    # including a leaked raw id like "sam_ht" or a doubled "Chloe (Chloe)".
     # A bare resolved name is always prose-safe.
     def _person(islander_id: str) -> str:
         if not islander_id:
@@ -350,7 +353,7 @@ def _render_minigame_details(state: GameState) -> str:
 def _humanize(key: str) -> str:
     """Turn a snake_case engine key into prose-safe words.
 
-    "drink_of_choice" -> "drink of choice"; "blake_start" -> "blake start".
+    "drink_of_choice" -> "drink of choice"; "sam_ht" -> "sam ht".
     Used so the narrator can never echo a raw key with underscores into
     player-facing prose, even when told to ground a sentence in round detail.
     """

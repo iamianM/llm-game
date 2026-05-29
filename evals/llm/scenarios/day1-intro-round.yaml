@@ -69,7 +69,7 @@ turns:
   - id: intro-sophie
     action:
       kind: introduce_to
-      target_id: sophie_start
+      target_id: sophie
       intent_id: intro_flirty
     golden: >
       A flirty hello with Sophie. She is the polished joker — she takes the
@@ -85,7 +85,7 @@ turns:
   - id: intro-nia
     action:
       kind: introduce_to
-      target_id: nia_start
+      target_id: nia
       intent_id: intro_friendly
     golden: >
       A warm friendly hello with Nia. She notices the player back —
@@ -100,7 +100,7 @@ turns:
   - id: intro-marcus
     action:
       kind: introduce_to
-      target_id: marcus_start
+      target_id: marcus
       intent_id: intro_banter
     golden: >
       A banter hello with Marcus. He takes the joke with confident
@@ -116,7 +116,7 @@ turns:
   - id: intro-blake
     action:
       kind: introduce_to
-      target_id: blake_start
+      target_id: blake
       intent_id: intro_deep
     golden: >
       A deeper hello with Blake. He answers in fewer words than expected,
@@ -132,7 +132,7 @@ turns:
   - id: intro-jordan
     action:
       kind: introduce_to
-      target_id: jordan_start
+      target_id: jordan
       intent_id: intro_banter
     golden: >
       A banter hello with Jordan. Anxious joker energy — the joke comes

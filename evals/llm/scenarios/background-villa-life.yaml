@@ -21,7 +21,7 @@ initial_npc_conversations:
   - id: npcconv_maya_marcus_kitchen
     participants:
       - maya
-      - marcus_start
+      - marcus
     location_id: kitchen
     topic: Maya pressing Marcus about who he is actually watching this week
     started_on_turn: 0

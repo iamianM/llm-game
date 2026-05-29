@@ -28,7 +28,7 @@ initial_relationships:
     affection: 25
     trust: 10
     friendship: 10
-  blake_start:
+  blake:
     affection: 5  # rival pool for audacity facet
 judge_context:
   - Final Couples is a weighted-sum minigame across 5 facets (knowledge=4, chemistry=3, honesty=5, banter=3, audacity=3 weights).
@@ -61,7 +61,7 @@ turns:
     golden: Player picks the inside-joke callback.
     checks: []
   - id: audacity-pie-rival
-    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: pie_blake_start, round_index: 4 } }
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: pie_blake, round_index: 4 } }
     golden: >
       Player pies the rival. Weighted sum lands in the success band.
       Classification: success. Audience +8. Partner deltas affection+8

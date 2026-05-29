@@ -28,7 +28,7 @@ initial_relationships:
     trust: 10
     friendship: 15
     chemistry: 70  # makes Maya the top-chemistry non-partner pick
-  blake_start:
+  blake:
     affection: 5   # lowest non-partner affection -> rival role
     trust: 0
     friendship: 0
@@ -55,7 +55,7 @@ turns:
     golden: Player marries Chloe (partner pick). Only Blake remains.
     checks: []
   - id: pie-blake
-    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake_start, round_index: 2 } }
+    action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake, round_index: 2 } }
     golden: >
       Player pies Blake (rival). Classification success (snog_chemistry
       3 + marry_partner 3 + pie_rival 3 = 9 pts >= success threshold 6).

@@ -61,11 +61,11 @@ def test_new_game_assigns_canonical_gender_per_islander() -> None:
         "chloe": Gender.WOMAN,
         "maya": Gender.WOMAN,
         "liam": Gender.MAN,
-        "sophie_start": Gender.WOMAN,
-        "nia_start": Gender.WOMAN,
-        "marcus_start": Gender.MAN,
-        "blake_start": Gender.MAN,
-        "jordan_start": Gender.MAN,
+        "sophie": Gender.WOMAN,
+        "nia": Gender.WOMAN,
+        "marcus": Gender.MAN,
+        "blake": Gender.MAN,
+        "jordan": Gender.MAN,
     }
 
 

@@ -41,7 +41,7 @@ def avatar_svg(name: str, *, size: int = 30) -> str:
 
 
 def display_name(name: str) -> str:
-    """Strip suffixes like _start from cast ids for display."""
+    """Strip suffixes like _ht from cast ids for display."""
     if not isinstance(name, str):
         return str(name)
     return name.split("_")[0].title()

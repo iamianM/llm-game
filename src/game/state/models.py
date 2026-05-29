@@ -59,7 +59,7 @@ from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
 from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 28
+SCHEMA_VERSION = 29
 
 
 class Phase(StrEnum):

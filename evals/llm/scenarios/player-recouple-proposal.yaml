@@ -18,7 +18,7 @@ initial_couples:
     partner_b_id: chloe
     formed_on_day: 1
   - partner_a_id: maya
-    partner_b_id: marcus_start
+    partner_b_id: marcus
     formed_on_day: 1
 initial_relationships:
   maya:

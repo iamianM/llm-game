@@ -52,7 +52,7 @@ def test_event_narrator_validation_accepts_starting_cast_display_name() -> None:
             CeremonyEvent(
                 kind="elimination",
                 message="Jordan leaves the villa.",
-                islander_id="jordan_start",
+                islander_id="jordan",
             )
         ],
     )
@@ -65,13 +65,13 @@ def test_mock_event_narration_uses_player_facing_event_language() -> None:
         state,
         [
             CeremonyEvent(kind="recoupling", message="internal recouple completed"),
-            CeremonyEvent(kind="elimination", message="jordan_start leaves", islander_id="jordan_start"),
+            CeremonyEvent(kind="elimination", message="jordan leaves", islander_id="jordan"),
         ],
     )
 
     assert "Pairing Ceremony" in narration.prose
     assert "Jordan is Heart Out" in narration.prose
-    assert "jordan_start" not in narration.prose
+    assert "jordan" not in narration.prose
 
 
 def _quiz_with_round() -> Challenge:
@@ -101,7 +101,7 @@ def _quiz_with_round() -> Challenge:
                     MinigameReveal(
                         kind="fact",
                         subject_id="chloe",
-                        payload={"observer_id": "blake_start", "trait_key": "drink_of_choice"},
+                        payload={"observer_id": "blake", "trait_key": "drink_of_choice"},
                     )
                 ],
             )
@@ -130,7 +130,7 @@ def test_minigame_block_never_leaks_engine_tokens() -> None:
     assert "drink of choice" in block
     assert "trait=" not in block
     assert "flavor_key=" not in block
-    assert "blake_start" not in block
+    assert "blake" not in block
     assert "Chloe (Chloe)" not in block
     assert "the player" not in block
 
@@ -206,13 +206,13 @@ def test_event_producers_emit_display_safe_messages() -> None:
     assert "Demo" in hideaway.message
     assert "Chloe" in hideaway.message
 
-    # A recoupling proposal from a starting-cast NPC (raw id "blake_start").
+    # A recoupling proposal from a starting-cast NPC (raw id "blake").
     result = MechanicalResult(
         action=PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="player"),
         success=True,
         tags=["npc_proposal_response"],
         proposal_outcome={
-            "proposer_id": "blake_start",
+            "proposer_id": "blake",
             "target_id": "player",
             "accepted": True,
             "chance": 60,
@@ -221,7 +221,7 @@ def test_event_producers_emit_display_safe_messages() -> None:
     )
     event = proposal_event(state, result)
     assert event is not None
-    assert "blake_start" not in event.message
+    assert "blake" not in event.message
     assert "Blake" in event.message
     assert "Demo" in event.message
 

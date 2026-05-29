@@ -224,7 +224,7 @@ def test_islander_voice_allows_gossip_subject_mentions() -> None:
         action=PlayerAction(
             kind=ActionKind.RESPOND_WITH,
             target_id="chloe",
-            intent_id="ask_gossip:about_blake_start",
+            intent_id="ask_gossip:about_blake",
         ),
         success=True,
         tags=["gossip"],

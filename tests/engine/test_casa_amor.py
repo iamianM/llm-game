@@ -37,7 +37,7 @@ def test_casa_amor_enter_adds_new_islanders() -> None:
     enter_casa_amor(state)
 
     ids = {islander.id for islander in state.islanders}
-    assert {"blake", "jordan", "marcus", "sophie", "zara", "nia"} <= ids
+    assert {"beau", "jules", "mateo", "sasha", "zara", "noor"} <= ids
 
 
 def test_casa_amor_display_names_do_not_duplicate_starting_cast() -> None:
@@ -93,7 +93,7 @@ def test_return_with_casa_amor_drops_perception_when_original_loyal() -> None:
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
     enter_casa_amor(state)
 
-    apply_casa_decision(state, CasaDecision.RETURN_WITH_NEW, "blake")
+    apply_casa_decision(state, CasaDecision.RETURN_WITH_NEW, "beau")
     state.day = 6
     event = return_ceremony(state)
 
@@ -101,7 +101,7 @@ def test_return_with_casa_amor_drops_perception_when_original_loyal() -> None:
     assert state.casa_amor_state is not None
     assert state.casa_amor_state.partners_swapped is True
     assert state.couples == [
-        Couple(partner_a_id="player", partner_b_id="blake", formed_on_day=6, formed_via="casa_return")
+        Couple(partner_a_id="player", partner_b_id="beau", formed_on_day=6, formed_via="casa_return")
     ]
     assert event is not None
     assert event.kind == "casa_amor_return_reveal"
@@ -123,7 +123,7 @@ def test_orchestrator_only_sees_same_villa_npcs() -> None:
 
     rendered = _render_context(state)
 
-    assert "blake" in rendered
+    assert "beau" in rendered
     assert "chloe" not in rendered
 
 
@@ -164,7 +164,7 @@ def test_villa_update_rejects_cross_villa_movement() -> None:
     state = new_game(1)
     enter_casa_amor(state)
     update = VillaUpdate(
-        npc_movements=[NPCMovement(npc_id="blake", target_location=Location.POOL, reason="wrong villa")]
+        npc_movements=[NPCMovement(npc_id="beau", target_location=Location.POOL, reason="wrong villa")]
     )
 
     with pytest.raises(ValueError, match="crosses out"):

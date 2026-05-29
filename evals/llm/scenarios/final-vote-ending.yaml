@@ -21,11 +21,11 @@ initial_couples:
   - partner_a_id: maya
     partner_b_id: liam
     formed_on_day: 5
-  - partner_a_id: sophie_start
-    partner_b_id: marcus_start
+  - partner_a_id: sophie
+    partner_b_id: marcus
     formed_on_day: 5
-  - partner_a_id: nia_start
-    partner_b_id: blake_start
+  - partner_a_id: nia
+    partner_b_id: blake
     formed_on_day: 5
 initial_relationships:
   chloe:

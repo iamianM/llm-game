@@ -21,11 +21,11 @@ initial_couples:
   - partner_a_id: maya
     partner_b_id: liam
     formed_on_day: 1
-  - partner_a_id: sophie_start
-    partner_b_id: marcus_start
+  - partner_a_id: sophie
+    partner_b_id: marcus
     formed_on_day: 1
-  - partner_a_id: nia_start
-    partner_b_id: blake_start
+  - partner_a_id: nia
+    partner_b_id: blake
     formed_on_day: 1
 initial_relationships:
   chloe:
@@ -35,10 +35,10 @@ initial_relationships:
   maya:
     affection: 35
     chemistry: 20
-  sophie_start:
+  sophie:
     affection: 30
     chemistry: 25
-  nia_start:
+  nia:
     affection: 25
     friendship: 20
 judge_context:

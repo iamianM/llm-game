@@ -39,7 +39,7 @@ def test_candidates_only_co_located_and_free() -> None:
     state.npc_conversations.append(
         NPCNPCConversation(
             id="npcconv_busy",
-            participants=["maya", "sophie_start"],
+            participants=["maya", "sophie"],
             location_id=Location.POOL,
             topic="x",
             started_on_turn=0,
@@ -51,7 +51,7 @@ def test_candidates_only_co_located_and_free() -> None:
     assert "chloe" in ids
     assert "maya" not in ids  # locked
     assert "liam" not in ids  # eliminated
-    assert "sophie_start" not in ids  # not co-located
+    assert "sophie" not in ids  # not co-located
 
 
 def test_chance_rises_with_chemistry_and_extraversion() -> None:
@@ -245,7 +245,7 @@ def test_deterministic_for_same_seed() -> None:
     results = []
     for _ in range(2):
         state = new_game(1)
-        _place_with_player(state, "chloe", "jordan_start")
+        _place_with_player(state, "chloe", "jordan")
         for npc in state.islanders:
             npc.relationship.chemistry = 40
         approach = roll_ambient_approach(state, SeededRng(99))

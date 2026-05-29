@@ -21,17 +21,17 @@ initial_couples:
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-- partner_a_id: sophie_start
-  partner_b_id: marcus_start
+- partner_a_id: sophie
+  partner_b_id: marcus
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-- partner_a_id: nia_start
-  partner_b_id: blake_start
+- partner_a_id: nia
+  partner_b_id: blake
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-expected_hash: 750805cc1a7f752e950034770dc90315c96f3fdf3b10812726083c98d9f8b8a5
+expected_hash: 6327741ad564b24ac884833b03e382751e9c111d7956d337eed3458e2b34efe0
 actions:
 - kind: ambient
   target_id: ambient_wait

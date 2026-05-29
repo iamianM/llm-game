@@ -1,9 +1,9 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "4ad36141119d15b490218a0404ae81cbac86903a08dc0c0f66a75a3dce6731d6",
+  "state_hash": "df8b58a574355cd115f9477331bad410c3feec3e0ee8bb1fd918c2ddd5df6f03",
   "state": {
-    "schema_version": 28,
+    "schema_version": 29,
     "seed": 7,
     "turn_index": 236,
     "day": 4,
@@ -46,7 +46,8 @@
             "ceremony",
             "recoupling"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_f6248b78d5efe016",
@@ -62,7 +63,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_4d4ad059ee5d0f48",
@@ -78,7 +80,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_9268d7453c64626f",
@@ -94,7 +97,8 @@
             "ceremony",
             "gather_scheduled"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_ed28071b13211056",
@@ -110,7 +114,8 @@
             "ceremony",
             "producer_text"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_602170c088d4c073",
@@ -126,7 +131,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_7c1fb3ca9fe1f112",
@@ -142,7 +148,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_ed74f1c34f2c698d",
@@ -158,7 +165,8 @@
             "ceremony",
             "gather_scheduled"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_9b429bdbb46d2e6f",
@@ -174,7 +182,8 @@
             "ceremony",
             "producer_text"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_e9493b5ac3a93059",
@@ -190,7 +199,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_1106e84e21607396",
@@ -206,7 +216,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_d2d2694226ad7b22",
@@ -222,7 +233,8 @@
             "ceremony",
             "gather_scheduled"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_d99d8b5113142e95",
@@ -238,7 +250,8 @@
             "ceremony",
             "producer_text"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_479a3c632bbdc903",
@@ -254,7 +267,8 @@
             "ceremony",
             "gather_scheduled"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_b0b7c37a76d48e4e",
@@ -270,12 +284,13 @@
             "ceremony",
             "recoupling"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_c393ce580083f48a",
           "holder_id": "player",
-          "subject_id": "jordan_start",
+          "subject_id": "jordan",
           "content": "Heart Out: jordan_start leaves Sunset Bay.",
           "source": "witnessed",
           "source_id": null,
@@ -286,7 +301,8 @@
             "ceremony",
             "elimination"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_47c0866fa6c0b08b",
@@ -302,7 +318,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_081ef58ab1510bc8",
@@ -318,7 +335,8 @@
             "ceremony",
             "challenge"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         },
         {
           "id": "mem_b757592965f5d937",
@@ -334,7 +352,8 @@
             "ceremony",
             "gather_scheduled"
           ],
-          "durable": true
+          "durable": true,
+          "mentioned_subject_ids": []
         }
       ],
       "known_facts": {
@@ -696,7 +715,8 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7fd2f5f46fa966e2",
@@ -712,7 +732,8 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_2cb942d2bf6474f1",
@@ -728,7 +749,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "caught_unprepared::chloe::favorite_food::1::13",
@@ -745,7 +767,8 @@
               "compatibility_quiz",
               "favorite_food"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "caught_unprepared::chloe::age::1::13",
@@ -762,7 +785,8 @@
               "compatibility_quiz",
               "age"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "caught_unprepared::chloe::hometown::1::13",
@@ -779,7 +803,8 @@
               "compatibility_quiz",
               "hometown"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_22ab7a0443e86655",
@@ -795,7 +820,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_6346daa8bf3b161d",
@@ -811,7 +837,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_4e43a280e7f864f9",
@@ -827,7 +854,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_f9dbdeaa9c9943da",
@@ -843,7 +871,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c94640ad84ea1eb6",
@@ -859,7 +888,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c64b952021f2c581",
@@ -875,7 +905,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_9a770f8bda49f377",
@@ -891,7 +922,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c967569e47f274b1",
@@ -907,7 +939,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_873e5cd327e47efb",
@@ -923,7 +956,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ee751ca8581e2757",
@@ -939,7 +973,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_3dc9f1aa1d93e7ad",
@@ -955,7 +990,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c3f21e74d30cefd1",
@@ -971,7 +1007,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7dd9792e95f18cd6",
@@ -987,12 +1024,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_e83e858f55a92f27",
             "holder_id": "chloe",
-            "subject_id": "jordan_start",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -1003,7 +1041,8 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_6d607d635d023940",
@@ -1019,7 +1058,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_dd0d0da1413b2205",
@@ -1035,7 +1075,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0fbc1b2ba149ff58",
@@ -1051,7 +1092,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -1542,7 +1584,8 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_b2829f17ddd1e1ca",
@@ -1558,7 +1601,8 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_d78452a8494a430b",
@@ -1574,7 +1618,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_abd4a98a41ee10b2",
@@ -1590,7 +1635,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_868320429348dcb9",
@@ -1606,7 +1652,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_58f6f3e0e512428e",
@@ -1622,7 +1669,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_50976e54b08c9a0f",
@@ -1638,7 +1686,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1b645d1036539038",
@@ -1654,7 +1703,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_cdea7cd1967af281",
@@ -1670,7 +1720,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_9dadb509c4ef2bf4",
@@ -1686,7 +1737,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_738a4470a554acbe",
@@ -1702,7 +1754,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a9afc8f815b5f3ae",
@@ -1718,7 +1771,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5af517b82cf50c04",
@@ -1734,7 +1788,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_8cbcd43599c09e29",
@@ -1750,7 +1805,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_31f9f53702c9086e",
@@ -1766,7 +1822,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ccc28a78f0180d1e",
@@ -1782,12 +1839,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_897e5c9784d1df21",
             "holder_id": "maya",
-            "subject_id": "jordan_start",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -1798,7 +1856,8 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_53b03bd178afa764",
@@ -1814,7 +1873,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_2432f147f1854ff4",
@@ -1830,7 +1890,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_14487f6d25965aef",
@@ -1846,7 +1907,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -2337,7 +2399,8 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_34037131594dd190",
@@ -2353,7 +2416,8 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_bdad7c39aafaf717",
@@ -2369,7 +2433,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_934befd6d3a3ae52",
@@ -2385,7 +2450,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5ee7750120a1a484",
@@ -2401,7 +2467,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_24df3cf7d07cba5e",
@@ -2417,7 +2484,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_2aebe2b24e44cb52",
@@ -2433,7 +2501,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_08defa20094575d4",
@@ -2449,7 +2518,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0c077d4905ac894a",
@@ -2465,7 +2535,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_53291830cbd414ae",
@@ -2481,7 +2552,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_349c69b02e188ae9",
@@ -2497,7 +2569,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7d24b16d2c315b83",
@@ -2513,7 +2586,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_97338e1aad597071",
@@ -2529,7 +2603,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_b90f63cf4f092fba",
@@ -2545,7 +2620,8 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_63bd58d4a7d5a4ae",
@@ -2561,7 +2637,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ab71bd53439d9468",
@@ -2577,12 +2654,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_02ddff50d7ee1d6a",
             "holder_id": "liam",
-            "subject_id": "jordan_start",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -2593,7 +2671,8 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_38f682cfb9a0a7fa",
@@ -2609,7 +2688,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7a7ec24cb6370ebd",
@@ -2625,7 +2705,8 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_37253219ab4fa39d",
@@ -2641,7 +2722,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -3079,7 +3161,7 @@
         }
       },
       {
-        "id": "sophie_start",
+        "id": "sophie",
         "name": "Sophie",
         "gender": "woman",
         "archetype": "alpha",
@@ -3120,7 +3202,7 @@
         "memories": [
           {
             "id": "mem_a92c6129d566cb0f",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
@@ -3132,11 +3214,12 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_16a2ec52bc1845a0",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -3148,11 +3231,12 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_9f02e6dab40a6cfa",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
@@ -3164,11 +3248,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_41d73d5d3d1d17eb",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
@@ -3180,11 +3265,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_bc825b3dddfc9320",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
@@ -3196,11 +3282,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_999e7136f5d1dcd0",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
@@ -3212,11 +3299,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5fb1de16b30d8370",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
@@ -3228,11 +3316,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a8ed47bf91a7d78a",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
@@ -3244,11 +3333,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_4a9a699add7ae1ae",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
@@ -3260,11 +3350,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_58dfae4928065d9e",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
@@ -3276,11 +3367,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_fc85f250a7a0a1c2",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
@@ -3292,11 +3384,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_aa94dc913f9bdfd7",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
@@ -3308,11 +3401,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5f16d57818c81e43",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
@@ -3324,11 +3418,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_eecd785016eb777a",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
@@ -3340,11 +3435,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_20e705ae89f24b49",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
@@ -3356,11 +3452,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0eb86ab7de0d15de",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -3372,12 +3469,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ba5235aa19fb6ae3",
-            "holder_id": "sophie_start",
-            "subject_id": "jordan_start",
+            "holder_id": "sophie",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -3388,11 +3486,12 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a8609348ddf16836",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
@@ -3404,11 +3503,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_67f9278215ea1eef",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
@@ -3420,11 +3520,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a537d388560727dc",
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
@@ -3436,7 +3537,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -3874,7 +3976,7 @@
         }
       },
       {
-        "id": "nia_start",
+        "id": "nia",
         "name": "Nia",
         "gender": "woman",
         "archetype": "sweetheart",
@@ -3915,7 +4017,7 @@
         "memories": [
           {
             "id": "mem_9190c022112ae2a3",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
@@ -3927,11 +4029,12 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7ecc909791f08b65",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -3943,11 +4046,12 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a8989f68975cce98",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
@@ -3959,11 +4063,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_524054a97292b4db",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
@@ -3975,11 +4080,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_fc51c303f41b440e",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
@@ -3991,11 +4097,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_92cf4da2699046dc",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
@@ -4007,11 +4114,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_93b6dd474187ca73",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
@@ -4023,11 +4131,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_8ee8c8dbc4ec7867",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
@@ -4039,11 +4148,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0645c28386360830",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
@@ -4055,11 +4165,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_334dc0fb63e8ac5f",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
@@ -4071,11 +4182,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7911cfafe44fdcf4",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
@@ -4087,11 +4199,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_db7ca6c2007bd3d0",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
@@ -4103,11 +4216,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_8f29834848ab83a6",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
@@ -4119,11 +4233,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_d28f8849d6ebda6f",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
@@ -4135,11 +4250,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ff4864912823c05c",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
@@ -4151,11 +4267,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_49c561a94ed61eb6",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -4167,12 +4284,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_f8510f5d3ff1d84e",
-            "holder_id": "nia_start",
-            "subject_id": "jordan_start",
+            "holder_id": "nia",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -4183,11 +4301,12 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_7525dffa4b3b5585",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
@@ -4199,11 +4318,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5a9df2ed05ebe335",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
@@ -4215,11 +4335,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_95dd9b53c30d54c3",
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
@@ -4231,7 +4352,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -4669,7 +4791,7 @@
         }
       },
       {
-        "id": "marcus_start",
+        "id": "marcus",
         "name": "Marcus",
         "gender": "man",
         "archetype": "alpha",
@@ -4710,7 +4832,7 @@
         "memories": [
           {
             "id": "mem_3b0100dc648e1ee0",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
@@ -4722,11 +4844,12 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_bb8c89b8963184a5",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -4738,11 +4861,12 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_457328f03cc5abe8",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
@@ -4754,11 +4878,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_4a97a7d6280d52ed",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
@@ -4770,11 +4895,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_fd942d4773fef1d8",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
@@ -4786,11 +4912,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_08c1d9f08f263fa2",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
@@ -4802,11 +4929,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_992840511f600693",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
@@ -4818,11 +4946,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1dc1289721f58526",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
@@ -4834,11 +4963,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_abded58fdfa090b2",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
@@ -4850,11 +4980,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_d8861022a1188f1b",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
@@ -4866,11 +4997,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_e94894fc58a5f28a",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
@@ -4882,11 +5014,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_9817dd101f0dec2e",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
@@ -4898,11 +5031,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c947606953541319",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
@@ -4914,11 +5048,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a4dac0d714c9e5ef",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
@@ -4930,11 +5065,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_4a5dec11539816c7",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
@@ -4946,11 +5082,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0082bc96cee2449b",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -4962,12 +5099,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_3745235ddba6eb1f",
-            "holder_id": "marcus_start",
-            "subject_id": "jordan_start",
+            "holder_id": "marcus",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -4978,11 +5116,12 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a9d7add62baad326",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
@@ -4994,11 +5133,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_2d8abf1175e17f76",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
@@ -5010,11 +5150,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_36d65d58a9445dae",
-            "holder_id": "marcus_start",
+            "holder_id": "marcus",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
@@ -5026,7 +5167,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -5464,7 +5606,7 @@
         }
       },
       {
-        "id": "blake_start",
+        "id": "blake",
         "name": "Blake",
         "gender": "man",
         "archetype": "friend",
@@ -5505,7 +5647,7 @@
         "memories": [
           {
             "id": "mem_7f3b3a65a473d869",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
@@ -5517,11 +5659,12 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_48ebb88b9d689f14",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -5533,11 +5676,12 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1e04265ce0bd9ff9",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
@@ -5549,11 +5693,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1306bd909e50368d",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
@@ -5565,11 +5710,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_dd30a3db250c6e73",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
@@ -5581,11 +5727,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_5326798b5c98156d",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
@@ -5597,11 +5744,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_ecfc4ecb8c6fca38",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
@@ -5613,11 +5761,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_9af48595ecd33d78",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
@@ -5629,11 +5778,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1f87e0b13caa9708",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
@@ -5645,11 +5795,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_85fd703d893f7d85",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
@@ -5661,11 +5812,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_358e0a05cfdea476",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
@@ -5677,11 +5829,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_8806b6cfa314adbf",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
@@ -5693,11 +5846,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_fcfdf89c970b9421",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
@@ -5709,11 +5863,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_1381c67fd212d911",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
@@ -5725,11 +5880,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_bc39557f38af44e1",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
@@ -5741,11 +5897,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_05b20e1392599ac6",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -5757,12 +5914,13 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_a686056bcb6891cc",
-            "holder_id": "blake_start",
-            "subject_id": "jordan_start",
+            "holder_id": "blake",
+            "subject_id": "jordan",
             "content": "Heart Out: jordan_start leaves Sunset Bay.",
             "source": "witnessed",
             "source_id": null,
@@ -5773,11 +5931,12 @@
               "ceremony",
               "elimination"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_990db7da3a7f1740",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
@@ -5789,11 +5948,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c2902cd277d49d64",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Lie Detector ended in partial (7 pts).",
             "source": "witnessed",
@@ -5805,11 +5965,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_daf49d86283a045c",
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for Flush of Hearts.",
             "source": "witnessed",
@@ -5821,7 +5982,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -6259,7 +6421,7 @@
         }
       },
       {
-        "id": "jordan_start",
+        "id": "jordan",
         "name": "Jordan",
         "gender": "man",
         "archetype": "joker",
@@ -6300,7 +6462,7 @@
         "memories": [
           {
             "id": "mem_28be1941a8e6b046",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "player",
             "content": "I properly met the player during Day One intros and got a real first read.",
             "source": "direct",
@@ -6312,11 +6474,12 @@
               "day_one",
               "intro"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_34fb148fe58b47e3",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
@@ -6328,11 +6491,12 @@
               "ceremony",
               "recoupling"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_dcc8f69980514a74",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
@@ -6344,11 +6508,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_8210ecd5eef6232a",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
@@ -6360,11 +6525,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_0b864fb17bb96c9d",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for welcome.",
             "source": "witnessed",
@@ -6376,11 +6542,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c582895dd3ddf6d3",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
@@ -6392,11 +6559,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_f752f20ad02ac779",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
@@ -6408,11 +6576,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_39e8cc125dc4f693",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
@@ -6424,11 +6593,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_455067df2e777be7",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for group date invite.",
             "source": "witnessed",
@@ -6440,11 +6610,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_835d88e78e5e8c60",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
@@ -6456,11 +6627,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_afc20c31cb72c785",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
@@ -6472,11 +6644,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_c9ddae190c1ba0fd",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
@@ -6488,11 +6661,12 @@
               "ceremony",
               "challenge"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_d99bfae61a09b787",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for coupling warning.",
             "source": "witnessed",
@@ -6504,11 +6678,12 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_52e0523f9433fccb",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
@@ -6520,11 +6695,12 @@
               "ceremony",
               "producer_text"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           },
           {
             "id": "mem_4d07202c8c975cac",
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "Everyone is called to the firepit for a Pairing Ceremony.",
             "source": "witnessed",
@@ -6536,7 +6712,8 @@
               "ceremony",
               "gather_scheduled"
             ],
-            "durable": true
+            "durable": true,
+            "mentioned_subject_ids": []
           }
         ],
         "trait_card": {
@@ -6993,7 +7170,7 @@
         "rebound": false
       },
       {
-        "partner_a_id": "marcus_start",
+        "partner_a_id": "marcus",
         "partner_b_id": "maya",
         "formed_on_day": 3,
         "formed_via": "ceremony",
@@ -7003,7 +7180,7 @@
       },
       {
         "partner_a_id": "liam",
-        "partner_b_id": "sophie_start",
+        "partner_b_id": "sophie",
         "formed_on_day": 3,
         "formed_via": "ceremony",
         "has_used_hideaway": false,
@@ -7011,8 +7188,8 @@
         "rebound": false
       },
       {
-        "partner_a_id": "blake_start",
-        "partner_b_id": "nia_start",
+        "partner_a_id": "blake",
+        "partner_b_id": "nia",
         "formed_on_day": 3,
         "formed_via": "ceremony",
         "has_used_hideaway": false,
@@ -7026,11 +7203,11 @@
       "chloe",
       "maya",
       "liam",
-      "sophie_start",
-      "nia_start",
-      "marcus_start",
-      "blake_start",
-      "jordan_start"
+      "sophie",
+      "nia",
+      "marcus",
+      "blake",
+      "jordan"
     ],
     "intro_memory_created": true,
     "active_conversation": null,
@@ -7059,7 +7236,7 @@
             "rank": 1,
             "couple": [
               "maya",
-              "marcus_start"
+              "marcus"
             ],
             "score": 50,
             "is_player_couple": false
@@ -7067,8 +7244,8 @@
           {
             "rank": 2,
             "couple": [
-              "nia_start",
-              "blake_start"
+              "nia",
+              "blake"
             ],
             "score": 50,
             "is_player_couple": false
@@ -7076,7 +7253,7 @@
           {
             "rank": 3,
             "couple": [
-              "sophie_start",
+              "sophie",
               "liam"
             ],
             "score": 50,
@@ -7100,7 +7277,7 @@
             "rank": 1,
             "couple": [
               "maya",
-              "marcus_start"
+              "marcus"
             ],
             "score": 50,
             "is_player_couple": false
@@ -7108,8 +7285,8 @@
           {
             "rank": 2,
             "couple": [
-              "nia_start",
-              "blake_start"
+              "nia",
+              "blake"
             ],
             "score": 50,
             "is_player_couple": false
@@ -7117,7 +7294,7 @@
           {
             "rank": 3,
             "couple": [
-              "sophie_start",
+              "sophie",
               "liam"
             ],
             "score": 50,
@@ -7157,7 +7334,7 @@
           {
             "id": "cq_blake_start_age",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "age",
             "tier": 1,
             "mechanical": true,
@@ -7173,7 +7350,7 @@
           {
             "id": "cq_blake_start_biggest_fear",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "biggest_fear",
             "tier": 3,
             "mechanical": true,
@@ -7189,7 +7366,7 @@
           {
             "id": "cq_blake_start_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "drink_of_choice",
             "tier": 2,
             "mechanical": true,
@@ -7205,7 +7382,7 @@
           {
             "id": "cq_blake_start_favorite_food",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "favorite_food",
             "tier": 2,
             "mechanical": true,
@@ -7221,7 +7398,7 @@
           {
             "id": "cq_blake_start_hidden_secret",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
@@ -7237,7 +7414,7 @@
           {
             "id": "cq_blake_start_hobby",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "hobby",
             "tier": 2,
             "mechanical": true,
@@ -7253,7 +7430,7 @@
           {
             "id": "cq_blake_start_hometown",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "hometown",
             "tier": 1,
             "mechanical": true,
@@ -7269,7 +7446,7 @@
           {
             "id": "cq_blake_start_insecurity",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "insecurity",
             "tier": 4,
             "mechanical": true,
@@ -7285,7 +7462,7 @@
           {
             "id": "cq_blake_start_love_language",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "love_language",
             "tier": 3,
             "mechanical": true,
@@ -7301,7 +7478,7 @@
           {
             "id": "cq_blake_start_occupation",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "occupation",
             "tier": 1,
             "mechanical": true,
@@ -7317,7 +7494,7 @@
           {
             "id": "cq_blake_start_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "past_heartbreak",
             "tier": 4,
             "mechanical": true,
@@ -7333,7 +7510,7 @@
           {
             "id": "cq_blake_start_pet_peeve",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "pet_peeve",
             "tier": 3,
             "mechanical": true,
@@ -7349,7 +7526,7 @@
           {
             "id": "cq_blake_start_worst_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "worst_habit",
             "tier": 3,
             "mechanical": true,
@@ -7365,7 +7542,7 @@
           {
             "id": "cq_blake_start_comfort_show",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "comfort_show",
             "tier": 0,
             "mechanical": false,
@@ -7377,7 +7554,7 @@
           {
             "id": "cq_blake_start_karaoke_song",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "karaoke_song",
             "tier": 0,
             "mechanical": false,
@@ -7389,7 +7566,7 @@
           {
             "id": "cq_blake_start_keepsake",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "keepsake",
             "tier": 0,
             "mechanical": false,
@@ -7401,7 +7578,7 @@
           {
             "id": "cq_blake_start_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "rainy_day_habit",
             "tier": 0,
             "mechanical": false,
@@ -7413,7 +7590,7 @@
           {
             "id": "cq_blake_start_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "unexpected_skill",
             "tier": 0,
             "mechanical": false,
@@ -7425,7 +7602,7 @@
           {
             "id": "cq_blake_start_villa_tell",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "blake_start",
+            "target_id": "blake",
             "trait_key": "villa_tell",
             "tier": 0,
             "mechanical": false,
@@ -7717,7 +7894,7 @@
           {
             "id": "cq_jordan_start_age",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "age",
             "tier": 1,
             "mechanical": true,
@@ -7733,7 +7910,7 @@
           {
             "id": "cq_jordan_start_biggest_fear",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "biggest_fear",
             "tier": 3,
             "mechanical": true,
@@ -7749,7 +7926,7 @@
           {
             "id": "cq_jordan_start_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "drink_of_choice",
             "tier": 2,
             "mechanical": true,
@@ -7765,7 +7942,7 @@
           {
             "id": "cq_jordan_start_favorite_food",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "favorite_food",
             "tier": 2,
             "mechanical": true,
@@ -7781,7 +7958,7 @@
           {
             "id": "cq_jordan_start_hidden_secret",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
@@ -7797,7 +7974,7 @@
           {
             "id": "cq_jordan_start_hobby",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "hobby",
             "tier": 2,
             "mechanical": true,
@@ -7813,7 +7990,7 @@
           {
             "id": "cq_jordan_start_hometown",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "hometown",
             "tier": 1,
             "mechanical": true,
@@ -7829,7 +8006,7 @@
           {
             "id": "cq_jordan_start_insecurity",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "insecurity",
             "tier": 4,
             "mechanical": true,
@@ -7845,7 +8022,7 @@
           {
             "id": "cq_jordan_start_love_language",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "love_language",
             "tier": 3,
             "mechanical": true,
@@ -7861,7 +8038,7 @@
           {
             "id": "cq_jordan_start_occupation",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "occupation",
             "tier": 1,
             "mechanical": true,
@@ -7877,7 +8054,7 @@
           {
             "id": "cq_jordan_start_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "past_heartbreak",
             "tier": 4,
             "mechanical": true,
@@ -7893,7 +8070,7 @@
           {
             "id": "cq_jordan_start_pet_peeve",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "pet_peeve",
             "tier": 3,
             "mechanical": true,
@@ -7909,7 +8086,7 @@
           {
             "id": "cq_jordan_start_worst_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "worst_habit",
             "tier": 3,
             "mechanical": true,
@@ -7925,7 +8102,7 @@
           {
             "id": "cq_jordan_start_comfort_show",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "comfort_show",
             "tier": 0,
             "mechanical": false,
@@ -7937,7 +8114,7 @@
           {
             "id": "cq_jordan_start_karaoke_song",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "karaoke_song",
             "tier": 0,
             "mechanical": false,
@@ -7949,7 +8126,7 @@
           {
             "id": "cq_jordan_start_keepsake",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "keepsake",
             "tier": 0,
             "mechanical": false,
@@ -7961,7 +8138,7 @@
           {
             "id": "cq_jordan_start_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "rainy_day_habit",
             "tier": 0,
             "mechanical": false,
@@ -7973,7 +8150,7 @@
           {
             "id": "cq_jordan_start_signature_dance_move",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "signature_dance_move",
             "tier": 0,
             "mechanical": false,
@@ -7985,7 +8162,7 @@
           {
             "id": "cq_jordan_start_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "unexpected_skill",
             "tier": 0,
             "mechanical": false,
@@ -7997,7 +8174,7 @@
           {
             "id": "cq_jordan_start_villa_tell",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "jordan_start",
+            "target_id": "jordan",
             "trait_key": "villa_tell",
             "tier": 0,
             "mechanical": false,
@@ -8289,7 +8466,7 @@
           {
             "id": "cq_marcus_start_age",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "age",
             "tier": 1,
             "mechanical": true,
@@ -8305,7 +8482,7 @@
           {
             "id": "cq_marcus_start_biggest_fear",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "biggest_fear",
             "tier": 3,
             "mechanical": true,
@@ -8321,7 +8498,7 @@
           {
             "id": "cq_marcus_start_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "drink_of_choice",
             "tier": 2,
             "mechanical": true,
@@ -8337,7 +8514,7 @@
           {
             "id": "cq_marcus_start_favorite_food",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "favorite_food",
             "tier": 2,
             "mechanical": true,
@@ -8353,7 +8530,7 @@
           {
             "id": "cq_marcus_start_hidden_secret",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
@@ -8369,7 +8546,7 @@
           {
             "id": "cq_marcus_start_hobby",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "hobby",
             "tier": 2,
             "mechanical": true,
@@ -8385,7 +8562,7 @@
           {
             "id": "cq_marcus_start_hometown",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "hometown",
             "tier": 1,
             "mechanical": true,
@@ -8401,7 +8578,7 @@
           {
             "id": "cq_marcus_start_insecurity",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "insecurity",
             "tier": 4,
             "mechanical": true,
@@ -8417,7 +8594,7 @@
           {
             "id": "cq_marcus_start_love_language",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "love_language",
             "tier": 3,
             "mechanical": true,
@@ -8433,7 +8610,7 @@
           {
             "id": "cq_marcus_start_occupation",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "occupation",
             "tier": 1,
             "mechanical": true,
@@ -8449,7 +8626,7 @@
           {
             "id": "cq_marcus_start_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "past_heartbreak",
             "tier": 4,
             "mechanical": true,
@@ -8465,7 +8642,7 @@
           {
             "id": "cq_marcus_start_pet_peeve",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "pet_peeve",
             "tier": 3,
             "mechanical": true,
@@ -8481,7 +8658,7 @@
           {
             "id": "cq_marcus_start_worst_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "worst_habit",
             "tier": 3,
             "mechanical": true,
@@ -8497,7 +8674,7 @@
           {
             "id": "cq_marcus_start_comfort_show",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "comfort_show",
             "tier": 0,
             "mechanical": false,
@@ -8509,7 +8686,7 @@
           {
             "id": "cq_marcus_start_karaoke_song",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "karaoke_song",
             "tier": 0,
             "mechanical": false,
@@ -8521,7 +8698,7 @@
           {
             "id": "cq_marcus_start_keepsake",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "keepsake",
             "tier": 0,
             "mechanical": false,
@@ -8533,7 +8710,7 @@
           {
             "id": "cq_marcus_start_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "rainy_day_habit",
             "tier": 0,
             "mechanical": false,
@@ -8545,7 +8722,7 @@
           {
             "id": "cq_marcus_start_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "unexpected_skill",
             "tier": 0,
             "mechanical": false,
@@ -8557,7 +8734,7 @@
           {
             "id": "cq_marcus_start_villa_tell",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "marcus_start",
+            "target_id": "marcus",
             "trait_key": "villa_tell",
             "tier": 0,
             "mechanical": false,
@@ -8849,7 +9026,7 @@
           {
             "id": "cq_nia_start_age",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "age",
             "tier": 1,
             "mechanical": true,
@@ -8865,7 +9042,7 @@
           {
             "id": "cq_nia_start_biggest_fear",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "biggest_fear",
             "tier": 3,
             "mechanical": true,
@@ -8881,7 +9058,7 @@
           {
             "id": "cq_nia_start_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "drink_of_choice",
             "tier": 2,
             "mechanical": true,
@@ -8897,7 +9074,7 @@
           {
             "id": "cq_nia_start_favorite_food",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "favorite_food",
             "tier": 2,
             "mechanical": true,
@@ -8913,7 +9090,7 @@
           {
             "id": "cq_nia_start_hidden_secret",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
@@ -8929,7 +9106,7 @@
           {
             "id": "cq_nia_start_hobby",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "hobby",
             "tier": 2,
             "mechanical": true,
@@ -8945,7 +9122,7 @@
           {
             "id": "cq_nia_start_hometown",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "hometown",
             "tier": 1,
             "mechanical": true,
@@ -8961,7 +9138,7 @@
           {
             "id": "cq_nia_start_insecurity",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "insecurity",
             "tier": 4,
             "mechanical": true,
@@ -8977,7 +9154,7 @@
           {
             "id": "cq_nia_start_love_language",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "love_language",
             "tier": 3,
             "mechanical": true,
@@ -8993,7 +9170,7 @@
           {
             "id": "cq_nia_start_occupation",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "occupation",
             "tier": 1,
             "mechanical": true,
@@ -9009,7 +9186,7 @@
           {
             "id": "cq_nia_start_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "past_heartbreak",
             "tier": 4,
             "mechanical": true,
@@ -9025,7 +9202,7 @@
           {
             "id": "cq_nia_start_pet_peeve",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "pet_peeve",
             "tier": 3,
             "mechanical": true,
@@ -9041,7 +9218,7 @@
           {
             "id": "cq_nia_start_worst_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "worst_habit",
             "tier": 3,
             "mechanical": true,
@@ -9057,7 +9234,7 @@
           {
             "id": "cq_nia_start_comfort_show",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "comfort_show",
             "tier": 0,
             "mechanical": false,
@@ -9069,7 +9246,7 @@
           {
             "id": "cq_nia_start_karaoke_song",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "karaoke_song",
             "tier": 0,
             "mechanical": false,
@@ -9081,7 +9258,7 @@
           {
             "id": "cq_nia_start_keepsake",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "keepsake",
             "tier": 0,
             "mechanical": false,
@@ -9093,7 +9270,7 @@
           {
             "id": "cq_nia_start_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "rainy_day_habit",
             "tier": 0,
             "mechanical": false,
@@ -9105,7 +9282,7 @@
           {
             "id": "cq_nia_start_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "unexpected_skill",
             "tier": 0,
             "mechanical": false,
@@ -9117,7 +9294,7 @@
           {
             "id": "cq_nia_start_villa_tell",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "nia_start",
+            "target_id": "nia",
             "trait_key": "villa_tell",
             "tier": 0,
             "mechanical": false,
@@ -9129,7 +9306,7 @@
           {
             "id": "cq_sophie_start_age",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "age",
             "tier": 1,
             "mechanical": true,
@@ -9145,7 +9322,7 @@
           {
             "id": "cq_sophie_start_biggest_fear",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "biggest_fear",
             "tier": 3,
             "mechanical": true,
@@ -9161,7 +9338,7 @@
           {
             "id": "cq_sophie_start_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "drink_of_choice",
             "tier": 2,
             "mechanical": true,
@@ -9177,7 +9354,7 @@
           {
             "id": "cq_sophie_start_favorite_food",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "favorite_food",
             "tier": 2,
             "mechanical": true,
@@ -9193,7 +9370,7 @@
           {
             "id": "cq_sophie_start_hidden_secret",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
@@ -9209,7 +9386,7 @@
           {
             "id": "cq_sophie_start_hobby",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "hobby",
             "tier": 2,
             "mechanical": true,
@@ -9225,7 +9402,7 @@
           {
             "id": "cq_sophie_start_hometown",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "hometown",
             "tier": 1,
             "mechanical": true,
@@ -9241,7 +9418,7 @@
           {
             "id": "cq_sophie_start_insecurity",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "insecurity",
             "tier": 4,
             "mechanical": true,
@@ -9257,7 +9434,7 @@
           {
             "id": "cq_sophie_start_love_language",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "love_language",
             "tier": 3,
             "mechanical": true,
@@ -9273,7 +9450,7 @@
           {
             "id": "cq_sophie_start_occupation",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "occupation",
             "tier": 1,
             "mechanical": true,
@@ -9289,7 +9466,7 @@
           {
             "id": "cq_sophie_start_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "past_heartbreak",
             "tier": 4,
             "mechanical": true,
@@ -9305,7 +9482,7 @@
           {
             "id": "cq_sophie_start_pet_peeve",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "pet_peeve",
             "tier": 3,
             "mechanical": true,
@@ -9321,7 +9498,7 @@
           {
             "id": "cq_sophie_start_worst_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "worst_habit",
             "tier": 3,
             "mechanical": true,
@@ -9337,7 +9514,7 @@
           {
             "id": "cq_sophie_start_comfort_show",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "comfort_show",
             "tier": 0,
             "mechanical": false,
@@ -9349,7 +9526,7 @@
           {
             "id": "cq_sophie_start_karaoke_song",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "karaoke_song",
             "tier": 0,
             "mechanical": false,
@@ -9361,7 +9538,7 @@
           {
             "id": "cq_sophie_start_keepsake",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "keepsake",
             "tier": 0,
             "mechanical": false,
@@ -9373,7 +9550,7 @@
           {
             "id": "cq_sophie_start_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "rainy_day_habit",
             "tier": 0,
             "mechanical": false,
@@ -9385,7 +9562,7 @@
           {
             "id": "cq_sophie_start_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "unexpected_skill",
             "tier": 0,
             "mechanical": false,
@@ -9397,7 +9574,7 @@
           {
             "id": "cq_sophie_start_villa_tell",
             "minigame_kind": "compatibility_quiz",
-            "target_id": "sophie_start",
+            "target_id": "sophie",
             "trait_key": "villa_tell",
             "tier": 0,
             "mechanical": false,
@@ -9439,7 +9616,7 @@
         "day": 1,
         "items": [
           {
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "emotional_weight": 5,
@@ -9449,7 +9626,7 @@
             ]
           },
           {
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "emotional_weight": 5,
@@ -9479,7 +9656,7 @@
             ]
           },
           {
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "The Pairing Ceremony locks in the next couples.",
             "emotional_weight": 5,
@@ -9514,7 +9691,7 @@
             ]
           },
           {
-            "holder_id": "sophie_start",
+            "holder_id": "sophie",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "emotional_weight": 5,
@@ -9534,7 +9711,7 @@
             ]
           },
           {
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "Pulse Race tested Charm and is still pending.",
             "emotional_weight": 5,
@@ -9559,7 +9736,7 @@
             ]
           },
           {
-            "holder_id": "blake_start",
+            "holder_id": "blake",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,
@@ -9579,7 +9756,7 @@
             ]
           },
           {
-            "holder_id": "nia_start",
+            "holder_id": "nia",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,
@@ -9589,7 +9766,7 @@
             ]
           },
           {
-            "holder_id": "jordan_start",
+            "holder_id": "jordan",
             "subject_id": "villa",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "emotional_weight": 5,

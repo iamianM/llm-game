@@ -24,11 +24,11 @@ def starting_islanders() -> list[IslanderState]:
         _islander("chloe", "Chloe", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.POOL, 10, (7, 6, 9, 8, 4), AttachmentStyle.SECURE, "warm smiles and kind eyes", ["warm", "confident"], ["loyalty", "honesty"], ["arrogance"]),
         _islander("maya", "Maya", Gender.WOMAN, "joker", backstories, trait_cards, Location.KITCHEN, 8, (8, 5, 9, 5, 6), AttachmentStyle.ANXIOUS, "expressive people with bright energy", ["funny", "attentive"], ["humor", "attention"], ["neglect"]),
         _islander("liam", "Liam", Gender.MAN, "friend", backstories, trait_cards, Location.TERRACE, 6, (5, 8, 6, 7, 3), AttachmentStyle.SECURE, "grounded and easygoing", ["steady", "thoughtful"], ["steadiness", "depth"], ["flakiness"]),
-        _islander("sophie_start", "Sophie", Gender.WOMAN, "alpha", backstories, trait_cards, Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
-        _islander("nia_start", "Nia", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
-        _islander("marcus_start", "Marcus", Gender.MAN, "alpha", backstories, trait_cards, Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
-        _islander("blake_start", "Blake", Gender.MAN, "friend", backstories, trait_cards, Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
-        _islander("jordan_start", "Jordan", Gender.MAN, "joker", backstories, trait_cards, Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
+        _islander("sophie", "Sophie", Gender.WOMAN, "alpha", backstories, trait_cards, Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
+        _islander("nia", "Nia", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
+        _islander("marcus", "Marcus", Gender.MAN, "alpha", backstories, trait_cards, Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
+        _islander("blake", "Blake", Gender.MAN, "friend", backstories, trait_cards, Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
+        _islander("jordan", "Jordan", Gender.MAN, "joker", backstories, trait_cards, Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
     ]
     _seed_npc_known_facts(cast)
     return cast

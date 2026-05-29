@@ -188,12 +188,12 @@ def _casa_cast() -> list[IslanderState]:
     backstories = index.backstories
     content = index.casa_amor_cast
     return [
-        _casa(content["blake"], backstories, 9, "secure", Location.CASA_POOL),
-        _casa(content["jordan"], backstories, 7, "anxious", Location.CASA_KITCHEN),
-        _casa(content["marcus"], backstories, 10, "avoidant", Location.CASA_TERRACE),
-        _casa(content["sophie"], backstories, 8, "secure", Location.CASA_POOL),
+        _casa(content["beau"], backstories, 9, "secure", Location.CASA_POOL),
+        _casa(content["jules"], backstories, 7, "anxious", Location.CASA_KITCHEN),
+        _casa(content["mateo"], backstories, 10, "avoidant", Location.CASA_TERRACE),
+        _casa(content["sasha"], backstories, 8, "secure", Location.CASA_POOL),
         _casa(content["zara"], backstories, 12, "avoidant", Location.CASA_KITCHEN),
-        _casa(content["nia"], backstories, 6, "anxious", Location.CASA_TERRACE),
+        _casa(content["noor"], backstories, 6, "anxious", Location.CASA_TERRACE),
     ]
 
 
@@ -229,7 +229,7 @@ def _casa(
 
 def _casa_trait_card(islander_id: str) -> TraitCard:
     cards = list(heart_throb_trait_cards().values())
-    index_by_id = {"blake": 0, "jordan": 1, "marcus": 2, "sophie": 3, "zara": 1, "nia": 2}
+    index_by_id = {"beau": 0, "jules": 1, "mateo": 2, "sasha": 3, "zara": 1, "noor": 2}
     return cards[index_by_id.get(islander_id, 0)]
 
 

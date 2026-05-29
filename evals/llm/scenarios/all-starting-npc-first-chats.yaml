@@ -9,29 +9,29 @@ initial_relationships:
     affection: 20
     trust: 10
     friendship: 10
-  jordan_start:
+  jordan:
     affection: 18
     friendship: 18
   maya:
     affection: 25
     chemistry: 10
     friendship: 15
-  marcus_start:
+  marcus:
     affection: 20
     friendship: 20
   liam:
     affection: 45
     trust: 20
     friendship: 20
-  nia_start:
+  nia:
     affection: 20
     trust: 15
     friendship: 15
-  sophie_start:
+  sophie:
     affection: 25
     chemistry: 10
     trust: 10
-  blake_start:
+  blake:
     affection: 20
     friendship: 20
 judge_context:
@@ -102,10 +102,10 @@ turns:
   - id: chat-jordan
     arrange_player_location: pool
     arrange_npc_locations:
-      jordan_start: pool
+      jordan: pool
     action:
       kind: start_conversation
-      target_id: jordan_start
+      target_id: jordan
       intent_id: bromance_check_in
     golden: >
       A bro-energy pool check-in. Jordan is the anxious joker — under the
@@ -138,7 +138,7 @@ turns:
   - id: move-kitchen
     arrange_npc_locations:
       maya: kitchen
-      marcus_start: kitchen
+      marcus: kitchen
     action:
       kind: move
       target_id: kitchen
@@ -146,7 +146,7 @@ turns:
       The player walks into the kitchen; Maya and Marcus are now in earshot.
     checks:
       - location_is:kitchen
-      - visible_targets_include:maya,marcus_start
+      - visible_targets_include:maya,marcus
   - id: chat-maya
     arrange_player_location: kitchen
     arrange_npc_locations:
@@ -188,10 +188,10 @@ turns:
   - id: chat-marcus
     arrange_player_location: kitchen
     arrange_npc_locations:
-      marcus_start: kitchen
+      marcus: kitchen
     action:
       kind: start_conversation
-      target_id: marcus_start
+      target_id: marcus
       intent_id: bromance_rib
     golden: >
       A light ribbing between two guys. Marcus is the confident heartthrob —
@@ -224,7 +224,7 @@ turns:
   - id: move-terrace
     arrange_npc_locations:
       liam: terrace
-      nia_start: terrace
+      nia: terrace
     action:
       kind: move
       target_id: terrace
@@ -232,7 +232,7 @@ turns:
       The player walks to the terrace; Liam and Nia are now in earshot.
     checks:
       - location_is:terrace
-      - visible_targets_include:liam,nia_start
+      - visible_targets_include:liam,nia
   - id: chat-liam
     arrange_player_location: terrace
     arrange_npc_locations:
@@ -272,10 +272,10 @@ turns:
   - id: chat-nia
     arrange_player_location: terrace
     arrange_npc_locations:
-      nia_start: terrace
+      nia: terrace
     action:
       kind: start_conversation
-      target_id: nia_start
+      target_id: nia
       intent_id: friendly_compliment_personality
     golden: >
       A genuine personality compliment, returned with grace. Nia is the
@@ -307,8 +307,8 @@ turns:
     judge_checks: *memory_judges
   - id: move-bedroom
     arrange_npc_locations:
-      sophie_start: bedroom
-      blake_start: bedroom
+      sophie: bedroom
+      blake: bedroom
     action:
       kind: move
       target_id: bedroom
@@ -316,14 +316,14 @@ turns:
       The player walks into the bedroom; Sophie and Blake are visible.
     checks:
       - location_is:bedroom
-      - visible_targets_include:sophie_start,blake_start
+      - visible_targets_include:sophie,blake
   - id: chat-sophie
     arrange_player_location: bedroom
     arrange_npc_locations:
-      sophie_start: bedroom
+      sophie: bedroom
     action:
       kind: start_conversation
-      target_id: sophie_start
+      target_id: sophie
       intent_id: banter_playful_roast
     golden: >
       Playful social sparring in the bedroom doorway. Sophie is the polished
@@ -356,10 +356,10 @@ turns:
   - id: chat-blake
     arrange_player_location: bedroom
     arrange_npc_locations:
-      blake_start: bedroom
+      blake: bedroom
     action:
       kind: start_conversation
-      target_id: blake_start
+      target_id: blake
       intent_id: bromance_share_strategy
     golden: >
       A quiet read-the-room conversation. Blake is the dry observer — he

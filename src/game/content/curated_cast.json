@@ -509,7 +509,7 @@
       }
     },
     {
-      "slot_id": "sophie_start",
+      "slot_id": "sophie",
       "name": "Sophie",
       "archetype": "alpha",
       "gender": "woman",
@@ -678,7 +678,7 @@
       }
     },
     {
-      "slot_id": "nia_start",
+      "slot_id": "nia",
       "name": "Nia",
       "archetype": "sweetheart",
       "gender": "woman",
@@ -847,7 +847,7 @@
       }
     },
     {
-      "slot_id": "marcus_start",
+      "slot_id": "marcus",
       "name": "Marcus",
       "archetype": "alpha",
       "gender": "man",
@@ -1016,7 +1016,7 @@
       }
     },
     {
-      "slot_id": "blake_start",
+      "slot_id": "blake",
       "name": "Blake",
       "archetype": "friend",
       "gender": "man",
@@ -1185,7 +1185,7 @@
       }
     },
     {
-      "slot_id": "jordan_start",
+      "slot_id": "jordan",
       "name": "Jordan",
       "archetype": "joker",
       "gender": "man",
