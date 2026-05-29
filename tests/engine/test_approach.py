@@ -205,8 +205,8 @@ def test_approach_response_labels_are_clean_and_named() -> None:
     internal tags like ``(wants_to_chat, keen)`` or ``(polite)``. We assert the
     serialized AvailableAction labels (what the web renders), not the raw spec.
     """
-    from src.game.engine.actions import available_actions
     from src.api.serializers import available_action
+    from src.game.engine.actions import available_actions
 
     engage_by_reason = {
         "wants_to_chat": "Welcome Chloe over for a chat",

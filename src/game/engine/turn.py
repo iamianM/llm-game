@@ -47,8 +47,8 @@ from src.game.engine.memory import add_memory_batch, remember_ceremony_events
 from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.pull_turn import pull_rejected_result, remember_pull_rejection
-from src.game.engine.state_access import display_name, player_display_name
 from src.game.engine.rules import EXIT_INTENT_KINDS, MechanicalResult, apply_action
+from src.game.engine.state_access import display_name, player_display_name
 from src.game.engine.time_budget import check_auto_advance, deduct_time
 from src.game.engine.turn_autonomy import apply_villa_turn
 from src.game.engine.turn_curator import (

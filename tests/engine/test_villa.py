@@ -14,7 +14,13 @@ from src.game.agents.villa_orchestrator import (
 )
 from src.game.engine.turn_autonomy import apply_villa_turn
 from src.game.engine.villa import apply_villa_update, normalize_villa_update, validate_villa_update
-from src.game.state.models import Location, NPCNPCConversation, PendingGather, new_game
+from src.game.state.models import (
+    GameState,
+    Location,
+    NPCNPCConversation,
+    PendingGather,
+    new_game,
+)
 from src.game.state.rng import SeededRng
 
 
@@ -351,8 +357,8 @@ def test_apply_villa_turn_drops_summon_that_conflicts_with_movement() -> None:
     """If the orchestrator validly moves the active partner the same turn a summon
     for that partner is queued, the combined update is invalid ("cannot summon and
     move the same NPC"). Keep the valid movement and drop the summon — never crash."""
-    from src.game.state.autonomy import PendingNPCSummon
     from src.game.engine.conversation import start_conversation
+    from src.game.state.autonomy import PendingNPCSummon
 
     state = new_game(1)
     maya = next(islander for islander in state.islanders if islander.id == "maya")
