@@ -207,18 +207,31 @@ def _name_for(state: GameState, actor_id: str | None) -> str:
     return actor_id
 
 
-def _player_name(state: GameState) -> str:
-    """Third-person name for the human player.
+def _player_has_name(state: GameState) -> bool:
+    """True when the session set a real player name (not the "You" placeholder).
 
-    The Event Narrator writes in third person, so the player is named like any
-    other islander. Fall back to a neutral in-world label only when the session
-    never set a name — never the meta phrase "the player" or second-person
-    "you", both of which break the narrator voice.
+    Real play routes through the character creator, which always supplies a
+    name; only quick-start sessions and placeholder checkpoints leave the
+    default "You" in place.
+    """
+    name = (getattr(state.player, "name", "") or "").strip()
+    return bool(name) and name.lower() != "you"
+
+
+def _player_name(state: GameState) -> str:
+    """How the narrator should refer to the human player in prose.
+
+    When the player set a real name, the Event Narrator names them in third
+    person like any other islander. When no name was set, address them in
+    SECOND PERSON ("you") — consistent with the daily recap, natural for a beat
+    shown to the player, and impossible to garble into a hallucinated name the
+    way the old abstract label "the islander" was (gpt-5-nano once rendered it
+    as "Eq stands beside Chloe").
     """
     name = (getattr(state.player, "name", "") or "").strip()
     if name and name.lower() != "you":
         return name
-    return "the islander"
+    return "you"
 
 
 def _event_label(kind: str) -> str:
@@ -240,13 +253,29 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         + (f" (about {_name_for(state, event.islander_id)})" if event.islander_id else " (no named islander)")
         for event in events
     )
+    named = _player_has_name(state)
     player = _player_name(state)
+    if named:
+        contestant_rule = (
+            f"- The human contestant is named {player}; refer to them as {player} "
+            '(third person), never "the player" or "you".'
+        )
+        possessive = f"{player}'s"
+        subject = player
+    else:
+        contestant_rule = (
+            "- The human contestant is the reader. Address them in SECOND PERSON "
+            'as "you"/"your" — never invent a name for them and never call them '
+            '"the player" or "the islander".'
+        )
+        possessive = "your"
+        subject = "you"
     semantics = [
-        f"- The human contestant is named {player}; refer to them as {player} (third person), never \"the player\" or \"you\".",
-        f"- recouple_proposal rejected means the target did not accept {player}'s proposal.",
+        contestant_rule,
+        f"- recouple_proposal rejected means the target did not accept {possessive} proposal.",
         "- npc_proposal_incoming means a pending ask, not an accepted recoupling or couple change.",
-        f"- recoupling narration should name {player}'s partner when the current couple is known.",
-        f"- hideaway means {player} and the named partner leave for a private suite beat.",
+        f"- recoupling narration should name {possessive} partner when the current couple is known.",
+        f"- hideaway means {subject} and the named partner leave for a private suite beat.",
     ]
     event_kinds = {event.kind for event in events}
     if "hideaway" in event_kinds and "gather_scheduled" in event_kinds:
@@ -271,14 +300,24 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     minigame_block = _render_minigame_details(state)
     if minigame_block:
         sections.append(minigame_block)
+    if named:
+        contestant_voice = (
+            f"Refer to the human contestant as {player} and to everyone else by "
+            "the names given in the context above, all in third person."
+        )
+    else:
+        contestant_voice = (
+            "Refer to the human contestant in SECOND PERSON (\"you\"/\"your\") and "
+            "to everyone else by the names given in the context above, in third "
+            "person. Do not invent a name for the contestant."
+        )
     sections.append("Narrate these resolved events now. If a Minigame block is "
                     "present above, ground at least one sentence in a concrete "
                     "round detail — a picked answer (quote the answer text), a "
-                    "named reveal, or a chemistry pair. Refer to everyone — "
-                    "including the human contestant — by the names given in the "
-                    "context above, in third person. Never copy an id, a "
-                    "snake_case key, an underscore, or bracketed metadata into "
-                    "your prose — translate them into natural language.")
+                    "named reveal, or a chemistry pair. " + contestant_voice +
+                    " Never copy an id, a snake_case key, an underscore, or "
+                    "bracketed metadata into your prose — translate them into "
+                    "natural language.")
     return "\n".join(sections)
 
 
@@ -377,13 +416,16 @@ def _humanize(key: str) -> str:
 
 
 def _player_couple(state: GameState) -> str:
+    named = _player_has_name(state)
     player = _player_name(state)
+    single = f"{player} is single" if named else "you are single"
     for couple in state.couples:
         members = {couple.partner_a_id, couple.partner_b_id}
         if "player" not in members:
             continue
         partner_id = next((member for member in members if member != "player"), None)
         if partner_id is None:
-            return f"{player} is single"
-        return f"{player} is coupled with {_name_for(state, partner_id)}"
-    return f"{player} is single"
+            return single
+        partner = _name_for(state, partner_id)
+        return f"{player} is coupled with {partner}" if named else f"you are coupled with {partner}"
+    return single

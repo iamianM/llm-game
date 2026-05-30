@@ -326,3 +326,32 @@ def test_event_narrator_context_names_player_in_third_person() -> None:
     )
 
     assert "named Demo" in rendered
+
+
+def test_event_narrator_context_addresses_nameless_player_in_second_person() -> None:
+    """A nameless player is narrated in second person, never an abstract label.
+
+    Regression for the "Eq stands beside Chloe" garble: when the player kept the
+    "You" placeholder, the narrator was told to call them "the islander", which
+    gpt-5-nano hallucinated into a fake proper name. The fix narrates the
+    nameless player in second person (consistent with the daily recap), which
+    cannot be turned into an invented name.
+    """
+    state = new_game(1)
+    # new_game leaves the placeholder "You" name in place.
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+
+    rendered = _render_context(
+        state,
+        [CeremonyEvent(kind="recoupling", message="Chloe couples with you.", islander_id="chloe")],
+    )
+
+    # The player is addressed in second person, never labelled "the islander".
+    # (The phrase may still appear inside the negative instruction that forbids
+    # inventing it, so we check the labelling forms, not a bare substring.)
+    assert "named the islander" not in rendered
+    assert "refer to them as the islander" not in rendered
+    assert "SECOND PERSON" in rendered
+    # Couple line is grammatical second person, not "you is coupled".
+    assert "Current player couple: you are coupled with Chloe" in rendered
+    assert "you is coupled" not in rendered
