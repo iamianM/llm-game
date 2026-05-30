@@ -118,17 +118,21 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             current_index = state.pending_challenge.current_round_index
             if current_index < len(state.pending_challenge.rounds):
                 current = state.pending_challenge.rounds[current_index]
-                target_id = (
-                    state.pending_challenge.participants[1]
-                    if len(state.pending_challenge.participants) > 1
-                    else (current.target_id or "")
-                )
+                # Round-based minigames resolve purely via payload.choice_id;
+                # target_id is advisory metadata. Only set it when the choice
+                # itself names an islander (e.g. snog_marry_pie picks a person).
+                # For answer-based quizzes fact_value is an answer string, so
+                # leave target_id unset rather than tagging every option with the
+                # player's partner id, which misleads the LLM agents/decider and
+                # pollutes telemetry.
+                islander_ids = {islander.id for islander in state.islanders}
                 for choice in current.choices:
+                    choice_target = choice.fact_value if choice.fact_value in islander_ids else None
                     actions.append(
                         ActionSpec(
                             action=PlayerAction(
                                 kind=ActionKind.CHALLENGE_RESPONSE,
-                                target_id=target_id,
+                                target_id=choice_target,
                                 payload={"choice_id": choice.id, "round_index": current_index},
                             ),
                             label=f"Quiz r{current.index + 1}/{len(state.pending_challenge.rounds)}: {choice.label}",

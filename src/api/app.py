@@ -259,6 +259,15 @@ async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
         try:
             turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
         except ValueError as exc:
+            logger.exception(
+                "turn rejected: session=%s day=%s phase=%s villa=%s loc=%s action=%s",
+                session_id,
+                state.day,
+                state.phase.value,
+                state.villa.value,
+                state.location_id.value,
+                envelope.action.model_dump(mode="json"),
+            )
             yield sse("error", {"status": 400, "message": str(exc)}, event_id=0)
             return
         new_persisted = freeze(

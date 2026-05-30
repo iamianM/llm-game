@@ -64,3 +64,47 @@ def test_validate_action_rejects_other_location_target() -> None:
                 intent_id="friendly_chat_villa",
             ),
         )
+
+
+def test_round_based_challenge_actions_target_the_named_islander_not_the_partner() -> None:
+    """Round-based minigame options carry the islander they name as target_id.
+
+    Round-based minigames resolve purely via ``payload.choice_id``, so target_id
+    is advisory. It used to be hardcoded to the player's partner for *every*
+    option (``participants[1]``), which misled the LLM agents/decider (all
+    options looked like they pointed at one person) and polluted telemetry.
+    Each Snog/Wed/Pass option must instead point at the islander it names.
+    """
+    from src.game.engine.challenges import schedule_challenge
+    from src.game.engine.snog_marry_pie import build_rounds
+    from src.game.state.rng import SeededRng
+
+    state = new_game(1)
+    challenge = schedule_challenge(5)
+    assert challenge is not None and challenge.kind == "snog_marry_pie"
+    rounds = build_rounds(state, SeededRng(1))
+    # participants[1]="chloe" is the historic partner stand-in that used to leak
+    # onto every option; the fix must not reproduce it blindly.
+    state.pending_challenge = challenge.model_copy(
+        update={"rounds": rounds, "participants": ["player", "chloe"]}
+    )
+
+    specs = [
+        spec
+        for spec in available_actions(state)
+        if spec.action.kind is ActionKind.CHALLENGE_RESPONSE
+    ]
+    assert specs, "a pending round-based challenge should surface response actions"
+
+    islander_ids = {islander.id for islander in state.islanders}
+    first_round = state.pending_challenge.rounds[0]
+    target_for_choice = {choice.id: choice.fact_value for choice in first_round.choices}
+    for spec in specs:
+        choice_id = spec.action.payload["choice_id"]
+        assert spec.action.target_id == target_for_choice[choice_id]
+        assert spec.action.target_id in islander_ids
+
+    # The options must not all collapse onto a single partner id (the old bug);
+    # each Snog/Wed/Pass pick names a distinct islander.
+    targets = {spec.action.target_id for spec in specs}
+    assert len(targets) == len(specs)
