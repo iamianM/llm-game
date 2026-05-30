@@ -191,6 +191,44 @@ def test_apply_needs_movements_sets_locations() -> None:
     assert npc.location_id is Location.TERRACE
 
 
+def test_casa_amor_does_not_drag_main_villa_npcs_across_the_divide() -> None:
+    """During Casa Amor the needs layer must keep the two villas separate.
+
+    The advertisement table only offers the *active* villa's locations, so a
+    main-villa islander stranded outside that set used to score -999 for
+    "stay put" and get yanked into Casa. Free NPCs are now gated to the active
+    villa, so neither side crosses over.
+    """
+    from src.game.engine.casa_amor import (
+        CASA_LOCATIONS,
+        MAIN_LOCATIONS,
+        enter_casa_amor,
+    )
+    from src.game.state.casa import VillaName
+
+    state = new_game(1)
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+    enter_casa_amor(state)
+    assert state.villa is VillaName.CASA_AMOR
+    casa_ids = set(state.casa_amor_state.casa_islander_ids)  # type: ignore[union-attr]
+
+    # Only the Casa cast is eligible to move; the main-villa cast is excluded.
+    eligible_ids = {islander.id for islander in free_npcs(state)}
+    assert eligible_ids <= casa_ids
+
+    state.phase = Phase.EVENING
+    _neutralize_personalities(state)
+    plan_and_apply(state, SeededRng(11))
+
+    for islander in state.islanders:
+        if islander.eliminated:
+            continue
+        if islander.id in casa_ids:
+            assert islander.location_id in CASA_LOCATIONS
+        else:
+            assert islander.location_id in MAIN_LOCATIONS
+
+
 def test_extraverts_prefer_social_spots_over_introverts() -> None:
     """At equal advertisement, extraverts score the pool higher than introverts."""
     state = new_game(1)

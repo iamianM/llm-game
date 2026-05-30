@@ -31,6 +31,25 @@ test("NPC speaks with a bubble anchored to that NPC", async ({ page }) => {
   expect(bubbleBox!.y).toBeLessThan(npcBox!.y + npcBox!.height * 0.45);
 });
 
+test("conversation keeps every co-located islander on stage, not just the partner", async ({ page }) => {
+  // Regression guard for Casa-Amor embodiment: when the player is mid-chat the
+  // focused partner is emphasized, but the rest of the room must stay visible
+  // (dimmed, not yanked off-stage) so the player is never talking to an empty
+  // pool. All three fakeState islanders share the player's location.
+  const state = fakeState({ active_conversation_target_id: "liam" });
+  await installSession(page, state, [
+    action("flirt", "Tease Liam", "liam"),
+    action("end_conversation", "Step away", "liam"),
+  ]);
+  await page.goto(`/play/${SESSION_ID}`);
+
+  await expect(page.getByTestId("scene-stage")).toBeVisible();
+  // The conversation partner is present...
+  await expect(page.locator('[data-character-id="liam"]')).toBeVisible();
+  // ...and so is the rest of the co-located cast plus the player.
+  await expect(page.getByTestId("character-sprite")).toHaveCount(state.islanders.length + 1);
+});
+
 test("narrator beat uses a top narrator bubble", async ({ page }) => {
   await installSession(page, fakeState(), [action("ambient", "Trigger text")]);
   await routeTurn(page, fakeTurn({ event_narration: { prose: "A text lands and the villa freezes for the kind of silence producers dream about." } }));

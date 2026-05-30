@@ -22,7 +22,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.engine.casa_amor import locations_for_villa
+from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.couples import partner_for
 from src.game.state.models import GameState, IslanderState, Location, Phase
 from src.game.state.personality import Big5
@@ -92,7 +92,11 @@ def free_npcs(state: GameState) -> list[IslanderState]:
     """Return NPCs that may be moved this turn.
 
     Excludes eliminated islanders, anyone locked in an active NPC-NPC
-    conversation, and the partner the player is actively talking to.
+    conversation, and the partner the player is actively talking to. During
+    Casa Amor only NPCs already in the *active* villa are eligible: the needs
+    layer advertises just this villa's locations, so an islander stranded in
+    the other villa would always score ``-999`` for "stay put" and get yanked
+    across the divide. Gating here keeps the two villas physically separate.
     """
     locked: set[str] = set()
     for conversation in state.npc_conversations:
@@ -107,6 +111,7 @@ def free_npcs(state: GameState) -> list[IslanderState]:
         if not islander.eliminated
         and islander.id not in locked
         and islander.id != active_target
+        and location_villa(islander.location_id) is state.villa
     ]
 
 
