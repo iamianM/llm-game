@@ -27,6 +27,11 @@ export type Position = {
 
 export type ChoiceFanSpec = {
   actions: AvailableAction[];
+  // For round-based challenges (quizzes, lie detector, etc.) the question stem
+  // is delivered as a dramatic narrator beat, then vanishes when the answer
+  // options appear. Carrying it here lets the stage pin the question on-screen
+  // as a persistent prompt card so the player can read it while choosing.
+  prompt?: string;
 };
 
 export type SceneBeat =

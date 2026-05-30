@@ -211,6 +211,9 @@ export function SceneDialogueStage({
       {activeBeat?.kind === "delta_pop" ? (
         <DeltaPop beat={activeBeat} position={positionById.get(activeBeat.subjectId) ?? PLAYER_ANCHOR} />
       ) : null}
+      {activeBeat?.kind === "choice_fan" && activeBeat.spec.prompt ? (
+        <QuizPrompt text={activeBeat.spec.prompt} />
+      ) : null}
       {activeBeat?.kind === "choice_fan" ? (
         <ChoiceFan actions={activeBeat.spec.actions} locked={locked} onChoose={onChoose} />
       ) : null}
@@ -342,6 +345,68 @@ function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_
           from { opacity: 0; transform: translate(-50%, -30%) scale(.92); }
           20% { opacity: 1; }
           to { opacity: 0; transform: translate(-50%, -90%) scale(1.03); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// The challenge question, pinned just under the round banner so it stays
+// readable while the player works through the answer options at the bottom of
+// the screen. Without it the choice_fan beat shows bare options and the
+// question (delivered moments earlier as a narrator bubble) is gone.
+function QuizPrompt({ text }: { text: string }) {
+  return (
+    <div className="quiz-prompt" data-testid="quiz-prompt">
+      <span className="quiz-prompt-eyebrow">Question</span>
+      <p className="quiz-prompt-text">{text}</p>
+      <style jsx>{`
+        .quiz-prompt {
+          position: absolute;
+          z-index: 11;
+          top: clamp(52px, 8vh, 76px);
+          left: 50%;
+          transform: translateX(-50%);
+          width: min(560px, calc(100vw - 28px));
+          padding: 11px 18px 13px;
+          border-radius: var(--r-lg);
+          background: rgba(20,16,12,.82);
+          border: 1px solid rgba(217,167,58,.45);
+          box-shadow: var(--shadow-md), var(--inset-gold);
+          backdrop-filter: blur(8px);
+          text-align: center;
+          pointer-events: none;
+          animation: quiz-prompt-in .26s cubic-bezier(.22,.61,.36,1) both;
+        }
+        @keyframes quiz-prompt-in {
+          from { opacity: 0; transform: translate(-50%, -6px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .quiz-prompt-eyebrow {
+          display: block;
+          font-family: var(--font-hand);
+          font-size: 11px;
+          letter-spacing: .16em;
+          text-transform: uppercase;
+          color: var(--gold-soft);
+          margin-bottom: 3px;
+        }
+        .quiz-prompt-text {
+          margin: 0;
+          font-family: var(--font-display);
+          font-size: 16px;
+          font-weight: 650;
+          line-height: 1.3;
+          color: var(--card);
+        }
+        @media (max-width: 520px) {
+          .quiz-prompt {
+            top: 46px;
+            padding: 9px 13px 10px;
+            width: calc(100vw - 20px);
+          }
+          .quiz-prompt-eyebrow { font-size: 10px; margin-bottom: 2px; }
+          .quiz-prompt-text { font-size: 14px; }
         }
       `}</style>
     </div>

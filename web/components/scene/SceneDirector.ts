@@ -101,17 +101,16 @@ export function planScene(
     });
   }
 
+  // The challenge stem is read aloud as a narrator beat (the dramatic reveal,
+  // keeping the host's scene-setting flavor) AND distilled to a concise question
+  // that rides on the choice_fan — otherwise the question vanishes the moment the
+  // answer options appear and the player is left choosing blind.
+  let challengePrompt: string | null = null;
   if (pending && !pending.finished) {
-    const stemText = quizStem(pending, next, challengeFocus);
-    if (stemText) {
-      const isContinuation = beats.some((b) => b.kind === "narrator" || b.kind === "speech");
-      for (const page of paginate(stemText)) {
-        if (isContinuation) {
-          beats.push({ kind: "narrator", text: page });
-        } else {
-          beats.push({ kind: "narrator", text: page });
-        }
-      }
+    const raw = typeof pending.stem === "string" ? pending.stem.trim() : "";
+    if (raw) {
+      challengePrompt = challengeQuestion(raw);
+      for (const page of paginate(cleanStem(raw))) beats.push({ kind: "narrator", text: page });
     }
   }
 
@@ -124,7 +123,10 @@ export function planScene(
   }
 
   if (availableActions.length > 0) {
-    beats.push({ kind: "choice_fan", spec: { actions: availableActions } });
+    beats.push({
+      kind: "choice_fan",
+      spec: challengePrompt ? { actions: availableActions, prompt: challengePrompt } : { actions: availableActions },
+    });
   }
   return beats;
 }
@@ -147,19 +149,29 @@ function lastAnsweredRound(pending: PendingChallenge | null): AnsweredRound | nu
   return last;
 }
 
-function quizStem(pending: PendingChallenge, state: SessionState, focusId: string | null): string | null {
-  const raw = typeof pending.stem === "string" ? pending.stem.trim() : "";
-  if (!raw) return null;
-  // Strip engine-side "Round N:" / "Q3:" / "Round 1 of 3 -" prefixes; the
-  // banner already shows the round count, so a duplicate is just noise.
-  const stripped = raw.replace(/^(?:round\s*\d+(?:\s*of\s*\d+)?|q\s*\d+)\s*[:\-—]\s*/i, "").trim();
-  const stem = stripped || raw;
-  const focus =
-    focusId && state.islanders.find((i) => i.id === focusId)?.name
-      ? state.islanders.find((i) => i.id === focusId)!.name
-      : null;
-  // Banner already says "ROUND N/M". Keep prefix focused on subject only.
-  return focus ? `About ${focus}: ${stem}` : stem;
+// Drop the leading round label ("Round 3:", "Q2 —", "Round 2 of 3:") since the
+// banner already shows "Round N / M", plus any redundant "about <name>:" lead-in
+// (the Couples Quiz repeats the subject the question already names). The scene +
+// question body is preserved — these stems are written as cohesive prompts.
+function cleanStem(raw: string): string {
+  const out = raw
+    .replace(/^(?:round\s*\d+(?:\s*of\s*\d+)?|q\s*\d+)\s*[:\-—]\s*/i, "")
+    .replace(/^about\s+[^:]+:\s*/i, "")
+    .trim();
+  const cleaned = out || raw.trim();
+  // Stripping a label can leave a lowercase fragment ("partner's turn. ...");
+  // re-capitalize so it reads as a proper sentence.
+  return cleaned.replace(/^([a-z])/, (m) => m.toUpperCase());
+}
+
+// The concise question for the persistent prompt card. The first round of the
+// Compatibility / Couples quizzes bundles a scene-setting intro that ends at a
+// "Round one[ is about <name>]:" marker — drop everything up to it so the card
+// shows just the ask. Other challenges weave the question into the scene with no
+// clean split, so fall back to the cleaned stem (still short enough to pin).
+function challengeQuestion(raw: string): string {
+  const afterIntro = raw.replace(/^[\s\S]*?\bround\s+one\b(?:\s+is\s+about\s+[^:]+)?:\s*/i, "");
+  return cleanStem(afterIntro !== raw ? afterIntro : raw);
 }
 
 function wrapNarration(pending: PendingChallenge): string | null {
