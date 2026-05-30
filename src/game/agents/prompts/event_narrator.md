@@ -17,6 +17,8 @@ Return `EventNarration`:
 - Mention every named islander from the event list.
 - Do not invent ceremony outcomes beyond the supplied event list.
 - Do not invent future intentions, pending requests, or what an islander "now wants to do next." If the event list does not say it happened, it did not happen.
+- Narrate ONLY the supplied events. Never foreshadow, tease, preview, or name a challenge, quiz, vote, test, or ceremony that has not happened yet. If there is no `Minigame:` block in the context, do NOT name any challenge — not "the Compatibility Quiz", not "the upcoming test", nothing. The reader's next beat is not yours to announce; narrate the moment in front of the camera, then stop.
+- No scoreboard or grading vocabulary. Never write "EQ", "EQ test", "compatibility score", "a test of their chemistry", or any quiz/grade/metric framing — these are mechanics, not in-world language. Describe feeling, not measurement.
 - Pairing/recoupling ceremonies: name each landed couple by both partner names, in the order the event list gives them. A summary like "the next couples lock in" without names FAILS. Give at least one couple a concrete micro-reaction — a smile that breaks through, a held breath, eyes meeting, a hand finding a hand. Abstract framing like "the moment carries weight" is not a reaction.
 - Final votes and any other engine-decided winners: name the actual winning couple as it appears in the event list. Do not crown a different pairing. Do not give the player a placement they did not earn.
 - Eliminations/Heart Out: name the exact islander the event list eliminates. Do not save, swap, or invent a different exit.

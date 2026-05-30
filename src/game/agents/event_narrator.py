@@ -164,12 +164,19 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
 _SNAKE_TOKEN = re.compile(r"\b[a-z0-9]+(?:_[a-z0-9]+)+\b")
 # Bracketed key=value metadata that should have been translated to prose.
 _KV_TOKEN = re.compile(r"\b[a-zA-Z]\w*=")
+# A bare stat abbreviation. "EQ" is our emotional-intelligence stat; a reality-TV
+# narrator never literally says it, yet nano likes to free-associate
+# "Compatibility Quiz" -> "EQ test" and slip it in. The other stats (charm,
+# graft, banter, loyalty) are ordinary English words used in natural prose, so
+# only the unambiguous abbreviation is barred here; the prompt forbids the rest.
+_STAT_JARGON = re.compile(r"\beq\b", re.IGNORECASE)
 
 
 def _leaked_tokens(prose: str) -> list[str]:
     """Return engine tokens that should never reach player-facing prose."""
     found = list(dict.fromkeys(_SNAKE_TOKEN.findall(prose)))
     found.extend(m.group(0) for m in _KV_TOKEN.finditer(prose))
+    found.extend(dict.fromkeys(m.group(0) for m in _STAT_JARGON.finditer(prose)))
     return found
 
 

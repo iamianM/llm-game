@@ -258,6 +258,37 @@ def test_validate_event_narration_accepts_clean_quiz_prose() -> None:
     )
 
 
+def test_validate_event_narration_rejects_eq_stat_jargon() -> None:
+    """The bare "EQ" stat abbreviation must not reach player-facing prose.
+
+    nano likes to free-associate "Compatibility Quiz" -> "EQ test" and slip the
+    raw stat name into a ceremony beat (observed in a live First Spark run).
+    """
+    with pytest.raises(ValueError, match="leaked engine token"):
+        validate_event_narration(
+            EventNarration(
+                prose=(
+                    "The Pairing Ceremony locks in you and Chloe, and the "
+                    "Compatibility Quiz's EQ test remains pending."
+                )
+            ),
+            [CeremonyEvent(kind="recoupling", message="couples locked", islander_id="chloe")],
+        )
+
+
+def test_validate_event_narration_allows_eq_inside_words() -> None:
+    """The "EQ" guard is word-bounded — ordinary words are never false flags."""
+    validate_event_narration(
+        EventNarration(
+            prose=(
+                "Chloe's equal footing with you holds as the sequence of looks "
+                "between them settles into something steady."
+            )
+        ),
+        [CeremonyEvent(kind="recoupling", message="couples locked", islander_id="chloe")],
+    )
+
+
 def test_event_narrator_context_names_player_couple() -> None:
     """Current couple context names both partners — never a raw id or "player"."""
     state = new_game(1)
