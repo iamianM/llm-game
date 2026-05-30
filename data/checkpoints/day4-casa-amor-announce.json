@@ -1,7 +1,7 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "18ab58d4c14afd572212338b4ccd4781d76a804c35e8dc75edb332262df86255",
+  "state_hash": "3f77cd165304750da1e2319106f848db30242d19ab1177da436c7c4939a27f89",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

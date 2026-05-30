@@ -1,7 +1,7 @@
 {
   "name": "day6-pre-final-vote",
   "seed": 7,
-  "state_hash": "db7baacfe26b263b04edc9bba27f65be601f8aeba6c23e50bba5385bbb77da25",
+  "state_hash": "1736d49b13814ab78327cd7dfd184e199d59912d8e25fa8cbecfdf9377b420a6",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "casa_amor",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

@@ -1,7 +1,7 @@
 {
   "name": "day1-pre-compatibility-quiz",
   "seed": 7,
-  "state_hash": "e03519391c08f9c229f9fb289fb3038be6ffe98da66d626720f987d93430aada",
+  "state_hash": "ff9f5552f4bcf29209803caa36ae6de8db2c784d5b1905e67029215689136c7e",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

@@ -1,7 +1,7 @@
 {
   "name": "day5-pre-kiss-wed-pass",
   "seed": 7,
-  "state_hash": "f7438c6e106eaadd3176fe6c15084a06b06f4ff7dedb41b521dba99eef265d28",
+  "state_hash": "0e91fbe58eead319d8e31d02a306cb4ec2255db8d3bf34b2802c355d6f434697",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "casa_amor",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

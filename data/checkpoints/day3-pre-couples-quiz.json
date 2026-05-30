@@ -1,7 +1,7 @@
 {
   "name": "day3-pre-couples-quiz",
   "seed": 7,
-  "state_hash": "fef35f32de860e1aa4f0b43c1bc29d0701b47fcfbad427fc076325411e4d85bc",
+  "state_hash": "c82d9d39794ba92db12420e56d59eda26dbeadcebb8e8fe097edb3c2fb3ee788",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

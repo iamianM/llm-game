@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "b23f4f5ab55f3affc633fe2edee561a8944e238fc65f7f84a92050df8d58b260",
+  "state_hash": "9a219e3a00e0f39e026c641a4398c1148a0d9baa50a1af654f2749473df10b6c",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

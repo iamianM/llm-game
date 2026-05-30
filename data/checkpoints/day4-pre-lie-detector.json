@@ -1,7 +1,7 @@
 {
   "name": "day4-pre-lie-detector",
   "seed": 7,
-  "state_hash": "05faa12678244cd18d6d34dff986b5e1945a94bf8c7c4c118894831e7a947f38",
+  "state_hash": "d7390bbe1215bfa0529b913d74d434e66c785c7bb63b8b671da5ba90ac3f65eb",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

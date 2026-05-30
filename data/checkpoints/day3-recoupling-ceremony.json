@@ -1,7 +1,7 @@
 {
   "name": "day3-recoupling-ceremony",
   "seed": 7,
-  "state_hash": "25c04ab222e1cdd79502a141dc44bab5645c41608bc1189ce8fa77bc72aac37c",
+  "state_hash": "a6a1b25267909123557ae444e5e8d3dc2d564890f74c7679804ceff898e9265b",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,

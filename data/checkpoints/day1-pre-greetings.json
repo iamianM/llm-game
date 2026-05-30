@@ -1,7 +1,7 @@
 {
   "name": "day1-pre-greetings",
   "seed": 7,
-  "state_hash": "96f0d2537417cd7dacfa714a13775e706abc2703d1adcbc65bf8474c54b4a5c8",
+  "state_hash": "4eb88cdb5edfaed78cf3b874897d7275d708a0bf70980c6f80294fead9bfb1e1",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -17,7 +17,7 @@
     "villa": "main",
     "player": {
       "id": "player",
-      "name": "Demo",
+      "name": "You",
       "gender": "man",
       "stats": {
         "charm": 9,
