@@ -11,6 +11,7 @@ import { DEFAULT_USE_LIVE_LLM, useUiStore } from "../../lib/store";
 import type { CheckpointSummary, Gender } from "../../lib/types";
 import { AccessoryBadges } from "../../components/chrome/AccessoryBadges";
 import { LookStage } from "../../components/look/LookStage";
+import { PlayerCrest } from "../../components/look/PlayerCrest";
 import {
   ACCESSORIES,
   ARCHETYPES,
@@ -235,6 +236,10 @@ export default function CreatePage() {
         <section className="preview-zone" aria-label="Islander preview">
           <div className="casting-card" data-testid="avatar-preview">
             <LookStage look={look} />
+            <div className="crest-chip" title="Your profile crest — carries your skin, hair & energy across the villa">
+              <PlayerCrest look={look} name={look.name} size="responsive" />
+              <span className="crest-chip-label">Your token</span>
+            </div>
             <div className="nameplate">
               <span className="nameplate-name">{look.name.trim() || "Your Islander"}</span>
               <span className="nameplate-sub">{archetype.label} · {findVibe(look.vibe).label}</span>
@@ -613,6 +618,24 @@ export default function CreatePage() {
           top: 12px;
           right: 12px;
           z-index: 4;
+        }
+        .crest-chip {
+          position: absolute;
+          left: 12px;
+          bottom: 14px;
+          z-index: 4;
+          --portrait-size: clamp(52px, 8.5vw, 72px);
+          display: grid;
+          justify-items: center;
+          gap: 4px;
+        }
+        .crest-chip-label {
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: .14em;
+          text-transform: uppercase;
+          color: var(--gold-soft);
+          text-shadow: 0 1px 4px rgba(0, 0, 0, .7);
         }
         .preview-actions { display: grid; gap: 10px; }
         .engine-row {

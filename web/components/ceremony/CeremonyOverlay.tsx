@@ -1,5 +1,6 @@
 "use client";
 
+import type { IslanderLook } from "../../lib/look";
 import type { CoupleSummary } from "../../lib/types";
 import { Narration } from "./Narration";
 import { PairingList } from "./PairingList";
@@ -11,9 +12,11 @@ type Props = {
   couples: CoupleSummary[];
   showCouples: boolean;
   onContinue: () => void;
+  playerId?: string;
+  playerLook?: IslanderLook | null;
 };
 
-export function CeremonyOverlay({ title, eyebrow, narration, couples, showCouples, onContinue }: Props) {
+export function CeremonyOverlay({ title, eyebrow, narration, couples, showCouples, onContinue, playerId, playerLook = null }: Props) {
   const background = featureImage(title);
   return (
     <div data-screen="ceremony" className="ceremony-stage film-grain">
@@ -28,7 +31,7 @@ export function CeremonyOverlay({ title, eyebrow, narration, couples, showCouple
           <Narration>{narration}</Narration>
           {showCouples ? (
             <div className="couples-wrap">
-              <PairingList couples={couples} />
+              <PairingList couples={couples} playerId={playerId} playerLook={playerLook} />
             </div>
           ) : null}
         </div>

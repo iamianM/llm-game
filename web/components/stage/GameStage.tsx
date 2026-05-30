@@ -110,7 +110,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
           ) : null}
         </div>
       </div>
-      <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} />
+      <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} look={look} />
       <SettingsMenu />
       <WardrobeModal
         sessionId={sessionId}
@@ -130,6 +130,8 @@ export function GameStage({ sessionId }: { sessionId: string }) {
           couples={state.couples}
           showCouples={ceremonyShowsCouples(event, state)}
           onContinue={() => setShowCeremony(false)}
+          playerId={state.player.id}
+          playerLook={look}
         />
       ) : null}
       {showRecap && latestRecap && !showCeremony ? <DayRecap recap={latestRecap} onClose={() => setShowRecap(false)} /> : null}

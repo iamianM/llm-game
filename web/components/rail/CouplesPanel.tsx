@@ -1,7 +1,17 @@
+import type { IslanderLook } from "../../lib/look";
 import type { CoupleSummary } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 
-export function CouplesPanel({ couples }: { couples: CoupleSummary[] }) {
+export function CouplesPanel({
+  couples,
+  playerId,
+  playerLook = null,
+}: {
+  couples: CoupleSummary[];
+  playerId?: string;
+  playerLook?: IslanderLook | null;
+}) {
+  const lookFor = (id: string) => (id === playerId ? playerLook : null);
   return (
     <section className="rail-section">
       <h3 className="rail-section-title">Couples</h3>
@@ -12,11 +22,11 @@ export function CouplesPanel({ couples }: { couples: CoupleSummary[] }) {
             className={`couple-row ${couple.is_player_couple ? "is-player" : ""}`}
           >
             <div className="couple-line">
-              <Avatar id={couple.partner_a_id} name={couple.partner_a_name} size="xs" />
+              <Avatar id={couple.partner_a_id} name={couple.partner_a_name} size="xs" look={lookFor(couple.partner_a_id)} />
               <span className="couple-name">{couple.partner_a_name}</span>
               <span className="couple-amp">&</span>
               <span className="couple-name">{couple.partner_b_name}</span>
-              <Avatar id={couple.partner_b_id} name={couple.partner_b_name} size="xs" />
+              <Avatar id={couple.partner_b_id} name={couple.partner_b_name} size="xs" look={lookFor(couple.partner_b_id)} />
             </div>
             <p className="couple-meta">
               <span>Strength <b>{couple.strength}</b></span>

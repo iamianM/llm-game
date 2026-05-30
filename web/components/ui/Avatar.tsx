@@ -1,4 +1,6 @@
 import Image from "next/image";
+import type { IslanderLook } from "../../lib/look";
+import { PlayerCrest } from "../look/PlayerCrest";
 
 const PALETTE = ["#b9502f", "#5b7c4f", "#c8932a", "#4a8fb8", "#8a5f78", "#7c654f"];
 
@@ -25,7 +27,12 @@ const IMAGE_BY_ID: Record<string, string> = {
   talia_ht: "/images/characters/talia_ht.webp"
 };
 
-export function Avatar({ id, name, size = "md" }: { id: string; name: string; size?: Size }) {
+export function Avatar({ id, name, size = "md", look = null }: { id: string; name: string; size?: Size; look?: IslanderLook | null }) {
+  // The player has no photoreal headshot — when their chosen look is supplied,
+  // render the look-aware casting crest (skin/hair/vibe) so the avatar that
+  // travels through the HUD, profile, couples list and finale is unmistakably
+  // theirs. NPCs keep their photo; unknown ids keep the monogram disc.
+  if (look) return <PlayerCrest look={look} name={name} size={size} />;
   const dimsMap: Record<Exclude<Size, "responsive">, number> = { xs: 22, sm: 30, md: 44, lg: 80, xl: 168 };
   const dims = size === "responsive" ? null : dimsMap[size];
   const color = PALETTE[Math.abs(hash(id)) % PALETTE.length];

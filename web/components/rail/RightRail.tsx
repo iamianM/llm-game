@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
+import type { IslanderLook } from "../../lib/look";
 import type { SessionState } from "../../lib/types";
 import { CastGrid } from "./CastGrid";
 import { CastPopout } from "./CastPopout";
@@ -10,9 +11,9 @@ import { CouplesPanel } from "./CouplesPanel";
 import { MemoriesList } from "./MemoriesList";
 import { VillaMap } from "./VillaMap";
 
-type Props = { state: SessionState; open: boolean; sessionId: string; onClose: () => void };
+type Props = { state: SessionState; open: boolean; sessionId: string; onClose: () => void; look?: IslanderLook | null };
 
-export function RightRail({ state, open, sessionId, onClose }: Props) {
+export function RightRail({ state, open, sessionId, onClose, look = null }: Props) {
   const [activeProfile, setActiveProfile] = useState<string | null>(null);
   useEffect(() => {
     if (!open) return;
@@ -30,7 +31,7 @@ export function RightRail({ state, open, sessionId, onClose }: Props) {
         </header>
         <div className="rail-body">
           <VillaMap snapshot={state.villa_snapshot} />
-          <CouplesPanel couples={state.couples} />
+          <CouplesPanel couples={state.couples} playerId={state.player.id} playerLook={look} />
           <CastGrid
             cast={state.islanders}
             onOpenProfile={(npcId) => { setActiveProfile(npcId); onClose(); }}
