@@ -135,6 +135,95 @@ def test_minigame_block_never_leaks_engine_tokens() -> None:
     assert "the player" not in block
 
 
+def _couples_quiz_partner_round() -> Challenge:
+    """A resolved Couples Quiz partner round (partner guessed about the player).
+
+    The reveal payload carries raw enum codes (partner_guess="low",
+    truth="high", fact_key="perception") for internal round matching plus the
+    *_label display companions the narrator is allowed to quote.
+    """
+    return Challenge(
+        id="couples-1",
+        day=3,
+        kind="mr_and_mrs",
+        stat_tested="combined",
+        participants=["player", "chloe"],
+        rounds=[
+            MinigameRound(
+                index=1,
+                prompt_id="mrandmrs_partner_perception",
+                target_id="chloe",
+                trait_key="player_perception",
+                tier=0,
+                mechanical=False,
+                stem="Round 2 — partner's turn. How does the audience read you?",
+                chosen_id="correct",
+                points=1,
+                choices=[
+                    MinigameChoice(
+                        id="correct",
+                        label="audience cool on them",
+                        fact_value="low",
+                        is_correct=True,
+                    ),
+                    MinigameChoice(
+                        id="distractor_0",
+                        label="audience favourite",
+                        fact_value="high",
+                    ),
+                ],
+                reveals=[
+                    MinigameReveal(
+                        kind="fact",
+                        subject_id="chloe",
+                        payload={
+                            "partner_guess": "low",
+                            "partner_guess_label": "audience cool on them",
+                            "truth": "high",
+                            "truth_label": "audience favourite",
+                            "fact_key": "perception",
+                            "direction": "partner_about_player",
+                        },
+                    )
+                ],
+            )
+        ],
+        current_round_index=2,
+        total_points=1,
+        classification="partial",
+        audience_delta=0,
+    )
+
+
+def test_couples_quiz_block_never_leaks_partner_guess_codes() -> None:
+    """The Couples Quiz partner-round recap must quote display labels only.
+
+    Regression for "'low' for perception, 'man' for gender" leaking into the
+    recap: raw enum codes and routing keys (fact_key/direction) live only in the
+    internal payload; the narrator block exposes the *_label forms.
+    """
+    state = new_game(1)
+    state.pending_challenge = _couples_quiz_partner_round()
+
+    block = _render_minigame_details(state)
+
+    assert block, "expected a rendered minigame block for a resolved quiz"
+    # Display labels are present and quotable.
+    assert "audience cool on them" in block
+    assert "audience favourite" in block
+    # Raw enum codes paired against a key ("low" for perception) were the leak —
+    # the value column must now carry the label, never the bare code.
+    assert ": low" not in block
+    assert ": high" not in block
+    assert "guess: low" not in block
+    # Internal routing keys never reach the narrator.
+    assert "partner_about_player" not in block
+    assert "partner about player" not in block
+    assert "fact_key" not in block
+    assert "fact key" not in block
+    assert "direction" not in block
+
+
 def test_validate_event_narration_rejects_leaked_snake_case_key() -> None:
     """A leaked engine key in prose fails validation."""
     with pytest.raises(ValueError, match="leaked engine token"):

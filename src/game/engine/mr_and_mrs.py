@@ -267,7 +267,18 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
                     MinigameReveal(
                         kind="fact",
                         subject_id=partner_id,
-                        payload={"partner_guess": partner_guess, "truth": truth, "fact_key": fact_key, "direction": "partner_about_player"},
+                        # Raw codes (partner_guess/truth/fact_key) drive internal
+                        # round matching; the *_label companions are the only
+                        # forms the narrator may quote so "low"/"man" never leak
+                        # into the player-facing recap.
+                        payload={
+                            "partner_guess": partner_guess,
+                            "partner_guess_label": _display_label(fact_key, partner_guess),
+                            "truth": truth,
+                            "truth_label": _display_label(fact_key, truth),
+                            "fact_key": fact_key,
+                            "direction": "partner_about_player",
+                        },
                     )
                 ],
             ))

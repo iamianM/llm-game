@@ -42,7 +42,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
             data-action-kind={action.kind}
             key={key}
             type="button"
-            aria-label={action.label}
+            aria-label={displayLabel(action.label)}
             disabled={locked || selectedKey !== null}
             className={`choice-bubble${selectedKey === key ? " is-selected" : ""}`}
             variants={{
@@ -55,7 +55,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
               window.setTimeout(() => onChoose(action), reduce ? 40 : 180);
             }}
           >
-            <span className="choice-text">{action.label}</span>
+            <span className="choice-text">{displayLabel(action.label)}</span>
             <span className="choice-meta">
               {categoryChip(action)}
               {hint ? <i className={`hint hint-${hint.tone}`}>{hint.label}</i> : null}
@@ -189,6 +189,16 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
       `}</style>
     </motion.div>
   );
+}
+
+// Option labels arrive from the engine with inconsistent casing — proper nouns
+// ("Grand Designs", "Stay by Rihanna") are capitalized but generic answers come
+// through lowercase ("audience favourite", "the unsent letter..."). As a button
+// each should read as a proper option, so capitalize the leading letter for
+// display only (engine state, feedback lines, and analytics keep the raw label).
+function displayLabel(label: string): string {
+  if (!label) return label;
+  return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
 function categoryChip(action: AvailableAction) {

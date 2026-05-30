@@ -335,14 +335,30 @@ def _render_minigame_details(state: GameState) -> str:
         lines.append(f"        chose {chosen_label}; correct was {correct_label}; points {round_.points}")
         for reveal in round_.reveals:
             payload_parts = []
-            for k, v in reveal.payload.items():
+            payload = reveal.payload
+            # When a key carries a raw engine code (partner_guess="low") the
+            # engine also supplies a display companion (partner_guess_label=
+            # "audience cool on them"). Quote only the label form and drop the
+            # raw one so internal enum values never reach the recap prose.
+            has_label = {
+                k[: -len("_label")] for k in payload if k.endswith("_label")
+            }
+            for k, v in payload.items():
+                # Pure routing/meta keys describe engine structure, not anything
+                # the narrator should surface.
+                if k in {"fact_key", "direction"}:
+                    continue
+                # Skip the raw code when its display companion is present.
+                if k in has_label:
+                    continue
                 if k == "observer_id" and isinstance(v, str):
                     payload_parts.append(f"observer {_person(v)}")
                 else:
                     # Humanize string values too: payloads carry engine keys
                     # like trait_key="drink_of_choice" that must not leak raw.
                     value = _humanize(v) if isinstance(v, str) else v
-                    payload_parts.append(f"{_humanize(k)}: {value}")
+                    display_key = k[: -len("_label")] if k.endswith("_label") else k
+                    payload_parts.append(f"{_humanize(display_key)}: {value}")
             payload_summary = ", ".join(payload_parts)
             lines.append(
                 f"        reveal[{reveal.kind}] about {_person(reveal.subject_id)} — {payload_summary}"

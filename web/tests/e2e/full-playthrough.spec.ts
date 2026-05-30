@@ -8,12 +8,18 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("link", { name: "New Run" }).click();
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
-  await expect(page.locator('[data-testid="choice"], [data-testid="choice-fan"]').first()).toBeVisible();
+  // The play screen opens on the Day-1 intro round-robin: NPCs greet you one at
+  // a time as dialogue bubbles, and the first choice fan only appears once those
+  // greetings have been advanced through. Wait for the stage, speed everything
+  // up, then click past the intros before asserting the first interactive fan.
+  await page.waitForSelector('[data-testid="scene-stage"]', { timeout: 30_000 });
   // Speed up dialogue + animations so the long playthrough fits in budget.
   await page.getByLabel("Open settings").click();
   await page.getByLabel("Typewriter speed").selectOption("instant");
   await page.getByLabel("Reduce motion").check();
   await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
+  await advanceToChoices(page);
+  await expect(page.locator('[data-testid="choice"], [data-testid="choice-fan"]').first()).toBeVisible();
   let sawDayRecap = false;
   let sawFirstSpark = false;
   let sawPairingCeremony = false;
@@ -81,6 +87,24 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
   expect(sawFlushOfHearts).toBeTruthy();
   expect(sawDayRecap).toBeTruthy();
 });
+
+// Advance past the opening intro round-robin until the first interactive choice
+// fan appears (or a ceremony/recap takes over). The intros render as dialogue
+// bubbles that advance on a stage click or a dedicated intro-continue button.
+async function advanceToChoices(page: import("@playwright/test").Page) {
+  for (let step = 0; step < 60; step += 1) {
+    if (await page.locator('[data-testid="choice-fan"], [data-testid="choice"]:not([disabled]), [data-screen="ceremony"], [data-screen="day-recap"], [data-screen="finale"]').count()) {
+      return;
+    }
+    const introContinue = page.getByTestId("intro-continue");
+    if (await introContinue.count()) {
+      await introContinue.first().click({ force: true }).catch(() => {});
+    } else {
+      await page.getByTestId("scene-stage").click({ force: true }).catch(() => {});
+    }
+    await page.waitForTimeout(200);
+  }
+}
 
 async function advanceScene(page: import("@playwright/test").Page) {
   for (let step = 0; step < 8; step += 1) {
