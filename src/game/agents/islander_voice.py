@@ -146,15 +146,28 @@ def mock_islander_voice(state: GameState, result: MechanicalResult) -> Exchange:
 
 
 def _intent_category(intent_id: str | None) -> str | None:
-    """Resolve an intent id to its category value, or None for special intents."""
-    from src.game.engine.intents import get_intent
+    """Resolve an intent id to its dialogue category, or None.
 
+    Tries the main intent catalog first (menu leaf intents such as
+    ``compliment_looks``), then the follow-up option registry (conversation
+    wheel responses such as ``joke_back`` / ``escalate_flirt`` that are not
+    catalog intents). Resolving follow-ups too keeps multi-turn demo
+    conversations varied instead of repeatedly falling back to the default
+    opener lines. Imports are local to avoid an import cycle: ``option_defaults``
+    imports ``Exchange`` from this module.
+    """
     if not intent_id:
         return None
+    from src.game.engine.intents import get_intent
+
     try:
         return get_intent(intent_id).category.value
     except ValueError:
-        return None
+        pass
+    from src.game.engine.option_defaults import OPTION_TEMPLATES
+
+    option = OPTION_TEMPLATES.get(intent_id)
+    return option.category if option is not None else None
 
 
 def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None:
