@@ -293,8 +293,10 @@ def _avoid_repetition_directive(
         "that sentence shape, OR the same underlying move. In particular, do not "
         'open with another generic greeting frame ("I thought I\'d come over", '
         '"I figured I\'d say hi", "just making the rounds", "come introduce '
-        'myself") and do not keep using the same scene prop or location as your '
-        "hook. Open differently every time — a specific observation about THIS "
+        'myself"); do not reopen with a reassurance frame you have already leaned '
+        'on ("you don\'t need to...", "you don\'t have to...", "you don\'t have to '
+        'perform/pretend with me"); and do not keep using the same scene prop or '
+        "location as your hook. Open differently every time — a specific observation about THIS "
         "person, a small tease, a callback, or a concrete offer. Also do NOT "
         "re-state a personal fact or anecdote you have already shared (your job, "
         "your ex, your family, the same metaphor) — assume the listener remembers "
