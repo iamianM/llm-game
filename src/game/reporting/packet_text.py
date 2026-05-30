@@ -48,12 +48,18 @@ Final hash: `{final_hash or "unknown"}`
 
 def infer_llm_mode(records: list[dict[str, Any]]) -> str:
     """Infer mock-vs-real mode for older traces that lack explicit metadata."""
+    from src.game.agents.mock_dialogue import MOCK_NPC_LINES
+
     for record in records:
         exchange = record.get("exchange")
         if not isinstance(exchange, dict):
             continue
         player_line = str(exchange.get("player_dialogue", ""))
         npc_line = str(exchange.get("npc_dialogue", ""))
+        # Current demo dialogue uses fixed NPC replies keyed by category.
+        if npc_line in MOCK_NPC_LINES:
+            return "mock"
+        # Legacy signature (pre-2026 traces that echoed the menu label).
         if "I wanted to say this properly" in player_line and "*smiles* I hear you" in npc_line:
             return "mock"
     return "unknown"

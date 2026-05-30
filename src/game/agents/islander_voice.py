@@ -19,6 +19,7 @@ from src.game.agents.islander_voice_context import (
     new_turn_context,
     target_for_result,
 )
+from src.game.agents.mock_dialogue import mock_exchange_fields
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     AgentGenerationError,
@@ -32,7 +33,7 @@ from src.game.agents.runtime import (
 from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import GameState, Mood
+from src.game.state.models import GameState
 
 ISLANDER_VOICE_MODEL = GAME_AGENT_MODEL
 ISLANDER_VOICE_PROMPT = "src/game/agents/prompts/islander_voice.md"
@@ -121,22 +122,39 @@ class OpenAIIslanderVoice:
 
 
 def mock_islander_voice(state: GameState, result: MechanicalResult) -> Exchange:
-    """Return deterministic mock dialogue for non-LLM tests and replays."""
+    """Return deterministic, in-character demo dialogue for non-LLM play.
+
+    Demo mode is the default in the browser when no LLM key is configured, so
+    these lines are the first conversation most players see. They are keyed by
+    intent category (flirty / deep / banter / ...) and rotate phrasing on the
+    deterministic dice roll, so the experience reads like real dialogue while
+    staying fully replayable.
+    """
     target = target_for_result(state, result)
-    intent_label = _intent_label(result.action.intent_id)
-    if result.success:
-        return Exchange(
-            player_dialogue=f"I wanted to say this properly, {target.name}: {intent_label}.",
-            npc_dialogue="*smiles* I hear you. That actually feels good coming from you.",
-            npc_tone="warm",
-            npc_mood_after=Mood.HAPPY,
-        )
-    return Exchange(
-        player_dialogue=f"I am trying to say this right, {target.name}: {intent_label}.",
-        npc_dialogue="*pauses* I get what you mean, but that did not fully land for me.",
-        npc_tone="defensive",
-        npc_mood_after=Mood.CONTENT,
+    player, npc, tone, mood = mock_exchange_fields(
+        category=_intent_category(result.action.intent_id),
+        success=result.success,
+        target_name=target.name,
+        roll=result.roll,
     )
+    return Exchange(
+        player_dialogue=player,
+        npc_dialogue=npc,
+        npc_tone=tone,
+        npc_mood_after=mood,
+    )
+
+
+def _intent_category(intent_id: str | None) -> str | None:
+    """Resolve an intent id to its category value, or None for special intents."""
+    from src.game.engine.intents import get_intent
+
+    if not intent_id:
+        return None
+    try:
+        return get_intent(intent_id).category.value
+    except ValueError:
+        return None
 
 
 def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None:
@@ -185,17 +203,6 @@ def _with_retry_message(
         "Use words for numbers, do not mention hidden Islanders, and stay within the word count."
     )
     return [*messages, {"role": "user", "content": retry}]
-
-
-def _intent_label(intent_id: str | None) -> str:
-    from src.game.engine.intents import get_intent
-
-    if intent_id is None:
-        return "chat"
-    try:
-        return get_intent(intent_id).label
-    except ValueError:
-        return intent_id.replace("_", " ")
 
 
 __all__ = [
