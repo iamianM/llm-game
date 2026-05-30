@@ -308,7 +308,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         actions.append(
             ActionSpec(
                 action=PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
-                label="Let the villa move on",
+                label=_ambient_wait_label(state),
             )
         )
         for ambient_option in ambient_options_for(state.location_id):
@@ -319,6 +319,29 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 )
             )
     return actions
+
+
+def _ambient_wait_label(state: GameState) -> str:
+    """Signpost where letting the clock run actually leads.
+
+    On the evenings that gate a mandatory ceremony, spending the rest of the
+    phase doesn't just "let the villa move on" — it convenes the night's big
+    beat: the Final Vote on the last day, a Pairing Ceremony on Days 3 and 5.
+    A generic label buries the game's most important moments behind an
+    innocuous skip, so a player (or the LLM decider) can chat past the ending
+    forever without realising this is the way to it. Name the destination on
+    those nights; stay generic otherwise. Mirrors the scheduling conditions in
+    ``advance_phase_with_events``.
+    """
+    if state.phase is Phase.EVENING:
+        casa_active = (
+            state.casa_amor_state is not None and not state.casa_amor_state.returned
+        )
+        if state.day >= 6:
+            return "It's time — gather everyone at the firepit for the Final Vote"
+        if state.day in {3, 5} and not (state.day == 5 and casa_active):
+            return "It's time — gather everyone at the firepit for the Pairing Ceremony"
+    return "Let the villa move on"
 
 
 def _recoupling_pick_actions(state: GameState) -> list[ActionSpec]:
