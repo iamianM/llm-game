@@ -63,10 +63,18 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
     ...(outfit ? { "--look-accent": outfit.accent, "--look-primary": outfit.primary } : {}),
     ...(vibe ? { "--look-vibe": vibe.value } : {}),
   } as CSSProperties;
+  // Inactive characters recede via lower light + a touch of depth-of-field
+  // blur, NOT transparency: at the old 0.56 opacity a standee turned into a
+  // translucent "ghost" over bright backgrounds (e.g. sunset water) — you
+  // could see straight through the figure, which read as a broken render.
   const animate = {
     scale: position.scale,
-    opacity: pose === "off_stage" ? 0 : position.dimmed ? 0.56 : 1,
-    filter: active ? "saturate(1.08) brightness(1.05)" : position.dimmed ? "saturate(.72) brightness(.82)" : "saturate(.95)",
+    opacity: pose === "off_stage" ? 0 : position.dimmed ? 0.94 : 1,
+    filter: active
+      ? "saturate(1.08) brightness(1.05)"
+      : position.dimmed
+        ? "saturate(.66) brightness(.6) blur(1.4px)"
+        : "saturate(.95)",
   };
   return (
     <div
@@ -184,9 +192,16 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
         .look-acc {
           position: absolute;
           z-index: 5;
-          top: 6%;
-          right: -6px;
+          /* Hug the figure's right side at hip height (the standee is far
+             narrower than its bounding box, so we bias well inward) instead of
+             floating in the dead space beside it. Slight scale-down keeps the
+             badges tasteful against a small in-scene figure. */
+          top: 38%;
+          right: 20%;
+          transform: scale(0.84);
+          transform-origin: top right;
           pointer-events: none;
+          filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5));
         }
         .is-player {
           --sprite-width: clamp(120px, 22vw, 220px);
