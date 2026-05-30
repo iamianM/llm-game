@@ -58,6 +58,7 @@ from src.game.engine.turn_curator import (
     intro_memory_batch,
     intro_segment_complete,
 )
+from src.game.engine.phases import is_finale_evening
 from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
@@ -482,6 +483,8 @@ def run_turn(
     # a co-located NPC may walk up to them. Only after the villa has settled
     # into its needs-driven positions, never while another demand is pending,
     # and never on the cusp of a phase change (the approach would be stranded).
+    # On the final night the villa settles for the Final Vote — a fresh approach
+    # here would just bury the "gather everyone" CTA behind a decline menu.
     if (
         action.kind is ActionKind.AMBIENT
         and not auto_advance
@@ -491,6 +494,7 @@ def run_turn(
         and state.pending_recouple_proposal is None
         and state.pending_gather is None
         and state.pending_challenge is None
+        and not is_finale_evening(state)
         and not check_auto_advance(state)
     ):
         roll_ambient_approach(state, rng.fork(f"approach-turn-{state.turn_index}"))

@@ -30,6 +30,21 @@ PHASE_BUDGETS: dict[Phase, int] = {
 }
 
 
+def is_finale_evening(state: GameState) -> bool:
+    """True on the last night, once the Final Vote is the only beat left.
+
+    On Day ``MAX_DAYS`` evening the villa is winding down to the Final Vote — the
+    climactic gather that ``advance_phase_with_events`` convenes when the evening
+    budget expires. Letting fresh NPC approaches and conversation interruptions
+    keep firing on this night buries the one action that matters (gathering the
+    cast at the firepit) under endless unsolicited small talk, so callers use
+    this to let the villa settle and surface the Final Vote CTA cleanly. The
+    player can still start their own conversations and the cast still mills
+    about — only unsolicited demands on the player are held back.
+    """
+    return state.phase is Phase.EVENING and state.day >= MAX_DAYS
+
+
 def advance_phase(state: GameState) -> None:
     """Advance the multi-day v0 clock and disperse NPCs into the new phase."""
     state.player.pull_attempts_this_phase = {}

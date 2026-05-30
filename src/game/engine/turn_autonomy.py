@@ -18,6 +18,7 @@ from src.game.agents.villa_orchestrator import (
     mock_villa_orchestrator,
 )
 from src.game.engine.arrival_rolls import ArrivalRoll, roll_arrival
+from src.game.engine.phases import is_finale_evening
 from src.game.engine.villa import (
     AppliedVillaChanges,
     apply_villa_update_async,
@@ -174,7 +175,7 @@ def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: IslanderS
     active = state.active_conversation
     if active is None:
         return
-    if roll.interruption_hit and active.pending_interruption is None:
+    if roll.interruption_hit and active.pending_interruption is None and not is_finale_evening(state):
         active.pending_interruption = NPCInterruption(
             interrupter_id=roll.arriving_npc_id,
             reason="has_gossip" if _recent_high_weight_memories(arriving) else "jealous",
