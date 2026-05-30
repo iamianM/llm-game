@@ -164,14 +164,38 @@ function cleanStem(raw: string): string {
   return cleaned.replace(/^([a-z])/, (m) => m.toUpperCase());
 }
 
-// The concise question for the persistent prompt card. The first round of the
-// Compatibility / Couples quizzes bundles a scene-setting intro that ends at a
-// "Round one[ is about <name>]:" marker — drop everything up to it so the card
-// shows just the ask. Other challenges weave the question into the scene with no
-// clean split, so fall back to the cleaned stem (still short enough to pin).
+// The concise question for the persistent prompt card. Challenges open with
+// host flavor / mechanic explanation (the Lie Detector spends four sentences
+// wiring up the needle before it ever asks anything) that belongs in the
+// scrolling narrator beat, not pinned over the answer buttons. Distill the raw
+// stem down to the actual ask:
+//   1. Drop a "...Round one[ is about <name>]:" scene-setting intro (the compat
+//      / couples quizzes mark the split explicitly).
+//   2. Otherwise trim to the sentence that first poses a question, through the
+//      end — so a trailing answer instruction ("(Pick what Chloe actually
+//      said…)") survives while the preamble is dropped. A stem with no "?" is
+//      an imperative prompt, so keep the cleaned stem as-is.
 function challengeQuestion(raw: string): string {
   const afterIntro = raw.replace(/^[\s\S]*?\bround\s+one\b(?:\s+is\s+about\s+[^:]+)?:\s*/i, "");
-  return cleanStem(afterIntro !== raw ? afterIntro : raw);
+  const base = afterIntro !== raw ? afterIntro : raw;
+  return cleanStem(trimToQuestion(base));
+}
+
+// Return the substring starting at the sentence that first contains a "?", so
+// scene-setting that precedes the ask is dropped but the question (and anything
+// after it, e.g. a parenthetical instruction) is kept. No "?" → return as-is.
+function trimToQuestion(text: string): string {
+  const qIdx = text.indexOf("?");
+  if (qIdx === -1) return text;
+  const before = text.slice(0, qIdx);
+  const boundary = Math.max(
+    before.lastIndexOf(". "),
+    before.lastIndexOf("! "),
+    before.lastIndexOf("? "),
+    before.lastIndexOf("\n"),
+  );
+  const start = boundary === -1 ? 0 : boundary + 1;
+  return text.slice(start).trim();
 }
 
 function wrapNarration(pending: PendingChallenge): string | null {
