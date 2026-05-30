@@ -288,20 +288,28 @@ def _avoid_repetition_directive(
         distinct = distinct[-max_items:]
     quoted = "; ".join(f'"{opening}"' for opening in distinct)
     return (
-        "Anti-repetition guard. Lines already used these openings this "
-        f"conversation: {quoted}. Do NOT begin player_dialogue or npc_dialogue "
-        'with those same words or sentence shapes (no second "You don\'t...", '
-        '"You\'re not...", or other reused frame). Open differently — a specific '
-        "observation, a small joke, a shared memory, or a concrete offer. Also do "
-        "NOT re-state a personal fact or anecdote you have already shared earlier "
-        "in this conversation (your job, your ex, your family, the same metaphor) — "
-        "assume the player remembers it. Build on it, react to what was just said, "
-        "or reveal a new detail instead of repeating the same line."
+        "Anti-repetition guard. Recent openings already used (this conversation "
+        f"and your last few lines elsewhere): {quoted}. Do NOT reuse those words, "
+        "that sentence shape, OR the same underlying move. In particular, do not "
+        'open with another generic greeting frame ("I thought I\'d come over", '
+        '"I figured I\'d say hi", "just making the rounds", "come introduce '
+        'myself") and do not keep using the same scene prop or location as your '
+        "hook. Open differently every time — a specific observation about THIS "
+        "person, a small tease, a callback, or a concrete offer. Also do NOT "
+        "re-state a personal fact or anecdote you have already shared (your job, "
+        "your ex, your family, the same metaphor) — assume the listener remembers "
+        "it; build on it, react to what was just said, or reveal a new detail "
+        "instead of repeating the same line."
     )
 
 
-def _line_opening(line: str, *, words: int = 4) -> str:
-    """First few words of a line, ignoring a leading italic stage direction."""
+def _line_opening(line: str, *, words: int = 6) -> str:
+    """First few words of a line, ignoring a leading italic stage direction.
+
+    Six words (not the first three or four) so near-identical greeting frames —
+    "I thought I'd come say hi" vs "I figured I'd come over and say hi" — surface
+    their shared move in the avoid-list, not just their literal first token.
+    """
     text = line.strip()
     if text.startswith("*"):
         close = text.find("*", 1)

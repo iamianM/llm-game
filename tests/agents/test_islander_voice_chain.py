@@ -111,8 +111,8 @@ def test_build_voice_messages_injects_anti_repetition_guard_after_prior_exchange
     assert [message["role"] for message in messages] == ["user", "user", "assistant", "user"]
     final = messages[-1]["content"]
     assert "Anti-repetition guard." in final
-    assert '"You don\'t have to"' in final
-    assert '"You\'re not as guarded"' in final  # leading *softens* is stripped
+    assert '"You don\'t have to carry all"' in final
+    assert '"You\'re not as guarded as you"' in final  # leading *softens* is stripped
     # The write cue stays last so the model still knows to act now.
     assert final.rstrip().endswith("Write the exchange now.")
 
@@ -164,7 +164,7 @@ def test_build_voice_messages_guards_against_cross_conversation_openers() -> Non
 
     final = messages[-1]["content"]
     assert "Anti-repetition guard." in final
-    assert '"Thought I\'d come say"' in final
+    assert '"Thought I\'d come say hi properly"' in final
     assert final.rstrip().endswith("Write the exchange now.")
 
 
