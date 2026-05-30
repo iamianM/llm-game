@@ -40,6 +40,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
             data-testid="choice"
             data-role="choice"
             data-action-kind={action.kind}
+            data-action-target={action.target_id ?? undefined}
             key={key}
             type="button"
             aria-label={displayLabel(action.label)}
