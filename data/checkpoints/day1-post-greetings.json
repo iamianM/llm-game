@@ -1,7 +1,7 @@
 {
   "name": "day1-post-greetings",
   "seed": 7,
-  "state_hash": "9ea122404365b429ae08948dd8eeaeef5cc8dc7475d44b22b8b6a69295cdf0e3",
+  "state_hash": "361baca89c4214d6a94b5f9f7fe8a18676b1c145b578a19c0d92925f43ed1245",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -123,8 +123,8 @@
           "confidence": 1.0,
           "citation": "Liam told you during Day One introductions."
         },
-        "sophie_start.age": {
-          "fact_key": "sophie_start.age",
+        "sophie.age": {
+          "fact_key": "sophie.age",
           "value": "28",
           "source": "direct",
           "source_npc_id": null,
@@ -133,8 +133,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "sophie_start.hometown": {
-          "fact_key": "sophie_start.hometown",
+        "sophie.hometown": {
+          "fact_key": "sophie.hometown",
           "value": "London",
           "source": "direct",
           "source_npc_id": null,
@@ -143,8 +143,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "sophie_start.occupation": {
-          "fact_key": "sophie_start.occupation",
+        "sophie.occupation": {
+          "fact_key": "sophie.occupation",
           "value": "luxury events producer",
           "source": "direct",
           "source_npc_id": null,
@@ -153,8 +153,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "nia_start.age": {
-          "fact_key": "nia_start.age",
+        "nia.age": {
+          "fact_key": "nia.age",
           "value": "25",
           "source": "direct",
           "source_npc_id": null,
@@ -163,8 +163,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "nia_start.hometown": {
-          "fact_key": "nia_start.hometown",
+        "nia.hometown": {
+          "fact_key": "nia.hometown",
           "value": "Birmingham",
           "source": "direct",
           "source_npc_id": null,
@@ -173,8 +173,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "nia_start.occupation": {
-          "fact_key": "nia_start.occupation",
+        "nia.occupation": {
+          "fact_key": "nia.occupation",
           "value": "florist",
           "source": "direct",
           "source_npc_id": null,
@@ -183,8 +183,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "marcus_start.age": {
-          "fact_key": "marcus_start.age",
+        "marcus.age": {
+          "fact_key": "marcus.age",
           "value": "29",
           "source": "direct",
           "source_npc_id": null,
@@ -193,8 +193,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "marcus_start.hometown": {
-          "fact_key": "marcus_start.hometown",
+        "marcus.hometown": {
+          "fact_key": "marcus.hometown",
           "value": "Manchester",
           "source": "direct",
           "source_npc_id": null,
@@ -203,8 +203,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "marcus_start.occupation": {
-          "fact_key": "marcus_start.occupation",
+        "marcus.occupation": {
+          "fact_key": "marcus.occupation",
           "value": "sales lead at a logistics startup",
           "source": "direct",
           "source_npc_id": null,
@@ -213,8 +213,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "blake_start.age": {
-          "fact_key": "blake_start.age",
+        "blake.age": {
+          "fact_key": "blake.age",
           "value": "26",
           "source": "direct",
           "source_npc_id": null,
@@ -223,8 +223,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "blake_start.hometown": {
-          "fact_key": "blake_start.hometown",
+        "blake.hometown": {
+          "fact_key": "blake.hometown",
           "value": "York",
           "source": "direct",
           "source_npc_id": null,
@@ -233,8 +233,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "blake_start.occupation": {
-          "fact_key": "blake_start.occupation",
+        "blake.occupation": {
+          "fact_key": "blake.occupation",
           "value": "radio producer",
           "source": "direct",
           "source_npc_id": null,
@@ -243,8 +243,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "jordan_start.age": {
-          "fact_key": "jordan_start.age",
+        "jordan.age": {
+          "fact_key": "jordan.age",
           "value": "25",
           "source": "direct",
           "source_npc_id": null,
@@ -253,8 +253,8 @@
           "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
-        "jordan_start.hometown": {
-          "fact_key": "jordan_start.hometown",
+        "jordan.hometown": {
+          "fact_key": "jordan.hometown",
           "value": "Cardiff",
           "source": "direct",
           "source_npc_id": null,
@@ -263,8 +263,8 @@
           "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
-        "jordan_start.occupation": {
-          "fact_key": "jordan_start.occupation",
+        "jordan.occupation": {
+          "fact_key": "jordan.occupation",
           "value": "cocktail bartender",
           "source": "direct",
           "source_npc_id": null,
@@ -617,8 +617,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -627,8 +627,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -637,8 +637,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -647,8 +647,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -657,8 +657,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -667,8 +667,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -677,8 +677,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -687,8 +687,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -697,8 +697,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -707,8 +707,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -717,8 +717,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -727,8 +727,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -737,8 +737,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -747,8 +747,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -757,8 +757,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1109,8 +1109,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1119,8 +1119,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1129,8 +1129,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1139,8 +1139,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1149,8 +1149,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1159,8 +1159,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1169,8 +1169,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1179,8 +1179,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1189,8 +1189,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1199,8 +1199,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1209,8 +1209,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1219,8 +1219,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1229,8 +1229,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1239,8 +1239,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1249,8 +1249,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1601,8 +1601,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1611,8 +1611,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1621,8 +1621,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1631,8 +1631,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1641,8 +1641,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1651,8 +1651,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1661,8 +1661,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1671,8 +1671,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1681,8 +1681,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1691,8 +1691,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1701,8 +1701,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1711,8 +1711,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1721,8 +1721,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1731,8 +1731,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1741,8 +1741,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2123,8 +2123,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2133,8 +2133,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2143,8 +2143,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2153,8 +2153,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2163,8 +2163,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2173,8 +2173,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2183,8 +2183,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2193,8 +2193,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2203,8 +2203,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2213,8 +2213,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2223,8 +2223,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2233,8 +2233,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2615,8 +2615,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2625,8 +2625,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2635,8 +2635,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2645,8 +2645,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2655,8 +2655,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2665,8 +2665,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2675,8 +2675,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2685,8 +2685,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2695,8 +2695,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2705,8 +2705,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2715,8 +2715,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2725,8 +2725,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3107,8 +3107,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3117,8 +3117,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3127,8 +3127,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3137,8 +3137,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3147,8 +3147,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3157,8 +3157,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3167,8 +3167,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3177,8 +3177,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3187,8 +3187,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3197,8 +3197,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3207,8 +3207,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3217,8 +3217,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3599,8 +3599,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3609,8 +3609,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3619,8 +3619,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3629,8 +3629,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3639,8 +3639,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3649,8 +3649,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3659,8 +3659,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3669,8 +3669,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3679,8 +3679,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3689,8 +3689,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3699,8 +3699,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3709,8 +3709,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4099,8 +4099,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4109,8 +4109,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4119,8 +4119,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4129,8 +4129,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4139,8 +4139,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4149,8 +4149,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4159,8 +4159,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4169,8 +4169,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4179,8 +4179,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4189,8 +4189,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4199,8 +4199,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4209,8 +4209,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",

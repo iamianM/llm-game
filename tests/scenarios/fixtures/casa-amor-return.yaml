@@ -19,4 +19,4 @@ actions:
   target_id: ambient_wait
 - kind: ambient
   target_id: ambient_wait
-expected_hash: 04c86d624afe186c4f1219051647899413c66bbd19508bdbcb20af798769b59a
+expected_hash: 90b4e30ca4ef24a16c7b581918b3f4c99778c8d8e1d9c557d3936656499f9573

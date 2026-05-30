@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "9a219e3a00e0f39e026c641a4398c1148a0d9baa50a1af654f2749473df10b6c",
+  "state_hash": "7e6e0e0e92590012b47f7b6b04741705f760f29217f7d33a3276594ad005f790",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -226,8 +226,8 @@
           "confidence": 1.0,
           "citation": "Liam told you during Day One introductions."
         },
-        "sophie_start.age": {
-          "fact_key": "sophie_start.age",
+        "sophie.age": {
+          "fact_key": "sophie.age",
           "value": "28",
           "source": "direct",
           "source_npc_id": null,
@@ -236,8 +236,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "sophie_start.hometown": {
-          "fact_key": "sophie_start.hometown",
+        "sophie.hometown": {
+          "fact_key": "sophie.hometown",
           "value": "London",
           "source": "direct",
           "source_npc_id": null,
@@ -246,8 +246,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "sophie_start.occupation": {
-          "fact_key": "sophie_start.occupation",
+        "sophie.occupation": {
+          "fact_key": "sophie.occupation",
           "value": "luxury events producer",
           "source": "direct",
           "source_npc_id": null,
@@ -256,8 +256,8 @@
           "confidence": 1.0,
           "citation": "Sophie told you during Day One introductions."
         },
-        "nia_start.age": {
-          "fact_key": "nia_start.age",
+        "nia.age": {
+          "fact_key": "nia.age",
           "value": "25",
           "source": "direct",
           "source_npc_id": null,
@@ -266,8 +266,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "nia_start.hometown": {
-          "fact_key": "nia_start.hometown",
+        "nia.hometown": {
+          "fact_key": "nia.hometown",
           "value": "Birmingham",
           "source": "direct",
           "source_npc_id": null,
@@ -276,8 +276,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "nia_start.occupation": {
-          "fact_key": "nia_start.occupation",
+        "nia.occupation": {
+          "fact_key": "nia.occupation",
           "value": "florist",
           "source": "direct",
           "source_npc_id": null,
@@ -286,8 +286,8 @@
           "confidence": 1.0,
           "citation": "Nia told you during Day One introductions."
         },
-        "marcus_start.age": {
-          "fact_key": "marcus_start.age",
+        "marcus.age": {
+          "fact_key": "marcus.age",
           "value": "29",
           "source": "direct",
           "source_npc_id": null,
@@ -296,8 +296,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "marcus_start.hometown": {
-          "fact_key": "marcus_start.hometown",
+        "marcus.hometown": {
+          "fact_key": "marcus.hometown",
           "value": "Manchester",
           "source": "direct",
           "source_npc_id": null,
@@ -306,8 +306,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "marcus_start.occupation": {
-          "fact_key": "marcus_start.occupation",
+        "marcus.occupation": {
+          "fact_key": "marcus.occupation",
           "value": "sales lead at a logistics startup",
           "source": "direct",
           "source_npc_id": null,
@@ -316,8 +316,8 @@
           "confidence": 1.0,
           "citation": "Marcus told you during Day One introductions."
         },
-        "blake_start.age": {
-          "fact_key": "blake_start.age",
+        "blake.age": {
+          "fact_key": "blake.age",
           "value": "26",
           "source": "direct",
           "source_npc_id": null,
@@ -326,8 +326,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "blake_start.hometown": {
-          "fact_key": "blake_start.hometown",
+        "blake.hometown": {
+          "fact_key": "blake.hometown",
           "value": "York",
           "source": "direct",
           "source_npc_id": null,
@@ -336,8 +336,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "blake_start.occupation": {
-          "fact_key": "blake_start.occupation",
+        "blake.occupation": {
+          "fact_key": "blake.occupation",
           "value": "radio producer",
           "source": "direct",
           "source_npc_id": null,
@@ -346,8 +346,8 @@
           "confidence": 1.0,
           "citation": "Blake told you during Day One introductions."
         },
-        "jordan_start.age": {
-          "fact_key": "jordan_start.age",
+        "jordan.age": {
+          "fact_key": "jordan.age",
           "value": "25",
           "source": "direct",
           "source_npc_id": null,
@@ -356,8 +356,8 @@
           "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
-        "jordan_start.hometown": {
-          "fact_key": "jordan_start.hometown",
+        "jordan.hometown": {
+          "fact_key": "jordan.hometown",
           "value": "Cardiff",
           "source": "direct",
           "source_npc_id": null,
@@ -366,8 +366,8 @@
           "confidence": 1.0,
           "citation": "Jordan told you during Day One introductions."
         },
-        "jordan_start.occupation": {
-          "fact_key": "jordan_start.occupation",
+        "jordan.occupation": {
+          "fact_key": "jordan.occupation",
           "value": "cocktail bartender",
           "source": "direct",
           "source_npc_id": null,
@@ -906,8 +906,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -916,8 +916,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -926,8 +926,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -936,8 +936,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -946,8 +946,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -956,8 +956,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -966,8 +966,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -976,8 +976,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -986,8 +986,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -996,8 +996,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1006,8 +1006,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1016,8 +1016,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1026,8 +1026,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1036,8 +1036,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1046,8 +1046,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1500,8 +1500,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1510,8 +1510,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1520,8 +1520,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1530,8 +1530,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1540,8 +1540,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1550,8 +1550,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1560,8 +1560,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1570,8 +1570,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1580,8 +1580,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1590,8 +1590,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1600,8 +1600,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1610,8 +1610,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1620,8 +1620,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1630,8 +1630,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -1640,8 +1640,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2094,8 +2094,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Maya"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2104,8 +2104,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2114,8 +2114,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2124,8 +2124,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2134,8 +2134,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2144,8 +2144,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2154,8 +2154,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2164,8 +2164,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2174,8 +2174,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2184,8 +2184,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2194,8 +2194,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2204,8 +2204,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2214,8 +2214,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2224,8 +2224,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2234,8 +2234,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2718,8 +2718,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2728,8 +2728,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2738,8 +2738,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2748,8 +2748,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2758,8 +2758,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2768,8 +2768,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2778,8 +2778,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2788,8 +2788,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2798,8 +2798,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2808,8 +2808,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2818,8 +2818,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -2828,8 +2828,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3312,8 +3312,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3322,8 +3322,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3332,8 +3332,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3342,8 +3342,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3352,8 +3352,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3362,8 +3362,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3372,8 +3372,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3382,8 +3382,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3392,8 +3392,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3402,8 +3402,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3412,8 +3412,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3422,8 +3422,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3906,8 +3906,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3916,8 +3916,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3926,8 +3926,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3936,8 +3936,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3946,8 +3946,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3956,8 +3956,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3966,8 +3966,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3976,8 +3976,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3986,8 +3986,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -3996,8 +3996,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4006,8 +4006,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4016,8 +4016,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4500,8 +4500,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4510,8 +4510,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4520,8 +4520,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4530,8 +4530,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4540,8 +4540,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4550,8 +4550,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4560,8 +4560,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4570,8 +4570,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4580,8 +4580,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4590,8 +4590,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "jordan_start.occupation": {
-            "fact_key": "jordan_start.occupation",
+          "jordan.occupation": {
+            "fact_key": "jordan.occupation",
             "value": "cocktail bartender",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4600,8 +4600,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.hometown": {
-            "fact_key": "jordan_start.hometown",
+          "jordan.hometown": {
+            "fact_key": "jordan.hometown",
             "value": "Cardiff",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -4610,8 +4610,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Jordan"
           },
-          "jordan_start.age": {
-            "fact_key": "jordan_start.age",
+          "jordan.age": {
+            "fact_key": "jordan.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5102,8 +5102,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Liam"
           },
-          "sophie_start.occupation": {
-            "fact_key": "sophie_start.occupation",
+          "sophie.occupation": {
+            "fact_key": "sophie.occupation",
             "value": "luxury events producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5112,8 +5112,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.hometown": {
-            "fact_key": "sophie_start.hometown",
+          "sophie.hometown": {
+            "fact_key": "sophie.hometown",
             "value": "London",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5122,8 +5122,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "sophie_start.age": {
-            "fact_key": "sophie_start.age",
+          "sophie.age": {
+            "fact_key": "sophie.age",
             "value": "28",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5132,8 +5132,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Sophie"
           },
-          "nia_start.occupation": {
-            "fact_key": "nia_start.occupation",
+          "nia.occupation": {
+            "fact_key": "nia.occupation",
             "value": "florist",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5142,8 +5142,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.hometown": {
-            "fact_key": "nia_start.hometown",
+          "nia.hometown": {
+            "fact_key": "nia.hometown",
             "value": "Birmingham",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5152,8 +5152,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "nia_start.age": {
-            "fact_key": "nia_start.age",
+          "nia.age": {
+            "fact_key": "nia.age",
             "value": "25",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5162,8 +5162,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Nia"
           },
-          "marcus_start.occupation": {
-            "fact_key": "marcus_start.occupation",
+          "marcus.occupation": {
+            "fact_key": "marcus.occupation",
             "value": "sales lead at a logistics startup",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5172,8 +5172,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.hometown": {
-            "fact_key": "marcus_start.hometown",
+          "marcus.hometown": {
+            "fact_key": "marcus.hometown",
             "value": "Manchester",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5182,8 +5182,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "marcus_start.age": {
-            "fact_key": "marcus_start.age",
+          "marcus.age": {
+            "fact_key": "marcus.age",
             "value": "29",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5192,8 +5192,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Marcus"
           },
-          "blake_start.occupation": {
-            "fact_key": "blake_start.occupation",
+          "blake.occupation": {
+            "fact_key": "blake.occupation",
             "value": "radio producer",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5202,8 +5202,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.hometown": {
-            "fact_key": "blake_start.hometown",
+          "blake.hometown": {
+            "fact_key": "blake.hometown",
             "value": "York",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5212,8 +5212,8 @@
             "confidence": 1.0,
             "citation": "Preseason chatter about Blake"
           },
-          "blake_start.age": {
-            "fact_key": "blake_start.age",
+          "blake.age": {
+            "fact_key": "blake.age",
             "value": "26",
             "source": "witnessed",
             "source_npc_id": "preseason",
@@ -5498,7 +5498,7 @@
       "prompts": {
         "compatibility_quiz": [
           {
-            "id": "cq_blake_start_age",
+            "id": "cq_blake_age",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "age",
@@ -5514,7 +5514,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_biggest_fear",
+            "id": "cq_blake_biggest_fear",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "biggest_fear",
@@ -5530,7 +5530,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_drink_of_choice",
+            "id": "cq_blake_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "drink_of_choice",
@@ -5546,7 +5546,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_favorite_food",
+            "id": "cq_blake_favorite_food",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "favorite_food",
@@ -5562,7 +5562,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_hidden_secret",
+            "id": "cq_blake_hidden_secret",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "hidden_secret",
@@ -5578,7 +5578,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_hobby",
+            "id": "cq_blake_hobby",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "hobby",
@@ -5594,7 +5594,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_hometown",
+            "id": "cq_blake_hometown",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "hometown",
@@ -5610,7 +5610,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_insecurity",
+            "id": "cq_blake_insecurity",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "insecurity",
@@ -5626,7 +5626,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_love_language",
+            "id": "cq_blake_love_language",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "love_language",
@@ -5642,7 +5642,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_occupation",
+            "id": "cq_blake_occupation",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "occupation",
@@ -5658,7 +5658,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_past_heartbreak",
+            "id": "cq_blake_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "past_heartbreak",
@@ -5674,7 +5674,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_pet_peeve",
+            "id": "cq_blake_pet_peeve",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "pet_peeve",
@@ -5690,7 +5690,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_worst_habit",
+            "id": "cq_blake_worst_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "worst_habit",
@@ -5706,7 +5706,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_comfort_show",
+            "id": "cq_blake_comfort_show",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "comfort_show",
@@ -5718,7 +5718,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_karaoke_song",
+            "id": "cq_blake_karaoke_song",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "karaoke_song",
@@ -5730,7 +5730,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_keepsake",
+            "id": "cq_blake_keepsake",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "keepsake",
@@ -5742,7 +5742,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_rainy_day_habit",
+            "id": "cq_blake_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "rainy_day_habit",
@@ -5754,7 +5754,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_unexpected_skill",
+            "id": "cq_blake_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "unexpected_skill",
@@ -5766,7 +5766,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_start_villa_tell",
+            "id": "cq_blake_villa_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
             "trait_key": "villa_tell",
@@ -6058,7 +6058,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_age",
+            "id": "cq_jordan_age",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "age",
@@ -6074,7 +6074,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_biggest_fear",
+            "id": "cq_jordan_biggest_fear",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "biggest_fear",
@@ -6090,7 +6090,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_drink_of_choice",
+            "id": "cq_jordan_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "drink_of_choice",
@@ -6106,7 +6106,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_favorite_food",
+            "id": "cq_jordan_favorite_food",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "favorite_food",
@@ -6122,7 +6122,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_hidden_secret",
+            "id": "cq_jordan_hidden_secret",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "hidden_secret",
@@ -6138,7 +6138,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_hobby",
+            "id": "cq_jordan_hobby",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "hobby",
@@ -6154,7 +6154,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_hometown",
+            "id": "cq_jordan_hometown",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "hometown",
@@ -6170,7 +6170,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_insecurity",
+            "id": "cq_jordan_insecurity",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "insecurity",
@@ -6186,7 +6186,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_love_language",
+            "id": "cq_jordan_love_language",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "love_language",
@@ -6202,7 +6202,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_occupation",
+            "id": "cq_jordan_occupation",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "occupation",
@@ -6218,7 +6218,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_past_heartbreak",
+            "id": "cq_jordan_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "past_heartbreak",
@@ -6234,7 +6234,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_pet_peeve",
+            "id": "cq_jordan_pet_peeve",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "pet_peeve",
@@ -6250,7 +6250,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_worst_habit",
+            "id": "cq_jordan_worst_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "worst_habit",
@@ -6266,7 +6266,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_comfort_show",
+            "id": "cq_jordan_comfort_show",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "comfort_show",
@@ -6278,7 +6278,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_karaoke_song",
+            "id": "cq_jordan_karaoke_song",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "karaoke_song",
@@ -6290,7 +6290,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_keepsake",
+            "id": "cq_jordan_keepsake",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "keepsake",
@@ -6302,7 +6302,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_rainy_day_habit",
+            "id": "cq_jordan_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "rainy_day_habit",
@@ -6314,7 +6314,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_signature_dance_move",
+            "id": "cq_jordan_signature_dance_move",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "signature_dance_move",
@@ -6326,7 +6326,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_unexpected_skill",
+            "id": "cq_jordan_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "unexpected_skill",
@@ -6338,7 +6338,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_start_villa_tell",
+            "id": "cq_jordan_villa_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
             "trait_key": "villa_tell",
@@ -6630,7 +6630,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_age",
+            "id": "cq_marcus_age",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "age",
@@ -6646,7 +6646,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_biggest_fear",
+            "id": "cq_marcus_biggest_fear",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "biggest_fear",
@@ -6662,7 +6662,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_drink_of_choice",
+            "id": "cq_marcus_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "drink_of_choice",
@@ -6678,7 +6678,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_favorite_food",
+            "id": "cq_marcus_favorite_food",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "favorite_food",
@@ -6694,7 +6694,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_hidden_secret",
+            "id": "cq_marcus_hidden_secret",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "hidden_secret",
@@ -6710,7 +6710,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_hobby",
+            "id": "cq_marcus_hobby",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "hobby",
@@ -6726,7 +6726,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_hometown",
+            "id": "cq_marcus_hometown",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "hometown",
@@ -6742,7 +6742,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_insecurity",
+            "id": "cq_marcus_insecurity",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "insecurity",
@@ -6758,7 +6758,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_love_language",
+            "id": "cq_marcus_love_language",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "love_language",
@@ -6774,7 +6774,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_occupation",
+            "id": "cq_marcus_occupation",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "occupation",
@@ -6790,7 +6790,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_past_heartbreak",
+            "id": "cq_marcus_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "past_heartbreak",
@@ -6806,7 +6806,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_pet_peeve",
+            "id": "cq_marcus_pet_peeve",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "pet_peeve",
@@ -6822,7 +6822,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_worst_habit",
+            "id": "cq_marcus_worst_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "worst_habit",
@@ -6838,7 +6838,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_comfort_show",
+            "id": "cq_marcus_comfort_show",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "comfort_show",
@@ -6850,7 +6850,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_karaoke_song",
+            "id": "cq_marcus_karaoke_song",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "karaoke_song",
@@ -6862,7 +6862,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_keepsake",
+            "id": "cq_marcus_keepsake",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "keepsake",
@@ -6874,7 +6874,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_rainy_day_habit",
+            "id": "cq_marcus_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "rainy_day_habit",
@@ -6886,7 +6886,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_unexpected_skill",
+            "id": "cq_marcus_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "unexpected_skill",
@@ -6898,7 +6898,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_start_villa_tell",
+            "id": "cq_marcus_villa_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
             "trait_key": "villa_tell",
@@ -7190,7 +7190,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_age",
+            "id": "cq_nia_age",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "age",
@@ -7206,7 +7206,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_biggest_fear",
+            "id": "cq_nia_biggest_fear",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "biggest_fear",
@@ -7222,7 +7222,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_drink_of_choice",
+            "id": "cq_nia_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "drink_of_choice",
@@ -7238,7 +7238,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_favorite_food",
+            "id": "cq_nia_favorite_food",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "favorite_food",
@@ -7254,7 +7254,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_hidden_secret",
+            "id": "cq_nia_hidden_secret",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "hidden_secret",
@@ -7270,7 +7270,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_hobby",
+            "id": "cq_nia_hobby",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "hobby",
@@ -7286,7 +7286,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_hometown",
+            "id": "cq_nia_hometown",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "hometown",
@@ -7302,7 +7302,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_insecurity",
+            "id": "cq_nia_insecurity",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "insecurity",
@@ -7318,7 +7318,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_love_language",
+            "id": "cq_nia_love_language",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "love_language",
@@ -7334,7 +7334,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_occupation",
+            "id": "cq_nia_occupation",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "occupation",
@@ -7350,7 +7350,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_past_heartbreak",
+            "id": "cq_nia_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "past_heartbreak",
@@ -7366,7 +7366,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_pet_peeve",
+            "id": "cq_nia_pet_peeve",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "pet_peeve",
@@ -7382,7 +7382,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_worst_habit",
+            "id": "cq_nia_worst_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "worst_habit",
@@ -7398,7 +7398,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_comfort_show",
+            "id": "cq_nia_comfort_show",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "comfort_show",
@@ -7410,7 +7410,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_karaoke_song",
+            "id": "cq_nia_karaoke_song",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "karaoke_song",
@@ -7422,7 +7422,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_keepsake",
+            "id": "cq_nia_keepsake",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "keepsake",
@@ -7434,7 +7434,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_rainy_day_habit",
+            "id": "cq_nia_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "rainy_day_habit",
@@ -7446,7 +7446,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_unexpected_skill",
+            "id": "cq_nia_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "unexpected_skill",
@@ -7458,7 +7458,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_start_villa_tell",
+            "id": "cq_nia_villa_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
             "trait_key": "villa_tell",
@@ -7470,7 +7470,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_age",
+            "id": "cq_sophie_age",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "age",
@@ -7486,7 +7486,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_biggest_fear",
+            "id": "cq_sophie_biggest_fear",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "biggest_fear",
@@ -7502,7 +7502,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_drink_of_choice",
+            "id": "cq_sophie_drink_of_choice",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "drink_of_choice",
@@ -7518,7 +7518,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_favorite_food",
+            "id": "cq_sophie_favorite_food",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "favorite_food",
@@ -7534,7 +7534,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_hidden_secret",
+            "id": "cq_sophie_hidden_secret",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "hidden_secret",
@@ -7550,7 +7550,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_hobby",
+            "id": "cq_sophie_hobby",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "hobby",
@@ -7566,7 +7566,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_hometown",
+            "id": "cq_sophie_hometown",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "hometown",
@@ -7582,7 +7582,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_insecurity",
+            "id": "cq_sophie_insecurity",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "insecurity",
@@ -7598,7 +7598,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_love_language",
+            "id": "cq_sophie_love_language",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "love_language",
@@ -7614,7 +7614,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_occupation",
+            "id": "cq_sophie_occupation",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "occupation",
@@ -7630,7 +7630,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_past_heartbreak",
+            "id": "cq_sophie_past_heartbreak",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "past_heartbreak",
@@ -7646,7 +7646,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_pet_peeve",
+            "id": "cq_sophie_pet_peeve",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "pet_peeve",
@@ -7662,7 +7662,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_worst_habit",
+            "id": "cq_sophie_worst_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "worst_habit",
@@ -7678,7 +7678,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_comfort_show",
+            "id": "cq_sophie_comfort_show",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "comfort_show",
@@ -7690,7 +7690,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_karaoke_song",
+            "id": "cq_sophie_karaoke_song",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "karaoke_song",
@@ -7702,7 +7702,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_keepsake",
+            "id": "cq_sophie_keepsake",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "keepsake",
@@ -7714,7 +7714,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_rainy_day_habit",
+            "id": "cq_sophie_rainy_day_habit",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "rainy_day_habit",
@@ -7726,7 +7726,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_unexpected_skill",
+            "id": "cq_sophie_unexpected_skill",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "unexpected_skill",
@@ -7738,7 +7738,7 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_start_villa_tell",
+            "id": "cq_sophie_villa_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
             "trait_key": "villa_tell",

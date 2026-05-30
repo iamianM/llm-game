@@ -152,14 +152,25 @@ def share_gossip(state: GameState, speaker_id: str, subject_id: str) -> KnownFac
 
 
 def gossip_subjects_for(state: GameState, speaker_id: str) -> list[str]:
-    """Return subject ids the speaker can gossip about."""
+    """Return subject ids the speaker can gossip about.
+
+    Only subjects that still resolve to a member of the current cast are
+    offered. A fact whose subject id no longer maps to a live islander (e.g. a
+    stale id carried in older save data, or a phantom left behind by a cast
+    change) is dropped here so the follow-up menu never offers — and the turn
+    loop never has to resolve — gossip about someone who is not in the villa.
+    """
     speaker = _islander(state, speaker_id)
+    cast_ids = {islander.id for islander in state.islanders}
     subjects = {
         fact.fact_key.split(".", 1)[0]
         for fact in speaker.known_facts.values()
         if not fact.fact_key.endswith(".hidden_secret")
     }
-    return sorted(subject for subject in subjects if subject not in {"player", speaker_id})
+    excluded = {"player", speaker_id}
+    return sorted(
+        subject for subject in subjects if subject in cast_ids and subject not in excluded
+    )
 
 
 def _fact_about(speaker: IslanderState, subject_id: str) -> KnownFact | None:
@@ -175,7 +186,11 @@ def _distorted_value(state: GameState, fact: KnownFact, rng: SeededRng) -> str:
     if rng.randint(1, 100) > 30:
         return fact.value
     subject_id, trait_key = fact.fact_key.split(".", 1)
-    subject = _islander(state, subject_id)
+    subject = next((islander for islander in state.islanders if islander.id == subject_id), None)
+    if subject is None:
+        # The fact's subject is no longer in the cast (stale id). Pass the value
+        # through undistorted rather than hard-crashing the turn.
+        return fact.value
     trait = subject.trait_card.core_traits.get(trait_key)
     if trait is None or not trait.distractors:
         return fact.value
