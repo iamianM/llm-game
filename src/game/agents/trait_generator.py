@@ -18,6 +18,7 @@ from src.game.agents.islander_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     begin_agent_attempt,
+    build_game_client,
     end_agent_attempt,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
@@ -99,7 +100,7 @@ class OpenAITraitGenerator:
 
     @cached_property
     def _client(self) -> OpenAI:
-        return OpenAI()
+        return build_game_client()
 
     def generate_opening_cast(self, seeds: Iterable[GenerationSeed]) -> dict[str, TraitCard]:
         """Generate and validate opening Trait Cards.

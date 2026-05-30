@@ -6,6 +6,7 @@ import os
 from contextvars import ContextVar, Token
 from typing import Any
 
+from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 # Allow overrides via env var for eval / perf comparisons without touching
@@ -15,6 +16,26 @@ GAME_AGENT_MODEL = os.environ.get("LLM_GAME_MODEL", "gpt-5.4-mini")
 GAME_AGENT_REASONING_EFFORT = os.environ.get("LLM_GAME_REASONING_EFFORT", "high")
 GAME_AGENT_REASONING_SUMMARY = os.environ.get("LLM_GAME_REASONING_SUMMARY", "detailed")
 GAME_AGENT_RESPONSE_INCLUDE = ["reasoning.encrypted_content"]
+
+# Bound per-request latency so one slow/hung model call can't freeze a whole
+# turn. The OpenAI SDK defaults to a 600s timeout and two automatic retries, so
+# a single transient stall mid-ceremony would leave the player staring at a
+# frozen scene for minutes before any fallback could fire. With an explicit
+# timeout the call fails fast and each agent's own retry loop degrades to
+# deterministic prose instead. Retries are owned by the agent loops (not the
+# SDK) so worst-case latency stays bounded at attempts x timeout rather than
+# compounding. Both knobs are env-overridable for eval/perf runs.
+GAME_AGENT_REQUEST_TIMEOUT = float(os.environ.get("LLM_GAME_REQUEST_TIMEOUT", "60"))
+GAME_AGENT_MAX_RETRIES = int(os.environ.get("LLM_GAME_MAX_RETRIES", "0"))
+
+
+def build_game_client() -> OpenAI:
+    """Return the shared, latency-bounded OpenAI client for live game agents.
+
+    Every live agent calls this instead of constructing a bare ``OpenAI()`` so
+    the timeout/retry policy lives in one place (see ``GAME_AGENT_REQUEST_TIMEOUT``).
+    """
+    return OpenAI(timeout=GAME_AGENT_REQUEST_TIMEOUT, max_retries=GAME_AGENT_MAX_RETRIES)
 
 
 class ReasoningSummary(BaseModel):

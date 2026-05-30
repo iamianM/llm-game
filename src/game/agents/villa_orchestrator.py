@@ -25,6 +25,7 @@ from src.game.agents.runtime import (
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
+    build_game_client,
     end_agent_attempt,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
@@ -119,7 +120,7 @@ class OpenAIVillaOrchestrator:
 
     @cached_property
     def _client(self) -> OpenAI:
-        return OpenAI()
+        return build_game_client()
 
     def decide(self, state: GameState) -> VillaUpdate:
         """Generate one VillaUpdate commit."""
