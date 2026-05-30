@@ -1,7 +1,15 @@
 "use client";
 
 import { ChevronLeft, Lock, MapPin, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { IslanderLook } from "../../lib/look";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
@@ -636,11 +644,49 @@ function CharacterMenu({
   const grouped = useMemo(() => groupActionsByCategory(actions), [actions]);
   const [openCategory, setOpenCategory] = useState<IntentCategory | null>(null);
   const subActions = openCategory ? grouped[openCategory] : [];
+
+  // The card is anchored just above the tapped character and grows upward. A
+  // tall option list (e.g. four-plus openers per category) on a character that
+  // stands high in the scene would push the top rows above the viewport, where
+  // they are unreachable — the player can't scroll an absolutely-positioned
+  // popover. Measure the natural height against the stage and decide per open:
+  // keep it above when there is room, flip below when the anchor sits high, and
+  // cap the height either way so the option list scrolls inside the card.
+  const menuRef = useRef<HTMLDivElement>(null);
+  const [placement, setPlacement] = useState<{
+    flip: boolean;
+    maxHeight: number;
+  } | null>(null);
+  useLayoutEffect(() => {
+    const el = menuRef.current;
+    const parent = el?.offsetParent as HTMLElement | null;
+    if (!el || !parent) return;
+    const stageHeight = parent.clientHeight;
+    if (stageHeight <= 0) return;
+    const margin = 12;
+    const anchorPx = (top / 100) * stageHeight;
+    const roomAbove = anchorPx - margin;
+    const roomBelow = stageHeight - anchorPx - margin;
+    const naturalHeight = el.scrollHeight;
+    // Prefer the classic above-the-head placement; only flip below when there
+    // genuinely isn't room above and below has more.
+    const flip = naturalHeight > roomAbove && roomBelow > roomAbove;
+    const available = Math.max(140, flip ? roomBelow : roomAbove);
+    setPlacement({ flip, maxHeight: Math.min(naturalHeight, available) });
+  }, [top, openCategory, subActions.length, actions.length]);
+
   return (
     <div
+      ref={menuRef}
       data-testid="character-menu"
-      className="char-menu"
-      style={{ "--anchor-x": `${left}%`, top: `${top}%` } as CSSProperties}
+      className={`char-menu${placement?.flip ? " is-below" : " is-above"}`}
+      style={
+        {
+          "--anchor-x": `${left}%`,
+          top: `${top}%`,
+          maxHeight: placement ? `${placement.maxHeight}px` : undefined,
+        } as CSSProperties
+      }
       onClick={(e) => e.stopPropagation()}
     >
       <header>
@@ -726,7 +772,6 @@ function CharacterMenu({
         .char-menu {
           position: absolute;
           z-index: 12;
-          transform: translate(-50%, -100%);
           --menu-w: min(320px, calc(100vw - 24px));
           width: var(--menu-w);
           /* Anchor near the tapped character, but never let the fixed-width
@@ -738,19 +783,39 @@ function CharacterMenu({
             var(--anchor-x, 50%),
             calc(100vw - var(--menu-w) / 2 - 10px)
           );
+          /* Flex column so the header/back row stay pinned while a long option
+             list scrolls inside the card instead of spilling off-screen. */
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
           padding: 12px 14px 14px;
           border-radius: var(--r-xl);
           background: linear-gradient(180deg, rgba(248,246,239,.98), rgba(238,226,201,.96));
           border: 1px solid rgba(217,167,58,.55);
           box-shadow: var(--shadow-lg), var(--inset-gold);
           color: var(--ink);
-          animation: pop .18s cubic-bezier(.22,.61,.36,1);
         }
-        @keyframes pop {
-          from { opacity: 0; transform: translate(-50%, -94%) scale(.96); }
+        /* Placement is chosen at open time: above the head by default, flipped
+           below when the anchor sits too high for the card to fit above. */
+        .char-menu.is-above {
+          transform: translate(-50%, -100%);
+          transform-origin: bottom center;
+          animation: pop-above .18s cubic-bezier(.22,.61,.36,1);
+        }
+        .char-menu.is-below {
+          transform: translate(-50%, 0);
+          transform-origin: top center;
+          animation: pop-below .18s cubic-bezier(.22,.61,.36,1);
+        }
+        @keyframes pop-above {
+          from { opacity: 0; transform: translate(-50%, -100%) scale(.96); }
           to { opacity: 1; transform: translate(-50%, -100%) scale(1); }
         }
-        header { position: relative; display: grid; gap: 2px; margin-bottom: 8px; }
+        @keyframes pop-below {
+          from { opacity: 0; transform: translate(-50%, 0) scale(.96); }
+          to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+        }
+        header { position: relative; display: grid; gap: 2px; margin-bottom: 8px; flex: 0 0 auto; }
         .char-menu-eyebrow {
           font-family: var(--font-hand);
           font-size: 11px;
@@ -774,7 +839,21 @@ function CharacterMenu({
           cursor: pointer;
         }
         .char-menu-close:hover { background: rgba(73,57,42,.1); color: var(--ink); }
-        ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 4px; }
+        ul {
+          list-style: none;
+          margin: 0;
+          display: grid;
+          gap: 4px;
+          /* Take the remaining card height and scroll when the option list is
+             taller than the room the card was given. The 2px inline padding +
+             negative margin keep focus rings from clipping against the edge. */
+          flex: 1 1 auto;
+          min-height: 0;
+          overflow-y: auto;
+          overscroll-behavior: contain;
+          padding: 2px;
+          margin-inline: -2px;
+        }
         .char-menu-item {
           width: 100%;
           padding: 9px 11px 10px;
