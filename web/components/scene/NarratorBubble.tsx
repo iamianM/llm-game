@@ -4,11 +4,11 @@ import { ChevronRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTypewriter } from "../../lib/scene/typewriter";
 
-export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance: boolean }) {
+export function NarratorBubble({ text, canAdvance, withBanner = false }: { text: string; canAdvance: boolean; withBanner?: boolean }) {
   const reduce = useReducedMotion();
   const { rendered, complete } = useTypewriter(text);
   return (
-    <div data-testid="narrator-bubble" data-stream-complete={complete ? "true" : "false"} className="narrator-shell">
+    <div data-testid="narrator-bubble" data-stream-complete={complete ? "true" : "false"} className={`narrator-shell${withBanner ? " has-banner" : ""}`}>
       <motion.div
         className="narrator-bubble"
         initial={reduce ? false : { opacity: 0, y: -10, scale: 0.98 }}
@@ -80,6 +80,9 @@ export function NarratorBubble({ text, canAdvance }: { text: string; canAdvance:
         }
         @media (max-width: 520px) {
           .narrator-shell { top: 8px; }
+          /* Clear the challenge round chip (top-left) so the centered
+             "The Producer" label never tucks under it on narrow screens. */
+          .narrator-shell.has-banner { top: 52px; }
           .narrator-bubble {
             padding: 9px 12px 11px;
             border-radius: var(--r-lg);

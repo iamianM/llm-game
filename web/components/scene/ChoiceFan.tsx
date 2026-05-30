@@ -23,7 +23,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
   return (
     <motion.div
       data-testid="choice-fan"
-      className={`choice-fan${actions.length > 4 ? " is-scroll" : ""}`}
+      className={`choice-fan${actions.length > 4 ? " is-scroll" : ""}${actions.length === 1 ? " is-single" : ""}${actions.length === 4 ? " is-quad" : ""}`}
       initial={reduce ? false : "hidden"}
       animate="show"
       variants={{
@@ -83,6 +83,23 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           overflow-y: auto;
           padding-right: 4px;
           mask-image: linear-gradient(180deg, transparent, #000 12px, #000 calc(100% - 18px), transparent);
+        }
+        /* A lone CTA (e.g. "Join everyone at Firepit", "Continue") shouldn't
+           stretch into a near-empty full-width bar — center a tidy pill. */
+        .choice-fan.is-single {
+          grid-template-columns: minmax(0, 340px);
+          justify-content: center;
+        }
+        .choice-fan.is-single .choice-bubble {
+          text-align: center;
+          justify-items: center;
+        }
+        .choice-fan.is-single .choice-meta { justify-content: center; }
+        /* Four options (the recoupling pick) read as a balanced, centered 2x2
+           block instead of an auto-fit "3 + 1 orphan" on wide screens. */
+        .choice-fan.is-quad {
+          grid-template-columns: repeat(2, minmax(0, 260px));
+          justify-content: center;
         }
         .choice-bubble {
           position: relative;

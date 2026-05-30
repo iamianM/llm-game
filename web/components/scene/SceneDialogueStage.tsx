@@ -157,6 +157,7 @@ export function SceneDialogueStage({
   );
 
   const sceneLocation = state.phase === "intros" ? "firepit" : state.location_id;
+  const bannerShown = showBanner(state.pending_challenge, actions);
   return (
     <SceneLayer location={sceneLocation} onTap={() => {
       if (openCharacterId) { setOpenCharacterId(null); return; }
@@ -171,7 +172,7 @@ export function SceneDialogueStage({
         tappableIds={charactersWithActions}
         onCharacterTap={(id) => { setMoveOpen(false); setOpenCharacterId((current) => current === id ? null : id); }}
       />
-      {showBanner(state.pending_challenge, actions) ? (
+      {bannerShown ? (
         <ChallengeBanner pending={state.pending_challenge as PendingChallengeView} />
       ) : null}
       {moveActions.length > 0 ? (
@@ -195,7 +196,7 @@ export function SceneDialogueStage({
         />
       ) : null}
       {activeBeat?.kind === "narrator" ? (
-        <NarratorBubble text={activeBeat.text} canAdvance={hasLaterBeat(plannedBeats, beatIndex)} />
+        <NarratorBubble text={activeBeat.text} canAdvance={hasLaterBeat(plannedBeats, beatIndex)} withBanner={bannerShown} />
       ) : null}
       {activeBeat?.kind === "speech" ? (
         <SpeechBubble
