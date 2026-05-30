@@ -1,13 +1,33 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { findOutfit, loadLook, type IslanderLook } from "../../lib/look";
+import { playerSprite } from "../../lib/scene/player-sprite";
 import type { SessionState } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 import { Button } from "../ui/Button";
 
-export function FinaleScreen({ state }: { state: SessionState }) {
+export function FinaleScreen({ state, sessionId }: { state: SessionState; sessionId?: string }) {
   const playerCouple = state.couples.find((couple) => couple.is_player_couple);
   const outcome = finaleOutcome(state.outcome);
+  // Load the saved look so the player's own Islander — outfit accent and all —
+  // shows up at their big moment instead of a generic initials disc.
+  const [look, setLook] = useState<IslanderLook | null>(null);
+  useEffect(() => {
+    if (sessionId) setLook(loadLook(sessionId));
+  }, [sessionId]);
+  const playerId = state.player.id;
+  const renderPartner = (id: string, name: string) =>
+    id === playerId ? (
+      <PlayerFinaleAvatar
+        sprite={playerSprite(state.player.archetype_id, state.player.gender)}
+        name={name}
+        accent={look ? findOutfit(look.outfit).accent : "#ffe48a"}
+      />
+    ) : (
+      <Avatar id={id} name={name} size="lg" />
+    );
   return (
     <main data-screen="finale" className="finale-stage grid min-h-screen place-items-center bg-[linear-gradient(180deg,rgba(7,5,4,.4),rgba(7,5,4,.9)),url('/images/features/finale.webp')] bg-cover bg-center p-8 text-center text-[var(--card)]">
       <section className="finale-content max-w-3xl">
@@ -15,12 +35,12 @@ export function FinaleScreen({ state }: { state: SessionState }) {
         <h1 className="finale-title mt-2 font-display text-7xl">{outcome.headline}</h1>
         {playerCouple ? (
           <div className="couple-card mx-auto mt-10 flex max-w-xl items-center justify-center gap-8 rounded-[var(--r-xl)] border border-gold bg-white/10 p-8">
-            <Avatar id={playerCouple.partner_a_id} name={playerCouple.partner_a_name} size="lg" />
+            {renderPartner(playerCouple.partner_a_id, playerCouple.partner_a_name)}
             <div>
               <p className="font-display text-3xl">{playerCouple.partner_a_name} & {playerCouple.partner_b_name}</p>
               <p className="mt-2 text-gold">Connection score: {playerCouple.strength}/100</p>
             </div>
-            <Avatar id={playerCouple.partner_b_id} name={playerCouple.partner_b_name} size="lg" />
+            {renderPartner(playerCouple.partner_b_id, playerCouple.partner_b_name)}
           </div>
         ) : null}
         <p className="result-line mt-8 text-lg text-[var(--muted-on-dark)]">{outcome.summary}</p>
@@ -82,6 +102,36 @@ export function FinaleScreen({ state }: { state: SessionState }) {
         }
       `}</style>
     </main>
+  );
+}
+
+// The player's standee is a full-body transparent cutout. The NPCs in the
+// couple card are tight face portraits (Avatar size="lg", 80px), so to keep the
+// card balanced we frame the standee as a matching head-and-shoulders portrait:
+// zoom the full-body image so only the upper body fills the 80px disc (tuned to
+// land every archetype/gender's face cleanly), accented with the outfit ring.
+function PlayerFinaleAvatar({ sprite, name, accent }: { sprite: string; name: string; accent: string }) {
+  return (
+    <div
+      className="player-finale-avatar"
+      aria-label={name}
+      style={{ ["--accent" as string]: accent, backgroundImage: `url(${sprite})` }}
+    >
+      <style jsx>{`
+        .player-finale-avatar {
+          width: 80px;
+          height: 80px;
+          flex-shrink: 0;
+          border-radius: 9999px;
+          overflow: hidden;
+          background-repeat: no-repeat;
+          background-size: auto 380px;
+          background-position: 46% 11%;
+          background-color: color-mix(in srgb, var(--accent) 42%, #16110d);
+          box-shadow: var(--shadow-md), 0 0 0 2px color-mix(in srgb, var(--accent) 70%, transparent), 0 0 22px color-mix(in srgb, var(--accent) 45%, transparent);
+        }
+      `}</style>
+    </div>
   );
 }
 
