@@ -1,7 +1,7 @@
 {
   "name": "day4-casa-amor-announce",
   "seed": 7,
-  "state_hash": "df8b58a574355cd115f9477331bad410c3feec3e0ee8bb1fd918c2ddd5df6f03",
+  "state_hash": "18ab58d4c14afd572212338b4ccd4781d76a804c35e8dc75edb332262df86255",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -9616,166 +9616,24 @@
         "day": 1,
         "items": [
           {
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
+            "subject_id": "player",
+            "content": "I properly met you during Day One intros and got a real first read.",
+            "emotional_weight": 4,
             "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
+              "day_one",
+              "intro"
             ]
           }
         ]
       },
       {
         "day": 2,
-        "items": [
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "player",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          }
-        ]
+        "items": []
       },
       {
         "day": 3,
-        "items": [
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          }
-        ]
+        "items": []
       }
     ],
     "hideaway": {

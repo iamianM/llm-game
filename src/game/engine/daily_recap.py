@@ -6,8 +6,32 @@ import re
 
 from src.game.state.models import DailyRecap, DailyRecapItem, GameState, Memory
 
-_PLAYER_POSSESSIVE_RE = re.compile(r"\bthe player's\b", re.IGNORECASE)
-_PLAYER_RE = re.compile(r"\bthe player\b", re.IGNORECASE)
+# Accept an optional "the " so a bare subject label ("Player guessed wrong ...")
+# is rewritten alongside the name-agnostic "the player" voice. Capitalization of
+# the replacement follows the first matched character ("The"/"Player" -> "You").
+_PLAYER_POSSESSIVE_RE = re.compile(r"\b(?:the )?player's\b", re.IGNORECASE)
+_PLAYER_RE = re.compile(r"\b(?:the )?player\b", re.IGNORECASE)
+
+# "While you were busy" surfaces background *whispers* — relationship beats and
+# gossip that drifted back to the player. Two families of memory are NOT
+# whispers and must be kept out of the player-facing digest:
+#
+#   * Procedural villa announcements the whole cast witnessed together (firepit
+#     gathers, recoupling/Pairing ceremonies, eliminations, challenges, Flush of
+#     Hearts/Casa announcements, producer text). Several carry internal labels
+#     ("Pairing Ceremony text: ..."), raw cast ids ("jordan_start leaves"), or
+#     mechanical scoring ("ended in failure (3 pts)") that read like leaked
+#     stage directions. ``remember_ceremony_events`` stamps *every* one of these
+#     with the ``"ceremony"`` tag, so matching that single tag drops them all —
+#     including any future event kind — without an event-by-event denylist.
+#   * Internal, tag-only mechanical markers the producer / Conversation Curator
+#     reference later but that were never written for display (e.g.
+#     ``caught_unprepared`` quiz reactions phrased in a bare first person —
+#     "...about my age..." — that read as orphaned without holder attribution).
+#
+# Dropping both lets the curator's genuine personal beats (or the honest "no
+# whispers" fallback) carry the recap instead.
+_NON_WHISPER_TAGS = frozenset({"ceremony", "caught_unprepared"})
 
 
 def append_daily_recap_if_needed(state: GameState, completed_day: int) -> DailyRecap | None:
@@ -56,18 +80,32 @@ def _notable_memories(state: GameState, day: int) -> list[Memory]:
         memory
         for islander in state.islanders
         for memory in islander.memories
-        if memory.formed_on_day == day
+        if memory.formed_on_day == day and not _is_non_whisper(memory)
     ]
-    memories.extend(memory for memory in state.player.memories if memory.formed_on_day == day)
+    memories.extend(
+        memory
+        for memory in state.player.memories
+        if memory.formed_on_day == day and not _is_non_whisper(memory)
+    )
     memories.sort(key=lambda memory: (-memory.emotional_weight, memory.formed_on_turn, memory.id))
-    seen: set[tuple[str, str, str]] = set()
+    # Witnessed ceremony events (challenges, recouplings) are stored once per
+    # holder with identical content, so a holder-scoped key would let the same
+    # line fill all five slots ("The Couples Quiz tested Banter ..." x5). Dedupe
+    # on the normalized text itself: identical wording carries identical news to
+    # the reader, while per-islander personalized memories stay distinct.
+    seen_content: set[str] = set()
     unique: list[Memory] = []
     for memory in memories:
-        key = (memory.holder_id, memory.subject_id, memory.content)
-        if key in seen:
+        content_key = " ".join(memory.content.lower().split())
+        if content_key in seen_content:
             continue
-        seen.add(key)
+        seen_content.add(content_key)
         unique.append(memory)
         if len(unique) == 5:
             break
     return unique
+
+
+def _is_non_whisper(memory: Memory) -> bool:
+    """True for procedural announcements / internal markers that aren't whispers."""
+    return bool(_NON_WHISPER_TAGS.intersection(memory.tags))

@@ -1,7 +1,7 @@
 {
   "name": "day6-pre-final-vote",
   "seed": 7,
-  "state_hash": "40c4a41508038614e96556250a237b8a29221da285458ba92f34c3829c8901df",
+  "state_hash": "db7baacfe26b263b04edc9bba27f65be601f8aeba6c23e50bba5385bbb77da25",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -12368,218 +12368,56 @@
         "day": 1,
         "items": [
           {
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
+            "subject_id": "player",
+            "content": "I properly met you during Day One intros and got a real first read.",
+            "emotional_weight": 4,
             "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
+              "day_one",
+              "intro"
             ]
           }
         ]
       },
       {
         "day": 2,
-        "items": [
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "player",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Pulse Race tested Charm and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          }
-        ]
+        "items": []
       },
       {
         "day": 3,
-        "items": [
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "The Couples Quiz tested Banter and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          }
-        ]
+        "items": []
       },
       {
         "day": 4,
         "items": [
           {
-            "holder_id": "liam",
-            "subject_id": "jordan",
-            "content": "Heart Out: jordan_start leaves Sunset Bay.",
-            "emotional_weight": 7,
+            "holder_id": "beau",
+            "subject_id": "player",
+            "content": "I remember you making our supportive chat feel personal.",
+            "emotional_weight": 5,
             "tags": [
-              "ceremony",
-              "elimination"
+              "player_conversation",
+              "supportive"
             ]
           },
           {
-            "holder_id": "marcus",
-            "subject_id": "jordan",
-            "content": "Heart Out: jordan_start leaves Sunset Bay.",
-            "emotional_weight": 7,
+            "holder_id": "player",
+            "subject_id": "beau",
+            "content": "I remember how Beau reacted when our supportive chat shifted.",
+            "emotional_weight": 5,
             "tags": [
-              "ceremony",
-              "elimination"
+              "player_conversation",
+              "supportive"
             ]
           },
           {
-            "holder_id": "maya",
-            "subject_id": "jordan",
-            "content": "Heart Out: jordan_start leaves Sunset Bay.",
-            "emotional_weight": 7,
+            "holder_id": "noor",
+            "subject_id": "beau",
+            "content": "I noticed Beau looked different after talking with you.",
+            "emotional_weight": 4,
             "tags": [
-              "ceremony",
-              "elimination"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "jordan",
-            "content": "Heart Out: jordan_start leaves Sunset Bay.",
-            "emotional_weight": 7,
-            "tags": [
-              "ceremony",
-              "elimination"
-            ]
-          },
-          {
-            "holder_id": "sophie",
-            "subject_id": "jordan",
-            "content": "Heart Out: jordan_start leaves Sunset Bay.",
-            "emotional_weight": 7,
-            "tags": [
-              "ceremony",
-              "elimination"
+              "supportive",
+              "witnessed"
             ]
           }
         ]

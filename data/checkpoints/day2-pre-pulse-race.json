@@ -1,7 +1,7 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "3cf716cdd0a49d99e018f5b32697fabb001e9de99551979973a88f8b2d0b46a9",
+  "state_hash": "b23f4f5ab55f3affc633fe2edee561a8944e238fc65f7f84a92050df8d58b260",
   "state": {
     "schema_version": 29,
     "seed": 7,
@@ -7760,53 +7760,13 @@
         "day": 1,
         "items": [
           {
-            "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Compatibility Quiz tested Eq and is still pending.",
-            "emotional_weight": 5,
+            "subject_id": "player",
+            "content": "I properly met you during Day One intros and got a real first read.",
+            "emotional_weight": 4,
             "tags": [
-              "ceremony",
-              "challenge"
-            ]
-          },
-          {
-            "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
-            ]
-          },
-          {
-            "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "The Pairing Ceremony locks in the next couples.",
-            "emotional_weight": 5,
-            "tags": [
-              "ceremony",
-              "recoupling"
+              "day_one",
+              "intro"
             ]
           }
         ]

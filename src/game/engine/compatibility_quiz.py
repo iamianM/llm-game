@@ -456,7 +456,7 @@ def _record_caught_unprepared(
             id=memory_id,
             holder_id=target.id,
             subject_id="player",
-            content=f"Player guessed wrong about my {trait_key.replace('_', ' ')} in the Compatibility Quiz.",
+            content=f"The player guessed wrong about my {trait_key.replace('_', ' ')} in the Compatibility Quiz.",
             source="direct",
             formed_on_day=day,
             formed_on_turn=turn_index,
