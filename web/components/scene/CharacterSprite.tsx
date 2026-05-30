@@ -4,8 +4,10 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { Gender } from "../../lib/types";
+import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
 import { playerSprite } from "../../lib/scene/player-sprite";
 import type { CharacterPose, Position } from "../../lib/scene/types";
+import { AccessoryBadges } from "../chrome/AccessoryBadges";
 
 const NPC_IMAGE_BY_ID: Record<string, string> = {
   chloe: "/images/characters/chloe.webp",
@@ -34,6 +36,7 @@ type Props = {
   role: "player" | "npc";
   gender?: Gender;
   archetypeId?: string;
+  look?: IslanderLook | null;
   position: Position;
   pose: CharacterPose;
   active: boolean;
@@ -41,14 +44,23 @@ type Props = {
   onTap?: () => void;
 };
 
-export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", position, pose, active, tappable, onTap }: Props) {
+export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, tappable, onTap }: Props) {
   const reduce = useReducedMotion();
   if (position.hidden) return null;
   const src = role === "player" ? playerSprite(archetypeId, gender) : NPC_IMAGE_BY_ID[id];
   const sizeClass = role === "player" ? "is-player" : "is-npc";
+  // The player's chosen look paints a soft outfit-accent aura behind the
+  // standee plus a tidy rail of accessory badges, so the creator choices read
+  // in-scene without any runtime image generation. NPCs never carry a look.
+  const playerLook = role === "player" ? look : null;
+  const outfit = playerLook ? findOutfit(playerLook.outfit) : null;
+  const vibe = playerLook ? findVibe(playerLook.vibe) : null;
+  const accessories = playerLook ? playerLook.accessories.slice(0, 4) : [];
   const style = {
     "--sprite-left": `${position.x}%`,
     "--sprite-top": `${position.y}%`,
+    ...(outfit ? { "--look-accent": outfit.accent, "--look-primary": outfit.primary } : {}),
+    ...(vibe ? { "--look-vibe": vibe.value } : {}),
   } as CSSProperties;
   const animate = {
     scale: position.scale,
@@ -79,6 +91,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
         animate={animate}
         transition={reduce ? { duration: 0.06 } : { duration: active ? 0.36 : 0.28, ease: [0.22, 0.61, 0.36, 1] }}
       >
+        {playerLook ? <div className="look-aura" aria-hidden /> : null}
         <div className="sprite-shadow" aria-hidden />
         <div className="sprite-image">
           {src ? (
@@ -87,6 +100,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
             <span>{initials(name)}</span>
           )}
         </div>
+        {accessories.length > 0 ? <AccessoryBadges ids={accessories} className="look-acc" compact /> : null}
         <div className="sprite-name">{name}</div>
       </motion.div>
       <style jsx global>{`
@@ -148,6 +162,30 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           object-fit: contain;
           object-position: 50% 100%;
           filter: drop-shadow(0 18px 20px rgba(0,0,0,.42));
+        }
+        .look-aura {
+          position: absolute;
+          left: 50%;
+          bottom: 8%;
+          width: 80%;
+          height: 78%;
+          transform: translateX(-50%);
+          z-index: 0;
+          pointer-events: none;
+          border-radius: 50% 50% 44% 44%;
+          background:
+            radial-gradient(60% 70% at 50% 70%, color-mix(in srgb, var(--look-accent, #f4e3b8) 52%, transparent), transparent 72%),
+            radial-gradient(80% 60% at 50% 24%, color-mix(in srgb, var(--look-vibe, #f2b441) 30%, transparent), transparent 70%);
+          filter: blur(13px);
+          opacity: .72;
+        }
+        .is-active .look-aura { opacity: .95; }
+        .look-acc {
+          position: absolute;
+          z-index: 5;
+          top: 6%;
+          right: -6px;
+          pointer-events: none;
         }
         .is-player {
           --sprite-width: clamp(120px, 22vw, 220px);

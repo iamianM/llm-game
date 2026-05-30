@@ -66,15 +66,16 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   // ─── 2. NEW RUN ────────────────────────────────────────────
   await page.getByRole("link", { name: "New Run" }).click();
   await page.waitForLoadState("networkidle");
-  // Heartthrob is selected by default; show the full casting screen.
+  // The casting creator opens on the Islander tab with Heartthrob selected by
+  // default and a live casting-card preview of the chosen look.
   await shot(
     page,
     "Character select",
-    "Pick your opening vibe. Three archetype cards with hero gradients, hand-script tag-lines, and a 'Step into Sunset Bay' CTA."
+    "Create your Islander. Name, opening vibe and wardrobe controls beside a live casting-card preview with outfit-graded lighting, and a 'Step into Sunset Bay' CTA."
   );
 
   // ─── 3. ENTER ──────────────────────────────────────────────
-  await page.getByRole("button", { name: "Test mode" }).click();
+  await page.getByRole("button", { name: "Demo" }).click();
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await page.waitForURL(/\/play\/.+/);
   // Wait for the stage HUD + initial action menu to be visible.

@@ -35,9 +35,9 @@ export function TitleScreen() {
         <p className="title-tagline">Make a Connection. Survive the Drama.</p>
 
         <div className="title-actions">
-          <Link href="/new-run" className="cta cta-primary" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <Link href="/create" className="cta cta-primary" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
             <span className="cta-label">New Run</span>
-            <span className="cta-sub">Step into Sunset Bay</span>
+            <span className="cta-sub">Create your Islander</span>
           </Link>
           {resumeSessionId ? (
             <Link

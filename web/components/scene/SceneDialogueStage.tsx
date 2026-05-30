@@ -3,6 +3,7 @@
 import { ChevronLeft, Lock, MapPin, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
+import type { IslanderLook } from "../../lib/look";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
 import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
 import {
@@ -29,6 +30,7 @@ const MOVE_KINDS = new Set(["move"]);
 
 type Props = {
   state: SessionState;
+  look?: IslanderLook | null;
   actions: AvailableAction[];
   lastTurn: TurnResponse | null;
   locked: boolean;
@@ -41,6 +43,7 @@ type Props = {
 
 export function SceneDialogueStage({
   state,
+  look = null,
   actions,
   lastTurn,
   locked,
@@ -162,6 +165,7 @@ export function SceneDialogueStage({
     }}>
       <CharacterLayer
         state={state}
+        look={look}
         focusedId={focusedId}
         speakerPose={speakerPose}
         tappableIds={charactersWithActions}

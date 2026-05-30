@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getSession, submitTurnStream } from "../../lib/api";
 import type { AvailableAction, SessionResponse, TurnResponse } from "../../lib/types";
+import { loadLook } from "../../lib/look";
+import type { IslanderLook } from "../../lib/look";
 import { useUiStore } from "../../lib/store";
 import { CeremonyOverlay } from "../ceremony/CeremonyOverlay";
 import { DayRecap } from "../chrome/DayRecap";
@@ -23,6 +25,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [streamSpeaker, setStreamSpeaker] = useState("Producer");
   const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
   const [deferredCeremony, setDeferredCeremony] = useState(false);
+  const [look, setLook] = useState<IslanderLook | null>(null);
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -58,6 +61,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   useEffect(() => {
     document.documentElement.classList.toggle("reduce-motion", reduce);
   }, [reduce]);
+  // The look recipe lives in localStorage (see lib/look.ts); load it once the
+  // session id is known so the in-scene player reflects the creator choices.
+  useEffect(() => {
+    setLook(loadLook(sessionId));
+  }, [sessionId]);
   useEffect(() => {
     if (query.data && lastTurn === null) setSeenRecaps(query.data.state.daily_recaps.length);
   }, [query.data, lastTurn]);
@@ -78,6 +86,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         <div className="flex-1 min-h-0">
           <SceneDialogueStage
             state={state}
+            look={look}
             actions={actions}
             lastTurn={lastTurn}
             locked={mutation.isPending}

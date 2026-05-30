@@ -62,12 +62,27 @@ async function errorMessage(response: Response): Promise<string> {
   }
 }
 
-export async function newSession(archetype: string, gender: Gender, mockLlm: boolean): Promise<SessionResponse> {
+export async function newSession(
+  archetype: string,
+  gender: Gender,
+  mockLlm: boolean,
+  name?: string,
+): Promise<SessionResponse> {
+  // The player's chosen name flows straight into the engine player so it
+  // surfaces everywhere (top bar, couples, narration) — not just the local
+  // look recipe. Empty/whitespace names fall back to the server default ("You").
+  const trimmed = (name ?? "").trim();
   const envelope = await request<NewSessionEnvelope>("/session/new", {
     method: "POST",
     // Send the explicit boolean so the server uses the user's pick rather
     // than its env-var default. Sending null falls back to PARADISE_MOCK_LLM.
-    body: JSON.stringify({ archetype, player_gender: gender, seed: 42, mock_llm: mockLlm })
+    body: JSON.stringify({
+      archetype,
+      player_gender: gender,
+      seed: 42,
+      mock_llm: mockLlm,
+      ...(trimmed ? { player_name: trimmed } : {}),
+    }),
   });
   sessionStore.save(envelope.persisted);
   return envelope.view;

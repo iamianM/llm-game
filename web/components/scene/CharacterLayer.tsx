@@ -1,19 +1,21 @@
 "use client";
 
 import type { SessionState } from "../../lib/types";
+import type { IslanderLook } from "../../lib/look";
 import { PLAYER_ANCHOR, npcPositions } from "../../lib/scene/positions";
 import type { CharacterPose, Position } from "../../lib/scene/types";
 import { CharacterSprite } from "./CharacterSprite";
 
 type Props = {
   state: SessionState;
+  look?: IslanderLook | null;
   focusedId: string | null;
   speakerPose: CharacterPose;
   tappableIds?: Set<string>;
   onCharacterTap?: (id: string) => void;
 };
 
-export function CharacterLayer({ state, focusedId, speakerPose, tappableIds, onCharacterTap }: Props) {
+export function CharacterLayer({ state, look = null, focusedId, speakerPose, tappableIds, onCharacterTap }: Props) {
   const npcs = visibleNpcs(state, focusedId);
   const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
   const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
@@ -35,10 +37,11 @@ export function CharacterLayer({ state, focusedId, speakerPose, tappableIds, onC
       ))}
       <CharacterSprite
         id={state.player.id}
-        name={state.player.name || "You"}
+        name={look?.name?.trim() || state.player.name || "You"}
         role="player"
-        gender={state.player.gender}
-        archetypeId={state.player.archetype_id}
+        gender={look?.gender ?? state.player.gender}
+        archetypeId={look?.archetype ?? state.player.archetype_id}
+        look={look}
         position={PLAYER_ANCHOR}
         pose={focusedId === state.player.id ? "talking" : "listening"}
         active={focusedId === state.player.id}

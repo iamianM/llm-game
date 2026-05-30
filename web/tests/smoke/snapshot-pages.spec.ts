@@ -11,7 +11,7 @@ test("captures primary screen snapshots", async ({ page }) => {
   await page.getByRole("link", { name: "New Run" }).click();
   await page.screenshot({ path: out("new-run.png"), fullPage: true });
 
-  await page.getByRole("button", { name: "Test mode" }).click();
+  await page.getByRole("button", { name: "Demo" }).click();
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
   await expect(page.locator('[data-screen="stage"]')).toBeVisible();
   await page.waitForSelector('[data-testid="choice-fan"]', { timeout: 15_000 });
