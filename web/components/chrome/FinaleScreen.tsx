@@ -140,31 +140,31 @@ function finaleOutcome(outcome: SessionState["outcome"]) {
     case "won_as_couple":
       return {
         headline: "Sunset Bay has its winners",
-        summary: "Final result: winners as a couple.",
+        summary: "The villa fell for you, and the nation voted you home — you take the crown hand in hand.",
         reward: "The crowd sends you out with a roar.",
       };
     case "runner_up_couple":
       return {
         headline: "You made the final two",
-        summary: "Final result: runner-up couple.",
-        reward: "The crowd remembers the moments you made.",
+        summary: "So close to the crown, and still standing together — the final two, no regrets.",
+        reward: "The crowd remembers every moment you made.",
       };
     case "left_single":
       return {
         headline: "You leave Sunset Bay solo",
-        summary: "Final result: left single.",
-        reward: "The story ends on your own terms.",
+        summary: "No couple at the final this time, but you walk out with your head high and your story your own.",
+        reward: "The villa carries your name long after you go.",
       };
     case "eliminated":
       return {
         headline: "Your summer ends tonight",
-        summary: "Final result: Heart Out.",
-        reward: "The villa keeps talking after you leave.",
+        summary: "The villa has spoken, and tonight you go Heart Out — carrying every memory you made here with you.",
+        reward: "Sunset Bay keeps talking about you after you leave.",
       };
     default:
       return {
         headline: "Sunset Bay crowns its couple",
-        summary: "Final result: complete.",
+        summary: "The summer closes on Sunset Bay, and the lights stay warm for one last look.",
         reward: "The lights stay warm for one last look.",
       };
   }

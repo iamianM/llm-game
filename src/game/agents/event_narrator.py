@@ -266,8 +266,13 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     else:
         contestant_rule = (
             "- The human contestant is the reader. Address them in SECOND PERSON "
-            'as "you"/"your" — never invent a name for them and never call them '
-            '"the player" or "the islander".'
+            'as "you"/"your" — never invent a name for them and never refer to '
+            'them in the third person: not "the player", "the islander", "the '
+            'contestant", "he", "she", or "they". An event message already phrased '
+            'in second person (it starts with "You ") is the contestant\'s OWN '
+            'action: keep that voice — narrate it as "you" (e.g. "you and Chloe '
+            'finish as the runner-up couple"), never as a third-person subject, '
+            "and never reassign the choice to the partner or anyone else."
         )
         possessive = "your"
         subject = "you"
@@ -310,7 +315,10 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         contestant_voice = (
             "Refer to the human contestant in SECOND PERSON (\"you\"/\"your\") and "
             "to everyone else by the names given in the context above, in third "
-            "person. Do not invent a name for the contestant."
+            "person. Do not invent a name for the contestant. When an event line "
+            "is the contestant's own choice (it reads \"You ...\"), narrate it as "
+            "\"you\" — never \"they\", \"he\", \"she\", \"the contestant\", or "
+            "\"the player\"."
         )
     sections.append("Narrate these resolved events now. If a Minigame block is "
                     "present above, ground at least one sentence in a concrete "
