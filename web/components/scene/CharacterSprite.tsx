@@ -47,12 +47,13 @@ type Props = {
 export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, tappable, onTap }: Props) {
   const reduce = useReducedMotion();
   if (position.hidden) return null;
-  const src = role === "player" ? playerSprite(archetypeId, gender) : NPC_IMAGE_BY_ID[id];
-  const sizeClass = role === "player" ? "is-player" : "is-npc";
   // The player's chosen look paints a soft outfit-accent aura behind the
   // standee plus a tidy rail of accessory badges, so the creator choices read
-  // in-scene without any runtime image generation. NPCs never carry a look.
+  // in-scene. When a baked per-outfit standee exists the clothes themselves
+  // change; otherwise the aura carries the outfit color. NPCs never carry a look.
   const playerLook = role === "player" ? look : null;
+  const src = role === "player" ? playerSprite(archetypeId, gender, playerLook?.outfit) : NPC_IMAGE_BY_ID[id];
+  const sizeClass = role === "player" ? "is-player" : "is-npc";
   const outfit = playerLook ? findOutfit(playerLook.outfit) : null;
   const vibe = playerLook ? findVibe(playerLook.vibe) : null;
   const accessories = playerLook ? playerLook.accessories.slice(0, 4) : [];

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
-import { playerSprite } from "../../lib/scene/player-sprite";
+import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
 
 /**
  * The avatar "casting card" stage. Renders the prebaked photoreal standee for
@@ -16,10 +16,13 @@ import { playerSprite } from "../../lib/scene/player-sprite";
 export function LookStage({ look, compact = false }: { look: IslanderLook; compact?: boolean }) {
   const outfit = findOutfit(look.outfit);
   const vibe = findVibe(look.vibe);
-  const src = playerSprite(look.archetype, look.gender);
+  const src = playerSprite(look.archetype, look.gender, look.outfit);
+  // When the standee already wears the chosen outfit, drop the duotone wash so
+  // the real garment color reads true; keep it as a stylistic grade otherwise.
+  const realOutfit = hasOutfitStandee(look.archetype, look.gender, look.outfit);
   return (
     <div
-      className={`look-stage${compact ? " is-compact" : ""}`}
+      className={`look-stage${compact ? " is-compact" : ""}${realOutfit ? " has-real-outfit" : ""}`}
       style={
         {
           ["--ot-primary" as string]: outfit.primary,
@@ -88,6 +91,7 @@ export function LookStage({ look, compact = false }: { look: IslanderLook; compa
           mix-blend-mode: soft-light;
           opacity: .9;
         }
+        .has-real-outfit .sprite-tint { opacity: .22; }
         .floor-shadow {
           position: absolute;
           left: 24%;
