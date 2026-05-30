@@ -321,6 +321,45 @@ def _line_opening(line: str, *, words: int = 6) -> str:
     return " ".join(tokens[:words])
 
 
+def recent_player_openings(
+    conversation: Conversation | None,
+    recent_player_lines: list[str] | None = None,
+) -> list[str]:
+    """Openings of the player's own recent spoken lines.
+
+    Used by the deterministic opener-freshness backstop in the agent: the
+    advisory guard *asks* the model not to repeat, but a small model will still
+    reopen with the same reassurance/greeting frame, so the agent needs a hard,
+    case-folded set of the player's prior openings to detect and re-prompt a
+    near-verbatim repeat. Player lines only — NPC voices differ by character, so
+    a coincidental NPC overlap should not force the player's line to be redrawn.
+    """
+    openings: list[str] = []
+    if conversation is not None:
+        for record in conversation.exchanges:
+            opening = _line_opening(record.player_dialogue)
+            if opening:
+                openings.append(opening)
+    for line in recent_player_lines or []:
+        opening = _line_opening(line)
+        if opening:
+            openings.append(opening)
+    return list(dict.fromkeys(openings))
+
+
+def reused_player_opening(player_line: str, used_openings: list[str]) -> str | None:
+    """Return the colliding opening if ``player_line`` reopens with a used one.
+
+    Comparison is case-folded so "You don't need to have it" and "you don't need
+    to have it" count as the same opener.
+    """
+    opening = _line_opening(player_line)
+    if not opening:
+        return None
+    folded = {used.casefold() for used in used_openings}
+    return opening if opening.casefold() in folded else None
+
+
 def target_for_result(state: GameState, result: MechanicalResult) -> IslanderState:
     target_id = result.action.target_id
     for islander in state.islanders:

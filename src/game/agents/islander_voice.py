@@ -17,6 +17,8 @@ from src.game.agents.islander_voice_context import (
     build_voice_messages,
     islander_voice_context,
     new_turn_context,
+    recent_player_openings,
+    reused_player_opening,
     target_for_result,
 )
 from src.game.agents.mock_dialogue import mock_exchange_fields
@@ -52,6 +54,21 @@ VALID_TONES = {
 IslanderVoiceFn = Callable[[GameState, MechanicalResult], Exchange]
 
 
+class StaleOpenerError(ValueError):
+    """The generated player line reopened with an already-used opening.
+
+    Carried through the retry loop so the re-prompt can name the offending
+    opening. Unlike a contract validation failure, a stale opener never
+    degrades to mock dialogue: the last structurally valid exchange is accepted
+    as a best effort once retries are exhausted (a faintly repetitive real line
+    still reads better than templated demo text).
+    """
+
+    def __init__(self, opening: str) -> None:
+        super().__init__(f"player line reused the opening {opening!r}")
+        self.opening = opening
+
+
 class OpenAIIslanderVoice:
     """Single Islander Voice agent backed by the OpenAI Responses API."""
 
@@ -73,7 +90,13 @@ class OpenAIIslanderVoice:
         """Generate one structured exchange for a resolved mechanical result."""
         context = islander_voice_context(state, result, self._content)
         rendered = build_voice_messages(state, state.active_conversation, new_turn_context(context))
+        used_openings = recent_player_openings(
+            state.active_conversation, state.recent_player_lines
+        )
         last_error: ValueError | None = None
+        # Last structurally valid exchange, kept so a stubborn opener repeat is
+        # accepted as a best effort instead of falling back to mock dialogue.
+        best_effort: Exchange | None = None
         for attempt in range(3):
             attempt_number = attempt + 1
             retry_context = rendered if last_error is None else _with_retry_message(rendered, last_error)
@@ -91,12 +114,22 @@ class OpenAIIslanderVoice:
                 end_agent_attempt(attempt_token)
             try:
                 validate_exchange(exchange, context)
-                return exchange
             except ValueError as exc:
                 mark_agent_trace_validation_error("islander_voice", attempt_number, exc)
                 last_error = exc
                 if attempt == 2:
                     raise AgentValidationError(str(exc)) from exc
+                continue
+            # Structurally valid. Prefer a fresh opener, but never hard-fail on
+            # repetition: redraw once or twice, then take the best effort.
+            best_effort = exchange
+            collision = reused_player_opening(exchange.player_dialogue, used_openings)
+            if collision is not None and attempt < 2:
+                last_error = StaleOpenerError(collision)
+                continue
+            return exchange
+        if best_effort is not None:
+            return best_effort
         raise AssertionError("unreachable Islander Voice retry state")
 
     def _generate_exchange(self, rendered_context: Any) -> Exchange:
@@ -209,12 +242,22 @@ def _with_retry_message(
     messages: list[dict[str, str]],
     error: ValueError,
 ) -> list[dict[str, str]]:
-    retry = (
-        "The previous Exchange failed validation. "
-        f"Validation error: {error}. "
-        "Return a corrected Exchange that satisfies every hard rule. "
-        "Use words for numbers, do not mention hidden Islanders, and stay within the word count."
-    )
+    if isinstance(error, StaleOpenerError):
+        retry = (
+            f'Your player line opened with "{error.opening}", which the player '
+            "already used recently. Rewrite the player line so it BEGINS with a "
+            "different phrase and a different move — not another greeting or "
+            '"you don\'t have to have it all figured out" style reassurance frame. '
+            "Keep the same intent, warmth, and length; only vary how it opens. "
+            "Return the full corrected Exchange."
+        )
+    else:
+        retry = (
+            "The previous Exchange failed validation. "
+            f"Validation error: {error}. "
+            "Return a corrected Exchange that satisfies every hard rule. "
+            "Use words for numbers, do not mention hidden Islanders, and stay within the word count."
+        )
     return [*messages, {"role": "user", "content": retry}]
 
 
@@ -222,6 +265,7 @@ __all__ = [
     "Exchange",
     "IslanderVoiceContext",
     "OpenAIIslanderVoice",
+    "StaleOpenerError",
     "build_voice_messages",
     "islander_voice_context",
     "load_dotenv_local",

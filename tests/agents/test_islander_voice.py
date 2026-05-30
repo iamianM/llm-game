@@ -166,6 +166,90 @@ def test_islander_voice_retries_after_validation_failure() -> None:
     assert "Liam" not in exchange.player_dialogue and "Liam" not in exchange.npc_dialogue
 
 
+def test_islander_voice_redraws_reused_opener() -> None:
+    """A player line that reopens with an already-used opening is re-prompted
+    once, and the re-prompt names the offending opening so the model can vary
+    only the opener while keeping the same intent."""
+    state = new_game(1)
+    state.recent_player_lines = ["You don't need to have it all mapped out, Chloe."]
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    class StaleThenFresh(OpenAIIslanderVoice):
+        def __init__(self) -> None:
+            super().__init__(content=None)
+            self.calls = 0
+
+        def _generate_exchange(self, rendered_context: object) -> Exchange:
+            self.calls += 1
+            if self.calls == 1:
+                return Exchange(
+                    player_dialogue="You don't need to have it all sorted out, Chloe.",
+                    npc_dialogue="That's kind of you to say, it does settle me a bit.",
+                    npc_tone="warm",
+                    npc_mood_after=Mood.CONTENT,
+                )
+            assert isinstance(rendered_context, list)
+            assert "You don't need to have it" in rendered_context[-1]["content"]
+            return Exchange(
+                player_dialogue="Honestly, the way you read this place is a bit unreal.",
+                npc_dialogue="Ha, I clock everything. Force of habit from the classroom.",
+                npc_tone="amused",
+                npc_mood_after=Mood.HAPPY,
+            )
+
+    agent = StaleThenFresh()
+
+    exchange = agent.generate(state, result)
+
+    assert agent.calls == 2
+    assert exchange.player_dialogue.startswith("Honestly")
+
+
+def test_islander_voice_accepts_best_effort_when_opener_keeps_repeating() -> None:
+    """A stubbornly repeated opener never degrades to mock dialogue: after the
+    retries are spent the last structurally valid exchange is returned as-is."""
+    state = new_game(1)
+    state.recent_player_lines = ["You don't need to have it all mapped out, Chloe."]
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+
+    class AlwaysStale(OpenAIIslanderVoice):
+        def __init__(self) -> None:
+            super().__init__(content=None)
+            self.calls = 0
+
+        def _generate_exchange(self, rendered_context: object) -> Exchange:
+            self.calls += 1
+            return Exchange(
+                player_dialogue="You don't need to have it all figured out yet, Chloe.",
+                npc_dialogue="I know, I just hate feeling like I'm behind everyone.",
+                npc_tone="vulnerable",
+                npc_mood_after=Mood.CONTENT,
+            )
+
+    agent = AlwaysStale()
+
+    exchange = agent.generate(state, result)
+
+    assert agent.calls == 3
+    assert exchange.player_dialogue.startswith("You don't need to have it")
+
+
 def test_islander_voice_context_identifies_player_as_listener() -> None:
     state = new_game(1)
     result = apply_action(
