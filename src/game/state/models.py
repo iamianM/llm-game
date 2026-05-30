@@ -386,6 +386,7 @@ class GameState(BaseModel):
     intro_completed_ids: list[str] = Field(default_factory=list)
     intro_memory_created: bool = False
     active_conversation: Conversation | None = None
+    recent_player_lines: list[str] = Field(default_factory=list)
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     pending_npc_summon: PendingNPCSummon | None = None
     pending_npc_approach: PendingNPCApproach | None = None

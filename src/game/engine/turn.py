@@ -119,12 +119,36 @@ def _voiced_exchange(
     instead of throwing a dead screen.
     """
     if islander_voice is None:
-        return mock_islander_voice(state, result)
-    try:
-        return islander_voice(state, result)
-    except AgentError as exc:
-        record_agent_degradation("islander_voice", exc)
-        return mock_islander_voice(state, result)
+        exchange = mock_islander_voice(state, result)
+    else:
+        try:
+            exchange = islander_voice(state, result)
+        except AgentError as exc:
+            record_agent_degradation("islander_voice", exc)
+            exchange = mock_islander_voice(state, result)
+    _remember_player_line(state, exchange.player_dialogue)
+    return exchange
+
+
+RECENT_PLAYER_LINE_CAP = 8
+
+
+def _remember_player_line(state: GameState, line: str) -> None:
+    """Track recent player spoken lines villa-wide so Islander Voice can avoid
+    reusing the same opener across *separate* conversations.
+
+    The per-conversation anti-repetition guard only sees lines from the active
+    thread, which leaves the one-at-a-time intro round exposed: each islander is
+    a fresh conversation, so without a villa-wide memory the player greets eight
+    people in a row with the same "Thought I'd come say hi while it's still
+    calm" template. This rolling buffer feeds that guard so the opener varies.
+    """
+    text = line.strip()
+    if not text:
+        return
+    state.recent_player_lines.append(text)
+    if len(state.recent_player_lines) > RECENT_PLAYER_LINE_CAP:
+        state.recent_player_lines = state.recent_player_lines[-RECENT_PLAYER_LINE_CAP:]
 
 
 def _narrated_events(

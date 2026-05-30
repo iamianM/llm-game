@@ -139,6 +139,35 @@ def test_build_voice_messages_no_guard_for_fresh_conversation() -> None:
     assert "Anti-repetition guard." not in messages[-1]["content"]
 
 
+def test_build_voice_messages_guards_against_cross_conversation_openers() -> None:
+    # A fresh conversation has no prior exchanges of its own, but the villa-wide
+    # recent-player-lines buffer carries the opener used with the last islander.
+    # Without this, the one-at-a-time intro round greets everyone identically.
+    state = new_game(1)
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+    state.recent_player_lines = ["Thought I'd come say hi properly while it's still calm."]
+    conversation = start_conversation(state, "chloe", 0)
+
+    messages = build_voice_messages(
+        state,
+        conversation,
+        new_turn_context(islander_voice_context(state, result)),
+    )
+
+    final = messages[-1]["content"]
+    assert "Anti-repetition guard." in final
+    assert '"Thought I\'d come say"' in final
+    assert final.rstrip().endswith("Write the exchange now.")
+
+
 def test_new_turn_message_includes_intent_and_outcome() -> None:
     state = new_game(1)
     result = apply_action(

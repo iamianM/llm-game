@@ -33,6 +33,10 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
     sequence hashes identically regardless of LLM wording.
     """
     payload = state.model_dump(mode="json")
+    # Rolling buffer of recent player spoken lines (used only to vary dialogue
+    # openers). Pure LLM-wording prose, so exclude it for the same reason the
+    # exchange dialogue below is stripped: same seed + intents must hash alike.
+    payload.pop("recent_player_lines", None)
     conversation = payload.get("active_conversation")
     if isinstance(conversation, dict):
         conversation.pop("summary", None)

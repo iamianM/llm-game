@@ -224,14 +224,12 @@ def build_voice_messages(
     current: NewTurnContext,
 ) -> list[dict[str, str]]:
     """Build OpenAI message input with prior exchanges as native turns."""
-    del state
     messages = [{"role": "user", "content": current.scene}]
-    guard: str | None = None
     if conversation is not None:
         for record in conversation.exchanges:
             messages.append({"role": "user", "content": _prior_turn_user_message(record)})
             messages.append({"role": "assistant", "content": _prior_exchange_json(record)})
-        guard = _avoid_repetition_directive(conversation)
+    guard = _avoid_repetition_directive(conversation, state.recent_player_lines)
     messages.append({"role": "user", "content": _turn_with_guard(current.turn, guard)})
     return messages
 
@@ -252,16 +250,37 @@ def _turn_with_guard(turn: str, guard: str | None) -> str:
     return f"{turn}\n{guard}"
 
 
-def _avoid_repetition_directive(conversation: Conversation, *, max_items: int = 8) -> str | None:
-    """List opening phrases already used this conversation so the model varies.
+def _avoid_repetition_directive(
+    conversation: Conversation | None,
+    recent_player_lines: list[str] | None = None,
+    *,
+    max_items: int = 8,
+) -> str | None:
+    """List opening phrases already used so the model varies its next opener.
 
-    Returns ``None`` for a fresh conversation (nothing to avoid yet)."""
+    Draws from two sources: the active conversation's own exchanges (so a long
+    chat does not re-run the same sentence shape) and ``recent_player_lines`` —
+    a villa-wide rolling buffer of the player's recent spoken lines. The second
+    source is what de-duplicates openers *across* separate conversations, most
+    visibly the one-at-a-time intro round where each islander is a fresh thread
+    that otherwise can't see the line the player just used on the last islander.
+
+    Only the player's lines carry across conversations: NPC voices differ by
+    character, so cross-character NPC overlap is not a repetition problem.
+
+    Returns ``None`` when there is nothing to avoid yet (fresh conversation and
+    empty villa-wide buffer)."""
     openings: list[str] = []
-    for record in conversation.exchanges:
-        for line in (record.player_dialogue, record.npc_dialogue):
-            opening = _line_opening(line)
-            if opening:
-                openings.append(opening)
+    if conversation is not None:
+        for record in conversation.exchanges:
+            for line in (record.player_dialogue, record.npc_dialogue):
+                opening = _line_opening(line)
+                if opening:
+                    openings.append(opening)
+    for line in recent_player_lines or []:
+        opening = _line_opening(line)
+        if opening:
+            openings.append(opening)
     distinct = list(dict.fromkeys(openings))
     if not distinct:
         return None
