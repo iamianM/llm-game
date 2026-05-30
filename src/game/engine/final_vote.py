@@ -55,16 +55,25 @@ def final_vote_message(result: FinalVoteResult, state: GameState) -> str:
     only runs in real-LLM mode), so it must already read in display terms — the
     player's name and the partner's display name, never the raw "the player"
     label or a lowercase islander id.
+
+    The nameless player carries the placeholder name "You", so the verb has to
+    agree in the second person ("You finish", not "You finishes"). A player who
+    set a real name via the character creator is a third-person subject ("Alex
+    finishes"). The plural WON clause ("X and Y win") reads correctly either way.
     """
     player = state.player.name
+    second_person = player.strip().lower() == "you"
     if result.outcome is RunOutcome.WON_AS_COUPLE:
         partner = _player_partner(result.winner, state)
         return f"Final vote: {player} and {partner} win as the top couple."
     if result.outcome is RunOutcome.RUNNER_UP_COUPLE:
-        return f"Final vote: {player} finishes as a runner-up couple."
+        verb = "finish" if second_person else "finishes"
+        return f"Final vote: {player} {verb} as a runner-up couple."
     if result.outcome is RunOutcome.LEFT_SINGLE:
-        return f"Final vote: {player} reaches the finale single."
-    return f"Final vote: {player} was already dumped from the island."
+        verb = "reach" if second_person else "reaches"
+        return f"Final vote: {player} {verb} the finale single."
+    verb = "were" if second_person else "was"
+    return f"Final vote: {player} {verb} already dumped from the island."
 
 
 def _couple_key(couple: Couple) -> str:

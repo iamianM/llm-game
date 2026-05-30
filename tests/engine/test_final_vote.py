@@ -121,6 +121,49 @@ def test_final_vote_message_names_player_partner() -> None:
     assert "chloe" not in message
 
 
+def test_final_vote_message_uses_second_person_verbs_for_nameless_player() -> None:
+    """The "You" placeholder must conjugate in the second person, not "You finishes"."""
+    runner_up = new_game(1)
+    runner_up.player.public_perception = 10
+    runner_up.couples = [
+        Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5),
+        Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5),
+    ]
+    runner_up_msg = final_vote_message(final_vote(runner_up), runner_up)
+    assert runner_up_msg == "Final vote: You finish as a runner-up couple."
+
+    single = new_game(1)
+    single.couples = [Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5)]
+    single_msg = final_vote_message(final_vote(single), single)
+    assert single_msg == "Final vote: You reach the finale single."
+
+    dumped = new_game(1)
+    dumped.outcome = RunOutcome.ELIMINATED
+    dumped_msg = final_vote_message(final_vote(dumped), dumped)
+    assert dumped_msg == "Final vote: You were already dumped from the island."
+
+    # No agreement slip in any branch.
+    for message in (runner_up_msg, single_msg, dumped_msg):
+        assert "You finishes" not in message
+        assert "You reaches" not in message
+        assert "You was" not in message
+
+
+def test_final_vote_message_uses_third_person_verbs_for_named_player() -> None:
+    """A player who set a real name stays a third-person subject ("Alex finishes")."""
+    state = new_game(1)
+    state.player.name = "Alex"
+    state.player.public_perception = 10
+    state.couples = [
+        Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5),
+        Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5),
+    ]
+
+    message = final_vote_message(final_vote(state), state)
+
+    assert message == "Final vote: Alex finishes as a runner-up couple."
+
+
 def test_final_vote_emits_ceremony_event() -> None:
     """Ceremony wrapper produces a narratable event."""
     state = new_game(1)
