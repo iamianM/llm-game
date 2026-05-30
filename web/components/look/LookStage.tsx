@@ -61,7 +61,7 @@ export function LookStage({ look, compact = false }: { look: IslanderLook; compa
           inset: 10% 16% auto;
           height: 42%;
           border-radius: 999px;
-          background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ot-accent) 55%, transparent), transparent);
+          background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--vibe) 50%, var(--ot-accent)), transparent);
           filter: blur(10px);
         }
         .stage-arch {
@@ -108,9 +108,9 @@ export function LookStage({ look, compact = false }: { look: IslanderLook; compa
           width: 6px;
           height: 6px;
           border-radius: 999px;
-          background: var(--ot-accent);
-          box-shadow: 0 0 10px var(--ot-accent);
-          opacity: .85;
+          background: var(--vibe);
+          box-shadow: 0 0 10px var(--vibe);
+          opacity: .9;
         }
         .s-a { left: 17%; top: 19%; }
         .s-b { right: 18%; top: 26%; width: 4px; height: 4px; }

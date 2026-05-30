@@ -155,7 +155,7 @@ export default function CreatePage() {
                     <SegButton on={look.gender === "woman"} onClick={() => update("gender", "woman" as Gender)}>Woman</SegButton>
                   </div>
                 </Field>
-                <Field label="Opening vibe">
+                <Field label="Your type">
                   <div className="card-options" data-testid="archetype-options">
                     {ARCHETYPES.map((a) => (
                       <button
