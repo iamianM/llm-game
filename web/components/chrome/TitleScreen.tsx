@@ -143,13 +143,15 @@ export function TitleScreen() {
         }
         .line-1 {
           display: block;
-          font-size: clamp(40px, 9vh, 112px);
+          /* Cap by width as well as height so the wordmark never overflows a
+             tall, narrow phone (vh alone clipped "Hearts" off the edge). */
+          font-size: clamp(40px, min(9vh, 16vw), 112px);
           color: var(--card);
           text-shadow: 0 4px 22px rgba(0,0,0,.55);
         }
         .line-2 {
           display: block;
-          font-size: clamp(56px, 13vh, 160px);
+          font-size: clamp(50px, min(13vh, 21vw), 160px);
           font-style: italic;
           letter-spacing: -.03em;
         }
@@ -170,7 +172,13 @@ export function TitleScreen() {
           gap: 10px;
           max-width: 360px;
         }
-        .cta {
+        /* next/link renders a custom <Link> component, and styled-jsx does NOT
+           inject its scoping class into custom components — only native tags.
+           So .cta rules applied directly to a <Link> never matched, leaving the
+           primary CTA (and the resume "Continue Run" link) unstyled. Scope via
+           the native .title-actions wrapper and target the links with :global so
+           the rules reach both <Link> and <button> CTAs consistently. */
+        .title-actions :global(.cta) {
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -184,46 +192,49 @@ export function TitleScreen() {
           text-decoration: none;
           color: var(--ink-on-dark);
         }
-        .cta-label {
+        .title-actions :global(.cta-label) {
           font-family: var(--font-display);
           font-size: 20px;
           letter-spacing: .02em;
         }
-        .cta-sub {
+        .title-actions :global(.cta-sub) {
           font-size: 11px;
           letter-spacing: .14em;
           text-transform: uppercase;
           color: var(--gold-soft);
           opacity: .8;
         }
-        .cta-primary {
+        .title-actions :global(.cta-primary) {
           background: linear-gradient(180deg, var(--accent), var(--accent-deep));
           color: var(--card);
-          border-color: rgba(217,167,58,.6);
-          box-shadow: var(--shadow-md), var(--inset-gold);
+          border-color: rgba(247,210,120,.9);
+          /* Persistent accent glow + ring so the primary action stays the most
+             prominent element even against the warm sunset backdrop. */
+          box-shadow: var(--shadow-lg), var(--shadow-accent), var(--inset-gold),
+            0 0 0 1px rgba(247,210,120,.35);
         }
-        .cta-primary:hover {
+        .title-actions :global(.cta-primary:hover) {
           transform: translateY(-2px);
           box-shadow: var(--shadow-lg), var(--shadow-accent), var(--inset-gold);
         }
-        .cta-secondary {
+        .title-actions :global(.cta-secondary) {
           background: rgba(20,16,12,.6);
           backdrop-filter: blur(6px);
           color: var(--muted-on-dark);
         }
-        .cta-secondary[disabled] {
+        .title-actions :global(.cta-secondary[disabled]) {
           cursor: not-allowed;
           opacity: .55;
         }
-        .cta-secondary:not([disabled]):hover {
+        .title-actions :global(.cta-secondary:not([disabled]):hover) {
           border-color: rgba(217,167,58,.55);
           color: var(--ink-on-dark);
         }
-        .cta-active {
+        .title-actions :global(.cta-active) {
           text-decoration: none;
           color: var(--ink-on-dark);
         }
-        .cta-active:hover {
+        .title-actions :global(.cta-active:hover) {
           border-color: rgba(217,167,58,.7);
           color: var(--card);
           transform: translateY(-2px);

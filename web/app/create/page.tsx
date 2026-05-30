@@ -392,7 +392,12 @@ export default function CreatePage() {
           letter-spacing: .14em;
           text-transform: uppercase;
         }
-        .icon-link,
+        /* .icon-link is applied to a next/link Link (a custom component), and
+           styled-jsx does NOT inject its scoping class into custom components,
+           only native tags. So a bare .icon-link rule never matches the Link
+           and the back button renders unstyled. Scope via the native
+           .creator-topbar wrapper + :global so the rule reaches the Link. */
+        .creator-topbar :global(.icon-link),
         .top-action {
           border: var(--frame-gold);
           color: var(--ink-on-dark);
@@ -404,7 +409,7 @@ export default function CreatePage() {
           cursor: pointer;
           text-decoration: none;
         }
-        .icon-link { width: 42px; height: 42px; border-radius: 50%; }
+        .creator-topbar :global(.icon-link) { width: 42px; height: 42px; border-radius: 50%; }
         .top-action {
           min-height: 42px;
           padding: 8px 15px;
@@ -511,7 +516,9 @@ export default function CreatePage() {
           border-radius: var(--r-pill);
           padding: 2px 8px;
         }
-        .card-check { position: absolute; top: 10px; right: 10px; color: var(--gold-soft); }
+        /* lucide icons are custom components, so styled-jsx won't scope this
+           class onto the rendered <svg> — reach it via the native .big-card. */
+        .big-card :global(.card-check) { position: absolute; top: 10px; right: 10px; color: var(--gold-soft); }
         .outfit-options { display: grid; gap: 8px; }
         .outfit-row {
           display: grid;
