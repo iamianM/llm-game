@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronLeft, Lock, MapPin, X } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type CSSProperties } from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 import type { IslanderLook } from "../../lib/look";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
@@ -574,7 +574,7 @@ function CharacterMenu({
     <div
       data-testid="character-menu"
       className="char-menu"
-      style={{ left: `${left}%`, top: `${top}%` }}
+      style={{ "--anchor-x": `${left}%`, top: `${top}%` } as CSSProperties}
       onClick={(e) => e.stopPropagation()}
     >
       <header>
@@ -661,7 +661,17 @@ function CharacterMenu({
           position: absolute;
           z-index: 12;
           transform: translate(-50%, -100%);
-          width: min(320px, calc(100vw - 24px));
+          --menu-w: min(320px, calc(100vw - 24px));
+          width: var(--menu-w);
+          /* Anchor near the tapped character, but never let the fixed-width
+             card cross the viewport edge: on a narrow phone a left/right
+             islander would push the card off-screen and clip the labels.
+             Clamp the center so both edges keep a 10px margin at any width. */
+          left: clamp(
+            calc(var(--menu-w) / 2 + 10px),
+            var(--anchor-x, 50%),
+            calc(100vw - var(--menu-w) / 2 - 10px)
+          );
           padding: 12px 14px 14px;
           border-radius: var(--r-xl);
           background: linear-gradient(180deg, rgba(248,246,239,.98), rgba(238,226,201,.96));
