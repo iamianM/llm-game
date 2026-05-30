@@ -1,12 +1,12 @@
 "use client";
 
-import { PanelRightOpen, Settings, Clock } from "lucide-react";
+import { PanelRightOpen, Settings, Shirt, Clock } from "lucide-react";
 import type { SessionState } from "../../lib/types";
 import { PulseMeter } from "./PulseMeter";
 
-type Props = { state: SessionState; onRail: () => void; onSettings: () => void };
+type Props = { state: SessionState; onRail: () => void; onSettings: () => void; onWardrobe: () => void };
 
-export function TopBar({ state, onRail, onSettings }: Props) {
+export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
   return (
     <header className="topbar">
       <button aria-label="Open right rail" onClick={onRail} className="icon-btn"><PanelRightOpen size={18} /></button>
@@ -27,6 +27,7 @@ export function TopBar({ state, onRail, onSettings }: Props) {
 
       <div className="hud-right">
         <PulseMeter score={state.audience.public_perception} delta={state.audience.recent_delta} />
+        <button aria-label="Open wardrobe" onClick={onWardrobe} className="icon-btn"><Shirt size={18} /></button>
         <button aria-label="Open settings" onClick={onSettings} className="icon-btn"><Settings size={18} /></button>
       </div>
 

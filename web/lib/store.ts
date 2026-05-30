@@ -5,11 +5,13 @@ type Speed = "slow" | "normal" | "fast" | "instant";
 type UiStore = {
   rightRailOpen: boolean;
   settingsOpen: boolean;
+  wardrobeOpen: boolean;
   reduceMotion: boolean;
   typewriterSpeed: Speed;
   useLiveLlm: boolean;
   setRail: (open: boolean) => void;
   setSettings: (open: boolean) => void;
+  setWardrobe: (open: boolean) => void;
   setReduceMotion: (value: boolean) => void;
   setTypewriterSpeed: (value: Speed) => void;
   setUseLiveLlm: (value: boolean) => void;
@@ -26,11 +28,13 @@ export const DEFAULT_USE_LIVE_LLM = process.env.NEXT_PUBLIC_DEFAULT_LIVE_LLM ===
 export const useUiStore = create<UiStore>((set) => ({
   rightRailOpen: false,
   settingsOpen: false,
+  wardrobeOpen: false,
   reduceMotion: false,
   typewriterSpeed: "normal",
   useLiveLlm: DEFAULT_USE_LIVE_LLM,
   setRail: (open) => set({ rightRailOpen: open }),
   setSettings: (open) => set({ settingsOpen: open }),
+  setWardrobe: (open) => set({ wardrobeOpen: open }),
   setReduceMotion: (value) => set({ reduceMotion: value }),
   setTypewriterSpeed: (value) => set({ typewriterSpeed: value }),
   setUseLiveLlm: (value) => {

@@ -6,11 +6,12 @@ import { useEffect, useState } from "react";
 import { getSession, submitTurnStream } from "../../lib/api";
 import type { AvailableAction, SessionResponse, TurnResponse } from "../../lib/types";
 import { loadLook } from "../../lib/look";
-import type { IslanderLook } from "../../lib/look";
+import type { ArchetypeId, IslanderLook } from "../../lib/look";
 import { useUiStore } from "../../lib/store";
 import { CeremonyOverlay } from "../ceremony/CeremonyOverlay";
 import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
+import { WardrobeModal } from "../chrome/WardrobeModal";
 import { RightRail } from "../rail/RightRail";
 import { SceneDialogueStage } from "../scene/SceneDialogueStage";
 import { TopBar } from "./TopBar";
@@ -29,6 +30,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
+  const setWardrobe = useUiStore((s) => s.setWardrobe);
   const reduce = useUiStore((s) => s.reduceMotion);
   const query = useQuery<SessionResponse>({ queryKey: ["session", sessionId], queryFn: () => getSession(sessionId), retry: false });
   const mutation = useMutation({
@@ -81,7 +83,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
-      <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} />
+      <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} onWardrobe={() => setWardrobe(true)} />
       <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
         <div className="flex-1 min-h-0">
           <SceneDialogueStage
@@ -110,6 +112,16 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       </div>
       <RightRail state={state} sessionId={sessionId} open={railOpen} onClose={() => setRail(false)} />
       <SettingsMenu />
+      <WardrobeModal
+        sessionId={sessionId}
+        currentLook={look}
+        identity={{
+          name: state.player.name,
+          gender: state.player.gender,
+          archetype: (state.player.archetype_id as ArchetypeId) ?? "heartthrob",
+        }}
+        onApply={(next) => setLook(next)}
+      />
       {showCeremony ? (
         <CeremonyOverlay
           title={ceremonyTitle(event, state)}
