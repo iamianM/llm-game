@@ -9,15 +9,22 @@ type UiStore = {
   reduceMotion: boolean;
   typewriterSpeed: Speed;
   useLiveLlm: boolean;
+  musicOn: boolean;
+  musicVolume: number;
   setRail: (open: boolean) => void;
   setSettings: (open: boolean) => void;
   setWardrobe: (open: boolean) => void;
   setReduceMotion: (value: boolean) => void;
   setTypewriterSpeed: (value: Speed) => void;
   setUseLiveLlm: (value: boolean) => void;
+  setMusicOn: (value: boolean) => void;
+  setMusicVolume: (value: number) => void;
 };
 
 const LLM_KEY = "paradise.settings.useLiveLlm";
+export const MUSIC_MUTE_KEY = "ph-title-muted";
+export const MUSIC_VOLUME_KEY = "ph-title-volume";
+export const DEFAULT_MUSIC_VOLUME = 0.32;
 export const DEFAULT_USE_LIVE_LLM = process.env.NEXT_PUBLIC_DEFAULT_LIVE_LLM === "1";
 
 // NOTE: the initial value MUST be the same on server and client to avoid
@@ -32,6 +39,8 @@ export const useUiStore = create<UiStore>((set) => ({
   reduceMotion: false,
   typewriterSpeed: "normal",
   useLiveLlm: DEFAULT_USE_LIVE_LLM,
+  musicOn: true,
+  musicVolume: DEFAULT_MUSIC_VOLUME,
   setRail: (open) => set({ rightRailOpen: open }),
   setSettings: (open) => set({ settingsOpen: open }),
   setWardrobe: (open) => set({ wardrobeOpen: open }),
@@ -42,5 +51,18 @@ export const useUiStore = create<UiStore>((set) => ({
       window.localStorage.setItem(LLM_KEY, value ? "1" : "0");
     }
     set({ useLiveLlm: value });
+  },
+  setMusicOn: (value) => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(MUSIC_MUTE_KEY, value ? "0" : "1");
+    }
+    set({ musicOn: value });
+  },
+  setMusicVolume: (value) => {
+    const clamped = Math.min(1, Math.max(0, value));
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(MUSIC_VOLUME_KEY, String(clamped));
+    }
+    set({ musicVolume: clamped });
   }
 }));

@@ -3,10 +3,16 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getCurrentSessionId, sessionStore } from "../../lib/storage";
+import { useUiStore } from "../../lib/store";
 
 export function TitleScreen() {
   const [mounted, setMounted] = useState(false);
   const [resumeSessionId, setResumeSessionId] = useState<string | null>(null);
+  const soundOn = useUiStore((s) => s.musicOn);
+  const volume = useUiStore((s) => s.musicVolume);
+  const setMusicOn = useUiStore((s) => s.setMusicOn);
+  const setMusicVolume = useUiStore((s) => s.setMusicVolume);
+
   useEffect(() => {
     setMounted(true);
     const sid = getCurrentSessionId();
@@ -15,8 +21,56 @@ export function TitleScreen() {
     }
   }, []);
 
+  const toggleSound = () => {
+    setMusicOn(!soundOn);
+  };
+
+  const handleVolume = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const next = Number(e.target.value) / 100;
+    setMusicVolume(next);
+    if (next > 0 && !soundOn) {
+      setMusicOn(true);
+    }
+  };
+
   return (
     <main className="title-stage film-grain vignette">
+      <div className="sound-controls">
+        <button
+          type="button"
+          className="sound-toggle"
+          onClick={toggleSound}
+          aria-label={soundOn ? "Mute music" : "Play music"}
+          aria-pressed={soundOn}
+        >
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden focusable="false">
+            <path
+              d="M4 9v6h4l5 4V5L8 9H4z"
+              fill="currentColor"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinejoin="round"
+            />
+            {soundOn ? (
+              <>
+                <path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                <path d="M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+              </>
+            ) : (
+              <path d="M16.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            )}
+          </svg>
+        </button>
+        <input
+          type="range"
+          className="volume-slider"
+          min={0}
+          max={100}
+          value={Math.round(volume * 100)}
+          onChange={handleVolume}
+          aria-label="Music volume"
+        />
+      </div>
       {/* Sunset layers */}
       <div className="title-sky" aria-hidden />
       <div className="title-horizon" aria-hidden />
@@ -247,6 +301,82 @@ export function TitleScreen() {
           font-size: 13px;
           color: rgba(248,236,210,.5);
           letter-spacing: .04em;
+        }
+
+        .sound-controls {
+          position: absolute;
+          top: max(16px, env(safe-area-inset-top));
+          right: max(16px, env(safe-area-inset-right));
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .sound-toggle {
+          width: 40px;
+          height: 40px;
+          display: grid;
+          place-items: center;
+          border-radius: 999px;
+          border: var(--frame-gold);
+          background: rgba(20,16,12,.55);
+          backdrop-filter: blur(6px);
+          color: var(--gold-soft);
+          cursor: pointer;
+          transition: transform .18s cubic-bezier(.22,.61,.36,1), color .18s, border-color .18s, box-shadow .18s;
+        }
+        .sound-toggle:hover {
+          transform: translateY(-1px);
+          color: var(--card);
+          border-color: rgba(247,210,120,.9);
+          box-shadow: var(--shadow-md);
+        }
+        .sound-toggle:focus-visible {
+          outline: 2px solid rgba(247,210,120,.9);
+          outline-offset: 2px;
+        }
+
+        .volume-slider {
+          width: 96px;
+          height: 40px;
+          cursor: pointer;
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+        }
+        .volume-slider::-webkit-slider-runnable-track {
+          height: 4px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, var(--gold-soft), rgba(247,210,120,.25));
+        }
+        .volume-slider::-moz-range-track {
+          height: 4px;
+          border-radius: 999px;
+          background: linear-gradient(90deg, var(--gold-soft), rgba(247,210,120,.25));
+        }
+        .volume-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          margin-top: -6px;
+          width: 16px;
+          height: 16px;
+          border-radius: 999px;
+          background: var(--card);
+          border: 2px solid rgba(247,210,120,.9);
+          box-shadow: var(--shadow-sm);
+        }
+        .volume-slider::-moz-range-thumb {
+          width: 16px;
+          height: 16px;
+          border-radius: 999px;
+          background: var(--card);
+          border: 2px solid rgba(247,210,120,.9);
+          box-shadow: var(--shadow-sm);
+        }
+        .volume-slider:focus-visible {
+          outline: 2px solid rgba(247,210,120,.9);
+          outline-offset: 4px;
+          border-radius: 999px;
         }
       `}</style>
     </main>

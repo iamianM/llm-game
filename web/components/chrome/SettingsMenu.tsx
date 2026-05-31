@@ -14,6 +14,10 @@ export function SettingsMenu() {
   const setReduce = useUiStore((s) => s.setReduceMotion);
   const useLive = useUiStore((s) => s.useLiveLlm);
   const setUseLive = useUiStore((s) => s.setUseLiveLlm);
+  const musicOn = useUiStore((s) => s.musicOn);
+  const setMusicOn = useUiStore((s) => s.setMusicOn);
+  const musicVolume = useUiStore((s) => s.musicVolume);
+  const setMusicVolume = useUiStore((s) => s.setMusicVolume);
   if (!open) return null;
   return (
     <div className="settings-root">
@@ -39,6 +43,37 @@ export function SettingsMenu() {
                 <option value="fast">Fast · 55 cps</option>
                 <option value="instant">Instant</option>
               </select>
+            </div>
+
+            <div className="setting-row">
+              <span className="setting-label">Music</span>
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={musicOn}
+                  onChange={(event) => setMusicOn(event.target.checked)}
+                  aria-label="Music on"
+                />
+                <span className="track"><span className="dot" /></span>
+              </label>
+            </div>
+
+            <div className="setting-row">
+              <label htmlFor="music-volume" className="setting-label">Music volume</label>
+              <input
+                id="music-volume"
+                type="range"
+                className="volume-slider"
+                min={0}
+                max={100}
+                value={Math.round(musicVolume * 100)}
+                onChange={(event) => {
+                  const next = Number(event.target.value) / 100;
+                  setMusicVolume(next);
+                  if (next > 0 && !musicOn) setMusicOn(true);
+                }}
+                aria-label="Music volume"
+              />
             </div>
 
             <div className="setting-row">
@@ -216,6 +251,47 @@ export function SettingsMenu() {
         }
         .switch input:checked + .track { background: rgba(217,167,58,.3); }
         .switch input:checked + .track .dot { left: 22px; background: var(--gold); }
+
+        .volume-slider {
+          width: 140px;
+          height: 24px;
+          cursor: pointer;
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+        }
+        .volume-slider::-webkit-slider-runnable-track {
+          height: 4px;
+          border-radius: var(--r-pill);
+          background: linear-gradient(90deg, var(--gold-soft), rgba(217,167,58,.25));
+        }
+        .volume-slider::-moz-range-track {
+          height: 4px;
+          border-radius: var(--r-pill);
+          background: linear-gradient(90deg, var(--gold-soft), rgba(217,167,58,.25));
+        }
+        .volume-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          margin-top: -6px;
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          background: var(--gold);
+          border: 2px solid rgba(247,210,120,.9);
+          box-shadow: 0 0 12px rgba(217,167,58,.45);
+        }
+        .volume-slider::-moz-range-thumb {
+          width: 16px; height: 16px;
+          border-radius: 50%;
+          background: var(--gold);
+          border: 2px solid rgba(247,210,120,.9);
+          box-shadow: 0 0 12px rgba(217,167,58,.45);
+        }
+        .volume-slider:focus-visible {
+          outline: 2px solid rgba(247,210,120,.9);
+          outline-offset: 4px;
+          border-radius: var(--r-pill);
+        }
 
         .main-menu-btn {
           margin-top: 4px;
