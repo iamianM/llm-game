@@ -116,6 +116,9 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const event = lastTurn?.ceremony_events[0];
   const narration = ceremonyNarration(lastTurn, state);
   const latestRecap = state.daily_recaps[state.daily_recaps.length - 1];
+  // Attribute each recap whisper to its holder so the reader can tell whose
+  // first-person "I" each card is (islander name, or "You" for the player).
+  const recapSpeakers = Object.fromEntries(state.islanders.map((islander) => [islander.id, islander.name]));
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
@@ -175,7 +178,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         />
       ) : null}
       {showRecap && latestRecap && !showCeremony ? (
-        <DayRecap recap={latestRecap} villaLabel={state.villa_label} onClose={() => setShowRecap(false)} />
+        <DayRecap recap={latestRecap} villaLabel={state.villa_label} speakers={recapSpeakers} playerId={state.player.id} onClose={() => setShowRecap(false)} />
       ) : null}
       <style jsx>{`
         /* The stage must fill the space below the 56px TopBar WITHOUT spilling
