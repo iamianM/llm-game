@@ -117,7 +117,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
       <TopBar state={state} onRail={() => setRail(true)} onSettings={() => setSettings(true)} onWardrobe={() => setWardrobe(true)} />
-      <div data-screen="stage" className="flex h-[calc(100vh-56px)] flex-col overflow-hidden">
+      <div data-screen="stage" className="stage-shell flex flex-col overflow-hidden">
         <div className="flex-1 min-h-0">
           <SceneDialogueStage
             state={state}
@@ -172,6 +172,17 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       ) : null}
       {showRecap && latestRecap && !showCeremony ? <DayRecap recap={latestRecap} onClose={() => setShowRecap(false)} /> : null}
       <style jsx>{`
+        /* The stage must fill the space below the 56px TopBar WITHOUT spilling
+           past the visible viewport. Mobile browsers report 100vh as the
+           "large" height (URL bar / toolbar hidden), so a 100vh-based stage runs
+           taller than what's on screen and the bottom-anchored ChoiceFan lands
+           behind the browser chrome. 100svh ("small" viewport height) measures
+           the worst case with chrome shown, so the action cards always fit. The
+           100vh line is a fallback for the rare browser without svh support. */
+        .stage-shell {
+          height: calc(100vh - 56px);
+          height: calc(100svh - 56px);
+        }
         .turn-error {
           position: fixed;
           left: 50%;

@@ -71,7 +71,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           position: absolute;
           z-index: 10;
           left: 50%;
-          bottom: clamp(14px, 3vh, 28px);
+          bottom: calc(clamp(14px, 3vh, 28px) + env(safe-area-inset-bottom, 0px));
           width: min(880px, calc(100vw - 24px));
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -156,7 +156,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         .hint-bad { color: var(--accent-deep) !important; }
         @media (max-width: 520px) {
           .choice-fan {
-            bottom: 12px;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             grid-template-columns: 1fr 1fr;
             gap: 6px;
             width: calc(100vw - 16px);
