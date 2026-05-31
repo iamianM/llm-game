@@ -174,7 +174,9 @@ export function GameStage({ sessionId }: { sessionId: string }) {
           playerLook={look}
         />
       ) : null}
-      {showRecap && latestRecap && !showCeremony ? <DayRecap recap={latestRecap} onClose={() => setShowRecap(false)} /> : null}
+      {showRecap && latestRecap && !showCeremony ? (
+        <DayRecap recap={latestRecap} villaLabel={state.villa_label} onClose={() => setShowRecap(false)} />
+      ) : null}
       <style jsx>{`
         /* The stage must fill the space below the 56px TopBar WITHOUT spilling
            past the visible viewport. Mobile browsers report 100vh as the
