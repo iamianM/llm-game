@@ -32,7 +32,7 @@ from src.game.agents.runtime import (
     record_agent_trace,
 )
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.models import GameState
+from src.game.state.models import Gender, GameState
 
 EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
 EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
@@ -215,6 +215,22 @@ def _name_for(state: GameState, actor_id: str | None) -> str:
     return actor_id
 
 
+def _cast_pronoun_lines(state: GameState) -> str:
+    """`Name — pronouns` for every living islander.
+
+    Casa Amor heart-throbs and starters alike can carry unisex names (Jules,
+    Sam, Riley, Noor), and the narrator writes third person — so without this it
+    guesses gender from the name and calls a man "she". The player is omitted:
+    the contestant rule already governs how to refer to them.
+    """
+    lines = [
+        f"- {islander.name}: {'she/her' if islander.gender == Gender.WOMAN else 'he/him'}"
+        for islander in state.islanders
+        if not islander.eliminated
+    ]
+    return "\n".join(lines) if lines else "- (no islanders in scene)"
+
+
 def _player_has_name(state: GameState) -> bool:
     """True when the session set a real player name (not the "You" placeholder).
 
@@ -301,6 +317,8 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         f"Phase: {state.phase.value}",
         f"Location: {state.location_id.value}",
         f"Current player couple: {_player_couple(state)}",
+        "Cast pronouns (use exactly these — never guess gender from a name):",
+        _cast_pronoun_lines(state),
         "Event semantics:",
         *semantics,
         "Events:",

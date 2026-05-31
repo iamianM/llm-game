@@ -346,6 +346,25 @@ def test_event_producers_emit_display_safe_messages() -> None:
     assert "Demo" in event.message
 
 
+def test_event_narrator_context_supplies_cast_pronouns() -> None:
+    """Every living islander's pronouns reach the narrator so unisex names don't
+    get the wrong third-person pronoun in ceremony prose."""
+    state = new_game(1)
+    state.player.name = "Demo"
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+
+    rendered = _render_context(
+        state,
+        [CeremonyEvent(kind="elimination", message="Liam leaves.", islander_id="liam")],
+    )
+
+    assert "Cast pronouns (use exactly these" in rendered
+    expected = "she/her" if chloe.gender.value == "woman" else "he/him"
+    assert f"- {chloe.name}: {expected}" in rendered
+    # The player is governed by the contestant rule, not the pronoun roster.
+    assert f"- {state.player.name}:" not in rendered
+
+
 def test_event_narrator_context_names_player_in_third_person() -> None:
     """The context tells the narrator the player's third-person name."""
     state = new_game(1)

@@ -11,6 +11,7 @@ Return `EventNarration`:
 ## Hard rules
 
 - Third person. Present tense throughout.
+- **Use the supplied pronouns — never guess gender from a name.** The context's `Cast pronouns` block gives each islander's pronouns (`he/him` or `she/her`). Many islander names are unisex (Jules, Sam, Riley, Noor) — you cannot tell gender from the name. Any pronoun you use for an islander must match the pronouns listed for them.
 - No digits.
 - No invented quantitative readings. Specifically: do not write spelled-out BPM numbers ("eighty-two", "a hundred"), spelled-out chemistry/affection/trust scores, spelled-out vote percentages, point totals, or any other numeric measurement unless the supplied event list or Minigame block gives you that exact number. A trait value that happens to be a number (age "twenty-eight" if the trait card says so) is fine; an invented chemistry score is not.
 - No direct dialogue. Characters do not speak in your narration. The narrator describes; the camera captures.
