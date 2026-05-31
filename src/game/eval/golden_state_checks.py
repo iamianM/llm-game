@@ -277,12 +277,24 @@ def check_engine_state_invariants(
     if resurrected:
         violations.append(f"eliminated Heartbreakers were brought back: {sorted(resurrected)}")
     action_kind = turn.mechanical_result.action.kind
-    couples_changed = _couple_set(pre_state) != _couple_set(post)
-    if couples_changed and action_kind not in COUPLE_CHANGING_KINDS:
-        violations.append(
-            f"couples changed under action {action_kind.value!r} - only "
-            f"{sorted(kind.value for kind in COUPLE_CHANGING_KINDS)} may move the couple list"
-        )
+    pre_couples = _couple_set(pre_state)
+    post_couples = _couple_set(post)
+    if pre_couples != post_couples and action_kind not in COUPLE_CHANGING_KINDS:
+        # The villa runs its own off-screen love stories: two single NPCs can
+        # quietly couple up on any turn (peer attraction), so a pure NPC↔NPC
+        # *addition* is legitimate regardless of the player's action. What must
+        # never happen silently is an existing couple dissolving or the *player*
+        # being coupled/uncoupled — those still demand a couple-changing action.
+        player_id = pre_state.player.id
+        removed = pre_couples - post_couples
+        player_added = sorted(pair for pair in (post_couples - pre_couples) if player_id in pair)
+        if removed or player_added:
+            violations.append(
+                f"couples changed illegitimately under action {action_kind.value!r}: "
+                f"dissolved={sorted(removed)} player_added={player_added} - only "
+                f"{sorted(kind.value for kind in COUPLE_CHANGING_KINDS)} may dissolve "
+                "couples or couple the player (autonomous NPC↔NPC pairings may form any turn)"
+            )
     if violations:
         return GoldenCheckResult(
             id="engine_state_invariants_preserved",

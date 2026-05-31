@@ -44,6 +44,7 @@ from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.gather import close_conversations_for_gather, move_everyone_to_gather
 from src.game.engine.hideaway import hideaway_event
 from src.game.engine.memory import add_memory_batch, remember_ceremony_events
+from src.game.engine.phases import is_finale_evening
 from src.game.engine.proposals import maybe_trigger_npc_player_proposal
 from src.game.engine.pull import PullAttempt, attempt_pull, target_in_active_conversation
 from src.game.engine.pull_turn import pull_rejected_result, remember_pull_rejection
@@ -58,7 +59,6 @@ from src.game.engine.turn_curator import (
     intro_memory_batch,
     intro_segment_complete,
 )
-from src.game.engine.phases import is_finale_evening
 from src.game.engine.turn_events import (
     advance_phase_with_events,
     challenge_response_event,
