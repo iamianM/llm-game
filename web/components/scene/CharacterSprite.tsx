@@ -20,11 +20,12 @@ type Props = {
   position: Position;
   pose: CharacterPose;
   active: boolean;
+  compact?: boolean;
   tappable?: boolean;
   onTap?: () => void;
 };
 
-export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, tappable, onTap }: Props) {
+export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, compact = false, tappable, onTap }: Props) {
   const reduce = useReducedMotion();
   if (position.hidden) return null;
   // The player's chosen look paints a soft outfit-accent aura behind the
@@ -71,7 +72,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
       onKeyDown={tappable && onTap ? (e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); }
       } : undefined}
-      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}${tappable ? " is-tappable" : ""}`}
+      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}${compact ? " is-compact" : ""}${tappable ? " is-tappable" : ""}`}
       style={style}
     >
       <motion.div
@@ -98,11 +99,12 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           z-index: 3;
           left: var(--sprite-left);
           top: var(--sprite-top);
-          transform: translate(-50%, -100%);
+          transform: translate(-50%, calc(-100% + var(--lift, 0px)));
           transform-origin: 50% 100%;
           display: grid;
           justify-items: center;
           pointer-events: none;
+          transition: transform .32s cubic-bezier(.22,.61,.36,1);
         }
         .character-sprite.is-tappable {
           pointer-events: auto;
@@ -184,15 +186,15 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5));
         }
         .is-player {
-          --sprite-width: clamp(120px, 22vw, 220px);
-          --sprite-height: clamp(170px, 28vh, 320px);
+          --sprite-width: clamp(160px, 26vw, 300px);
+          --sprite-height: clamp(240px, 46vh, 520px);
           /* Always the foreground figure — above even an active NPC (z 6) so
              "you" never get occluded by whoever's speaking. */
           z-index: 7;
         }
         .is-npc {
-          --sprite-width: clamp(96px, 17vw, 200px);
-          --sprite-height: clamp(150px, 27vh, 320px);
+          --sprite-width: clamp(120px, 19vw, 260px);
+          --sprite-height: clamp(190px, 36vh, 440px);
         }
         .is-npc.is-active {
           z-index: 6;
@@ -236,14 +238,26 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           55% { transform: rotate(2deg) scale(1.04); }
           to { transform: none; }
         }
+        /* When the choice fan is open the player tucks up + shrinks (mobile
+           only) so the bottom option bars never cover the standee. On desktop
+           the options are a centred column with room to spare, so "you" stay
+           big and low at the far left. */
+        .is-player.is-compact {
+          --lift: 0px;
+        }
         @media (max-width: 520px) {
           .is-player {
-            --sprite-width: clamp(108px, 32vw, 160px);
-            --sprite-height: clamp(152px, 26vh, 240px);
+            --sprite-width: clamp(130px, 40vw, 220px);
+            --sprite-height: clamp(210px, 40vh, 340px);
           }
           .is-npc {
-            --sprite-width: clamp(78px, 22vw, 138px);
-            --sprite-height: clamp(124px, 25vh, 220px);
+            --sprite-width: clamp(96px, 26vw, 180px);
+            --sprite-height: clamp(160px, 32vh, 300px);
+          }
+          .is-player.is-compact {
+            --sprite-width: clamp(96px, 28vw, 150px);
+            --sprite-height: clamp(150px, 24vh, 230px);
+            --lift: -40vh;
           }
           .sprite-name {
             font-size: 12px;

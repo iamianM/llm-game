@@ -73,9 +73,8 @@ export function SceneDialogueStage({
   // free-time actions. Treat only an *unfinished* challenge as in-flight, so
   // laning resumes immediately and free-roam openers reach the per-character
   // CharacterMenu instead of flooding the flat ChoiceFan.
-  const inChallenge =
-    state.pending_challenge !== null
-    && (state.pending_challenge as { finished?: boolean }).finished !== true;
+  const pendingChallenge = (state.pending_challenge ?? null) as { finished?: boolean } | null;
+  const inChallenge = pendingChallenge !== null && pendingChallenge.finished !== true;
   const inIntros = state.phase === "intros";
   // The character-tap + location-switcher menus only make sense during
   // free-time. During intros / conversations / minigames we keep every
@@ -204,6 +203,7 @@ export function SceneDialogueStage({
         look={look}
         focusedId={focusedId}
         speakerPose={speakerPose}
+        choicesActive={activeBeat?.kind === "choice_fan"}
         tappableIds={charactersWithActions}
         onCharacterTap={(id) => { setMoveOpen(false); setOpenCharacterId((current) => current === id ? null : id); }}
       />

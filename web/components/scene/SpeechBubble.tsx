@@ -24,9 +24,19 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
   // SceneDialogueStage can call.
   const revealRef = useRef(revealAll);
   useEffect(() => { revealRef.current = revealAll; }, [revealAll]);
+  // Anchor the bubble by its BOTTOM edge, parked just above the speaker's head
+  // so it never clips the face — the bubble then grows upward as text wraps.
+  // The coefficient is the *visible* figure height as a share of the viewport,
+  // NOT the sprite box: the standees are bottom-aligned webps with transparent
+  // headroom, so the drawn figure is shorter than its box. Tuned against the
+  // spotlight speaker (scale ~1.34) so the tail lands just over the head
+  // instead of floating up into the dead space above the hair.
+  const figureHeightPct = (role === "player" ? 32 : 21) * position.scale;
+  const headTop = Math.max(6, position.y - figureHeightPct);
+  const bubbleBottom = Math.min(88, Math.max(8, 100 - headTop + 3));
   const style = {
     "--bubble-left": `${position.x}%`,
-    "--bubble-top": `${Math.max(10, position.y - (role === "player" ? 31 : 33))}%`,
+    "--bubble-bottom": `${bubbleBottom}%`,
   } as CSSProperties;
   return (
     <div
@@ -59,7 +69,7 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
             var(--bubble-left),
             calc(100% - var(--bubble-width) / 2 - 12px)
           );
-          top: var(--bubble-top);
+          bottom: var(--bubble-bottom);
           z-index: 8;
           width: var(--bubble-width);
           transform: translateX(-50%);

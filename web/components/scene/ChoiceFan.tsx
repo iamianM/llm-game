@@ -72,13 +72,18 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         .choice-fan {
           position: absolute;
           z-index: 10;
-          left: 50%;
+          /* Reserve the bottom-left column for the player standee so the option
+             bars sit to their right and never cover "you" (desktop/tablet). On
+             mobile this is overridden to full-width — there the player lifts up
+             out of the way instead. */
+          left: calc(28vw + 40px);
+          right: clamp(16px, 4vw, 64px);
           bottom: calc(clamp(14px, 3vh, 28px) + env(safe-area-inset-bottom, 0px));
-          width: min(560px, calc(100vw - 24px));
+          max-width: 560px;
+          margin-inline: auto;
           display: grid;
           grid-template-columns: minmax(0, 1fr);
           gap: 8px;
-          transform: translateX(-50%);
           pointer-events: auto;
         }
         .choice-fan.is-scroll {
@@ -156,10 +161,13 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         .hint-bad { color: #e6a86a !important; }
         @media (max-width: 520px) {
           .choice-fan {
+            left: 8px;
+            right: 8px;
+            max-width: none;
+            margin-inline: 0;
             bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            width: calc(100vw - 16px);
             gap: 6px;
-            max-height: min(42vh, 340px);
+            max-height: min(40vh, 330px);
             overflow-y: auto;
           }
           .choice-bubble {
