@@ -64,6 +64,11 @@ def _advance_phase_clock(state: GameState) -> None:
             state.phase = Phase.COMPLETE
             _reset_phase_clock(state)
             return
+        # The night passes: bonds settle toward the shape of the couples before
+        # the new day begins. Single chokepoint, so it fires exactly once per
+        # night whether the rollover comes from a quiet evening or from the path
+        # that resolves a Pairing Ceremony first.
+        _apply_overnight_drift(state)
         state.day += 1
         state.phase = Phase.MORNING
         _reset_phase_clock(state)
@@ -84,6 +89,17 @@ def _advance_phase_clock(state: GameState) -> None:
     index = PHASE_ORDER.index(state.phase)
     state.phase = PHASE_ORDER[index + 1]
     _reset_phase_clock(state)
+
+
+def _apply_overnight_drift(state: GameState) -> None:
+    """Settle every bond one night toward the shape of the couples.
+
+    Imported locally to mirror this module's other engine hooks and keep the
+    phase-clock import surface flat.
+    """
+    from src.game.engine.bond_drift import apply_overnight_drift
+
+    apply_overnight_drift(state)
 
 
 def _disperse_into_phase(state: GameState) -> None:
