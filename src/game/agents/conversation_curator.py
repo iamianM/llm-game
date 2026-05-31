@@ -32,6 +32,7 @@ from src.game.agents.runtime import (
 )
 from src.game.state.models import (
     Conversation,
+    Gender,
     GameState,
     MemoryBatch,
     MemoryDraft,
@@ -233,6 +234,9 @@ def _render_context(
             f"Day: {state.day}",
             f"Location: {state.location_id.value}",
             f"Participants: player, {conversation.target_id} ({target})",
+            "Pronouns (use exactly these — never guess gender from a name):",
+            _pronoun_line(state, "player"),
+            _pronoun_line(state, conversation.target_id),
             f"Bystanders: {_list_ids(bystander_ids)}",
             f"Required direct memory holders: player, {conversation.target_id}",
             "Memory holder checklist:",
@@ -321,6 +325,9 @@ def _render_npc_context(
             f"Location: {conversation.location_id.value}",
             f"Participants: {first_id} ({_name_for(state, first_id)}), "
             f"{second_id} ({_name_for(state, second_id)})",
+            "Pronouns (use exactly these — never guess gender from a name):",
+            _pronoun_line(state, first_id),
+            _pronoun_line(state, second_id),
             f"Topic: {conversation.topic}",
             f"Bystanders: {_list_ids(bystander_ids)}",
             f"Required direct memory holders: {first_id}, {second_id}",
@@ -359,6 +366,28 @@ def _name_for(state: GameState, holder_id: str) -> str:
     return holder_id
 
 
+def _pronouns_for_gender(gender: Gender) -> str:
+    return "she/her" if gender == Gender.WOMAN else "he/him"
+
+
+def _gender_for(state: GameState, holder_id: str) -> Gender | None:
+    if holder_id == "player":
+        return state.player.gender
+    for islander in state.islanders:
+        if islander.id == holder_id:
+            return islander.gender
+    return None
+
+
+def _pronoun_line(state: GameState, holder_id: str) -> str:
+    """`id: Name (he/him)` so the curator never guesses gender from a name."""
+    name = _name_for(state, holder_id)
+    gender = _gender_for(state, holder_id)
+    if gender is None:
+        return f"- {holder_id}: {name}"
+    return f"- {holder_id}: {name} ({_pronouns_for_gender(gender)})"
+
+
 def _list_ids(ids: Sequence[str]) -> str:
     return ", ".join(ids) if ids else "none"
 
@@ -376,7 +405,7 @@ def _mentioned_third_party_ids(state: GameState, conversation: CuratableConversa
         if islander.id in participant_ids or islander.eliminated:
             continue
         if islander.name.lower() in text:
-            mentioned.append(f"{islander.id} ({islander.name})")
+            mentioned.append(f"{islander.id} ({islander.name}, {_pronouns_for_gender(islander.gender)})")
     return ", ".join(mentioned) if mentioned else "none"
 
 

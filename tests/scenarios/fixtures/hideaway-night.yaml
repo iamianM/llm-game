@@ -21,4 +21,4 @@ initial_couples:
   formed_on_day: 3
 actions:
 - kind: hideaway
-expected_hash: 8fc9aa83d648e6ea3d9c3098623b41558ce34fd8f477bd2deaaf29f9d0bf4ebf
+expected_hash: 5413ad9511cfabdc559cfbe96de93160f2edf891d44b12355591520faef9b53d

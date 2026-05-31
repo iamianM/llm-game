@@ -186,6 +186,11 @@ class IslanderState(BaseModel):
     memories: list[Memory] = Field(default_factory=list)
     trait_card: TraitCard = Field(default_factory=empty_trait_card)
     known_facts: KnownFacts = Field(default_factory=dict)
+    # Mutual NPC↔NPC attraction toward other islanders (other_id -> 0..100).
+    # The villa's own love stories: kept symmetric by the peer engine and grown
+    # deterministically as compatible islanders spend time co-located. Absent on
+    # older saves (defaults empty), so the field is backward compatible.
+    peer_affinity: dict[str, int] = Field(default_factory=dict)
 
 
 class Couple(BaseModel):

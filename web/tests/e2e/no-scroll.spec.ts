@@ -32,7 +32,7 @@ test("new-run fits viewport without scroll", async ({ page }) => {
 test("stage fits viewport without scroll", async ({ page }) => {
   await page.goto("/new-run");
   await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
-  await expect(page.getByTestId("choice-fan").or(page.getByText("Day-1 Introductions"))).toBeVisible();
+  await expect(page.getByTestId("choice-fan").or(page.getByText("Arrivals"))).toBeVisible();
   const m = await bodyScroll(page);
   expect(m.overflowY).toBe("hidden");
   expect(m.bodyScroll).toBeLessThanOrEqual(1);

@@ -25,7 +25,7 @@ def test_display_translates_protected_terms() -> None:
     assert display("casa_amor") == "Flush of Hearts"
     assert display("casa_amor_return_reveal") == "Sunset Bay Return"
     assert display("opening") == "First Spark"
-    assert display("intros") == "Day-1 Introductions"
+    assert display("intros") == "Arrivals"
     assert display("main") == "Sunset Bay"
     assert display("bombshell") == "Heart Throb"
 

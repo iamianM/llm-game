@@ -93,6 +93,27 @@ export function AmbiencePlayer() {
     };
   }, []);
 
+  // Pause the room-tone bed while the tab/app is backgrounded and resume it on
+  // return, matching the music engine so nothing keeps playing under a hidden
+  // window.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden) {
+        aRef.current?.pause();
+        bRef.current?.pause();
+        return;
+      }
+      if (!useUiStore.getState().musicOn) return;
+      const active = elFor(activeRef.current);
+      if (active && active.paused) {
+        active.volume = AMBIENCE_VOLUME;
+        active.play().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
   useEffect(() => () => stopFade(fadeTimerRef), []);
 
   return (

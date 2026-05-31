@@ -1,6 +1,6 @@
 "use client";
 
-import { PanelRightOpen, Settings, Shirt, Clock } from "lucide-react";
+import { PanelRightOpen, Settings, Shirt } from "lucide-react";
 import type { SessionState } from "../../lib/types";
 import { PulseMeter } from "./PulseMeter";
 
@@ -9,24 +9,23 @@ type Props = { state: SessionState; onRail: () => void; onSettings: () => void; 
 export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
   return (
     <header className="topbar">
-      <button aria-label="Open right rail" onClick={onRail} className="icon-btn"><PanelRightOpen size={18} /></button>
       <div className="brand">
         <span className="brand-dot" />
         <span className="brand-text">Paradise Hearts</span>
       </div>
 
       <div className="hud-row">
-        <span className="day-chip" aria-label={`Day ${state.day}`}>
-          <span className="day-label">Day</span>
+        <span className="day-badge" aria-label={`Day ${state.day}, ${clockText(state.phase_clock)}`}>
+          <span className="day-eyebrow">Day</span>
           <span className="day-num">{state.day}</span>
+          <span className="day-time">{clockText(state.phase_clock)}</span>
         </span>
-        <span className="divider" aria-hidden />
         <span className="phase-chip">{state.phase_label}</span>
-        <span className="turn-chip"><Clock size={11} /> {clockText(state.phase_clock)}</span>
       </div>
 
       <div className="hud-right">
         <PulseMeter score={state.audience.public_perception} delta={state.audience.recent_delta} />
+        <button aria-label="Open right rail" onClick={onRail} className="icon-btn"><PanelRightOpen size={18} /></button>
         <button aria-label="Open wardrobe" onClick={onWardrobe} className="icon-btn"><Shirt size={18} /></button>
         <button aria-label="Open settings" onClick={onSettings} className="icon-btn"><Settings size={18} /></button>
       </div>
@@ -92,30 +91,39 @@ export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
           align-items: center;
           gap: 10px;
         }
-        .day-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-          padding: 4px 12px;
-          border-radius: var(--r-pill);
-          background: linear-gradient(180deg, rgba(217,167,58,.18), rgba(168,122,31,.12));
-          border: 1px solid rgba(217,167,58,.4);
+        .day-badge {
+          display: grid;
+          place-items: center;
+          width: 46px; height: 46px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 50% 32%, rgba(217,167,58,.24), rgba(168,122,31,.1));
+          border: 1px solid rgba(217,167,58,.45);
           color: var(--gold-soft);
+          line-height: 1;
+          flex: 0 0 auto;
         }
-        .day-label {
-          font-size: 10px;
-          letter-spacing: .14em;
+        .day-eyebrow {
+          font-size: 7px;
+          letter-spacing: .12em;
           text-transform: uppercase;
           font-weight: 700;
-          opacity: .9;
+          opacity: .85;
+          margin-top: 1px;
         }
         .day-num {
           font-family: var(--font-display);
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 700;
           color: var(--card);
+          margin: 1px 0;
         }
-        .divider { width: 1px; height: 16px; background: rgba(248,236,210,.12); }
+        .day-time {
+          font-size: 7.5px;
+          font-variant-numeric: tabular-nums;
+          color: var(--muted-on-dark);
+          letter-spacing: .01em;
+          white-space: nowrap;
+        }
         .phase-chip {
           font-family: var(--font-display);
           font-style: italic;
@@ -123,17 +131,6 @@ export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
           color: var(--ink-on-dark);
           letter-spacing: .02em;
         }
-        .turn-chip {
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          font-size: 11px;
-          font-variant-numeric: tabular-nums;
-          color: var(--muted-on-dark);
-          letter-spacing: .04em;
-          white-space: nowrap;
-        }
-
         .hud-right {
           margin-left: auto;
           display: inline-flex;
@@ -150,7 +147,6 @@ export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
           .icon-btn { width: 30px; height: 30px; flex: 0 0 auto; }
           .brand { padding-right: 4px; border-right: 0; }
           .brand-text { display: none; }
-          .turn-chip { display: none; }
           .phase-chip {
             font-size: 12px;
             max-width: min(38vw, 116px);
@@ -158,9 +154,9 @@ export function TopBar({ state, onRail, onSettings, onWardrobe }: Props) {
             text-overflow: ellipsis;
             white-space: nowrap;
           }
-          .hud-row { gap: 6px; min-width: 0; }
-          .day-chip { gap: 4px; padding: 4px 9px; }
-          .divider { display: none; }
+          .hud-row { gap: 8px; min-width: 0; }
+          .day-badge { width: 42px; height: 42px; }
+          .day-num { font-size: 14px; }
           .hud-right { gap: 6px; min-width: 0; }
         }
         @media (max-width: 420px) {

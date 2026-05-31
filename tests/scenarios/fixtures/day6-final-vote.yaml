@@ -31,7 +31,8 @@ initial_couples:
   formed_on_day: 1
   has_used_hideaway: false
   last_steal_attempt_chance: null
-expected_hash: 6327741ad564b24ac884833b03e382751e9c111d7956d337eed3458e2b34efe0
+initial_phase: morning
+expected_hash: 350dfad4563a0a09abc3c57f2597544adf9551f053e4776bb9115d8e6ae30b18
 actions:
 - kind: ambient
   target_id: ambient_wait

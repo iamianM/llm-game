@@ -139,6 +139,27 @@ export function MusicPlayer() {
     };
   }, []);
 
+  // Pause the score while the tab/app is backgrounded (e.g. the player
+  // minimizes the browser) and resume it on return. Without this the loop keeps
+  // playing under a hidden window with no way to stop it.
+  useEffect(() => {
+    const onVisibility = () => {
+      if (document.hidden) {
+        aRef.current?.pause();
+        bRef.current?.pause();
+        return;
+      }
+      if (!useUiStore.getState().musicOn) return;
+      const active = elFor(activeRef.current);
+      if (active && active.paused) {
+        active.volume = targetVolumeRef.current;
+        active.play().catch(() => {});
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => document.removeEventListener("visibilitychange", onVisibility);
+  }, []);
+
   // Clear any running fade on unmount.
   useEffect(() => () => stopFade(fadeTimerRef), []);
 

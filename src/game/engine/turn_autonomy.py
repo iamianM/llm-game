@@ -18,6 +18,7 @@ from src.game.agents.villa_orchestrator import (
     mock_villa_orchestrator,
 )
 from src.game.engine.arrival_rolls import ArrivalRoll, roll_arrival
+from src.game.engine.peer import advance_peer_attractions, maybe_form_peer_couples
 from src.game.engine.phases import is_finale_evening
 from src.game.engine.villa import (
     AppliedVillaChanges,
@@ -93,6 +94,14 @@ async def apply_villa_turn_async(
         background_dialogue=background_dialogue,
         conversation_curator=conversation_curator,
     )
+    # The villa has its own love stories: islanders grow attracted to each other
+    # as they spend time co-located, and single pairs who click hard enough
+    # couple up off-screen. Both feed the gossip mill + morning recap. Run after
+    # the orchestrator's movements land so attraction reflects this turn's
+    # positions.
+    peer_memories = advance_peer_attractions(state, rng.fork("peer-advance"))
+    peer_memories.extend(maybe_form_peer_couples(state, rng.fork("peer-couple")))
+    villa_changes.memories.extend(peer_memories)
     arrival_rolls = _roll_arrivals_for_movements(state, villa_update.npc_movements, pre_locations, rng)
     return villa_update, villa_changes, arrival_rolls
 
