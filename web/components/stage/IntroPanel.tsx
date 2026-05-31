@@ -138,7 +138,7 @@ export function IntroPanel({
 
         <div className="intro-conversation">
           <header className="intro-header">
-            <span className="intro-eyebrow">Day-1 Introductions</span>
+            <span className="intro-eyebrow">Introductions</span>
             <h2 className="intro-title">Meet {displayTarget.name}</h2>
           </header>
 
