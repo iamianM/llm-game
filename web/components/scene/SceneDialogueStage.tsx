@@ -44,6 +44,7 @@ type Props = {
   lastTurn: TurnResponse | null;
   locked: boolean;
   pendingActionLabel: string | null;
+  pendingTargetId?: string | null;
   streamText: string;
   streamSpeaker: string;
   onChoose: (action: AvailableAction) => void;
@@ -57,6 +58,7 @@ export function SceneDialogueStage({
   lastTurn,
   locked,
   pendingActionLabel,
+  pendingTargetId = null,
   streamText,
   streamSpeaker,
   onChoose,
@@ -99,9 +101,9 @@ export function SceneDialogueStage({
   const [moveOpen, setMoveOpen] = useState(false);
   const plannedBeats = useMemo(
     () => locked
-      ? pendingBeats(state, pendingActionLabel, streamText, streamSpeaker)
+      ? pendingBeats(state, pendingActionLabel, pendingTargetId, streamText, streamSpeaker)
       : planScene(null, state, lastTurn, fanActions),
-    [fanActions, lastTurn, locked, pendingActionLabel, state, streamSpeaker, streamText],
+    [fanActions, lastTurn, locked, pendingActionLabel, pendingTargetId, state, streamSpeaker, streamText],
   );
   const [beatIndex, setBeatIndex] = useState(0);
   const sceneKey = `${state.turn_index}:${state.phase}:${lastTurn?.state_hash ?? "start"}:${locked ? "locked" : "ready"}:${actions.length}`;
@@ -281,8 +283,11 @@ export function SceneDialogueStage({
   );
 }
 
-function pendingBeats(state: SessionState, playerLine: string | null, streamText: string, streamSpeaker: string): SceneBeat[] {
-  const activeSpeaker = state.active_conversation_target_id;
+function pendingBeats(state: SessionState, playerLine: string | null, pendingTargetId: string | null, streamText: string, streamSpeaker: string): SceneBeat[] {
+  // Intros never set active_conversation_target_id, so fall back to the target
+  // of the action the player just picked — otherwise the camera drops to a wide
+  // group and the islander we're talking to recedes while the turn resolves.
+  const activeSpeaker = state.active_conversation_target_id ?? pendingTargetId;
   const beats: SceneBeat[] = [
     { kind: "camera", shot: activeSpeaker ? "two_shot" : "wide_group", focusIds: activeSpeaker ? [activeSpeaker] : [], durationMs: 80 },
   ];
