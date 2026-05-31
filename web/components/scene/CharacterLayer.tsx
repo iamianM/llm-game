@@ -2,7 +2,7 @@
 
 import type { SessionState } from "../../lib/types";
 import type { IslanderLook } from "../../lib/look";
-import { PLAYER_ANCHOR, npcPositions } from "../../lib/scene/positions";
+import { PLAYER_ANCHOR, PLAYER_ANCHOR_COMPACT, npcPositions } from "../../lib/scene/positions";
 import type { CharacterPose, Position } from "../../lib/scene/types";
 import { CharacterSprite } from "./CharacterSprite";
 
@@ -11,11 +11,14 @@ type Props = {
   look?: IslanderLook | null;
   focusedId: string | null;
   speakerPose: CharacterPose;
+  // The bottom choice fan is open — the player tucks up + shrinks (mobile) so
+  // the option bars never sit on top of the standee.
+  choicesActive?: boolean;
   tappableIds?: Set<string>;
   onCharacterTap?: (id: string) => void;
 };
 
-export function CharacterLayer({ state, look = null, focusedId, speakerPose, tappableIds, onCharacterTap }: Props) {
+export function CharacterLayer({ state, look = null, focusedId, speakerPose, choicesActive = false, tappableIds, onCharacterTap }: Props) {
   const npcs = visibleNpcs(state, focusedId);
   const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
   const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
@@ -42,9 +45,10 @@ export function CharacterLayer({ state, look = null, focusedId, speakerPose, tap
         gender={look?.gender ?? state.player.gender}
         archetypeId={look?.archetype ?? state.player.archetype_id}
         look={look}
-        position={PLAYER_ANCHOR}
+        position={choicesActive ? PLAYER_ANCHOR_COMPACT : PLAYER_ANCHOR}
         pose={focusedId === state.player.id ? "talking" : "listening"}
         active={focusedId === state.player.id}
+        compact={choicesActive}
       />
       <style jsx>{`
         .character-layer {

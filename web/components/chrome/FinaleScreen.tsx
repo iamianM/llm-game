@@ -21,7 +21,7 @@ export function FinaleScreen({ state, sessionId }: { state: SessionState; sessio
   const renderPartner = (id: string, name: string) =>
     id === playerId ? (
       <PlayerFinaleAvatar
-        sprite={playerSprite(state.player.archetype_id, state.player.gender)}
+        sprite={playerSprite(state.player.archetype_id, state.player.gender, look?.outfit, look?.characterId)}
         name={name}
         accent={look ? findOutfit(look.outfit).accent : "#ffe48a"}
       />

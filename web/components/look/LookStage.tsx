@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { isRosterId } from "../../lib/roster";
 import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
 
 /**
@@ -16,10 +17,11 @@ import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
 export function LookStage({ look, compact = false }: { look: IslanderLook; compact?: boolean }) {
   const outfit = findOutfit(look.outfit);
   const vibe = findVibe(look.vibe);
-  const src = playerSprite(look.archetype, look.gender, look.outfit);
-  // When the standee already wears the chosen outfit, drop the duotone wash so
-  // the real garment color reads true; keep it as a stylistic grade otherwise.
-  const realOutfit = hasOutfitStandee(look.archetype, look.gender, look.outfit);
+  const src = playerSprite(look.archetype, look.gender, look.outfit, look.characterId);
+  // When the standee already wears its real outfit — a baked outfit variant, or
+  // a roster pick whose single standee is its own look — drop the duotone wash
+  // so the garment color reads true; keep it as a stylistic grade otherwise.
+  const realOutfit = isRosterId(look.characterId) || hasOutfitStandee(look.archetype, look.gender, look.outfit);
   return (
     <div
       className={`look-stage${compact ? " is-compact" : ""}${realOutfit ? " has-real-outfit" : ""}`}

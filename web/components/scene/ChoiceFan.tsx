@@ -23,7 +23,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
   return (
     <motion.div
       data-testid="choice-fan"
-      className={`choice-fan${actions.length > 4 ? " is-scroll" : ""}${actions.length === 1 ? " is-single" : ""}${actions.length === 4 ? " is-quad" : ""}`}
+      className={`choice-fan${actions.length > 4 ? " is-scroll" : ""}${actions.length === 1 ? " is-single" : ""}`}
       initial={reduce ? false : "hidden"}
       animate="show"
       variants={{
@@ -67,20 +67,27 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         );
       })}
       <style jsx global>{`
+        /* Love Island mobile framing: the player's options stack as dark,
+           translucent, full-width rounded buttons pinned to the bottom. */
         .choice-fan {
           position: absolute;
           z-index: 10;
-          left: 50%;
+          /* Reserve the bottom-left column for the player standee so the option
+             bars sit to their right and never cover "you" (desktop/tablet). On
+             mobile this is overridden to full-width — there the player lifts up
+             out of the way instead. */
+          left: calc(28vw + 40px);
+          right: clamp(16px, 4vw, 64px);
           bottom: calc(clamp(14px, 3vh, 28px) + env(safe-area-inset-bottom, 0px));
-          width: min(880px, calc(100vw - 24px));
+          max-width: 560px;
+          margin-inline: auto;
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          grid-template-columns: minmax(0, 1fr);
           gap: 8px;
-          transform: translateX(-50%);
           pointer-events: auto;
         }
         .choice-fan.is-scroll {
-          max-height: min(30vh, 260px);
+          max-height: min(34vh, 300px);
           overflow-y: auto;
           padding-right: 4px;
           mask-image: linear-gradient(180deg, transparent, #000 12px, #000 calc(100% - 18px), transparent);
@@ -96,47 +103,45 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           justify-items: center;
         }
         .choice-fan.is-single .choice-meta { justify-content: center; }
-        /* Four options (the recoupling pick) read as a balanced, centered 2x2
-           block instead of an auto-fit "3 + 1 orphan" on wide screens. */
-        .choice-fan.is-quad {
-          grid-template-columns: repeat(2, minmax(0, 260px));
-          justify-content: center;
-        }
         .choice-bubble {
           position: relative;
-          min-height: 48px;
+          min-height: 50px;
           display: grid;
           align-content: center;
           gap: 4px;
-          padding: 9px 13px 10px;
-          border-radius: 18px;
-          border: 1px solid rgba(217,167,58,.42);
-          background:
-            linear-gradient(180deg, rgba(248,246,239,.98), rgba(238,226,201,.96)),
-            radial-gradient(80% 80% at 10% 0, rgba(217,167,58,.18), transparent 65%);
-          box-shadow: var(--shadow-md), var(--inset-gold);
-          color: var(--ink);
+          padding: 10px 16px 11px;
+          border-radius: 16px;
+          border: 1px solid rgba(217,167,58,.34);
+          background: rgba(14,10,8,.6);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          box-shadow: 0 8px 22px rgba(0,0,0,.34);
+          color: var(--ink-on-dark);
           text-align: left;
           cursor: pointer;
-          transition: transform .16s, box-shadow .16s, border-color .16s;
+          transition: transform .16s, box-shadow .16s, border-color .16s, background .16s;
         }
         .choice-bubble:hover:not(:disabled) {
-          transform: translateY(-3px);
-          border-color: rgba(217,167,58,.75);
-          box-shadow: var(--shadow-lg), 0 0 20px rgba(217,167,58,.25);
+          transform: translateY(-2px);
+          background: rgba(28,20,14,.72);
+          border-color: rgba(217,167,58,.7);
+          box-shadow: 0 10px 26px rgba(0,0,0,.4), 0 0 18px rgba(217,167,58,.22);
         }
         .choice-bubble.is-selected {
-          transform: translateY(-8px) scale(.98);
-          opacity: .82;
+          transform: translateY(-4px) scale(.99);
+          border-color: rgba(217,167,58,.85);
+          background: rgba(40,28,18,.78);
         }
         .choice-bubble:disabled {
           cursor: not-allowed;
         }
         .choice-text {
           font-family: var(--font-display);
-          font-size: 15px;
+          font-size: 15.5px;
           font-weight: 650;
-          line-height: 1.22;
+          line-height: 1.24;
+          color: var(--card);
+          text-shadow: 0 1px 6px rgba(0,0,0,.5);
         }
         .choice-meta {
           display: flex;
@@ -150,27 +155,29 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           font-weight: 700;
           letter-spacing: .1em;
           text-transform: uppercase;
-          color: rgba(73,57,42,.7);
+          color: rgba(243,228,200,.6);
         }
-        .hint-good { color: #316844 !important; }
-        .hint-bad { color: var(--accent-deep) !important; }
+        .hint-good { color: #7fd0a0 !important; }
+        .hint-bad { color: #e6a86a !important; }
         @media (max-width: 520px) {
           .choice-fan {
+            left: 8px;
+            right: 8px;
+            max-width: none;
+            margin-inline: 0;
             bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            grid-template-columns: 1fr 1fr;
             gap: 6px;
-            width: calc(100vw - 16px);
-            max-height: min(38vh, 320px);
+            max-height: min(40vh, 330px);
             overflow-y: auto;
           }
           .choice-bubble {
-            min-height: 42px;
-            padding: 7px 10px 8px;
+            min-height: 44px;
+            padding: 8px 13px 9px;
             border-radius: 14px;
           }
           .choice-text {
-            font-size: 13px;
-            line-height: 1.18;
+            font-size: 14px;
+            line-height: 1.2;
           }
           .choice-meta i { font-size: 9px; }
         }
@@ -181,12 +188,12 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           letter-spacing: .08em;
           padding: 1px 7px 2px !important;
           border-radius: var(--r-pill);
-          color: rgba(73,57,42,.85) !important;
+          color: rgba(243,228,200,.92) !important;
         }
-        .choice-chip.cat-friendly { background: rgba(212,168,122,.35); }
-        .choice-chip.cat-flirty   { background: rgba(212,99,62,.32); color: var(--accent-deep) !important; }
-        .choice-chip.cat-deep     { background: rgba(193,154,79,.42); color: rgba(60,42,18,.9) !important; }
-        .choice-chip.cat-banter   { background: rgba(138,165,128,.38); color: rgba(46,68,40,.92) !important; }
+        .choice-chip.cat-friendly { background: rgba(212,168,122,.3); }
+        .choice-chip.cat-flirty   { background: rgba(212,99,62,.34); color: #f0b48a !important; }
+        .choice-chip.cat-deep     { background: rgba(193,154,79,.36); color: #e8cf90 !important; }
+        .choice-chip.cat-banter   { background: rgba(138,165,128,.34); color: #b6d4a6 !important; }
       `}</style>
     </motion.div>
   );

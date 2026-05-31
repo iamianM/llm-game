@@ -66,17 +66,17 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   // ─── 2. NEW RUN ────────────────────────────────────────────
   await page.getByRole("link", { name: "New Run" }).click();
   await page.waitForLoadState("networkidle");
-  // The casting creator opens on the Islander tab with Heartthrob selected by
-  // default and a live casting-card preview of the chosen look.
+  // The casting screen opens on the roster: a grid of pre-made Islanders with
+  // the first pick highlighted and a live casting-card preview of their look.
   await shot(
     page,
     "Character select",
-    "Create your Islander. Name, opening vibe and wardrobe controls beside a live casting-card preview with outfit-graded lighting, and a 'Step into Sunset Bay' CTA."
+    "Choose your Islander. A grid of pre-made roster cards beside a live casting-card preview with outfit-graded lighting, and a 'Play as …' CTA."
   );
 
   // ─── 3. ENTER ──────────────────────────────────────────────
   await page.getByRole("button", { name: "Demo" }).click();
-  await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
+  await page.getByRole("button", { name: /^Play as / }).click();
   await page.waitForURL(/\/play\/.+/);
   // Wait for the stage HUD + initial action menu to be visible.
   await expect(page.getByTestId("choice-fan")).toBeVisible({ timeout: 15_000 });
@@ -119,7 +119,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   await shot(
     page,
     "Intros · deep response lands",
-    "Player picked the Deep response. NPC mirrors back. Notice the player-bubble on the right (accent orange) and the NPC-bubble on the left (cream)."
+    "Player picked the Deep response. NPC mirrors back. Each bubble carries a name-tag chip above a rounded card with a tail — the player's reads warm cream, the NPC's clean white."
   );
 
   // ─── 7. INTROS: SECOND ARCHETYPE ───────────────────────────

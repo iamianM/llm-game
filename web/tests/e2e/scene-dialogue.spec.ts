@@ -136,7 +136,7 @@ test("mobile portrait has no horizontal scroll", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
-test("desktop scene scales with player bottom-center", async ({ page }, testInfo) => {
+test("desktop scene anchors the player bottom-left as the foreground figure", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === "mobile", "desktop geometry is covered by desktop projects");
   await page.setViewportSize({ width: 1280, height: 800 });
   await installSession(page, fakeState(), [action("ambient", "Let it breathe")]);
@@ -144,8 +144,11 @@ test("desktop scene scales with player bottom-center", async ({ page }, testInfo
 
   const box = await page.locator('[data-role="player"]').boundingBox();
   expect(box).not.toBeNull();
+  // Love Island framing: "you" sit in the bottom-left foreground, not centered.
   const center = box!.x + box!.width / 2;
-  expect(Math.abs(center - 640)).toBeLessThan(64);
+  expect(center).toBeLessThan(1280 * 0.4);
+  // ...and anchored low, with the figure's feet near the bottom of the stage.
+  expect(box!.y + box!.height).toBeGreaterThan(800 * 0.6);
 });
 
 test("reduced motion keeps focus changes fast", async ({ page }) => {

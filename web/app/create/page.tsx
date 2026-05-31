@@ -3,49 +3,29 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, Dice5, Shuffle, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 import { listCheckpoints, newSession, sessionFromCheckpoint } from "../../lib/api";
 import { rememberCurrentSession } from "../../lib/storage";
 import { DEFAULT_USE_LIVE_LLM, useUiStore } from "../../lib/store";
-import type { CheckpointSummary, Gender } from "../../lib/types";
-import { AccessoryBadges } from "../../components/chrome/AccessoryBadges";
+import type { CheckpointSummary } from "../../lib/types";
 import { LookStage } from "../../components/look/LookStage";
-import { PlayerCrest } from "../../components/look/PlayerCrest";
-import {
-  ACCESSORIES,
-  ARCHETYPES,
-  HAIR_COLORS,
-  OUTFITS,
-  SKIN_TONES,
-  VIBES,
-  DEFAULT_LOOK,
-  commitDraftToSession,
-  findArchetype,
-  findHairColor,
-  findOutfit,
-  findSkinTone,
-  findVibe,
-  loadDraftLook,
-  saveDraftLook,
-  type IslanderLook,
-} from "../../lib/look";
-
-type Section = "islander" | "look" | "wardrobe";
+import { commitDraftToSession, findArchetype, findVibe, loadDraftLook, saveDraftLook } from "../../lib/look";
+import { ROSTER, findRosterCharacter, isRosterId, rosterLook } from "../../lib/roster";
 
 export default function CreatePage() {
   const router = useRouter();
-  const [look, setLook] = useState<IslanderLook>(DEFAULT_LOOK);
-  const [section, setSection] = useState<Section>("islander");
+  const [selectedId, setSelectedId] = useState<string>(ROSTER[0].id);
   const [checkpointOpen, setCheckpointOpen] = useState(false);
 
   const useLive = useUiStore((s) => s.useLiveLlm);
   const setUseLive = useUiStore((s) => s.setUseLiveLlm);
   const mockLlm = !useLive;
 
-  // Restore the in-progress draft and sync the engine toggle from storage.
+  // Restore the last picked islander and sync the engine toggle from storage.
   useEffect(() => {
-    setLook(loadDraftLook());
+    const draft = loadDraftLook();
+    if (isRosterId(draft.characterId)) setSelectedId(draft.characterId as string);
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("paradise.settings.useLiveLlm");
     if (stored === "1" && !useLive) setUseLive(true);
@@ -54,39 +34,18 @@ export default function CreatePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist the draft as the user styles so a refresh keeps their work.
+  const selected = findRosterCharacter(selectedId) ?? ROSTER[0];
+  const look = useMemo(() => rosterLook(selected), [selected]);
+
+  // Persist the pick so a refresh keeps it selected.
   useEffect(() => {
     saveDraftLook(look);
   }, [look]);
 
-  const update = <K extends keyof IslanderLook>(key: K, value: IslanderLook[K]) =>
-    setLook((cur) => ({ ...cur, [key]: value }));
-
-  const toggleAccessory = (id: string) =>
-    setLook((cur) => ({
-      ...cur,
-      accessories: cur.accessories.includes(id)
-        ? cur.accessories.filter((a) => a !== id)
-        : [...cur.accessories, id].slice(0, 8),
-    }));
-
-  const shuffle = () =>
-    setLook((cur) => ({
-      ...cur,
-      skinTone: pick(SKIN_TONES).id,
-      hairColor: pick(HAIR_COLORS).id,
-      outfit: pick(OUTFITS).id,
-      vibe: pick(VIBES).id,
-      accessories: ACCESSORIES.filter(() => Math.random() < 0.3)
-        .slice(0, 3)
-        .map((a) => a.id),
-    }));
-
   const mutation = useMutation({
-    mutationFn: () => newSession(look.archetype, look.gender, mockLlm, look.name),
+    mutationFn: () => newSession(selected.archetype, selected.gender, mockLlm, selected.name),
     onSuccess: (data) => {
-      const named: IslanderLook = { ...look, name: (look.name || "").trim() };
-      commitDraftToSession(data.session_id, named);
+      commitDraftToSession(data.session_id, look);
       rememberCurrentSession(data.session_id);
       router.push(`/play/${data.session_id}`);
     },
@@ -107,149 +66,62 @@ export default function CreatePage() {
     return <CastingLoader mockLlm={mockLlm} />;
   }
 
-  const archetype = findArchetype(look.archetype);
-  const outfit = findOutfit(look.outfit);
+  const archetype = findArchetype(selected.archetype);
 
   return (
-    <main className="creator-page film-grain vignette" data-screen="create">
-      <div className="creator-bg" aria-hidden />
+    <main className="select-page film-grain vignette" data-screen="create">
+      <div className="select-bg" aria-hidden />
 
-      <header className="creator-topbar">
+      <header className="select-topbar">
         <Link href="/" className="icon-link" aria-label="Back to title">
           <ArrowLeft size={18} />
         </Link>
         <div className="topbar-title">
           <p className="kicker flourish">Paradise Hearts / Casting</p>
-          <h1>Create your Islander</h1>
+          <h1>Choose your Islander</h1>
         </div>
-        <button type="button" className="top-action" onClick={shuffle} aria-label="Shuffle look">
-          <Shuffle size={16} />
-          <span>Shuffle</span>
-        </button>
       </header>
 
-      <section className="creator-layout">
-        {/* CONTROLS */}
-        <aside className="panel controls" aria-label="Islander editor">
-          <div className="tabs" role="tablist" aria-label="Editor sections">
-            <TabButton active={section === "islander"} onClick={() => setSection("islander")}>Islander</TabButton>
-            <TabButton active={section === "look"} onClick={() => setSection("look")}>Look</TabButton>
-            <TabButton active={section === "wardrobe"} onClick={() => setSection("wardrobe")}>Wardrobe</TabButton>
-          </div>
+      <section className="select-layout">
+        {/* ROSTER GRID */}
+        <div className="roster-grid" role="radiogroup" aria-label="Playable islanders" data-testid="roster-grid">
+          {ROSTER.map((character) => {
+            const on = character.id === selected.id;
+            return (
+              <button
+                key={character.id}
+                type="button"
+                role="radio"
+                aria-checked={on}
+                data-character-id={character.id}
+                className={`roster-card${on ? " is-on" : ""}`}
+                onClick={() => setSelectedId(character.id)}
+              >
+                <span className="roster-stage">
+                  <LookStage look={rosterLook(character)} compact />
+                </span>
+                <span className="roster-meta">
+                  <b>{character.name}</b>
+                  <small>{findArchetype(character.archetype).label}</small>
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-          <div className="control-scroll">
-            {section === "islander" ? (
-              <div className="stack">
-                <Field label="Name">
-                  <input
-                    className="name-input"
-                    value={look.name}
-                    maxLength={18}
-                    placeholder="Your islander"
-                    aria-label="Islander name"
-                    onChange={(e) => update("name", e.target.value)}
-                  />
-                </Field>
-                <Field label="You walk in as">
-                  <div className="seg">
-                    <SegButton on={look.gender === "man"} onClick={() => update("gender", "man" as Gender)}>Man</SegButton>
-                    <SegButton on={look.gender === "woman"} onClick={() => update("gender", "woman" as Gender)}>Woman</SegButton>
-                  </div>
-                </Field>
-                <Field label="Your type">
-                  <div className="card-options" data-testid="archetype-options">
-                    {ARCHETYPES.map((a) => (
-                      <button
-                        key={a.id}
-                        type="button"
-                        role="tab"
-                        aria-selected={look.archetype === a.id}
-                        className={`big-card${look.archetype === a.id ? " is-on" : ""}`}
-                        onClick={() => update("archetype", a.id)}
-                      >
-                        <span className="big-card-head">
-                          <b>{a.label}</b>
-                          <span className="badge">{a.bonus}</span>
-                        </span>
-                        <small>{a.detail}</small>
-                        {look.archetype === a.id ? <Check className="card-check" size={16} /> : null}
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-              </div>
-            ) : null}
-
-            {section === "look" ? (
-              <div className="stack">
-                <SwatchField title="Skin tone" options={SKIN_TONES} value={look.skinTone} onChange={(id) => update("skinTone", id)} />
-                <SwatchField title="Hair colour" options={HAIR_COLORS} value={look.hairColor} onChange={(id) => update("hairColor", id)} />
-                <SwatchField title="Energy" options={VIBES} value={look.vibe} onChange={(id) => update("vibe", id)} labelled />
-              </div>
-            ) : null}
-
-            {section === "wardrobe" ? (
-              <div className="stack">
-                <Field label="Outfit">
-                  <div className="outfit-options">
-                    {OUTFITS.map((o) => (
-                      <button
-                        key={o.id}
-                        type="button"
-                        className={`outfit-row${look.outfit === o.id ? " is-on" : ""}`}
-                        onClick={() => update("outfit", o.id)}
-                      >
-                        <span className="outfit-swatch" style={{ background: `linear-gradient(135deg, ${o.primary}, ${o.secondary})` }} />
-                        <span className="outfit-meta">
-                          <b>{o.label}</b>
-                          <small>{o.detail}</small>
-                        </span>
-                        {look.outfit === o.id ? <Check size={16} /> : null}
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-                <Field label={`Accessories (${look.accessories.length})`}>
-                  <div className="chip-grid" data-testid="accessory-grid">
-                    {ACCESSORIES.map((a) => {
-                      const on = look.accessories.includes(a.id);
-                      return (
-                        <button
-                          key={a.id}
-                          type="button"
-                          aria-pressed={on}
-                          className={`chip${on ? " is-on" : ""}`}
-                          onClick={() => toggleAccessory(a.id)}
-                        >
-                          {a.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </Field>
-              </div>
-            ) : null}
-          </div>
-        </aside>
-
-        {/* PREVIEW */}
-        <section className="preview-zone" aria-label="Islander preview">
-          <div className="casting-card" data-testid="avatar-preview">
+        {/* PREVIEW + ACTIONS */}
+        <section className="preview-zone" aria-label="Selected islander">
+          <div className="casting-card" data-testid="selected-preview">
             <LookStage look={look} />
-            <div className="crest-chip" title="Your profile crest — carries your skin, hair & energy across the villa">
-              <PlayerCrest look={look} name={look.name} size="responsive" />
-              <span className="crest-chip-label">Your token</span>
-            </div>
             <div className="nameplate">
-              <span className="nameplate-name">{look.name.trim() || "Your Islander"}</span>
-              <span className="nameplate-sub">{archetype.label} · {findVibe(look.vibe).label}</span>
-            </div>
-            <div className="badge-rail">
-              <AccessoryBadges ids={look.accessories} />
+              <span className="nameplate-name">{selected.name}</span>
+              <span className="nameplate-sub">{archetype.label} · {findVibe(selected.vibe).label}</span>
             </div>
           </div>
 
           <div className="preview-actions">
+            <p className="tagline">{selected.tagline}</p>
+            <p className="bonus-line">{archetype.bonus} · {archetype.detail}</p>
             <div className="engine-row">
               <span className="engine-label">Story engine</span>
               <div className="seg">
@@ -257,13 +129,8 @@ export default function CreatePage() {
                 <SegButton on={useLive} onClick={() => setUseLive(true)}>Live LLM</SegButton>
               </div>
             </div>
-            <button
-              type="button"
-              className="enter-cta"
-              disabled={mutation.isPending}
-              onClick={() => mutation.mutate()}
-            >
-              <span className="cta-label">{mutation.isPending ? "Opening…" : "Step into Sunset Bay"}</span>
+            <button type="button" className="enter-cta" disabled={mutation.isPending} onClick={() => mutation.mutate()}>
+              <span className="cta-label">Play as {selected.name}</span>
               <span className="cta-arrow" aria-hidden>→</span>
             </button>
             {checkpoints.length > 0 ? (
@@ -275,43 +142,6 @@ export default function CreatePage() {
           {mutation.error ? <p role="alert" className="error-banner">{mutation.error.message}</p> : null}
           {checkpointMutation.error ? <p role="alert" className="error-banner">{checkpointMutation.error.message}</p> : null}
         </section>
-
-        {/* SUMMARY */}
-        <aside className="panel summary" aria-label="Look summary">
-          <div className="profile-card">
-            <div className="mini-card">
-              <LookStage look={look} compact />
-            </div>
-            <div>
-              <p className="kicker">Draft Islander</p>
-              <h2 className="profile-name">{look.name.trim() || "Your Islander"}</h2>
-              <p className="profile-line">{archetype.label} · {outfit.label.toLowerCase()} styling</p>
-            </div>
-          </div>
-          <SummaryRows
-            rows={[
-              ["Bonus", archetype.bonus],
-              ["Skin", findSkinTone(look.skinTone).detail],
-              ["Hair", findHairColor(look.hairColor).detail],
-              ["Energy", findVibe(look.vibe).detail],
-              ["Outfit", `${outfit.label} — ${outfit.category}`],
-            ]}
-          />
-          <div className="acc-summary">
-            <p className="panel-heading">Wearing</p>
-            {look.accessories.length === 0 ? (
-              <p className="acc-empty">Keeping it clean — no accessories yet.</p>
-            ) : (
-              <div className="acc-tags">
-                {look.accessories.map((id) => {
-                  const a = ACCESSORIES.find((x) => x.id === id);
-                  return a ? <span className="acc-tag" key={id}>{a.label}</span> : null;
-                })}
-              </div>
-            )}
-          </div>
-          <p className="reassure"><Sparkles size={13} /> You can change your look any time at the villa.</p>
-        </aside>
       </section>
 
       {checkpointOpen && checkpoints.length > 0 ? (
@@ -344,19 +174,18 @@ export default function CreatePage() {
       ) : null}
 
       <style jsx>{`
-        .creator-page {
+        .select-page {
           position: relative;
-          height: 100vh;
-          height: 100svh;
+          min-height: 100vh;
+          min-height: 100svh;
           color: var(--ink-on-dark);
           padding: 14px;
           isolation: isolate;
-          overflow: hidden;
           display: flex;
           flex-direction: column;
           align-items: center;
         }
-        .creator-bg {
+        .select-bg {
           position: absolute;
           inset: 0;
           z-index: 0;
@@ -366,17 +195,17 @@ export default function CreatePage() {
             radial-gradient(74% 64% at 52% 116%, rgba(111, 76, 160, .22), transparent 62%),
             linear-gradient(180deg, #160c09 0%, #070504 100%);
         }
-        .creator-topbar,
-        .creator-layout {
+        .select-topbar,
+        .select-layout {
           position: relative;
           z-index: 2;
           width: 100%;
-          max-width: 1440px;
+          max-width: 1280px;
         }
-        .creator-topbar {
+        .select-topbar {
           min-height: 64px;
           display: grid;
-          grid-template-columns: 42px 1fr auto;
+          grid-template-columns: 42px 1fr;
           align-items: center;
           gap: 12px;
           margin-bottom: 12px;
@@ -397,173 +226,58 @@ export default function CreatePage() {
           letter-spacing: .14em;
           text-transform: uppercase;
         }
-        /* .icon-link is applied to a next/link Link (a custom component), and
-           styled-jsx does NOT inject its scoping class into custom components,
-           only native tags. So a bare .icon-link rule never matches the Link
-           and the back button renders unstyled. Scope via the native
-           .creator-topbar wrapper + :global so the rule reaches the Link. */
-        .creator-topbar :global(.icon-link),
-        .top-action {
+        .select-topbar :global(.icon-link) {
+          width: 42px;
+          height: 42px;
+          border-radius: 50%;
           border: var(--frame-gold);
           color: var(--ink-on-dark);
           background: rgba(20, 16, 12, .72);
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          gap: 7px;
-          cursor: pointer;
           text-decoration: none;
         }
-        .creator-topbar :global(.icon-link) { width: 42px; height: 42px; border-radius: 50%; }
-        .top-action {
-          min-height: 42px;
-          padding: 8px 15px;
-          border-radius: var(--r-pill);
-          font-size: 12px;
-          font-weight: 800;
-          letter-spacing: .08em;
-          text-transform: uppercase;
-        }
-        .creator-layout {
+        .select-layout {
           display: grid;
-          grid-template-columns: minmax(280px, 360px) minmax(340px, 1fr) minmax(260px, 340px);
-          gap: 14px;
-          align-items: stretch;
+          grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
+          gap: 16px;
           flex: 1;
           min-height: 0;
         }
-        .panel {
-          border: var(--frame-gold);
-          background: rgba(13, 10, 9, .80);
-          box-shadow: var(--shadow-lg), var(--inset-gold);
-          backdrop-filter: blur(12px);
-          border-radius: var(--r-xl);
-          padding: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          min-height: 0;
-        }
-        .tabs {
+        .roster-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 5px;
-          padding: 4px;
-          border-radius: var(--r-pill);
-          background: rgba(0, 0, 0, .35);
+          gap: 12px;
+          align-content: start;
         }
-        .control-scroll {
-          min-height: 0;
-          overflow-y: auto;
-          padding-right: 2px;
-        }
-        .stack { display: grid; gap: 16px; }
-        .panel-heading,
-        .field-label {
-          margin: 0 0 8px;
-          color: var(--gold-soft);
-          font-size: 11px;
-          font-weight: 900;
-          letter-spacing: .14em;
-          text-transform: uppercase;
-        }
-        .name-input {
-          width: 100%;
-          min-height: 48px;
-          border-radius: var(--r-md);
-          border: 1px solid rgba(248, 236, 210, .18);
-          background: rgba(248, 236, 210, .07);
-          color: var(--ink-on-dark);
-          padding: 0 13px;
-          font-size: 17px;
-          font-weight: 800;
-          outline: none;
-        }
-        .name-input:focus {
-          border-color: rgba(217, 167, 58, .72);
-          box-shadow: 0 0 0 2px rgba(217, 167, 58, .18);
-        }
-        .seg {
-          display: inline-flex;
-          gap: 4px;
-          padding: 3px;
-          border-radius: var(--r-pill);
-          background: rgba(0, 0, 0, .4);
-          border: 1px solid rgba(248, 236, 210, .08);
-        }
-        .card-options { display: grid; gap: 8px; }
-        .big-card {
+        .roster-card {
           position: relative;
-          border: 1px solid rgba(248, 236, 210, .12);
-          background: rgba(248, 236, 210, .05);
-          color: var(--ink-on-dark);
-          border-radius: var(--r-md);
-          padding: 11px 12px;
-          text-align: left;
-          cursor: pointer;
-          transition: border-color .14s, background .14s, transform .12s;
-        }
-        .big-card:hover { transform: translateY(-1px); }
-        .big-card.is-on {
-          border-color: rgba(217, 167, 58, .72);
-          background: rgba(217, 167, 58, .14);
-          box-shadow: 0 0 0 2px rgba(217, 167, 58, .16);
-        }
-        .big-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .big-card b { font-size: 15px; font-family: var(--font-display); }
-        .big-card small { display: block; margin-top: 3px; color: var(--muted-on-dark); font-size: 12px; line-height: 1.3; }
-        .badge {
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: .06em;
-          color: var(--gold-soft);
-          border: 1px solid rgba(217, 167, 58, .4);
-          border-radius: var(--r-pill);
-          padding: 2px 8px;
-        }
-        /* lucide icons are custom components, so styled-jsx won't scope this
-           class onto the rendered <svg> — reach it via the native .big-card. */
-        .big-card :global(.card-check) { position: absolute; top: 10px; right: 10px; color: var(--gold-soft); }
-        .outfit-options { display: grid; gap: 8px; }
-        .outfit-row {
           display: grid;
-          grid-template-columns: 36px 1fr 18px;
-          gap: 10px;
-          align-items: center;
-          min-height: 56px;
-          padding: 8px;
-          border-radius: var(--r-md);
-          border: 1px solid rgba(248, 236, 210, .12);
-          background: rgba(248, 236, 210, .05);
-          color: var(--ink-on-dark);
+          grid-template-rows: 1fr auto;
+          aspect-ratio: 3 / 4;
+          border-radius: var(--r-lg);
+          overflow: hidden;
+          border: 1px solid rgba(248, 236, 210, .14);
+          background: rgba(13, 10, 9, .6);
           cursor: pointer;
+          transition: transform .14s, border-color .14s, box-shadow .14s;
+        }
+        .roster-card:hover { transform: translateY(-2px); }
+        .roster-card.is-on {
+          border-color: rgba(217, 167, 58, .8);
+          box-shadow: 0 0 0 2px rgba(217, 167, 58, .26), var(--shadow-lg);
+        }
+        .roster-stage { position: relative; }
+        .roster-meta {
+          display: grid;
+          gap: 1px;
+          padding: 8px 10px;
+          background: rgba(8, 6, 4, .72);
           text-align: left;
         }
-        .outfit-row.is-on {
-          border-color: rgba(217, 167, 58, .72);
-          background: rgba(217, 167, 58, .13);
-        }
-        .outfit-swatch { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .34); }
-        .outfit-meta b { display: block; font-size: 13px; }
-        .outfit-meta small { display: block; margin-top: 2px; color: var(--muted-on-dark); font-size: 11px; line-height: 1.25; }
-        .chip-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-        .chip {
-          min-height: 40px;
-          padding: 8px 13px;
-          border-radius: var(--r-pill);
-          border: 1px solid rgba(248, 236, 210, .14);
-          background: rgba(248, 236, 210, .05);
-          color: var(--ink-on-dark);
-          font-size: 13px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: border-color .14s, background .14s;
-        }
-        .chip.is-on {
-          border-color: rgba(217, 167, 58, .72);
-          background: rgba(217, 167, 58, .16);
-          color: var(--card);
-        }
+        .roster-meta b { font-family: var(--font-display); font-size: 16px; color: var(--card); }
+        .roster-meta small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--gold-soft); }
 
         .preview-zone {
           min-height: 0;
@@ -573,7 +287,7 @@ export default function CreatePage() {
         }
         .casting-card {
           position: relative;
-          min-height: 0;
+          min-height: 320px;
           border: var(--frame-gold);
           border-radius: var(--r-xl);
           overflow: hidden;
@@ -602,10 +316,6 @@ export default function CreatePage() {
           font-size: clamp(18px, 2.6vw, 26px);
           line-height: 1;
           color: var(--card);
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 60vw;
         }
         .nameplate-sub {
           font-size: 10px;
@@ -613,31 +323,9 @@ export default function CreatePage() {
           text-transform: uppercase;
           color: var(--gold-soft);
         }
-        .badge-rail {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          z-index: 4;
-        }
-        .crest-chip {
-          position: absolute;
-          left: 12px;
-          bottom: 14px;
-          z-index: 4;
-          --portrait-size: clamp(52px, 8.5vw, 72px);
-          display: grid;
-          justify-items: center;
-          gap: 4px;
-        }
-        .crest-chip-label {
-          font-size: 9px;
-          font-weight: 800;
-          letter-spacing: .14em;
-          text-transform: uppercase;
-          color: var(--gold-soft);
-          text-shadow: 0 1px 4px rgba(0, 0, 0, .7);
-        }
         .preview-actions { display: grid; gap: 10px; }
+        .tagline { margin: 0; font-size: 14px; line-height: 1.4; color: var(--ink-on-dark); }
+        .bonus-line { margin: 0; font-size: 12px; color: var(--muted-on-dark); }
         .engine-row {
           display: flex;
           align-items: center;
@@ -649,6 +337,14 @@ export default function CreatePage() {
           background: rgba(20, 16, 12, .6);
         }
         .engine-label { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--gold-soft); }
+        .seg {
+          display: inline-flex;
+          gap: 4px;
+          padding: 3px;
+          border-radius: var(--r-pill);
+          background: rgba(0, 0, 0, .4);
+          border: 1px solid rgba(248, 236, 210, .08);
+        }
         .enter-cta {
           display: inline-flex;
           align-items: center;
@@ -692,50 +388,6 @@ export default function CreatePage() {
           color: #f7c8c1;
           font-size: 13px;
         }
-
-        .summary { gap: 14px; }
-        .profile-card {
-          display: grid;
-          grid-template-columns: 92px 1fr;
-          gap: 12px;
-          align-items: center;
-          padding-bottom: 12px;
-          border-bottom: 1px solid rgba(248, 236, 210, .12);
-        }
-        .mini-card {
-          width: 88px;
-          height: 120px;
-          border-radius: var(--r-md);
-          overflow: hidden;
-          border: 1px solid rgba(217, 167, 58, .24);
-        }
-        .profile-name { margin: 2px 0 0; font-family: var(--font-display); font-size: 24px; color: var(--card); }
-        .profile-line { margin: 5px 0 0; color: var(--muted-on-dark); font-size: 13px; }
-        .summary-list { display: grid; gap: 8px; padding-bottom: 12px; border-bottom: 1px solid rgba(248, 236, 210, .12); }
-        .summary-row { display: grid; grid-template-columns: 64px 1fr; gap: 8px; align-items: baseline; font-size: 12.5px; }
-        .summary-row b { color: var(--gold-soft); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; }
-        .summary-row span { color: var(--muted-on-dark); }
-        .acc-summary { display: grid; gap: 8px; }
-        .acc-empty { margin: 0; color: var(--muted-on-dark); font-size: 12.5px; font-style: italic; }
-        .acc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-        .acc-tag {
-          font-size: 12px;
-          padding: 4px 10px;
-          border-radius: var(--r-pill);
-          background: rgba(217, 167, 58, .12);
-          border: 1px solid rgba(217, 167, 58, .3);
-          color: var(--ink-on-dark);
-        }
-        .reassure {
-          margin: auto 0 0;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: var(--muted-on-dark);
-          font-size: 12px;
-          font-style: italic;
-        }
-        .reassure :global(svg) { color: var(--gold-soft); flex-shrink: 0; }
 
         .checkpoint-overlay {
           position: fixed;
@@ -798,62 +450,15 @@ export default function CreatePage() {
         .checkpoint-label { font-size: 14px; }
         .checkpoint-source { font-size: 11px; opacity: .5; }
 
-        @media (max-width: 1100px) {
-          .creator-layout { grid-template-columns: minmax(280px, 340px) minmax(320px, 1fr); }
-          .summary { display: none; }
-        }
-        @media (max-width: 760px) {
-          .creator-page {
-            height: auto;
-            min-height: 100svh;
-            overflow: visible;
-          }
-          .creator-layout {
-            flex: initial;
-            min-height: 0;
-            grid-template-columns: 1fr;
-            grid-template-rows: minmax(380px, 52svh) auto;
-          }
+        @media (max-width: 880px) {
+          .select-layout { grid-template-columns: 1fr; }
           .preview-zone { order: 1; }
-          .controls { order: 2; }
-          .control-scroll { overflow: visible; }
-          .top-action span { display: none; }
-          .top-action { width: 42px; padding: 0; }
+          .roster-grid { order: 2; }
+          .casting-card { min-height: 360px; }
           .checkpoint-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </main>
-  );
-}
-
-function pick<T>(arr: T[]): T {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function TabButton({ active, children, onClick }: { active: boolean; children: string; onClick: () => void }) {
-  return (
-    <button type="button" role="tab" aria-selected={active} className={`tab${active ? " is-on" : ""}`} onClick={onClick}>
-      {children}
-      <style jsx>{`
-        .tab {
-          min-height: 36px;
-          border: 0;
-          border-radius: var(--r-pill);
-          background: transparent;
-          color: var(--muted-on-dark);
-          font-size: 11px;
-          font-weight: 900;
-          letter-spacing: .08em;
-          text-transform: uppercase;
-          cursor: pointer;
-        }
-        .tab.is-on {
-          background: linear-gradient(180deg, var(--accent), var(--accent-deep));
-          color: var(--card);
-          box-shadow: var(--shadow-sm), var(--inset-gold);
-        }
-      `}</style>
-    </button>
   );
 }
 
@@ -879,108 +484,6 @@ function SegButton({ on, onClick, children }: { on: boolean; onClick: () => void
         }
       `}</style>
     </button>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <section>
-      <p className="field-label">{label}</p>
-      {children}
-      <style jsx>{`
-        .field-label {
-          margin: 0 0 8px;
-          color: var(--gold-soft);
-          font-size: 11px;
-          font-weight: 900;
-          letter-spacing: .14em;
-          text-transform: uppercase;
-        }
-      `}</style>
-    </section>
-  );
-}
-
-function SwatchField({
-  title,
-  options,
-  value,
-  onChange,
-  labelled,
-}: {
-  title: string;
-  options: { id: string; label: string; detail: string; value: string }[];
-  value: string;
-  onChange: (id: string) => void;
-  labelled?: boolean;
-}) {
-  return (
-    <section>
-      <p className="field-label">{title}</p>
-      <div className="swatch-row">
-        {options.map((o) => (
-          <button
-            key={o.id}
-            type="button"
-            className={`swatch-btn${value === o.id ? " is-on" : ""}`}
-            onClick={() => onChange(o.id)}
-            aria-label={`${title}: ${o.label}`}
-            aria-pressed={value === o.id}
-            title={o.detail}
-          >
-            <span className="swatch-dot" style={{ background: o.value }} />
-            {labelled ? <span className="swatch-text">{o.label}</span> : null}
-          </button>
-        ))}
-      </div>
-      <style jsx>{`
-        .field-label {
-          margin: 0 0 8px;
-          color: var(--gold-soft);
-          font-size: 11px;
-          font-weight: 900;
-          letter-spacing: .14em;
-          text-transform: uppercase;
-        }
-        .swatch-row { display: flex; flex-wrap: wrap; gap: 8px; }
-        .swatch-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          padding: 5px;
-          padding-right: ${labelled ? "12px" : "5px"};
-          border-radius: ${labelled ? "var(--r-pill)" : "50%"};
-          border: 1px solid rgba(248, 236, 210, .14);
-          background: rgba(248, 236, 210, .05);
-          cursor: pointer;
-        }
-        .swatch-btn.is-on {
-          border-color: rgba(217, 167, 58, .8);
-          box-shadow: 0 0 0 2px rgba(217, 167, 58, .2);
-        }
-        .swatch-dot {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 255, 255, .42);
-          box-shadow: inset 0 0 0 2px rgba(0, 0, 0, .18);
-        }
-        .swatch-text { font-size: 12px; font-weight: 700; color: var(--ink-on-dark); }
-      `}</style>
-    </section>
-  );
-}
-
-function SummaryRows({ rows }: { rows: [string, string][] }) {
-  return (
-    <div className="summary-list">
-      {rows.map(([label, value]) => (
-        <p className="summary-row" key={label}>
-          <b>{label}</b>
-          <span>{value}</span>
-        </p>
-      ))}
-    </div>
   );
 }
 

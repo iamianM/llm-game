@@ -92,7 +92,7 @@ export function TitleScreen() {
         <div className="title-actions">
           <Link href="/create" onClick={() => playSfx("new-run")} className="cta cta-primary" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
             <span className="cta-label">New Run</span>
-            <span className="cta-sub">Create your Islander</span>
+            <span className="cta-sub">Choose your Islander</span>
           </Link>
           {resumeSessionId ? (
             <Link
