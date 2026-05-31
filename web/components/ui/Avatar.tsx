@@ -1,51 +1,24 @@
 import Image from "next/image";
 import type { IslanderLook } from "../../lib/look";
+import { isRosterId, rosterSprite } from "../../lib/roster";
+import { npcSprite } from "../../lib/scene/npc-art";
 import { PlayerCrest } from "../look/PlayerCrest";
 
 const PALETTE = ["#b9502f", "#5b7c4f", "#c8932a", "#4a8fb8", "#8a5f78", "#7c654f"];
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl" | "responsive";
 
-const IMAGE_BY_ID: Record<string, string> = {
-  chloe: "/images/characters/chloe.webp",
-  maya: "/images/characters/maya.webp",
-  liam: "/images/characters/liam.webp",
-  sophie_start: "/images/characters/sophie_start.webp",
-  nia_start: "/images/characters/nia_start.webp",
-  marcus_start: "/images/characters/marcus_start.webp",
-  blake_start: "/images/characters/blake_start.webp",
-  jordan_start: "/images/characters/jordan_start.webp",
-  blake: "/images/characters/blake_start.webp",
-  jordan: "/images/characters/jordan_start.webp",
-  marcus: "/images/characters/marcus_start.webp",
-  sophie: "/images/characters/sophie_start.webp",
-  nia: "/images/characters/nia_start.webp",
-  // Casa Amor bombshells (engine ids from src/game/engine/casa_amor.py) — without
-  // these they showed a monogram disc instead of a photo in the cast list,
-  // couples panel and finale. Borrow gender-matched heart-throb headshots until
-  // each gets bespoke art.
-  beau: "/images/characters/sam_ht.webp",
-  jules: "/images/characters/sam_ht.webp",
-  mateo: "/images/characters/ellis_ht.webp",
-  noor: "/images/characters/talia_ht.webp",
-  sasha: "/images/characters/talia_ht.webp",
-  zara: "/images/characters/riley_ht.webp",
-  sam_ht: "/images/characters/sam_ht.webp",
-  riley_ht: "/images/characters/riley_ht.webp",
-  ellis_ht: "/images/characters/ellis_ht.webp",
-  talia_ht: "/images/characters/talia_ht.webp"
-};
-
 export function Avatar({ id, name, size = "md", look = null }: { id: string; name: string; size?: Size; look?: IslanderLook | null }) {
-  // The player has no photoreal headshot — when their chosen look is supplied,
-  // render the look-aware casting crest (skin/hair/vibe) so the avatar that
-  // travels through the HUD, profile, couples list and finale is unmistakably
-  // theirs. NPCs keep their photo; unknown ids keep the monogram disc.
-  if (look) return <PlayerCrest look={look} name={name} size={size} />;
+  // A roster pick has a real face — crop its standee into the disc so the HUD,
+  // couples list and finale all show the player's chosen islander. Legacy/
+  // checkpoint sessions carry a look without a roster id and fall back to the
+  // look-aware casting crest. NPCs keep their photo; unknown ids keep a
+  // monogram disc.
+  if (look && !isRosterId(look.characterId)) return <PlayerCrest look={look} name={name} size={size} />;
   const dimsMap: Record<Exclude<Size, "responsive">, number> = { xs: 22, sm: 30, md: 44, lg: 80, xl: 168 };
   const dims = size === "responsive" ? null : dimsMap[size];
   const color = PALETTE[Math.abs(hash(id)) % PALETTE.length];
-  const image = IMAGE_BY_ID[id];
+  const image = look?.characterId && isRosterId(look.characterId) ? rosterSprite(look.characterId) : npcSprite(id);
   return (
     <div
       className="avatar-disc relative grid shrink-0 place-items-center overflow-hidden rounded-full font-display font-bold text-[var(--card)] shadow-[var(--shadow-md)]"

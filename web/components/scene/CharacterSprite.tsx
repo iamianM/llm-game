@@ -5,42 +5,10 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { Gender } from "../../lib/types";
 import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { npcSprite } from "../../lib/scene/npc-art";
 import { playerSprite } from "../../lib/scene/player-sprite";
 import type { CharacterPose, Position } from "../../lib/scene/types";
 import { AccessoryBadges } from "../chrome/AccessoryBadges";
-
-const NPC_IMAGE_BY_ID: Record<string, string> = {
-  chloe: "/images/characters/chloe.webp",
-  maya: "/images/characters/maya.webp",
-  liam: "/images/characters/liam.webp",
-  sophie_start: "/images/characters/sophie_start.webp",
-  nia_start: "/images/characters/nia_start.webp",
-  marcus_start: "/images/characters/marcus_start.webp",
-  blake_start: "/images/characters/blake_start.webp",
-  jordan_start: "/images/characters/jordan_start.webp",
-  blake: "/images/characters/blake_start.webp",
-  jordan: "/images/characters/jordan_start.webp",
-  marcus: "/images/characters/marcus_start.webp",
-  sophie: "/images/characters/sophie_start.webp",
-  nia: "/images/characters/nia_start.webp",
-  // Casa Amor bombshells (engine ids from src/game/engine/casa_amor.py). Without
-  // these, the bombshells fell through to a bare-initial standee ("M" for Mateo)
-  // for the entire Casa act. Each borrows a gender-matched heart-throb standee.
-  // The villa pins the six to three Casa locations as fixed man+woman pairs
-  // (pool: beau+sasha, kitchen: jules+zara, terrace: mateo+noor), so two
-  // same-gender bombshells are NEVER co-located in one scene — a reused male or
-  // female face can't appear twice in the same frame.
-  beau: "/images/characters/sam_ht.webp",
-  jules: "/images/characters/sam_ht.webp",
-  mateo: "/images/characters/ellis_ht.webp",
-  noor: "/images/characters/talia_ht.webp",
-  sasha: "/images/characters/talia_ht.webp",
-  zara: "/images/characters/riley_ht.webp",
-  sam_ht: "/images/characters/sam_ht.webp",
-  riley_ht: "/images/characters/riley_ht.webp",
-  ellis_ht: "/images/characters/ellis_ht.webp",
-  talia_ht: "/images/characters/talia_ht.webp",
-};
 
 type Props = {
   id: string;
@@ -52,11 +20,12 @@ type Props = {
   position: Position;
   pose: CharacterPose;
   active: boolean;
+  compact?: boolean;
   tappable?: boolean;
   onTap?: () => void;
 };
 
-export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, tappable, onTap }: Props) {
+export function CharacterSprite({ id, name, role, gender = "man", archetypeId = "heartthrob", look = null, position, pose, active, compact = false, tappable, onTap }: Props) {
   const reduce = useReducedMotion();
   if (position.hidden) return null;
   // The player's chosen look paints a soft outfit-accent aura behind the
@@ -64,7 +33,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
   // in-scene. When a baked per-outfit standee exists the clothes themselves
   // change; otherwise the aura carries the outfit color. NPCs never carry a look.
   const playerLook = role === "player" ? look : null;
-  const src = role === "player" ? playerSprite(archetypeId, gender, playerLook?.outfit) : NPC_IMAGE_BY_ID[id];
+  const src = role === "player" ? playerSprite(archetypeId, gender, playerLook?.outfit, playerLook?.characterId) : npcSprite(id);
   const sizeClass = role === "player" ? "is-player" : "is-npc";
   const outfit = playerLook ? findOutfit(playerLook.outfit) : null;
   const vibe = playerLook ? findVibe(playerLook.vibe) : null;
@@ -103,7 +72,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
       onKeyDown={tappable && onTap ? (e) => {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTap(); }
       } : undefined}
-      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}${tappable ? " is-tappable" : ""}`}
+      className={`character-sprite ${sizeClass} pose-${pose}${active ? " is-active" : ""}${position.dimmed ? " is-dimmed" : ""}${compact ? " is-compact" : ""}${tappable ? " is-tappable" : ""}`}
       style={style}
     >
       <motion.div
@@ -135,11 +104,12 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           z-index: 3;
           left: var(--sprite-left);
           top: var(--sprite-top);
-          transform: translate(-50%, -100%);
+          transform: translate(-50%, calc(-100% + var(--lift, 0px)));
           transform-origin: 50% 100%;
           display: grid;
           justify-items: center;
           pointer-events: none;
+          transition: transform .32s cubic-bezier(.22,.61,.36,1);
         }
         .character-sprite.is-tappable {
           pointer-events: auto;
@@ -221,13 +191,15 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5));
         }
         .is-player {
-          --sprite-width: clamp(120px, 22vw, 220px);
-          --sprite-height: clamp(170px, 28vh, 320px);
-          z-index: 4;
+          --sprite-width: clamp(220px, 28vw, 420px);
+          --sprite-height: clamp(360px, 82vh, 720px);
+          /* Always the foreground figure — above even an active NPC (z 6) so
+             "you" never get occluded by whoever's speaking. */
+          z-index: 7;
         }
         .is-npc {
-          --sprite-width: clamp(96px, 17vw, 200px);
-          --sprite-height: clamp(150px, 27vh, 320px);
+          --sprite-width: clamp(180px, 23vw, 360px);
+          --sprite-height: clamp(300px, 72vh, 620px);
         }
         .is-npc.is-active {
           z-index: 6;
@@ -271,18 +243,35 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           55% { transform: rotate(2deg) scale(1.04); }
           to { transform: none; }
         }
+        /* When the choice fan is open the player tucks up + shrinks (mobile
+           only) so the bottom option bars never cover the standee. On desktop
+           the options are a centred column with room to spare, so "you" stay
+           big and low at the far left. */
+        .is-player.is-compact {
+          --lift: 0px;
+        }
         @media (max-width: 520px) {
+          /* Love Island mobile framing: figures are big + close, cropping
+             thigh-up so they fill the stage instead of floating small with a
+             slab of dead sky overhead. The bottom-anchored standees have
+             transparent headroom, so the box runs tall and the lower anchor
+             (positions.ts) pushes the feet just under the frame. */
           .is-player {
-            --sprite-width: clamp(108px, 32vw, 160px);
-            --sprite-height: clamp(152px, 26vh, 240px);
+            --sprite-width: clamp(250px, 68vw, 400px);
+            --sprite-height: clamp(440px, 92vh, 700px);
           }
           .is-npc {
-            --sprite-width: clamp(78px, 22vw, 138px);
-            --sprite-height: clamp(124px, 25vh, 220px);
+            --sprite-width: clamp(200px, 58vw, 340px);
+            --sprite-height: clamp(380px, 80vh, 600px);
+          }
+          /* When the option cards open they overlay the lower body (faces still
+             show), so the player only nudges slightly rather than flying up. */
+          .is-player.is-compact {
+            --lift: 0px;
           }
           .sprite-name {
             font-size: 12px;
-            max-width: 100px;
+            max-width: 120px;
           }
         }
       `}</style>

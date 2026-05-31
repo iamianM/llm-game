@@ -7,7 +7,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
   test.setTimeout(720_000);
   await page.goto("/");
   await page.getByRole("link", { name: "New Run" }).click();
-  await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
+  await page.getByRole("button", { name: /^Play as / }).click();
   // The play screen opens on the Day-1 intro round-robin: NPCs greet you one at
   // a time as dialogue bubbles, and the first choice fan only appears once those
   // greetings have been advanced through. Wait for the stage, speed everything

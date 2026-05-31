@@ -26,6 +26,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [streamText, setStreamText] = useState("");
   const [streamSpeaker, setStreamSpeaker] = useState("Producer");
   const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
+  const [pendingTargetId, setPendingTargetId] = useState<string | null>(null);
   const [deferredCeremony, setDeferredCeremony] = useState(false);
   const [look, setLook] = useState<IslanderLook | null>(null);
   const railOpen = useUiStore((s) => s.rightRailOpen);
@@ -40,6 +41,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       setStreamText("");
       setStreamSpeaker("Producer");
       setPendingActionLabel(action.label);
+      setPendingTargetId(action.target_id ?? null);
       setDeferredCeremony(false);
       return submitTurnStream(sessionId, action, {
         onDialogueStart: (speaker) => setStreamSpeaker(speaker),
@@ -50,6 +52,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
       setLastTurn(data);
       setStreamText("");
       setPendingActionLabel(null);
+      setPendingTargetId(null);
       const hasCeremony = data.ceremony_events.length > 0;
       const hasDialogue = data.exchange !== null;
       setDeferredCeremony(hasCeremony && hasDialogue);
@@ -126,6 +129,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
             lastTurn={lastTurn}
             locked={mutation.isPending}
             pendingActionLabel={pendingActionLabel}
+            pendingTargetId={pendingTargetId}
             streamText={streamText}
             streamSpeaker={streamSpeaker}
             onChoose={(action) => {

@@ -233,13 +233,18 @@ function planIntroScene(
 
   // Show the just-finished exchange first (player line then NPC reply) so the
   // user can read the response before the camera swings to the next islander.
+  // Keep the islander we're replying to spotlighted for the whole exchange —
+  // including the player's own line — so they don't drop to the back row the
+  // instant the player speaks and then snap forward again for their reply.
+  if (justFinished && (exchange?.player_dialogue || exchange?.npc_dialogue)) {
+    beats.push({ kind: "camera", shot: "two_shot", focusIds: [justFinished], durationMs: 140 });
+  }
   if (exchange?.player_dialogue) {
     for (const page of paginate(exchange.player_dialogue)) {
       beats.push({ kind: "speech", speakerId: state.player.id, text: page, pose: "talking" });
     }
   }
   if (exchange?.npc_dialogue && justFinished) {
-    beats.push({ kind: "camera", shot: "two_shot", focusIds: [justFinished], durationMs: 140 });
     for (const page of paginate(exchange.npc_dialogue)) {
       beats.push({ kind: "speech", speakerId: justFinished, text: page, pose: "talking" });
     }
