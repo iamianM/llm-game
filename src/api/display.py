@@ -24,7 +24,7 @@ DISPLAY_NAMES: dict[str, str] = {
     "graft": "Spark",
     "heart_rate": "Pulse Race",
     "hideaway": "Paradise Suite",
-    "intros": "Day-1 Introductions",
+    "intros": "Arrivals",
     "kitchen": "Kitchen",
     "lie_detector": "Lie Detector",
     "morning": "Morning",

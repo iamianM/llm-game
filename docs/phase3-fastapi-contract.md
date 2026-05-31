@@ -410,7 +410,7 @@ DISPLAY_NAMES = {
     "elimination": "Heart Out",
 
     # Phases
-    "intros": "Day-1 Introductions",
+    "intros": "Arrivals",
     "morning": "Morning",
     "challenge": "Challenge",
     "afternoon": "Afternoon",

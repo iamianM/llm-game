@@ -131,7 +131,7 @@ narration, memories, or prompt output; fix those at their structured source.
 | `elimination` | Heart Out |
 | `villa: paradise` (state) | Sunset Bay |
 | `villa: casa_amor` (state) | Sirens' Cove |
-| `phase: intros` | Day-1 Introductions |
+| `phase: intros` | Arrivals |
 | Challenge `compatibility_quiz` | Compatibility Quiz |
 | Challenge `heart_rate` | Pulse Race |
 | Challenge `mr_and_mrs` | The Couples Quiz |
