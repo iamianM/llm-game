@@ -71,6 +71,26 @@ def test_curator_context_lists_required_memory_holders() -> None:
     assert "Valid subject ids:" in rendered
 
 
+def test_curator_context_supplies_pronouns_so_unisex_names_are_not_guessed() -> None:
+    """Every participant's pronouns must reach the curator. A unisex name like
+    Jules (male in our cast) was getting "she" in recap memories because the
+    context only gave the name — the model guessed gender. The render must spell
+    out he/him or she/her for each holder so the LLM never has to infer it."""
+    state = new_game(1)
+    _start_conversation(state)
+    conversation = state.active_conversation
+    assert conversation is not None
+    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+
+    rendered = _render_context(state, conversation, [])
+
+    assert "Pronouns (use exactly these" in rendered
+    expected = "she/her" if chloe.gender.value == "woman" else "he/him"
+    assert f"- chloe: {chloe.name} ({expected})" in rendered
+    player_pronouns = "she/her" if state.player.gender.value == "woman" else "he/him"
+    assert f"- player: {state.player.name} ({player_pronouns})" in rendered
+
+
 def test_curator_request_uses_shared_reasoning_kwargs_without_token_cap() -> None:
     """The curator request must not pass max_output_tokens or temperature."""
 
