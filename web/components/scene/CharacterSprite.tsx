@@ -22,8 +22,20 @@ const NPC_IMAGE_BY_ID: Record<string, string> = {
   jordan: "/images/characters/jordan_start.webp",
   marcus: "/images/characters/marcus_start.webp",
   sophie: "/images/characters/sophie_start.webp",
-  zara: "/images/characters/talia_ht.webp",
   nia: "/images/characters/nia_start.webp",
+  // Casa Amor bombshells (engine ids from src/game/engine/casa_amor.py). Without
+  // these, the bombshells fell through to a bare-initial standee ("M" for Mateo)
+  // for the entire Casa act. Each borrows a gender-matched heart-throb standee.
+  // The villa pins the six to three Casa locations as fixed man+woman pairs
+  // (pool: beau+sasha, kitchen: jules+zara, terrace: mateo+noor), so two
+  // same-gender bombshells are NEVER co-located in one scene — a reused male or
+  // female face can't appear twice in the same frame.
+  beau: "/images/characters/sam_ht.webp",
+  jules: "/images/characters/sam_ht.webp",
+  mateo: "/images/characters/ellis_ht.webp",
+  noor: "/images/characters/talia_ht.webp",
+  sasha: "/images/characters/talia_ht.webp",
+  zara: "/images/characters/riley_ht.webp",
   sam_ht: "/images/characters/sam_ht.webp",
   riley_ht: "/images/characters/riley_ht.webp",
   ellis_ht: "/images/characters/ellis_ht.webp",

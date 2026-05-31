@@ -19,8 +19,17 @@ const IMAGE_BY_ID: Record<string, string> = {
   jordan: "/images/characters/jordan_start.webp",
   marcus: "/images/characters/marcus_start.webp",
   sophie: "/images/characters/sophie_start.webp",
-  zara: "/images/characters/talia_ht.webp",
   nia: "/images/characters/nia_start.webp",
+  // Casa Amor bombshells (engine ids from src/game/engine/casa_amor.py) — without
+  // these they showed a monogram disc instead of a photo in the cast list,
+  // couples panel and finale. Borrow gender-matched heart-throb headshots until
+  // each gets bespoke art.
+  beau: "/images/characters/sam_ht.webp",
+  jules: "/images/characters/sam_ht.webp",
+  mateo: "/images/characters/ellis_ht.webp",
+  noor: "/images/characters/talia_ht.webp",
+  sasha: "/images/characters/talia_ht.webp",
+  zara: "/images/characters/riley_ht.webp",
   sam_ht: "/images/characters/sam_ht.webp",
   riley_ht: "/images/characters/riley_ht.webp",
   ellis_ht: "/images/characters/ellis_ht.webp",
