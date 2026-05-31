@@ -14,6 +14,7 @@ import type { AvailableAction, SessionState, TurnResponse } from "../../lib/type
 import type { IslanderLook } from "../../lib/look";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
 import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
+import { playSfx } from "../../lib/sfx";
 import {
   CATEGORY_LABEL,
   CATEGORY_LOCK_HINT,
@@ -136,6 +137,7 @@ export function SceneDialogueStage({
         return;
       }
     }
+    playSfx("ui-advance");
     const remaining = plannedBeats.slice(beatIndex + 1);
     const moreDialogue = remaining.some((beat) => beat.kind === "speech" || beat.kind === "narrator");
     if (!moreDialogue) onAdvance?.();
@@ -153,6 +155,26 @@ export function SceneDialogueStage({
     const timeout = window.setTimeout(advance, activeBeat.durationMs);
     return () => window.clearTimeout(timeout);
   }, [activeBeat, advance]);
+
+  // Fire the matching cue the moment a stat/choice beat lands. Keyed on the
+  // beat position within the scene (not on plannedBeats identity, which churns
+  // every streamed chunk) so each beat sounds exactly once on arrival.
+  useEffect(() => {
+    const beat = plannedBeats[Math.min(beatIndex, Math.max(0, plannedBeats.length - 1))];
+    if (!beat) return;
+    if (beat.kind === "choice_fan") {
+      playSfx("choice-open");
+    } else if (beat.kind === "connection_shift") {
+      playSfx("connection-up");
+    } else if (beat.kind === "delta_pop") {
+      if (beat.deltaKind === "audience") {
+        playSfx(beat.amount >= 0 ? "pulse-up" : "pulse-down");
+      } else {
+        playSfx(beat.amount >= 0 ? "connection-up" : "connection-down");
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [beatIndex, sceneKey]);
 
   const charactersWithActions = useMemo(() => {
     const ids = new Set<string>();

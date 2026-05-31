@@ -2,9 +2,10 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSession, submitTurnStream } from "../../lib/api";
 import type { AvailableAction, SessionResponse, TurnResponse } from "../../lib/types";
+import { playSfx } from "../../lib/sfx";
 import { loadLook } from "../../lib/look";
 import type { ArchetypeId, IslanderLook } from "../../lib/look";
 import { useUiStore } from "../../lib/store";
@@ -31,6 +32,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
   const setWardrobe = useUiStore((s) => s.setWardrobe);
+  const setMusicScene = useUiStore((s) => s.setMusicScene);
   const reduce = useUiStore((s) => s.reduceMotion);
   const query = useQuery<SessionResponse>({ queryKey: ["session", sessionId], queryFn: () => getSession(sessionId), retry: false });
   const mutation = useMutation({
@@ -72,6 +74,37 @@ export function GameStage({ sessionId }: { sessionId: string }) {
     if (query.data && lastTurn === null) setSeenRecaps(query.data.state.daily_recaps.length);
   }, [query.data, lastTurn]);
 
+  // Drive the background score from the live game phase: ceremonies and the
+  // build-up to a challenge get the tense bed, nights get the evening bed, and
+  // ordinary villa daytime gets the warm day bed. Leaving the run resets the
+  // app-wide player back to the title theme.
+  const liveState = lastTurn?.state ?? query.data?.state;
+  const livePhase = liveState?.phase;
+  const liveTension = Boolean(
+    showCeremony || liveState?.pending_challenge || liveState?.pending_recouple_proposal,
+  );
+  useEffect(() => {
+    if (!livePhase) return;
+    if (liveTension) setMusicScene("tension");
+    else if (livePhase === "evening") setMusicScene("evening");
+    else setMusicScene("day");
+  }, [livePhase, liveTension, setMusicScene]);
+  useEffect(() => () => setMusicScene("title"), [setMusicScene]);
+
+  // A firepit reveal lands: punctuate the overlay with the ceremony sting.
+  useEffect(() => {
+    if (showCeremony) playSfx("ceremony-reveal");
+  }, [showCeremony]);
+  // "A text just came in!" — chime when the villa drops into the daily Text
+  // phase, the moment a producer message or gather is announced.
+  const prevPhaseRef = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (livePhase && livePhase !== prevPhaseRef.current && livePhase === "text") {
+      playSfx("text-alert");
+    }
+    prevPhaseRef.current = livePhase;
+  }, [livePhase]);
+
   if (query.isLoading) return <main className="grid min-h-screen place-items-center bg-bg text-[var(--card)]">Loading Paradise...</main>;
   if (query.error || !query.data) return <main className="grid min-h-screen place-items-center bg-bg text-[var(--card)]">Session not found.</main>;
 
@@ -95,7 +128,10 @@ export function GameStage({ sessionId }: { sessionId: string }) {
             pendingActionLabel={pendingActionLabel}
             streamText={streamText}
             streamSpeaker={streamSpeaker}
-            onChoose={(action) => mutation.mutate(action)}
+            onChoose={(action) => {
+              playSfx("ui-click");
+              mutation.mutate(action);
+            }}
             onAdvance={() => {
               if (deferredCeremony) {
                 setDeferredCeremony(false);

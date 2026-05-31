@@ -2,6 +2,11 @@ import { create } from "zustand";
 
 type Speed = "slow" | "normal" | "fast" | "instant";
 
+// Which mood the background score should sit in. The app-wide MusicPlayer
+// crossfades between the matching tracks; the play screen drives this from the
+// game phase (see GameStage), and everything outside a run sits on "title".
+export type MusicScene = "title" | "day" | "evening" | "tension";
+
 type UiStore = {
   rightRailOpen: boolean;
   settingsOpen: boolean;
@@ -11,6 +16,7 @@ type UiStore = {
   useLiveLlm: boolean;
   musicOn: boolean;
   musicVolume: number;
+  musicScene: MusicScene;
   setRail: (open: boolean) => void;
   setSettings: (open: boolean) => void;
   setWardrobe: (open: boolean) => void;
@@ -19,6 +25,7 @@ type UiStore = {
   setUseLiveLlm: (value: boolean) => void;
   setMusicOn: (value: boolean) => void;
   setMusicVolume: (value: number) => void;
+  setMusicScene: (value: MusicScene) => void;
 };
 
 const LLM_KEY = "paradise.settings.useLiveLlm";
@@ -41,6 +48,7 @@ export const useUiStore = create<UiStore>((set) => ({
   useLiveLlm: DEFAULT_USE_LIVE_LLM,
   musicOn: true,
   musicVolume: DEFAULT_MUSIC_VOLUME,
+  musicScene: "title",
   setRail: (open) => set({ rightRailOpen: open }),
   setSettings: (open) => set({ settingsOpen: open }),
   setWardrobe: (open) => set({ wardrobeOpen: open }),
@@ -64,5 +72,6 @@ export const useUiStore = create<UiStore>((set) => ({
       window.localStorage.setItem(MUSIC_VOLUME_KEY, String(clamped));
     }
     set({ musicVolume: clamped });
-  }
+  },
+  setMusicScene: (value) => set({ musicScene: value })
 }));
