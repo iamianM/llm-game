@@ -417,6 +417,62 @@ def test_islander_voice_allows_share_gossip_mentioning_absent_second_cast() -> N
     validate_exchange(exchange, context)
 
 
+def test_islander_voice_context_supplies_cast_pronouns() -> None:
+    """The voice gets a pronoun roster so unisex third-party names are not guessed.
+
+    ``cast_names``/``others_present`` are matched verbatim by the leak validator,
+    so the gender signal rides on a separate ``cast_pronouns`` roster that the
+    turn block surfaces for every living islander."""
+    from src.game.agents.islander_voice_context import new_turn_context
+
+    state = new_game(1)
+    chloe = next(i for i in state.islanders if i.id == "chloe")
+    liam = next(i for i in state.islanders if i.id == "liam")
+    assert chloe.gender is Gender.WOMAN
+    assert liam.gender is Gender.MAN
+
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+    context = islander_voice_context(state, result)
+
+    assert f"{chloe.name}: she/her" in context.cast_pronouns
+    assert f"{liam.name}: he/him" in context.cast_pronouns
+
+    turn = new_turn_context(context).turn
+    assert "Cast pronouns (use exactly these" in turn
+    assert f"{liam.name}: he/him" in turn
+
+
+def test_islander_voice_cast_pronouns_exclude_eliminated() -> None:
+    """A Heart Out islander should drop off the live pronoun roster."""
+    state = new_game(1)
+    target = next(i for i in state.islanders if i.id == "chloe")
+    eliminated = next(i for i in state.islanders if i.id == "maya")
+    eliminated.eliminated = True
+
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id=target.id,
+            intent_id="friendly_chat_villa",
+        ),
+        SeededRng(1),
+    )
+    context = islander_voice_context(state, result)
+
+    roster_names = {entry.split(":")[0] for entry in context.cast_pronouns}
+    assert eliminated.name not in roster_names
+    assert target.name in roster_names
+
+
 @pytest.mark.llm
 def test_islander_voice_avoids_meta_talk() -> None:
     state = new_game(1)

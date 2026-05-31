@@ -15,6 +15,7 @@ from src.game.state.models import (
     Conversation,
     ExchangeRecord,
     GameState,
+    Gender,
     IslanderState,
     Memory,
     Mood,
@@ -71,6 +72,7 @@ class IslanderVoiceContext(BaseModel):
     mechanical_change_summary: str
     others_present: list[str]
     cast_names: list[str]
+    cast_pronouns: list[str]
     gossip_subject_names: list[str]
     recent_exchange_topics: list[str]
     gossip_eligible_memories: list[str]
@@ -171,6 +173,7 @@ def islander_voice_context(
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
         cast_names=sorted({islander.name for islander in state.islanders}),
+        cast_pronouns=_cast_pronouns(state),
         gossip_subject_names=_gossip_subject_names_for_intent(state, intent_id, gossip),
         recent_exchange_topics=_recent_exchange_topics(state),
         gossip_eligible_memories=_gossip_eligible_memories(state, target.id),
@@ -210,6 +213,8 @@ def new_turn_context(context: IslanderVoiceContext) -> NewTurnContext:
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
             f"Allowed gossip subjects this turn: {_list_or_none(context.gossip_subject_names)}",
+            "Cast pronouns (use exactly these for anyone you mention — never guess from a name): "
+            f"{_list_or_none(context.cast_pronouns)}",
             f"Recent exchange topics: {_list_or_none(context.recent_exchange_topics)}",
             f"Gossip eligible memories: {_list_or_none(context.gossip_eligible_memories)}",
             "Write the exchange now.",
@@ -538,6 +543,23 @@ def _gossip_memory_for_intent(state: GameState, intent_id: str) -> Memory | None
         if memory.id == memory_id:
             return memory
     return None
+
+
+def _cast_pronouns(state: GameState) -> list[str]:
+    """`Name: pronouns` for every living islander so the voice never guesses.
+
+    Many islander names are unisex (Jules, Sam, Riley, Noor, Jordan, Blake), so a
+    speaker referring to a *third party* by name — most often when sharing or
+    answering gossip, or reacting to someone else in the room — can pick the wrong
+    pronoun off the name alone. This roster is supplied separately from
+    ``cast_names``/``others_present`` (which the leak validator matches verbatim),
+    so it carries the gender signal without disturbing leak detection.
+    """
+    return [
+        f"{islander.name}: {'she/her' if islander.gender == Gender.WOMAN else 'he/him'}"
+        for islander in state.islanders
+        if not islander.eliminated
+    ]
 
 
 def _subject_name(state: GameState, subject_id: str) -> str:
