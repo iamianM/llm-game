@@ -34,7 +34,7 @@ from src.game.agents.runtime import (
     reasoning_request_kwargs,
     record_agent_trace,
 )
-from src.game.state.models import GameState, NPCNPCConversation
+from src.game.state.models import GameState, Gender, NPCNPCConversation
 
 BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
 # Background NPC-NPC chitchat is texture, not a player-facing scene. Default
@@ -200,6 +200,8 @@ def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: s
             f"Speaker A: {first_id} ({_name_for(state, first_id)})",
             f"Speaker B: {second_id} ({_name_for(state, second_id)})",
             f"Bystanders: {_bystanders(state, conversation)}",
+            "Cast pronouns (use exactly these — never guess gender from a name): "
+            f"{_cast_pronouns(state)}",
             "Recent history:",
             history or "No prior exchanges.",
             "Write one BackgroundExchange now.",
@@ -225,3 +227,18 @@ def _name_for(state: GameState, islander_id: str) -> str:
         if islander.id == islander_id:
             return islander.name
     return islander_id
+
+
+def _cast_pronouns(state: GameState) -> str:
+    """`Name: pronouns` for every living islander.
+
+    The two speakers — or a bystander they react to — may be unisex-named
+    (Jules, Sam, Riley, Noor), so the name alone does not reveal gender. This
+    roster lets the background voice pick the right pronoun instead of guessing.
+    """
+    lines = [
+        f"{islander.name}: {'she/her' if islander.gender == Gender.WOMAN else 'he/him'}"
+        for islander in state.islanders
+        if not islander.eliminated
+    ]
+    return ", ".join(lines) if lines else "none"

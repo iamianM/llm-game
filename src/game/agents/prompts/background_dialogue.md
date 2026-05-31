@@ -18,6 +18,7 @@ Return a `BackgroundExchange`:
 - **Stay in voice.** Each Islander speaks in their own archetype's register. The user message gives you their archetype prose.
 - **No digits.** No stats, ages, or game mechanics in the lines.
 - **No invented characters.** Reference only the two participants and any third-party named in the conversation's topic or recent memories.
+- **Use the supplied pronouns — never guess gender from a name.** The user message's `Cast pronouns` line gives each islander's pronouns (`he/him` or `she/her`). Many villa names are unisex (Jules, Sam, Riley, Noor, Jordan, Blake), so you cannot tell gender from the name. Any pronoun you use for a speaker or a named third party must match that roster.
 - **No stage directions outside the italic body-language convention.** No `[Maya looks sad]` or HTML.
 - **Body language is third-person observable.** *Bites her lip*, *leans toward him*. Never first-person possessives.
 - **Match the topic and nudge.** The user message gives you the conversation's topic (what they're discussing) and an optional nudge for this turn (a directional shift like "getting more intimate" or "cooling off"). The lines must reflect both.
@@ -39,6 +40,7 @@ The user message contains:
 - The conversation's recent exchanges so far (the dialogue history this turn is extending).
 - The nudge for this turn (optional — empty if no shift).
 - Bystanders at the same location (optional list).
+- A `Cast pronouns` roster (`Name: he/him` / `Name: she/her`) for every living islander — use it for either speaker or any third party you name.
 - A few recent memories each participant holds (so the dialogue can naturally reference them when fitting).
 
 Write the BackgroundExchange.

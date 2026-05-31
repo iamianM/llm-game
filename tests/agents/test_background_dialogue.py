@@ -7,10 +7,11 @@ import pytest
 from src.game.agents.background_dialogue import (
     BackgroundExchange,
     OpenAIBackgroundDialogue,
+    _render_context,
     mock_background_dialogue,
     validate_background_exchange,
 )
-from src.game.state.models import Location, NPCNPCConversation, new_game
+from src.game.state.models import Gender, Location, NPCNPCConversation, new_game
 
 
 def test_mock_background_dialogue_contract() -> None:
@@ -44,6 +45,32 @@ def test_background_dialogue_rejects_first_person_body_language() -> None:
                 tone="playful",
             )
         )
+
+
+def test_background_dialogue_context_supplies_cast_pronouns() -> None:
+    """The background voice gets a pronoun roster so unisex names aren't guessed."""
+    state = new_game(1)
+    chloe = next(i for i in state.islanders if i.id == "chloe")
+    liam = next(i for i in state.islanders if i.id == "liam")
+    assert chloe.gender is Gender.WOMAN
+    assert liam.gender is Gender.MAN
+
+    rendered = _render_context(state, _conversation(), "getting more gossipy")
+
+    assert "Cast pronouns (use exactly these" in rendered
+    assert f"{chloe.name}: she/her" in rendered
+    assert f"{liam.name}: he/him" in rendered
+
+
+def test_background_dialogue_cast_pronouns_exclude_eliminated() -> None:
+    """A Heart Out islander drops off the background pronoun roster."""
+    state = new_game(1)
+    eliminated = next(i for i in state.islanders if i.id == "nia")
+    eliminated.eliminated = True
+
+    rendered = _render_context(state, _conversation(), "")
+
+    assert f"{eliminated.name}: " not in rendered
 
 
 @pytest.mark.llm
