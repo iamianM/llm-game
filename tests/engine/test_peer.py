@@ -8,9 +8,11 @@ already-coupled islanders), and the gossip/recap surfacing of both the
 
 from __future__ import annotations
 
+from src.game.engine.daily_recap import humanize_player_reference
 from src.game.engine.peer import (
     PEER_COUPLE_THRESHOLD,
     PEER_FRIENDLY_THRESHOLD,
+    PEER_WANDERING_THRESHOLD,
     advance_peer_attractions,
     maybe_form_peer_couples,
     peer_affinity_between,
@@ -214,8 +216,9 @@ def test_crossing_friendly_threshold_emits_whisper_and_gossip() -> None:
 
 
 def test_coupled_pair_does_not_emit_closeness_whisper() -> None:
-    """A coupled islander can still warm to a new face, but it stays quiet — no
-    'getting close' whisper fires while either party is attached."""
+    """A coupled islander warming to a new face never reads as a budding romance:
+    no single-pair 'getting close' whisper fires while either party is attached
+    (it surfaces as a wandering-eye whisper instead — covered separately)."""
     state = new_game(1)
     chloe = next(i for i in state.islanders if i.id == "chloe")
     liam = next(i for i in state.islanders if i.id == "liam")
@@ -227,3 +230,112 @@ def test_coupled_pair_does_not_emit_closeness_whisper() -> None:
     created = advance_peer_attractions(state, SeededRng(1))
 
     assert not any("getting_close" in m.tags for m in created)
+
+
+# --- wandering eye (coupled islanders) -----------------------------------
+
+
+def _coupled_pair(seed: int = 1):
+    """Return (state, chloe, liam, marcus) with chloe↔liam co-located and chloe
+    already coupled to marcus, so her growing pull toward liam reads as a
+    wandering eye. marcus is alive but parked elsewhere; everyone else is
+    eliminated, so chloe↔liam is the only opposite-gender pair that can grow."""
+    state = new_game(seed)
+    chloe = next(i for i in state.islanders if i.id == "chloe")
+    liam = next(i for i in state.islanders if i.id == "liam")
+    marcus = next(i for i in state.islanders if i.id == "marcus")
+    liam.location_id = chloe.location_id
+    marcus.location_id = next(
+        loc for loc in type(chloe.location_id) if loc != chloe.location_id
+    )
+    for other in state.islanders:
+        if other.id not in {"chloe", "liam", "marcus"}:
+            other.eliminated = True
+    state.couples = [Couple(partner_a_id="chloe", partner_b_id="marcus", formed_on_day=1)]
+    return state, chloe, liam, marcus
+
+
+def test_wandering_eye_fires_when_coupled_crosses_threshold() -> None:
+    state, chloe, liam, _marcus = _coupled_pair()
+    # Park just under the wandering line so one co-located turn crosses it.
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD - 1
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD - 1
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    assert peer_affinity_between(state, "chloe", "liam") >= PEER_WANDERING_THRESHOLD
+    # Both principals remember it; it is tagged as a wandering eye, not a budding
+    # single-pair romance.
+    assert any("wandering_eye" in m.tags and m.holder_id == "chloe" for m in created)
+    assert any("wandering_eye" in m.tags and m.holder_id == "liam" for m in created)
+    assert not any("getting_close" in m.tags for m in created)
+
+
+def test_wandering_eye_gives_betrayed_partner_jealousy_memory() -> None:
+    state, chloe, liam, _marcus = _coupled_pair()
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD - 1
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD - 1
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    # chloe's partner (marcus) is the betrayed party and gets a heavier,
+    # jealousy-tagged memory so the recap reads it as personal.
+    betrayed = [m for m in created if m.holder_id == "marcus"]
+    assert betrayed
+    assert all("jealousy" in m.tags and "drama" in m.tags for m in betrayed)
+    assert all(m.emotional_weight >= 6 for m in betrayed)
+
+
+def test_wandering_eye_betraying_the_player_addresses_them_directly() -> None:
+    """When the wandering islander is coupled with the *player*, the whisper
+    names 'the player' so the recap humanizer rewrites it to second person."""
+    state, chloe, liam, _marcus = _coupled_pair()
+    # Re-point chloe's couple at the player instead of marcus.
+    state.couples = [Couple(partner_a_id="chloe", partner_b_id="player", formed_on_day=1)]
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD - 1
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD - 1
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    player_memory = next((m for m in created if m.holder_id == "player"), None)
+    assert player_memory is not None
+    assert "jealousy" in player_memory.tags
+    # Stored name-agnostic, but reads as second person once humanized for the recap.
+    assert "the player" in player_memory.content
+    assert "you" in humanize_player_reference(player_memory.content).lower()
+
+
+def test_partners_growing_close_is_not_a_wandering_eye() -> None:
+    """A couple warming to *each other* is their bond, not a betrayal — no
+    wandering-eye whisper fires for a pair who are each other's partners."""
+    state, chloe, liam = _isolated_pair()
+    state.couples = [Couple(partner_a_id="chloe", partner_b_id="liam", formed_on_day=1)]
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD - 1
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD - 1
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    assert not any("wandering_eye" in m.tags for m in created)
+
+
+def test_wandering_eye_only_fires_once_on_crossing() -> None:
+    """Past the threshold, continued growth stays quiet — no repeat whisper."""
+    state, chloe, liam, _marcus = _coupled_pair()
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD + 5
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD + 5
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    assert not any("wandering_eye" in m.tags for m in created)
+
+
+def test_wandering_eye_surfaces_in_recap_as_single_whisper() -> None:
+    """The shared gist dedupes to one clean recap line rather than one per holder."""
+    state, chloe, liam, _marcus = _coupled_pair()
+    chloe.peer_affinity["liam"] = PEER_WANDERING_THRESHOLD - 1
+    liam.peer_affinity["chloe"] = PEER_WANDERING_THRESHOLD - 1
+
+    created = advance_peer_attractions(state, SeededRng(1))
+
+    contents = {m.content for m in created if "wandering_eye" in m.tags}
+    assert len(contents) == 1
