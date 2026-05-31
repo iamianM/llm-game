@@ -34,6 +34,23 @@ export type ApiKnownFact = {
   group: "confirmed" | "heard" | "trivia";
 };
 
+// Four raw 0-100 bonds plus the engine-derived composite Connection: a single
+// legible 0-100 score, its in-world tier word ("Just met" -> "Inseparable"),
+// and the tier's ladder index (0-based) so the UI can fill/colour by intensity.
+export type ApiRelationship = {
+  affection: number;
+  chemistry: number;
+  trust: number;
+  friendship: number;
+  connection: number;
+  connection_label: string;
+  connection_tier: number;
+};
+
+// The four raw bonds, in the order they are shown as the Connection breakdown.
+export const RELATIONSHIP_BONDS = ["chemistry", "affection", "trust", "friendship"] as const;
+export type RelationshipBond = (typeof RELATIONSHIP_BONDS)[number];
+
 export type IslanderSummary = {
   id: string;
   name: string;
@@ -117,6 +134,11 @@ export type TurnResponse = {
   audience_delta_reason: string | null;
   memories_formed: Array<Record<string, unknown>>;
   background_activity: Array<Record<string, unknown>>;
+  // Short, in-world line for how this action shifted the player's bond with the
+  // acted-on islander ("The spark with Chloe is electric."). Null when no bond
+  // moved (idle moves, exits) — surfaced inline in-scene. Optional to match the
+  // generated OpenAPI type (the field carries a Pydantic default).
+  connection_shift?: string | null;
   state_hash: string;
 };
 
@@ -129,7 +151,7 @@ export type CastDetail = {
   location: string;
   backstory: string;
   familiarity: number;
-  relationship: Record<string, number>;
+  relationship: ApiRelationship;
   type_on_paper: Record<string, unknown | null>;
   known_facts: ApiKnownFact[];
   memories: ApiMemory[];

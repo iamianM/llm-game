@@ -47,6 +47,7 @@ from src.api.serializers import (
     audience_delta,
     available_actions_api,
     cast_detail,
+    connection_shift_line,
     exchange_api,
     session_state,
 )
@@ -353,6 +354,7 @@ def _turn_response(session_id: str, turn: TurnResult) -> TurnResponse:
         audience_delta_reason=result.audience_reason,
         memories_formed=[_model_dump(batch) for batch in turn.curator_batches],
         background_activity=[_model_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues],
+        connection_shift=connection_shift_line(turn.state, result),
         state_hash=turn.state_hash,
     )
 

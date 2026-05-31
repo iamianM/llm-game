@@ -243,6 +243,21 @@ export interface components {
             trust: number;
             /** Friendship */
             friendship: number;
+            /**
+             * Connection
+             * @default 0
+             */
+            connection: number;
+            /**
+             * Connection Label
+             * @default Just met
+             */
+            connection_label: string;
+            /**
+             * Connection Tier
+             * @default 0
+             */
+            connection_tier: number;
         };
         /** AudienceState */
         AudienceState: {
@@ -512,6 +527,8 @@ export interface components {
             background_activity: {
                 [key: string]: unknown;
             }[];
+            /** Connection Shift */
+            connection_shift?: string | null;
             /** State Hash */
             state_hash: string;
         };

@@ -91,6 +91,13 @@ export function planScene(
       beats.push({ kind: "speech", speakerId: exchange.speaker_id, text: page, pose: "talking" });
     }
   }
+  // A felt "your bond just moved" cue, floated by the islander we just engaged.
+  // Anchored to the exchange speaker (the person we steered toward); auto-advances.
+  const shiftLine = lastTurn?.connection_shift?.trim();
+  if (shiftLine) {
+    const anchor = exchangeSpeaker ?? focusSpeaker ?? next.player.id;
+    beats.push({ kind: "connection_shift", subjectId: anchor, text: shiftLine, durationMs: 1500 });
+  }
   if (typeof lastTurn?.audience_delta === "number" && lastTurn.audience_delta !== 0) {
     beats.push({
       kind: "delta_pop",

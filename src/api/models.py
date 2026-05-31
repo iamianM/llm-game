@@ -73,6 +73,13 @@ class ApiRelationship(BaseModel):
     chemistry: int
     trust: int
     friendship: int
+    # Player-facing composite: a single legible read derived from the four raw
+    # bonds above. `connection` is 0-100; `connection_label` is the in-world tier
+    # word ("Just met" -> "Inseparable"); `connection_tier` is its ladder index
+    # (0-based) so the UI can colour/fill by intensity.
+    connection: int = Field(default=0, ge=0, le=100)
+    connection_label: str = "Just met"
+    connection_tier: int = Field(default=0, ge=0)
 
 
 class ApiMemory(BaseModel):
@@ -205,6 +212,10 @@ class TurnResponse(BaseModel):
     audience_delta_reason: str | None
     memories_formed: list[dict[str, object]]
     background_activity: list[dict[str, object]]
+    # Short, in-world line describing how this action shifted the player's bond
+    # with the acted-on islander ("The spark with Chloe is electric."). None when
+    # the action changed no bond (idle moves, exits). Surfaced inline in-scene.
+    connection_shift: str | None = None
     state_hash: str
 
 

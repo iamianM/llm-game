@@ -24,6 +24,7 @@ from src.api.models import (
 from src.game.agents.islander_voice_context import Exchange
 from src.game.engine.actions import ActionSpec, available_actions
 from src.game.engine.casa_amor import locations_for_villa
+from src.game.engine.connection import connection_score, connection_tier, describe_shift
 from src.game.engine.couples import couple_strength, partner_for
 from src.game.engine.daily_recap import humanize_player_reference
 from src.game.engine.intents import get_intent
@@ -151,6 +152,22 @@ def exchange_api(state: GameState, exchange: Exchange | None, speaker_id: str | 
     )
 
 
+def relationship_api(islander: IslanderState) -> ApiRelationship:
+    """Serialize one islander's bonds plus the derived composite Connection."""
+    rel = islander.relationship
+    score = connection_score(rel)
+    tier_index, tier_label = connection_tier(score)
+    return ApiRelationship(
+        affection=rel.affection,
+        chemistry=rel.chemistry,
+        trust=rel.trust,
+        friendship=rel.friendship,
+        connection=score,
+        connection_label=tier_label,
+        connection_tier=tier_index,
+    )
+
+
 def cast_detail(state: GameState, npc_id: str) -> CastDetail:
     islander = next((item for item in state.islanders if item.id == npc_id), None)
     if islander is None:
@@ -166,7 +183,7 @@ def cast_detail(state: GameState, npc_id: str) -> CastDetail:
         location=display(islander.location_id.value),
         backstory=islander.backstory,
         familiarity=familiarity,
-        relationship=ApiRelationship(**islander.relationship.model_dump(mode="json")),
+        relationship=relationship_api(islander),
         type_on_paper={
             "physical_type": top.physical_type if familiarity >= 25 else None,
             "personality_type": top.personality_type if familiarity >= 50 else None,
@@ -379,6 +396,23 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
 
 def audience_delta(result: MechanicalResult) -> int | None:
     return result.audience_delta if result.audience_delta != 0 else None
+
+
+def connection_shift_line(state: GameState, result: MechanicalResult) -> str | None:
+    """In-world one-liner for how this action moved the player's primary bond.
+
+    Reports the change for the acted-on islander (``action.target_id``) only —
+    that is the relationship the player is steering, so secondary ripples (e.g.
+    an interrupter's reaction) stay off this headline. Returns ``None`` when the
+    target took no relationship change, so idle moves and exits surface nothing.
+    """
+    target_id = result.action.target_id
+    if target_id is None or target_id == "player":
+        return None
+    delta = result.relationship_deltas.get(target_id)
+    if delta is None:
+        return None
+    return describe_shift(delta, find_name(state, target_id))
 
 
 def _model_dump(value: BaseModel) -> dict[str, object]:

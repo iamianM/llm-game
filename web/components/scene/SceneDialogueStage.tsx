@@ -144,7 +144,12 @@ export function SceneDialogueStage({
 
   useEffect(() => {
     if (!activeBeat) return;
-    if (activeBeat.kind !== "camera" && activeBeat.kind !== "reaction" && activeBeat.kind !== "delta_pop") return;
+    if (
+      activeBeat.kind !== "camera" &&
+      activeBeat.kind !== "reaction" &&
+      activeBeat.kind !== "delta_pop" &&
+      activeBeat.kind !== "connection_shift"
+    ) return;
     const timeout = window.setTimeout(advance, activeBeat.durationMs);
     return () => window.clearTimeout(timeout);
   }, [activeBeat, advance]);
@@ -218,6 +223,9 @@ export function SceneDialogueStage({
       ) : null}
       {activeBeat?.kind === "delta_pop" ? (
         <DeltaPop beat={activeBeat} position={positionById.get(activeBeat.subjectId) ?? PLAYER_ANCHOR} />
+      ) : null}
+      {activeBeat?.kind === "connection_shift" ? (
+        <ConnectionCue beat={activeBeat} position={positionById.get(activeBeat.subjectId) ?? PLAYER_ANCHOR} />
       ) : null}
       {activeBeat?.kind === "choice_fan" && activeBeat.spec.prompt ? (
         <QuizPrompt text={activeBeat.spec.prompt} />
@@ -353,6 +361,63 @@ function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_
           from { opacity: 0; transform: translate(-50%, -30%) scale(.92); }
           20% { opacity: 1; }
           to { opacity: 0; transform: translate(-50%, -90%) scale(1.03); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// A warm, non-numeric "your bond just moved" cue floated near the islander we
+// just engaged (e.g. "The spark with Chloe is electric."). Modeled on DeltaPop
+// but styled as a soft gold heart-chip rather than a green/red pulse — the
+// engine only gives us a tonal line, not a sign, so we keep it uniformly warm.
+// Auto-advances (~1.5s) so it never adds a tap to a chat.
+function ConnectionCue({ beat, position }: { beat: Extract<SceneBeat, { kind: "connection_shift" }>; position: Position }) {
+  return (
+    <div
+      data-testid="connection-cue"
+      className="connection-cue"
+      style={{ left: `${position.x}%`, top: `${Math.max(8, position.y - 32)}%` }}
+    >
+      <span className="connection-cue-heart" aria-hidden>♥</span>
+      <span className="connection-cue-text">{beat.text}</span>
+      <style jsx>{`
+        .connection-cue {
+          position: absolute;
+          z-index: 11;
+          transform: translate(-50%, -50%);
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          max-width: min(280px, 70vw);
+          padding: 7px 14px 8px;
+          border-radius: var(--r-pill);
+          font-size: 13px;
+          font-weight: 650;
+          line-height: 1.25;
+          color: var(--card);
+          background: linear-gradient(135deg, rgba(40,26,30,.88), rgba(24,17,14,.88));
+          border: 1px solid rgba(217,167,58,.55);
+          box-shadow: var(--shadow-md), var(--inset-gold);
+          backdrop-filter: blur(6px);
+          text-align: left;
+          pointer-events: none;
+          animation: connection-cue 1.5s ease-out both;
+        }
+        .connection-cue-heart {
+          color: var(--gold);
+          font-size: 14px;
+          flex: none;
+          filter: drop-shadow(0 0 4px rgba(217,167,58,.5));
+        }
+        .connection-cue-text {
+          font-family: var(--font-display);
+        }
+        @keyframes connection-cue {
+          from { opacity: 0; transform: translate(-50%, -20%) scale(.94); }
+          16% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+          78% { opacity: 1; transform: translate(-50%, -56%) scale(1); }
+          to { opacity: 0; transform: translate(-50%, -78%) scale(1.02); }
         }
       `}</style>
     </div>

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { X } from "lucide-react";
 import { getCast } from "../../lib/api";
+import { RELATIONSHIP_BONDS, type ApiRelationship } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 
 export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; npcId: string; onClose: () => void }) {
@@ -39,18 +40,8 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
                 <p className="backstory">{data.backstory}</p>
 
                 <div className="section">
-                  <h3 className="section-title">Relationship</h3>
-                  <div className="rel-grid">
-                    {Object.entries(data.relationship).map(([key, value]) => (
-                      <div key={key} className="rel-row">
-                        <div className="rel-head">
-                          <span className="rel-label">{key}</span>
-                          <span className="rel-value">{value}</span>
-                        </div>
-                        <div className="rel-track"><span className="rel-fill" style={{ width: `${value}%` }} /></div>
-                      </div>
-                    ))}
-                  </div>
+                  <h3 className="section-title">Connection</h3>
+                  <ConnectionPanel relationship={data.relationship} />
                 </div>
 
                 <div className="section">
@@ -197,24 +188,6 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
         }
         .section-title.gold { color: var(--gold-soft); }
 
-        .rel-grid { display: grid; gap: 10px; }
-        .rel-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
-        .rel-label { text-transform: capitalize; letter-spacing: .04em; color: var(--muted-on-dark); }
-        .rel-value { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--card); }
-        .rel-track {
-          height: 8px;
-          border-radius: var(--r-pill);
-          background: rgba(248,236,210,.08);
-          overflow: hidden;
-        }
-        .rel-fill {
-          display: block;
-          height: 100%;
-          background: linear-gradient(90deg, var(--accent-deep), var(--accent), var(--accent-soft));
-          border-radius: var(--r-pill);
-          box-shadow: 0 0 12px var(--accent-glow);
-        }
-
         .top-grid { display: grid; gap: 8px; margin: 0; }
         .top-item {
           display: grid;
@@ -268,6 +241,130 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
           color: var(--muted-on-dark);
           opacity: .7;
           margin: 0;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+const BOND_LABELS: Record<string, string> = {
+  chemistry: "Chemistry",
+  affection: "Affection",
+  trust: "Trust",
+  friendship: "Friendship",
+};
+
+// The composite Connection read: a single legible score + tier word up top, with
+// the four raw bonds demoted to a "what's underneath" breakdown. The ring is an
+// SVG donut whose arc fills proportionally to the 0-100 score.
+function ConnectionPanel({ relationship }: { relationship: ApiRelationship }) {
+  const score = Math.max(0, Math.min(100, relationship.connection));
+  const radius = 42;
+  const circumference = 2 * Math.PI * radius;
+  const dash = (score / 100) * circumference;
+  return (
+    <div className="conn">
+      <div className="conn-ring">
+        <svg viewBox="0 0 100 100" className="ring-svg" role="img" aria-label={`Connection ${score} of 100, ${relationship.connection_label}`}>
+          <circle className="ring-bg" cx="50" cy="50" r={radius} />
+          <circle
+            className="ring-fill"
+            cx="50"
+            cy="50"
+            r={radius}
+            strokeDasharray={`${dash} ${circumference - dash}`}
+          />
+        </svg>
+        <div className="ring-center">
+          <span className="ring-score">{score}</span>
+        </div>
+      </div>
+      <div className="conn-meta">
+        <span className="conn-tier">{relationship.connection_label}</span>
+        <div className="conn-breakdown">
+          {RELATIONSHIP_BONDS.map((bond) => {
+            const value = Math.max(0, Math.min(100, relationship[bond]));
+            return (
+              <div key={bond} className="bd-row">
+                <span className="bd-label">{BOND_LABELS[bond] ?? bond}</span>
+                <div className="bd-track"><span className="bd-fill" style={{ width: `${value}%` }} /></div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <style jsx>{`
+        .conn {
+          display: grid;
+          grid-template-columns: auto 1fr;
+          align-items: center;
+          gap: 18px;
+        }
+        .conn-ring { position: relative; width: 96px; height: 96px; flex: 0 0 auto; }
+        .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .ring-bg {
+          fill: none;
+          stroke: rgba(248,236,210,.1);
+          stroke-width: 9;
+        }
+        .ring-fill {
+          fill: none;
+          stroke: var(--accent);
+          stroke-width: 9;
+          stroke-linecap: round;
+          filter: drop-shadow(0 0 6px var(--accent-glow));
+          transition: stroke-dasharray .6s cubic-bezier(.22,.61,.36,1);
+        }
+        .ring-center {
+          position: absolute; inset: 0;
+          display: grid;
+          place-items: center;
+        }
+        .ring-score {
+          font-family: var(--font-display);
+          font-size: 30px;
+          font-weight: 700;
+          color: var(--card);
+          font-variant-numeric: tabular-nums;
+          line-height: 1;
+        }
+        .conn-meta { display: grid; gap: 10px; min-width: 0; }
+        .conn-tier {
+          font-family: var(--font-display);
+          font-size: 18px;
+          font-weight: 600;
+          color: var(--gold-soft);
+          letter-spacing: .01em;
+        }
+        .conn-breakdown { display: grid; gap: 7px; }
+        .bd-row {
+          display: grid;
+          grid-template-columns: 78px 1fr;
+          align-items: center;
+          gap: 10px;
+        }
+        .bd-label {
+          font-size: 11px;
+          letter-spacing: .04em;
+          color: var(--muted-on-dark);
+        }
+        .bd-track {
+          height: 6px;
+          border-radius: var(--r-pill);
+          background: rgba(248,236,210,.08);
+          overflow: hidden;
+        }
+        .bd-fill {
+          display: block;
+          height: 100%;
+          background: linear-gradient(90deg, var(--accent-deep), var(--accent), var(--accent-soft));
+          border-radius: var(--r-pill);
+        }
+        @media (max-width: 420px) {
+          .conn { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+          .conn-meta { width: 100%; }
+          .bd-label { text-align: left; }
         }
       `}</style>
     </div>
