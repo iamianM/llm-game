@@ -23,6 +23,7 @@ export type IslanderLook = {
   outfit: string; // OUTFITS id
   accessories: string[]; // ACCESSORIES ids (multi-select)
   vibe: string; // VIBES id
+  characterId?: string; // ROSTER id when the player picked a pre-made islander
 };
 
 export type SwatchOption = {
@@ -164,6 +165,12 @@ function sanitize(raw: unknown): IslanderLook {
       ? look.accessories.filter((id) => ACCESSORIES.some((a) => a.id === id)).slice(0, 8)
       : [],
     vibe: findVibe(look.vibe).id,
+    // Validity against the roster is enforced where the id is consumed (the
+    // sprite resolver falls back to archetype art for an unknown id), so here
+    // we only coerce the shape.
+    ...(typeof look.characterId === "string" && look.characterId
+      ? { characterId: look.characterId.slice(0, 40) }
+      : {}),
   };
 }
 

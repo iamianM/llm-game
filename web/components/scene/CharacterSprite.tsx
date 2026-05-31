@@ -5,30 +5,10 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { Gender } from "../../lib/types";
 import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { npcSprite } from "../../lib/scene/npc-art";
 import { playerSprite } from "../../lib/scene/player-sprite";
 import type { CharacterPose, Position } from "../../lib/scene/types";
 import { AccessoryBadges } from "../chrome/AccessoryBadges";
-
-const NPC_IMAGE_BY_ID: Record<string, string> = {
-  chloe: "/images/characters/chloe.webp",
-  maya: "/images/characters/maya.webp",
-  liam: "/images/characters/liam.webp",
-  sophie_start: "/images/characters/sophie_start.webp",
-  nia_start: "/images/characters/nia_start.webp",
-  marcus_start: "/images/characters/marcus_start.webp",
-  blake_start: "/images/characters/blake_start.webp",
-  jordan_start: "/images/characters/jordan_start.webp",
-  blake: "/images/characters/blake_start.webp",
-  jordan: "/images/characters/jordan_start.webp",
-  marcus: "/images/characters/marcus_start.webp",
-  sophie: "/images/characters/sophie_start.webp",
-  zara: "/images/characters/talia_ht.webp",
-  nia: "/images/characters/nia_start.webp",
-  sam_ht: "/images/characters/sam_ht.webp",
-  riley_ht: "/images/characters/riley_ht.webp",
-  ellis_ht: "/images/characters/ellis_ht.webp",
-  talia_ht: "/images/characters/talia_ht.webp",
-};
 
 type Props = {
   id: string;
@@ -52,7 +32,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
   // in-scene. When a baked per-outfit standee exists the clothes themselves
   // change; otherwise the aura carries the outfit color. NPCs never carry a look.
   const playerLook = role === "player" ? look : null;
-  const src = role === "player" ? playerSprite(archetypeId, gender, playerLook?.outfit) : NPC_IMAGE_BY_ID[id];
+  const src = role === "player" ? playerSprite(archetypeId, gender, playerLook?.outfit, playerLook?.characterId) : npcSprite(id);
   const sizeClass = role === "player" ? "is-player" : "is-npc";
   const outfit = playerLook ? findOutfit(playerLook.outfit) : null;
   const vibe = playerLook ? findVibe(playerLook.vibe) : null;
@@ -206,7 +186,9 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
         .is-player {
           --sprite-width: clamp(120px, 22vw, 220px);
           --sprite-height: clamp(170px, 28vh, 320px);
-          z-index: 4;
+          /* Always the foreground figure — above even an active NPC (z 6) so
+             "you" never get occluded by whoever's speaking. */
+          z-index: 7;
         }
         .is-npc {
           --sprite-width: clamp(96px, 17vw, 200px);

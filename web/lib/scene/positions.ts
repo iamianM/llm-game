@@ -1,6 +1,10 @@
 import type { Position } from "./types";
 
-export const PLAYER_ANCHOR: Position = { x: 50, y: 92, scale: 1 };
+// The player sits bottom-LEFT and always reads as the foreground figure —
+// the Love Island mobile framing where "you" are closest to camera while the
+// rest of the villa is staged above/behind. Anchored low and slightly larger
+// than the ring so they sit in front (z-index handled in CharacterSprite).
+export const PLAYER_ANCHOR: Position = { x: 21, y: 99, scale: 1.16 };
 
 // Wide-group positions — the firepit ring. Used during intros, ceremonies,
 // idle scenes, and as the *base* layout for focused conversations (we

@@ -1,16 +1,18 @@
+import { isRosterId, rosterSprite } from "../roster";
 import type { Gender } from "../types";
 import { OUTFIT_STANDEES } from "./outfit-standees";
 
 const ARCHETYPES = new Set(["heartthrob", "class_clown", "loyal_friend"]);
 
 /**
- * Resolve the in-scene player standee. When an outfit is supplied and a baked
- * per-outfit variant exists for this archetype+gender, serve it so the chosen
- * wardrobe actually changes the islander's clothes. Otherwise fall back to the
- * base `${archetype}_${gender}` standee. Vercel-safe (prebaked assets, no
- * runtime image generation).
+ * Resolve the in-scene player standee. A roster pick (characterId) is the whole
+ * identity, so its single baked standee wins outright. Legacy/checkpoint
+ * sessions without a characterId fall back to the archetype+gender art, serving
+ * a baked per-outfit variant when one exists so the wardrobe reads in-scene.
+ * Vercel-safe (prebaked assets, no runtime image generation).
  */
-export function playerSprite(archetypeId: string, gender: Gender, outfit?: string): string {
+export function playerSprite(archetypeId: string, gender: Gender, outfit?: string, characterId?: string): string {
+  if (isRosterId(characterId)) return rosterSprite(characterId as string);
   const archetype = ARCHETYPES.has(archetypeId) ? archetypeId : "heartthrob";
   if (archetype !== archetypeId && typeof window !== "undefined") {
     console.warn(`Missing player archetype sprite for ${archetypeId}; using heartthrob.`);

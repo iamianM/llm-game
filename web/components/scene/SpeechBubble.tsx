@@ -42,7 +42,7 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={reduce ? { duration: 0.06 } : { duration: 0.18, ease: "easeOut" }}
       >
-        <span className="speaker">{speaker}</span>
+        <span className="speaker-chip">{speaker}</span>
         <p>
           {rendered}
           {!complete ? <span className="cursor" aria-hidden>▍</span> : null}
@@ -68,33 +68,43 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
         .speech-bubble {
           position: relative;
           width: 100%;
-          min-height: 86px;
-          padding: 14px 18px 16px;
-          border-radius: 24px;
-          background: linear-gradient(180deg, var(--card-alt), var(--card));
-          border: 1px solid rgba(217,167,58,.42);
-          box-shadow: var(--shadow-lg), var(--inset-gold);
+          min-height: 76px;
+          /* Extra top padding clears the name chip that floats over the edge. */
+          padding: 22px 18px 16px;
+          margin-top: 12px;
+          border-radius: 22px;
+          background: #fffdf8;
+          border: 1px solid rgba(217,167,58,.3);
+          box-shadow: var(--shadow-lg);
           color: var(--ink);
           pointer-events: none;
         }
         .bubble-player {
-          background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 82%, white), var(--accent-deep));
-          color: var(--card);
-          border-color: rgba(217,167,58,.65);
+          background: linear-gradient(180deg, #fff8ec, #fdeecf);
+          border-color: rgba(217,167,58,.5);
         }
-        .speaker {
-          display: block;
+        .speaker-chip {
+          position: absolute;
+          top: -13px;
+          left: 16px;
+          padding: 4px 13px 5px;
+          border-radius: var(--r-pill);
+          background: linear-gradient(180deg, var(--accent), var(--accent-deep));
+          color: #fff;
           font-family: var(--font-display);
-          font-size: 20px;
+          font-size: 14px;
           font-weight: 700;
-          color: var(--accent-deep);
+          letter-spacing: .01em;
           line-height: 1;
+          box-shadow: 0 4px 12px rgba(0,0,0,.28);
+          white-space: nowrap;
         }
-        .bubble-player .speaker {
-          color: rgba(255,255,255,.9);
+        .bubble-player .speaker-chip {
+          background: linear-gradient(180deg, #2a211a, #14100c);
+          color: var(--accent);
         }
         p {
-          margin: 8px 0 0;
+          margin: 0;
           font-size: 17px;
           line-height: 1.42;
         }
@@ -118,14 +128,18 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
         }
         .tail {
           position: absolute;
-          left: 50%;
-          bottom: -10px;
-          width: 22px;
-          height: 22px;
-          transform: translateX(-50%) rotate(45deg);
-          background: inherit;
-          border-right: 1px solid rgba(217,167,58,.32);
-          border-bottom: 1px solid rgba(217,167,58,.32);
+          left: 30px;
+          bottom: -9px;
+          width: 20px;
+          height: 20px;
+          transform: rotate(45deg);
+          background: #fffdf8;
+          border-right: 1px solid rgba(217,167,58,.3);
+          border-bottom: 1px solid rgba(217,167,58,.3);
+        }
+        .bubble-player .tail {
+          background: #fdeecf;
+          border-color: rgba(217,167,58,.5);
         }
         @keyframes nudge {
           0%, 100% { transform: translateX(0); }
@@ -136,11 +150,12 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
             --bubble-width: min(338px, calc(100vw - 24px));
           }
           .speech-bubble {
-            min-height: 78px;
-            padding: 12px 15px 14px;
-            border-radius: 20px;
+            min-height: 70px;
+            padding: 20px 15px 13px;
+            border-radius: 18px;
           }
-          .speaker { font-size: 18px; }
+          .speaker-chip { font-size: 12.5px; left: 13px; }
+          .tail { left: 24px; }
           p { font-size: 15.5px; line-height: 1.38; }
         }
       `}</style>
