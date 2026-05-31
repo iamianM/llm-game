@@ -104,7 +104,12 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
         <div className="sprite-shadow" aria-hidden />
         <div className="sprite-image">
           {src ? (
-            <Image src={src} alt="" fill sizes={role === "player" ? "360px" : "260px"} priority={role === "player"} />
+            // Scene standees are the above-the-fold hero imagery (only
+            // co-located characters mount), so load them eagerly: it kills the
+            // Next.js "LCP image needs priority" advisory when an NPC is the
+            // largest paint, and stops characters from popping in after the
+            // backdrop. Off-stage figures get unmounted upstream (position.hidden).
+            <Image src={src} alt="" fill sizes={role === "player" ? "360px" : "260px"} priority />
           ) : (
             <span>{initials(name)}</span>
           )}

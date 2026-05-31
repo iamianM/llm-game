@@ -73,8 +73,12 @@ export function SceneDialogueStage({
   // free-time actions. Treat only an *unfinished* challenge as in-flight, so
   // laning resumes immediately and free-roam openers reach the per-character
   // CharacterMenu instead of flooding the flat ChoiceFan.
+  // Guard with a truthy check, not `!== null`: some session payloads omit the
+  // key entirely (it arrives `undefined`, not `null`), and `undefined !== null`
+  // is `true` — which would then read `.finished` off `undefined` and crash the
+  // whole scene. `!!` collapses both null and undefined to "no challenge".
   const inChallenge =
-    state.pending_challenge !== null
+    !!state.pending_challenge
     && (state.pending_challenge as { finished?: boolean }).finished !== true;
   const inIntros = state.phase === "intros";
   // The character-tap + location-switcher menus only make sense during
