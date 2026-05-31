@@ -24,19 +24,13 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
   // SceneDialogueStage can call.
   const revealRef = useRef(revealAll);
   useEffect(() => { revealRef.current = revealAll; }, [revealAll]);
-  // Anchor the bubble by its BOTTOM edge, parked just above the speaker's head
-  // so it never clips the face — the bubble then grows upward as text wraps.
-  // The coefficient is the *visible* figure height as a share of the viewport,
-  // NOT the sprite box: the standees are bottom-aligned webps with transparent
-  // headroom, so the drawn figure is shorter than its box. Tuned against the
-  // spotlight speaker (scale ~1.34) so the tail lands just over the head
-  // instead of floating up into the dead space above the hair.
-  const figureHeightPct = (role === "player" ? 32 : 21) * position.scale;
-  const headTop = Math.max(6, position.y - figureHeightPct);
-  const bubbleBottom = Math.min(88, Math.max(8, 100 - headTop + 3));
+  // Love Island framing: the speech bubble is PINNED to the top of the stage
+  // (not floating over the speaker), so big foreground figures are never
+  // clipped or covered and the eye reads name → line → who's talking below.
+  // It biases horizontally toward the speaker so the tail still gestures at the
+  // right person, but clamps so the wide card never crosses the viewport edge.
   const style = {
     "--bubble-left": `${position.x}%`,
-    "--bubble-bottom": `${bubbleBottom}%`,
   } as CSSProperties;
   return (
     <div
@@ -63,13 +57,13 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
       <style jsx global>{`
         .speech-bubble-shell {
           position: absolute;
-          --bubble-width: min(460px, calc(100vw - 32px));
+          --bubble-width: min(520px, calc(100vw - 24px));
           left: clamp(
             calc(var(--bubble-width) / 2 + 12px),
             var(--bubble-left),
             calc(100% - var(--bubble-width) / 2 - 12px)
           );
-          bottom: var(--bubble-bottom);
+          top: clamp(12px, 2.2vh, 26px);
           z-index: 8;
           width: var(--bubble-width);
           transform: translateX(-50%);

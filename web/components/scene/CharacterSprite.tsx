@@ -186,15 +186,15 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .5));
         }
         .is-player {
-          --sprite-width: clamp(160px, 26vw, 300px);
-          --sprite-height: clamp(240px, 46vh, 520px);
+          --sprite-width: clamp(220px, 28vw, 420px);
+          --sprite-height: clamp(360px, 82vh, 720px);
           /* Always the foreground figure — above even an active NPC (z 6) so
              "you" never get occluded by whoever's speaking. */
           z-index: 7;
         }
         .is-npc {
-          --sprite-width: clamp(120px, 19vw, 260px);
-          --sprite-height: clamp(190px, 36vh, 440px);
+          --sprite-width: clamp(180px, 23vw, 360px);
+          --sprite-height: clamp(300px, 72vh, 620px);
         }
         .is-npc.is-active {
           z-index: 6;
@@ -246,22 +246,27 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           --lift: 0px;
         }
         @media (max-width: 520px) {
+          /* Love Island mobile framing: figures are big + close, cropping
+             thigh-up so they fill the stage instead of floating small with a
+             slab of dead sky overhead. The bottom-anchored standees have
+             transparent headroom, so the box runs tall and the lower anchor
+             (positions.ts) pushes the feet just under the frame. */
           .is-player {
-            --sprite-width: clamp(130px, 40vw, 220px);
-            --sprite-height: clamp(210px, 40vh, 340px);
+            --sprite-width: clamp(250px, 68vw, 400px);
+            --sprite-height: clamp(440px, 92vh, 700px);
           }
           .is-npc {
-            --sprite-width: clamp(96px, 26vw, 180px);
-            --sprite-height: clamp(160px, 32vh, 300px);
+            --sprite-width: clamp(200px, 58vw, 340px);
+            --sprite-height: clamp(380px, 80vh, 600px);
           }
+          /* When the option cards open they overlay the lower body (faces still
+             show), so the player only nudges slightly rather than flying up. */
           .is-player.is-compact {
-            --sprite-width: clamp(96px, 28vw, 150px);
-            --sprite-height: clamp(150px, 24vh, 230px);
-            --lift: -40vh;
+            --lift: 0px;
           }
           .sprite-name {
             font-size: 12px;
-            max-width: 100px;
+            max-width: 120px;
           }
         }
       `}</style>
