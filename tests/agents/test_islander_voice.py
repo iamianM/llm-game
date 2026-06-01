@@ -329,6 +329,33 @@ def test_islander_voice_allows_gossip_subject_mentions() -> None:
     validate_exchange(exchange, context)
 
 
+def test_islander_voice_rejects_casa_amor_brand_leak() -> None:
+    """The second villa is branded "Flush of Hearts"; a line that slips the
+    real-world term "Casa Amor" must fail validation so the retry regenerates
+    with the in-world name."""
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(kind=ActionKind.RESPOND_WITH, target_id="chloe", intent_id="banter_tell_joke"),
+        success=True,
+    )
+    context = islander_voice_context(state, result)
+    leaked = Exchange(
+        player_dialogue="You look far too sweet to survive Casa Amor, Chloe.",
+        npc_dialogue="Cheeky! I will take that as a compliment and a warning.",
+        npc_tone="playful",
+        npc_mood_after=Mood.FLIRTY,
+    )
+
+    with pytest.raises(ValueError, match="Casa Amor"):
+        validate_exchange(leaked, context)
+
+    # The branded phrasing passes cleanly.
+    branded = leaked.model_copy(
+        update={"player_dialogue": "You look far too sweet to survive the Flush of Hearts, Chloe."}
+    )
+    validate_exchange(branded, context)
+
+
 def test_islander_voice_allows_share_gossip_subject_mentions() -> None:
     """Sharing a player memory whitelists its subject so the natural mention
     of that subject does not trip validate_exchange (the live share_gossip

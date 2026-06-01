@@ -52,6 +52,11 @@ VALID_TONES = {
     "defensive",
 }
 
+# The second villa is branded "Flush of Hearts". Match the real-world term
+# "Casa Amor" (any spacing/casing) so a slipped line fails validation and the
+# retry regenerates with the in-world name.
+_FORBIDDEN_BRAND_RE = re.compile(r"\bcasa\s+amor\b", re.IGNORECASE)
+
 IslanderVoiceFn = Callable[[GameState, MechanicalResult], Exchange]
 
 
@@ -223,6 +228,16 @@ def validate_exchange(exchange: Exchange, context: IslanderVoiceContext) -> None
     if hidden_mentions:
         raise ValueError(
             f"exchange mentions hidden islander(s) {hidden_mentions}; exchange={exchange!r}"
+        )
+    # In-world vocabulary: the second villa is branded "Flush of Hearts". nano
+    # knows the real Love Island term and occasionally slips it into a line
+    # ("too sweet to survive Casa Amor"), which breaks the fiction. Fail loud so
+    # the retry regenerates with the branded name rather than scrubbing it
+    # downstream (ENGINEERING R7 — keep the agent boundary honest).
+    if _FORBIDDEN_BRAND_RE.search(joined):
+        raise ValueError(
+            'exchange uses the real-world term "Casa Amor"; the second villa is '
+            f'the "Flush of Hearts". exchange={exchange!r}'
         )
     if exchange.npc_tone not in VALID_TONES:
         raise ValueError(f"invalid npc_tone: {exchange.npc_tone}")
