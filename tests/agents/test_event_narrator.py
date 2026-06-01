@@ -20,7 +20,7 @@ from src.game.state.event_models import (
     MinigameReveal,
     MinigameRound,
 )
-from src.game.state.models import Couple, new_game
+from src.game.state.models import Couple, Phase, new_game
 
 
 @pytest.mark.llm
@@ -304,6 +304,41 @@ def test_event_narrator_context_names_player_couple() -> None:
 
     assert "Current player couple: Demo is coupled with Chloe" in rendered
     assert "(Chloe)" not in rendered
+
+
+def test_recoupling_narrated_as_evening_after_clock_rolls_to_morning() -> None:
+    """A firepit ceremony resolves at night, but the engine rolls the clock to
+    the next morning the instant the recoupling pick lands (so the daily recap
+    can fire). The narrator must still be told it's the prior evening, or it
+    writes "morning tension" over a torch-lit ceremony."""
+    state = new_game(1)
+    state.day = 4
+    state.phase = Phase.MORNING
+
+    rendered = _render_context(
+        state,
+        [CeremonyEvent(kind="recoupling", message="The Pairing Ceremony locks in the next couples.")],
+    )
+
+    assert "Day: 3" in rendered
+    assert "Phase: evening" in rendered
+    assert "Phase: morning" not in rendered
+
+
+def test_non_ceremony_morning_events_keep_the_live_clock() -> None:
+    """The evening pin is scoped to firepit ceremonies — an ordinary morning
+    beat must still narrate as the current morning."""
+    state = new_game(1)
+    state.day = 4
+    state.phase = Phase.MORNING
+
+    rendered = _render_context(
+        state,
+        [CeremonyEvent(kind="bombshell", message="Aisha enters the villa.", islander_id="aisha")],
+    )
+
+    assert "Day: 4" in rendered
+    assert "Phase: morning" in rendered
 
 
 def test_event_producers_emit_display_safe_messages() -> None:

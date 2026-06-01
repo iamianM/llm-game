@@ -32,7 +32,7 @@ from src.game.agents.runtime import (
     record_agent_trace,
 )
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.models import Gender, GameState
+from src.game.state.models import Gender, GameState, Phase
 
 EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
 EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
@@ -271,6 +271,30 @@ def _event_label(kind: str) -> str:
     return labels.get(kind, kind.replace("_", " ").title())
 
 
+# Recouplings, eliminations, and partner-steals all play out at the evening
+# firepit. The engine rolls the clock straight to the next morning the instant a
+# recoupling pick resolves (so the post-ceremony "while you were busy" daily
+# recap can fire), which would otherwise hand the narrator a "morning" phase for
+# a scene that canonically happens at night — producing prose like "Chloe's hand
+# cuts through the morning tension" over a torch-lit ceremony. Pin those beats
+# back to the evening of the day they occurred.
+_FIREPIT_CEREMONY_KINDS = frozenset(
+    {"recoupling", "elimination", "steal_attempt", "partner_stolen"}
+)
+
+
+def _narration_when(state: GameState, events: list[CeremonyEvent]) -> tuple[int, str]:
+    """Return the (day, phase label) the events should be narrated as.
+
+    Normally this is just the live clock, but a firepit ceremony narrated after
+    the clock has already rolled into the next morning is pinned back to that
+    ceremony's evening so the time-of-day never contradicts the scene.
+    """
+    if state.phase is Phase.MORNING and {event.kind for event in events} & _FIREPIT_CEREMONY_KINDS:
+        return max(1, state.day - 1), Phase.EVENING.value
+    return state.day, state.phase.value
+
+
 def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_lines = "\n".join(
         f"- {event.kind}: {event.message}"
@@ -312,9 +336,10 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
             "- If hideaway appears with gather_scheduled, narrate only the Hideaway. "
             "The scheduled gather is a later UI/state fact, not part of the private suite beat."
         )
+    narration_day, narration_phase = _narration_when(state, events)
     sections = [
-        f"Day: {state.day}",
-        f"Phase: {state.phase.value}",
+        f"Day: {narration_day}",
+        f"Phase: {narration_phase}",
         f"Location: {state.location_id.value}",
         f"Current player couple: {_player_couple(state)}",
         "Cast pronouns (use exactly these — never guess gender from a name):",
