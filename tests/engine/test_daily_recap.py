@@ -65,6 +65,56 @@ def test_daily_recap_rewrites_the_player_label_to_second_person() -> None:
     assert "the player" in state.islanders[0].memories[-1].content
 
 
+def test_daily_recap_diversifies_across_storylines() -> None:
+    # A hot Heart-Throb pair can spawn many distinct memories in one day (both
+    # principals' versions + the couple announcement). Without a diversity pass
+    # they sweep all five slots and bury the player's own quieter beat. The
+    # recap should survey several storylines first, so the lower-weight player
+    # memory still surfaces alongside the dominant pair.
+    state = new_game(1)
+    for turn, (holder, subject) in enumerate(
+        [("maya", "marcus"), ("marcus", "maya")] * 3
+    ):
+        add_memory(
+            state,
+            create_memory(
+                holder_id=holder,
+                subject_id=subject,
+                source="direct",
+                day=1,
+                turn=turn,
+                weight=8,
+                tags=["peer_attraction"],
+                content=f"{holder} and {subject} drifted closer — moment {turn}.",
+            ),
+        )
+    player_beat = "I liked the quiet way Chloe checked in on me."
+    add_memory(
+        state,
+        create_memory(
+            holder_id="player",
+            subject_id="chloe",
+            source="direct",
+            day=1,
+            turn=9,
+            weight=5,  # lower weight than the pair — would rank 7th without diversity
+            tags=["felt_seen"],
+            content=player_beat,
+        ),
+    )
+    state.day = 2
+
+    recap = append_daily_recap_if_needed(state, 1)
+
+    assert recap is not None
+    assert len(recap.items) == 5
+    # The player's quieter beat survives despite six higher-weight pair memories.
+    assert any(item.content == player_beat for item in recap.items)
+    # The maya/marcus pair no longer monopolises every slot.
+    pair_cards = [item for item in recap.items if {item.holder_id, item.subject_id} == {"maya", "marcus"}]
+    assert len(pair_cards) <= 4
+
+
 def test_daily_recap_collapses_identical_witnessed_content() -> None:
     # A witnessed event is stored once per holder with the exact same wording.
     # The recap must surface it once, not fill every slot. (Uses a non-ceremony

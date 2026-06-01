@@ -101,9 +101,47 @@ def _notable_memories(state: GameState, day: int) -> list[Memory]:
             continue
         seen_content.add(content_key)
         unique.append(memory)
-        if len(unique) == 5:
+    return _diversify(unique)
+
+
+def _pair_key(memory: Memory) -> frozenset[str]:
+    """The two-person storyline a memory belongs to (order-independent).
+
+    A budding Heart-Throb romance can spawn four or five distinct memories in a
+    single day — both principals' versions plus the couple announcement — and
+    they'd otherwise sweep every recap slot, burying the player's own beats and
+    the rest of the villa under one pair's saga. Grouping by the unordered
+    {holder, subject} pair lets the recap survey several storylines first.
+    """
+    subject = memory.subject_id or memory.holder_id
+    return frozenset({memory.holder_id, subject})
+
+
+def _diversify(memories: list[Memory], slots: int = 5) -> list[Memory]:
+    """Pick up to ``slots`` memories, favouring storyline variety over depth.
+
+    Pass one takes the strongest memory from each distinct storyline (already in
+    weight order), so the reader hears from several corners of the villa. If
+    slots remain, pass two backfills the next-strongest leftovers — so a quiet
+    day with only one storyline still fills the digest rather than going sparse.
+    """
+    chosen: list[Memory] = []
+    leftovers: list[Memory] = []
+    seen_pairs: set[frozenset[str]] = set()
+    for memory in memories:
+        key = _pair_key(memory)
+        if key in seen_pairs:
+            leftovers.append(memory)
+            continue
+        seen_pairs.add(key)
+        chosen.append(memory)
+        if len(chosen) == slots:
+            return chosen
+    for memory in leftovers:
+        if len(chosen) == slots:
             break
-    return unique
+        chosen.append(memory)
+    return chosen
 
 
 def _is_non_whisper(memory: Memory) -> bool:
