@@ -275,7 +275,7 @@ Chloe: "Fine, just relaxing by the pool."
 Chloe: "Actually, I should go get ready for tonight's challenge.
        We can catch up later though!"
 
-[Chloe walks toward villa]
+[Chloe walks toward the resort]
 
 [Return to location menu]
 ```
@@ -327,7 +327,7 @@ async function handleConversation(player, npc) {
     // FIRST EXCHANGE: Player picks from static intent menu
     if (exchangeCount === 0) {
       const intent = await showStaticIntentMenu(npc, player)
-      // Shows: Flirt, Go Deep, Banter, Supportive, Graft, etc.
+      // Shows: Flirt, Go Deep, Banter, Supportive, Spark, etc.
 
       const exchange = await generateExchange(intent, player, npc, conversationHistory)
       conversationHistory.push(exchange)

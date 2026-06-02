@@ -17,8 +17,8 @@ def test_save_named_checkpoint_round_trips_state_and_trace(tmp_path, monkeypatch
     records = [{"turn": 1, "action": {"kind": "advance_phase"}}]
     monkeypatch.chdir(tmp_path)
 
-    path = save_named_checkpoint(state, "pre-recoupling", records, seed=1)
-    loaded_state, loaded_records, seed, rng_state = load_checkpoint("pre-recoupling")
+    path = save_named_checkpoint(state, "pre-pairing", records, seed=1)
+    loaded_state, loaded_records, seed, rng_state = load_checkpoint("pre-pairing")
 
     assert path.exists()
     assert seed == 1

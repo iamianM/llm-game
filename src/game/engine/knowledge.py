@@ -5,13 +5,13 @@ from __future__ import annotations
 from typing import Literal, cast
 
 from src.game.engine.intents import Intent
-from src.game.state.models import GameState, IslanderState
+from src.game.state.models import GameState, HeartbreakerState
 from src.game.state.traits import TIER_THRESHOLDS, KnownFact, TraitFact
 
 
 def emit_fact_reveal(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     intent: Intent,
     *,
     source: str = "direct",
@@ -43,7 +43,7 @@ def emit_fact_reveal(
 
 def emit_fact_reveal_by_tier(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     tier: int,
     *,
     reveal_tag: str | None = None,
@@ -76,7 +76,7 @@ def add_known_fact(holder: dict[str, KnownFact], known: KnownFact) -> None:
 
 
 def pick_revealable_trait(
-    target: IslanderState,
+    target: HeartbreakerState,
     tier: int,
     reveal_tag: str | None,
     already_known: dict[str, KnownFact],
@@ -103,14 +103,14 @@ def pick_revealable_trait(
     return candidates[0]
 
 
-def reveal_intro_facts(state: GameState, target: IslanderState) -> None:
+def reveal_intro_facts(state: GameState, target: HeartbreakerState) -> None:
     """Reveal tier-one intro facts for a target."""
     reveal_surface_facts(state, target, citation=f"{target.name} told you during Day One introductions.")
 
 
 def reveal_partner_surface_facts(state: GameState, partner_id: str) -> None:
     """Reveal basic partner facts when the player forms a couple."""
-    target = next((islander for islander in state.islanders if islander.id == partner_id), None)
+    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == partner_id), None)
     if target is None:
         return
     reveal_surface_facts(
@@ -120,7 +120,7 @@ def reveal_partner_surface_facts(state: GameState, partner_id: str) -> None:
     )
 
 
-def reveal_surface_facts(state: GameState, target: IslanderState, *, citation: str) -> None:
+def reveal_surface_facts(state: GameState, target: HeartbreakerState, *, citation: str) -> None:
     """Reveal tier-one facts for a target."""
     for key, fact in sorted(target.trait_card.core_traits.items()):
         if fact.tier != 1:
@@ -140,7 +140,7 @@ def reveal_surface_facts(state: GameState, target: IslanderState, *, citation: s
         )
 
 
-def _effective_tier(target: IslanderState, intent: Intent) -> int:
+def _effective_tier(target: HeartbreakerState, intent: Intent) -> int:
     tier = intent.reveal_tier
     if intent.id == "friendly_compliment_personality" and target.familiarity_with_player < 25:
         return 1

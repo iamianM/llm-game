@@ -5,7 +5,6 @@ from __future__ import annotations
 from src.game.content.ambient import get_ambient_option
 from src.game.engine.actions import ActionKind, PlayerAction, validate_action
 from src.game.engine.approach import APPROACH_INTENT_KINDS, apply_approach_response
-from src.game.engine.casa_amor import apply_casa_decision
 from src.game.engine.challenges import resolve_challenge
 from src.game.engine.chance import (
     follow_up_success_breakdown,
@@ -15,13 +14,13 @@ from src.game.engine.chance import (
 )
 from src.game.engine.character_creation import create_character
 from src.game.engine.compatibility import apply_familiarity, attachment_delta_modifier
+from src.game.engine.flush_of_hearts import apply_flush_decision
 from src.game.engine.followups import (
     EXIT_INTENT_KINDS,
     FOLLOW_UP_DELTA_TABLE,
     apply_follow_up,
     follow_up_delta,
 )
-from src.game.engine.hideaway import HIDEAWAY_TAGS, apply_hideaway
 from src.game.engine.intents import available_intents_for, get_intent
 from src.game.engine.interruptions import (
     INTERRUPTION_INTENT_KINDS,
@@ -31,10 +30,11 @@ from src.game.engine.interruptions import (
 )
 from src.game.engine.knowledge import reveal_intro_facts
 from src.game.engine.perception import update_public_perception
+from src.game.engine.private_suite import PRIVATE_SUITE_TAGS, apply_private_suite
 from src.game.engine.proposals import apply_npc_proposal_response, apply_player_proposal
 from src.game.engine.results import ChanceBreakdown, MechanicalResult
-from src.game.engine.state_access import apply_relationship_delta, find_islander
-from src.game.state.casa import CasaDecision
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
+from src.game.state.flush import FlushDecision
 from src.game.state.models import GameState, Gender, Location, PlayerStats, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -59,7 +59,7 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return result
     if action.kind is ActionKind.END_CONVERSATION:
         return _apply_end_conversation(state, action)
-    if action.kind is ActionKind.PROPOSE_RECOUPLE:
+    if action.kind is ActionKind.PROPOSE_PAIR:
         result, _outcome = apply_player_proposal(state, action.target_id or "", rng)
         return result
     if action.kind is ActionKind.NPC_PROPOSAL_RESPONSE:
@@ -67,10 +67,10 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return result
     if action.kind is ActionKind.CHALLENGE_RESPONSE:
         return _apply_challenge_response(state, action, rng)
-    if action.kind is ActionKind.HIDEAWAY:
-        return _apply_hideaway(state, action)
-    if action.kind is ActionKind.CASA_DECISION:
-        return _apply_casa_decision(state, action)
+    if action.kind is ActionKind.PRIVATE_SUITE:
+        return _apply_private_suite(state, action)
+    if action.kind is ActionKind.FLUSH_DECISION:
+        return _apply_flush_decision(state, action)
     if action.kind is ActionKind.JOIN_GATHER:
         return MechanicalResult(action=action, success=True, tags=["join_gather"])
     if action.kind is ActionKind.AMBIENT:
@@ -81,8 +81,8 @@ def apply_action(state: GameState, action: PlayerAction, rng: SeededRng) -> Mech
         return _apply_intro(state, action)
     if action.kind is ActionKind.MOVE:
         return _apply_move(state, action)
-    if action.kind is ActionKind.RECOUPLE:
-        return MechanicalResult(action=action, success=True, tags=["recouple"])
+    if action.kind is ActionKind.PAIR:
+        return MechanicalResult(action=action, success=True, tags=["pair"])
     raise ValueError(f"action is not implemented: {action.kind}")
 
 
@@ -105,7 +105,7 @@ def _apply_create_character(state: GameState, action: PlayerAction) -> None:
 
 
 def _apply_intent(state: GameState, action: PlayerAction, rng: SeededRng) -> MechanicalResult:
-    target = find_islander(state, action.target_id)
+    target = find_heartbreaker(state, action.target_id)
     if action.intent_id is None:
         raise ValueError("intent_id is required for conversation actions")
     intent = get_intent(action.intent_id)
@@ -138,7 +138,7 @@ def _apply_end_conversation(state: GameState, action: PlayerAction) -> Mechanica
     delta = RelationshipDelta()
     target_id: str | None = None
     if state.active_conversation is not None:
-        target = find_islander(state, state.active_conversation.target_id)
+        target = find_heartbreaker(state, state.active_conversation.target_id)
         target_id = target.id
         delta = RelationshipDelta(affection=-1)
         apply_relationship_delta(target, delta)
@@ -178,7 +178,7 @@ def _apply_ambient(state: GameState, action: PlayerAction) -> MechanicalResult:
 def _apply_intro(state: GameState, action: PlayerAction) -> MechanicalResult:
     if action.target_id is None or action.intent_id is None:
         raise ValueError("INTRODUCE_TO requires target_id and intent_id")
-    target = find_islander(state, action.target_id)
+    target = find_heartbreaker(state, action.target_id)
     style = action.intent_id.removeprefix("intro_")
     delta_by_style = {
         "friendly": RelationshipDelta(affection=2, friendship=3),
@@ -272,46 +272,46 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
             relationship_deltas=applied.deltas,
             tags=["minigame", applied.kind, applied.classification or "unknown"],
         )
-    if state.pending_challenge.kind == "mr_and_mrs":
-        from src.game.engine.mr_and_mrs import (
-            apply_mr_and_mrs_result,
-            score_mr_and_mrs,
+    if state.pending_challenge.kind == "couples_quiz":
+        from src.game.engine.couples_quiz import (
+            apply_couples_quiz_result,
+            score_couples_quiz,
         )
-        from src.game.engine.mr_and_mrs import (
+        from src.game.engine.couples_quiz import (
             has_more_rounds as mam_has_more,
         )
-        from src.game.engine.mr_and_mrs import (
+        from src.game.engine.couples_quiz import (
             submit_choice as mam_submit,
         )
         updated = mam_submit(state.pending_challenge, choice_id)
         if mam_has_more(updated):
             state.pending_challenge = updated
             return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
-        scored = score_mr_and_mrs(state, updated)
-        applied = apply_mr_and_mrs_result(state, scored)
+        scored = score_couples_quiz(state, updated)
+        applied = apply_couples_quiz_result(state, scored)
         state.pending_challenge = applied
         return MechanicalResult(
             action=action, success=applied.classification != "failure",
             relationship_deltas=applied.deltas,
             tags=["minigame", applied.kind, applied.classification or "unknown"],
         )
-    if state.pending_challenge.kind == "snog_marry_pie":
-        from src.game.engine.snog_marry_pie import (
-            apply_snog_marry_pie_result,
-            score_snog_marry_pie,
+    if state.pending_challenge.kind == "kiss_wed_pass":
+        from src.game.engine.kiss_wed_pass import (
+            apply_kiss_wed_pass_result,
+            score_kiss_wed_pass,
         )
-        from src.game.engine.snog_marry_pie import (
-            has_more_rounds as smp_has_more,
+        from src.game.engine.kiss_wed_pass import (
+            has_more_rounds as kwp_has_more,
         )
-        from src.game.engine.snog_marry_pie import (
-            submit_choice as smp_submit,
+        from src.game.engine.kiss_wed_pass import (
+            submit_choice as kwp_submit,
         )
-        updated = smp_submit(state.pending_challenge, choice_id)
-        if smp_has_more(updated):
+        updated = kwp_submit(state.pending_challenge, choice_id)
+        if kwp_has_more(updated):
             state.pending_challenge = updated
             return MechanicalResult(action=action, success=True, tags=["minigame", updated.kind, "round_submitted"])
-        scored = score_snog_marry_pie(state, updated)
-        applied = apply_snog_marry_pie_result(state, scored)
+        scored = score_kiss_wed_pass(state, updated)
+        applied = apply_kiss_wed_pass_result(state, scored)
         state.pending_challenge = applied
         return MechanicalResult(
             action=action,
@@ -375,27 +375,27 @@ def _apply_round_based_minigame_response(state: GameState, action: PlayerAction)
     raise ValueError(f"unsupported round-based minigame: {state.pending_challenge.kind}")
 
 
-def _apply_hideaway(state: GameState, action: PlayerAction) -> MechanicalResult:
-    partner_id = state.hideaway.partner_id
-    delta = apply_hideaway(state)
-    partner_id = state.hideaway.partner_id or partner_id
+def _apply_private_suite(state: GameState, action: PlayerAction) -> MechanicalResult:
+    partner_id = state.private_suite.partner_id
+    delta = apply_private_suite(state)
+    partner_id = state.private_suite.partner_id or partner_id
     return MechanicalResult(
         action=action,
         success=True,
         relationship_deltas={} if partner_id is None else {partner_id: delta},
-        tags=HIDEAWAY_TAGS,
+        tags=PRIVATE_SUITE_TAGS,
     )
 
 
-def _apply_casa_decision(state: GameState, action: PlayerAction) -> MechanicalResult:
+def _apply_flush_decision(state: GameState, action: PlayerAction) -> MechanicalResult:
     if action.intent_id is None:
-        raise ValueError("CASA_DECISION requires intent_id")
-    decision = CasaDecision(action.intent_id)
-    apply_casa_decision(state, decision, action.target_id)
+        raise ValueError("FLUSH_DECISION requires intent_id")
+    decision = FlushDecision(action.intent_id)
+    apply_flush_decision(state, decision, action.target_id)
     return MechanicalResult(
         action=action,
         success=True,
-        tags=["casa_amor", decision.value],
+        tags=["flush_of_hearts", decision.value],
     )
 
 

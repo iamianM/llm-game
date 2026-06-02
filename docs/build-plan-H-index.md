@@ -5,7 +5,7 @@
 
 This is the index for the H-series of build plans. Each H phase has its own plan doc with full implementation detail, acceptance criteria, and evals. Codex executes them in the order below.
 
-The H series exists because v0 ships an engine, not a game. H makes it a game: it has a start (character creation), a middle (daily challenges and producer events), a climax (Casa Amor or recoupling drama), and an ending (the public vote). The engine systems built in F and G become the *substrate* for actual gameplay.
+The H series exists because v0 ships an engine, not a game. H makes it a game: it has a start (character creation), a middle (daily challenges and producer events), a climax (Flush of Hearts or Pairing Ceremony drama), and an ending (the public vote). The engine systems built in F and G become the *substrate* for actual gameplay.
 
 ---
 
@@ -17,8 +17,8 @@ The H series exists because v0 ships an engine, not a game. H makes it a game: i
 | **H1** | Win Condition + Character Creation | [build-plan-H1.md](build-plan-H1.md) | G9 |
 | **H2** | Daily Challenges + Producer Texts | [build-plan-H2.md](build-plan-H2.md) | H1 |
 | **H3** | NPC Personality Depth | [build-plan-H3.md](build-plan-H3.md) | H1 |
-| **H4** | Hideaway + Couple Strength | [build-plan-H4.md](build-plan-H4.md) | H1, H2 |
-| **H5** | Casa Amor | [build-plan-H5.md](build-plan-H5.md) | H1–H4 |
+| **H4** | Paradise Suite + Couple Strength | [build-plan-H4.md](build-plan-H4.md) | H1, H2 |
+| **H5** | Flush of Hearts | [build-plan-H5.md](build-plan-H5.md) | H1–H4 |
 | **H6** | Stylish HTML Report | [build-plan-H6.md](build-plan-H6.md) | H1, H2 |
 | **H7** | AI Self-Play Validation | [build-plan-H7.md](build-plan-H7.md) | H1, H2 |
 
@@ -27,11 +27,11 @@ The H series exists because v0 ships an engine, not a game. H makes it a game: i
 - H1 ships first, always. Nothing else matters without a win condition.
 - H2 and H3 can run in either order after H1. H2 fills phase content; H3 deepens social math. Doing H2 first gives the player more variety to react to.
 - H4 needs H1 (couple ranking) and H2 (text phase events).
-- H5 (Casa Amor) is the biggest content drop and needs all the engine hooks from H1–H4.
+- H5 (Flush of Hearts) is the biggest content drop and needs all the engine hooks from H1–H4.
 - H6 (stylish report) waits until H1+H2 have produced enough content to render meaningfully.
 - H7 (AI autopilot) waits until H1 (a goal to optimize toward) and H2 (variety to react to).
 
-A reasonable shipping order: G9 → H1 → H2 → H3 → H4 → H6 → H7 → H5. Casa Amor is the dessert; the other phases produce the meal first.
+A reasonable shipping order: G9 → H1 → H2 → H3 → H4 → H6 → H7 → H5. Flush of Hearts is the dessert; the other phases produce the meal first.
 
 ---
 
@@ -61,7 +61,7 @@ Before declaring a phase committed:
 - [ ] New CLI subcommands wired into `src/game/cli/__main__.py`
 - [ ] `SCHEMA_VERSION` bumped if any Pydantic state model changed; scenario fixtures regenerated (R12)
 - [ ] No dead code, no `--no-verify`, no bare `# type: ignore` (R4, R5)
-- [ ] No new agent calls outside the four established surfaces (Islander Voice, Contextual Options, Event Narrator, Villa Orchestrator, Background Dialogue, Conversation Curator) without an ADR
+- [ ] No new agent calls outside the four established surfaces (Heartbreaker Voice, Contextual Options, Event Narrator, Resort Orchestrator, Background Dialogue, Conversation Curator) without an ADR
 
 ## Per-phase evaluation checklist
 
@@ -86,25 +86,25 @@ llm-game/
 ├── uv.lock
 ├── content/
 │   ├── archetypes/                   (3 NPC archetypes, expandable)
-│   ├── locations/                    (4 locations + casa amor)
+│   ├── locations/                    (4 locations + Flush of Hearts)
 │   ├── intents.yaml                  (intent catalog with risk-by-category)
 │   ├── challenges/                   (H2)
 │   │   ├── compatibility_quiz.md
 │   │   ├── heart_rate.md
-│   │   ├── mr_and_mrs.md
+│   │   ├── couples_quiz.md
 │   │   ├── lie_detector.md
-│   │   ├── snog_marry_pie.md
+│   │   ├── kiss_wed_pass.md
 │   │   └── final_couples.md
 │   ├── producer_texts/               (H2)
 │   │   ├── welcome.md
 │   │   ├── group_date.md
-│   │   ├── casa_amor_announce.md
+│   │   ├── flush_of_hearts_announce.md
 │   │   └── ...
 │   ├── player_archetypes/            (H1)
 │   │   ├── heartthrob.md
 │   │   ├── class_clown.md
 │   │   └── loyal_friend.md
-│   └── hideaway.md                   (H4)
+│   └── private_suite.md                   (H4)
 ├── docs/
 │   ├── build-plan-A2-E.md            (historical)
 │   ├── build-plan-F.md               (historical)
@@ -131,9 +131,9 @@ llm-game/
 │       │   ├── contextual_options.py
 │       │   ├── conversation_curator.py
 │       │   ├── event_narrator.py
-│       │   ├── islander_voice.py
+│       │   ├── heartbreaker_voice.py
 │       │   ├── player_autopilot.py   (H7)
-│       │   ├── villa_orchestrator.py
+│       │   ├── resort_orchestrator.py
 │       │   └── __init__.py
 │       ├── api/                      (FastAPI; unchanged through H)
 │       ├── cli/
@@ -163,20 +163,20 @@ llm-game/
 │       │   ├── final_vote.py         (H1)
 │       │   ├── followups.py
 │       │   ├── gossip.py
-│       │   ├── hideaway.py           (H4)
+│       │   ├── private_suite.py           (H4)
 │       │   ├── interruptions.py
 │       │   ├── memory.py
 │       │   ├── perception.py
 │       │   ├── phases.py
 │       │   ├── producer_events.py    (H2)
-│       │   ├── pull.py
+│       │   ├── private_chat.py
 │       │   ├── recorded_agents.py
 │       │   ├── results.py
 │       │   ├── rules.py
 │       │   ├── scenario.py
 │       │   ├── state_access.py
 │       │   ├── turn.py
-│       │   └── villa.py
+│       │   └── resort.py
 │       ├── eval/
 │       │   ├── playthrough.py        (extended each phase)
 │       │   └── __init__.py
@@ -203,11 +203,11 @@ llm-game/
     │   ├── test_background_dialogue.py
     │   ├── test_conversation_curator.py
     │   ├── test_event_narrator.py
-    │   ├── test_islander_voice.py
-    │   ├── test_islander_voice_pull_rejected.py
+    │   ├── test_heartbreaker_voice.py
+    │   ├── test_heartbreaker_voice_private_chat_rejected.py
     │   ├── test_player_autopilot.py        (H7)
-    │   ├── test_villa_orchestrator.py
-    │   └── test_villa_orchestrator_interruptions.py
+    │   ├── test_resort_orchestrator.py
+    │   └── test_resort_orchestrator_interruptions.py
     ├── cli/
     │   └── test_play.py                    (H1 adds character creation tests)
     ├── engine/
@@ -220,18 +220,18 @@ llm-game/
     │   ├── test_couples.py                 (H4)
     │   ├── test_final_vote.py              (H1)
     │   ├── test_gossip.py
-    │   ├── test_hideaway.py                (H4)
+    │   ├── test_private_suite.py                (H4)
     │   ├── test_intents.py
     │   ├── test_interruptions.py
     │   ├── test_memory.py
     │   ├── test_models.py
     │   ├── test_phases.py
     │   ├── test_producer_events.py         (H2)
-    │   ├── test_pull.py
+    │   ├── test_private_chat.py
     │   ├── test_rng.py
     │   ├── test_rules.py
     │   ├── test_turn.py
-    │   └── test_villa.py
+    │   └── test_resort.py
     ├── eval/
     │   └── test_playthrough.py             (extended each phase)
     ├── reporting/
@@ -239,8 +239,8 @@ llm-game/
     │   └── test_stylish.py                 (H6)
     └── scenarios/
         ├── fixtures/
-        │   ├── casa-amor-arrive.yaml        (H5)
-        │   ├── casa-amor-return.yaml        (H5)
+        │   ├── flush-of-hearts-arrive.yaml        (H5)
+        │   ├── flush-of-hearts-return.yaml        (H5)
         │   ├── challenge-day1.yaml          (H2)
         │   ├── character-creation.yaml      (H1)
         │   ├── conversation-multi-exchange.yaml
@@ -251,9 +251,9 @@ llm-game/
         │   ├── day6-final-vote.yaml         (H1)
         │   ├── day6-full-run.yaml
         │   ├── elimination-day5.yaml
-        │   ├── hideaway-night.yaml          (H4)
+        │   ├── private-suite-night.yaml          (H4)
         │   ├── producer-text-day2.yaml      (H2)
-        │   ├── recoupling-day3.yaml
+        │   ├── pairing-day3.yaml
         │   └── type-on-paper-reveal.yaml    (H3)
         └── test_runner.py
 ```

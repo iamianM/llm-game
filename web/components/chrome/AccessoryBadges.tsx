@@ -28,7 +28,7 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 type AccessoryBadgesProps = {
-  /** Accessory ids from an IslanderLook. */
+  /** Accessory ids from an HeartbreakerLook. */
   ids: string[];
   className?: string;
   /** Slightly smaller badges for compact / chip contexts. */

@@ -117,11 +117,11 @@ def _humanize(slug: str) -> str:
     spaced = re.sub(r"(\d)([a-zA-Z])", r"\1 \2", spaced)
     parts = [part for part in spaced.split("-") if part]
     label = " ".join(part.capitalize() for part in parts)
-    # Whole-word terminology pass: avoids mangling slugs like "Prelude"/"Casarica".
+    # Whole-word terminology pass: avoids mangling slugs like "Prelude"/"Flushrica".
     replacements = {
-        r"\bCasa Amor\b": "Flush of Hearts",
-        r"\bCasa\b": "Flush of Hearts",
-        r"\bRecoupling\b": "Pairing",
+        r"\bFlush\s+Of\s+Hearts\b": "Flush of Hearts",
+        r"\bFlush\b(?!\s+of\s+Hearts)": "Flush of Hearts",
+        r"\bPairing\b": "Pairing",
         r"\bPre\b": "Before",
     }
     for pattern, new in replacements.items():

@@ -45,9 +45,9 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
                 </div>
 
                 <div className="section">
-                  <h3 className="section-title">Type on Paper</h3>
+                  <h3 className="section-title">Ideal Match</h3>
                   <dl className="top-grid">
-                    {Object.entries(data.type_on_paper).map(([key, value]) => (
+                    {Object.entries(data.ideal_match).map(([key, value]) => (
                       <div key={key} className={`top-item ${value ? "is-revealed" : ""}`}>
                         <dt>{key.replaceAll("_", " ")}</dt>
                         <dd>{value ? String(value) : "???"}</dd>

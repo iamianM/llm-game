@@ -14,7 +14,7 @@ def exchange_block(exchange: object) -> str:
     return (
         "<div class='card'>"
         f"<p><b>You:</b> {escape(exchange.get('player_dialogue', ''))}</p>"
-        f"<p><b>Islander:</b> {escape(exchange.get('npc_dialogue', ''))}</p>"
+        f"<p><b>Heartbreaker:</b> {escape(exchange.get('npc_dialogue', ''))}</p>"
         f"<p class='meta'>Tone: {escape(exchange.get('npc_tone', ''))}; "
         f"mood after: {escape(exchange.get('npc_mood_after', ''))}</p>"
         "</div>"
@@ -67,7 +67,7 @@ def agent_commit_block(agent_commits: object) -> str:
     """Render a summary and details for agent commits."""
     if not isinstance(agent_commits, dict):
         return ""
-    update = agent_commits.get("villa_update")
+    update = agent_commits.get("resort_update")
     if not isinstance(update, dict):
         return ""
     movements = update.get("npc_movements")
@@ -89,7 +89,7 @@ def agent_commit_block(agent_commits: object) -> str:
     details = _agent_commit_details(update, background)
     return (
         "<div class='card'>"
-        "<p><b>Villa agent commits</b></p>"
+        "<p><b>Sunset Bay agent commits</b></p>"
         f"<ul>{''.join(rows)}</ul>"
         f"{details}"
         "</div>"
@@ -117,28 +117,28 @@ def time_block(record: dict[str, Any]) -> str:
     )
 
 
-def pull_attempt_block(pull_attempt: object) -> str:
-    """Render a pull-for-chat result."""
-    if not isinstance(pull_attempt, dict):
+def private_chat_attempt_block(private_chat_attempt: object) -> str:
+    """Render a private-chat result."""
+    if not isinstance(private_chat_attempt, dict):
         return ""
-    outcome = "success" if pull_attempt.get("success") else "miss"
-    deflection = pull_attempt.get("deflection_line")
+    outcome = "success" if private_chat_attempt.get("success") else "miss"
+    deflection = private_chat_attempt.get("deflection_line")
     deflection_html = (
         "" if not isinstance(deflection, str) or not deflection else f"<p>{escape(deflection)}</p>"
     )
     return (
-        "<div class='card pull-attempt'>"
-        "<p><b>Pull attempt</b></p>"
-        f"<p>Target: {escape(str(pull_attempt.get('target_id', 'unknown')))}; "
-        f"chance {escape(str(pull_attempt.get('chance', '')))}; "
-        f"roll {escape(str(pull_attempt.get('roll', '')))}; "
+        "<div class='card private-chat-attempt'>"
+        "<p><b>Private chat attempt</b></p>"
+        f"<p>Target: {escape(str(private_chat_attempt.get('target_id', 'unknown')))}; "
+        f"chance {escape(str(private_chat_attempt.get('chance', '')))}; "
+        f"roll {escape(str(private_chat_attempt.get('roll', '')))}; "
         f"outcome {escape(outcome)}.</p>"
         f"{deflection_html}"
         "</div>"
     )
 
 
-def villa_snapshot_block(snapshot: object) -> str:
+def resort_snapshot_block(snapshot: object) -> str:
     """Render a per-turn map snapshot."""
     if not isinstance(snapshot, dict):
         return ""
@@ -151,36 +151,36 @@ def villa_snapshot_block(snapshot: object) -> str:
         )
     if not rows:
         return ""
-    return f"<div class='card'><p><b>Villa snapshot</b></p><ul>{''.join(rows)}</ul></div>"
+    return f"<div class='card'><p><b>Location snapshot</b></p><ul>{''.join(rows)}</ul></div>"
 
 
 def couple_status_block(record: dict[str, Any]) -> str:
     strength = record.get("couple_strength")
-    hideaway = record.get("hideaway")
+    private_suite = record.get("private_suite")
     rows = []
     if isinstance(strength, int):
         rows.append(f"<li>Player couple strength: {strength}</li>")
-    if isinstance(hideaway, dict) and hideaway.get("used_on_day") is not None:
+    if isinstance(private_suite, dict) and private_suite.get("used_on_day") is not None:
         rows.append(
-            f"<li>Hideaway used day {escape(hideaway.get('used_on_day'))} "
-            f"with {escape(hideaway.get('partner_id', 'unknown'))}</li>"
+            f"<li>Private Suite used day {escape(private_suite.get('used_on_day'))} "
+            f"with {escape(private_suite.get('partner_id', 'unknown'))}</li>"
         )
-    return "" if not rows else f"<div class='card hideaway'><p><b>Couple status</b></p><ul>{''.join(rows)}</ul></div>"
+    return "" if not rows else f"<div class='card private_suite'><p><b>Couple status</b></p><ul>{''.join(rows)}</ul></div>"
 
 
-def casa_amor_block(record: dict[str, Any]) -> str:
-    """Render Casa Amor state when present."""
-    villa = record.get("villa")
-    casa = record.get("casa_amor")
-    if villa != "casa_amor" and not isinstance(casa, dict):
+def flush_of_hearts_block(record: dict[str, Any]) -> str:
+    """Render Flush of Hearts state when present."""
+    resort = record.get("resort")
+    flush = record.get("flush_of_hearts")
+    if resort != "flush_of_hearts" and not isinstance(flush, dict):
         return ""
-    rows = [f"<li>Current villa: {escape(villa or 'main')}</li>"]
-    if isinstance(casa, dict):
-        rows.append(f"<li>Started day: {escape(casa.get('started_on_day', 'unknown'))}</li>")
-        rows.append(f"<li>Return day: {escape(casa.get('return_day', 'unknown'))}</li>")
-        rows.append(f"<li>Decision: {escape(casa.get('player_decision') or 'pending')}</li>")
-        rows.append(f"<li>Partners swapped: {escape(casa.get('partners_swapped', False))}</li>")
-    return f"<div class='card casa-amor'><p><b>Casa Amor</b></p><ul>{''.join(rows)}</ul></div>"
+    rows = [f"<li>Current resort: {escape(resort or 'main')}</li>"]
+    if isinstance(flush, dict):
+        rows.append(f"<li>Started day: {escape(flush.get('started_on_day', 'unknown'))}</li>")
+        rows.append(f"<li>Return day: {escape(flush.get('return_day', 'unknown'))}</li>")
+        rows.append(f"<li>Decision: {escape(flush.get('player_decision') or 'pending')}</li>")
+        rows.append(f"<li>Partners swapped: {escape(flush.get('partners_swapped', False))}</li>")
+    return f"<div class='card flush-of-hearts'><p><b>Flush of Hearts</b></p><ul>{''.join(rows)}</ul></div>"
 
 
 def interruption_block(record: dict[str, Any]) -> str:
@@ -188,7 +188,7 @@ def interruption_block(record: dict[str, Any]) -> str:
     commits = record.get("agent_commits")
     if not isinstance(commits, dict):
         return ""
-    update = commits.get("villa_update")
+    update = commits.get("resort_update")
     if not isinstance(update, dict):
         return ""
     interruptions = update.get("npc_interruptions")

@@ -224,7 +224,7 @@ def _actual_output(record: dict[str, Any]) -> str:
         _event_narration(record.get("event_narration")),
         _ceremony_events(record.get("ceremony_events")),
         _memories(record.get("agent_commits")),
-        _villa_changes(record.get("agent_commits")),
+        _resort_changes(record.get("agent_commits")),
     ]
     rendered = "".join(part for part in parts if part)
     if not rendered:
@@ -340,9 +340,9 @@ def _memories(raw: object) -> str:
     return f"<div class='fact-card'><b>Memories</b><ul class='compact'>{''.join(items)}</ul></div>"
 
 
-def _villa_changes(raw: object) -> str:
+def _resort_changes(raw: object) -> str:
     commits = raw if isinstance(raw, dict) else {}
-    update = commits.get("villa_update")
+    update = commits.get("resort_update")
     background = commits.get("background_dialogues")
     parts = []
     if isinstance(update, dict):
@@ -356,7 +356,7 @@ def _villa_changes(raw: object) -> str:
         parts.append(f"{len(background)} background dialogue beat(s)")
     if not parts:
         return ""
-    return f"<p class='muted villa-summary'>Villa life: {escape('; '.join(parts))}</p>"
+    return f"<p class='muted resort-summary'>Sunset Bay life: {escape('; '.join(parts))}</p>"
 
 
 def _check_row(check: dict[str, Any]) -> str:

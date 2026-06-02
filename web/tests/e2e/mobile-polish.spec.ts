@@ -5,7 +5,7 @@ const API = process.env.PLAYWRIGHT_API_BASE ?? "http://127.0.0.1:8000";
 
 test("mobile right rail opens as a full-width drawer", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 740 });
-  await installSession(page, fakeState(), [action("ambient", "Let the villa breathe")]);
+  await installSession(page, fakeState(), [action("ambient", "Let Sunset Bay breathe")]);
 
   await page.goto(`/play/${SESSION_ID}`);
   await page.getByLabel("Open right rail").click();
@@ -73,8 +73,8 @@ function fakeState(overrides: Record<string, unknown> = {}) {
     turn_index: 88,
     location_id: "pool",
     location_label: "Pool",
-    villa: "main",
-    villa_label: "Sunset Bay",
+    resort: "main",
+    resort_label: "Sunset Bay",
     phase_clock: {},
     player: {
       id: "player",
@@ -82,26 +82,26 @@ function fakeState(overrides: Record<string, unknown> = {}) {
       gender: "woman",
       archetype_id: "loyal_friend",
       public_perception: 100,
-      stats: { charm: 6, banter: 6, eq: 6, graft: 6, loyalty: 9 },
+      stats: { charm: 6, banter: 6, eq: 6, spark: 6, loyalty: 9 },
       memories: [],
     },
-    islanders: [
-      islander("liam", "Liam", "man"),
-      islander("chloe", "Chloe", "woman"),
-      islander("maya", "Maya", "woman"),
+    heartbreakers: [
+      heartbreaker("liam", "Liam", "man"),
+      heartbreaker("chloe", "Chloe", "woman"),
+      heartbreaker("maya", "Maya", "woman"),
     ],
     couples: [],
     audience: { public_perception: 100, recent_delta: null, trend: "steady" },
-    pending_recouple_proposal: null,
+    pending_pair_proposal: null,
     outcome: null,
     active_conversation_target_id: null,
-    villa_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
+    resort_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
     daily_recaps: [],
     ...overrides,
   };
 }
 
-function islander(id: string, name: string, gender: "man" | "woman") {
+function heartbreaker(id: string, name: string, gender: "man" | "woman") {
   return {
     id,
     name,

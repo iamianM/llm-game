@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { findOutfit, findVibe, type HeartbreakerLook } from "../../lib/look";
 import { isRosterId } from "../../lib/roster";
 import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
 
@@ -11,10 +11,10 @@ import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
  * (a soft duotone wash + accent ring + glow) so wardrobe/energy choices read
  * visibly without any runtime image generation. Vercel-safe.
  *
- * Shared by the /create casting card and the in-villa Wardrobe modal so the
+ * Shared by the casting card and the Sunset Bay wardrobe modal so the
  * preview is pixel-identical in both places.
  */
-export function LookStage({ look, compact = false }: { look: IslanderLook; compact?: boolean }) {
+export function LookStage({ look, compact = false }: { look: HeartbreakerLook; compact?: boolean }) {
   const outfit = findOutfit(look.outfit);
   const vibe = findVibe(look.vibe);
   const src = playerSprite(look.archetype, look.gender, look.outfit, look.characterId);

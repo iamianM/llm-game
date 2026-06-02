@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from src.game.agents.contextual_options import validate_follow_up_menu
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.results import MechanicalResult
-from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, IslanderState, Memory
+from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, HeartbreakerState, Memory
 
 TONE_REACTIONS: dict[str, list[str]] = {
     "suspicious": ["defend_self", "honest_vulnerable", "change_subject"],
@@ -32,7 +32,7 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
         label="Push the flirt",
         category="flirty",
         intent_kind="escalate_flirt",
-        stat_used="graft",
+        stat_used="spark",
         risk="high",
         tone="flirty",
     ),
@@ -158,14 +158,14 @@ def default_options(state: GameState, result: MechanicalResult, exchange: Exchan
         if _flirty_allowed(state, target.id):
             options.append(_template("escalate_flirt"))
             # When escalation is being offered on a flirty beat, also offer a
-            # graceful pull-back so the menu isn't escalator-only. Relabel the
+            # graceful ease-off so the menu isn't escalator-only. Relabel the
             # supportive_listen template here so the player reads it as a
             # genuine "cool the heat" choice instead of generic "Just listen".
             if exchange.npc_tone in {"flirty", "playful"}:
-                pull_back = _template("supportive_listen").model_copy(
+                ease_off = _template("supportive_listen").model_copy(
                     update={"label": "Cool the heat — slow it down"}
                 )
-                options.append(pull_back)
+                options.append(ease_off)
     options.append(_template("joke_back"))
     gossip = _player_shareable_memory(state, target.id)
     if gossip is not None:
@@ -208,7 +208,7 @@ def assemble_follow_up_menu(
     # intent_kind keeps the first occurrence, so a bespoke option that shares
     # an intent_kind with a default keeps the default's label — which is fine
     # because default labels are stable. The cap then preserves bespoke
-    # specifics that fill an otherwise-empty beat (pull-back, on-topic gossip).
+    # specifics that fill an otherwise-empty beat (ease-off, on-topic gossip).
     base_defaults = default_options(state, result, exchange)
     tone_options = tone_reaction_options(state, exchange)
     # When the bespoke options already provide a specific on-topic deeper
@@ -322,18 +322,18 @@ def _first_unused_template(recent: set[str], present: set[str]) -> FollowUpOptio
     return None
 
 
-def _target(state: GameState, result: MechanicalResult) -> IslanderState:
+def _target(state: GameState, result: MechanicalResult) -> HeartbreakerState:
     target_id = result.action.target_id
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker
     raise ValueError(f"follow-up target not found: {target_id}")
 
 
 def _flirty_allowed(state: GameState, target_id: str) -> bool:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander.gender != state.player.gender
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker.gender != state.player.gender
     return False
 
 
@@ -343,12 +343,12 @@ def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
     Eligibility is a *positive allowlist*, not a blacklist of known-bad system
     tags. A memory is shareable interpersonal gossip only when both hold:
 
-    1. Its ``subject_id`` resolves to a real cast islander — never the player,
-       the current listener, or a non-cast pseudo-subject like ``"villa"`` /
+    1. Its ``subject_id`` resolves to a real cast heartbreaker — never the player,
+       the current listener, or a non-cast pseudo-subject like ``"resort"`` /
        ``"producers"``. This alone drops ceremony bookkeeping recorded against
-       the villa.
+       the resort.
     2. It is explicitly flagged ``gossip``. Ceremony / producer / system
-       memories are "witnessed" villa events that carry their own kind tags
+       memories are "witnessed" resort events that carry their own kind tags
        (``ceremony``, ``elimination``, ``gather_scheduled``, ...) and never the
        ``gossip`` flag, so they fall outside the allowlist automatically —
        *including future system event kinds nobody remembered to blacklist*.
@@ -379,12 +379,12 @@ def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
 
 
 def _cast_ids(state: GameState) -> set[str]:
-    """Return every real islander id (eliminated or not).
+    """Return every real heartbreaker id (eliminated or not).
 
     Membership here is the structural gate that keeps non-cast subjects
-    (``"villa"`` and other engine pseudo-subjects) out of shareable gossip.
+    (``"resort"`` and other engine pseudo-subjects) out of shareable gossip.
     """
-    return {islander.id for islander in state.islanders}
+    return {heartbreaker.id for heartbreaker in state.heartbreakers}
 
 
 def _gossip_shared_with(state: GameState, target_id: str) -> set[str]:
@@ -395,12 +395,12 @@ def _gossip_shared_with(state: GameState, target_id: str) -> set[str]:
     shares gossip, so repeats can be detected without any extra schema.
     """
     prefix = "source_memory:"
-    for islander in state.islanders:
-        if islander.id != target_id:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id != target_id:
             continue
         return {
             tag.removeprefix(prefix)
-            for memory in islander.memories
+            for memory in heartbreaker.memories
             if memory.source_id == "player"
             for tag in memory.tags
             if tag.startswith(prefix)
@@ -409,10 +409,10 @@ def _gossip_shared_with(state: GameState, target_id: str) -> set[str]:
 
 
 def _subject_name(state: GameState, memory: Memory) -> str:
-    for islander in state.islanders:
-        if islander.id == memory.subject_id:
-            return islander.name
-    return "Villa"
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == memory.subject_id:
+            return heartbreaker.name
+    return "Sunset Bay"
 
 
 def _with_audience_hint(option: FollowUpOption) -> FollowUpOption:

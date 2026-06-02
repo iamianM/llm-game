@@ -8,31 +8,31 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_couples:
 - partner_a_id: player
   partner_b_id: chloe
   formed_on_day: 1
-  has_used_hideaway: false
+  has_used_private_suite: false
   last_steal_attempt_chance: null
 - partner_a_id: maya
   partner_b_id: liam
   formed_on_day: 1
-  has_used_hideaway: false
+  has_used_private_suite: false
   last_steal_attempt_chance: null
 - partner_a_id: sophie
   partner_b_id: marcus
   formed_on_day: 1
-  has_used_hideaway: false
+  has_used_private_suite: false
   last_steal_attempt_chance: null
 - partner_a_id: nia
   partner_b_id: blake
   formed_on_day: 1
-  has_used_hideaway: false
+  has_used_private_suite: false
   last_steal_attempt_chance: null
 initial_phase: morning
-expected_hash: 350dfad4563a0a09abc3c57f2597544adf9551f053e4776bb9115d8e6ae30b18
+expected_hash: 118d19fefb91700439189ae09d437c09669a54eec16a1f09468ad79893aa4d60
 actions:
 - kind: ambient
   target_id: ambient_wait

@@ -14,8 +14,8 @@ from typing import Any
 from src.game.agents.background_dialogue import BackgroundExchange
 from src.game.agents.conversation_curator import CuratableConversation
 from src.game.agents.event_narrator import EventNarration
-from src.game.agents.islander_voice import Exchange
-from src.game.agents.villa_orchestrator import VillaUpdate
+from src.game.agents.heartbreaker_voice import Exchange
+from src.game.agents.resort_orchestrator import ResortUpdate
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import FollowUpMenu, GameState, MemoryBatch, NPCNPCConversation
@@ -35,7 +35,7 @@ class RecordedAgents:
         self._background_index = 0
         self._curator_index = 0
 
-    def islander_voice(self, _state: GameState, _result: MechanicalResult) -> Exchange:
+    def heartbreaker_voice(self, _state: GameState, _result: MechanicalResult) -> Exchange:
         """Replay recorded player/NPC dialogue."""
         value = self._required("exchange")
         if not isinstance(value, dict):
@@ -66,12 +66,12 @@ class RecordedAgents:
             raise ValueError("recorded event_narration must be an object")
         return EventNarration.model_validate(value)
 
-    def villa_orchestrator(self, _state: GameState) -> VillaUpdate:
-        """Replay recorded VillaUpdate commit."""
-        value = self._agent_commits().get("villa_update")
+    def resort_orchestrator(self, _state: GameState) -> ResortUpdate:
+        """Replay recorded ResortUpdate commit."""
+        value = self._agent_commits().get("resort_update")
         if not isinstance(value, dict):
-            raise ValueError("recorded agent_commits.villa_update must be an object")
-        return VillaUpdate.model_validate(value)
+            raise ValueError("recorded agent_commits.resort_update must be an object")
+        return ResortUpdate.model_validate(value)
 
     def background_dialogue(
         self,

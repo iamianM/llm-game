@@ -1,13 +1,13 @@
-"""Tests for recoupling proposal mechanics."""
+"""Tests for pairing proposal mechanics."""
 
 from __future__ import annotations
 
 from src.game.agents.background_dialogue import BackgroundExchange
-from src.game.agents.villa_orchestrator import EndConversation, VillaUpdate
+from src.game.agents.resort_orchestrator import EndConversation, ResortUpdate
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.proposals import apply_player_proposal, maybe_trigger_npc_player_proposal
+from src.game.engine.resort import apply_resort_update
 from src.game.engine.turn import run_turn
-from src.game.engine.villa import apply_villa_update
 from src.game.state.models import (
     BackgroundExchangeRecord,
     Conversation,
@@ -15,7 +15,7 @@ from src.game.state.models import (
     Gender,
     Location,
     NPCNPCConversation,
-    PendingRecoupleProposal,
+    PendingPairProposal,
     new_game,
 )
 from src.game.state.rng import SeededRng
@@ -27,7 +27,7 @@ def test_player_proposal_action_surfaces_only_for_eligible_non_partner() -> None
 
     labels = [spec.label for spec in available_actions(state)]
 
-    assert "Ask Maya to recouple with you" in labels
+    assert "Ask Maya to pair with you" in labels
 
 
 def test_successful_player_proposal_breaks_old_couples_and_leaves_singles() -> None:
@@ -57,18 +57,18 @@ def test_rejected_player_proposal_keeps_couples_and_hits_audience() -> None:
         ("maya", "liam"),
     ]
     assert result.audience_delta < 0
-    assert state.islanders[1].relationship.affection == 50
-    assert state.islanders[1].relationship.chemistry == 65
+    assert state.heartbreakers[1].relationship.affection == 50
+    assert state.heartbreakers[1].relationship.chemistry == 65
 
 
 def test_proposal_turn_closes_conversation_and_records_event_and_memories() -> None:
     state = _proposal_state()
     state.active_conversation = Conversation(target_id="maya", started_on_turn=1, started_on_day=1)
 
-    turn = run_turn(state, PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id="maya"), SeededRng(1))
+    turn = run_turn(state, PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id="maya"), SeededRng(1))
 
     assert turn.state.active_conversation is None
-    assert turn.ceremony_events[0].kind == "recouple_proposal"
+    assert turn.ceremony_events[0].kind == "pair_proposal"
     assert turn.ceremony_events[0].sub_kind == "accepted"
     assert any(batch.summary.startswith("Player proposed") for batch in turn.curator_batches)
 
@@ -76,7 +76,7 @@ def test_proposal_turn_closes_conversation_and_records_event_and_memories() -> N
 def test_npc_proposal_incoming_creates_forced_response_actions() -> None:
     state = _proposal_state()
     state.active_conversation = None
-    maya = state.islanders[1]
+    maya = state.heartbreakers[1]
     maya.relationship.affection = 80
     maya.relationship.chemistry = 90
 
@@ -85,7 +85,7 @@ def test_npc_proposal_incoming_creates_forced_response_actions() -> None:
     assert incoming is not None
     labels = [spec.label for spec in available_actions(state)]
     assert labels == [
-        "Accept Maya's recoupling proposal",
+        "Accept Maya's pairing proposal",
         "Decline Maya politely",
         "Decline Maya harshly",
     ]
@@ -94,8 +94,8 @@ def test_npc_proposal_incoming_creates_forced_response_actions() -> None:
 def test_accepting_npc_proposal_forms_new_couple_and_leaves_singles() -> None:
     state = _proposal_state()
     state.active_conversation = None
-    state.islanders[1].relationship.affection = 80
-    state.islanders[1].relationship.chemistry = 90
+    state.heartbreakers[1].relationship.affection = 80
+    state.heartbreakers[1].relationship.chemistry = 90
     maybe_trigger_npc_player_proposal(state, SeededRng(1))
 
     turn = run_turn(
@@ -104,7 +104,7 @@ def test_accepting_npc_proposal_forms_new_couple_and_leaves_singles() -> None:
         SeededRng(2),
     )
 
-    assert turn.state.pending_recouple_proposal is None
+    assert turn.state.pending_pair_proposal is None
     assert _partner_id(state, "player") == "maya"
     assert _partner_id(state, "chloe") is None
     assert _partner_id(state, "liam") is None
@@ -114,10 +114,10 @@ def test_accepting_npc_proposal_forms_new_couple_and_leaves_singles() -> None:
 def test_npc_proposal_response_does_not_reopen_same_turn() -> None:
     state = _proposal_state()
     state.active_conversation = None
-    maya = state.islanders[1]
+    maya = state.heartbreakers[1]
     maya.relationship.affection = 80
     maya.relationship.chemistry = 90
-    state.pending_recouple_proposal = PendingRecoupleProposal(
+    state.pending_pair_proposal = PendingPairProposal(
         proposer_id="maya",
         chance=60,
         audience_hint_accept="",
@@ -129,7 +129,7 @@ def test_npc_proposal_response_does_not_reopen_same_turn() -> None:
         SeededRng(4),
     )
 
-    assert turn.state.pending_recouple_proposal is None
+    assert turn.state.pending_pair_proposal is None
     assert [event.kind for event in turn.ceremony_events] == ["npc_proposal_response"]
 
 
@@ -163,9 +163,9 @@ def test_single_npc_background_flirt_can_form_rebound_couple() -> None:
     )
     state.npc_conversations = [conversation]
 
-    changes = apply_villa_update(
+    changes = apply_resort_update(
         state,
-        VillaUpdate(conversation_ends=[EndConversation(conversation_id="npcconv_test", reason="spark")]),
+        ResortUpdate(conversation_ends=[EndConversation(conversation_id="npcconv_test", reason="spark")]),
         SeededRng(1),
         background_dialogue=lambda _state, _conversation, _nudge: BackgroundExchange(
             speaker_a_line="",
@@ -186,7 +186,7 @@ def _proposal_state():
         Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1),
         Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=1),
     ]
-    maya = state.islanders[1]
+    maya = state.heartbreakers[1]
     assert maya.id == "maya"
     maya.relationship.affection = 55
     maya.relationship.chemistry = 70

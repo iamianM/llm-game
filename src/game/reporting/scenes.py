@@ -67,10 +67,10 @@ def scene_kind(record: dict[str, Any]) -> SceneKind:
     if record.get("daily_recaps"):
         return "day_boundary"
     commits = record.get("agent_commits") or {}
-    villa_update = commits.get("villa_update") or {}
+    resort_update = commits.get("resort_update") or {}
     if commits.get("background_dialogues"):
         return "background"
-    if villa_update.get("npc_movements"):
+    if resort_update.get("npc_movements"):
         return "movement"
     return "turn"
 
@@ -114,11 +114,11 @@ def _title(
     if kind == "gather":
         return f"Day {day}: gather moment ({span})"
     if kind == "background":
-        return f"Day {day}: background villa life ({span})"
+        return f"Day {day}: background Sunset Bay life ({span})"
     if kind == "movement":
-        return f"Day {day}: villa movement ({span})"
+        return f"Day {day}: Sunset Bay movement ({span})"
     if kind == "ambient":
-        return f"Day {day}: ambient villa time ({span})"
+        return f"Day {day}: ambient Sunset Bay time ({span})"
     if kind == "challenge":
         return f"Day {day}: challenge ({span})"
     if kind == "day_boundary":
@@ -132,4 +132,4 @@ def _conversation_target(records: list[dict[str, Any]]) -> str:
         target = action.get("target_id")
         if target:
             return str(target).title()
-    return "islander"
+    return "heartbreaker"

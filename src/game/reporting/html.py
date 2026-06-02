@@ -10,17 +10,17 @@ from src.game.reporting.html_audience import audience_block
 from src.game.reporting.html_base import escape, index_page, page, table_page
 from src.game.reporting.html_blocks import (
     agent_commit_block,
-    casa_amor_block,
     couple_status_block,
     delta_text,
     event_block,
     exchange_block,
+    flush_of_hearts_block,
     follow_up_block,
     interruption_block,
     memory_block,
-    pull_attempt_block,
+    private_chat_attempt_block,
+    resort_snapshot_block,
     time_block,
-    villa_snapshot_block,
 )
 from src.game.reporting.html_events import (
     challenge_block,
@@ -78,9 +78,9 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"<details class='turn' id='turn-{escape(record['turn'])}'{open_attr}>"
         f"<summary>{header}</summary>"
         f"<p class='meta'>{escape(record.get('visible_state', ''))}</p>"
-        f"{villa_snapshot_block(record.get('villa_snapshot'))}"
+        f"{resort_snapshot_block(record.get('resort_snapshot'))}"
         f"{time_block(record)}"
-        f"{casa_amor_block(record)}"
+        f"{flush_of_hearts_block(record)}"
         f"{couple_status_block(record)}"
         f"{challenge_block(record.get('challenge'))}"
         f"{producer_text_block(record.get('producer_text'))}"
@@ -91,7 +91,7 @@ def _turn_card(record: dict[str, Any], *, collapsible: bool) -> str:
         f"{escape(str(action.get('target_id') or ''))} "
         f"{escape(str(action.get('intent_id') or ''))}</p>"
         f"{math_block(result)}"
-        f"{pull_attempt_block(result.get('pull_attempt'))}"
+        f"{private_chat_attempt_block(result.get('private_chat_attempt'))}"
         f"{arrival_roll_block(record)}"
         f"{exchange_block(record.get('exchange'))}"
         f"{event_block(record.get('event_narration'))}"

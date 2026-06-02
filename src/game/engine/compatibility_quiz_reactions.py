@@ -1,7 +1,7 @@
 """Per-round partner reaction templates for the Compatibility Quiz.
 
 Lightweight curated lines keyed by (mechanical/flavor, correct, tier).
-The live Islander Voice agent can swap these for personalised lines in
+The live Heartbreaker Voice agent can swap these for personalised lines in
 a future pass; the templates exist so the round-by-round texture is
 present even in mock mode.
 """
@@ -68,7 +68,7 @@ _BUCKETS: dict[tuple[bool, bool, str], list[str]] = {
     # mechanical, wrong
     (True, False, "low"): [
         "{name} laughs, but it lands a little flat. 'Mate, that's the basics.'",
-        "{name} pulls a face. 'I literally already told you that.'",
+        "{name} makes a face. 'I literally already told you that.'",
         "{name} blinks. 'Genuinely? That's where you went?'",
     ],
     (True, False, "mid"): [
@@ -105,12 +105,12 @@ _BUCKETS: dict[tuple[bool, bool, str], list[str]] = {
     ],
     (False, False, "mid"):[
         "{name} laughs. 'Cute guess. Wrong, but cute.'",
-        "{name} pulls a face. 'You think *I'd* do that? Genuinely?'",
+        "{name} makes a face. 'You think *I'd* do that? Genuinely?'",
         "{name} grins, but barely. 'Okay, that one stung a little.'",
     ],
     (False, False, "high"):[
         "{name} laughs. 'Cute guess. Wrong, but cute.'",
-        "{name} pulls a face. 'You think *I'd* do that? Genuinely?'",
+        "{name} makes a face. 'You think *I'd* do that? Genuinely?'",
         "{name} grins, but barely. 'Okay, that one stung a little.'",
     ],
 }

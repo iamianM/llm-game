@@ -48,10 +48,10 @@ Players don't see everything. Information is a resource.
 
 ### Visible Information
 
-**✅ Villa Map with Islander Positions**
+**✅ Resort Map with Heartbreaker Positions**
 
 ```
-VILLA MAP
+SUNSET BAY MAP
 
 🏊 Pool (4/8)                    [YOU ARE HERE]
    • You
@@ -111,7 +111,7 @@ YOUR STATS
 
 Charm: 7/10
 Banter: 6/10
-Graft: 5/10
+Spark: 5/10
 Loyalty: 8/10
 Emotional Intelligence: 6/10
 Physical: 5/10
@@ -226,8 +226,8 @@ interface KnowledgeFact {
 
   // PROPAGATION (who knows)
   knownBy: Array<{
-    islanderId: string
-    learnedFrom: string | null  // null if witnessed, islander ID if gossip
+    heartbreakerId: string
+    learnedFrom: string | null  // null if witnessed, heartbreaker ID if gossip
     learnedDay: number
     willingnessToShare: number  // 0-100
     hasSharedWith: string[]     // Who they've told
@@ -259,7 +259,7 @@ interface KnowledgeFact {
 
   knownBy: [
     {
-      islanderId: "player",
+      heartbreakerId: "player",
       learnedFrom: null, // witnessed
       learnedDay: 4,
       willingnessToShare: 80, // likely to gossip
@@ -291,7 +291,7 @@ interface KnowledgeFact {
 
   knownBy: [
     {
-      islanderId: "player",
+      heartbreakerId: "player",
       learnedFrom: null, // she told player directly
       learnedDay: 2,
       willingnessToShare: 50, // might tell others
@@ -323,7 +323,7 @@ interface KnowledgeFact {
 
   knownBy: [
     {
-      islanderId: "player",
+      heartbreakerId: "player",
       learnedFrom: null,
       learnedDay: 6,
       willingnessToShare: 10, // very unlikely to share (it's personal)
@@ -346,7 +346,7 @@ player.knowledge = [
   {
     fact: "Marcus and Sophie argued about trust",
     source: "gossip",
-    sourceIslander: "liam",
+    sourceHeartbreaker: "liam",
     day: 5,
     reliability: "rumor" // heard from someone else
   },
@@ -440,7 +440,7 @@ Talk to Liam
 
 Friendly: 💬
 → Ask how he's doing
-→ Chat about the villa
+→ Chat about the resort
 
 Banter: 😄
 → Tell a joke
@@ -450,7 +450,7 @@ Gossip: 🗨️
 → "Heard any drama lately?" (General)
 → Ask about Marcus (Liam knows something - 85% chance to share)
 → Ask about Aisha (Liam knows something - 60% chance to share)
-→ Ask about the new bombshell
+→ Ask about the new Heart Throb
 ```
 
 **Player selects: "Ask about Marcus"**
@@ -476,14 +476,14 @@ if (willShare) {
   player.knowledge.push({
     fact: gossip.knowledge.fact,
     source: "gossip",
-    sourceIslander: "liam",
+    sourceHeartbreaker: "liam",
     day: currentDay,
     reliability: "rumor"
   })
 
   // Update gossip propagation
   gossip.knowledge.knownBy.push({
-    islanderId: "player",
+    heartbreakerId: "player",
     learnedFrom: "liam",
     learnedDay: currentDay,
     willingnessToShare: calculatePlayerWillingnessToShare(gossip.knowledge),
@@ -491,7 +491,7 @@ if (willShare) {
   })
 
   // Mark that Liam shared it
-  const liamKnowledge = gossip.knowledge.knownBy.find(k => k.islanderId === "liam")
+  const liamKnowledge = gossip.knowledge.knownBy.find(k => k.heartbreakerId === "liam")
   liamKnowledge.hasSharedWith.push("player")
 
   return dialogue
@@ -563,7 +563,7 @@ He shakes his head. "Sophie has no idea. That's gonna blow up."
 
 ```javascript
 knowledge.knownBy = [
-  { islanderId: "player", learnedFrom: null, ... }
+  { heartbreakerId: "player", learnedFrom: null, ... }
 ]
 ```
 
@@ -572,8 +572,8 @@ knowledge.knownBy = [
 
 ```javascript
 knowledge.knownBy = [
-  { islanderId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
-  { islanderId: "liam", learnedFrom: "player", ... }
+  { heartbreakerId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
+  { heartbreakerId: "liam", learnedFrom: "player", ... }
 ]
 ```
 
@@ -582,9 +582,9 @@ knowledge.knownBy = [
 
 ```javascript
 knowledge.knownBy = [
-  { islanderId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
-  { islanderId: "liam", learnedFrom: "player", hasSharedWith: ["chloe"] },
-  { islanderId: "chloe", learnedFrom: "liam", ... }
+  { heartbreakerId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
+  { heartbreakerId: "liam", learnedFrom: "player", hasSharedWith: ["chloe"] },
+  { heartbreakerId: "chloe", learnedFrom: "liam", ... }
 ]
 ```
 
@@ -593,17 +593,17 @@ knowledge.knownBy = [
 
 ```javascript
 knowledge.knownBy = [
-  { islanderId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
-  { islanderId: "liam", learnedFrom: "player", hasSharedWith: ["chloe"] },
-  { islanderId: "chloe", learnedFrom: "liam", hasSharedWith: ["sophie"] },
-  { islanderId: "sophie", learnedFrom: "chloe", ... }
+  { heartbreakerId: "player", learnedFrom: null, hasSharedWith: ["liam"] },
+  { heartbreakerId: "liam", learnedFrom: "player", hasSharedWith: ["chloe"] },
+  { heartbreakerId: "chloe", learnedFrom: "liam", hasSharedWith: ["sophie"] },
+  { heartbreakerId: "sophie", learnedFrom: "chloe", ... }
 ]
 ```
 
 **Day 6, Morning:**
 - Sophie confronts Marcus (DRAMA!)
 
-**Result:** Gossip that started with player witnessing something creates villa-wide drama.
+**Result:** Gossip that started with player witnessing something creates resort-wide drama.
 
 ### NPC Gossip Sharing (Autonomous)
 
@@ -623,14 +623,14 @@ function simulateNPCGossipSharing(npc1, npc2) {
       npc2.knowledge.push({
         fact: gossip.knowledge.fact,
         source: "gossip",
-        sourceIslander: npc1.id,
+        sourceHeartbreaker: npc1.id,
         timestamp: { day: currentDay, phase: currentPhase },
         reliability: calculateReliability(gossip.knowledge, npc1, npc2)
       })
 
       // Update propagation
       gossip.knowledge.knownBy.push({
-        islanderId: npc2.id,
+        heartbreakerId: npc2.id,
         learnedFrom: npc1.id,
         learnedDay: currentDay,
         willingnessToShare: calculateNPCWillingnessToShare(npc2, gossip.knowledge),
@@ -638,7 +638,7 @@ function simulateNPCGossipSharing(npc1, npc2) {
       })
 
       // Mark that NPC1 shared it
-      const npc1Knowledge = gossip.knowledge.knownBy.find(k => k.islanderId === npc1.id)
+      const npc1Knowledge = gossip.knowledge.knownBy.find(k => k.heartbreakerId === npc1.id)
       npc1Knowledge.hasSharedWith.push(npc2.id)
 
       // Generate event
@@ -672,7 +672,7 @@ function calculateReliability(knowledge, speaker, listener) {
 }
 
 function getGossipChainLength(knowledge, speaker) {
-  const speakerKnowledge = knowledge.knownBy.find(k => k.islanderId === speaker.id)
+  const speakerKnowledge = knowledge.knownBy.find(k => k.heartbreakerId === speaker.id)
 
   if (!speakerKnowledge.learnedFrom) {
     return 0 // witnessed directly
@@ -683,7 +683,7 @@ function getGossipChainLength(knowledge, speaker) {
   let current = speakerKnowledge.learnedFrom
 
   while (current) {
-    const link = knowledge.knownBy.find(k => k.islanderId === current)
+    const link = knowledge.knownBy.find(k => k.heartbreakerId === current)
     if (!link || !link.learnedFrom) break
     chain++
     current = link.learnedFrom
@@ -730,7 +730,7 @@ Talk to Sophie
 - Sophie learns Marcus kissed Aisha
 - Sophie's trust in Marcus plummets
 - Sophie's animosity toward Aisha increases
-- Creates public drama (affects villa state)
+- Creates public drama (affects resort state)
 - Player's public perception might drop (seen as troublemaker)
 
 ```javascript
@@ -741,7 +741,7 @@ function revealGossip(gossipId, target) {
   target.knowledge.push({
     fact: gossip.fact,
     source: "told_directly",
-    sourceIslander: "player",
+    sourceHeartbreaker: "player",
     day: currentDay,
     reliability: "confirmed" // player told them directly
   })
@@ -751,7 +751,7 @@ function revealGossip(gossipId, target) {
   // If gossip is about their partner
   if (gossip.participants.includes(target.coupledWith)) {
     // Massive trust damage
-    const partner = getIslanderById(target.coupledWith)
+    const partner = getHeartbreakerById(target.coupledWith)
     target.relationships[partner.id].trust -= 25
     target.relationships[partner.id].animosity += 15
 
@@ -768,7 +768,7 @@ function revealGossip(gossipId, target) {
     })
   }
 
-  // If gossip involves another Islander
+  // If gossip involves another Heartbreaker
   if (gossip.participants.length > 1) {
     const otherPerson = gossip.participants.find(id => id !== target.id)
     if (otherPerson) {
@@ -778,7 +778,7 @@ function revealGossip(gossipId, target) {
 
   // Public perception impact (depends on how others view this)
   if (gossip.juiciness > 70) {
-    player.publicPerception -= 5 // seen as stirring drama
+    player.pulse -= 5 // seen as stirring drama
   }
 
   // Generate LLM reaction
@@ -810,13 +810,13 @@ Talk to Chloe
 
 **3. Intelligence Gathering**
 
-Player asks around to learn villa state:
+Player asks around to learn resort state:
 
 ```
 Talk to Liam
 
 🗨️ Gossip:
-→ "What's the vibe in the villa lately?"
+→ "What's the vibe around here lately?"
 → "Heard any drama?"
 → "How are Marcus and Sophie doing?"
 ```
@@ -832,7 +832,7 @@ Gossip has strategic value:
 
 **High-value gossip:**
 - "Marcus kissed someone else" (partner betrayal)
-- "Sophie is planning to recouple" (strategic intel)
+- "Sophie is planning a Heart Swap" (strategic intel)
 - "Aisha is fake" (reputation damage)
 
 **Low-value gossip:**
@@ -859,7 +859,7 @@ function gossipReciprocity(player, npc) {
 
 **Situation:**
 - You're coupled with Chloe
-- Liam tells you: "Marcus is planning to graft on Chloe tonight"
+- Liam tells you: "Marcus is planning to spark with Chloe tonight"
 
 **Options:**
 
@@ -906,7 +906,7 @@ B) **Wait and comfort later**
 C) **Tell others about the argument**
 - Spreads gossip
 - Damages Sophie's reputation
-- Might help you (if Sophie gets dumped, you can recouple)
+- Might help you (if Sophie goes Heart Out, you can do a Heart Swap)
 
 D) **Help them reconcile**
 - Builds friendship with both
@@ -917,7 +917,7 @@ D) **Help them reconcile**
 
 **Situation:**
 - Chloe told you her secret fear (being alone)
-- She's feeling insecure about new bombshell
+- She's feeling insecure about new Heart Throb
 
 **Options:**
 
@@ -983,7 +983,7 @@ Talk to Liam
 
 **Players who focus on one person:**
 - Deep relationship
-- But miss villa dynamics
+- But miss resort dynamics
 - Might be blindsided
 
 **Tradeoff creates strategy.**
@@ -996,7 +996,7 @@ Talk to Liam
 
 ```javascript
 // Global gossip network
-const villaKnowledge = {
+const resortKnowledge = {
   facts: [
     {
       id: "kiss_marcus_aisha_day4",
@@ -1010,14 +1010,14 @@ const villaKnowledge = {
       reliability: 100,
       knownBy: [
         {
-          islanderId: "player",
+          heartbreakerId: "player",
           learnedFrom: null,
           learnedDay: 4,
           willingnessToShare: 80,
           hasSharedWith: ["liam"]
         },
         {
-          islanderId: "liam",
+          heartbreakerId: "liam",
           learnedFrom: "player",
           learnedDay: 5,
           willingnessToShare: 90,
@@ -1034,33 +1034,33 @@ const villaKnowledge = {
 ```javascript
 // Get all gossip that speaker can share with listener
 function getShareableGossip(speaker, listener) {
-  return villaKnowledge.facts.filter(fact => {
+  return resortKnowledge.facts.filter(fact => {
     // Speaker knows it
-    const speakerKnows = fact.knownBy.some(k => k.islanderId === speaker.id)
+    const speakerKnows = fact.knownBy.some(k => k.heartbreakerId === speaker.id)
     if (!speakerKnows) return false
 
     // Listener doesn't know it
-    const listenerKnows = fact.knownBy.some(k => k.islanderId === listener.id)
+    const listenerKnows = fact.knownBy.some(k => k.heartbreakerId === listener.id)
     if (listenerKnows) return false
 
     // Speaker is willing to share
-    const speakerKnowledge = fact.knownBy.find(k => k.islanderId === speaker.id)
+    const speakerKnowledge = fact.knownBy.find(k => k.heartbreakerId === speaker.id)
     return speakerKnowledge.willingnessToShare > 30
   })
 }
 
 // Check if player knows a fact
 function playerKnows(factId) {
-  const fact = villaKnowledge.facts.find(f => f.id === factId)
+  const fact = resortKnowledge.facts.find(f => f.id === factId)
   if (!fact) return false
 
-  return fact.knownBy.some(k => k.islanderId === "player")
+  return fact.knownBy.some(k => k.heartbreakerId === "player")
 }
 
-// Get all facts about a specific Islander
-function getFactsAbout(islanderId) {
-  return villaKnowledge.facts.filter(fact =>
-    fact.participants.includes(islanderId)
+// Get all facts about a specific Heartbreaker
+function getFactsAbout(heartbreakerId) {
+  return resortKnowledge.facts.filter(fact =>
+    fact.participants.includes(heartbreakerId)
   )
 }
 ```

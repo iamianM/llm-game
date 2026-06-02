@@ -65,8 +65,8 @@ Two services. Both run locally during development; both ship to one host
         ▼
   Existing Python engine
     Deterministic turn loop
-    Six LLM agents (Islander Voice, Contextual Options, Event Narrator,
-                    Villa Orchestrator, Background Dialogue, Conversation Curator)
+    Six LLM agents (Heartbreaker Voice, Contextual Options, Event Narrator,
+                    Resort Orchestrator, Background Dialogue, Conversation Curator)
     State + memory + couples + audience
         │
         ▼
@@ -118,14 +118,14 @@ web/                       # NEW — Next.js app
       DialogueBox.tsx
       ChoiceMenu.tsx
       NpcPortrait.tsx
-      VillaBackground.tsx
+      ResortBackground.tsx
       TopBar.tsx
       AudienceMeter.tsx
       DayBadge.tsx
       ClockPill.tsx
     rail/
       RightRail.tsx
-      VillaMap.tsx
+      ResortMap.tsx
       CastGrid.tsx
       CouplesPanel.tsx
       MemoriesList.tsx
@@ -229,7 +229,7 @@ time in.
 │                                                          ┌──┐ │
 │                                                          │ ▼│ │  rail toggle
 │                                                          └──┘ │
-│            (villa pool gradient background)                   │
+│            (resort pool gradient background)                  │
 │                                                               │
 │                                                               │
 │                   ⬤  Chloe portrait                           │
@@ -366,7 +366,7 @@ What happens between the player clicking a choice and seeing the next state:
        { mood_after, audience_delta, deltas: {affection: +2} }
      event: options
        { menu: [...] }
-     event: villa_update
+     event: resort_update
        { interruptions, conversation_starts, ... }
      event: turn_end
        { state_hash }
@@ -409,7 +409,7 @@ This prevents drift.
 
 - **`<GameStage>`** — root layout, takes session state, orchestrates children
 - **`<TopBar>`** — title, status chips, Pulse meter, settings
-- **`<VillaBackground>`** — CSS gradient based on `state.location_id`
+- **`<ResortBackground>`** — CSS gradient based on `state.location_id`
 - **`<NpcPortrait>`** — colored-circle avatar, name, optional mood tint flash
 - **`<DialogueBox>`** — name tag + streaming text + next indicator
 - **`<ChoiceMenu>`** — list of `<ChoiceButton>` with audience hints
@@ -421,7 +421,7 @@ This prevents drift.
 ### Rail components
 
 - **`<RightRail>`** — collapsible container
-- **`<VillaMap>`** — 4-cell grid, you-marker (same as review packet)
+- **`<ResortMap>`** — 4-cell grid, you-marker (same as review packet)
 - **`<CouplesPanel>`** — list of couples with avatars
 - **`<CastGrid>`** — 8 avatar tiles, opens popouts
 - **`<CastPopout>`** — full NPC detail dialog (modal)
@@ -479,7 +479,7 @@ Out of MVP: server-side persistence, multi-run history.
 
 - Mobile responsive layout
 - Real NPC portraits (commissioned or AI-generated)
-- Real villa background art
+- Real resort background art
 - Audio (BGM, SFX, voice)
 - The Reunion / meta-progression screen
 - Run history and replay
@@ -550,7 +550,7 @@ on `/play/{uuid}` (placeholder page).
 ### Step 5: Stage skeleton
 
 - `/play/[sessionId]/page.tsx` fetches session state on mount
-- Build `<TopBar>`, `<VillaBackground>`, `<NpcPortrait>`, `<DialogueBox>`,
+- Build `<TopBar>`, `<ResortBackground>`, `<NpcPortrait>`, `<DialogueBox>`,
   `<ChoiceMenu>`, `<ChoiceButton>`
 - Wire choice clicks to `POST /session/{id}/turn`
 - For now, render dialogue all-at-once (no streaming yet — placeholder)
@@ -573,7 +573,7 @@ human-readable pace. Clicking on the dialogue box jumps to complete.
 ### Step 7: Right rail + popouts
 
 - Build `<RightRail>` toggle
-- Port `<VillaMap>`, `<CouplesPanel>`, `<CastGrid>` from review packet logic
+- Port `<ResortMap>`, `<CouplesPanel>`, `<CastGrid>` from review packet logic
 - Build `<CastPopout>` dialog with full NPC detail
 - Wire to `GET /session/{id}/cast/{npc_id}` for on-demand fetch
 

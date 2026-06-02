@@ -16,9 +16,9 @@ _PLAYER_RE = re.compile(r"\b(?:the )?player\b", re.IGNORECASE)
 # gossip that drifted back to the player. Two families of memory are NOT
 # whispers and must be kept out of the player-facing digest:
 #
-#   * Procedural villa announcements the whole cast witnessed together (firepit
-#     gathers, recoupling/Pairing ceremonies, eliminations, challenges, Flush of
-#     Hearts/Casa announcements, producer text). Several carry internal labels
+#   * Procedural resort announcements the whole cast witnessed together (flame_deck
+#     gathers, pairing/Pairing ceremonies, eliminations, challenges, Flush of
+#     Hearts/Flush announcements, producer text). Several carry internal labels
 #     ("Pairing Ceremony text: ..."), raw cast ids ("jordan_start leaves"), or
 #     mechanical scoring ("ended in failure (3 pts)") that read like leaked
 #     stage directions. ``remember_ceremony_events`` stamps *every* one of these
@@ -58,7 +58,7 @@ def append_daily_recap_if_needed(state: GameState, completed_day: int) -> DailyR
 def humanize_player_reference(content: str) -> str:
     """Rewrite the curator's name-agnostic "the player" into second person.
 
-    Islander memories are stored in a name-agnostic voice ("the player") so they
+    Heartbreaker memories are stored in a name-agnostic voice ("the player") so they
     stay reusable across surfaces, but the daily recap is read *by* the player.
     Surfacing the raw label ("I appreciated the player checking in") breaks
     immersion, so the player-facing recap addresses them directly ("I
@@ -78,8 +78,8 @@ def humanize_player_reference(content: str) -> str:
 def _notable_memories(state: GameState, day: int) -> list[Memory]:
     memories = [
         memory
-        for islander in state.islanders
-        for memory in islander.memories
+        for heartbreaker in state.heartbreakers
+        for memory in heartbreaker.memories
         if memory.formed_on_day == day and not _is_non_whisper(memory)
     ]
     memories.extend(
@@ -88,11 +88,11 @@ def _notable_memories(state: GameState, day: int) -> list[Memory]:
         if memory.formed_on_day == day and not _is_non_whisper(memory)
     )
     memories.sort(key=lambda memory: (-memory.emotional_weight, memory.formed_on_turn, memory.id))
-    # Witnessed ceremony events (challenges, recouplings) are stored once per
+    # Witnessed ceremony events (challenges, pairings) are stored once per
     # holder with identical content, so a holder-scoped key would let the same
     # line fill all five slots ("The Couples Quiz tested Banter ..." x5). Dedupe
     # on the normalized text itself: identical wording carries identical news to
-    # the reader, while per-islander personalized memories stay distinct.
+    # the reader, while per-heartbreaker personalized memories stay distinct.
     seen_content: set[str] = set()
     unique: list[Memory] = []
     for memory in memories:
@@ -110,7 +110,7 @@ def _pair_key(memory: Memory) -> frozenset[str]:
     A budding Heart-Throb romance can spawn four or five distinct memories in a
     single day — both principals' versions plus the couple announcement — and
     they'd otherwise sweep every recap slot, burying the player's own beats and
-    the rest of the villa under one pair's saga. Grouping by the unordered
+    the rest of the resort under one pair's saga. Grouping by the unordered
     {holder, subject} pair lets the recap survey several storylines first.
     """
     subject = memory.subject_id or memory.holder_id
@@ -121,7 +121,7 @@ def _diversify(memories: list[Memory], slots: int = 5) -> list[Memory]:
     """Pick up to ``slots`` memories, favouring storyline variety over depth.
 
     Pass one takes the strongest memory from each distinct storyline (already in
-    weight order), so the reader hears from several corners of the villa. If
+    weight order), so the reader hears from several corners of the resort. If
     slots remain, pass two backfills the next-strongest leftovers — so a quiet
     day with only one storyline still fills the digest rather than going sparse.
     """

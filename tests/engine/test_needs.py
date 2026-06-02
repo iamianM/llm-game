@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from src.game.engine.needs import (
-    PARTNER_PULL,
+    PARTNER_DRAW,
     ROLE_OF,
     NeedsMovement,
     apply_needs_movements,
@@ -26,17 +26,17 @@ from src.game.state.rng import SeededRng
 
 def _neutralize_personalities(state: GameState) -> None:
     """Flatten Big5 to neutral so phase advertisement dominates scoring."""
-    for islander in state.islanders:
-        islander.big5.openness = 5
-        islander.big5.conscientiousness = 5
-        islander.big5.extraversion = 5
-        islander.big5.agreeableness = 5
-        islander.big5.neuroticism = 5
+    for heartbreaker in state.heartbreakers:
+        heartbreaker.big5.openness = 5
+        heartbreaker.big5.conscientiousness = 5
+        heartbreaker.big5.extraversion = 5
+        heartbreaker.big5.agreeableness = 5
+        heartbreaker.big5.neuroticism = 5
 
 
 def _place_all(state: GameState, location: Location) -> None:
-    for islander in state.islanders:
-        islander.location_id = location
+    for heartbreaker in state.heartbreakers:
+        heartbreaker.location_id = location
 
 
 def test_no_movement_in_scripted_phases() -> None:
@@ -44,26 +44,26 @@ def test_no_movement_in_scripted_phases() -> None:
     for phase in (Phase.CHALLENGE, Phase.INTROS, Phase.COMPLETE):
         state = new_game(1)
         state.phase = phase
-        _place_all(state, Location.FIREPIT)
+        _place_all(state, Location.FLAME_DECK)
         assert plan_needs_movements(state, SeededRng(1)) == []
 
 
-def test_morning_disperses_from_firepit_to_home_rooms() -> None:
-    """After an event (all at firepit), morning pulls NPCs to bedroom/kitchen."""
+def test_morning_disperses_from_flame_deck_to_home_rooms() -> None:
+    """After an event (all at flame_deck), morning draws NPCs to bedroom/kitchen."""
     state = new_game(1)
     state.phase = Phase.MORNING
     _neutralize_personalities(state)
-    _place_all(state, Location.FIREPIT)
+    _place_all(state, Location.FLAME_DECK)
 
     moves = plan_and_apply(state, SeededRng(7))
 
-    assert moves, "expected morning dispersal away from the firepit"
-    for islander in free_npcs(state):
-        assert islander.location_id is not Location.FIREPIT
-        assert ROLE_OF[islander.location_id] in {"bedroom", "kitchen"}
+    assert moves, "expected morning dispersal away from the flame_deck"
+    for heartbreaker in free_npcs(state):
+        assert heartbreaker.location_id is not Location.FLAME_DECK
+        assert ROLE_OF[heartbreaker.location_id] in {"bedroom", "kitchen"}
 
 
-def test_afternoon_pulls_to_pool() -> None:
+def test_afternoon_draws_to_pool() -> None:
     """Afternoon advertises the pool most strongly for neutral personalities."""
     state = new_game(1)
     state.phase = Phase.AFTERNOON
@@ -72,12 +72,12 @@ def test_afternoon_pulls_to_pool() -> None:
 
     plan_and_apply(state, SeededRng(3))
 
-    for islander in free_npcs(state):
-        assert islander.location_id is Location.POOL
+    for heartbreaker in free_npcs(state):
+        assert heartbreaker.location_id is Location.POOL
 
 
-def test_evening_clusters_on_terrace_and_firepit() -> None:
-    """Evening keeps people on the terrace / at the firepit, not the bedroom."""
+def test_evening_clusters_on_terrace_and_flame_deck() -> None:
+    """Evening keeps people on the terrace / at the flame_deck, not the bedroom."""
     state = new_game(1)
     state.phase = Phase.EVENING
     _neutralize_personalities(state)
@@ -85,8 +85,8 @@ def test_evening_clusters_on_terrace_and_firepit() -> None:
 
     plan_and_apply(state, SeededRng(5))
 
-    for islander in free_npcs(state):
-        assert ROLE_OF[islander.location_id] in {"terrace", "firepit"}
+    for heartbreaker in free_npcs(state):
+        assert ROLE_OF[heartbreaker.location_id] in {"terrace", "flame_deck"}
 
 
 def test_locked_conversation_participants_are_not_moved() -> None:
@@ -95,7 +95,7 @@ def test_locked_conversation_participants_are_not_moved() -> None:
     state.phase = Phase.AFTERNOON
     _neutralize_personalities(state)
     _place_all(state, Location.BEDROOM)
-    a, b = state.islanders[0].id, state.islanders[1].id
+    a, b = state.heartbreakers[0].id, state.heartbreakers[1].id
     state.npc_conversations.append(
         NPCNPCConversation(
             id="npcconv_locked",
@@ -114,12 +114,12 @@ def test_locked_conversation_participants_are_not_moved() -> None:
 
 
 def test_active_player_target_is_not_moved() -> None:
-    """The islander the player is actively talking to is never relocated."""
+    """The heartbreaker the player is actively talking to is never relocated."""
     state = new_game(1)
     state.phase = Phase.AFTERNOON
     _neutralize_personalities(state)
     _place_all(state, Location.BEDROOM)
-    target = state.islanders[0].id
+    target = state.heartbreakers[0].id
     state.active_conversation = Conversation(
         target_id=target, started_on_turn=0, started_on_day=1
     )
@@ -127,25 +127,25 @@ def test_active_player_target_is_not_moved() -> None:
     free = free_npcs(state)
     moves = plan_needs_movements(state, SeededRng(3))
 
-    assert all(islander.id != target for islander in free)
+    assert all(heartbreaker.id != target for heartbreaker in free)
     assert all(move.npc_id != target for move in moves)
 
 
-def test_eliminated_islanders_excluded() -> None:
+def test_eliminated_heartbreakers_excluded() -> None:
     state = new_game(1)
     state.phase = Phase.AFTERNOON
-    state.islanders[0].eliminated = True
+    state.heartbreakers[0].eliminated = True
 
-    assert all(islander.id != state.islanders[0].id for islander in free_npcs(state))
+    assert all(heartbreaker.id != state.heartbreakers[0].id for heartbreaker in free_npcs(state))
 
 
-def test_present_partner_adds_exactly_partner_pull() -> None:
-    """Romance pull contributes exactly PARTNER_PULL when the partner is present."""
+def test_present_partner_adds_exactly_partner_draw() -> None:
+    """Romance draw contributes exactly PARTNER_DRAW when the partner is present."""
     state = new_game(1)
     state.phase = Phase.AFTERNOON
     _neutralize_personalities(state)
     _place_all(state, Location.POOL)
-    a, b = state.islanders[2], state.islanders[3]
+    a, b = state.heartbreakers[2], state.heartbreakers[3]
     state.couples.append(
         Couple(partner_a_id=a.id, partner_b_id=b.id, formed_on_day=1, formed_via="opening")
     )
@@ -157,7 +157,7 @@ def test_present_partner_adds_exactly_partner_pull() -> None:
     b.location_id = Location.KITCHEN
     without_partner = destination_score(state, a, Location.TERRACE, SeededRng(1))
 
-    assert with_partner - without_partner == PARTNER_PULL
+    assert with_partner - without_partner == PARTNER_DRAW
 
 
 def test_deterministic_for_same_seed() -> None:
@@ -165,7 +165,7 @@ def test_deterministic_for_same_seed() -> None:
     state_b = new_game(1)
     for state in (state_a, state_b):
         state.phase = Phase.MORNING
-        _place_all(state, Location.FIREPIT)
+        _place_all(state, Location.FLAME_DECK)
 
     moves_a = plan_needs_movements(state_a, SeededRng(42))
     moves_b = plan_needs_movements(state_b, SeededRng(42))
@@ -175,7 +175,7 @@ def test_deterministic_for_same_seed() -> None:
 
 def test_apply_needs_movements_sets_locations() -> None:
     state = new_game(1)
-    npc = state.islanders[0]
+    npc = state.heartbreakers[0]
     npc.location_id = Location.POOL
     move = NeedsMovement(
         npc_id=npc.id,
@@ -191,55 +191,55 @@ def test_apply_needs_movements_sets_locations() -> None:
     assert npc.location_id is Location.TERRACE
 
 
-def test_casa_amor_does_not_drag_main_villa_npcs_across_the_divide() -> None:
-    """During Casa Amor the needs layer must keep the two villas separate.
+def test_flush_of_hearts_does_not_drag_main_resort_npcs_across_the_divide() -> None:
+    """During Flush of Hearts the needs layer must keep the two resorts separate.
 
-    The advertisement table only offers the *active* villa's locations, so a
-    main-villa islander stranded outside that set used to score -999 for
-    "stay put" and get yanked into Casa. Free NPCs are now gated to the active
-    villa, so neither side crosses over.
+    The advertisement table only offers the *active* resort's locations, so a
+    main-resort heartbreaker stranded outside that set used to score -999 for
+    "stay put" and get yanked into Flush. Free NPCs are now gated to the active
+    resort, so neither side crosses over.
     """
-    from src.game.engine.casa_amor import (
-        CASA_LOCATIONS,
+    from src.game.engine.flush_of_hearts import (
+        FLUSH_LOCATIONS,
         MAIN_LOCATIONS,
-        enter_casa_amor,
+        enter_flush_of_hearts,
     )
-    from src.game.state.casa import VillaName
+    from src.game.state.flush import ResortName
 
     state = new_game(1)
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
-    enter_casa_amor(state)
-    assert state.villa is VillaName.CASA_AMOR
-    casa_ids = set(state.casa_amor_state.casa_islander_ids)  # type: ignore[union-attr]
+    enter_flush_of_hearts(state)
+    assert state.resort is ResortName.FLUSH_OF_HEARTS
+    flush_ids = set(state.flush_of_hearts_state.flush_heartbreaker_ids)  # type: ignore[union-attr]
 
-    # Only the Casa cast is eligible to move; the main-villa cast is excluded.
-    eligible_ids = {islander.id for islander in free_npcs(state)}
-    assert eligible_ids <= casa_ids
+    # Only the Flush cast is eligible to move; the main-resort cast is excluded.
+    eligible_ids = {heartbreaker.id for heartbreaker in free_npcs(state)}
+    assert eligible_ids <= flush_ids
 
     state.phase = Phase.EVENING
     _neutralize_personalities(state)
     plan_and_apply(state, SeededRng(11))
 
-    for islander in state.islanders:
-        if islander.eliminated:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.eliminated:
             continue
-        if islander.id in casa_ids:
-            assert islander.location_id in CASA_LOCATIONS
+        if heartbreaker.id in flush_ids:
+            assert heartbreaker.location_id in FLUSH_LOCATIONS
         else:
-            assert islander.location_id in MAIN_LOCATIONS
+            assert heartbreaker.location_id in MAIN_LOCATIONS
 
 
 def test_extraverts_prefer_social_spots_over_introverts() -> None:
     """At equal advertisement, extraverts score the pool higher than introverts."""
     state = new_game(1)
     state.phase = Phase.AFTERNOON
-    extravert = state.islanders[0]
-    introvert = state.islanders[1]
+    extravert = state.heartbreakers[0]
+    introvert = state.heartbreakers[1]
     extravert.big5.extraversion = 9
     introvert.big5.extraversion = 1
     # Put a crowd at the pool so the social term has something to act on.
-    for islander in state.islanders[2:]:
-        islander.location_id = Location.POOL
+    for heartbreaker in state.heartbreakers[2:]:
+        heartbreaker.location_id = Location.POOL
 
     extravert_score = destination_score(state, extravert, Location.POOL, SeededRng(1))
     introvert_score = destination_score(state, introvert, Location.POOL, SeededRng(1))

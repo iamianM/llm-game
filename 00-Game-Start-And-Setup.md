@@ -1,6 +1,6 @@
 # Game Start and Setup Flow
 
-*How players begin their journey: character creation, Islander selection, and initial coupling*
+*How players begin their journey: character creation, Heartbreaker selection, and initial coupling*
 
 **Status:** Complete design
 **Last Updated:** 2025-10-08
@@ -13,7 +13,7 @@
 1. Choose Archetype (or Custom)
 2. Allocate Stats (30 points)
 3. See Stat Effects Breakdown (what each stat unlocks)
-4. Meet the Islanders (character cards)
+4. Meet the Heartbreakers (character cards)
 5. Reroll Cast (optional, uses tokens)
 6. Pick First Choice Partner
 7. Initial Coupling Ceremony
@@ -30,7 +30,7 @@
 ### **Archetype Selection Screen**
 
 ```
-CHOOSE YOUR ISLANDER TYPE
+CHOOSE YOUR HEARTBREAKER TYPE
 
 These archetypes give you a preset stat spread.
 You can customize stats after selecting.
@@ -41,7 +41,7 @@ You can customize stats after selecting.
 │ Natural charm and romantic appeal   │
 │                                     │
 │ Stats: Charm 8, Banter 5, EQ 6,     │
-│        Graft 7, Loyalty 4           │
+│        Spark 7, Loyalty 4           │
 │                                     │
 │ Strengths:                          │
 │ • Flirting (95% success rate)       │
@@ -54,7 +54,7 @@ You can customize stats after selecting.
 │ • Building long-term trust          │
 │                                     │
 │ Unlocks:                            │
-│ ✅ Bold category (Graft 7)          │
+│ ✅ Bold category (Spark 7)          │
 │ ✅ Romantic gestures (Charm 8)      │
 │                                     │
 │ [SELECT HEARTTHROB]                 │
@@ -66,7 +66,7 @@ You can customize stats after selecting.
 │ Witty and entertaining              │
 │                                     │
 │ Stats: Charm 5, Banter 9, EQ 6,     │
-│        Graft 6, Loyalty 4           │
+│        Spark 6, Loyalty 4           │
 │                                     │
 │ Strengths:                          │
 │ • Humor (95% success rate)          │
@@ -79,7 +79,7 @@ You can customize stats after selecting.
 │ • Sincere flirting                  │
 │                                     │
 │ Unlocks:                            │
-│ ✅ Bold category (Graft 6)          │
+│ ✅ Bold category (Spark 6)          │
 │ ✅ Roast playfully (Banter 9)       │
 │                                     │
 │ [SELECT COMEDIAN]                   │
@@ -91,7 +91,7 @@ You can customize stats after selecting.
 │ Reads people and situations well    │
 │                                     │
 │ Stats: Charm 6, Banter 7, EQ 8,     │
-│        Graft 5, Loyalty 4           │
+│        Spark 5, Loyalty 4           │
 │                                     │
 │ Strengths:                          │
 │ • Reading emotions (90% accuracy)   │
@@ -104,7 +104,7 @@ You can customize stats after selecting.
 │ • Appearing genuine                 │
 │                                     │
 │ Unlocks:                            │
-│ ✅ Bold category (Graft 5)          │
+│ ✅ Bold category (Spark 5)          │
 │ ✅ Read emotions (EQ 8)              │
 │                                     │
 │ [SELECT STRATEGIST]                 │
@@ -116,7 +116,7 @@ You can customize stats after selecting.
 │ Deep and emotionally intelligent    │
 │                                     │
 │ Stats: Charm 7, Banter 5, EQ 9,     │
-│        Graft 4, Loyalty 5           │
+│        Spark 4, Loyalty 5           │
 │                                     │
 │ Strengths:                          │
 │ • Building deep trust               │
@@ -126,7 +126,7 @@ You can customize stats after selecting.
 │                                     │
 │ Weaknesses:                         │
 │ • Playing the game strategically    │
-│ • Bold grafting moves               │
+│ • Bold sparking moves               │
 │                                     │
 │ Unlocks:                            │
 │ ✅ Vulnerable confession (EQ 9)     │
@@ -141,7 +141,7 @@ You can customize stats after selecting.
 │ Jack of all trades                  │
 │                                     │
 │ Stats: Charm 6, Banter 6, EQ 6,     │
-│        Graft 6, Loyalty 6           │
+│        Spark 6, Loyalty 6           │
 │                                     │
 │ Strengths:                          │
 │ • Versatile (70% at everything)     │
@@ -153,7 +153,7 @@ You can customize stats after selecting.
 │ • Fewer advanced unlocks            │
 │                                     │
 │ Unlocks:                            │
-│ ✅ Bold category (Graft 6)          │
+│ ✅ Bold category (Spark 6)          │
 │                                     │
 │ [SELECT BALANCED]                   │
 └─────────────────────────────────────┘
@@ -173,18 +173,18 @@ You can customize stats after selecting.
 ### **Advanced Archetypes (Unlockable via Meta-Progression)**
 
 ```
-🔒 LOCKED - Earn 1000 AP to unlock
+🔒 LOCKED - Earn 1000 Heart Beats to unlock
 
-💣 THE BOMBSHELL
-Charm 9, Graft 8, Banter 6, EQ 5, Loyalty 2
+💣 THE HEART THROB
+Charm 9, Spark 8, Banter 6, EQ 5, Loyalty 2
 Maximum romantic impact, low commitment
 
 🧘 THE THERAPIST
-EQ 9, Banter 7, Charm 6, Loyalty 7, Graft 1
+EQ 9, Banter 7, Charm 6, Loyalty 7, Spark 1
 Emotional specialist, builds deep trust
 
 🎭 THE CHAOS AGENT
-Graft 9, Banter 8, Charm 7, Loyalty 2, EQ 4
+Spark 9, Banter 8, Charm 7, Loyalty 2, EQ 4
 Maximum drama, entertainer build
 ```
 
@@ -236,7 +236,7 @@ Min 3, Max 9 per stat.
 └─────────────────────────────────────┘
 
 ┌─────────────────────────────────────┐
-│ GRAFT: [3] [4] [5] [6] [7] [8] [9]  │
+│ SPARK: [3] [4] [5] [6] [7] [8] [9]  │
 │ Bold, risky, forward interactions   │
 │ Current: 6 points                   │
 │                                     │
@@ -279,7 +279,7 @@ YOUR BUILD SUMMARY
 Charm: 8/9  🔥🔥🔥🔥🔥
 Banter: 5/9 😂😂😂
 EQ: 6/9     💭💭💭
-Graft: 7/9  ⚡⚡⚡⚡
+Spark: 7/9  ⚡⚡⚡⚡
 Loyalty: 4/9 💔💔
 
 ───────────────────────────────────────
@@ -290,12 +290,12 @@ Each stat gives a +5% success bonus per point.
   Charm 8 = +40% to all romantic actions
   Banter 5 = +25% to all humor actions
   EQ 6 = +30% to all deep conversations
-  Graft 7 = +35% to all bold moves
+  Spark 7 = +35% to all bold moves
 
 High stats also unlock advanced actions:
   ✅ Charm 8: "Sweep them off their feet"
-  ✅ Graft 7: "Steal from couple"
-  ✅ Graft 5+: BOLD category unlocked
+  ✅ Spark 7: "Steal from couple"
+  ✅ Spark 5+: BOLD category unlocked
 
 Loyalty is special:
   • Does NOT affect success rates
@@ -319,19 +319,19 @@ Weaknesses:
 
 ───────────────────────────────────────
 
-[CONTINUE TO ISLANDER SELECTION] →
+[CONTINUE TO HEARTBREAKER SELECTION] →
 ```
 
 ---
 
-## 4️⃣ Meet the Islanders
+## 4️⃣ Meet the Heartbreakers
 
 ### **Character Card View**
 
 ```
-MEET YOUR FELLOW ISLANDERS
+MEET YOUR FELLOW HEARTBREAKERS
 
-These are the 7 other Islanders competing for love.
+These are the 7 other Heartbreakers competing for love.
 Select one to view their full profile.
 Pick who you want to couple with first!
 
@@ -399,7 +399,7 @@ Pick who you want to couple with first!
 
 Reroll Tokens: 3 remaining
 
-[SELECT ISLANDERS TO REROLL] 🔄
+[SELECT HEARTBREAKERS TO REROLL] 🔄
 [CONFIRM FIRST CHOICE: CHLOE] →
 ```
 
@@ -458,7 +458,7 @@ BACKGROUND HINT:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[BACK TO ALL ISLANDERS]
+[BACK TO ALL HEARTBREAKERS]
 [PICK CHLOE AS FIRST CHOICE] ✓
 ```
 
@@ -499,9 +499,9 @@ function calculateChemistryPreview(player, npc) {
 ### **Reroll Selection Screen**
 
 ```
-REROLL ISLANDERS
+REROLL HEARTBREAKERS
 
-Select which Islanders you want to reroll.
+Select which Heartbreakers you want to reroll.
 Costs 1 token regardless of how many you select.
 
 You have 3 reroll tokens remaining.
@@ -529,9 +529,9 @@ You have 3 reroll tokens remaining.
 │   (Actually, keep him for backup)   │
 └─────────────────────────────────────┘
 
-... (other Islanders)
+... (other Heartbreakers)
 
-Selected for reroll: 1 Islander (Marcus)
+Selected for reroll: 1 Heartbreaker (Marcus)
 
 [CONFIRM REROLL - Uses 1 token] 🔄
 [CANCEL]
@@ -539,7 +539,7 @@ Selected for reroll: 1 Islander (Marcus)
 
 **After reroll:**
 ```
-Rerolling selected Islanders...
+Rerolling selected Heartbreakers...
 
 MARCUS has been replaced with:
 
@@ -569,17 +569,17 @@ Reroll tokens remaining: 2
 **Starting tokens:** 3 free per run
 
 **How it works:**
-- Select any number of Islanders (1-7)
+- Select any number of Heartbreakers (1-7)
 - Costs 1 token regardless of count
-- Selected Islanders replaced with new random generations
+- Selected Heartbreakers replaced with new random generations
 - Can reroll multiple times (until tokens run out)
 
 **Meta-progression unlock:**
 ```
-REROLL TOKEN PACKS (Spend AP)
-  • +3 tokens: 300 AP
-  • +5 tokens: 500 AP
-  • Infinite rerolls for one run: 1000 AP
+REROLL TOKEN PACKS (Spend Heart Beats)
+  • +3 tokens: 300 Heart Beats
+  • +5 tokens: 500 Heart Beats
+  • Infinite rerolls for one run: 1000 Heart Beats
 ```
 
 ---
@@ -596,12 +596,12 @@ You've chosen Chloe as your preferred partner.
 During the Initial Coupling ceremony, you will
 attempt to couple with Chloe.
 
-⚠️ However, other Islanders may also choose her!
+⚠️ However, other Heartbreakers may also choose her!
 
 If multiple people want Chloe:
   • Coupling order is randomized
   • If someone picks her first, you'll choose
-    from remaining Islanders
+    from remaining Heartbreakers
 
 Your backup options (by chemistry):
   1. ⭐⭐⭐⭐⭐ Chloe (95) - First choice
@@ -625,9 +625,9 @@ Your backup options (by chemistry):
 ```
 DAY 1: INITIAL COUPLING CEREMONY
 
-All Islanders gather at the firepit.
+All Heartbreakers gather at the Flame Deck.
 
-The Producer will call Islanders forward one by one
+The Producer will call Heartbreakers forward one by one
 to choose their partner.
 
 ⚠️ Coupling order is randomized for drama!
@@ -752,10 +752,10 @@ function npcInitialCoupling(npc, availablePartners) {
   return ranked[0].partner
 }
 
-function determineCouplingOrder(allIslanders) {
+function determineCouplingOrder(allHeartbreakers) {
   // Randomize order for drama
   // But ensure player goes roughly in middle (position 3-5)
-  const order = shuffle(allIslanders)
+  const order = shuffle(allHeartbreakers)
 
   // Move player to middle
   const playerIndex = order.indexOf(player)
@@ -772,38 +772,38 @@ function determineCouplingOrder(allIslanders) {
 
 ## 8️⃣ Meta-Progression System
 
-### **After Run Ends (Earn AP)**
+### **After Run Ends (Earn Heart Beats)**
 
 ```
 RUN COMPLETE!
 
-You were dumped on Day 12 (Casa Amor recoupling)
+You went Heart Out on Day 12 (Flush of Hearts Pairing Ceremony)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-AUDIENCE POINTS EARNED:
+HEART BEATS EARNED:
 
-Days Survived: 12 days × 50 AP = 600 AP
-Placement: Top 6 = 200 AP
-Drama Created: 8 moments × 25 AP = 200 AP
-Final Audience Score: 72/100 = 72 AP
-Memorable Moments: 3 × 50 AP = 150 AP
+Days Survived: 12 days × 50 Heart Beats = 600 Heart Beats
+Placement: Top 6 = 200 Heart Beats
+Drama Created: 8 moments × 25 Heart Beats = 200 Heart Beats
+Final Pulse: 72/100 = 72 Heart Beats
+Memorable Moments: 3 × 50 Heart Beats = 150 Heart Beats
 
-TOTAL: 1,222 AP 🎉
+TOTAL: 1,222 Heart Beats 🎉
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-All-time AP: 1,222 (first run)
+All-time Heart Beats: 1,222 (first run)
 
-[SPEND AP] → [PLAY AGAIN]
+[SPEND HEART BEATS] → [PLAY AGAIN]
 ```
 
-### **Spend AP Screen**
+### **Spend Heart Beats Screen**
 
 ```
-REUNION SHOW - SPEND AUDIENCE POINTS
+THE REUNION - SPEND HEART BEATS
 
-All-time AP: 1,222
+All-time Heart Beats: 1,222
 Available to spend: 1,222
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -811,50 +811,50 @@ Available to spend: 1,222
 PERMANENT STAT BOOSTS:
 
 Your current stats (from last run):
-  Charm: 8, Banter: 5, EQ: 6, Graft: 7, Loyalty: 4
+  Charm: 8, Banter: 5, EQ: 6, Spark: 7, Loyalty: 4
 
-[ ] +1 Charm (8 → 9): 500 AP
+[ ] +1 Charm (8 → 9): 500 Heart Beats
     Unlock: "Sweep off feet" action
 
-[ ] +1 Banter (5 → 6): 500 AP
+[ ] +1 Banter (5 → 6): 500 Heart Beats
 
-[ ] +1 EQ (6 → 7): 500 AP
+[ ] +1 EQ (6 → 7): 500 Heart Beats
     Unlock: "Vulnerable confession" action
 
-[ ] +1 Graft (7 → 8): 500 AP
+[ ] +1 Spark (7 → 8): 500 Heart Beats
     Unlock: "Public declaration" action
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 REROLL TOKENS:
 
-[ ] +3 Reroll Tokens: 300 AP
-[ ] +5 Reroll Tokens: 500 AP
+[ ] +3 Reroll Tokens: 300 Heart Beats
+[ ] +5 Reroll Tokens: 500 Heart Beats
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ADVANCED ARCHETYPES: 🔒
 
-[ ] Unlock "The Bombshell": 1,000 AP
-    (Charm 9, Graft 8, Banter 6, EQ 5, Loyalty 2)
+[ ] Unlock "The Heart Throb": 1,000 Heart Beats
+    (Charm 9, Spark 8, Banter 6, EQ 5, Loyalty 2)
 
-[ ] Unlock "The Therapist": 1,000 AP
-    (EQ 9, Banter 7, Charm 6, Loyalty 7, Graft 1)
+[ ] Unlock "The Therapist": 1,000 Heart Beats
+    (EQ 9, Banter 7, Charm 6, Loyalty 7, Spark 1)
 
-[ ] Unlock "The Chaos Agent": 1,500 AP
-    (Graft 9, Banter 8, Charm 7, Loyalty 2, EQ 4)
+[ ] Unlock "The Chaos Agent": 1,500 Heart Beats
+    (Spark 9, Banter 8, Charm 7, Loyalty 2, EQ 4)
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 STARTING ADVANTAGES:
 
-[ ] Start next run with +20 chemistry: 400 AP
-    (Pick which Islander)
+[ ] Start next run with +20 chemistry: 400 Heart Beats
+    (Pick which Heartbreaker)
 
-[ ] Choose bombshell type (once): 600 AP
-    (Decide if next bombshell is Weapon/Rescue/Balanced)
+[ ] Choose Heart Throb type (once): 600 Heart Beats
+    (Decide if next Heart Throb is Weapon/Rescue/Balanced)
 
-[ ] First elimination immunity: 800 AP
+[ ] First elimination immunity: 800 Heart Beats
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -864,19 +864,19 @@ STARTING ADVANTAGES:
 ### **Progression Example**
 
 **Run 1:** Base build (Heartthrob)
-- Earn: 1,222 AP
-- Spend: +1 Charm (500 AP) + +3 Rerolls (300 AP)
-- Remaining: 422 AP saved
+- Earn: 1,222 Heart Beats
+- Spend: +1 Charm (500 Heart Beats) + +3 Rerolls (300 Heart Beats)
+- Remaining: 422 Heart Beats saved
 
 **Run 2:** Heartthrob with Charm 9
 - Now have "Sweep off feet" action unlocked
-- Earn: 1,800 AP (won the game!)
-- Total saved: 2,222 AP
-- Spend: Unlock "The Bombshell" (1,000 AP) + First elimination immunity (800 AP)
-- Remaining: 422 AP
+- Earn: 1,800 Heart Beats (won the game!)
+- Total saved: 2,222 Heart Beats
+- Spend: Unlock "The Heart Throb" (1,000 Heart Beats) + First elimination immunity (800 Heart Beats)
+- Remaining: 422 Heart Beats
 
-**Run 3:** Play as The Bombshell with immunity
-- Charm 9, Graft 8 (max romance and bold moves)
+**Run 3:** Play as The Heart Throb with immunity
+- Charm 9, Spark 8 (max romance and bold moves)
 - Protected from first elimination
 - Different playstyle, new strategies
 
@@ -886,7 +886,7 @@ STARTING ADVANTAGES:
 
 ### **1. Player Agency**
 - ✅ Choose archetype or custom build
-- ✅ See all Islanders before committing
+- ✅ See all Heartbreakers before committing
 - ✅ Reroll cast to find compatible matches
 - ✅ Pick first choice partner
 - ✅ Understand build before playing
@@ -898,7 +898,7 @@ STARTING ADVANTAGES:
 - ✅ Reroll tokens create meaningful choice (save for later or use now?)
 
 ### **3. Progression Loop**
-- ✅ Earn AP based on performance
+- ✅ Earn Heart Beats based on performance
 - ✅ Permanent stat boosts (get stronger)
 - ✅ Unlock advanced archetypes (new playstyles)
 - ✅ Starting advantages (experiment with builds)
@@ -915,20 +915,20 @@ STARTING ADVANTAGES:
 
 ### **LLM Usage in Setup**
 
-**Islander Generation:**
+**Heartbreaker Generation:**
 ```javascript
-async function generateIslander(playerBuild) {
-  const islander = await LLM.generate({
-    schema: IslanderSchema,
-    prompt: `Generate Love Island contestant.
+async function generateHeartbreaker(playerBuild) {
+  const heartbreaker = await LLM.generate({
+    schema: HeartbreakerSchema,
+    prompt: `Generate Paradise Hearts contestant.
              Player stats: ${playerBuild.stats}
              Create varied compatibility (some high, some low chemistry).`
   })
 
   // Calculate chemistry preview
-  islander.chemistryPreview = calculateChemistryPreview(playerBuild, islander)
+  heartbreaker.chemistryPreview = calculateChemistryPreview(playerBuild, heartbreaker)
 
-  return islander
+  return heartbreaker
 }
 ```
 
@@ -941,7 +941,7 @@ async function generateCast(playerBuild) {
   const chemistryTargets = [90, 80, 70, 65, 60, 50, 45] // spread from high to low
 
   for (const target of chemistryTargets) {
-    const npc = await generateIslanderWithChemistry(playerBuild, target)
+    const npc = await generateHeartbreakerWithChemistry(playerBuild, target)
     cast.push(npc)
   }
 
@@ -954,16 +954,16 @@ async function generateCast(playerBuild) {
 ### **Reroll Implementation**
 
 ```javascript
-function rerollSelectedIslanders(selectedIDs, playerBuild) {
+function rerollSelectedHeartbreakers(selectedIDs, playerBuild) {
   // Cost 1 token regardless of count
   if (rerollTokens < 1) return error("No tokens remaining")
 
   rerollTokens -= 1
 
-  // Replace selected Islanders
+  // Replace selected Heartbreakers
   selectedIDs.forEach(async id => {
-    const newIslander = await generateIslander(playerBuild)
-    replaceCastMember(id, newIslander)
+    const newHeartbreaker = await generateHeartbreaker(playerBuild)
+    replaceCastMember(id, newHeartbreaker)
   })
 }
 ```

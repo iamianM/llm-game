@@ -1,14 +1,14 @@
 "use client";
 
 import type { SessionState } from "../../lib/types";
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import { PLAYER_ANCHOR, PLAYER_ANCHOR_COMPACT, npcPositions } from "../../lib/scene/positions";
 import type { CharacterPose, Position } from "../../lib/scene/types";
 import { CharacterSprite } from "./CharacterSprite";
 
 type Props = {
   state: SessionState;
-  look?: IslanderLook | null;
+  look?: HeartbreakerLook | null;
   focusedId: string | null;
   speakerPose: CharacterPose;
   // The bottom choice fan is open — the player tucks up + shrinks (mobile) so
@@ -23,7 +23,7 @@ export function CharacterLayer({ state, look = null, focusedId, speakerPose, cho
   const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
   const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
   return (
-    <div className="character-layer" aria-label="Villa scene characters">
+    <div className="character-layer" aria-label="Sunset Bay scene characters">
       {npcs.map((npc, index) => (
         <CharacterSprite
           key={npc.id}
@@ -66,16 +66,16 @@ function fallbackNpcPosition(index: number): Position {
   return { x: 22 + index * 7, y: 58, scale: 0.62, dimmed: true };
 }
 
-// Only show islanders in the player's current location. The focused NPC (if
+// Only show heartbreakers in the player's current location. The focused NPC (if
 // any) is always included so quiz scenes work even when the target's room
 // differs (e.g. a Producer-text gather). During Day-1 intros the entire
-// cast appears at the firepit visually regardless of their canonical room.
+// cast appears at the flame_deck visually regardless of their canonical room.
 export function visibleNpcs(state: Props["state"], focusedId: string | null) {
   const allHere = state.phase === "intros";
-  return state.islanders.filter((islander) => {
-    if (islander.eliminated) return false;
+  return state.heartbreakers.filter((heartbreaker) => {
+    if (heartbreaker.eliminated) return false;
     if (allHere) return true;
-    if (focusedId && islander.id === focusedId) return true;
-    return islander.location_id === state.location_id;
+    if (focusedId && heartbreaker.id === focusedId) return true;
+    return heartbreaker.location_id === state.location_id;
   });
 }

@@ -120,8 +120,8 @@ def _run_scenario(
     state = _new_scenario_state(scenario)
     rng = SeededRng(scenario.seed)
     agents = AgentBundle.live() if real_llm else AgentBundle.mock()
-    if real_llm and not scenario.live_villa_life:
-        agents.villa_orchestrator = None
+    if real_llm and not scenario.live_resort_life:
+        agents.resort_orchestrator = None
         agents.background_dialogue = None
     turn_results: list[GoldenTurnResult] = []
     records: list[dict[str, object]] = []
@@ -134,11 +134,11 @@ def _run_scenario(
                 state,
                 turn_spec.action,
                 rng,
-                islander_voice=agents.islander_voice,
+                heartbreaker_voice=agents.heartbreaker_voice,
                 contextual_options=agents.contextual_options,
                 event_narrator=agents.event_narrator,
                 conversation_curator=agents.conversation_curator,
-                villa_orchestrator=agents.villa_orchestrator,
+                resort_orchestrator=agents.resort_orchestrator,
                 background_dialogue=agents.background_dialogue,
             )
             state = turn.state
@@ -233,10 +233,10 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
     if scenario.initial_location is not None:
         state.location_id = scenario.initial_location
     if scenario.initial_relationships is not None:
-        for islander in state.islanders:
-            relationship = scenario.initial_relationships.get(islander.id)
+        for heartbreaker in state.heartbreakers:
+            relationship = scenario.initial_relationships.get(heartbreaker.id)
             if relationship is not None:
-                islander.relationship = relationship.model_copy(deep=True)
+                heartbreaker.relationship = relationship.model_copy(deep=True)
     if scenario.initial_couples is not None:
         state.couples = [couple.model_copy(deep=True) for couple in scenario.initial_couples]
     if scenario.initial_npc_conversations is not None:
@@ -276,7 +276,7 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
             state.phase = target_phase
             state.phase_clock = _PhaseClock(phase=target_phase.value, budget_minutes=budget)
             state.intro_completed_ids = [
-                islander.id for islander in state.islanders if not islander.eliminated
+                heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
             ]
             state.intro_memory_created = True
     return state
@@ -285,10 +285,10 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
 def _apply_turn_arrangements(state: GameState, turn_spec: GoldenTurnSpec) -> None:
     if turn_spec.arrange_player_location is not None:
         state.location_id = turn_spec.arrange_player_location
-    for islander in state.islanders:
-        location = turn_spec.arrange_npc_locations.get(islander.id)
+    for heartbreaker in state.heartbreakers:
+        location = turn_spec.arrange_npc_locations.get(heartbreaker.id)
         if location is not None:
-            islander.location_id = location
+            heartbreaker.location_id = location
     if turn_spec.arrange_active_conversation is not None:
         state.active_conversation = turn_spec.arrange_active_conversation.model_copy(deep=True)
 
@@ -299,8 +299,8 @@ def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
         payload["player_location"] = turn_spec.arrange_player_location.value
     if turn_spec.arrange_npc_locations:
         payload["npc_locations"] = {
-            islander_id: location.value
-            for islander_id, location in turn_spec.arrange_npc_locations.items()
+            heartbreaker_id: location.value
+            for heartbreaker_id, location in turn_spec.arrange_npc_locations.items()
         }
     if turn_spec.arrange_active_conversation is not None:
         conversation = turn_spec.arrange_active_conversation
@@ -328,27 +328,27 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
     }:
         return ["Engine-only turn"]
     if kind in {"start_conversation", "respond_with"}:
-        tools = ["Islander Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
-        if scenario.live_villa_life:
-            tools.extend(["Villa Orchestrator -> VillaUpdate", "Background Dialogue -> BackgroundExchange"])
+        tools = ["Heartbreaker Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
+        if scenario.live_resort_life:
+            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
         return tools
     if kind == "end_conversation":
         tools = ["Conversation Curator -> MemoryBatch"]
-        if scenario.live_villa_life:
-            tools.extend(["Villa Orchestrator -> VillaUpdate", "Background Dialogue -> BackgroundExchange"])
+        if scenario.live_resort_life:
+            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
         return tools
     if kind in {
         "ambient",
         "join_gather",
-        "recouple",
-        "propose_recouple",
+        "pair",
+        "propose_pair",
         "challenge_response",
-        "hideaway",
+        "private_suite",
         "npc_proposal_response",
     }:
         tools = ["Event Narrator -> EventNarration"]
-        if scenario.live_villa_life:
-            tools.extend(["Villa Orchestrator -> VillaUpdate", "Background Dialogue -> BackgroundExchange"])
+        if scenario.live_resort_life:
+            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
         return tools
     return ["Engine-only turn"]
 

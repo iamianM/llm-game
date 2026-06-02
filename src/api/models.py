@@ -114,7 +114,7 @@ class PlayerState(BaseModel):
     memories: list[ApiMemory]
 
 
-class IslanderSummary(BaseModel):
+class HeartbreakerSummary(BaseModel):
     id: str
     name: str
     gender: str
@@ -178,20 +178,20 @@ class SessionState(BaseModel):
     turn_index: int
     location_id: str
     location_label: str
-    villa: str
-    villa_label: str
+    resort: str
+    resort_label: str
     phase_clock: dict[str, object]
     player: PlayerState
-    islanders: list[IslanderSummary]
+    heartbreakers: list[HeartbreakerSummary]
     couples: list[CoupleSummary]
     audience: AudienceState
-    pending_recouple_proposal: dict[str, object] | None
+    pending_pair_proposal: dict[str, object] | None
     pending_challenge: dict[str, object] | None = None
     outcome: str | None
     active_conversation_target_id: str | None
-    villa_snapshot: dict[str, list[str]]
+    resort_snapshot: dict[str, list[str]]
     daily_recaps: list[dict[str, object]]
-    # Dynamically-generated NPC greetings keyed by islander id. Empty in mock
+    # Dynamically-generated NPC greetings keyed by heartbreaker id. Empty in mock
     # mode; the UI falls back to templated greetings in web/lib/intros.ts.
     intros_greetings: dict[str, str] = {}
 
@@ -213,7 +213,7 @@ class TurnResponse(BaseModel):
     memories_formed: list[dict[str, object]]
     background_activity: list[dict[str, object]]
     # Short, in-world line describing how this action shifted the player's bond
-    # with the acted-on islander ("The spark with Chloe is electric."). None when
+    # with the acted-on heartbreaker ("The spark with Chloe is electric."). None when
     # the action changed no bond (idle moves, exits). Surfaced inline in-scene.
     connection_shift: str | None = None
     state_hash: str
@@ -261,7 +261,7 @@ class CastDetail(BaseModel):
     backstory: str
     familiarity: int
     relationship: ApiRelationship
-    type_on_paper: dict[str, object | None]
+    ideal_match: dict[str, object | None]
     known_facts: list[ApiKnownFact]
     memories: list[ApiMemory]
     coupled_with: str | None

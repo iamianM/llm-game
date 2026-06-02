@@ -5,7 +5,7 @@ The FastAPI server is a *thin adapter*. It does no game logic — every request
 calls into existing `src/game/` modules and serializes their output.
 
 **One of its key responsibilities** is translating structured engine identifiers
-(`bombshell`, `casa_amor`, `recouple`, `opening`, etc.) into Paradise Hearts
+(`heart_throb`, `flush_of_hearts`, `pair`, `opening`, etc.) into Paradise Hearts
 display strings (Heart Throb, Flush of Hearts, Heart Swap, First Spark, etc.)
 before sending to the frontend. It must not rewrite free-text prose with
 keyword or regex replacement. See `paradise-hearts-glossary.md` for the full
@@ -154,10 +154,10 @@ event: options
 data: { "actions": [ ... ] }
 
 event: ceremony
-data: { "kind": "recouple_proposal", "narration": "...", "couples": [...] }
+data: { "kind": "pair_proposal", "narration": "...", "couples": [...] }
 // only when a ceremony fires this turn
 
-event: villa_update
+event: resort_update
 data: { "interruptions": [...], "background_starts": [...], ... }
 // only when there is background activity
 
@@ -186,7 +186,7 @@ Full popout detail for one NPC. Lazy-loaded when the player opens a cast tile.
   "gender": "woman",
   "archetype": "sweetheart",
   "mood": "content",
-  "location": "firepit",
+  "location": "flame_deck",
   "backstory": "Twenty-six, primary school teacher from Liverpool. ...",
   "familiarity": 41,
   "relationship": {
@@ -286,21 +286,21 @@ class SessionState(BaseModel):
     day: int
     phase: str           # "morning" | "challenge" | "afternoon" | "text" | "evening" | "intros"
     turn_index: int
-    location_id: str     # "pool" | "kitchen" | ... | "casa_pool" | ...
+    location_id: str     # "pool" | "kitchen" | ... | "flush_pool" | ...
     player: PlayerState
-    islanders: list[IslanderSummary]      # everyone at a glance
+    heartbreakers: list[HeartbreakerSummary]      # everyone at a glance
     couples: list[CoupleSummary]
     audience: AudienceState
-    pending_recouple_proposal: ProposalState | None
-    villa: str           # "paradise" | "wild_hearts"  ← engine-side names
+    pending_pair_proposal: ProposalState | None
+    resort: str           # "main" | "flush_of_hearts"  ← engine-side names
     phase_clock: PhaseClock
     outcome: str | None
 ```
 
-### `IslanderSummary`
+### `HeartbreakerSummary`
 
 ```python
-class IslanderSummary(BaseModel):
+class HeartbreakerSummary(BaseModel):
     id: str
     name: str
     gender: str
@@ -378,35 +378,37 @@ class Memory(BaseModel):
 
 ## Naming reconciliation: engine vs. UI
 
-The engine uses generic identifiers (`bombshell`, `casa_amor`, `recouple`).
-The UI displays Paradise Hearts terms. The FastAPI server is responsible for
-the **display translation**, so the frontend never sees the engine names:
+The engine uses structured identifiers (`heart_throb`, `flush_of_hearts`,
+`pair`, `opening`, etc.). The UI displays Paradise Hearts terms. The FastAPI
+server is responsible for the **display translation**, so the frontend always
+sees the correct Paradise Hearts strings. See `src/api/display.py` for the
+authoritative implementation.
 
 ```python
 DISPLAY_NAMES = {
-    # Locations and twist
-    "paradise": "Sunset Bay",                  # state.villa == "paradise"
-    "casa_amor": "Flush of Hearts",            # state.villa == "casa_amor"
+    # Locations and resort state
+    "main": "Sunset Bay",                          # resort == "main"
+    "flush_of_hearts": "Flush of Hearts",          # resort == "flush_of_hearts"
 
     # Ceremony event kinds
-    "bombshell": "Heart Throb",
-    "recouple": "Heart Swap",                  # action kind
-    "recoupling": "Pairing Ceremony",          # event kind
-    "casa_amor_announce": "Flush of Hearts Announcement",
-    "casa_amor_arrival": "Flush of Hearts Arrival",
-    "casa_amor_decision": "Flush of Hearts Decision",
-    "casa_amor_return_reveal": "Sunset Bay Return",
-    "recouple_proposal": "Heart Swap Proposal",
+    "heart_throb": "Heart Throb",
+    "pair": "Heart Swap",                          # action kind
+    "pairing": "Pairing Ceremony",                 # event kind
+    "flush_of_hearts_announce": "Flush of Hearts Announcement",
+    "flush_of_hearts_arrival": "Flush of Hearts Arrival",
+    "flush_of_hearts_decision": "Flush of Hearts Decision",
+    "flush_of_hearts_return_reveal": "Sunset Bay Return",
+    "pair_proposal": "Heart Swap Proposal",
     "final_vote": "Finale",
 
     # Couple formed_via values
     "opening": "First Spark",
     "ceremony": "Pairing Ceremony",
     "proposal": "Heart Swap Proposal",
-    "casa_return": "Sunset Bay Return",
+    "flush_return": "Sunset Bay Return",
 
     # Status transitions
-    "hideaway": "Paradise Suite",
+    "private_suite": "Paradise Suite",
     "elimination": "Heart Out",
 
     # Phases
@@ -418,7 +420,7 @@ DISPLAY_NAMES = {
     "evening": "Evening",
 
     # Cast role
-    "islander": "Heartbreaker",
+    "heartbreaker": "Heartbreaker",
 
     # Audience
     "public_perception": "Pulse",
@@ -429,8 +431,8 @@ DISPLAY_NAMES = {
     "challenges": {
         "compatibility_quiz": "Compatibility Quiz",
         "heart_rate": "Pulse Race",
-        "mr_and_mrs": "The Couples Quiz",
-        "snog_marry_pie": "Kiss Wed Pass",
+        "couples_quiz": "The Couples Quiz",
+        "kiss_wed_pass": "Kiss Wed Pass",
         "lie_detector": "Lie Detector",
         "final_couples": "Final Couples Challenge",
     },
@@ -494,7 +496,7 @@ async def turn_stream(session_id: str, req: TurnRequest):
 ```
 
 `run_turn_streaming` wraps the existing `run_turn` but yields events as the
-LLM responds. The Islander Voice agent already supports streaming via the
+LLM responds. The Heartbreaker Voice agent already supports streaming via the
 OpenAI streaming API; FastAPI just needs to forward chunks.
 
 For mock LLM, emit chunks with a small sleep between them so the typewriter
@@ -508,7 +510,7 @@ All non-2xx responses share a body shape:
 {
   "error": {
     "code": "INVALID_ACTION",
-    "message": "Action 'propose_recouple' is not available in current state",
+    "message": "Action 'propose_pair' is not available in current state",
     "details": {"state_phase": "intros"}
   }
 }

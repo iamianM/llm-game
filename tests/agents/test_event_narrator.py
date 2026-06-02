@@ -27,9 +27,9 @@ from src.game.state.models import Couple, Phase, new_game
 @pytest.mark.parametrize(
     "events",
     [
-        [CeremonyEvent(kind="bombshell", message="Aisha enters the villa.", islander_id="aisha")],
-        [CeremonyEvent(kind="recoupling", message="Chloe couples with the player.", islander_id="chloe")],
-        [CeremonyEvent(kind="elimination", message="Liam leaves the villa.", islander_id="liam")],
+        [CeremonyEvent(kind="heart_throb", message="Aisha enters Sunset Bay.", heartbreaker_id="aisha")],
+        [CeremonyEvent(kind="pairing", message="Chloe couples with the player.", heartbreaker_id="chloe")],
+        [CeremonyEvent(kind="elimination", message="Liam leaves Sunset Bay.", heartbreaker_id="liam")],
     ],
 )
 def test_event_narrator_output_contract(events: list[CeremonyEvent]) -> None:
@@ -46,16 +46,33 @@ def test_event_narrator_validation_accepts_starting_cast_display_name() -> None:
     """Starting-cast ids may appear in prose as their public first name."""
     validate_event_narration(
         narration=EventNarration(
-            prose="The firepit falls quiet as Jordan faces the decision. Every glance sharpens, and the villa absorbs the shock."
+            prose="The Flame Deck falls quiet as Jordan faces the decision. Every glance sharpens, and Sunset Bay absorbs the shock."
         ),
         events=[
             CeremonyEvent(
                 kind="elimination",
-                message="Jordan leaves the villa.",
-                islander_id="jordan",
+                message="Jordan leaves Sunset Bay.",
+                heartbreaker_id="jordan",
             )
         ],
     )
+
+
+def test_event_narrator_validation_requires_word_bounded_participant_mentions() -> None:
+    """A Heart Throb id like sam_ht must not be satisfied by text like 'same'."""
+    with pytest.raises(ValueError, match="omitted participant"):
+        validate_event_narration(
+            narration=EventNarration(
+                prose="The same silence ripples across Sunset Bay as the decision lands."
+            ),
+            events=[
+                CeremonyEvent(
+                    kind="elimination",
+                    message="Sam leaves Sunset Bay.",
+                    heartbreaker_id="sam_ht",
+                )
+            ],
+        )
 
 
 def test_mock_event_narration_uses_player_facing_event_language() -> None:
@@ -64,8 +81,8 @@ def test_mock_event_narration_uses_player_facing_event_language() -> None:
     narration = mock_event_narration(
         state,
         [
-            CeremonyEvent(kind="recoupling", message="internal recouple completed"),
-            CeremonyEvent(kind="elimination", message="jordan leaves", islander_id="jordan"),
+            CeremonyEvent(kind="pairing", message="internal pair completed"),
+            CeremonyEvent(kind="elimination", message="jordan leaves", heartbreaker_id="jordan"),
         ],
     )
 
@@ -145,7 +162,7 @@ def _couples_quiz_partner_round() -> Challenge:
     return Challenge(
         id="couples-1",
         day=3,
-        kind="mr_and_mrs",
+        kind="couples_quiz",
         stat_tested="combined",
         participants=["player", "chloe"],
         rounds=[
@@ -231,7 +248,7 @@ def test_validate_event_narration_rejects_leaked_snake_case_key() -> None:
             EventNarration(
                 prose="The quiz ends as you miss Chloe on drink_of_choice by a mile."
             ),
-            [CeremonyEvent(kind="challenge", message="quiz resolved", islander_id="chloe")],
+            [CeremonyEvent(kind="challenge", message="quiz resolved", heartbreaker_id="chloe")],
         )
 
 
@@ -239,8 +256,8 @@ def test_validate_event_narration_rejects_key_value_metadata() -> None:
     """Bracketed key=value metadata in prose fails validation."""
     with pytest.raises(ValueError, match="leaked engine token"):
         validate_event_narration(
-            EventNarration(prose="Chloe reacts (trait=charm) and the villa stirs."),
-            [CeremonyEvent(kind="challenge", message="quiz resolved", islander_id="chloe")],
+            EventNarration(prose="Chloe reacts (trait=charm) and Sunset Bay stirs."),
+            [CeremonyEvent(kind="challenge", message="quiz resolved", heartbreaker_id="chloe")],
         )
 
 
@@ -250,11 +267,11 @@ def test_validate_event_narration_accepts_clean_quiz_prose() -> None:
         EventNarration(
             prose=(
                 "The Compatibility Quiz lands with a wince: you guessed an espresso "
-                "martini when Chloe's drink of choice was white wine, and the villa "
+                "martini when Chloe's drink of choice was white wine, and Sunset Bay "
                 "feels the miss."
             )
         ),
-        [CeremonyEvent(kind="challenge", message="quiz resolved", islander_id="chloe")],
+        [CeremonyEvent(kind="challenge", message="quiz resolved", heartbreaker_id="chloe")],
     )
 
 
@@ -272,7 +289,7 @@ def test_validate_event_narration_rejects_eq_stat_jargon() -> None:
                     "Compatibility Quiz's EQ test remains pending."
                 )
             ),
-            [CeremonyEvent(kind="recoupling", message="couples locked", islander_id="chloe")],
+            [CeremonyEvent(kind="pairing", message="couples locked", heartbreaker_id="chloe")],
         )
 
 
@@ -285,7 +302,7 @@ def test_validate_event_narration_allows_eq_inside_words() -> None:
                 "between them settles into something steady."
             )
         ),
-        [CeremonyEvent(kind="recoupling", message="couples locked", islander_id="chloe")],
+        [CeremonyEvent(kind="pairing", message="couples locked", heartbreaker_id="chloe")],
     )
 
 
@@ -299,16 +316,16 @@ def test_event_narrator_context_names_player_couple() -> None:
     # so the narrator context can trust the message verbatim.
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="recoupling", message="Chloe couples with Demo.", islander_id="chloe")],
+        [CeremonyEvent(kind="pairing", message="Chloe couples with Demo.", heartbreaker_id="chloe")],
     )
 
     assert "Current player couple: Demo is coupled with Chloe" in rendered
     assert "(Chloe)" not in rendered
 
 
-def test_recoupling_narrated_as_evening_after_clock_rolls_to_morning() -> None:
-    """A firepit ceremony resolves at night, but the engine rolls the clock to
-    the next morning the instant the recoupling pick lands (so the daily recap
+def test_pairing_narrated_as_evening_after_clock_rolls_to_morning() -> None:
+    """A flame_deck ceremony resolves at night, but the engine rolls the clock to
+    the next morning the instant the pairing pick lands (so the daily recap
     can fire). The narrator must still be told it's the prior evening, or it
     writes "morning tension" over a torch-lit ceremony."""
     state = new_game(1)
@@ -317,7 +334,7 @@ def test_recoupling_narrated_as_evening_after_clock_rolls_to_morning() -> None:
 
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="recoupling", message="The Pairing Ceremony locks in the next couples.")],
+        [CeremonyEvent(kind="pairing", message="The Pairing Ceremony locks in the next couples.")],
     )
 
     assert "Day: 3" in rendered
@@ -326,7 +343,7 @@ def test_recoupling_narrated_as_evening_after_clock_rolls_to_morning() -> None:
 
 
 def test_non_ceremony_morning_events_keep_the_live_clock() -> None:
-    """The evening pin is scoped to firepit ceremonies — an ordinary morning
+    """The evening pin is scoped to flame_deck ceremonies — an ordinary morning
     beat must still narrate as the current morning."""
     state = new_game(1)
     state.day = 4
@@ -334,7 +351,7 @@ def test_non_ceremony_morning_events_keep_the_live_clock() -> None:
 
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="bombshell", message="Aisha enters the villa.", islander_id="aisha")],
+        [CeremonyEvent(kind="heart_throb", message="Aisha enters Sunset Bay.", heartbreaker_id="aisha")],
     )
 
     assert "Day: 4" in rendered
@@ -346,7 +363,7 @@ def test_event_producers_emit_display_safe_messages() -> None:
     source, so no raw id or "the player" meta-token reaches a rendered message,
     a memory, or the narrator context (ENGINEERING R7 — typed at the source,
     never regex-scrubbed downstream)."""
-    from src.game.engine.hideaway import hideaway_event
+    from src.game.engine.private_suite import private_suite_event
     from src.game.engine.results import MechanicalResult
     from src.game.engine.turn_proposals import proposal_event
     from src.game.state.models import Couple
@@ -354,14 +371,14 @@ def test_event_producers_emit_display_safe_messages() -> None:
     state = new_game(1)
     state.player.name = "Demo"
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
-    state.hideaway.partner_id = "chloe"
+    state.private_suite.partner_id = "chloe"
 
-    hideaway = hideaway_event(state)
-    assert "the player" not in hideaway.message.lower()
-    assert "Demo" in hideaway.message
-    assert "Chloe" in hideaway.message
+    private_suite = private_suite_event(state)
+    assert "the player" not in private_suite.message.lower()
+    assert "Demo" in private_suite.message
+    assert "Chloe" in private_suite.message
 
-    # A recoupling proposal from a starting-cast NPC (raw id "blake").
+    # A pairing proposal from a starting-cast NPC (raw id "blake").
     result = MechanicalResult(
         action=PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="player"),
         success=True,
@@ -382,15 +399,15 @@ def test_event_producers_emit_display_safe_messages() -> None:
 
 
 def test_event_narrator_context_supplies_cast_pronouns() -> None:
-    """Every living islander's pronouns reach the narrator so unisex names don't
+    """Every living heartbreaker's pronouns reach the narrator so unisex names don't
     get the wrong third-person pronoun in ceremony prose."""
     state = new_game(1)
     state.player.name = "Demo"
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
 
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="elimination", message="Liam leaves.", islander_id="liam")],
+        [CeremonyEvent(kind="elimination", message="Liam leaves.", heartbreaker_id="liam")],
     )
 
     assert "Cast pronouns (use exactly these" in rendered
@@ -407,7 +424,7 @@ def test_event_narrator_context_names_player_in_third_person() -> None:
 
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="elimination", message="Liam leaves.", islander_id="liam")],
+        [CeremonyEvent(kind="elimination", message="Liam leaves.", heartbreaker_id="liam")],
     )
 
     assert "named Demo" in rendered
@@ -417,7 +434,7 @@ def test_event_narrator_context_addresses_nameless_player_in_second_person() -> 
     """A nameless player is narrated in second person, never an abstract label.
 
     Regression for the "Eq stands beside Chloe" garble: when the player kept the
-    "You" placeholder, the narrator was told to call them "the islander", which
+    "You" placeholder, the narrator was told to call them "the contestant", which
     gpt-5-nano hallucinated into a fake proper name. The fix narrates the
     nameless player in second person (consistent with the daily recap), which
     cannot be turned into an invented name.
@@ -428,14 +445,14 @@ def test_event_narrator_context_addresses_nameless_player_in_second_person() -> 
 
     rendered = _render_context(
         state,
-        [CeremonyEvent(kind="recoupling", message="Chloe couples with you.", islander_id="chloe")],
+        [CeremonyEvent(kind="pairing", message="Chloe couples with you.", heartbreaker_id="chloe")],
     )
 
-    # The player is addressed in second person, never labelled "the islander".
+    # The player is addressed in second person, never labelled "the contestant".
     # (The phrase may still appear inside the negative instruction that forbids
     # inventing it, so we check the labelling forms, not a bare substring.)
-    assert "named the islander" not in rendered
-    assert "refer to them as the islander" not in rendered
+    assert "named the contestant" not in rendered
+    assert "refer to them as the contestant" not in rendered
     assert "SECOND PERSON" in rendered
     # Couple line is grammatical second person, not "you is coupled".
     assert "Current player couple: you are coupled with Chloe" in rendered

@@ -20,17 +20,17 @@ def test_playthrough_report_passes_complete_trace() -> None:
     assert report.passed == 29
 
 
-def test_playthrough_report_flags_missing_pull_failure() -> None:
-    """The pull failure assertion fails loudly when no miss is recorded."""
+def test_playthrough_report_flags_missing_private_chat_failure() -> None:
+    """The private chat failure assertion fails loudly when no miss is recorded."""
     package = _complete_package()
     for record in package["records"]:
-        pull = record.get("mechanical_result", {}).get("pull_attempt")
-        if isinstance(pull, dict):
-            pull["success"] = True
+        private_chat = record.get("mechanical_result", {}).get("private_chat_attempt")
+        if isinstance(private_chat, dict):
+            private_chat["success"] = True
 
     report = evaluate_trace(package)
 
-    failure = next(assertion for assertion in report.assertions if assertion.id == "pull_failure")
+    failure = next(assertion for assertion in report.assertions if assertion.id == "private_chat_failure")
     assert failure.passed is False
     assert report.failed == 1
 
@@ -90,7 +90,7 @@ def _complete_package():
                 4,
                 "start_conversation",
                 chance=42,
-                pull={"target_id": "chloe", "success": False, "chance": 42, "roll": 88},
+                private_chat={"target_id": "chloe", "success": False, "chance": 42, "roll": 88},
             ),
             _record(
                 5,
@@ -106,42 +106,42 @@ def _complete_package():
             _record(10, "advance_phase", challenge=True),
             _record(11, "advance_phase", challenge=True),
             _record(12, "advance_phase", challenge=True),
-            _record(13, "hideaway", challenge=True, couple_strength=74),
+            _record(13, "private_suite", challenge=True, couple_strength=74),
             _record(14, "advance_phase", producer_text=True, group_date=True),
             _record(15, "advance_phase", producer_text=True),
             _record(16, "advance_phase", producer_text=True, steal=True),
-            _record(17, "advance_phase", villa="casa_amor", casa={"started_on_day": 4}),
+            _record(17, "advance_phase", resort="flush_of_hearts", flush={"started_on_day": 4}),
             _record(
                 18,
-                "casa_decision",
+                "flush_decision",
                 chance=None,
-                casa={
+                flush={
                     "started_on_day": 4,
                     "player_decision": "return_with_new",
                     "partners_swapped": True,
                     "player_perception_before": 50,
                     "player_perception_after": 38,
                 },
-                ceremony_events=[{"kind": "casa_amor_decision"}],
+                ceremony_events=[{"kind": "flush_of_hearts_decision"}],
             ),
             _record(
                 19,
                 "advance_phase",
-                casa={
+                flush={
                     "started_on_day": 4,
                     "player_decision": "return_with_new",
                     "partners_swapped": True,
                     "player_perception_before": 50,
                     "player_perception_after": 38,
                 },
-                ceremony_events=[{"kind": "casa_amor_return_reveal"}],
+                ceremony_events=[{"kind": "flush_of_hearts_return_reveal"}],
             ),
             _record(20, "start_conversation", chance=55, auto_advance=True),
         ],
         "final_state": {
             "day": 6,
             "outcome": "won_as_couple",
-            "islanders": [{"id": "chloe", "familiarity_with_player": 50}],
+            "heartbreakers": [{"id": "chloe", "familiarity_with_player": 50}],
         },
     }
 
@@ -152,7 +152,7 @@ def _record(
     *,
     intent_id: str | None = None,
     chance: int | None = 70,
-    pull: dict[str, object] | None = None,
+    private_chat: dict[str, object] | None = None,
     interruption: dict[str, object] | None = None,
     curator_memories: list[dict[str, object]] | None = None,
     background_dialogues: int = 0,
@@ -162,8 +162,8 @@ def _record(
     group_date: bool = False,
     couple_strength: int | None = 50,
     steal: bool = False,
-    villa: str = "main",
-    casa: dict[str, object] | None = None,
+    resort: str = "main",
+    flush: dict[str, object] | None = None,
     ceremony_events: list[dict[str, object]] | None = None,
     auto_advance: bool = False,
     arrival_roll: bool = False,
@@ -183,8 +183,8 @@ def _record(
         result["chance_breakdown"] = {
             "compatibility_bonus": 4 if turn == 1 else 0,
         }
-    if pull is not None:
-        result["pull_attempt"] = pull
+    if private_chat is not None:
+        result["private_chat_attempt"] = private_chat
     curator_batches = []
     if curator_memories is not None:
         curator_batches.append({"memories": curator_memories})
@@ -192,7 +192,7 @@ def _record(
         "turn": turn,
         "day": ((turn - 1) // 4) + 1,
         "phase": ["morning", "challenge", "afternoon", "text", "evening"][turn % 5],
-        "villa": villa,
+        "resort": resort,
         "auto_advance": auto_advance,
         "action": action,
         "arrival_rolls": [
@@ -202,9 +202,9 @@ def _record(
                 "interruption_chance": 55,
                 "interruption_roll": 40,
                 "interruption_hit": True,
-                "pull_chance": 35,
-                "pull_roll": 20,
-                "pull_hit": True,
+                "private_chat_chance": 35,
+                "private_chat_roll": 20,
+                "private_chat_hit": True,
             }
         ]
         if arrival_roll
@@ -231,24 +231,24 @@ def _record(
             else None
         ),
         "couple_strength": couple_strength,
-        "hideaway": (
+        "private_suite": (
             {"used_on_day": 5, "partner_id": "chloe", "deltas_applied": True}
-            if kind == "hideaway"
+            if kind == "private_suite"
             else {"used_on_day": None, "partner_id": None, "deltas_applied": False}
         ),
-        "casa_amor": casa,
+        "flush_of_hearts": flush,
         "ceremony_events": ceremony_events
         if ceremony_events is not None
-        else ([{"kind": "steal_attempt", "message": "Steal attempt fails."}] if steal else ([{"kind": "bombshell"}] if turn == 6 else [])),
+        else ([{"kind": "steal_attempt", "message": "Steal attempt fails."}] if steal else ([{"kind": "heart_throb"}] if turn == 6 else [])),
         "agent_commits": {
-            "villa_update": _villa_update(interruption=interruption, summon=summon),
+            "resort_update": _resort_update(interruption=interruption, summon=summon),
             "curator_batches": curator_batches,
             "background_dialogues": [{} for _ in range(background_dialogues)],
         },
     }
 
 
-def _villa_update(
+def _resort_update(
     *,
     interruption: dict[str, object] | None,
     summon: bool,

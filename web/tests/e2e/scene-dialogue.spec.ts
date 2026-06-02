@@ -5,11 +5,11 @@ const API = process.env.PLAYWRIGHT_API_BASE ?? "http://127.0.0.1:8000";
 
 test("idle scene shows player and all present NPCs", async ({ page }) => {
   const state = fakeState();
-  await installSession(page, state, [action("ambient", "Let the villa breathe")]);
+  await installSession(page, state, [action("ambient", "Let Sunset Bay breathe")]);
   await page.goto(`/play/${SESSION_ID}`);
 
   await expect(page.getByTestId("scene-stage")).toBeVisible();
-  await expect(page.getByTestId("character-sprite")).toHaveCount(state.islanders.length + 1);
+  await expect(page.getByTestId("character-sprite")).toHaveCount(state.heartbreakers.length + 1);
   await expect(page.locator('[data-testid="character-sprite"][data-role="player"][data-position="bottom"]')).toBeVisible();
 });
 
@@ -31,11 +31,11 @@ test("NPC speaks with a bubble anchored to that NPC", async ({ page }) => {
   expect(bubbleBox!.y).toBeLessThan(npcBox!.y + npcBox!.height * 0.45);
 });
 
-test("conversation keeps every co-located islander on stage, not just the partner", async ({ page }) => {
-  // Regression guard for Casa-Amor embodiment: when the player is mid-chat the
+test("conversation keeps every co-located heartbreaker on stage, not just the partner", async ({ page }) => {
+  // Regression guard for Flush-Amor embodiment: when the player is mid-chat the
   // focused partner is emphasized, but the rest of the room must stay visible
   // (dimmed, not yanked off-stage) so the player is never talking to an empty
-  // pool. All three fakeState islanders share the player's location.
+  // pool. All three fakeState heartbreakers share the player's location.
   const state = fakeState({ active_conversation_target_id: "liam" });
   await installSession(page, state, [
     action("flirt", "Tease Liam", "liam"),
@@ -47,12 +47,12 @@ test("conversation keeps every co-located islander on stage, not just the partne
   // The conversation partner is present...
   await expect(page.locator('[data-character-id="liam"]')).toBeVisible();
   // ...and so is the rest of the co-located cast plus the player.
-  await expect(page.getByTestId("character-sprite")).toHaveCount(state.islanders.length + 1);
+  await expect(page.getByTestId("character-sprite")).toHaveCount(state.heartbreakers.length + 1);
 });
 
 test("narrator beat uses a top narrator bubble", async ({ page }) => {
   await installSession(page, fakeState(), [action("ambient", "Trigger text")]);
-  await routeTurn(page, fakeTurn({ event_narration: { prose: "A text lands and the villa freezes for the kind of silence producers dream about." } }));
+  await routeTurn(page, fakeTurn({ event_narration: { prose: "A text lands and Sunset Bay freezes for the kind of silence producers dream about." } }));
 
   await page.goto(`/play/${SESSION_ID}`);
   await page.getByRole("button", { name: "Trigger text" }).click();
@@ -72,7 +72,7 @@ test("tap anywhere advances a long bubble", async ({ page }) => {
       "liam",
       "Liam",
       "Open up to Liam",
-      "I like that you are not treating this place like a scoreboard. It makes me feel like I can breathe for a second. But I am also scared because every good conversation in this villa turns into a headline by breakfast. So if we are doing this, I need it to be honest."
+      "I like that you are not treating this place like a scoreboard. It makes me feel like I can breathe for a second. But I am also scared because every good conversation in Sunset Bay turns into a headline by breakfast. So if we are doing this, I need it to be honest."
     ),
   }));
 
@@ -112,18 +112,20 @@ test("selecting a choice shows the player bubble then NPC reaction", async ({ pa
 });
 
 test("pulse race opening cutscene changes an NPC pose", async ({ page }) => {
-  await installSession(page, fakeState({ phase: "challenge", pending_challenge: { kind: "heart_rate", round_index: 0, round_count: 3, stem: "Whose pulse jumps?", finished: false } }), [action("challenge_response", "Pick Liam", "liam")]);
+  await installSession(page, fakeState({ phase: "challenge", pending_challenge: { kind: "heart_rate", round_index: 0, round_count: 3, stem: "Whose pulse jumps?", target_id: "liam", finished: false } }), [action("challenge_response", "Pick Liam", "liam")]);
   await page.goto(`/play/${SESSION_ID}`);
 
-  await expect(page.getByTestId("scene-minigame-board")).toBeVisible();
-  await expect(page.locator('[data-pose="exiting"]').first()).toBeVisible({ timeout: 1500 });
+  await expect(page.getByTestId("challenge-banner")).toBeVisible();
+  await expect(page.getByText("Pulse Race")).toBeVisible();
+  await expect(page.locator('[data-character-id="liam"][data-pose="listening"]')).toBeVisible();
 });
 
 test("compat quiz keeps player visible during round", async ({ page }) => {
   await installSession(page, fakeState({ phase: "challenge", pending_challenge: { kind: "compatibility_quiz", round_index: 0, round_count: 3, stem: "What does Liam value?", finished: false } }), [action("challenge_response", "Honesty", "liam")]);
   await page.goto(`/play/${SESSION_ID}`);
 
-  await expect(page.getByTestId("scene-minigame-board")).toBeVisible();
+  await expect(page.getByTestId("challenge-banner")).toBeVisible();
+  await expect(page.getByText("Compatibility Quiz")).toBeVisible();
   await expect(page.locator('[data-role="player"][data-position="bottom"]')).toBeVisible();
 });
 
@@ -144,7 +146,7 @@ test("desktop scene anchors the player bottom-left as the foreground figure", as
 
   const box = await page.locator('[data-role="player"]').boundingBox();
   expect(box).not.toBeNull();
-  // Love Island framing: "you" sit in the bottom-left foreground, not centered.
+  // Paradise Hearts framing: "you" sit in the bottom-left foreground, not centered.
   const center = box!.x + box!.width / 2;
   expect(center).toBeLessThan(1280 * 0.4);
   // ...and anchored low, with the figure's feet near the bottom of the stage.
@@ -213,7 +215,7 @@ function fakeTurn(overrides: Record<string, unknown>) {
   return {
     state: fakeState(),
     exchange: null,
-    available_actions: [action("ambient", "Let the villa breathe")],
+    available_actions: [action("ambient", "Let Sunset Bay breathe")],
     ceremony_events: [],
     event_narration: null,
     audience_delta: null,
@@ -261,8 +263,8 @@ function fakeState(overrides: Record<string, unknown> = {}) {
     turn_index: 88,
     location_id: "pool",
     location_label: "Pool",
-    villa: "main",
-    villa_label: "Sunset Bay",
+    resort: "main",
+    resort_label: "Sunset Bay",
     phase_clock: {},
     player: {
       id: "player",
@@ -270,26 +272,26 @@ function fakeState(overrides: Record<string, unknown> = {}) {
       gender: "woman",
       archetype_id: "loyal_friend",
       public_perception: 100,
-      stats: { charm: 6, banter: 6, eq: 6, graft: 6, loyalty: 9 },
+      stats: { charm: 6, banter: 6, eq: 6, spark: 6, loyalty: 9 },
       memories: [],
     },
-    islanders: [
-      islander("liam", "Liam", "man"),
-      islander("chloe", "Chloe", "woman"),
-      islander("maya", "Maya", "woman"),
+    heartbreakers: [
+      heartbreaker("liam", "Liam", "man"),
+      heartbreaker("chloe", "Chloe", "woman"),
+      heartbreaker("maya", "Maya", "woman"),
     ],
     couples: [],
     audience: { public_perception: 100, recent_delta: null, trend: "steady" },
-    pending_recouple_proposal: null,
+    pending_pair_proposal: null,
     outcome: null,
     active_conversation_target_id: null,
-    villa_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
+    resort_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
     daily_recaps: [],
     ...overrides,
   };
 }
 
-function islander(id: string, name: string, gender: "man" | "woman") {
+function heartbreaker(id: string, name: string, gender: "man" | "woman") {
   return {
     id,
     name,

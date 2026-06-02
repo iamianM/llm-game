@@ -8,14 +8,14 @@ from src.game.reporting.html import session_page
 from src.game.reporting.stylish.background import background_dialogue_block
 
 
-def test_session_page_renders_math_villa_memories_pull_and_interruption() -> None:
+def test_session_page_renders_math_resort_memories_private_chat_and_interruption() -> None:
     """Enhanced session HTML exposes the G8 review details."""
     html = session_page("Session", [_record()])
 
     assert "Why this outcome?" in html
     assert "banter" in html and "8" in html
     assert "Where everyone is" in html
-    assert "Pull attempt" in html
+    assert "Private chat attempt" in html
     assert "Interruption" in html
     assert "Memories formed" in html
     assert "Model reasoning traces" in html
@@ -65,7 +65,7 @@ def _record() -> dict[str, object]:
         "phase": "morning",
         "location": "pool",
         "visible_state": "Chloe: affection 10",
-        "villa_snapshot": {"pool": ["you", "Chloe"], "terrace": ["Maya"]},
+        "resort_snapshot": {"pool": ["you", "Chloe"], "terrace": ["Maya"]},
         "action": {"kind": "respond_with", "intent_id": "end_softly"},
         "mechanical_result": {
             "action": {"kind": "respond_with", "intent_id": "end_softly"},
@@ -92,7 +92,7 @@ def _record() -> dict[str, object]:
             },
             "relationship_deltas": {"chloe": {"trust": 1}},
             "tags": ["end_softly", "safe"],
-            "pull_attempt": {
+            "private_chat_attempt": {
                 "target_id": "chloe",
                 "started_from_location": "pool",
                 "success": False,
@@ -107,7 +107,7 @@ def _record() -> dict[str, object]:
         "follow_up_menu": None,
         "ceremony_events": [],
         "agent_commits": {
-            "villa_update": {
+            "resort_update": {
                 "npc_movements": [],
                 "conversation_starts": [],
                 "conversation_continues": [],

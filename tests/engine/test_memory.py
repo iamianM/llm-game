@@ -19,7 +19,7 @@ def test_conversation_close_creates_memories() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         rng,
         contextual_options=lambda *_args: mock_follow_up_menu(),
@@ -30,9 +30,9 @@ def test_conversation_close_creates_memories() -> None:
     assert state.player.memories
     assert state.player.memories[0].holder_id == "player"
     assert state.player.memories[0].subject_id == "chloe"
-    assert state.islanders[0].memories
-    assert state.islanders[0].memories[0].holder_id == "chloe"
-    assert state.islanders[0].memories[0].subject_id == "player"
+    assert state.heartbreakers[0].memories
+    assert state.heartbreakers[0].memories[0].holder_id == "chloe"
+    assert state.heartbreakers[0].memories[0].subject_id == "player"
 
 
 def test_memory_id_deterministic_from_fields() -> None:
@@ -62,7 +62,7 @@ def test_memory_id_deterministic_from_fields() -> None:
 
 
 def test_ceremony_memory_is_witnessed() -> None:
-    """Ceremony events create witnessed memories for the villa."""
+    """Ceremony events create witnessed memories for the resort."""
     state = new_game(1)
     state.day = 3
     state.phase = Phase.EVENING

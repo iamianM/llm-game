@@ -17,20 +17,20 @@ from src.api.models import (
     AvailableAction,
     CastDetail,
     CoupleSummary,
-    IslanderSummary,
+    HeartbreakerSummary,
     PlayerState,
     SessionState,
 )
-from src.game.agents.islander_voice_context import Exchange
+from src.game.agents.heartbreaker_voice_context import Exchange
 from src.game.engine.actions import ActionSpec, available_actions
-from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.connection import connection_score, connection_tier, describe_shift
 from src.game.engine.couples import couple_strength, partner_for
 from src.game.engine.daily_recap import humanize_player_reference
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.intents import get_intent
 from src.game.engine.results import MechanicalResult
 from src.game.state.memory import Memory
-from src.game.state.models import FollowUpOption, GameState, IslanderState
+from src.game.state.models import FollowUpOption, GameState, HeartbreakerState
 from src.game.state.traits import KnownFact
 
 
@@ -46,8 +46,8 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
         turn_index=state.turn_index,
         location_id=state.location_id.value,
         location_label=display(state.location_id.value),
-        villa=state.villa.value,
-        villa_label=display(state.villa.value),
+        resort=state.resort.value,
+        resort_label=display(state.resort.value),
         phase_clock=state.phase_clock.model_dump(mode="json"),
         player=PlayerState(
             id=state.player.id,
@@ -58,22 +58,22 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
             stats=state.player.stats.model_dump(mode="json"),
             memories=[memory_api(memory) for memory in state.player.memories[-12:]],
         ),
-        islanders=[islander_summary(state, islander) for islander in state.islanders],
+        heartbreakers=[heartbreaker_summary(state, heartbreaker) for heartbreaker in state.heartbreakers],
         couples=couple_summaries(state),
         audience=AudienceState(
             public_perception=state.player.public_perception,
             recent_delta=recent_delta,
             trend="rising" if (recent_delta or 0) > 0 else "falling" if (recent_delta or 0) < 0 else "steady",
         ),
-        pending_recouple_proposal=(
-            None if state.pending_recouple_proposal is None else state.pending_recouple_proposal.model_dump(mode="json")
+        pending_pair_proposal=(
+            None if state.pending_pair_proposal is None else state.pending_pair_proposal.model_dump(mode="json")
         ),
         pending_challenge=_pending_challenge_view(state),
         outcome=None if state.outcome is None else state.outcome.value,
         active_conversation_target_id=(
             None if state.active_conversation is None else state.active_conversation.target_id
         ),
-        villa_snapshot=villa_snapshot(state),
+        resort_snapshot=resort_snapshot(state),
         daily_recaps=[_recap_view(recap) for recap in state.daily_recaps],
         intros_greetings=dict(state.intros.greetings) if state.intros is not None else {},
     )
@@ -152,9 +152,9 @@ def exchange_api(state: GameState, exchange: Exchange | None, speaker_id: str | 
     )
 
 
-def relationship_api(islander: IslanderState) -> ApiRelationship:
-    """Serialize one islander's bonds plus the derived composite Connection."""
-    rel = islander.relationship
+def relationship_api(heartbreaker: HeartbreakerState) -> ApiRelationship:
+    """Serialize one heartbreaker's bonds plus the derived composite Connection."""
+    rel = heartbreaker.relationship
     score = connection_score(rel)
     tier_index, tier_label = connection_tier(score)
     return ApiRelationship(
@@ -169,31 +169,31 @@ def relationship_api(islander: IslanderState) -> ApiRelationship:
 
 
 def cast_detail(state: GameState, npc_id: str) -> CastDetail:
-    islander = next((item for item in state.islanders if item.id == npc_id), None)
-    if islander is None:
+    heartbreaker = next((item for item in state.heartbreakers if item.id == npc_id), None)
+    if heartbreaker is None:
         raise KeyError(npc_id)
-    top = islander.type_on_paper
-    familiarity = islander.familiarity_with_player
+    top = heartbreaker.ideal_match
+    familiarity = heartbreaker.familiarity_with_player
     return CastDetail(
-        id=islander.id,
-        name=islander.name,
-        gender=islander.gender.value,
-        archetype=islander.archetype,
-        mood=islander.mood.value,
-        location=display(islander.location_id.value),
-        backstory=islander.backstory,
+        id=heartbreaker.id,
+        name=heartbreaker.name,
+        gender=heartbreaker.gender.value,
+        archetype=heartbreaker.archetype,
+        mood=heartbreaker.mood.value,
+        location=display(heartbreaker.location_id.value),
+        backstory=heartbreaker.backstory,
         familiarity=familiarity,
-        relationship=relationship_api(islander),
-        type_on_paper={
+        relationship=relationship_api(heartbreaker),
+        ideal_match={
             "physical_type": top.physical_type if familiarity >= 25 else None,
             "personality_type": top.personality_type if familiarity >= 50 else None,
             "values": top.values if familiarity >= 75 else None,
             "dealbreakers": top.dealbreakers if familiarity >= 100 else None,
         },
-        known_facts=known_facts_api(state, islander.id),
-        memories=[memory_api(memory) for memory in islander.memories[-12:]],
-        coupled_with=partner_id(state, islander.id),
-        eliminated=islander.eliminated,
+        known_facts=known_facts_api(state, heartbreaker.id),
+        memories=[memory_api(memory) for memory in heartbreaker.memories[-12:]],
+        coupled_with=partner_id(state, heartbreaker.id),
+        eliminated=heartbreaker.eliminated,
     )
 
 
@@ -272,29 +272,29 @@ def _known_fact_api(fact: KnownFact) -> ApiKnownFact:
     )
 
 
-def villa_snapshot(state: GameState) -> dict[str, list[str]]:
+def resort_snapshot(state: GameState) -> dict[str, list[str]]:
     snapshot: dict[str, list[str]] = {}
-    for location in locations_for_villa(state.villa):
+    for location in locations_for_resort(state.resort):
         occupants = ["You"] if location is state.location_id else []
         occupants.extend(
-            islander.name for islander in state.islanders if islander.location_id is location and not islander.eliminated
+            heartbreaker.name for heartbreaker in state.heartbreakers if heartbreaker.location_id is location and not heartbreaker.eliminated
         )
         snapshot[display(location.value)] = occupants
     return snapshot
 
 
-def islander_summary(state: GameState, islander: IslanderState) -> IslanderSummary:
-    return IslanderSummary(
-        id=islander.id,
-        name=islander.name,
-        gender=islander.gender.value,
-        archetype=islander.archetype,
-        mood=islander.mood.value,
-        location_id=islander.location_id.value,
-        location_label=display(islander.location_id.value),
-        eliminated=islander.eliminated,
-        coupled=partner_id(state, islander.id) is not None,
-        familiarity_with_player=islander.familiarity_with_player,
+def heartbreaker_summary(state: GameState, heartbreaker: HeartbreakerState) -> HeartbreakerSummary:
+    return HeartbreakerSummary(
+        id=heartbreaker.id,
+        name=heartbreaker.name,
+        gender=heartbreaker.gender.value,
+        archetype=heartbreaker.archetype,
+        mood=heartbreaker.mood.value,
+        location_id=heartbreaker.location_id.value,
+        location_label=display(heartbreaker.location_id.value),
+        eliminated=heartbreaker.eliminated,
+        coupled=partner_id(state, heartbreaker.id) is not None,
+        familiarity_with_player=heartbreaker.familiarity_with_player,
     )
 
 
@@ -308,9 +308,9 @@ def partner_id(state: GameState, actor_id: str) -> str | None:
 def find_name(state: GameState, actor_id: str) -> str:
     if actor_id == "player":
         return state.player.name
-    for islander in state.islanders:
-        if islander.id == actor_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == actor_id:
+            return heartbreaker.name
     return actor_id
 
 
@@ -333,18 +333,18 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
             return label
         target = "" if action.target_id is None else f": choose {find_name(state, action.target_id)}"
         return f"{display(state.pending_challenge.kind)}{target}"
-    if action.kind.value == "recouple" and action.target_id is not None:
-        # During a pending recoupling ceremony, the engine already emits a
+    if action.kind.value == "pair" and action.target_id is not None:
+        # During a pending Pairing Ceremony, the engine already emits a
         # specific label ("Stay with X" or "Couple with Y") that distinguishes
         # the player's current partner from a swap. Keep it.
         if (
             state.pending_gather is not None
             and state.pending_gather.kind == "ceremony"
-            and state.pending_gather.event_id.startswith("recoupling")
+            and state.pending_gather.event_id.startswith("pairing")
         ):
             return spec.label
         return f"Pair with {find_name(state, action.target_id)}"
-    if action.kind.value == "propose_recouple" and action.target_id is not None:
+    if action.kind.value == "propose_pair" and action.target_id is not None:
         return f"Ask {find_name(state, action.target_id)} for a Heart Swap"
     if action.kind.value == "npc_proposal_response" and action.target_id is not None:
         proposer = find_name(state, action.target_id)
@@ -354,11 +354,11 @@ def action_label(state: GameState, spec: ActionSpec) -> str:
             return f"Decline {proposer} politely"
         if action.intent_id == "decline_harshly":
             return f"Decline {proposer} harshly"
-    if action.kind.value == "hideaway":
+    if action.kind.value == "private_suite":
         partner_id = partner_id_for_player(state)
         suffix = "" if partner_id is None else f" with {find_name(state, partner_id)}"
-        return f"Spend the night in {display('hideaway')}{suffix}"
-    if action.kind.value == "casa_decision":
+        return f"Spend the night in {display('private_suite')}{suffix}"
+    if action.kind.value == "flush_decision":
         if action.intent_id == "return_with_original":
             return "Return loyal"
         if action.intent_id == "return_with_new" and action.target_id is not None:
@@ -401,7 +401,7 @@ def audience_delta(result: MechanicalResult) -> int | None:
 def connection_shift_line(state: GameState, result: MechanicalResult) -> str | None:
     """In-world one-liner for how this action moved the player's primary bond.
 
-    Reports the change for the acted-on islander (``action.target_id``) only —
+    Reports the change for the acted-on heartbreaker (``action.target_id``) only —
     that is the relationship the player is steering, so secondary ripples (e.g.
     an interrupter's reaction) stay off this headline. Returns ``None`` when the
     target took no relationship change, so idle moves and exits surface nothing.
@@ -422,7 +422,7 @@ def _model_dump(value: BaseModel) -> dict[str, object]:
 def _recap_view(recap: BaseModel) -> dict[str, object]:
     """Serialize a daily recap, humanizing any "the player" label for the reader.
 
-    Recaps are surfaced verbatim from islander memories, which are written in a
+    Recaps are surfaced verbatim from heartbreaker memories, which are written in a
     name-agnostic voice ("the player"). The recap is read *by* the player, so we
     rewrite that label to second person at the view boundary. This also cleans
     recaps already baked into older checkpoints, where the substitution could

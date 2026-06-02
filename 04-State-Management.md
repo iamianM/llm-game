@@ -10,9 +10,9 @@
 ## Table of Contents
 
 - [Overview](#overview)
-- [Islander State](#islander-state)
+- [Heartbreaker State](#heartbreaker-state)
 - [Player State](#player-state)
-- [Villa State](#villa-state)
+- [Resort State](#resort-state)
 - [Relationship State](#relationship-state)
 - [Event State](#event-state)
 - [Knowledge State](#knowledge-state)
@@ -39,11 +39,11 @@
 ```javascript
 // Single store with slices
 const useGameStore = create((set, get) => ({
-  // Villa slice
-  villa: { /* villa state */ },
+  // Resort slice
+  resort: { /* resort state */ },
 
-  // Islanders slice
-  islanders: { /* all Islander objects */ },
+  // Heartbreakers slice
+  heartbreakers: { /* all Heartbreaker objects */ },
 
   // Player slice
   player: { /* player state */ },
@@ -52,7 +52,7 @@ const useGameStore = create((set, get) => ({
   events: { /* scheduled and recent events */ },
 
   // Actions
-  updateRelationship: (islanderId, changes) => { /* ... */ },
+  updateRelationship: (heartbreakerId, changes) => { /* ... */ },
   simulateNPCBehavior: () => { /* ... */ },
   advanceDay: () => { /* ... */ }
 }))
@@ -63,7 +63,7 @@ const useGameStore = create((set, get) => ({
 **Save to localStorage after:**
 - Each day completes
 - Player leaves the game
-- Major events (recoupling, dumping)
+- Major events (Pairing Ceremony, Heart Out)
 
 **Don't save:**
 - During active conversations
@@ -77,20 +77,20 @@ const useGameStore = create((set, get) => ({
   timestamp: 1633024800000,
   currentDay: 5,
   currentPhase: "afternoon",
-  islanders: [...],
+  heartbreakers: [...],
   player: {...},
-  villa: {...}
+  resort: {...}
 }
 ```
 
 ---
 
-## Islander State
+## Heartbreaker State
 
-Complete state for each NPC Islander:
+Complete state for each NPC Heartbreaker:
 
 ```typescript
-interface Islander {
+interface Heartbreaker {
   // IDENTITY (generated once, never changes)
   id: string                    // "chloe_001"
   name: string                  // "Chloe"
@@ -132,19 +132,19 @@ interface Islander {
   backstory: string             // 3-4 sentences from LLM
   secret: string                // Hidden insecurity/past
   chatUpLine: string            // What they say when entering
-  strategy: string              // Why they're on Love Island
+  strategy: string              // Why they're on Paradise Hearts
 
   // CURRENT STATE (changes constantly)
   currentMood: "happy" | "flirty" | "upset" | "anxious" | "angry" | "content"
   currentLocation: LocationId   // "pool" | "gym" | "kitchen" etc.
   currentActivity: string       // "sunbathing" | "working_out" | "chatting"
-  coupledWith: string | null    // Islander ID or null
+  coupledWith: string | null    // Heartbreaker ID or null
 
   // STATS (0-10, can increase during run)
   stats: {
     charm: number               // Romantic appeal
     banter: number              // Humor and wit
-    graft: number               // Pursuit ability
+    spark: number               // Pursuit ability
     loyalty: number             // Faithfulness
     emotional_intelligence: number // Reading emotions
     physical: number            // Athletic ability
@@ -156,9 +156,9 @@ interface Islander {
     confidence: number          // Self-assurance
   }
 
-  // RELATIONSHIPS (with every other Islander including player)
+  // RELATIONSHIPS (with every other Heartbreaker including player)
   relationships: {
-    [islanderId: string]: {
+    [heartbreakerId: string]: {
       affection: number         // 0-100
       chemistry: number         // 0-100
       trust: number             // 0-100
@@ -173,19 +173,19 @@ interface Islander {
     }
   }
 
-  // KNOWLEDGE (what they know about villa drama)
+  // KNOWLEDGE (what they know about resort drama)
   knowledge: Array<{
     fact: string                // "Marcus kissed Sophie last night"
     source: "witnessed" | "gossip" | "told_directly"
-    sourceIslander: string | null  // Who told them (if gossip)
+    sourceHeartbreaker: string | null  // Who told them (if gossip)
     timestamp: {
       day: number
       phase: string
     }
-    participants: string[]      // Islander IDs involved
+    participants: string[]      // Heartbreaker IDs involved
     juiciness: number           // 0-100, how dramatic is this?
     willingnessToShare: number  // 0-100, likelihood of sharing
-    sharedWith: string[]        // Islander IDs they've told
+    sharedWith: string[]        // Heartbreaker IDs they've told
   }>
 
   // AI BEHAVIOR (influences autonomous actions)
@@ -196,19 +196,19 @@ interface Islander {
   }
 
   // SOCIAL GRAPH (updated by AI behavior system)
-  interests: string[]           // Islander IDs they're romantically interested in
-  threats: string[]             // Islander IDs they see as competition
-  allies: string[]              // Islander IDs they're aligned with
+  interests: string[]           // Heartbreaker IDs they're romantically interested in
+  threats: string[]             // Heartbreaker IDs they see as competition
+  allies: string[]              // Heartbreaker IDs they're aligned with
 
   // METADATA
-  enteredVilla: number          // Day number
-  isBombshell: boolean          // Entered mid-run
+  enteredResort: number         // Day number
+  isHeartThrob: boolean         // Entered mid-run
   isOriginal: boolean           // Started at Day 0
   dumpedOnDay: number | null    // If eliminated
 }
 ```
 
-### Example Islander Object
+### Example Heartbreaker Object
 
 ```javascript
 const chloe = {
@@ -262,7 +262,7 @@ const chloe = {
   stats: {
     charm: 8,
     banter: 7,
-    graft: 6,
+    spark: 6,
     loyalty: 8,
     emotional_intelligence: 7,
     physical: 7,
@@ -295,14 +295,14 @@ const chloe = {
       lastInteraction: 4,
       interactionCount: 8
     }
-    // ... all other Islanders
+    // ... all other Heartbreakers
   },
 
   knowledge: [
     {
       fact: "Marcus kissed Aisha on the terrace",
       source: "witnessed",
-      sourceIslander: null,
+      sourceHeartbreaker: null,
       timestamp: { day: 4, phase: "evening" },
       participants: ["marcus", "aisha"],
       juiciness: 80,
@@ -321,8 +321,8 @@ const chloe = {
   threats: [],
   allies: ["liam", "emma"],
 
-  enteredVilla: 0,
-  isBombshell: false,
+  enteredResort: 0,
+  isHeartThrob: false,
   isOriginal: true,
   dumpedOnDay: null
 }
@@ -344,7 +344,7 @@ interface Player {
   stats: {
     charm: number
     banter: number
-    graft: number
+    spark: number
     loyalty: number
     emotional_intelligence: number
     physical: number
@@ -353,15 +353,15 @@ interface Player {
   // CURRENT STATE
   currentLocation: LocationId
   currentActivity: string
-  coupledWith: string | null  // Islander ID
+  coupledWith: string | null  // Heartbreaker ID
   mood: string
 
   // PUBLIC PERCEPTION (0-100)
-  publicPerception: number    // Simulated audience opinion
+  pulse: number    // Simulated audience opinion
 
-  // RELATIONSHIPS (same as Islander.relationships)
+  // RELATIONSHIPS (same as Heartbreaker.relationships)
   relationships: {
-    [islanderId: string]: {
+    [heartbreakerId: string]: {
       affection: number
       chemistry: number
       trust: number
@@ -378,14 +378,14 @@ interface Player {
   knowledge: Array<{
     fact: string
     source: "conversation" | "gossip" | "witnessed"
-    sourceIslander: string | null
+    sourceHeartbreaker: string | null
     day: number
     reliability: "confirmed" | "rumor" | "uncertain"
   }>
 
   // UNLOCKS (for this run)
-  unlockedInteractions: string[]  // ["kiss", "hideaway_access", etc.]
-  unlockedLocations: string[]     // ["terrace", "hideaway"]
+  unlockedInteractions: string[]  // ["kiss", "private_suite_access", etc.]
+  unlockedLocations: string[]     // ["terrace", "private_suite"]
 
   // ACTIVE BUFFS (temporary bonuses)
   activeBuffs: Array<{
@@ -404,7 +404,7 @@ interface Player {
   challengesWon: number
 
   // META (across all runs)
-  audienceAppeal: number          // Total AP earned (persists across runs)
+  heartBeats: number              // Total Heart Beats earned (persists across runs)
   completedRuns: number
   achievements: string[]
   unlockedArchetypes: string[]
@@ -423,20 +423,20 @@ const newPlayer = {
   stats: {
     charm: 5,
     banter: 5,
-    graft: 5,
+    spark: 5,
     loyalty: 5,
     emotional_intelligence: 5,
     physical: 5
   },
 
   currentLocation: "bedroom", // Start here
-  currentActivity: "entering_villa",
+  currentActivity: "entering_resort",
   coupledWith: null, // Single at start
   mood: "excited",
 
-  publicPerception: 50, // Neutral
+  pulse: 50, // Neutral
 
-  relationships: {}, // Filled as they meet Islanders
+  relationships: {}, // Filled as they meet Heartbreakers
 
   knowledge: [],
 
@@ -452,7 +452,7 @@ const newPlayer = {
     "kitchen",
     "bedroom",
     "beach"
-  ], // Terrace/hideaway locked
+  ], // Terrace/Paradise Suite locked
 
   activeBuffs: [],
 
@@ -464,7 +464,7 @@ const newPlayer = {
   challengesWon: 0,
 
   // Meta (loaded from saved data)
-  audienceAppeal: 0,
+  heartBeats: 0,
   completedRuns: 0,
   achievements: [],
   unlockedArchetypes: ["default"],
@@ -474,12 +474,12 @@ const newPlayer = {
 
 ---
 
-## Villa State
+## Resort State
 
-Global state for the villa:
+Global state for the resort:
 
 ```typescript
-interface VillaState {
+interface ResortState {
   // TIME
   currentDay: number          // 1-20
   currentPhase: "morning" | "challenge" | "afternoon" | "evening"
@@ -490,7 +490,7 @@ interface VillaState {
     [locationId: string]: {
       name: string
       capacity: number
-      islandersPresent: string[]  // Islander IDs
+      heartbreakersPresent: string[]  // Heartbreaker IDs
       activities: string[]         // Available activities
       privacy: "public" | "semi-private" | "private"
       requiresInvitation: boolean
@@ -500,13 +500,13 @@ interface VillaState {
 
   // COUPLES (current pairings)
   couples: Array<{
-    islander1: string
-    islander2: string
+    heartbreaker1: string
+    heartbreaker2: string
     formedDay: number
     strength: number  // 0-100, calculated
   }>
 
-  singles: string[]  // Islander IDs who are uncoupled
+  singles: string[]  // Heartbreaker IDs who are uncoupled
 
   // RECENT EVENTS (last 3 days)
   recentEvents: Array<{
@@ -521,26 +521,26 @@ interface VillaState {
 
   // SCHEDULED EVENTS (upcoming)
   scheduledEvents: Array<{
-    type: "recoupling" | "dumping" | "bombshell" | "challenge" | "date" | "twist"
+    type: "pairing_ceremony" | "heart_out" | "heart_throb" | "challenge" | "date" | "twist"
     day: number
     phase: string
     participants: string[] | null  // Pre-selected or null (TBD)
     metadata: any  // Event-specific data
   }>
 
-  // VILLA METRICS (for Producer AI)
+  // RESORT METRICS (for Producer AI)
   metrics: {
     averageCoupleStrength: number
     dramaLevel: number              // 0-100
-    daysSinceLastBombshell: number
-    daysSinceLastRecoupling: number
+    daysSinceLastHeartThrob: number
+    daysSinceLastPairingCeremony: number
     daysSinceLastDumping: number
     totalActiveRomances: number
     totalActiveRivalries: number
   }
 
   // AUDIENCE STATE (simulated)
-  audienceFavorites: string[]       // Top 3 Islander IDs
+  audienceFavorites: string[]       // Top 3 Heartbreaker IDs
   audienceLeastFavorite: string[]   // Bottom 3
   audienceVotesAvailable: boolean   // Is there an active public vote?
 
@@ -551,10 +551,10 @@ interface VillaState {
 }
 ```
 
-### Example Villa State
+### Example Resort State
 
 ```javascript
-const villaState = {
+const resortState = {
   currentDay: 5,
   currentPhase: "morning",
   timeRemaining: 90, // minutes
@@ -563,7 +563,7 @@ const villaState = {
     pool: {
       name: "Pool Area",
       capacity: 6,
-      islandersPresent: ["chloe", "marcus", "sophie", "player"],
+      heartbreakersPresent: ["chloe", "marcus", "sophie", "player"],
       activities: ["swim", "sunbathe", "lounge", "chat"],
       privacy: "public",
       requiresInvitation: false,
@@ -572,7 +572,7 @@ const villaState = {
     gym: {
       name: "Gym",
       capacity: 4,
-      islandersPresent: ["liam"],
+      heartbreakersPresent: ["liam"],
       activities: ["workout", "cardio", "weights"],
       privacy: "semi-private",
       requiresInvitation: false,
@@ -581,16 +581,16 @@ const villaState = {
     terrace: {
       name: "Terrace",
       capacity: 2,
-      islandersPresent: [],
+      heartbreakersPresent: [],
       activities: ["stargaze", "deep_talk", "romantic_moment"],
       privacy: "private",
       requiresInvitation: true,
       requiresUnlock: null
     },
-    hideaway: {
-      name: "The Hideaway",
+    private_suite: {
+      name: "The Paradise Suite",
       capacity: 2,
-      islandersPresent: [],
+      heartbreakersPresent: [],
       activities: ["overnight_stay"],
       privacy: "private",
       requiresInvitation: true,
@@ -600,20 +600,20 @@ const villaState = {
 
   couples: [
     {
-      islander1: "player",
-      islander2: "chloe",
+      heartbreaker1: "player",
+      heartbreaker2: "chloe",
       formedDay: 2,
       strength: 68
     },
     {
-      islander1: "marcus",
-      islander2: "sophie",
+      heartbreaker1: "marcus",
+      heartbreaker2: "sophie",
       formedDay: 0,
       strength: 45
     },
     {
-      islander1: "liam",
-      islander2: "emma",
+      heartbreaker1: "liam",
+      heartbreaker2: "emma",
       formedDay: 1,
       strength: 72
     }
@@ -654,7 +654,7 @@ const villaState = {
       }
     },
     {
-      type: "recoupling",
+      type: "pairing_ceremony",
       day: 7,
       phase: "evening",
       participants: null,
@@ -667,9 +667,9 @@ const villaState = {
   metrics: {
     averageCoupleStrength: 62,
     dramaLevel: 45,
-    daysSinceLastBombshell: 1, // Aisha just arrived
-    daysSinceLastRecoupling: 5,
-    daysSinceLastDumping: 5,
+    daysSinceLastHeartThrob: 1, // Aisha just arrived
+    daysSinceLastPairingCeremony: 5,
+    daysSinceLastHeartOut: 5,
     totalActiveRomances: 5,
     totalActiveRivalries: 1
   },
@@ -688,7 +688,7 @@ const villaState = {
 
 ## Relationship State
 
-Relationships are stored in both Islander and Player objects, but here's the detailed schema:
+Relationships are stored in both Heartbreaker and Player objects, but here's the detailed schema:
 
 ```typescript
 interface Relationship {
@@ -779,16 +779,16 @@ function wouldAcceptCoupling(npc, player) {
 ```typescript
 interface Event {
   id: string
-  type: "recoupling" | "dumping" | "bombshell" | "challenge" | "date" | "twist"
+  type: "pairing_ceremony" | "heart_out" | "heart_throb" | "challenge" | "date" | "twist"
   day: number
   phase: string
 
   // PARTICIPANTS
-  participants: string[]  // Islander IDs
+  participants: string[]  // Heartbreaker IDs
 
   // EVENT-SPECIFIC DATA
   metadata: {
-    // For recouplings
+    // For Pairing Ceremonies
     format?: "boys_choose" | "girls_choose" | "public_vote"
     choices?: Array<{
       chooser: string
@@ -801,8 +801,8 @@ interface Event {
     winner?: string
     prize?: string
 
-    // For bombshells
-    bombshellId?: string
+    // For Heart Throbs
+    heartThrobId?: string
     targetCouple?: string
 
     // For dates
@@ -813,7 +813,7 @@ interface Event {
   // OUTCOMES
   outcomes: Array<{
     type: "coupled" | "dumped" | "won" | "unlocked"
-    affectedIslanders: string[]
+    affectedHeartbreakers: string[]
     description: string
   }>
 
@@ -827,7 +827,7 @@ interface Event {
 
 ## Knowledge State
 
-How information propagates through the villa:
+How information propagates through the resort:
 
 ```typescript
 interface KnowledgeFact {
@@ -843,7 +843,7 @@ interface KnowledgeFact {
 
   // PROPAGATION
   knownBy: Array<{
-    islanderId: string
+    heartbreakerId: string
     learnedFrom: string | null  // null if witnessed
     day: number
     willingToShare: number      // 0-100
@@ -875,7 +875,7 @@ const event = {
 
   knownBy: [
     {
-      islanderId: "player",
+      heartbreakerId: "player",
       learnedFrom: null, // witnessed directly
       day: 4,
       willingToShare: 80, // likely to gossip
@@ -893,7 +893,7 @@ const event = {
 // Player tells Liam
 // → Add to Liam's knowledge
 event.knownBy.push({
-  islanderId: "liam",
+  heartbreakerId: "liam",
   learnedFrom: "player",
   day: 5,
   willingToShare: 90, // Liam loves gossip
@@ -901,20 +901,20 @@ event.knownBy.push({
 })
 
 // Update player's record
-const playerKnowledge = event.knownBy.find(k => k.islanderId === "player")
+const playerKnowledge = event.knownBy.find(k => k.heartbreakerId === "player")
 playerKnowledge.hasSharedWith.push("liam")
 
 // Liam tells Chloe
 // → Add to Chloe's knowledge
 event.knownBy.push({
-  islanderId: "chloe",
+  heartbreakerId: "chloe",
   learnedFrom: "liam",
   day: 5,
   willingToShare: 75,
   hasSharedWith: []
 })
 
-// Now 3 Islanders know, gossip is spreading
+// Now 3 Heartbreakers know, gossip is spreading
 ```
 
 ---
@@ -926,13 +926,13 @@ event.knownBy.push({
 ```javascript
 function advanceDay() {
   // 1. Increment day
-  villaState.currentDay++
-  villaState.currentPhase = "morning"
-  villaState.timeRemaining = 90
+  resortState.currentDay++
+  resortState.currentPhase = "morning"
+  resortState.timeRemaining = 90
 
   // 2. Update metrics
-  villaState.metrics.daysSinceLastBombshell++
-  villaState.metrics.daysSinceLastRecoupling++
+  resortState.metrics.daysSinceLastHeartThrob++
+  resortState.metrics.daysSinceLastPairingCeremony++
 
   // 3. Apply daily relationship decay
   applyRelationshipDecay()
@@ -944,7 +944,7 @@ function advanceDay() {
   executeScheduledEvents()
 
   // 6. Producer AI decides new events
-  const newEvent = await getProducerDecision(villaState)
+  const newEvent = await getProducerDecision(resortState)
   if (newEvent) {
     scheduleEvent(newEvent)
   }
@@ -959,7 +959,7 @@ function advanceDay() {
 ```javascript
 function advancePhase() {
   const phases = ["morning", "challenge", "afternoon", "evening"]
-  const currentIndex = phases.indexOf(villaState.currentPhase)
+  const currentIndex = phases.indexOf(resortState.currentPhase)
   const nextPhase = phases[(currentIndex + 1) % 4]
 
   // If wrapping around, advance day instead
@@ -967,14 +967,14 @@ function advancePhase() {
     return advanceDay()
   }
 
-  villaState.currentPhase = nextPhase
-  villaState.timeRemaining = getPhaseTimeLimit(nextPhase)
+  resortState.currentPhase = nextPhase
+  resortState.timeRemaining = getPhaseTimeLimit(nextPhase)
 
   // Simulate NPC behavior during transition
   simulateAllNPCBehavior()
 
   // Update locations
-  redistributeIslanders()
+  redistributeHeartbreakers()
 }
 ```
 
@@ -982,13 +982,13 @@ function advancePhase() {
 
 ```javascript
 function applyRelationshipDecay() {
-  for (let islander of allIslanders) {
-    for (let [targetId, rel] of Object.entries(islander.relationships)) {
+  for (let heartbreaker of allHeartbreakers) {
+    for (let [targetId, rel] of Object.entries(heartbreaker.relationships)) {
       // Skip if they just interacted
-      if (rel.lastInteraction === villaState.currentDay - 1) continue
+      if (rel.lastInteraction === resortState.currentDay - 1) continue
 
       // Decay rates
-      const daysSinceInteraction = villaState.currentDay - rel.lastInteraction
+      const daysSinceInteraction = resortState.currentDay - rel.lastInteraction
 
       if (daysSinceInteraction >= 2) {
         rel.affection -= 1
@@ -1020,18 +1020,18 @@ const saveState = {
   timestamp: Date.now(),
 
   // Core state
-  villa: villaState,
+  resort: resortState,
   player: player,
-  islanders: allIslanders,
+  heartbreakers: allHeartbreakers,
 
   // Derived state (can be recalculated, but save for convenience)
-  couples: villaState.couples,
+  couples: resortState.couples,
   knowledge: allKnowledgeFacts,
 
   // Run metadata
-  seed: villaState.seed,
-  difficulty: villaState.difficulty,
-  startTime: villaState.runStartTime
+  seed: resortState.seed,
+  difficulty: resortState.difficulty,
+  startTime: resortState.runStartTime
 }
 ```
 
@@ -1069,9 +1069,9 @@ function loadGame() {
   }
 
   // Restore state
-  restoreVillaState(saved.villa)
+  restoreResortState(saved.resort)
   restorePlayer(saved.player)
-  restoreIslanders(saved.islanders)
+  restoreHeartbreakers(saved.heartbreakers)
 
   return saved
 }

@@ -14,9 +14,9 @@ import yaml
 
 from src.game.content.models import (
     ArchetypeContent,
-    CasaAmorCastContent,
     ChallengeContent,
     ContentIndex,
+    FlushOfHeartsCastContent,
     LocationContent,
     PlayerArchetypeContent,
     ProducerTextContent,
@@ -29,7 +29,7 @@ ContentT = TypeVar(
     PlayerArchetypeContent,
     ChallengeContent,
     ProducerTextContent,
-    CasaAmorCastContent,
+    FlushOfHeartsCastContent,
 )
 
 
@@ -41,13 +41,13 @@ def load_content(root: Path = Path("content")) -> ContentIndex:
         player_archetypes=_load_collection(root / "player_archetypes", PlayerArchetypeContent),
         challenges=_load_collection(root / "challenges", ChallengeContent),
         producer_texts=_load_collection(root / "producer_texts", ProducerTextContent),
-        casa_amor_cast=_load_collection(root / "casa_amor_cast", CasaAmorCastContent),
+        flush_of_hearts_cast=_load_collection(root / "flush_of_hearts_cast", FlushOfHeartsCastContent),
         backstories=load_backstories(root / "backstories.yaml"),
     )
 
 
 def load_backstories(path: Path = Path("content/backstories.yaml")) -> dict[str, str]:
-    """Load deterministic islander backstories keyed by islander id."""
+    """Load deterministic heartbreaker backstories keyed by heartbreaker id."""
     if not path.is_file():
         raise ValueError(f"missing backstory catalog: {path}")
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))

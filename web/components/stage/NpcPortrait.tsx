@@ -1,4 +1,4 @@
-import type { IslanderSummary } from "../../lib/types";
+import type { HeartbreakerSummary } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 
 const moodTone: Record<string, { ring: string; glow: string; tag: string }> = {
@@ -11,7 +11,7 @@ const moodTone: Record<string, { ring: string; glow: string; tag: string }> = {
   anxious: { ring: "rgba(181,161,135,.7)", glow: "rgba(120,106,88,.45)", tag: "Anxious" }
 };
 
-export function NpcPortrait({ npc }: { npc: IslanderSummary }) {
+export function NpcPortrait({ npc }: { npc: HeartbreakerSummary }) {
   const tone = moodTone[npc.mood] ?? { ring: "rgba(248,236,210,.4)", glow: "rgba(248,236,210,.2)", tag: npc.mood || "" };
   return (
     <div className="portrait">

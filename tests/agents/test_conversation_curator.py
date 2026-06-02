@@ -80,7 +80,7 @@ def test_curator_context_supplies_pronouns_so_unisex_names_are_not_guessed() -> 
     _start_conversation(state)
     conversation = state.active_conversation
     assert conversation is not None
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
 
     rendered = _render_context(state, conversation, [])
 
@@ -154,7 +154,7 @@ def _start_conversation(state) -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
         contextual_options=lambda *_args: mock_follow_up_menu(),

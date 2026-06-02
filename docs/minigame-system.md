@@ -31,7 +31,7 @@ A minigame is a structured player-facing scene with the following properties:
   Facts, Trait Cards, and recorded play history. No agent ever decides who
   wins, by how much, or which relationship deltas apply.
 - Its narration is written by the existing agent layer (Event Narrator,
-  Islander Voice, Conversation Curator) using a typed result payload. The
+  Heartbreaker Voice, Conversation Curator) using a typed result payload. The
   agent reveals facts and dramatizes the moment; it never changes the result.
 - Its question/prompt pool is generated **once at session start** by a typed
   Question Bank agent (see §4), then cached in `GameState`. Minigame turns
@@ -45,8 +45,8 @@ A minigame is a structured player-facing scene with the following properties:
 
 A minigame **never**:
 
-- Decides whether an islander is eliminated, recoupled, or unlocked.
-  (Eliminations, recouplings, and unlocks happen in their owning systems and
+- Decides whether a heartbreaker is eliminated, paired, or unlocked.
+  (Eliminations, pairings, and unlocks happen in their owning systems and
   may *consume* a minigame's deltas, but the minigame does not branch them.)
 - Persists state outside the seasonal run. Question banks and per-run
   knowledge stay in the run; cross-run carryover is parked
@@ -63,8 +63,8 @@ The terms below appear in code, content, and the per-minigame specs.
 | Term | Meaning |
 |---|---|
 | **Minigame** | One of the six entries in `DAILY_CHALLENGE_SCHEDULE`. Also called a "challenge" externally; the per-minigame design canon uses both interchangeably. |
-| **Minigame kind** | The discriminator string: `compatibility_quiz`, `heart_rate`, `mr_and_mrs`, `lie_detector`, `snog_marry_pie`, `final_couples`. Stable. Never renamed without a snapshot version bump. |
-| **Round** | One scored unit inside a minigame (one question, one heart-rate reveal pair, one snog/marry/pie pick). A minigame is a sequence of 1..N rounds. |
+| **Minigame kind** | The discriminator string: `compatibility_quiz`, `heart_rate`, `couples_quiz`, `lie_detector`, `kiss_wed_pass`, `final_couples`. Stable. Never renamed without a snapshot version bump. |
+| **Round** | One scored unit inside a minigame (one question, one heart-rate reveal pair, one kiss/wed/pass pick). A minigame is a sequence of 1..N rounds. |
 | **Prompt** | A round's player-facing question/setup, drawn from the Question Bank. |
 | **Choice** | One discrete option the player can pick. Always part of a finite, engine-validated set. |
 | **Reveal** | A fact, chemistry score, or relationship beat that becomes visible to the player as a side effect of resolving a round. |
@@ -74,7 +74,7 @@ The terms below appear in code, content, and the per-minigame specs.
 
 Player-facing names follow [paradise-hearts-glossary.md](paradise-hearts-glossary.md):
 Compatibility Quiz, Pulse Race (Heart Rate), The Couples Quiz (Mr & Mrs),
-Lie Detector, Kiss Wed Pass (Snog Marry Pie), Final Couples Challenge. Engine
+Lie Detector, Kiss Wed Pass, Final Couples Challenge. Engine
 identifiers keep the underscored forms.
 
 ---
@@ -125,7 +125,7 @@ drives round-by-round decisions.
 - **apply deltas**: Engine writes `RelationshipDelta`s and audience deltas
   into state, attaches the new facts to `player.known_facts`, and persists.
 - **narrator wrap**: Event Narrator produces the closing prose, citing the
-  reveals. Islander Voice may speak the loudest reaction line.
+  reveals. Heartbreaker Voice may speak the loudest reaction line.
 
 Each step is one engine turn except for **present round** ↔ **score round**,
 which advance together when the player submits a choice. The browser and CLI
@@ -220,9 +220,9 @@ alias is removed in one cleanup PR (`ENGINEERING.md` R-no-dead-code applies).
 class MinigameKind(StrEnum):
     COMPATIBILITY_QUIZ = "compatibility_quiz"
     HEART_RATE = "heart_rate"
-    MR_AND_MRS = "mr_and_mrs"
+    COUPLES_QUIZ = "couples_quiz"
     LIE_DETECTOR = "lie_detector"
-    SNOG_MARRY_PIE = "snog_marry_pie"
+    KISS_WED_PASS = "kiss_wed_pass"
     FINAL_COUPLES = "final_couples"
 ```
 
@@ -467,14 +467,14 @@ rules below apply to every minigame; per-minigame specs may add more.
 
 ## 7. Narration contract
 
-The Event Narrator is the primary writer; Islander Voice writes individual
+The Event Narrator is the primary writer; Heartbreaker Voice writes individual
 reaction lines; Conversation Curator may write a recap line for the rail.
 
 **Inputs handed to the narrator:**
 
 - The fully resolved `Challenge` with all rounds, points, classification,
   deltas, and reveals.
-- The Islander Voice context bundle for any speaking NPCs.
+- The Heartbreaker Voice context bundle for any speaking NPCs.
 - The relevant `PersonaSummary`s.
 
 **What the narrator must do:**
@@ -617,11 +617,11 @@ order is:
    two-sided answers: the player guesses Chloe and Chloe guesses the player.
    Validates the two-target round shape.
 3. **Lie Detector** (Day 4) — adds the lie/truth axis. Reuses the quiz round
-   shape but consults event history (kisses, hideaway visits) instead of
+   shape but consults event history (kisses, Paradise Suite visits) instead of
    Trait Cards.
 4. **Pulse Race** (Heart Rate, Day 2) — non-interactive reveal. Validates that
    the system supports a minigame with zero rounds, only reveals.
-5. **Kiss Wed Pass** (Snog Marry Pie, Day 5) — three-pick allocation, one
+5. **Kiss Wed Pass** (Day 5) — three-pick allocation, one
    per NPC. Validates the constrained-allocation choice pattern.
 6. **Final Couples Challenge** (Day 6) — couple-level scoring that consumes
    the season's aggregate of relationships. Validates the cross-minigame

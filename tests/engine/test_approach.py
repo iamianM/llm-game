@@ -21,20 +21,20 @@ from src.game.state.models import (
 from src.game.state.rng import SeededRng
 
 
-def _place_with_player(state: GameState, *islander_ids: str) -> None:
-    """Co-locate the named islanders with the player; banish everyone else."""
+def _place_with_player(state: GameState, *heartbreaker_ids: str) -> None:
+    """Co-locate the named heartbreakers with the player; banish everyone else."""
     state.location_id = Location.POOL
-    for islander in state.islanders:
-        islander.location_id = (
-            Location.POOL if islander.id in islander_ids else Location.BEDROOM
+    for heartbreaker in state.heartbreakers:
+        heartbreaker.location_id = (
+            Location.POOL if heartbreaker.id in heartbreaker_ids else Location.BEDROOM
         )
 
 
 def test_candidates_only_co_located_and_free() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe", "maya")
-    state.islanders[2].location_id = Location.POOL  # liam co-located too
-    state.islanders[2].eliminated = True  # ...but eliminated
+    state.heartbreakers[2].location_id = Location.POOL  # liam co-located too
+    state.heartbreakers[2].eliminated = True  # ...but eliminated
     # Lock maya into an NPC-NPC conversation.
     state.npc_conversations.append(
         NPCNPCConversation(
@@ -57,7 +57,7 @@ def test_candidates_only_co_located_and_free() -> None:
 def test_chance_rises_with_chemistry_and_extraversion() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe")
-    npc = state.islanders[0]
+    npc = state.heartbreakers[0]
     npc.big5.extraversion = 5
     npc.relationship.chemistry = 0
     npc.relationship.affection = 0
@@ -72,7 +72,7 @@ def test_chance_rises_with_chemistry_and_extraversion() -> None:
 def test_encounter_boost_increases_chance() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe")
-    npc = state.islanders[0]
+    npc = state.heartbreakers[0]
     no_boost = approach_chance(state, npc, encounter_boost=0)
     with_boost = approach_chance(state, npc, encounter_boost=14)
 
@@ -83,7 +83,7 @@ def test_roll_sets_pending_when_chance_is_high() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe")
     # Crank chloe so her approach is near-certain.
-    chloe = state.islanders[0]
+    chloe = state.heartbreakers[0]
     chloe.relationship.chemistry = 90
     chloe.relationship.affection = 90
     chloe.big5.extraversion = 10
@@ -99,9 +99,9 @@ def test_roll_sets_pending_when_chance_is_high() -> None:
 def test_roll_none_when_no_candidates() -> None:
     state = new_game(1)
     # Send everyone away from the player.
-    state.location_id = Location.HIDEAWAY
-    for islander in state.islanders:
-        islander.location_id = Location.POOL
+    state.location_id = Location.PRIVATE_SUITE
+    for heartbreaker in state.heartbreakers:
+        heartbreaker.location_id = Location.POOL
 
     assert roll_ambient_approach(state, SeededRng(1)) is None
     assert state.pending_npc_approach is None
@@ -113,7 +113,7 @@ def test_engage_warms_relationship_and_resets_ambient() -> None:
     state.active_ambient_id = "pool_lounge"
     roll_ambient_approach(state, SeededRng(2))
     state.pending_npc_approach = _force_pending(state, "chloe")
-    before = state.islanders[0].relationship.affection
+    before = state.heartbreakers[0].relationship.affection
 
     result = apply_approach_response(
         state,
@@ -121,7 +121,7 @@ def test_engage_warms_relationship_and_resets_ambient() -> None:
         SeededRng(1),
     )
 
-    assert state.islanders[0].relationship.affection > before
+    assert state.heartbreakers[0].relationship.affection > before
     assert state.pending_npc_approach is None
     assert state.active_ambient_id is None
     assert result.success
@@ -131,7 +131,7 @@ def test_wave_off_firmly_seeds_gossip_and_walks_away() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe")
     state.pending_npc_approach = _force_pending(state, "chloe")
-    before = state.islanders[0].relationship.affection
+    before = state.heartbreakers[0].relationship.affection
 
     result = apply_approach_response(
         state,
@@ -139,7 +139,7 @@ def test_wave_off_firmly_seeds_gossip_and_walks_away() -> None:
         SeededRng(1),
     )
 
-    chloe = state.islanders[0]
+    chloe = state.heartbreakers[0]
     assert chloe.relationship.affection == before - 4
     assert chloe.location_id is not Location.POOL  # walked away
     assert result.forced_movements
@@ -153,8 +153,8 @@ def test_ignore_is_milder_and_seeds_no_public_snub() -> None:
     state = new_game(1)
     _place_with_player(state, "chloe")
     state.pending_npc_approach = _force_pending(state, "chloe")
-    before = state.islanders[0].relationship.affection
-    memories_before = len(state.islanders[0].memories)
+    before = state.heartbreakers[0].relationship.affection
+    memories_before = len(state.heartbreakers[0].memories)
 
     apply_approach_response(
         state,
@@ -162,7 +162,7 @@ def test_ignore_is_milder_and_seeds_no_public_snub() -> None:
         SeededRng(1),
     )
 
-    chloe = state.islanders[0]
+    chloe = state.heartbreakers[0]
     assert chloe.relationship.affection == before - 2
     assert len(chloe.memories) == memories_before  # no public snub memory
     assert state.pending_npc_approach is None
@@ -246,7 +246,7 @@ def test_deterministic_for_same_seed() -> None:
     for _ in range(2):
         state = new_game(1)
         _place_with_player(state, "chloe", "jordan")
-        for npc in state.islanders:
+        for npc in state.heartbreakers:
             npc.relationship.chemistry = 40
         approach = roll_ambient_approach(state, SeededRng(99))
         results.append(None if approach is None else approach.model_dump())

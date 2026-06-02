@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict
 SummonReason = Literal[
     "chemistry_partner_arrived",
     "friend_needs_them",
-    "drama_pull",
+    "drama_summon",
     "needs_space",
     "phase_pressure",
 ]
@@ -23,7 +23,7 @@ ApproachReason = Literal[
 
 
 class PendingNPCSummon(BaseModel):
-    """A deterministic queued NPC summon from an arrival pull hit."""
+    """A deterministic queued NPC summon from an arrival private-chat hit."""
 
     model_config = ConfigDict(extra="forbid")
 

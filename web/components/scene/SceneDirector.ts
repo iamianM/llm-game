@@ -91,7 +91,7 @@ export function planScene(
       beats.push({ kind: "speech", speakerId: exchange.speaker_id, text: page, pose: "talking" });
     }
   }
-  // A felt "your bond just moved" cue, floated by the islander we just engaged.
+  // A felt "your bond just moved" cue, floated by the heartbreaker we just engaged.
   // Anchored to the exchange speaker (the person we steered toward); auto-advances.
   const shiftLine = lastTurn?.connection_shift?.trim();
   if (shiftLine) {
@@ -213,7 +213,7 @@ function wrapNarration(pending: PendingChallenge): string | null {
 }
 
 /**
- * Day-1 intros: NPCs greet the player one at a time, in the firepit.
+ * Day-1 intros: NPCs greet the player one at a time, in the flame_deck.
  * After each pick, the engine response is surfaced as a narrator beat then
  * we auto-cycle to the next target. Once everyone is met, the engine
  * transitions phase and the next planScene call covers what comes after.
@@ -229,11 +229,11 @@ function planIntroScene(
   const introTargets = availableActions
     .filter((a) => a.kind === "introduce_to" && a.target_id)
     .map((a) => a.target_id as string);
-  const nextTarget = nextIntroTarget(state.islanders, availableActions, state.player.id);
+  const nextTarget = nextIntroTarget(state.heartbreakers, availableActions, state.player.id);
 
   // Show the just-finished exchange first (player line then NPC reply) so the
-  // user can read the response before the camera swings to the next islander.
-  // Keep the islander we're replying to spotlighted for the whole exchange —
+  // user can read the response before the camera swings to the next heartbreaker.
+  // Keep the heartbreaker we're replying to spotlighted for the whole exchange —
   // including the player's own line — so they don't drop to the back row the
   // instant the player speaks and then snap forward again for their reply.
   if (justFinished && (exchange?.player_dialogue || exchange?.npc_dialogue)) {
@@ -262,7 +262,7 @@ function planIntroScene(
     return beats;
   }
 
-  // Frame the next islander, NPC greets first, then the player picks an intent.
+  // Frame the next heartbreaker, NPC greets first, then the player picks an intent.
   beats.push({ kind: "camera", shot: "two_shot", focusIds: [nextTarget.id], durationMs: 160 });
   // Prefer dynamically-generated greetings (live mode); fall back to per-archetype
   // templates so demo mode and pre-feature checkpoints still read cleanly.
@@ -274,7 +274,7 @@ function planIntroScene(
 
   // Show the engine's intent-labeled choices ("Be friendly with X", etc.)
   // unchanged — no preview-line rewriting. The bubble shows the *intent dial*,
-  // the engine's islander_voice writes the actual line on click.
+  // the engine's heartbreaker_voice writes the actual line on click.
   const introChoices = availableActions.filter(
     (a) => a.kind === "introduce_to" && a.target_id === nextTarget.id,
   );

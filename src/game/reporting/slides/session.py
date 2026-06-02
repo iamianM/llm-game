@@ -66,7 +66,7 @@ def slide_session_page(
         f"<aside class='scene-nav'><h4>Timeline</h4>{scene_nav_html}</aside>"
         f"<main class='stage'>{scenes_html}</main>"
         "<aside class='right-rail'>"
-        "<section><h4>Where everyone is</h4><div id='villa-map-host'></div></section>"
+        "<section><h4>Where everyone is</h4><div id='resort-map-host'></div></section>"
         f"<section><h4>Couples</h4>{couples_html}</section>"
         f"<section><h4>Cast</h4>{render_cast_grid(cast, partner_id)}</section>"
         f"<section><h4>Bookmarks</h4>{bookmarks_html}</section>"
@@ -98,9 +98,9 @@ def _render_run_header(title: str, final_state: dict[str, Any] | None, preface: 
             partner_label = ""
             partner_id = player_partner_id(final_state)
             if partner_id:
-                islanders = final_state.get("islanders") or []
-                if isinstance(islanders, list):
-                    for isl in islanders:
+                heartbreakers = final_state.get("heartbreakers") or []
+                if isinstance(heartbreakers, list):
+                    for isl in heartbreakers:
                         if isinstance(isl, dict) and isl.get("id") == partner_id:
                             partner_label = f" with {escape(str(isl.get('name') or display_name(partner_id)))}"
                             break
@@ -297,12 +297,12 @@ def _scene_metadata(scenes: list[Scene]) -> list[dict[str, Any]]:
     meta: list[dict[str, Any]] = []
     for index, scene in enumerate(scenes):
         first = scene.records[0] if scene.records else {}
-        snapshot = first.get("villa_snapshot") if isinstance(first.get("villa_snapshot"), dict) else None
+        snapshot = first.get("resort_snapshot") if isinstance(first.get("resort_snapshot"), dict) else None
         meta.append({
             "index": index,
             "day": str(first.get("day", "?")),
             "phase": str(first.get("phase", "")),
             "kind": scene.kind,
-            "villa_snapshot": snapshot or {},
+            "resort_snapshot": snapshot or {},
         })
     return meta

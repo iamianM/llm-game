@@ -40,9 +40,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); }
 .location-kitchen { background: linear-gradient(180deg,#d4a456 0%,#a07232 70%,#6b4d22 100%); }
 .location-terrace { background: linear-gradient(180deg,#b5c298 0%,#8aa370 70%,#5d7349 100%); }
 .location-bedroom { background: linear-gradient(180deg,#b58a8f 0%,#815f64 70%,#4d3a3d 100%); }
-.location-firepit { background: linear-gradient(180deg,#1f1410 0%,#4a1a0e 50%,#802814 90%); }
-.location-hideaway { background: linear-gradient(180deg,#2e1b2c 0%,#4d2840 70%,#7a3c61 100%); }
-.location-casa_pool,.location-casa_kitchen,.location-casa_terrace {
+.location-flame_deck { background: linear-gradient(180deg,#1f1410 0%,#4a1a0e 50%,#802814 90%); }
+.location-private_suite { background: linear-gradient(180deg,#2e1b2c 0%,#4d2840 70%,#7a3c61 100%); }
+.location-flush_pool,.location-flush_kitchen,.location-flush_terrace {
   background: linear-gradient(180deg,#5a4490 0%,#3f2f6a 70%,#1f163a 100%);
 }
 

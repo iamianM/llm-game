@@ -12,11 +12,11 @@ from enum import StrEnum
 from typing import Literal, cast
 
 from src.game.engine.audience import player_couple
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.models import Challenge, GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
-ChallengeStat = Literal["charm", "banter", "eq", "graft", "loyalty", "combined"]
+ChallengeStat = Literal["charm", "banter", "eq", "spark", "loyalty", "combined"]
 
 
 class MinigameKind(StrEnum):
@@ -24,17 +24,17 @@ class MinigameKind(StrEnum):
 
     COMPATIBILITY_QUIZ = "compatibility_quiz"
     HEART_RATE = "heart_rate"
-    MR_AND_MRS = "mr_and_mrs"
+    COUPLES_QUIZ = "couples_quiz"
     LIE_DETECTOR = "lie_detector"
-    SNOG_MARRY_PIE = "snog_marry_pie"
+    KISS_WED_PASS = "kiss_wed_pass"
     FINAL_COUPLES = "final_couples"
 
 
 ROUND_BASED_MINIGAMES: set[str] = {
     MinigameKind.COMPATIBILITY_QUIZ.value,
     MinigameKind.HEART_RATE.value,
-    MinigameKind.SNOG_MARRY_PIE.value,
-    MinigameKind.MR_AND_MRS.value,
+    MinigameKind.KISS_WED_PASS.value,
+    MinigameKind.COUPLES_QUIZ.value,
     MinigameKind.LIE_DETECTOR.value,
     MinigameKind.FINAL_COUPLES.value,
 }
@@ -53,9 +53,9 @@ class ChallengeDef:
 DAILY_CHALLENGE_SCHEDULE: dict[int, ChallengeDef] = {
     1: ChallengeDef("compatibility_quiz", 1, "compatibility_quiz", "eq"),
     2: ChallengeDef("heart_rate", 2, "heart_rate", "charm"),
-    3: ChallengeDef("mr_and_mrs", 3, "mr_and_mrs", "banter"),
+    3: ChallengeDef("couples_quiz", 3, "couples_quiz", "banter"),
     4: ChallengeDef("lie_detector", 4, "lie_detector", "loyalty"),
-    5: ChallengeDef("snog_marry_pie", 5, "snog_marry_pie", "banter"),
+    5: ChallengeDef("kiss_wed_pass", 5, "kiss_wed_pass", "banter"),
     6: ChallengeDef("final_couples", 6, "final_couples", "combined"),
 }
 
@@ -105,7 +105,7 @@ def resolve_challenge(
     chance = _challenge_success_chance(state, challenge)
     success = rng.randint(1, 100) <= chance
     delta = _challenge_delta(challenge.kind, success)
-    target = find_islander(state, target_id)
+    target = find_heartbreaker(state, target_id)
     apply_relationship_delta(target, delta)
     state.player.public_perception = max(
         0,
@@ -138,8 +138,8 @@ def _challenge_label(kind: str) -> str:
         "final_couples": "Final Couples Challenge",
         "heart_rate": "Pulse Race",
         "lie_detector": "Lie Detector",
-        "mr_and_mrs": "The Couples Quiz",
-        "snog_marry_pie": "Kiss Wed Pass",
+        "couples_quiz": "The Couples Quiz",
+        "kiss_wed_pass": "Kiss Wed Pass",
     }
     return labels.get(kind, kind.replace("_", " ").title())
 
@@ -164,11 +164,11 @@ def _challenge_delta(kind: str, success: bool) -> RelationshipDelta:
         return RelationshipDelta(affection=5 if success else 0, trust=2 if success else -1)
     if kind == "heart_rate":
         return RelationshipDelta(chemistry=6 if success else 1)
-    if kind == "mr_and_mrs":
+    if kind == "couples_quiz":
         return RelationshipDelta(friendship=5 if success else -2)
     if kind == "lie_detector":
         return RelationshipDelta(trust=6 if success else -6)
-    if kind == "snog_marry_pie":
+    if kind == "kiss_wed_pass":
         return RelationshipDelta(chemistry=3 if success else 0, friendship=0 if success else -3)
     if kind == "final_couples":
         return RelationshipDelta(affection=8 if success else 2, trust=2 if success else 0)
@@ -179,17 +179,17 @@ def _perception_delta(kind: str, success: bool) -> int:
     success_values = {
         "compatibility_quiz": 3,
         "heart_rate": 4,
-        "mr_and_mrs": 5,
+        "couples_quiz": 5,
         "lie_detector": 4,
-        "snog_marry_pie": 2,
+        "kiss_wed_pass": 2,
         "final_couples": 6,
     }
     failure_values = {
         "compatibility_quiz": -1,
         "heart_rate": -2,
-        "mr_and_mrs": -3,
+        "couples_quiz": -3,
         "lie_detector": -3,
-        "snog_marry_pie": -1,
+        "kiss_wed_pass": -1,
         "final_couples": -2,
     }
     return (success_values if success else failure_values)[kind]
@@ -197,7 +197,7 @@ def _perception_delta(kind: str, success: bool) -> int:
 
 def _challenge_target_id(state: GameState, choice: str | None) -> str:
     if choice:
-        find_islander(state, choice)
+        find_heartbreaker(state, choice)
         return choice
     couple = player_couple(state)
     if couple is not None:

@@ -28,29 +28,29 @@ from src.game.state.rng import SeededRng
 def test_intent_success_chance_uses_configured_stat_and_affection() -> None:
     """F1 intent math uses the intent's configured player stat."""
     state = new_game(1)
-    intent = get_intent("friendly_chat_villa")
+    intent = get_intent("friendly_chat_resort")
 
-    assert intent_success_chance(state, state.islanders[0], intent) == 80
+    assert intent_success_chance(state, state.heartbreakers[0], intent) == 80
 
 
 def test_initial_intent_chance_capped_by_category_default() -> None:
     """Initial conversation risk caps keep friendly/banter rolls from reaching 95."""
     state = new_game(1)
     state.player.stats.banter = 9
-    state.islanders[0].relationship.affection = 100
+    state.heartbreakers[0].relationship.affection = 100
     intent = get_intent("banter_tell_joke")
 
-    assert intent_success_chance(state, state.islanders[0], intent) == 80
+    assert intent_success_chance(state, state.heartbreakers[0], intent) == 80
 
 
 def test_intent_success_breakdown_names_formula_terms() -> None:
     """Initial intent results carry a reviewable chance formula."""
     state = new_game(1)
     state.player.stats.banter = 9
-    state.islanders[0].relationship.affection = 100
+    state.heartbreakers[0].relationship.affection = 100
     intent = get_intent("banter_tell_joke")
 
-    breakdown = intent_success_breakdown(state, state.islanders[0], intent)
+    breakdown = intent_success_breakdown(state, state.heartbreakers[0], intent)
 
     assert breakdown.base == 50
     assert breakdown.stat_name == "banter"
@@ -67,8 +67,8 @@ def test_intent_success_chance_includes_compatibility_bonus() -> None:
     """Compatibility bonus appears in the chance breakdown."""
     state = new_game(1)
     state.player.archetype_id = "loyal_friend"
-    target = state.islanders[0]
-    intent = get_intent("friendly_chat_villa")
+    target = state.heartbreakers[0]
+    intent = get_intent("friendly_chat_resort")
 
     breakdown = intent_success_breakdown(state, target, intent)
 
@@ -78,9 +78,9 @@ def test_intent_success_chance_includes_compatibility_bonus() -> None:
 def test_intent_success_chance_includes_dealbreaker_penalty() -> None:
     """Dealbreaker tags reduce chance."""
     state = new_game(1)
-    target = state.islanders[0]
-    target.type_on_paper.dealbreakers = ["friendly"]
-    intent = get_intent("friendly_chat_villa")
+    target = state.heartbreakers[0]
+    target.ideal_match.dealbreakers = ["friendly"]
+    intent = get_intent("friendly_chat_resort")
 
     breakdown = intent_success_breakdown(state, target, intent)
 
@@ -91,7 +91,7 @@ def test_initial_intent_explicit_risk_overrides_default() -> None:
     """Explicit intent risk overrides category defaults."""
     state = new_game(1)
     state.player.stats.banter = 9
-    state.islanders[0].relationship.affection = 100
+    state.heartbreakers[0].relationship.affection = 100
     intent = Intent(
         id="test_high_risk_joke",
         category=IntentCategory.BANTER,
@@ -105,7 +105,7 @@ def test_initial_intent_explicit_risk_overrides_default() -> None:
         ),
     )
 
-    assert intent_success_chance(state, state.islanders[0], intent) == 50
+    assert intent_success_chance(state, state.heartbreakers[0], intent) == 50
 
 
 def test_friendly_intent_applies_success_delta() -> None:
@@ -117,7 +117,7 @@ def test_friendly_intent_applies_success_delta() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
     )
@@ -129,8 +129,8 @@ def test_friendly_intent_applies_success_delta() -> None:
     assert result.relationship_deltas == {
         "chloe": RelationshipDelta(affection=2, friendship=1)
     }
-    assert state.islanders[0].relationship.affection == 12
-    assert state.islanders[0].relationship.friendship == 1
+    assert state.heartbreakers[0].relationship.affection == 12
+    assert state.heartbreakers[0].relationship.friendship == 1
 
 
 def test_locked_intent_fails_loud() -> None:
@@ -153,7 +153,7 @@ def test_bromance_intent_applies_friendship_delta() -> None:
     """Same-sex men get bromance mechanics instead of flirty mechanics."""
     state = new_game(1)
     state.player.gender = Gender.MAN
-    liam = next(islander for islander in state.islanders if islander.id == "liam")
+    liam = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "liam")
     liam.location_id = state.location_id
 
     result = apply_action(
@@ -207,14 +207,14 @@ def test_follow_up_honest_vulnerable_builds_trust() -> None:
 
     assert result.success is True
     assert result.relationship_deltas == {"chloe": RelationshipDelta(affection=2, trust=6)}
-    assert state.islanders[0].relationship.trust == 6
+    assert state.heartbreakers[0].relationship.trust == 6
 
 
 def test_follow_up_escalate_flirt_miss_drops_chemistry() -> None:
     """Missed flirt follow-ups can backfire."""
     state = _state_with_follow_up("escalate_flirt", risk="medium", stat_used="charm")
-    state.islanders[0].relationship.chemistry = 5
-    state.islanders[0].relationship.trust = 5
+    state.heartbreakers[0].relationship.chemistry = 5
+    state.heartbreakers[0].relationship.trust = 5
 
     result = apply_action(
         state,
@@ -226,8 +226,8 @@ def test_follow_up_escalate_flirt_miss_drops_chemistry() -> None:
     assert result.relationship_deltas == {
         "chloe": RelationshipDelta(chemistry=-3, trust=-1)
     }
-    assert state.islanders[0].relationship.chemistry == 2
-    assert state.islanders[0].relationship.trust == 4
+    assert state.heartbreakers[0].relationship.chemistry == 2
+    assert state.heartbreakers[0].relationship.trust == 4
 
 
 def test_follow_up_unknown_intent_raises() -> None:
@@ -291,7 +291,7 @@ def test_supportive_follow_up_deltas_are_closed_set(
 def test_follow_up_success_chance_is_capped_by_risk() -> None:
     """Risk labels remain meaningful even with high stats and affection."""
     state = new_game(1)
-    target = state.islanders[0]
+    target = state.heartbreakers[0]
     target.relationship.affection = 100
     state.player.stats.banter = 9
 

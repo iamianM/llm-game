@@ -1,21 +1,21 @@
-"""Deterministic demo-mode dialogue for the Islander Voice agent.
+"""Deterministic demo-mode dialogue for the Heartbreaker Voice agent.
 
 Demo mode (the default when no LLM key is configured) never calls the model, so
 these templates are the first — and often the only — conversation a player ever
-sees. They must read like real, in-character Love-Island lines rather than
+sees. They must read like real, in-character Paradise Hearts lines rather than
 echoing the raw menu label (the old mock literally said "I wanted to say this
 properly, X: <label>", which broke immersion on the very first turn).
 
 Lines are keyed by intent category and outcome. A stable roll seed rotates
 between a few index-matched (player, npc) phrasings so repeated demo play does
-not feel identical — flirting twice, or with two different Islanders, no longer
+not feel identical — flirting twice, or with two different Heartbreakers, no longer
 returns word-for-word the same reply. The full set of NPC replies stays a small
 fixed pool per (category, outcome) so traces remain detectable as mock.
 Determinism (same state -> same line) is required for replay parity, so the
 only entropy is the already-deterministic dice roll.
 
 This module deliberately avoids importing the OpenAI client (unlike
-``islander_voice``) so the report tooling can pull the mock sentinels cheaply.
+``heartbreaker_voice``) so the report tooling can read the mock sentinels cheaply.
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ from typing import Literal
 
 from src.game.state.models import Mood
 
-# Mirror of ``Exchange.npc_tone`` (islander_voice_context). Kept local so this
+# Mirror of ``Exchange.npc_tone`` (heartbreaker_voice_context). Kept local so this
 # module stays dependency-light; an identical Literal is type-compatible.
 Tone = Literal[
     "warm",

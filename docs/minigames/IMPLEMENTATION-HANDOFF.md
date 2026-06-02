@@ -21,7 +21,7 @@ The rest of this document is the exact implementation plan. Sections map one-to-
 ## 0. Pre-flight
 
 - `SCHEMA_VERSION` will bump 25 → 26 (`src/game/state/models.py:43`). Every scenario fixture under `tests/scenarios/fixtures/` carries an `expected_hash`; those values become stale once new fields land on `GameState` / `Challenge`. Plan to regenerate them in step 6.
-- The implementation does *not* break the legacy single-roll `resolve_challenge` path. The other five minigames (`heart_rate`, `mr_and_mrs`, `lie_detector`, `snog_marry_pie`, `final_couples`) continue to run through the old path until each gets its own PR per the per-minigame specs. Only `compatibility_quiz` is migrated to the new round-based harness in this PR.
+- The implementation does *not* break the legacy single-roll `resolve_challenge` path. The other five minigames (`heart_rate`, `couples_quiz`, `lie_detector`, `kiss_wed_pass`, `final_couples`) continue to run through the old path until each gets its own PR per the per-minigame specs. Only `compatibility_quiz` is migrated to the new round-based harness in this PR.
 - The Question Bank ships in **mock mode only** in this PR (deterministic generation from existing Trait Cards). The live OpenAI Question Bank agent is a follow-up; the mock implementation already lets every other surface ship.
 
 ---
@@ -94,7 +94,7 @@ class Challenge(BaseModel):
     id: str
     day: int
     kind: str
-    stat_tested: Literal["charm", "banter", "eq", "graft", "loyalty", "combined"]
+    stat_tested: Literal["charm", "banter", "eq", "spark", "loyalty", "combined"]
     participants: list[str] = Field(default_factory=list)
     player_choice: str | None = None
     result: Literal["success", "failure"] | None = None
@@ -269,17 +269,17 @@ def build_question_bank(state: GameState) -> QuestionBank:
     """Deterministically derive a Question Bank from current Trait Cards."""
     rng = SeededRng(state.seed).fork("question_bank")
     prompts: dict[str, list[QuestionBankPrompt]] = {"compatibility_quiz": []}
-    for islander in state.islanders:
-        card = islander.trait_card
+    for heartbreaker in state.heartbreakers:
+        card = heartbreaker.trait_card
         for key, fact in {**card.core_traits, **card.flavor_traits}.items():
             prompts["compatibility_quiz"].append(QuestionBankPrompt(
-                id=f"cq_{islander.id}_{key}",
+                id=f"cq_{heartbreaker.id}_{key}",
                 minigame_kind="compatibility_quiz",
-                target_id=islander.id,
+                target_id=heartbreaker.id,
                 trait_key=key,
                 tier=fact.tier,
                 mechanical=fact.mechanical,
-                stem=_mock_stem(islander.name, key),
+                stem=_mock_stem(heartbreaker.name, key),
                 correct_value=fact.value,
                 distractors=list(fact.distractors),
             ))
@@ -299,7 +299,7 @@ _STEMS = {
     "pet_peeve": "What's {name}'s biggest pet peeve?",
     "insecurity": "What is {name} most insecure about?",
     "past_heartbreak": "What was {name}'s last heartbreak?",
-    "hidden_secret": "What is {name} hiding from the villa?",
+    "hidden_secret": "What is {name} hiding from the resort?",
 }
 
 
@@ -318,7 +318,7 @@ Call site: at the end of `engine/turn_events.py:_run_intros` or the first turn a
 from __future__ import annotations
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.challenges import apply_recovery_floor
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.engine.couples import player_couple
 from src.game.state.event_models import (
     Challenge, MinigameChoice, MinigameReveal, MinigameRound,
@@ -332,7 +332,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
     """Build five eligible quiz rounds with priority: T2+ mech → T1 mech → flavor → fallback."""
     bank = state.question_bank
     assert bank is not None, "question_bank must be initialized before minigame start"
-    target = find_islander(state, target_id)
+    target = find_heartbreaker(state, target_id)
     used = set(state.quizzed_traits_this_run.get(target_id, []))
     pool = [p for p in bank.prompts.get("compatibility_quiz", []) if p.target_id == target_id]
 
@@ -431,7 +431,7 @@ def score_compatibility_quiz(state: GameState, challenge: Challenge) -> Challeng
 def apply_compatibility_quiz_result(state: GameState, challenge: Challenge) -> None:
     """Side effects: relationship deltas, audience, KnownFacts, caught_unprepared memories."""
     target_id = challenge.participants[1] if len(challenge.participants) > 1 else "chloe"
-    target = find_islander(state, target_id)
+    target = find_heartbreaker(state, target_id)
     cls = challenge.classification
     if cls == "success":
         delta = RelationshipDelta(affection=6, trust=3)
@@ -479,7 +479,7 @@ if state.phase.value == "challenge":
             target_id = _quiz_partner_id(state)
             challenge.rounds = build_rounds(state, target_id, rng.fork(f"compat_quiz_{state.day}"))
             challenge.participants = ["player", target_id]
-        elif challenge.kind != "snog_marry_pie":
+        elif challenge.kind != "kiss_wed_pass":
             state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
         events.append(...)
 ```
@@ -506,7 +506,7 @@ if state.pending_challenge is not None and state.pending_challenge.result is Non
                 label=f"Compat Quiz r{current.index+1}: {choice.label}",
             ))
         return actions
-    if state.pending_challenge.kind == "snog_marry_pie":
+    if state.pending_challenge.kind == "kiss_wed_pass":
         # ... existing block ...
 ```
 

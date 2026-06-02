@@ -8,15 +8,15 @@
 
 The first minigame where the player chooses *whether to be honest*. Reuses
 the quiz round shape, but the "correct answer" is computed from event
-history (kisses, hideaway visits, gossip propagation) instead of Trait
+history (kisses, Paradise Suite visits, gossip propagation) instead of Trait
 Cards. The drama comes from the player deciding to lie about something the
 machine will detect.
 
 ## 1. Player experience
 
-Day 4 is after the first recoupling. The producer announces a Lie Detector
+Day 4 is after the first Pairing Ceremony. The producer announces a Lie Detector
 session. The player is wired up to a fake polygraph and the partner asks
-five questions about the player's behavior in the villa so far. For each
+five questions about the player's behavior in Sunset Bay so far. For each
 question, the player picks between (a) the truthful answer and (b) a small
 set of plausible lies. The "machine" — actually the engine, consulting state
 — reveals after each round whether the partner *believes* the answer based
@@ -87,7 +87,7 @@ Classification → effects:
   `lie_exposed` memory the producer can reference in future texts.
 
 A single high-stakes lie caught on a Tier-4 event (kiss with another
-islander, hideaway with a third party) escalates the failure: an additional
+heartbreaker, Paradise Suite visit with a third party) escalates the failure: an additional
 `-3` audience and an entry on the partner's `dealbreakers` list.
 
 ## 4. Knowledge bridge
@@ -96,7 +96,7 @@ This minigame consumes the **event history** layer instead of the
 Trait Card layer:
 
 - Each round's "truth" is a function of recorded engine events: kiss
-  registry, hideaway visit ledger, gossip-propagation graph, recoupling
+  registry, Paradise Suite visit ledger, gossip-propagation graph, pairing
   history. The Question Bank captures the *question*, but the *answer* is
   looked up live at score time.
 - Lies are still discrete choices from the bank. The bank produces 3-4
@@ -158,7 +158,7 @@ A reviewer can:
 - The best moments here are the ones where the player tells a hard truth
   and the partner *appreciates* it ("I'm glad you didn't lie about that").
   Lean on this with a `truth_told` reveal that grants real trust.
-- A caught lie about a hideaway visit should feel like a season-defining
+- A caught lie about a Paradise Suite visit should feel like a season-defining
   moment. The audience delta and the gossip propagation should make it
   matter for two more days.
 - Avoid making the polygraph feel arbitrary. Every belief outcome should be

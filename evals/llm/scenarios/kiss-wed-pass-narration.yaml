@@ -1,10 +1,10 @@
 id: kiss-wed-pass-narration
 title: Kiss Wed Pass Allocation
-goal: Prove the narrator names each of the three allocations specifically and dramatises the pie pick.
+goal: Prove the narrator names each of the three allocations specifically and dramatises the pass pick.
 seed: 511
 initial_day: 5
 initial_phase: morning
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: class_clown
   gender: man
@@ -12,7 +12,7 @@ character_creation:
     charm: 5
     banter: 8
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 7
 initial_couples:
   - partner_a_id: player
@@ -33,10 +33,10 @@ initial_relationships:
     trust: 0
     friendship: 0
 judge_context:
-  - Kiss Wed Pass has three sequential rounds (snog, marry, pie). The pool shrinks after each pick.
-  - The narrator must name the three picks by label and target. Pie-ing the rival is a power move; pie-ing the partner is a self-destruct.
+  - Kiss Wed Pass has three sequential rounds (kiss, wed, pass). The pool shrinks after each pick.
+  - The narrator must name the three picks by label and target. Passing the rival is a power move; passing the partner is a self-destruct.
 turns:
-  - id: morning-to-smp
+  - id: morning-to-kwp
     action:
       kind: ambient
       target_id: ambient_wait
@@ -46,19 +46,19 @@ turns:
       rival Blake.
     checks:
       - ceremony_events_present
-  - id: snog-maya
+  - id: kiss-maya
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_maya, round_index: 0 } }
-    golden: Player snogs Maya (chemistry pick). Pool shrinks for round 2.
+    golden: Player kisss Maya (chemistry pick). Pool shrinks for round 2.
     checks: []
-  - id: marry-chloe
+  - id: wed-chloe
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_chloe, round_index: 1 } }
-    golden: Player marries Chloe (partner pick). Only Blake remains.
+    golden: Player weds Chloe (partner pick). Only Blake remains.
     checks: []
-  - id: pie-blake
+  - id: pass-blake
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake, round_index: 2 } }
     golden: >
-      Player pies Blake (rival). Classification success (snog_chemistry
-      3 + marry_partner 3 + pie_rival 3 = 9 pts >= success threshold 6).
+      Player passes Blake (rival). Classification success (kiss_chemistry
+      3 + wed_partner 3 + pass_rival 3 = 9 pts >= success threshold 6).
       Audience +5. Narrator names all three picks specifically.
     checks:
       - ceremony_events_present
@@ -68,12 +68,12 @@ turns:
     judge_checks:
       - id: all_three_picks_named
         criteria: >
-          The prose names Maya as the snog, Chloe as the marry, and
-          Blake as the pie — by name. Generic "you made your picks"
+          The prose names Maya as the kiss, Chloe as the wed, and
+          Blake as the pass by name. Generic "you made your picks"
           fails.
-      - id: pie_dramatised
+      - id: callout_dramatised
         criteria: >
-          The pie of Blake (a rival) is dramatised as a power move with
+          The pass on Blake (a rival) is dramatised as a power move with
           a cast reaction or audience read. The narrator does not
-          paint it as cruel — the engine treats this as a positive
+          paint it as cruel; the engine treats this as a positive
           play.

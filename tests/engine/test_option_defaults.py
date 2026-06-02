@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from src.game.agents.contextual_options import ContextualBespoke
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import AgentValidationError
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
@@ -42,7 +42,7 @@ def test_default_options_include_apologize_after_miss() -> None:
 
 def test_default_options_include_escalate_at_high_affection_opposite_sex() -> None:
     state, result, exchange = _context(success=True, tone="flirty")
-    state.islanders[0].relationship.affection = 30
+    state.heartbreakers[0].relationship.affection = 30
 
     options = default_options(state, result, exchange)
 
@@ -51,8 +51,8 @@ def test_default_options_include_escalate_at_high_affection_opposite_sex() -> No
 
 def test_default_options_respect_gender_pair_filter() -> None:
     state, result, exchange = _context(success=True, tone="flirty")
-    state.player.gender = state.islanders[0].gender
-    state.islanders[0].relationship.affection = 40
+    state.player.gender = state.heartbreakers[0].gender
+    state.heartbreakers[0].relationship.affection = 40
 
     options = default_options(state, result, exchange)
 
@@ -71,7 +71,7 @@ def test_default_options_include_share_gossip_when_player_holds_memory() -> None
             turn=1,
             weight=7,
             tags=["gossip"],
-            content="Maya looked rattled after Liam pulled away.",
+            content="Maya looked rattled after Liam stepped back.",
         ),
     )
 
@@ -81,7 +81,7 @@ def test_default_options_include_share_gossip_when_player_holds_memory() -> None
 
 
 def test_ceremony_memory_not_offered_as_share_gossip() -> None:
-    """Ceremony / producer / system bookkeeping memories are 'witnessed' villa
+    """Ceremony / producer / system bookkeeping memories are 'witnessed' resort
     events but are not interpersonal gossip; offering them surfaces raw internal
     tokens and can dead-screen the voice agent, so they must be filtered out."""
     state, result, exchange = _context(success=True, tone="warm")
@@ -90,13 +90,13 @@ def test_ceremony_memory_not_offered_as_share_gossip() -> None:
         state,
         create_memory(
             holder_id="player",
-            subject_id="villa",
+            subject_id="resort",
             source="witnessed",
             day=1,
             turn=1,
             weight=5,
             tags=["ceremony", "gather_scheduled"],
-            content="Everyone is called to the firepit for group_date_invite.",
+            content="Everyone is called to the flame_deck for group_date_invite.",
         ),
     )
 
@@ -123,8 +123,8 @@ def test_real_subject_ceremony_memory_not_offered_without_gossip_flag() -> None:
             turn=1,
             weight=7,
             # A brand-new ceremony kind the blacklist never heard of.
-            tags=["surprise_dumping", "ceremony"],
-            content="Maya was sent home in a shock dumping.",
+            tags=["surprise_heart_out", "ceremony"],
+            content="Maya was sent home in a shock heart_out.",
         ),
     )
 
@@ -134,7 +134,7 @@ def test_real_subject_ceremony_memory_not_offered_without_gossip_flag() -> None:
 
 
 def test_witnessed_memory_offered_when_flagged_gossip() -> None:
-    """No regression: a witnessed observation of two other islanders that the
+    """No regression: a witnessed observation of two other heartbreakers that the
     curator flagged ``gossip`` is still offered as shareable gossip."""
     state, result, exchange = _context(success=True, tone="warm")
     state.player.memories.clear()
@@ -168,7 +168,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
         turn=1,
         weight=7,
         tags=["gossip"],
-        content="Maya looked rattled after Liam pulled away.",
+        content="Maya looked rattled after Liam stepped back.",
     )
     add_memory(state, first)
 
@@ -188,7 +188,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
             turn=2,
             weight=7,
             tags=["gossip", f"source_memory:{first.id}"],
-            content="Maya looked rattled after Liam pulled away.",
+            content="Maya looked rattled after Liam stepped back.",
         ),
     )
 
@@ -207,7 +207,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
         turn=1,
         weight=7,
         tags=["gossip"],
-        content="Maya looked rattled after Liam pulled away.",
+        content="Maya looked rattled after Liam stepped back.",
     )
     newer = create_memory(
         holder_id="player",
@@ -253,7 +253,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
 def test_tone_reaction_includes_escalate_for_flirty() -> None:
     state, _result, exchange = _context(success=True, tone="flirty")
     state.player.gender = Gender.MAN
-    state.islanders[0].gender = Gender.WOMAN
+    state.heartbreakers[0].gender = Gender.WOMAN
     state.active_conversation = Conversation(target_id="chloe", started_on_turn=1, started_on_day=1)
 
     options = tone_reaction_options(state, exchange)
@@ -263,7 +263,7 @@ def test_tone_reaction_includes_escalate_for_flirty() -> None:
 
 def test_assemble_dedupes_and_caps_with_one_exit() -> None:
     state, result, exchange = _context(success=True, tone="warm")
-    state.islanders[0].relationship.affection = 40
+    state.heartbreakers[0].relationship.affection = 40
     bespoke = [
         FollowUpOption(
             label="Ask about Liverpool",
@@ -412,7 +412,7 @@ def _context(*, success: bool, tone: str):
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=success,
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},

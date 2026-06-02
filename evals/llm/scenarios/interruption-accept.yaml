@@ -3,7 +3,7 @@ title: Conversation Interruption (Accept)
 goal: Prove accepting an interruption closes the current chat, applies both relationship consequences, starts a new conversation with the interrupter, and voices the new exchange.
 seed: 1920
 initial_location: pool
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: class_clown
   gender: woman
@@ -11,7 +11,7 @@ character_creation:
     charm: 6
     banter: 9
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 5
 initial_relationships:
   chloe:
@@ -26,7 +26,7 @@ initial_relationships:
     friendship: 25
 judge_context:
   - The player is mid-conversation with Chloe at the pool; Liam walks up with a polite interruption.
-  - Accepting the interruption is the only interruption response that swaps the active conversation to the interrupter and calls Islander Voice.
+  - Accepting the interruption is the only interruption response that swaps the active conversation to the interrupter and calls Heartbreaker Voice.
   - The engine applies the social cost to Chloe and the boost to Liam before the LLM writes the new exchange.
 turns:
   - id: accept-liam

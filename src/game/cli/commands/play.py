@@ -11,8 +11,8 @@ from src.game.agents.background_dialogue import OpenAIBackgroundDialogue
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.conversation_curator import OpenAIConversationCurator
 from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.islander_voice import OpenAIIslanderVoice
-from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator
+from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
+from src.game.agents.resort_orchestrator import OpenAIResortOrchestrator
 from src.game.cli.commands.play_recording import (
     llm_mode as _llm_mode,
 )
@@ -35,13 +35,13 @@ from src.game.cli.commands.play_render import (
     print_character_card as _print_character_card,
 )
 from src.game.cli.commands.play_render import (
+    print_resort_update as _print_resort_update,
+)
+from src.game.cli.commands.play_render import (
     print_state as _print_state,
 )
 from src.game.cli.commands.play_render import (
     print_turn as _print_turn,
-)
-from src.game.cli.commands.play_render import (
-    print_villa_update as _print_villa_update,
 )
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.character_creation import (
@@ -97,11 +97,11 @@ def run(args: argparse.Namespace) -> int:
         state = new_game(seed)
         records = []
     rng = SeededRng.from_snapshot(seed, rng_state) if rng_state is not None else SeededRng(seed)
-    islander_voice = None if args.mock_llm else OpenAIIslanderVoice().generate
+    heartbreaker_voice = None if args.mock_llm else OpenAIHeartbreakerVoice().generate
     contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
     event_narrator = None if args.mock_llm else OpenAIEventNarrator().narrate
     conversation_curator = None if args.mock_llm else OpenAIConversationCurator().curate
-    villa_orchestrator = None if args.mock_llm else OpenAIVillaOrchestrator().decide
+    resort_orchestrator = None if args.mock_llm else OpenAIResortOrchestrator().decide
     background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
     record_path = _record_path_from_args(args)
     if not from_checkpoint:
@@ -151,11 +151,11 @@ def run(args: argparse.Namespace) -> int:
             state,
             action,
             rng,
-            islander_voice=islander_voice,
+            heartbreaker_voice=heartbreaker_voice,
             contextual_options=contextual_options,
             event_narrator=event_narrator,
             conversation_curator=conversation_curator,
-            villa_orchestrator=villa_orchestrator,
+            resort_orchestrator=resort_orchestrator,
             background_dialogue=background_dialogue,
         )
         state = turn.state
@@ -203,7 +203,7 @@ def _choose_intent(state: GameState, target_id: str) -> PlayerAction:
 
 
 def _run_character_creation_flow(state: GameState) -> None:
-    print("Create your islander.")
+    print("Create your heartbreaker.")
     rerolled = False
     while True:
         archetype_ids = list(PLAYER_ARCHETYPES)
@@ -260,14 +260,14 @@ def _choose_gender() -> Gender:
 def _parse_stats(raw: str) -> PlayerStats:
     pieces = [int(piece) for piece in raw.replace(",", " ").split()]
     if len(pieces) != 5:
-        raise ValueError("enter five stats: charm banter eq graft loyalty")
-    return PlayerStats(charm=pieces[0], banter=pieces[1], eq=pieces[2], graft=pieces[3], loyalty=pieces[4])
+        raise ValueError("enter five stats: charm banter eq spark loyalty")
+    return PlayerStats(charm=pieces[0], banter=pieces[1], eq=pieces[2], spark=pieces[3], loyalty=pieces[4])
 
 
 def _stats_text(stats: PlayerStats) -> str:
     return (
         f"Charm {stats.charm}, Banter {stats.banter}, EQ {stats.eq}, "
-        f"Graft {stats.graft}, Loyalty {stats.loyalty}"
+        f"Spark {stats.spark}, Loyalty {stats.loyalty}"
     )
 
 
@@ -308,7 +308,7 @@ def _replay_recording(path: Path) -> int:
             state,
             action,
             rng,
-            islander_voice=agents.islander_voice if raw_record.get("exchange") is not None else None,
+            heartbreaker_voice=agents.heartbreaker_voice if raw_record.get("exchange") is not None else None,
             contextual_options=(
                 agents.contextual_options if raw_record.get("follow_up_menu") is not None else None
             ),
@@ -316,7 +316,7 @@ def _replay_recording(path: Path) -> int:
                 agents.event_narrator if raw_record.get("event_narration") is not None else None
             ),
             conversation_curator=agents.conversation_curator,
-            villa_orchestrator=agents.villa_orchestrator,
+            resort_orchestrator=agents.resort_orchestrator,
             background_dialogue=agents.background_dialogue,
         )
         state = turn.state
@@ -333,7 +333,7 @@ def _replay_recording(path: Path) -> int:
     return 0
 
 
-__all__ = ["_print_state", "_print_villa_update", "add_parser", "run"]
+__all__ = ["_print_state", "_print_resort_update", "add_parser", "run"]
 
 
 def _record_path_from_args(args: argparse.Namespace) -> Path | None:
@@ -356,7 +356,7 @@ def _should_auto_checkpoint(turn: object) -> bool:
     return bool(
         turn.auto_advance
         or turn.ceremony_events
-        or action_kind in {"hideaway", "casa_decision", "join_gather"}
+        or action_kind in {"private_suite", "flush_decision", "join_gather"}
     )
 
 

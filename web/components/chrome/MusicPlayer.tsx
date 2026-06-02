@@ -15,8 +15,8 @@ type FadeTimer = ReturnType<typeof setInterval> | null;
 // creator / finale routes sit on "title".
 const TRACKS: Record<MusicScene, string> = {
   title: "/audio/music/title-theme.mp3",
-  day: "/audio/music/villa-day.mp3",
-  evening: "/audio/music/villa-evening.mp3",
+  day: "/audio/music/resort-day.mp3",
+  evening: "/audio/music/resort-evening.mp3",
   tension: "/audio/music/tension.mp3",
 };
 

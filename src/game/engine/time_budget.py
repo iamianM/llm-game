@@ -13,14 +13,14 @@ ACTION_TIME_COST: dict[ActionKind, int] = {
     ActionKind.RESPOND_WITH: 5,
     ActionKind.END_CONVERSATION: 0,
     ActionKind.CHALLENGE_RESPONSE: 0,
-    ActionKind.HIDEAWAY: 60,
-    ActionKind.CASA_DECISION: 10,
+    ActionKind.PRIVATE_SUITE: 60,
+    ActionKind.FLUSH_DECISION: 10,
     ActionKind.JOIN_GATHER: 30,
     ActionKind.AMBIENT: 20,
     ActionKind.INTRODUCE_TO: 25,
     ActionKind.MOVE: 5,
-    ActionKind.RECOUPLE: 0,
-    ActionKind.PROPOSE_RECOUPLE: 20,
+    ActionKind.PAIR: 0,
+    ActionKind.PROPOSE_PAIR: 20,
     ActionKind.NPC_PROPOSAL_RESPONSE: 10,
 }
 

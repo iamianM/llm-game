@@ -49,7 +49,7 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 
 **Changes.**
 - [`state/models.py`](../src/game/state/models.py): add `chemistry: int = Field(default=0, ge=0, le=100)` to `RelationshipState`. Bump `SCHEMA_VERSION` to 2; regenerate fixture hashes; delete old hashes (R12).
-- [`engine/actions.py`](../src/game/engine/actions.py): `available_actions` returns FLIRT for each visible islander alongside TALK.
+- [`engine/actions.py`](../src/game/engine/actions.py): `available_actions` returns FLIRT for each visible heartbreaker alongside TALK.
 - [`engine/rules.py`](../src/game/engine/rules.py): add `_apply_flirt` with formula `chance = 40 + charm*5 + chemistry//4`, clamped `[5, 95]`. Success: chemistry +5, affection +2, tag `flirty`. Miss: chemistry -1, no affection change, tag `awkward`. Hardcoded deltas become named module-level constants.
 - [`engine/rules.py`](../src/game/engine/rules.py): promote `MechanicalResult.relationship_deltas` from `dict[str, dict[str, int]]` to `dict[str, RelationshipDelta]` where `RelationshipDelta` is a Pydantic model with `affection: int = 0, chemistry: int = 0`. Prevents typo'd stat names (R10).
 - [`cli/commands/play.py`](../src/game/cli/commands/play.py): no change required — `available_actions` drives the menu.
@@ -57,7 +57,7 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 
 **Acceptance criteria.**
 - `make qa` green.
-- `make play` shows both `Talk to X` and `Flirt with X` for each islander.
+- `make play` shows both `Talk to X` and `Flirt with X` for each heartbreaker.
 - `tests/engine/test_rules.py` has new tests: `test_flirt_success_bumps_chemistry`, `test_flirt_miss_drops_chemistry`, `test_relationship_delta_rejects_unknown_field` (asserts Pydantic `extra="forbid"`).
 - Both `day1-happy-path.yaml` and `day1-flirt-mixed.yaml` are verified by `make determinism`.
 
@@ -72,18 +72,18 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 **Scope.** Fill out the 5-stat surface. Add LISTEN and LEAVE. Implement stat gating.
 
 **Changes.**
-- [`state/models.py`](../src/game/state/models.py): expand `PlayerStats` to all five — `charm, banter, eq, graft, loyalty`, each `ge=3, le=9`. Add `model_validator` ensuring total ≤ 30. Bump `SCHEMA_VERSION` to 3.
+- [`state/models.py`](../src/game/state/models.py): expand `PlayerStats` to all five — `charm, banter, eq, spark, loyalty`, each `ge=3, le=9`. Add `model_validator` ensuring total ≤ 30. Bump `SCHEMA_VERSION` to 3.
 - `state/models.py`: extend `RelationshipState` to include `trust: int = Field(default=0, ge=0, le=100)` and `friendship: int = Field(default=0, ge=0, le=100)`.
 - [`engine/actions.py`](../src/game/engine/actions.py): add LISTEN and LEAVE to `available_actions`. Add a `min_stat: tuple[str, int] | None = None` field on `ActionSpec`. `available_actions` filters out specs whose `min_stat` requirement is unmet.
-- [`engine/rules.py`](../src/game/engine/rules.py): `_apply_listen` uses EQ + Affection, adds `trust +3` on success, `friendship +1` always. `_apply_leave` exits cleanly with `tag=["disengaged"]` and no deltas. Add a `BOLD` flirt variant unlocked at `graft >= 5` per [02-Core-Mechanics.md](../02-Core-Mechanics.md); higher reward, higher risk.
-- `cli/commands/play.py`: menu rendering picks up the new actions automatically. Show the stat requirement next to gated options: `Flirt boldly with Chloe (Graft 5)`.
-- New fixture: `tests/scenarios/fixtures/day1-full-stats.yaml` exercising all five action kinds. Add a second fixture `day1-low-stats.yaml` where gated options are absent (player with graft=3) and the fixture's actions cannot include BOLD flirt — `make determinism` proves the gate works.
+- [`engine/rules.py`](../src/game/engine/rules.py): `_apply_listen` uses EQ + Affection, adds `trust +3` on success, `friendship +1` always. `_apply_leave` exits cleanly with `tag=["disengaged"]` and no deltas. Add a `BOLD` flirt variant unlocked at `spark >= 5` per [02-Core-Mechanics.md](../02-Core-Mechanics.md); higher reward, higher risk.
+- `cli/commands/play.py`: menu rendering picks up the new actions automatically. Show the stat requirement next to gated options: `Flirt boldly with Chloe (Spark 5)`.
+- New fixture: `tests/scenarios/fixtures/day1-full-stats.yaml` exercising all five action kinds. Add a second fixture `day1-low-stats.yaml` where gated options are absent (player with spark=3) and the fixture's actions cannot include BOLD flirt — `make determinism` proves the gate works.
 
 **Acceptance criteria.**
 - `make qa` green.
 - All 5 stats in `PlayerStats`. Total budget validator works (reject `model_validate` with sum > 30).
 - LISTEN, LEAVE, BOLD flirt visible in `make play` when stat thresholds are met; absent otherwise.
-- `tests/engine/test_actions.py` has `test_bold_flirt_locked_below_graft_5` and `test_bold_flirt_unlocked_at_graft_5`.
+- `tests/engine/test_actions.py` has `test_bold_flirt_locked_below_spark_5` and `test_bold_flirt_unlocked_at_spark_5`.
 
 **Anti-goals.** No archetype-specific mechanics yet (A3 is purely player-side). No personality (Big 5) modeling on NPCs yet — that's Phase D's prompt input only. No "Type on Paper" preference matching yet.
 
@@ -96,10 +96,10 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 **Scope.** Extend from one day to a 6-day run. Add locations. NPCs move and interact autonomously between player turns.
 
 **Changes.**
-- [`state/models.py`](../src/game/state/models.py): `Day` advances when phase wraps from EVENING back to MORNING. Track `current_day: int = 1`. Terminal state is `day > 6` (configurable constant). Add `Location` enum: `POOL, KITCHEN, TERRACE, BEDROOM`. Each `IslanderState.location_id` references a `Location`.
+- [`state/models.py`](../src/game/state/models.py): `Day` advances when phase wraps from EVENING back to MORNING. Track `current_day: int = 1`. Terminal state is `day > 6` (configurable constant). Add `Location` enum: `POOL, KITCHEN, TERRACE, BEDROOM`. Each `HeartbreakerState.location_id` references a `Location`.
 - [`engine/phases.py`](../src/game/engine/phases.py): phase progression includes day rollover. Add a per-phase RNG fork: `rng.fork(f"day-{day}-phase-{phase}")` so NPC simulation in each phase is reproducible and independent.
 - New module `engine/simulation.py`: `simulate_off_screen(state, rng) -> list[OffScreenEvent]`. Called when player advances phase. NPCs at the player's location may or may not move based on extraversion-proxy (deterministic from archetype). NPCs at other locations interact pairwise based on chemistry, producing relationship updates among themselves. Player only sees aggregate visible-state changes, not the prose of NPC-NPC interactions. `OffScreenEvent` is a Pydantic model: `actor_id, target_id, kind, location`.
-- [`cli/commands/play.py`](../src/game/cli/commands/play.py): add location selector — player can move between locations during certain phases (MORNING, AFTERNOON). Action `MOVE` to `Location`. Player's location filters which islanders are visible.
+- [`cli/commands/play.py`](../src/game/cli/commands/play.py): add location selector — player can move between locations during certain phases (MORNING, AFTERNOON). Action `MOVE` to `Location`. Player's location filters which heartbreakers are visible.
 - Add `archetype` → behavior table in `engine/simulation.py`. Three archetypes for now: `sweetheart, joker, friend` (matches A1 cast). Each has fixed `move_propensity` and `flirt_propensity` constants.
 - New fixture: `tests/scenarios/fixtures/day6-full-run.yaml` — 6 days, mix of TALK/FLIRT/LISTEN/MOVE/ADVANCE_PHASE. Verify final hash.
 
@@ -107,33 +107,33 @@ Tidy the last commit before starting A2. Estimated 15 minutes.
 - `make qa` green.
 - `make play` plays 6 days end-to-end without crashes.
 - `simulate_off_screen` is fully deterministic: same seed + same player actions = same NPC-NPC interaction sequence. Test `test_off_screen_simulation_deterministic_under_replay` proves it.
-- Player at a different location sees a filtered visible state (other-location islanders not in menu).
+- Player at a different location sees a filtered visible state (other-location heartbreakers not in menu).
 - Mid-plan checkpoint: produce a minimal HTML render of one full 6-day session under `review-packet-preview/session-phaseB.html`. Post path to user. Continue to C.
 
-**Anti-goals.** No bombshells, no recouplings, no eliminations — those are Phase C. No real LLM. No new archetypes beyond the three. No event system for "I've Got a Text" — that's Phase C. Off-screen NPC interactions produce mechanical updates only, no narration.
+**Anti-goals.** No Heart Throbs, no Pairing Ceremonys, no eliminations — those are Phase C. No real LLM. No new archetypes beyond the three. No event system for "I've Got a Text" — that's Phase C. Off-screen NPC interactions produce mechanical updates only, no narration.
 
 ---
 
-## Phase C: Couples, Recoupling, Elimination
+## Phase C: Couples, Pairing Ceremony, Elimination
 
-**Design source:** [10-Elimination-System.md](../10-Elimination-System.md), [12-Challenges-And-Events.md](../12-Challenges-And-Events.md) (only the recoupling and bombshell parts; no challenges yet).
+**Design source:** [10-Elimination-System.md](../10-Elimination-System.md), [12-Challenges-And-Events.md](../12-Challenges-And-Events.md) (only the Pairing Ceremony and heart_throb parts; no challenges yet).
 
-**Scope.** Players and NPCs form couples. Day-end recoupling ceremony reshuffles them. Bombshells arrive. Public Perception tracks. Player can be eliminated.
+**Scope.** Players and NPCs form couples. Day-end Pairing Ceremony reshuffles them. Heart Throbs arrive. Public Perception tracks. Player can be eliminated.
 
 **Changes.**
-- [`state/models.py`](../src/game/state/models.py): add `Couple` Pydantic model with `partner_a_id, partner_b_id, formed_on_day`. Add `couples: list[Couple]` to `GameState`. Add `public_perception: int = Field(default=50, ge=0, le=100)` to `IslanderState` and `PlayerState`. Add `eliminated: bool = False` to islander and player.
-- [`engine/ceremonies.py`](../src/game/engine/) (new module): `recoupling(state, rng) -> RecouplingResult` runs end-of-day-3 and end-of-day-5. Algorithmic choice per islander: pick partner with highest `affection + chemistry/2`. Player chooses interactively in `play.py`. Unpartnered islander after recoupling is eliminated.
-- `engine/ceremonies.py`: `arrive_bombshell(state, rng) -> Islander` adds a new islander mid-run on day 4. Bombshell has high baseline chemistry with random existing islanders to force drama.
+- [`state/models.py`](../src/game/state/models.py): add `Couple` Pydantic model with `partner_a_id, partner_b_id, formed_on_day`. Add `couples: list[Couple]` to `GameState`. Add `public_perception: int = Field(default=50, ge=0, le=100)` to `HeartbreakerState` and `PlayerState`. Add `eliminated: bool = False` to heartbreaker and player.
+- [`engine/ceremonies.py`](../src/game/engine/) (new module): `pair(state, rng) -> PairingCeremonyResult` runs end-of-day-3 and end-of-day-5. Algorithmic choice per heartbreaker: pick partner with highest `affection + chemistry/2`. Player chooses interactively in `play.py`. Unpartnered heartbreaker after Pairing Ceremony is eliminated.
+- `engine/ceremonies.py`: `arrive_heart_throb(state, rng) -> Heartbreaker` adds a new heartbreaker mid-run on day 4. Heart Throb has high baseline chemistry with random existing heartbreakers to force drama.
 - `engine/rules.py`: public_perception updates per action (loyalty actions raise it, "snakey" patterns lower it). `update_public_perception(state, action, result)` runs after every `apply_action`.
-- `cli/commands/play.py`: recoupling prompt presented at the right phase. Bombshell arrival announced. Elimination ends the run with a clear screen.
-- New fixtures: `tests/scenarios/fixtures/recoupling-day3.yaml`, `bombshell-day4.yaml`, `elimination-day5.yaml`. Each pins an `expected_hash`.
+- `cli/commands/play.py`: Pairing Ceremony prompt presented at the right phase. Heart Throb arrival announced. Elimination ends the run with a clear screen.
+- New fixtures: `tests/scenarios/fixtures/pairing-day3.yaml`, `heart-throb-day4.yaml`, `elimination-day5.yaml`. Each pins an `expected_hash`.
 
 **Acceptance criteria.**
 - `make qa` green.
-- A 6-day playthrough can end three ways: player survives, player eliminated, recoupling drama (couples shuffle). All three covered by fixtures.
-- `tests/engine/test_ceremonies.py` covers: deterministic NPC partner choice, bombshell insertion, elimination of unpartnered islander, public_perception bounds.
+- A 6-day playthrough can end three ways: player survives, player eliminated, Pairing Ceremony drama (couples shuffle). All three covered by fixtures.
+- `tests/engine/test_ceremonies.py` covers: deterministic NPC partner choice, heart_throb insertion, elimination of unpartnered heartbreaker, public_perception bounds.
 
-**Anti-goals.** No Casa Amor. No challenges system. No "Type on Paper" preference matching. No meta-progression (AP). No Producer agent. No real LLM.
+**Anti-goals.** No Flush of Hearts. No challenges system. No "Type on Paper" preference matching. No meta-progression (AP). No Producer agent. No real LLM.
 
 ---
 
@@ -216,7 +216,7 @@ review-packet/
 
 Each per-turn card on a session page shows:
 - Turn N · Day D · Phase · Location
-- Visible state summary (affection / chemistry / trust per visible islander)
+- Visible state summary (affection / chemistry / trust per visible heartbreaker)
 - Action taken with target
 - Roll vs chance, outcome (Success / Miss)
 - Relationship deltas

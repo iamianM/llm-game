@@ -3,7 +3,7 @@
 > Historical build plan. This file is kept for implementation context only.
 > Current planning lives in [current-plan.md](current-plan.md).
 
-After H1, the run has a beginning (character creation) and an end (final vote). H2 fills the middle. The `CHALLENGE` phase fires actual challenges with mechanical outcomes and dramatic narration. The `TEXT` phase fires producer texts that announce dates, twists, and bombshells. Every phase becomes something the player reacts to, not a clock tick.
+After H1, the run has a beginning (character creation) and an end (final vote). H2 fills the middle. The `CHALLENGE` phase fires actual challenges with mechanical outcomes and dramatic narration. The `TEXT` phase fires producer texts that announce dates, twists, and heart_throbs. Every phase becomes something the player reacts to, not a clock tick.
 
 **Design sources:** [12-Challenges-And-Events.md](../12-Challenges-And-Events.md), [08-Daily-Loop.md § The Four Phases](../08-Daily-Loop.md), [10-Elimination-System.md § Producer AI](../10-Elimination-System.md).
 
@@ -25,9 +25,9 @@ Six initial challenges, one per day:
 |---|---|---|---|---|
 | 1 | **Compatibility Quiz** | EQ | Couple strength +5 with partner, public perception +3 | Couple strength +0, public perception -1, slight tension |
 | 2 | **Heart Rate Challenge** | Charm | Chemistry +6 with partner, public perception +4 | Chemistry +1, public perception -2, mild humiliation |
-| 3 | **Mr & Mrs** | Banter + Player relationship knowledge | Friendship +5 across cast, public perception +5 | Friendship -2 with partner, public perception -3 |
+| 3 | **The Couples Quiz** | Banter + Player relationship knowledge | Friendship +5 across cast, public perception +5 | Friendship -2 with partner, public perception -3 |
 | 4 | **Lie Detector** | Loyalty | Trust +6 with partner, public perception +4 | Trust -6 with partner, public perception -3, drama incoming |
-| 5 | **Snog Marry Pie** | Banter | Chemistry +3 with chosen kiss target, public perception +2 | Friendship -3 with whoever you "pied", public perception -1 |
+| 5 | **Kiss Wed Pass** | Banter | Chemistry +3 with chosen kiss target, public perception +2 | Friendship -3 with whoever you passed on, public perception -1 |
 | 6 | **Final Couple's Challenge** | combined Charm + Banter | Couple strength +10 with partner, public perception +6 | Couple strength +2, public perception -2 |
 
 Each challenge type has its own resolution function in `engine/challenges.py`. The scheduling table `DAILY_CHALLENGE_SCHEDULE = {1: "compatibility_quiz", 2: "heart_rate", ...}` is a module-level constant. Validation rejects challenges that reference unknown stats.
@@ -36,7 +36,7 @@ When the player enters CHALLENGE phase: the engine resolves the challenge, appli
 
 ### Player choice within challenges
 
-Some challenges require a player choice mid-event (e.g. Snog Marry Pie: pick three islanders by name). These present a quick menu, **not the conversation wheel** — it's a simple list selection. The chosen option becomes part of the recorded action stream.
+Some challenges require a player choice mid-event (e.g. Kiss Wed Pass: pick three heartbreakers by name). These present a quick menu, **not the conversation wheel** — it's a simple list selection. The chosen option becomes part of the recorded action stream.
 
 New action kind: `CHALLENGE_RESPONSE` with `choice: str` field. Only valid when a challenge is in-flight. Engine validation rejects it otherwise.
 
@@ -48,11 +48,11 @@ Six initial producer text kinds:
 
 | Kind | Day | Effect |
 |---|---|---|
-| `welcome` | 1 | Sets villa tone; no mechanical effect |
-| `group_date_invite` | 2 | Three player+islander pairs get a group date the next morning |
-| `coupling_warning` | 3 | Tells the islanders recoupling is tonight (sets mood: anxious for some) |
-| `bombshell_arrival_tease` | 4 (just before bombshell) | Announces Aisha's imminent arrival, raises tension |
-| `casa_amor_announce` | After H5: day 4 | Triggers Casa Amor flow |
+| `welcome` | 1 | Sets resort tone; no mechanical effect |
+| `group_date_invite` | 2 | Three player+heartbreaker pairs get a group date the next morning |
+| `coupling_warning` | 3 | Tells the heartbreakers Pairing Ceremony is tonight (sets mood: anxious for some) |
+| `heart_throb_arrival_tease` | 4 (just before heart_throb) | Announces Aisha's imminent arrival, raises tension |
+| `flush_of_hearts_announce` | After H5: day 4 | Triggers Flush of Hearts flow |
 | `final_vote_announce` | 6 | "Tonight, the public vote opens" — sets the stakes |
 
 Texts are scheduled deterministically by day in `engine/producer_events.py`. The Event Narrator writes the actual text-to-screen prose.
@@ -61,7 +61,7 @@ When a producer text fires, the next applicable phase may have a special pre-amb
 
 ### Group dates as a new conversation flavor
 
-Group date is a special conversation type where two NPCs are present, not just one. The wheel options behave similarly but exchanges reference both NPCs. The Islander Voice context includes both participants. Memories are created for both NPCs (direct), plus any bystander at the location.
+Group date is a special conversation type where two NPCs are present, not just one. The wheel options behave similarly but exchanges reference both NPCs. The Heartbreaker Voice context includes both participants. Memories are created for both NPCs (direct), plus any bystander at the location.
 
 For H2, group dates are limited to fixed pairings (player + 2 NPCs in different scenarios). The Producer Event scheduler decides which NPCs and writes the pairing into the conversation start.
 
@@ -109,14 +109,14 @@ class GroupDate(BaseModel):
 | `src/game/engine/producer_events.py` | Producer text scheduler, group date setup |
 | `content/challenges/compatibility_quiz.md` | Challenge definition |
 | `content/challenges/heart_rate.md` | Challenge definition |
-| `content/challenges/mr_and_mrs.md` | Challenge definition |
+| `content/challenges/couples_quiz.md` | Challenge definition |
 | `content/challenges/lie_detector.md` | Challenge definition |
-| `content/challenges/snog_marry_pie.md` | Challenge definition |
+| `content/challenges/kiss_wed_pass.md` | Challenge definition |
 | `content/challenges/final_couples.md` | Challenge definition |
 | `content/producer_texts/welcome.md` | Text content + frontmatter |
 | `content/producer_texts/group_date_invite.md` | Text content + frontmatter |
 | `content/producer_texts/coupling_warning.md` | Text content + frontmatter |
-| `content/producer_texts/bombshell_arrival_tease.md` | Text content + frontmatter |
+| `content/producer_texts/heart_throb_arrival_tease.md` | Text content + frontmatter |
 | `content/producer_texts/final_vote_announce.md` | Text content + frontmatter |
 | `tests/engine/test_challenges.py` | Per-challenge unit tests |
 | `tests/engine/test_producer_events.py` | Producer text scheduling tests |
@@ -144,7 +144,7 @@ class GroupDate(BaseModel):
 
 - [ ] `make qa` green.
 - [ ] `make test-llm` green.
-- [ ] `make play` shows a challenge each day during the CHALLENGE phase. The player sees the challenge name, the stat tested, and either the result (algorithmic challenges) or a choice menu (Snog Marry Pie).
+- [ ] `make play` shows a challenge each day during the CHALLENGE phase. The player sees the challenge name, the stat tested, and either the result (algorithmic challenges) or a choice menu (Kiss Wed Pass).
 - [ ] Producer texts fire in the TEXT phase on days 1, 2, 3, 4, and 6 at minimum.
 - [ ] A group date setup leads to a special two-NPC conversation flavor the next morning.
 - [ ] Each challenge applies correct relationship deltas (positive on success, varied on failure) per the table.
@@ -166,11 +166,11 @@ class GroupDate(BaseModel):
   - `test_compatibility_quiz_success_applies_couple_strength_bonus`
   - `test_compatibility_quiz_failure_applies_tension`
   - `test_heart_rate_uses_charm`
-  - `test_mr_and_mrs_failure_drops_friendship`
+  - `test_couples_quiz_failure_drops_friendship`
   - `test_lie_detector_high_loyalty_succeeds`
   - `test_lie_detector_low_loyalty_breaks_trust`
-  - `test_snog_marry_pie_choice_required`
-  - `test_snog_marry_pie_pied_islander_loses_friendship`
+  - `test_kiss_wed_pass_choice_required`
+  - `test_kiss_wed_pass_cooled on_heartbreaker_loses_friendship`
   - `test_final_couples_challenge_combines_stats`
   - `test_schedule_challenge_returns_correct_kind_per_day`
   - `test_challenge_emits_ceremony_event_for_narration`
@@ -178,7 +178,7 @@ class GroupDate(BaseModel):
   - `test_welcome_text_fires_day_1`
   - `test_group_date_invite_creates_pending_group_date`
   - `test_coupling_warning_text_on_day_3`
-  - `test_bombshell_arrival_tease_precedes_aisha`
+  - `test_heart_throb_arrival_tease_precedes_aisha`
   - `test_final_vote_announce_text_day_6`
   - `test_producer_text_does_not_fire_off_schedule`
 

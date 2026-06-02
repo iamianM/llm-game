@@ -1,4 +1,4 @@
-"""Final public vote resolution."""
+"""Final Pulse vote resolution."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ class FinalVoteResult(BaseModel):
 
 
 def final_vote(state: GameState) -> FinalVoteResult:
-    """Resolve the final public vote and assign ``state.outcome``."""
+    """Resolve the final Pulse vote and assign ``state.outcome``."""
     if state.outcome is RunOutcome.ELIMINATED:
         return FinalVoteResult(winner=None, runner_up=None, player_rank=None, outcome=RunOutcome.ELIMINATED)
     if state.player.eliminated:
@@ -54,7 +54,7 @@ def final_vote_message(result: FinalVoteResult, state: GameState) -> str:
     This string is surfaced verbatim in mock/static mode (the event narrator
     only runs in real-LLM mode), so it must already read in display terms — the
     player's name and the partner's display name, never the raw "the player"
-    label or a lowercase islander id.
+    label or a lowercase heartbreaker id.
 
     The nameless player carries the placeholder name "You", so the verb has to
     agree in the second person ("You finish", not "You finishes"). A player who
@@ -65,15 +65,15 @@ def final_vote_message(result: FinalVoteResult, state: GameState) -> str:
     second_person = player.strip().lower() == "you"
     if result.outcome is RunOutcome.WON_AS_COUPLE:
         partner = _player_partner(result.winner, state)
-        return f"Final vote: {player} and {partner} win as the top couple."
+        return f"Pulse vote: {player} and {partner} win as the top couple."
     if result.outcome is RunOutcome.RUNNER_UP_COUPLE:
         verb = "finish" if second_person else "finishes"
-        return f"Final vote: {player} {verb} as a runner-up couple."
+        return f"Pulse vote: {player} {verb} as a runner-up couple."
     if result.outcome is RunOutcome.LEFT_SINGLE:
         verb = "reach" if second_person else "reaches"
-        return f"Final vote: {player} {verb} the finale single."
+        return f"Pulse vote: {player} {verb} the finale single."
     verb = "were" if second_person else "was"
-    return f"Final vote: {player} {verb} already dumped from the island."
+    return f"Pulse vote: {player} {verb} already Heart Out."
 
 
 def _couple_key(couple: Couple) -> str:
@@ -90,11 +90,11 @@ def _player_partner(couple: Couple | None, state: GameState) -> str:
         partner_id = couple.partner_a_id
     if partner_id is None:
         return "their partner"
-    return _islander_name(state, partner_id)
+    return _heartbreaker_name(state, partner_id)
 
 
-def _islander_name(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
+def _heartbreaker_name(state: GameState, heartbreaker_id: str) -> str:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            return heartbreaker.name
+    return heartbreaker_id

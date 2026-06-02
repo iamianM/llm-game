@@ -11,7 +11,7 @@ import {
   type CSSProperties,
 } from "react";
 import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
 import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
 import { playSfx } from "../../lib/sfx";
@@ -39,7 +39,7 @@ const MOVE_KINDS = new Set(["move"]);
 
 type Props = {
   state: SessionState;
-  look?: IslanderLook | null;
+  look?: HeartbreakerLook | null;
   actions: AvailableAction[];
   lastTurn: TurnResponse | null;
   locked: boolean;
@@ -188,7 +188,7 @@ export function SceneDialogueStage({
     return ids;
   }, [characterActions]);
   const openCharacter = openCharacterId
-    ? state.islanders.find((i) => i.id === openCharacterId) ?? null
+    ? state.heartbreakers.find((i) => i.id === openCharacterId) ?? null
     : null;
   const openCharacterActions = useMemo(
     () => openCharacterId
@@ -197,7 +197,7 @@ export function SceneDialogueStage({
     [characterActions, openCharacterId],
   );
 
-  const sceneLocation = state.phase === "intros" ? "firepit" : state.location_id;
+  const sceneLocation = state.phase === "intros" ? "flame_deck" : state.location_id;
   const bannerShown = showBanner(state.pending_challenge, actions);
   return (
     <SceneLayer location={sceneLocation} onTap={() => {
@@ -291,7 +291,7 @@ export function SceneDialogueStage({
 function pendingBeats(state: SessionState, playerLine: string | null, pendingTargetId: string | null, streamText: string, streamSpeaker: string): SceneBeat[] {
   // Intros never set active_conversation_target_id, so fall back to the target
   // of the action the player just picked — otherwise the camera drops to a wide
-  // group and the islander we're talking to recedes while the turn resolves.
+  // group and the heartbreaker we're talking to recedes while the turn resolves.
   const activeSpeaker = state.active_conversation_target_id ?? pendingTargetId;
   const beats: SceneBeat[] = [
     { kind: "camera", shot: activeSpeaker ? "two_shot" : "wide_group", focusIds: activeSpeaker ? [activeSpeaker] : [], durationMs: 80 },
@@ -341,7 +341,7 @@ function spritePositions(state: SessionState, focusedId: string | null): Map<str
 
 function speakerName(state: SessionState, speakerId: string) {
   if (speakerId === state.player.id) return state.player.name || "You";
-  return state.islanders.find((npc) => npc.id === speakerId)?.name ?? "The Producer";
+  return state.heartbreakers.find((npc) => npc.id === speakerId)?.name ?? "The Producer";
 }
 
 function hasLaterBeat(beats: SceneBeat[], index: number) {
@@ -353,7 +353,7 @@ function showBanner(pending: SessionState["pending_challenge"], actions: Availab
   const finished = (pending as { finished?: boolean }).finished === true;
   if (!finished) return true;
   // Hide a wrapped challenge once the engine has moved on to a non-challenge
-  // action set (e.g. recoupling picks) — the banner would otherwise mislead.
+  // action set (e.g. pairing picks) — the banner would otherwise mislead.
   return actions.some((action) => action.kind === "challenge_response");
 }
 
@@ -399,7 +399,7 @@ function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_
   );
 }
 
-// A warm, non-numeric "your bond just moved" cue floated near the islander we
+// A warm, non-numeric "your bond just moved" cue floated near the heartbreaker we
 // just engaged (e.g. "The spark with Chloe is electric."). Modeled on DeltaPop
 // but styled as a soft gold heart-chip rather than a green/red pulse — the
 // engine only gives us a tonal line, not a sign, so we keep it uniformly warm.
@@ -521,9 +521,9 @@ function QuizPrompt({ text }: { text: string }) {
 const CHALLENGE_TITLES: Record<string, string> = {
   compatibility_quiz: "Compatibility Quiz",
   heart_rate: "Pulse Race",
-  mr_and_mrs: "The Couples Quiz",
+  couples_quiz: "The Couples Quiz",
   lie_detector: "Lie Detector",
-  snog_marry_pie: "Kiss · Wed · Pass",
+  kiss_wed_pass: "Kiss · Wed · Pass",
   final_couples: "Final Couples",
 };
 
@@ -873,7 +873,7 @@ function CharacterMenu({
           width: var(--menu-w);
           /* Anchor near the tapped character, but never let the fixed-width
              card cross the viewport edge: on a narrow phone a left/right
-             islander would push the card off-screen and clip the labels.
+             heartbreaker would push the card off-screen and clip the labels.
              Clamp the center so both edges keep a 10px margin at any width. */
           left: clamp(
             calc(var(--menu-w) / 2 + 10px),

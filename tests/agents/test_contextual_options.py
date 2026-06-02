@@ -14,7 +14,7 @@ from src.game.agents.contextual_options import (
     validate_contextual_bespoke,
     validate_follow_up_menu,
 )
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.rules import MechanicalResult
@@ -46,7 +46,7 @@ def test_contextual_options_contract(departure_probability: int, tone: Tone) -> 
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=tone in {"warm", "flirty", "playful", "vulnerable"},
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},
@@ -82,7 +82,7 @@ def test_assembled_menu_adds_exit_to_bespoke_output() -> None:
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=True,
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},
@@ -107,7 +107,7 @@ def test_assembled_menu_adds_exit_to_bespoke_output() -> None:
                         tone="curious",
                     ),
                     FollowUpOption(
-                        label="Tease the villa tension",
+                        label="Tease the Sunset Bay tension",
                         category="banter",
                         intent_kind="joke_back",
                         stat_used="banter",
@@ -172,7 +172,7 @@ def test_follow_up_menu_accepts_specific_longer_labels() -> None:
 def test_explored_threads_only_includes_memories_about_the_target() -> None:
     """Cross-conversation topic memory: the context surfaces topics the player
     has already explored with *this* NPC (so the agent can avoid re-opening
-    them), and excludes memories about other islanders."""
+    them), and excludes memories about other heartbreakers."""
     state = new_game(1)
     state.player.memories.extend(
         [
@@ -204,7 +204,7 @@ def test_explored_threads_only_includes_memories_about_the_target() -> None:
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=True,
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},
@@ -230,7 +230,7 @@ def test_explored_threads_defaults_when_no_prior_memories() -> None:
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=True,
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},
@@ -255,7 +255,7 @@ def test_contextual_options_labels_are_specific() -> None:
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=True,
         relationship_deltas={"chloe": RelationshipDelta(affection=2)},

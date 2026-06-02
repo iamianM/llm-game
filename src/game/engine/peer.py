@@ -1,13 +1,13 @@
-"""Deterministic NPC↔NPC attraction — the villa's own love stories.
+"""Deterministic NPC↔NPC attraction — the resort's own love stories.
 
-The player is not the only one falling for someone. Other islanders develop
+The player is not the only one falling for someone. Other heartbreakers develop
 crushes on *each other*, grow closer the more time they spend together, and —
 when two singles click hard enough — quietly couple up off-screen. And the ones
 who are *already* coupled aren't immune: spend enough time beside the wrong
-person and a wandering eye starts to show, which the villa whispers about ("your
+person and a wandering eye starts to show, which the resort whispers about ("your
 partner's been getting close to someone"). The player feels all of this through
 the gossip mill and the morning recap ("while you were busy..."), which makes
-the villa breathe instead of orbiting only the player.
+the resort breathe instead of orbiting only the player.
 
 Everything here is deterministic: attraction is a pure function of fixed
 personality data (Big5 + attachment) plus who is standing where, advanced by a
@@ -22,15 +22,15 @@ from __future__ import annotations
 
 from src.game.engine.memory import add_memory_batch, propagate_gossip_seeds
 from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft
-from src.game.state.models import Couple, GameState, IslanderState, Memory
+from src.game.state.models import Couple, GameState, HeartbreakerState, Memory
 from src.game.state.personality import AttachmentStyle
 from src.game.state.rng import SeededRng
 
-# Attraction first reads as "getting close" — a whisper the villa starts to
+# Attraction first reads as "getting close" — a whisper the resort starts to
 # notice — well before anyone couples up.
 PEER_FRIENDLY_THRESHOLD = 45
-# An already-coupled islander warming to a new face is juicier — and grows at
-# half speed — so the villa clocks it earlier, at a lower bar than the single
+# An already-coupled heartbreaker warming to a new face is juicier — and grows at
+# half speed — so the resort clocks it earlier, at a lower bar than the single
 # "getting close" line. This is the "wandering eye" the morning recap surfaces
 # to a betrayed partner (including the player, when it's *their* other half).
 PEER_WANDERING_THRESHOLD = 38
@@ -40,7 +40,7 @@ PEER_WANDERING_THRESHOLD = 38
 # couples stay rare and earned rather than everyone pairing off.
 PEER_COUPLE_THRESHOLD = 58
 # Fraction of the remaining gap to the compatibility target closed each eligible
-# (co-located) villa turn. A slow burn: a strong pair needs many shared turns.
+# (co-located) resort turn. A slow burn: a strong pair needs many shared turns.
 PEER_GROWTH_RATE = 0.18
 
 # Symmetric attachment-pair chemistry. frozenset keys collapse order and make a
@@ -60,11 +60,11 @@ _ATTACHMENT_PAIR_BONUS: dict[frozenset[AttachmentStyle], int] = {
 }
 
 
-def peer_compatibility(a: IslanderState, b: IslanderState) -> int:
-    """Return the symmetric 0..100 attraction ceiling for two islanders.
+def peer_compatibility(a: HeartbreakerState, b: HeartbreakerState) -> int:
+    """Return the symmetric 0..100 attraction ceiling for two heartbreakers.
 
     Pure function of fixed personality data, so it is identical no matter which
-    islander is passed first. Shared social wavelength (openness/extraversion),
+    heartbreaker is passed first. Shared social wavelength (openness/extraversion),
     combined warmth, low combined volatility, and attachment fit all lift it.
     """
     big5_a, big5_b = a.big5, b.big5
@@ -87,10 +87,10 @@ def peer_compatibility(a: IslanderState, b: IslanderState) -> int:
 
 
 def peer_affinity_between(state: GameState, a_id: str, b_id: str) -> int:
-    """Return the current mutual attraction between two islanders (0 if none)."""
-    for islander in state.islanders:
-        if islander.id == a_id:
-            return islander.peer_affinity.get(b_id, 0)
+    """Return the current mutual attraction between two heartbreakers (0 if none)."""
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == a_id:
+            return heartbreaker.peer_affinity.get(b_id, 0)
     return 0
 
 
@@ -101,11 +101,11 @@ def advance_peer_attractions(state: GameState, rng: SeededRng) -> list[Memory]:
     "getting close" whisper for two singles, or a "wandering eye" whisper (plus a
     jealousy memory for the betrayed partner, the player included) when one of
     them is already coupled. The caller folds these into the turn's recorded
-    changes. Attraction only grows while two islanders are actually together, so
+    changes. Attraction only grows while two heartbreakers are actually together, so
     where people choose to spend their time quietly shapes who falls for whom.
     """
     created: list[Memory] = []
-    active = [islander for islander in state.islanders if not islander.eliminated]
+    active = [heartbreaker for heartbreaker in state.heartbreakers if not heartbreaker.eliminated]
     for index, first in enumerate(active):
         for second in active[index + 1 :]:
             if first.gender == second.gender:
@@ -122,7 +122,7 @@ def advance_peer_attractions(state: GameState, rng: SeededRng) -> list[Memory]:
             )
             gap = target - current
             step = max(1, int(gap * PEER_GROWTH_RATE) + pair_rng.randint(0, 1))
-            # Loyalty pull: someone already coupled drifts toward a new face at
+            # Loyalty draw: someone already coupled drifts toward a new face at
             # half speed (they rarely reach the couple threshold while attached).
             anyone_coupled = _is_coupled(state, first.id) or _is_coupled(state, second.id)
             if anyone_coupled:
@@ -131,7 +131,7 @@ def advance_peer_attractions(state: GameState, rng: SeededRng) -> list[Memory]:
             _set_mutual(first, second, updated)
             if anyone_coupled:
                 # A wandering eye: at least one of them is taken, so this isn't a
-                # budding romance — it's a quiet betrayal the villa starts to
+                # budding romance — it's a quiet betrayal the resort starts to
                 # whisper about (and the betrayed partner, player included, hears).
                 # But skip a pair who are each other's partners: a couple warming
                 # to *each other* is just their bond, not a betrayal of anyone.
@@ -148,12 +148,12 @@ def advance_peer_attractions(state: GameState, rng: SeededRng) -> list[Memory]:
 def maybe_form_peer_couples(state: GameState, rng: SeededRng) -> list[Memory]:
     """Couple up the single pair whose mutual attraction has crossed the line.
 
-    At most one new peer couple forms per call so the villa pairs off gradually
+    At most one new peer couple forms per call so the resort pairs off gradually
     rather than snapping into couples all at once. Returns the memories created
     (couple announcement + gossip seeds) for the caller to record.
     """
-    active = [islander for islander in state.islanders if not islander.eliminated]
-    best: tuple[int, IslanderState, IslanderState] | None = None
+    active = [heartbreaker for heartbreaker in state.heartbreakers if not heartbreaker.eliminated]
+    best: tuple[int, HeartbreakerState, HeartbreakerState] | None = None
     for index, first in enumerate(active):
         for second in active[index + 1 :]:
             if first.gender == second.gender:
@@ -172,7 +172,7 @@ def maybe_form_peer_couples(state: GameState, rng: SeededRng) -> list[Memory]:
     return _commit_batch(state, _peer_couple_batch(state, first, second))
 
 
-def _form_peer_couple(state: GameState, first: IslanderState, second: IslanderState) -> None:
+def _form_peer_couple(state: GameState, first: HeartbreakerState, second: HeartbreakerState) -> None:
     # Both are single (the caller guarantees it), so there is no existing couple
     # to dissolve and no player partner reveal to trigger.
     state.couples.append(
@@ -186,7 +186,7 @@ def _form_peer_couple(state: GameState, first: IslanderState, second: IslanderSt
     )
 
 
-def _closeness_batch(state: GameState, first: IslanderState, second: IslanderState) -> MemoryBatch:
+def _closeness_batch(state: GameState, first: HeartbreakerState, second: HeartbreakerState) -> MemoryBatch:
     return _pair_batch(
         state,
         first,
@@ -197,11 +197,11 @@ def _closeness_batch(state: GameState, first: IslanderState, second: IslanderSta
     )
 
 
-def _wandering_eye_batch(state: GameState, first: IslanderState, second: IslanderState) -> MemoryBatch:
-    """Build the gossip a coupled islander's drifting attention sets off.
+def _wandering_eye_batch(state: GameState, first: HeartbreakerState, second: HeartbreakerState) -> MemoryBatch:
+    """Build the gossip a coupled heartbreaker's drifting attention sets off.
 
     At least one of ``first``/``second`` is coupled. Both principals remember
-    the moment; every *betrayed partner* (the coupled islanders' other halves —
+    the moment; every *betrayed partner* (the coupled heartbreakers' other halves —
     the player among them when it's their partner who is wandering) gets a
     heavier, jealousy-tagged memory so the recap reads it as personal and the
     arrival-roll drama heuristics treat them as freshly wound up. A single
@@ -252,7 +252,7 @@ def _wandering_eye_batch(state: GameState, first: IslanderState, second: Islande
         ),
     ]
     for partner_id, wanderer_id in betrayed:
-        # A partner who has already left the villa is no longer a memory holder;
+        # A partner who has already left the resort is no longer a memory holder;
         # skip their copy rather than crash. The principals' whisper + gossip
         # still surface the drama.
         if not _is_valid_holder(state, partner_id):
@@ -288,7 +288,7 @@ def _wandering_eye_batch(state: GameState, first: IslanderState, second: Islande
     )
 
 
-def _peer_couple_batch(state: GameState, first: IslanderState, second: IslanderState) -> MemoryBatch:
+def _peer_couple_batch(state: GameState, first: HeartbreakerState, second: HeartbreakerState) -> MemoryBatch:
     return _pair_batch(
         state,
         first,
@@ -301,8 +301,8 @@ def _peer_couple_batch(state: GameState, first: IslanderState, second: IslanderS
 
 def _pair_batch(
     state: GameState,
-    first: IslanderState,
-    second: IslanderState,
+    first: HeartbreakerState,
+    second: HeartbreakerState,
     *,
     gist: str,
     weight: int,
@@ -355,34 +355,34 @@ def _commit_batch(state: GameState, batch: MemoryBatch) -> list[Memory]:
 
 def _onlookers(state: GameState, principals: set[str]) -> list[str]:
     return [
-        islander.id
-        for islander in state.islanders
-        if not islander.eliminated and islander.id not in principals
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated and heartbreaker.id not in principals
     ][:3]
 
 
-def _set_mutual(first: IslanderState, second: IslanderState, value: int) -> None:
+def _set_mutual(first: HeartbreakerState, second: HeartbreakerState, value: int) -> None:
     first.peer_affinity[second.id] = value
     second.peer_affinity[first.id] = value
 
 
-def _is_coupled(state: GameState, islander_id: str) -> bool:
+def _is_coupled(state: GameState, heartbreaker_id: str) -> bool:
     return any(
-        islander_id in {couple.partner_a_id, couple.partner_b_id}
+        heartbreaker_id in {couple.partner_a_id, couple.partner_b_id}
         for couple in state.couples
     )
 
 
-def _partner_id(state: GameState, islander_id: str) -> str | None:
-    """Return ``islander_id``'s current partner id, or None if single.
+def _partner_id(state: GameState, heartbreaker_id: str) -> str | None:
+    """Return ``heartbreaker_id``'s current partner id, or None if single.
 
     The partner may be the player ("player"), which is exactly when a wandering
     eye becomes the player's own business.
     """
     for couple in state.couples:
         ids = {couple.partner_a_id, couple.partner_b_id}
-        if islander_id in ids:
-            others = ids - {islander_id}
+        if heartbreaker_id in ids:
+            others = ids - {heartbreaker_id}
             if others:
                 return others.pop()
     return None
@@ -395,13 +395,13 @@ def _partner_reference(state: GameState, partner_id: str) -> str:
     daily recap rewrites it to second person ("...coupled up with you.")."""
     if partner_id == state.player.id:
         return "the player"
-    for islander in state.islanders:
-        if islander.id == partner_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == partner_id:
+            return heartbreaker.name
     return "their partner"
 
 
 def _is_valid_holder(state: GameState, holder_id: str) -> bool:
     if holder_id == state.player.id:
         return True
-    return any(islander.id == holder_id and not islander.eliminated for islander in state.islanders)
+    return any(heartbreaker.id == holder_id and not heartbreaker.eliminated for heartbreaker in state.heartbreakers)

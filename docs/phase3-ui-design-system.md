@@ -156,7 +156,7 @@ import { Charter, Inter, Caveat } from 'next/font/google';
   - ⚡ chemistry (bolt)
   - 🤝 trust (handshake — or sage circle with check)
   - 🎭 banter (theater masks)
-  - 💪 graft (flex)
+  - 💪 spark (flex)
   - 🧠 EQ (brain)
 - **Pulse meter:** 5-dot gauge inline at top bar. Each dot is a CSS circle;
   filled dots use `--gold`, empty dots use `--muted` at 30% opacity. Color
@@ -321,7 +321,7 @@ darkens with blur.
 
 ## Backgrounds (location gradients)
 
-Until real art exists, each villa location is a CSS gradient. The current
+Until real art exists, each resort location is a CSS gradient. The current
 character of the location should still come through.
 
 ```css
@@ -329,9 +329,9 @@ character of the location should still come through.
 .location-kitchen   { background: linear-gradient(180deg, #d4a456 0%, #a07232 70%, #6b4d22 100%); }
 .location-terrace   { background: linear-gradient(180deg, #b5c298 0%, #8aa370 70%, #5d7349 100%); }
 .location-bedroom   { background: linear-gradient(180deg, #b58a8f 0%, #815f64 70%, #4d3a3d 100%); }
-.location-firepit   { background: linear-gradient(180deg, #1f1410 0%, #4a1a0e 50%, #802814 90%); }
-.location-suite     { background: linear-gradient(180deg, #2e1b2c 0%, #4d2840 70%, #7a3c61 100%); }  /* Paradise Suite */
-.location-casa-pool { background: linear-gradient(180deg, #5a4490 0%, #3f2f6a 70%, #1f163a 100%); } /* Flush of Hearts pool (Sirens' Cove) */
+.location-flame-deck { background: linear-gradient(180deg, #1f1410 0%, #4a1a0e 50%, #802814 90%); }
+.location-suite      { background: linear-gradient(180deg, #2e1b2c 0%, #4d2840 70%, #7a3c61 100%); }  /* Paradise Suite */
+.location-flush-pool { background: linear-gradient(180deg, #5a4490 0%, #3f2f6a 70%, #1f163a 100%); } /* Flush of Hearts pool (Sirens' Cove) */
 ```
 
 Plus a subtle film-grain overlay (a faint noise PNG at 4% opacity) for
@@ -345,7 +345,7 @@ Define sound categories now so when audio lands we have semantic names:
 - `sfx.text` — Paradise Calls "ding"
 - `sfx.pulse.up` / `pulse.down` — Pulse meter chimes
 - `sfx.ceremony` — dramatic swell
-- `bgm.pool`, `bgm.firepit`, `bgm.bedroom`, etc. — location loops
+- `bgm.pool`, `bgm.flame_deck`, `bgm.bedroom`, etc. — location loops
 - `bgm.ceremony` — drone underscore for ceremony overlay
 
 MVP UI has volume sliders that route to no-op handlers. Phase 4+ adds files.

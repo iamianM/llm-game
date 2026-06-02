@@ -3,7 +3,7 @@ title: Incoming NPC Proposal And Accept
 goal: Prove the engine can surface an NPC-initiated Heart Swap proposal as a pending ask, then accept it with the exact engine-owned couple change and relationship deltas.
 seed: 4
 initial_location: pool
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: man
@@ -11,7 +11,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_couples:
   - partner_a_id: player

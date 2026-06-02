@@ -315,7 +315,7 @@ export interface components {
             familiarity: number;
             relationship: components["schemas"]["ApiRelationship"];
             /** Type On Paper */
-            type_on_paper: {
+            ideal_match: {
                 [key: string]: unknown | null;
             };
             /** Known Facts */
@@ -362,8 +362,8 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
-        /** IslanderSummary */
-        IslanderSummary: {
+        /** HeartbreakerSummary */
+        HeartbreakerSummary: {
             /** Id */
             id: string;
             /** Name */
@@ -455,30 +455,30 @@ export interface components {
             location_id: string;
             /** Location Label */
             location_label: string;
-            /** Villa */
-            villa: string;
-            /** Villa Label */
-            villa_label: string;
+            /** Resort */
+            resort: string;
+            /** Resort Label */
+            resort_label: string;
             /** Phase Clock */
             phase_clock: {
                 [key: string]: unknown;
             };
             player: components["schemas"]["PlayerState"];
-            /** Islanders */
-            islanders: components["schemas"]["IslanderSummary"][];
+            /** Heartbreakers */
+            heartbreakers: components["schemas"]["HeartbreakerSummary"][];
             /** Couples */
             couples: components["schemas"]["CoupleSummary"][];
             audience: components["schemas"]["AudienceState"];
-            /** Pending Recouple Proposal */
-            pending_recouple_proposal: {
+            /** Pending Pair Proposal */
+            pending_pair_proposal: {
                 [key: string]: unknown;
             } | null;
             /** Outcome */
             outcome: string | null;
             /** Active Conversation Target Id */
             active_conversation_target_id: string | null;
-            /** Villa Snapshot */
-            villa_snapshot: {
+            /** Resort Snapshot */
+            resort_snapshot: {
                 [key: string]: string[];
             };
             /** Daily Recaps */

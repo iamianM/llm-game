@@ -1,26 +1,26 @@
 import type { Position } from "./types";
 
-// The player sits bottom-LEFT and always reads as the foreground figure —
-// the Love Island mobile framing where "you" are closest to camera while the
-// rest of the villa is staged above/behind. Feet park just BELOW the frame so
+// The player sits bottom-LEFT and always reads as the foreground figure:
+// the reality-romance mobile framing where "you" are closest to camera while the
+// rest of Sunset Bay is staged above/behind. Feet park just BELOW the frame so
 // the figure crops at the shin and reads large + close (the real size comes
 // from the tall is-player CSS box in CharacterSprite).
 export const PLAYER_ANCHOR: Position = { x: 22, y: 105, scale: 1.16 };
 
 // When the player's choice fan is open the option bars overlay the lower body
-// (Love Island lets the cards sit over the legs, faces still showing) — so the
+// (choice cards sit over the legs, faces still showing), so the
 // player barely changes: a hair smaller/left so the cards have breathing room.
 export const PLAYER_ANCHOR_COMPACT: Position = { x: 20, y: 104, scale: 1.0 };
 
 // The spotlight slot: whoever is speaking / in focus strides to centre-front,
 // large and close, feet just under the frame so they crop thigh-up like the
-// Love Island "to camera" hero. Everyone else recedes into a tighter, softly
+// Paradise Hearts "to camera" hero. Everyone else recedes into a tighter, softly
 // blurred cluster just behind so the eye still lands on the talker.
 const SPOTLIGHT: Position = { x: 58, y: 101, scale: 1.32 };
 
 // Upstage cluster for the non-focused cast: packed close just behind the
 // speaker (not a distant line), dimmed + blurred by CharacterSprite so they
-// read as "the rest of the villa right there behind you".
+// read as "the rest of Sunset Bay right there behind you".
 const BACKROW_Y = 66;
 const BACKROW_SCALE = 0.84;
 
@@ -28,7 +28,7 @@ export function npcPositions(count: number, focusedIndex: number | null): Positi
   if (count <= 0) return [];
 
   // No single focus (idle / ceremony / wide camera beat) → spread the cast in
-  // a gentle arc across mid-stage so the villa feels populated.
+  // a gentle arc across mid-stage so Sunset Bay feels populated.
   if (focusedIndex === null || focusedIndex < 0 || focusedIndex >= count) {
     return ensemble(count);
   }
@@ -68,7 +68,7 @@ function ensemble(count: number): Position[] {
   const endX = 86;
   const span = endX - startX;
   // Sit the crowd low in the frame (feet near the bottom) so they crop thigh-up
-  // and fill the stage like a packed villa, instead of hovering mid-screen with
+  // and fill the stage like a packed resort, instead of hovering mid-screen with
   // dead air above their heads.
   return Array.from({ length: count }, (_, index) => ({
     x: startX + (span / Math.max(1, count - 1)) * index,
@@ -77,8 +77,8 @@ function ensemble(count: number): Position[] {
   }));
 }
 
-// Hand-tuned arcs for small ensembles (the firepit ring before anyone speaks).
-// Feet park low so the figures read big and close, Love Island style.
+// Hand-tuned arcs for small ensembles (the flame_deck ring before anyone speaks).
+// Feet park low so the figures read big and close, Paradise Hearts style.
 const ENSEMBLE_LAYOUTS: Position[][] = [
   [],
   [{ x: 50, y: 102, scale: 1.32 }],

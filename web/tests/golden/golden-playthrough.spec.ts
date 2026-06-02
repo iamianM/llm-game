@@ -66,12 +66,12 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   // ─── 2. NEW RUN ────────────────────────────────────────────
   await page.getByRole("link", { name: "New Run" }).click();
   await page.waitForLoadState("networkidle");
-  // The casting screen opens on the roster: a grid of pre-made Islanders with
+  // The casting screen opens on the roster: a grid of pre-made Heartbreakers with
   // the first pick highlighted and a live casting-card preview of their look.
   await shot(
     page,
     "Character select",
-    "Choose your Islander. A grid of pre-made roster cards beside a live casting-card preview with outfit-graded lighting, and a 'Play as …' CTA."
+    "Choose your Heartbreaker. A grid of pre-made roster cards beside a live casting-card preview with outfit-graded lighting, and a 'Play as …' CTA."
   );
 
   // ─── 3. ENTER ──────────────────────────────────────────────
@@ -179,7 +179,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   await shot(
     page,
     "Cast popout · discovery",
-    "Heartbreaker profile. Backstory, relationship bars, Type-on-Paper (gated by familiarity), and 'What you know' — the structured trait knowledge revealed through conversation."
+    "Heartbreaker profile. Backstory, relationship bars, Ideal-Match (gated by familiarity), and 'What you know' — the structured trait knowledge revealed through conversation."
   );
   await page.getByRole("dialog").getByRole("button", { name: "Close" }).first().click();
   await page.waitForTimeout(180);
@@ -268,7 +268,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
         await shot(
           page,
           "Flush of Hearts",
-          "The mid-show twist. Multiple new arrivals at once, pulling the existing couples apart. Pairs ceremony reveal with staggered animation."
+          "The mid-show twist. Multiple new arrivals at once, testing the existing couples. Pairs ceremony reveal with staggered animation."
         );
         flushCaptured = true;
       } else if (/Pairing Ceremony/i.test(text) && !pairingCaptured) {
@@ -290,7 +290,7 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
     let pick = 0;
     for (let i = 0; i < count; i += 1) {
       const text = (await buttons.nth(i).innerText()).toLowerCase();
-      if (/chat|deep|share|listen|comfort|pair|propose|hideaway/.test(text)) { pick = i; break; }
+      if (/chat|deep|share|listen|comfort|pair|propose|private_suite/.test(text)) { pick = i; break; }
     }
     await buttons.nth(pick).click({ force: true, timeout: 5_000 }).catch(() => undefined);
     try {

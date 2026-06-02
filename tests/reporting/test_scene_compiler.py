@@ -79,7 +79,7 @@ def _record(turn: int, action_kind: str) -> dict[str, object]:
         "phase": "morning",
         "location": "pool",
         "visible_state": "Chloe is here.",
-        "villa_snapshot": {"pool": ["you", "Chloe"]},
+        "resort_snapshot": {"pool": ["you", "Chloe"]},
         "mechanical_result": {
             "action": {"kind": action_kind, "target_id": "chloe"},
             "success": True,

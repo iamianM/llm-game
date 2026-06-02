@@ -5,7 +5,7 @@
  * real conversational response. This module derives that flow from the engine's
  * action list without an engine change.
  */
-import type { AvailableAction, IslanderSummary } from "./types";
+import type { AvailableAction, HeartbreakerSummary } from "./types";
 
 export const INTRO_DYNAMICS = ["intro_friendly", "intro_flirty", "intro_deep", "intro_banter"] as const;
 export type IntroDynamic = (typeof INTRO_DYNAMICS)[number];
@@ -85,7 +85,7 @@ const RESPONSE_VARIANTS: Partial<Record<string, Partial<Record<IntroDynamic, str
   },
 };
 
-export function responseFor(npc: IslanderSummary, dynamic: IntroDynamic): string {
+export function responseFor(npc: HeartbreakerSummary, dynamic: IntroDynamic): string {
   const variants = RESPONSE_VARIANTS[npc.archetype]?.[dynamic];
   if (!variants?.length) return INTRO_RESPONSES[dynamic].line;
   return variants[fnv1a(`${npc.id}|${dynamic}`) % variants.length];
@@ -130,7 +130,7 @@ const ARCHETYPE_GREETINGS: Record<string, string[]> = {
 
 const FALLBACK_GREETING = "Hey — I'm {name}. So… here we are.";
 
-export function greetingFor(npc: IslanderSummary): string {
+export function greetingFor(npc: HeartbreakerSummary): string {
   const pool = ARCHETYPE_GREETINGS[npc.archetype] ?? null;
   if (!pool) return FALLBACK_GREETING.replace("{name}", npc.name);
   // Stable choice per session: hash on npc.id length + initial char
@@ -140,17 +140,17 @@ export function greetingFor(npc: IslanderSummary): string {
 
 /** Return the next NPC the player should meet during intros. */
 export function nextIntroTarget(
-  islanders: IslanderSummary[],
+  heartbreakers: HeartbreakerSummary[],
   actions: AvailableAction[],
   playerId: string | undefined,
-): IslanderSummary | null {
+): HeartbreakerSummary | null {
   // Sort all NPCs surfaced in the action list as INTRO targets, stable by name
   const targetsInActions = new Set(
     actions
       .filter((action) => action.kind === "introduce_to" && action.target_id)
       .map((action) => action.target_id as string),
   );
-  const eligible = islanders.filter(
+  const eligible = heartbreakers.filter(
     (npc) =>
       !npc.eliminated &&
       npc.id !== playerId &&
@@ -168,7 +168,7 @@ export function nextIntroTarget(
   return eligible[0];
 }
 
-/** Pull the 4 intro actions for a specific NPC out of the flat action list. */
+/** Extract the 4 intro actions for a specific NPC out of the flat action list. */
 export function introActionsForTarget(
   actions: AvailableAction[],
   targetId: string,

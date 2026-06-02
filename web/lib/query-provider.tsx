@@ -9,8 +9,8 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
   const setUseLive = useUiStore((s) => s.setUseLiveLlm);
   // Hydrate the live-LLM toggle from localStorage on first client render.
   // Reading at store-create time misses the SSR pass (window undefined), so
-  // the initial render falls back to false; this effect pulls the real value
-  // before the new-run page commits and the toggle gets locked into Demo.
+  // the initial render falls back to false; this effect reads the real value
+  // before the casting page commits and the toggle gets locked into Demo.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = window.localStorage.getItem("paradise.settings.useLiveLlm");

@@ -14,7 +14,7 @@
       "elapsed_minutes": 0
     },
     "location_id": "pool",
-    "villa": "main",
+    "resort": "main",
     "player": {
       "id": "player",
       "name": "You",
@@ -23,7 +23,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 5,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 5
       },
       "archetype_id": "heartthrob",
@@ -35,7 +35,7 @@
         {
           "id": "mem_cb1d1f6a31a43898",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "The Pairing Ceremony locks in the next couples.",
           "source": "witnessed",
           "source_id": null,
@@ -44,7 +44,7 @@
           "emotional_weight": 5,
           "tags": [
             "ceremony",
-            "recoupling"
+            "pairing"
           ],
           "durable": true,
           "mentioned_subject_ids": []
@@ -52,7 +52,7 @@
         {
           "id": "mem_f6248b78d5efe016",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Compatibility Quiz tested Eq and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -309,9 +309,9 @@
           "citation": "Jordan told you during Day One introductions."
         }
       },
-      "pull_attempts_this_phase": {}
+      "private_chat_attempts_this_phase": {}
     },
-    "islanders": [
+    "heartbreakers": [
       {
         "id": "chloe",
         "name": "Chloe",
@@ -336,7 +336,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "warm smiles and kind eyes",
           "personality_type": [
             "warm",
@@ -372,7 +372,7 @@
           {
             "id": "mem_7fd2f5f46fa966e2",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -381,7 +381,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -389,7 +389,7 @@
           {
             "id": "mem_2cb942d2bf6474f1",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -615,8 +615,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "touches her necklace when she wants to leave a conversation",
               "distractors": [],
               "tier": 0,
@@ -843,7 +843,7 @@
         "name": "Maya",
         "gender": "woman",
         "archetype": "joker",
-        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to the villa hoping someone notices when she drops the joke.",
+        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to Sunset Bay hoping someone notices when she drops the joke.",
         "location_id": "kitchen",
         "relationship": {
           "affection": 10,
@@ -862,7 +862,7 @@
           "neuroticism": 6
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "expressive people with bright energy",
           "personality_type": [
             "funny",
@@ -898,7 +898,7 @@
           {
             "id": "mem_b2829f17ddd1e1ca",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -907,7 +907,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -915,7 +915,7 @@
           {
             "id": "mem_d78452a8494a430b",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1141,8 +1141,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "starts doing impressions when she is close to crying",
               "distractors": [],
               "tier": 0,
@@ -1388,7 +1388,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "grounded and easygoing",
           "personality_type": [
             "steady",
@@ -1424,7 +1424,7 @@
           {
             "id": "mem_34037131594dd190",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -1433,7 +1433,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -1441,7 +1441,7 @@
           {
             "id": "mem_bdad7c39aafaf717",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1659,8 +1659,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "checks everyone has water before admitting he is tired",
               "distractors": [],
               "tier": 0,
@@ -1914,7 +1914,7 @@
           "neuroticism": 5
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "sharp style and confident eye contact",
           "personality_type": [
             "ambitious",
@@ -1950,7 +1950,7 @@
           {
             "id": "mem_16a2ec52bc1845a0",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -1959,7 +1959,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -1967,7 +1967,7 @@
           {
             "id": "mem_9f02e6dab40a6cfa",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2185,8 +2185,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "straightens cushions when she wants to be touched",
               "distractors": [],
               "tier": 0,
@@ -2440,7 +2440,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "soft warmth and grounded humor",
           "personality_type": [
             "kind",
@@ -2476,7 +2476,7 @@
           {
             "id": "mem_7ecc909791f08b65",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -2485,7 +2485,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -2493,7 +2493,7 @@
           {
             "id": "mem_a8989f68975cce98",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2711,8 +2711,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "over-offers tea when she feels unwanted",
               "distractors": [],
               "tier": 0,
@@ -2966,7 +2966,7 @@
           "neuroticism": 4
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "athletic confidence and direct energy",
           "personality_type": [
             "confident",
@@ -3002,7 +3002,7 @@
           {
             "id": "mem_bb8c89b8963184a5",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -3011,7 +3011,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -3019,7 +3019,7 @@
           {
             "id": "mem_457328f03cc5abe8",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3237,8 +3237,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "gets louder when he feels replaceable",
               "distractors": [],
               "tier": 0,
@@ -3492,7 +3492,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "dry wit and calm loyalty",
           "personality_type": [
             "thoughtful",
@@ -3528,7 +3528,7 @@
           {
             "id": "mem_48ebb88b9d689f14",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -3537,7 +3537,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -3545,7 +3545,7 @@
           {
             "id": "mem_1e04265ce0bd9ff9",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3763,8 +3763,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "makes himself useful before saying what he wants",
               "distractors": [],
               "tier": 0,
@@ -4018,7 +4018,7 @@
           "neuroticism": 5
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "bright grin and restless energy",
           "personality_type": [
             "playful",
@@ -4054,7 +4054,7 @@
           {
             "id": "mem_34fb148fe58b47e3",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -4063,7 +4063,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -4071,7 +4071,7 @@
           {
             "id": "mem_dcc8f69980514a74",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4297,8 +4297,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "keeps the bit going three seconds too long",
               "distractors": [],
               "tier": 0,
@@ -4535,7 +4535,7 @@
         "partner_b_id": "chloe",
         "formed_on_day": 1,
         "formed_via": "opening",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -4544,7 +4544,7 @@
         "partner_b_id": "marcus",
         "formed_on_day": 1,
         "formed_via": "opening",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -4553,7 +4553,7 @@
         "partner_b_id": "liam",
         "formed_on_day": 1,
         "formed_via": "opening",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -4562,7 +4562,7 @@
         "partner_b_id": "blake",
         "formed_on_day": 1,
         "formed_via": "opening",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       }
@@ -4584,7 +4584,7 @@
     "npc_conversations": [],
     "pending_npc_summon": null,
     "pending_npc_approach": null,
-    "pending_recouple_proposal": null,
+    "pending_pair_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {
       "archetype_id": "heartthrob",
@@ -4593,7 +4593,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 5,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 5
       },
       "rerolled": false
@@ -4914,7 +4914,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Blake is hiding from the villa?",
+            "stem": "What's the one thing Blake is hiding from Sunset Bay?",
             "correct_value": "he wrote a breakup speech for himself",
             "distractors": [
               "he lied on his application",
@@ -5112,13 +5112,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_villa_tell",
+            "id": "cq_blake_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Blake's villa tell.",
+            "stem": "Tell us about Blake's resort tell.",
             "correct_value": "makes himself useful before saying what he wants",
             "distractors": [],
             "flavor_tags": []
@@ -5194,7 +5194,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Chloe is hiding from the villa?",
+            "stem": "What's the one thing Chloe is hiding from Sunset Bay?",
             "correct_value": "she found the ring in his sock drawer and panicked before he could ask",
             "distractors": [
               "she still texts that ex",
@@ -5392,13 +5392,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_chloe_villa_tell",
+            "id": "cq_chloe_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "chloe",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Chloe's villa tell.",
+            "stem": "Tell us about Chloe's resort tell.",
             "correct_value": "touches her necklace when she wants to leave a conversation",
             "distractors": [],
             "flavor_tags": []
@@ -5474,7 +5474,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Jordan is hiding from the villa?",
+            "stem": "What's the one thing Jordan is hiding from Sunset Bay?",
             "correct_value": "he has panic attacks before hosting nights and calls them pre-show buzz",
             "distractors": [
               "he has a secret child",
@@ -5684,13 +5684,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_villa_tell",
+            "id": "cq_jordan_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Jordan's villa tell.",
+            "stem": "Tell us about Jordan's resort tell.",
             "correct_value": "keeps the bit going three seconds too long",
             "distractors": [],
             "flavor_tags": []
@@ -5766,7 +5766,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Liam is hiding from the villa?",
+            "stem": "What's the one thing Liam is hiding from Sunset Bay?",
             "correct_value": "he still keeps her old voicemail",
             "distractors": [
               "he quit medicine once",
@@ -5964,13 +5964,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_liam_villa_tell",
+            "id": "cq_liam_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "liam",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Liam's villa tell.",
+            "stem": "Tell us about Liam's resort tell.",
             "correct_value": "checks everyone has water before admitting he is tired",
             "distractors": [],
             "flavor_tags": []
@@ -6046,7 +6046,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Marcus is hiding from the villa?",
+            "stem": "What's the one thing Marcus is hiding from Sunset Bay?",
             "correct_value": "sleeps four hours a night and runs on caffeine and dread",
             "distractors": [
               "hides therapy",
@@ -6244,13 +6244,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_villa_tell",
+            "id": "cq_marcus_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Marcus's villa tell.",
+            "stem": "Tell us about Marcus's resort tell.",
             "correct_value": "gets louder when he feels replaceable",
             "distractors": [],
             "flavor_tags": []
@@ -6326,7 +6326,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Maya is hiding from the villa?",
+            "stem": "What's the one thing Maya is hiding from Sunset Bay?",
             "correct_value": "still has the unsent letter in her bedside drawer",
             "distractors": [
               "she is secretly in therapy",
@@ -6524,13 +6524,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_maya_villa_tell",
+            "id": "cq_maya_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "maya",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Maya's villa tell.",
+            "stem": "Tell us about Maya's resort tell.",
             "correct_value": "starts doing impressions when she is close to crying",
             "distractors": [],
             "flavor_tags": []
@@ -6606,7 +6606,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Nia is hiding from the villa?",
+            "stem": "What's the one thing Nia is hiding from Sunset Bay?",
             "correct_value": "she still has the unused anniversary menu folded in her purse",
             "distractors": [
               "she lied about her job",
@@ -6804,13 +6804,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_villa_tell",
+            "id": "cq_nia_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Nia's villa tell.",
+            "stem": "Tell us about Nia's resort tell.",
             "correct_value": "over-offers tea when she feels unwanted",
             "distractors": [],
             "flavor_tags": []
@@ -6886,7 +6886,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Sophie is hiding from the villa?",
+            "stem": "What's the one thing Sophie is hiding from Sunset Bay?",
             "correct_value": "she once hired a private coach to learn how to cry on command and still could not",
             "distractors": [
               "she faked a proposal",
@@ -7084,13 +7084,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_villa_tell",
+            "id": "cq_sophie_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Sophie's villa tell.",
+            "stem": "Tell us about Sophie's resort tell.",
             "correct_value": "straightens cushions when she wants to be touched",
             "distractors": [],
             "flavor_tags": []
@@ -7102,12 +7102,12 @@
     "pending_gather": null,
     "pending_group_date": null,
     "daily_recaps": [],
-    "hideaway": {
+    "private_suite": {
       "used_on_day": null,
       "partner_id": null,
       "deltas_applied": false
     },
-    "casa_amor_state": null,
+    "flush_of_hearts_state": null,
     "outcome": null
   },
   "trace_records": [

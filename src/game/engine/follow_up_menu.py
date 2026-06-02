@@ -13,7 +13,7 @@ from src.game.agents.contextual_options import (
     validate_follow_up_menu,
     with_gossip_options,
 )
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import (
     AgentError,
     AgentValidationError,

@@ -29,10 +29,10 @@ test("long ceremony overlays keep Continue visible and clickable", async ({ page
         state,
         exchange: null,
         available_actions: [],
-        ceremony_events: [{ kind: "recoupling", message: "Pairing ceremony completed." }],
+        ceremony_events: [{ kind: "pairing", message: "Pairing ceremony completed." }],
         event_narration: {
           prose:
-            "The firepit fills with held breath as every choice lands in public. " +
+            "The flame_deck fills with held breath as every choice lands in public. " +
             "Couples settle, doubts surface, and Sunset Bay feels sharper than it did an hour ago.",
         },
         audience_delta: null,
@@ -86,7 +86,7 @@ test("challenge overlays use challenge titles without showing stale pairings", a
             state,
             exchange: null,
             available_actions: [],
-            ceremony_events: [{ kind: "challenge", sub_kind: "snog_marry_pie", message: "Challenge completed." }],
+            ceremony_events: [{ kind: "challenge", sub_kind: "kiss_wed_pass", message: "Challenge completed." }],
             event_narration: {
               prose:
                 "The challenge lands with messy laughter and a few looks that last too long. " +
@@ -144,7 +144,7 @@ test("challenge banner keeps choices usable on a short viewport", async ({ page 
             correct_label: "Liam",
             is_correct: true,
             points: 3,
-            reaction_line: "The villa notices."
+            reaction_line: "Sunset Bay notices."
           }
         ]
       }
@@ -231,8 +231,8 @@ function fakeState(overrides: Record<string, unknown> = {}) {
     turn_index: 88,
     location_id: "pool",
     location_label: "Pool",
-    villa: "main",
-    villa_label: "Sunset Bay",
+    resort: "main",
+    resort_label: "Sunset Bay",
     phase_clock: {},
     player: {
       id: "player",
@@ -240,32 +240,32 @@ function fakeState(overrides: Record<string, unknown> = {}) {
       gender: "woman",
       archetype_id: "loyal_friend",
       public_perception: 100,
-      stats: { charm: 6, banter: 6, eq: 6, graft: 6, loyalty: 9 },
+      stats: { charm: 6, banter: 6, eq: 6, spark: 6, loyalty: 9 },
       memories: [
         memory("mem-one", "liam", 12),
         memory("mem-two", "liam", 12),
       ],
     },
-    islanders: [
-      islander("liam", "Liam", "man"),
-      islander("chloe", "Chloe", "woman"),
-      islander("maya", "Maya", "woman"),
-      islander("marcus", "Marcus", "man"),
-      islander("beau", "Beau", "man"),
-      islander("zara", "Zara", "woman"),
+    heartbreakers: [
+      heartbreaker("liam", "Liam", "man"),
+      heartbreaker("chloe", "Chloe", "woman"),
+      heartbreaker("maya", "Maya", "woman"),
+      heartbreaker("marcus", "Marcus", "man"),
+      heartbreaker("beau", "Beau", "man"),
+      heartbreaker("zara", "Zara", "woman"),
     ],
     couples: [],
     audience: { public_perception: 100, recent_delta: null, trend: "steady" },
-    pending_recouple_proposal: null,
+    pending_pair_proposal: null,
     outcome: null,
     active_conversation_target_id: null,
-    villa_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
+    resort_snapshot: { Pool: ["You", "Liam"], Kitchen: ["Chloe"], Terrace: ["Maya"] },
     daily_recaps: [],
     ...overrides,
   };
 }
 
-function islander(id: string, name: string, gender: "man" | "woman") {
+function heartbreaker(id: string, name: string, gender: "man" | "woman") {
   return {
     id,
     name,

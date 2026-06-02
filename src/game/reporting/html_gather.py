@@ -13,7 +13,7 @@ def pending_gather_block(record: dict[str, Any]) -> str:
     if not isinstance(gather, dict):
         return ""
     event = escape(gather.get("event_id", "event"))
-    location = escape(gather.get("gather_location", "firepit"))
+    location = escape(gather.get("gather_location", "flame_deck"))
     return (
         "<div class='card interruption'><p><b>Gather pending</b></p>"
         f"<p>{event} at {location}.</p></div>"

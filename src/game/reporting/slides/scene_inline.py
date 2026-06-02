@@ -134,10 +134,10 @@ def _render_menu_options(menu: dict[str, Any], chosen_intent: str) -> str:
 
 def _interruption_inset(record: dict[str, Any]) -> str:
     commits = record.get("agent_commits") or {}
-    villa = commits.get("villa_update") if isinstance(commits, dict) else None
-    if not isinstance(villa, dict):
+    resort = commits.get("resort_update") if isinstance(commits, dict) else None
+    if not isinstance(resort, dict):
         return ""
-    interruptions = villa.get("npc_interruptions") or []
+    interruptions = resort.get("npc_interruptions") or []
     if not interruptions:
         return ""
     parts: list[str] = []
@@ -175,17 +175,17 @@ def _inline_mechanics(record: dict[str, Any]) -> str:
             f"→ <span class='{('success' if success else 'miss')}'>"
             f"{('success' if success else 'miss')}</span></span></div>"
         )
-    pull = result.get("pull_attempt")
-    if isinstance(pull, dict):
-        pull_chance = pull.get("chance")
-        pull_roll = pull.get("roll")
-        pull_success = pull.get("success") is True
+    private_chat = result.get("private_chat_attempt")
+    if isinstance(private_chat, dict):
+        private_chat_chance = private_chat.get("chance")
+        private_chat_roll = private_chat.get("roll")
+        private_chat_success = private_chat.get("success") is True
         parts.append(
             f"<div class='mech-line'>"
-            f"<b>Pull attempt:</b> rolled <code>{escape(pull_roll)}</code> vs "
-            f"<code>{escape(pull_chance)}</code> → "
-            f"<span class='{('success' if pull_success else 'miss')}'>"
-            f"{('success' if pull_success else 'rejected')}</span></div>"
+            f"<b>Private chat attempt:</b> rolled <code>{escape(private_chat_roll)}</code> vs "
+            f"<code>{escape(private_chat_chance)}</code> → "
+            f"<span class='{('success' if private_chat_success else 'miss')}'>"
+            f"{('success' if private_chat_success else 'rejected')}</span></div>"
         )
     return "".join(parts)
 

@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class Memory(BaseModel):
-    """One fact remembered by the player or an islander."""
+    """One fact remembered by the player or an heartbreaker."""
 
     model_config = ConfigDict(extra="forbid")
 

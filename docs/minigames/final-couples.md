@@ -16,8 +16,8 @@ performance.
 Day 6. The remaining couples compete in a five-round mixed challenge. Each
 round tests a different facet of the couple — knowledge (one Compatibility
 Quiz question), chemistry (a Heart Rate echo), honesty (one Lie Detector
-question), banter (one Couples Quiz question), and audacity (a Snog/Marry/
-Pie pick on the rest of the cast). The player makes one choice per round.
+question), banter (one Couples Quiz question), and audacity (a Kiss/Wed/Pass
+pick on the rest of the cast). The player makes one choice per round.
 The other couples are scored deterministically.
 
 The winner takes the season — or, in extended seasons, secures a Final-
@@ -36,8 +36,8 @@ Five rounds, one per facet:
   the partner. Standard truth/lie choice set.
 - Round 3 — Banter: a one-question Couples Quiz round, alternating
   direction from a fixed coin (deterministic from seed).
-- Round 4 — Audacity: a single Snog/Marry/Pie allocation against three
-  other islanders.
+- Round 4 — Audacity: a single Kiss/Wed/Pass allocation against three
+  other heartbreakers.
 
 Each round reuses the *scoring* helper of its source minigame, but
 contributes a fixed weight to the final tally — the Final Couples scoring
@@ -97,7 +97,7 @@ formula and their state. The full ranking is captured in the result.
 - Reuses Compatibility Quiz / Couples Quiz / Lie Detector eligibility and
   bank pools. No new Trait Card or KnownFact additions.
 - The Audacity round's allocation against the rest of the cast updates the
-  same memories as a Day-5 Snog/Marry/Pie.
+  same memories as a Day-5 Kiss Wed Pass.
 
 ## 5. Reveals and wrap
 

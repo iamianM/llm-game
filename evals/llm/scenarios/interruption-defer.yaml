@@ -3,7 +3,7 @@ title: Conversation Interruption (Defer)
 goal: 'Prove an NPC interruption mid-conversation routes through the engine cleanly: the player picks "defer", the engine resolves the chance, the pending interruption clears, and the original conversation stays active.'
 seed: 1919
 initial_location: pool
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -11,7 +11,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_relationships:
   chloe:

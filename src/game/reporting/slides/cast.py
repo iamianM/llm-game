@@ -1,4 +1,4 @@
-"""Cast grid, popout dialogs, and villa map for the slide deck right rail."""
+"""Cast grid, popout dialogs, and location map for the slide deck right rail."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from typing import Any
 
 from src.game.reporting.html_base import escape
 
-# Deterministic avatar palette per islander id (or display name)
+# Deterministic avatar palette per heartbreaker id (or display name)
 PALETTE = [
     "#b9502f", "#5b7c4f", "#c8932a", "#6b3fa0",
     "#3d6f8e", "#a93826", "#2d6a3f", "#8b6a17",
@@ -47,20 +47,20 @@ def display_name(name: str) -> str:
     return name.split("_")[0].title()
 
 
-def render_villa_map(snapshot: dict[str, Any]) -> str:
-    """Render the 4-location villa map for the right rail."""
+def render_resort_map(snapshot: dict[str, Any]) -> str:
+    """Render the resort location map for the right rail."""
     if not isinstance(snapshot, dict) or not snapshot:
-        return "<p class='muted small'>No villa map for this scene.</p>"
+        return "<p class='muted small'>No location map for this scene.</p>"
     cells: list[str] = []
     # Stable display order
-    order = ["pool", "kitchen", "terrace", "bedroom", "firepit", "hideaway"]
+    order = ["pool", "kitchen", "terrace", "bedroom", "flame_deck", "private_suite"]
     keys = sorted(snapshot.keys(), key=lambda k: (order.index(k) if k in order else 99, k))
     for loc in keys:
         occupants = snapshot.get(loc)
         if not isinstance(occupants, list):
             continue
-        if loc in {"hideaway"} and not occupants:
-            continue  # skip empty hideaway clutter
+        if loc in {"private_suite"} and not occupants:
+            continue  # skip empty private_suite clutter
         names: list[str] = []
         player_here = False
         for occ in occupants:
@@ -76,18 +76,18 @@ def render_villa_map(snapshot: dict[str, Any]) -> str:
             f"<div class='{cls}'><div class='loc-name'>{escape(loc.title())}</div>"
             f"<div class='loc-people'>{people}</div></div>"
         )
-    return f"<div class='villa-map'>{''.join(cells)}</div>"
+    return f"<div class='resort-map'>{''.join(cells)}</div>"
 
 
 def collect_cast(records: list[dict[str, Any]], final_state: dict[str, Any] | None) -> list[dict[str, Any]]:
     """Extract a deterministic ordered cast roster from final_state or trace fallback."""
     cast: list[dict[str, Any]] = []
     seen: set[str] = set()
-    # Prefer final_state islanders for full data
+    # Prefer final_state heartbreakers for full data
     if isinstance(final_state, dict):
-        islanders = final_state.get("islanders")
-        if isinstance(islanders, list):
-            for isl in islanders:
+        heartbreakers = final_state.get("heartbreakers")
+        if isinstance(heartbreakers, list):
+            for isl in heartbreakers:
                 if not isinstance(isl, dict):
                     continue
                 npc_id = str(isl.get("id") or "")
@@ -97,9 +97,9 @@ def collect_cast(records: list[dict[str, Any]], final_state: dict[str, Any] | No
                 cast.append(_cast_record_from_state(isl, final_state))
             if cast:
                 return cast
-    # Fallback: pull names from the last villa_snapshot in records
+    # Fallback: derive names from the last resort_snapshot in records
     for record in reversed(records):
-        snap = record.get("villa_snapshot") if isinstance(record, dict) else None
+        snap = record.get("resort_snapshot") if isinstance(record, dict) else None
         if not isinstance(snap, dict):
             continue
         for occupants in snap.values():
@@ -125,15 +125,15 @@ def collect_cast(records: list[dict[str, Any]], final_state: dict[str, Any] | No
     return cast
 
 
-def _cast_record_from_state(islander: dict[str, Any], final_state: dict[str, Any]) -> dict[str, Any]:
-    npc_id = str(islander.get("id") or "")
-    name = str(islander.get("name") or display_name(npc_id))
-    location = str(islander.get("location_id") or "")
-    mood = str(islander.get("mood") or "")
-    archetype = str(islander.get("archetype") or "")
-    backstory = str(islander.get("backstory") or "")
-    eliminated = bool(islander.get("eliminated"))
-    relationship = islander.get("relationship") if isinstance(islander.get("relationship"), dict) else {}
+def _cast_record_from_state(heartbreaker: dict[str, Any], final_state: dict[str, Any]) -> dict[str, Any]:
+    npc_id = str(heartbreaker.get("id") or "")
+    name = str(heartbreaker.get("name") or display_name(npc_id))
+    location = str(heartbreaker.get("location_id") or "")
+    mood = str(heartbreaker.get("mood") or "")
+    archetype = str(heartbreaker.get("archetype") or "")
+    backstory = str(heartbreaker.get("backstory") or "")
+    eliminated = bool(heartbreaker.get("eliminated"))
+    relationship = heartbreaker.get("relationship") if isinstance(heartbreaker.get("relationship"), dict) else {}
     return {
         "id": npc_id,
         "name": name,
@@ -143,16 +143,16 @@ def _cast_record_from_state(islander: dict[str, Any], final_state: dict[str, Any
         "backstory": backstory,
         "eliminated": eliminated,
         "relationship": relationship,
-        "gender": str(islander.get("gender") or ""),
-        "memories": islander.get("memories") if isinstance(islander.get("memories"), list) else [],
-        "familiarity": islander.get("familiarity_with_player", 0),
-        "type_on_paper": islander.get("type_on_paper") if isinstance(islander.get("type_on_paper"), dict) else {},
-        "public_perception": islander.get("public_perception", 0),
+        "gender": str(heartbreaker.get("gender") or ""),
+        "memories": heartbreaker.get("memories") if isinstance(heartbreaker.get("memories"), list) else [],
+        "familiarity": heartbreaker.get("familiarity_with_player", 0),
+        "ideal_match": heartbreaker.get("ideal_match") if isinstance(heartbreaker.get("ideal_match"), dict) else {},
+        "public_perception": heartbreaker.get("public_perception", 0),
     }
 
 
 def render_cast_grid(cast: list[dict[str, Any]], partner_id: str | None) -> str:
-    """Sticky right-rail cast grid showing 8 islanders."""
+    """Sticky right-rail cast grid showing 8 heartbreakers."""
     if not cast:
         return "<p class='muted small'>Cast roster unavailable.</p>"
     cards: list[str] = []
@@ -191,7 +191,7 @@ def _npc_popout(c: dict[str, Any], own_memories: list[dict[str, Any]]) -> str:
     location = c.get("location") or ""
     familiarity = c.get("familiarity", 0)
     rel = c.get("relationship") if isinstance(c.get("relationship"), dict) else {}
-    type_on_paper = c.get("type_on_paper") if isinstance(c.get("type_on_paper"), dict) else {}
+    ideal_match = c.get("ideal_match") if isinstance(c.get("ideal_match"), dict) else {}
     sub_parts: list[str] = []
     if archetype:
         sub_parts.append(escape(archetype.title()))
@@ -204,7 +204,7 @@ def _npc_popout(c: dict[str, Any], own_memories: list[dict[str, Any]]) -> str:
         f"<section><h4>Backstory</h4><p>{escape(backstory)}</p></section>" if backstory else ""
     )
     rel_block = _relationship_block(rel)
-    type_block = _type_on_paper_block(type_on_paper, familiarity)
+    type_block = _ideal_match_block(ideal_match, familiarity)
     mem_block = _memory_popout_block(own_memories, npc_id)
     return (
         f"<dialog id='cast-{escape(npc_id)}'>"
@@ -240,7 +240,7 @@ def _relationship_block(rel: dict[str, Any]) -> str:
     return f"<section><h4>How they feel about you</h4>{''.join(rows)}</section>"
 
 
-def _type_on_paper_block(top: dict[str, Any], familiarity: int) -> str:
+def _ideal_match_block(top: dict[str, Any], familiarity: int) -> str:
     if not top:
         return ""
     thresholds = {"physical_type": 25, "personality_type": 50, "values": 75, "dealbreakers": 100}

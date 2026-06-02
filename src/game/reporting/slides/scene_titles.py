@@ -6,18 +6,18 @@ from typing import Any
 
 
 def _ceremony_title(kind: str, day: Any = None) -> str:
-    if kind == "recoupling" and day == 1:
+    if kind == "pairing" and day == 1:
         return "Opening Coupling"
     return {
-        "recoupling": "Recoupling Ceremony",
-        "bombshell": "Bombshell Arrival",
+        "pairing": "Pairing Ceremony",
+        "heart_throb": "Heart Throb Arrival",
         "elimination": "Elimination",
-        "casa_amor_announce": "Casa Amor Announcement",
-        "casa_amor_arrival": "Casa Amor Arrival",
-        "casa_amor_decision": "Casa Amor Decision",
-        "casa_amor_return_reveal": "Casa Amor Return",
-        "final_vote": "🏆 Finale",
-        "producer_text": "I've got a text",
+        "flush_of_hearts_announce": "Flush of Hearts Announcement",
+        "flush_of_hearts_arrival": "Flush of Hearts Arrival",
+        "flush_of_hearts_decision": "Flush of Hearts Decision",
+        "flush_of_hearts_return_reveal": "Sunset Bay Return",
+        "final_vote": "Finale",
+        "producer_text": "Paradise Calls",
         "gather_scheduled": "Everyone gathers",
         "challenge": "Challenge",
     }.get(kind, kind.replace("_", " ").title())
@@ -27,9 +27,9 @@ def _challenge_title(kind: str) -> str:
     return {
         "compatibility_quiz": "Compatibility Quiz",
         "heart_rate": "Heart Rate Challenge",
-        "mr_and_mrs": "Mr & Mrs",
+        "couples_quiz": "Couples Quiz",
         "lie_detector": "Lie Detector",
-        "snog_marry_pie": "Snog, Marry, Pie",
+        "kiss_wed_pass": "Kiss, Wed, Pass",
         "final_couples": "Final Couples Challenge",
     }.get(kind, kind.replace("_", " ").title())
 

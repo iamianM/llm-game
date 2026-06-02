@@ -7,8 +7,8 @@ everything looks and feels right** — not just that tests pass.
 
 **All player-facing copy must use Paradise Hearts vocabulary** from
 `paradise-hearts-glossary.md`. During interactive verification, codex
-explicitly checks that no Love Island residue ("islanders", "villa", "Casa
-Amor", "bombshell", "recoupling", "graft", "I've got a text", "dumped", etc.)
+explicitly checks that no residue terms ("heartbreakers" misused, "Sunset Bay" wrong,
+"Flush of Hearts" label errors, "Heart Throb" misspellings, stale pairing or sparking copy, etc.)
 appears anywhere in the UI. Engine-internal identifiers in API payloads are
 fine; only player-facing strings need to be rebranded.
 
@@ -41,8 +41,8 @@ All three must be green before Phase 3 is reported complete.
   - Mock-LLM mode produces dialogue_chunk events with sane chunks
   - Error mid-stream → error event then close
 - `test_display.py`
-  - Engine event_kind "recoupling" → display "Pairing Ceremony"
-  - Engine challenge "snog_marry_pie" → display "Kiss Wed Pass"
+  - Engine event_kind "pairing" → display "Pairing Ceremony"
+  - Engine challenge "kiss_wed_pass" → display "Kiss Wed Pass"
   - Every engine-side identifier has a display translation OR is explicitly
     in the passthrough allow-list (validates `DISPLAY_NAMES` coverage)
 
@@ -127,7 +127,7 @@ test('complete playthrough lands on finale', async ({ page }) => {
 
 Variations: same test seeded with different archetypes; same test that picks
 "highest-affection" choice every time vs "random"; same test that triggers
-the recouple-proposal action when available.
+the pair-proposal action when available.
 
 ### `e2e/ceremony.spec.ts`
 
@@ -183,7 +183,7 @@ const states = [
   { name: 'ceremony-first-spark', goto: () => resumeCheckpoint(page, 'ui-day1-first-spark') },
   { name: 'ceremony-heart-throb', goto: () => resumeCheckpoint(page, 'ui-day3-heart-throb') },
   { name: 'ceremony-flush-of-hearts', goto: () => resumeCheckpoint(page, 'ui-day4-flush-of-hearts') },
-  { name: 'recouple-proposal', goto: () => resumeCheckpoint(page, 'ui-recouple-proposal') },
+  { name: 'pair-proposal', goto: () => resumeCheckpoint(page, 'ui-pair-proposal') },
   { name: 'day-recap', goto: () => resumeCheckpoint(page, 'ui-day3-recap') },
   { name: 'finale', goto: () => resumeCheckpoint(page, 'ui-day6-finale') },
   { name: 'cast-popout', goto: () => /* open popout for chloe */ },
@@ -219,7 +219,7 @@ Codex must do all of these before reporting Phase 3 done:
 - Start FastAPI in mock-LLM mode: `PARADISE_MOCK_LLM=1 uv run uvicorn ...`
 - Start Next.js dev server
 - Open `http://localhost:3000` in Chrome
-- Click through title → archetype → enter the villa
+- Click through title → archetype → arrive at Sunset Bay
 - Play **every turn** of Day 1 through finale
 - Take screenshots at every distinct screen state
 - Confirm:
@@ -260,13 +260,13 @@ that can be resumed via `play-session resume --from-checkpoint`.
 | `ui-day1-ambient` | When player picks an ambient action | Ambient action card, "stay" continuation, NPC encounter chance |
 | `ui-day2-paradise-calls` | When a Paradise Calls producer text fires | Distinct producer-text styling (Caveat font, dramatic flourish) |
 | `ui-day3-heart-throb` | When a Heart Throb arrival fires | Heart Throb arrival ceremony — bigger portrait, intro line |
-| `ui-day3-pairing-ceremony` | At the Day-3 Pairing Ceremony | Multi-couple recoupling, full screen overlay |
+| `ui-day3-pairing-ceremony` | At the Day-3 Pairing Ceremony | Multi-couple Heart Swap, full screen overlay |
 | `ui-day3-recap` | End of Day 3 | Day boundary modal, Pulse Board |
 | `ui-day4-flush-of-hearts` | Flush of Hearts announcement | Flush of Hearts intro ceremony, location shift |
 | `ui-day4-flush-of-hearts-arrival` | Right after entering Flush of Hearts | Background change to Flush of Hearts color palette (Sirens' Cove) |
 | `ui-day5-flush-of-hearts-decision` | Flush of Hearts return decision | Decision flow rendered as a distinct prompt |
-| `ui-recouple-proposal-player` | Just before player triggers a PROPOSE_RECOUPLE | Player-initiated proposal flow, accept/reject branch |
-| `ui-recouple-proposal-npc` | When an NPC proposes to the player | NPC-initiated proposal screen with three response options |
+| `ui-pair-proposal-player` | Just before player triggers a PROPOSE_PAIR | Player-initiated Heart Swap proposal flow, accept/reject branch |
+| `ui-pair-proposal-npc` | When an NPC proposes to the player | NPC-initiated Heart Swap proposal screen with three response options |
 | `ui-day6-final-vote` | Right before the final vote | Finale ceremony narration, Pulse reveal |
 | `ui-day6-finale` | After final vote outcome | Finale screen with winning couple, stats, HA earned |
 
@@ -344,8 +344,8 @@ Before codex reports Phase 3 done, every box must be checked:
 - [ ] Day-3 Pairing Ceremony renders with multi-couple animation
 - [ ] Flush of Hearts announcement + arrival render
 - [ ] Flush of Hearts return decision works
-- [ ] Recouple proposal (player-initiated) flow works
-- [ ] Recouple proposal (NPC-initiated) flow works
+- [ ] Heart Swap proposal (player-initiated) flow works
+- [ ] Heart Swap proposal (NPC-initiated) flow works
 - [ ] Day boundary recap modal appears between days
 - [ ] Finale screen renders with all stats
 - [ ] Settings menu: typewriter speed, auto-advance, reduce motion all work
@@ -356,7 +356,7 @@ Before codex reports Phase 3 done, every box must be checked:
 - [ ] All screen states have a corresponding screenshot in `web/tests/snapshots/`
 - [ ] No placeholder text or `TODO` strings visible to the player
 - [ ] All player-facing strings use Paradise Hearts glossary terms (not
-      Love Island terms)
+      legacy reality-dating-show terms)
 - [ ] Typography is correct: Charter for headings, Inter for body, Caveat
       for Paradise Calls
 - [ ] Color palette matches the design system tokens; no hard-coded colors
@@ -374,15 +374,16 @@ Codex runs a search through the rendered page source of each captured
 screenshot for any of these strings — if any appear in player-facing copy,
 it's a fail:
 
-- "islander", "Islanders", "the villa", "The Villa", "Villa"
-- "Casa Amor", "casa amor"
-- "bombshell", "Bombshell"
-- "recoupling", "Recoupling" (the action; "Pairing Ceremony" the event is OK)
-- "graft", "grafting"
-- "I've got a text", "ive got a text"
-- "dumped", "mugged off", "pied"
+- "islander", "Islanders" (use "heartbreaker" / "Heartbreakers")
+- "the villa", "The Villa", "Villa" (use "Sunset Bay")
+- "Casa Amor", "casa amor" (use "Flush of Hearts")
+- "bombshell", "Bombshell" (use "Heart Throb")
+- "recoupling", "Recoupling" (use "Heart Swap" for the action, "Pairing Ceremony" for the event)
+- "graft", "grafting" (use "spark" / "sparking")
+- "I've got a text", "ive got a text" (use "Paradise Calls")
+- "dumped", "mugged off", "pied" (use "Heart Out" / "cooled on")
 
-Engine-internal API field names (`bombshell`, `casa_amor`, `recouple`, etc.)
+Engine-internal API field names (`heart_throb`, `flush_of_hearts`, `pair`, etc.)
 in network responses are NOT player-facing and are fine.
 
 - [ ] Zero LI-residue strings found in any rendered page source
@@ -429,7 +430,7 @@ Codex's final report must include:
 
 - **Default mock seed:** 42 — produces a known-good Day 1 with Chloe coupling
   and 4 NPC pairings forming opposite-gender
-- **Recouple proposal seed:** TBD — codex finds a seed where chemistry hits
+- **Heart Swap proposal seed:** TBD — codex finds a seed where chemistry hits
   threshold early; documents it for the checkpoint
 - **Flush of Hearts decision seed:** the default seed should reach this; if not,
   codex documents an alternate seed

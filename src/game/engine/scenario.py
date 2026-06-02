@@ -17,8 +17,8 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
-from src.game.agents.islander_voice import Exchange
-from src.game.agents.villa_orchestrator import VillaOrchestratorFn, VillaUpdate
+from src.game.agents.heartbreaker_voice import Exchange
+from src.game.agents.resort_orchestrator import ResortOrchestratorFn, ResortUpdate
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
@@ -54,7 +54,7 @@ class ActionScript(BaseModel):
     initial_location: Location | None = None
     initial_relationships: dict[str, RelationshipState] | None = None
     initial_couples: list[Couple] | None = None
-    villa_updates: list[VillaUpdate | None] | None = None
+    resort_updates: list[ResortUpdate | None] | None = None
     actions: list[PlayerAction] = Field(min_length=1)
     expected_hash: str | None = None
 
@@ -103,13 +103,13 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
             state.phase = Phase.MORNING
             state.phase_clock = _PhaseClock(phase=Phase.MORNING.value, budget_minutes=PHASE_BUDGETS[Phase.MORNING])
             state.intro_completed_ids = [
-                islander.id for islander in state.islanders if not islander.eliminated
+                heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
             ]
             state.intro_memory_created = True
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
-    contextual_options = _scripted_contextual_options(script.actions, script.villa_updates)
-    villa_orchestrator = _scripted_villa_updates(script.villa_updates)
+    contextual_options = _scripted_contextual_options(script.actions, script.resort_updates)
+    resort_orchestrator = _scripted_resort_updates(script.resort_updates)
 
     for action in script.actions:
         turn = run_turn(
@@ -117,7 +117,7 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
             action,
             rng,
             contextual_options=contextual_options,
-            villa_orchestrator=villa_orchestrator,
+            resort_orchestrator=resort_orchestrator,
         )
         turns.append(turn.model_copy(deep=True))
         state = turn.state
@@ -140,17 +140,17 @@ def _apply_initial_state(state: GameState, script: ActionScript) -> None:
     if script.initial_couples is not None:
         state.couples = [couple.model_copy(deep=True) for couple in script.initial_couples]
     if script.initial_relationships is not None:
-        for islander in state.islanders:
-            relationship = script.initial_relationships.get(islander.id)
+        for heartbreaker in state.heartbreakers:
+            relationship = script.initial_relationships.get(heartbreaker.id)
             if relationship is not None:
-                islander.relationship = relationship.model_copy(deep=True)
+                heartbreaker.relationship = relationship.model_copy(deep=True)
 
 
 def _scripted_contextual_options(
     actions: list[PlayerAction],
-    villa_updates: list[VillaUpdate | None] | None,
+    resort_updates: list[ResortUpdate | None] | None,
 ) -> ContextualOptionsFn:
-    planned = _planned_follow_up_intents(actions, villa_updates)
+    planned = _planned_follow_up_intents(actions, resort_updates)
     index = 0
 
     def contextual_options(
@@ -169,29 +169,29 @@ def _scripted_contextual_options(
     return contextual_options
 
 
-def _scripted_villa_updates(updates: list[VillaUpdate | None] | None) -> VillaOrchestratorFn | None:
+def _scripted_resort_updates(updates: list[ResortUpdate | None] | None) -> ResortOrchestratorFn | None:
     if updates is None:
         return None
     index = 0
 
-    def villa_orchestrator(_state: GameState) -> VillaUpdate:
+    def resort_orchestrator(_state: GameState) -> ResortUpdate:
         nonlocal index
         update = updates[index] if index < len(updates) else None
         index += 1
-        return VillaUpdate() if update is None else update
+        return ResortUpdate() if update is None else update
 
-    return villa_orchestrator
+    return resort_orchestrator
 
 
 def _planned_follow_up_intents(
     actions: list[PlayerAction],
-    villa_updates: list[VillaUpdate | None] | None,
+    resort_updates: list[ResortUpdate | None] | None,
 ) -> list[str | None]:
     planned: list[str | None] = []
     for index, action in enumerate(actions):
         if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
             continue
-        update = None if villa_updates is None or index >= len(villa_updates) else villa_updates[index]
+        update = None if resort_updates is None or index >= len(resort_updates) else resort_updates[index]
         if update is not None and update.npc_summoned_elsewhere:
             planned.append("joke_back")
             continue

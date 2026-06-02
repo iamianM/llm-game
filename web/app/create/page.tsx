@@ -22,7 +22,7 @@ export default function CreatePage() {
   const setUseLive = useUiStore((s) => s.setUseLiveLlm);
   const mockLlm = !useLive;
 
-  // Restore the last picked islander and sync the engine toggle from storage.
+  // Restore the last picked Heartbreaker and sync the engine toggle from storage.
   useEffect(() => {
     const draft = loadDraftLook();
     if (isRosterId(draft.characterId)) setSelectedId(draft.characterId as string);
@@ -78,13 +78,13 @@ export default function CreatePage() {
         </Link>
         <div className="topbar-title">
           <p className="kicker flourish">Paradise Hearts / Casting</p>
-          <h1>Choose your Islander</h1>
+          <h1>Choose your Heartbreaker</h1>
         </div>
       </header>
 
       <section className="select-layout">
         {/* ROSTER GRID */}
-        <div className="roster-grid" role="radiogroup" aria-label="Playable islanders" data-testid="roster-grid">
+        <div className="roster-grid" role="radiogroup" aria-label="Playable Heartbreakers" data-testid="roster-grid">
           {ROSTER.map((character) => {
             const on = character.id === selected.id;
             return (
@@ -110,7 +110,7 @@ export default function CreatePage() {
         </div>
 
         {/* PREVIEW + ACTIONS */}
-        <section className="preview-zone" aria-label="Selected islander">
+        <section className="preview-zone" aria-label="Selected Heartbreaker">
           <div className="casting-card" data-testid="selected-preview">
             <LookStage look={look} />
             <div className="nameplate">
@@ -149,7 +149,7 @@ export default function CreatePage() {
           <div className="checkpoint-sheet">
             <header className="sheet-header">
               <div>
-                <span className="kicker">Jump into the villa</span>
+                <span className="kicker">Jump into Sunset Bay</span>
                 <h2 className="sheet-title">Choose a checkpoint</h2>
               </div>
               <button type="button" className="sheet-close" onClick={() => setCheckpointOpen(false)}>Close</button>
@@ -176,8 +176,10 @@ export default function CreatePage() {
       <style jsx>{`
         .select-page {
           position: relative;
-          min-height: 100vh;
-          min-height: 100svh;
+          height: 100vh;
+          height: 100svh;
+          min-height: 0;
+          overflow: hidden;
           color: var(--ink-on-dark);
           padding: 14px;
           isolation: isolate;
@@ -243,6 +245,7 @@ export default function CreatePage() {
           grid-template-columns: minmax(340px, 1fr) minmax(300px, 420px);
           gap: 16px;
           flex: 1;
+          overflow: hidden;
           min-height: 0;
         }
         .roster-grid {
@@ -451,10 +454,42 @@ export default function CreatePage() {
         .checkpoint-source { font-size: 11px; opacity: .5; }
 
         @media (max-width: 880px) {
-          .select-layout { grid-template-columns: 1fr; }
+          .select-page { padding: 10px; }
+          .select-topbar {
+            min-height: 54px;
+            margin-bottom: 8px;
+          }
+          .select-layout {
+            grid-template-columns: 1fr;
+            grid-template-rows: minmax(0, 1fr) minmax(120px, 28svh);
+            gap: 10px;
+          }
           .preview-zone { order: 1; }
-          .roster-grid { order: 2; }
-          .casting-card { min-height: 360px; }
+          .roster-grid {
+            order: 2;
+            min-height: 0;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            gap: 8px;
+            padding-right: 2px;
+          }
+          .casting-card { min-height: 0; }
+          .preview-zone {
+            gap: 8px;
+            overflow: hidden;
+          }
+          .preview-actions { gap: 7px; }
+          .tagline,
+          .bonus-line {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+          .tagline { -webkit-line-clamp: 2; font-size: 13px; }
+          .bonus-line { -webkit-line-clamp: 1; font-size: 11px; }
+          .engine-row { padding: 7px 10px; }
+          .enter-cta { min-height: 46px; padding: 10px 18px; font-size: 17px; }
+          .ghost-cta { min-height: 38px; }
           .checkpoint-grid { grid-template-columns: 1fr; }
         }
       `}</style>
@@ -489,8 +524,8 @@ function SegButton({ on, onClick, children }: { on: boolean; onClick: () => void
 
 function CastingLoader({ mockLlm }: { mockLlm: boolean }) {
   const beats = mockLlm
-    ? ["Calling places…", "Mixing the cast…", "Lighting the firepit…"]
-    : ["Casting your Islanders…", "Writing their backstories…", "Setting the scene at Sunset Bay…"];
+    ? ["Calling places…", "Mixing the cast…", "Lighting the flame_deck…"]
+    : ["Casting your Heartbreakers…", "Writing their backstories…", "Setting the scene at Sunset Bay…"];
   return (
     <main className="loader-stage film-grain vignette" data-screen="casting-loader">
       <div className="loader-bg" aria-hidden />

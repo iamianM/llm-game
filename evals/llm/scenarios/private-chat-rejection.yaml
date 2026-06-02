@@ -1,0 +1,68 @@
+id: private-chat-rejection
+title: Private Chat (Rejection)
+goal: Prove a failed private chat keeps the original NPC-NPC conversation active, records a deflection memory, and the rejected exchange does not invent acceptance.
+seed: 1515
+initial_location: flame_deck
+live_resort_life: false
+character_creation:
+  archetype_id: loyal_friend
+  gender: woman
+  stats:
+    charm: 5
+    banter: 6
+    eq: 5
+    spark: 5
+    loyalty: 9
+initial_relationships:
+  maya:
+    affection: 10
+    chemistry: 60
+    friendship: 5
+initial_npc_conversations:
+  - id: npcconv_maya_liam_flame_deck
+    participants:
+      - maya
+      - liam
+    location_id: flame_deck
+    topic: Maya pressing Liam about who he is actually watching this week
+    started_on_turn: 0
+    status: active
+judge_context:
+  - Maya is mid-conversation with Liam at the flame_deck, in front of the rest of the cast.
+  - The private chat is engine-decided; the seed and stats are set so the invitation is rejected here.
+  - On rejection the NPC-NPC conversation stays active, Maya deflects, and the exchange must not behave like a successful private chat.
+turns:
+  - id: try-private-chat-maya
+    arrange_player_location: flame_deck
+    arrange_npc_locations:
+      maya: flame_deck
+      liam: flame_deck
+    action:
+      kind: start_conversation
+      target_id: maya
+      intent_id: flirty_intimate_eye_contact
+    golden: >
+      The player asks Maya for a private chat during the flame_deck chat and gets brushed
+      off. Maya's deflection should feel in character — a quick "not now",
+      a glance back to Liam, maybe a soft "find me later" — and the
+      original conversation between Maya and Liam should still be running.
+      Imagine: "Babe, give me a minute — I'm in the middle of something.
+      ...Come back when this lot have gone to bed."
+    checks:
+      - private_chat_recorded
+      - private_chat_rejected
+      - npc_conversation_still_active
+      - private_chat_rejection_witness_memory
+      - exchange_valid
+      - agent_traces_present
+    judge_checks:
+      - id: rejection_in_character
+        criteria: >
+          Maya's deflection reads like a polite "not now", not a warm
+          acceptance with a smaller smile. Fail if the line treats the private chat
+          as having succeeded or invents a new private moment with the player.
+      - id: blocks_acknowledged
+        criteria: >
+          The exchange acknowledges (directly or implicitly) that Maya was
+          mid-conversation with Liam. Fail if Maya behaves as if the player
+          had her full attention to begin with.

@@ -17,7 +17,7 @@ def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
     existing = {option.intent_kind for option in menu.options}
     if any(intent_kind.startswith("ask_gossip:") for intent_kind in existing):
         return menu
-    target = next((islander for islander in state.islanders if islander.id == conversation.target_id), None)
+    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == conversation.target_id), None)
     if target is None or target.relationship.affection < 25:
         return menu
     # Do not inject a topic-switching gossip option when the last exchange
@@ -38,7 +38,7 @@ def with_gossip_options(menu: FollowUpMenu, state: GameState) -> FollowUpMenu:
         if intent_kind in existing:
             continue
         option = FollowUpOption(
-            label=f"Ask about {_islander_name(state, subject_id)}",
+            label=f"Ask about {_heartbreaker_name(state, subject_id)}",
             category="gossip",
             intent_kind=intent_kind,
             stat_used="eq",
@@ -87,11 +87,11 @@ def _insert_option(menu: FollowUpMenu, options: list[FollowUpOption], option: Fo
 
 
 def _subject_name(state: GameState, memory: Memory) -> str:
-    return _islander_name(state, memory.subject_id)
+    return _heartbreaker_name(state, memory.subject_id)
 
 
-def _islander_name(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
+def _heartbreaker_name(state: GameState, heartbreaker_id: str) -> str:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            return heartbreaker.name
+    return heartbreaker_id

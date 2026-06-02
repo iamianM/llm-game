@@ -1,19 +1,19 @@
-"""Couple strength and bombshell steal mechanics."""
+"""Couple strength and Heart Throb steal mechanics."""
 
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.state.models import Couple, GameState, IslanderState, clamp_relationship
+from src.game.state.models import Couple, GameState, HeartbreakerState, clamp_relationship
 from src.game.state.rng import SeededRng
 
 
 class StealAttempt(BaseModel):
-    """One bombshell attempt to steal a coupled islander."""
+    """One Heart Throb attempt to steal a coupled contestant."""
 
     model_config = ConfigDict(extra="forbid")
 
-    bombshell_id: str
+    heart_throb_id: str
     target_id: str
     abandoned_id: str
     chance: int
@@ -52,37 +52,37 @@ def ranked_couples(state: GameState) -> list[tuple[Couple, int]]:
     return rows
 
 
-def steal_chance(state: GameState, bombshell: IslanderState, target_id: str, couple: Couple) -> int:
-    """Chance that ``bombshell`` steals ``target_id`` from ``couple``."""
-    chemistry = bombshell.relationship.chemistry
-    modifier = 10 if bombshell.archetype in {"bombshell", "joker"} else 0
+def steal_chance(state: GameState, heart_throb: HeartbreakerState, target_id: str, couple: Couple) -> int:
+    """Chance that a Heart Throb steals ``target_id`` from ``couple``."""
+    chemistry = heart_throb.relationship.chemistry
+    modifier = 10 if heart_throb.archetype in {"heart_throb", "joker"} else 0
     chance = 50 + (chemistry * 3) - couple_strength(state, couple) + modifier
     return max(10, min(90, chance))
 
 
 def resolve_steal_attempt(
     state: GameState,
-    bombshell_id: str,
+    heart_throb_id: str,
     target_couple: Couple,
     rng: SeededRng,
 ) -> StealAttempt:
-    """Resolve a bombshell steal roll and mutate couples on success."""
-    bombshell = _islander(state, bombshell_id)
-    target_id = _steal_target(state, bombshell, target_couple)
+    """Resolve a Heart Throb steal roll and mutate couples on success."""
+    heart_throb = _heartbreaker(state, heart_throb_id)
+    target_id = _steal_target(state, heart_throb, target_couple)
     abandoned_id = partner_for(target_couple, target_id)
-    chance = steal_chance(state, bombshell, target_id, target_couple)
+    chance = steal_chance(state, heart_throb, target_id, target_couple)
     roll = rng.randint(1, 100)
     success = roll <= chance
     target_couple.last_steal_attempt_chance = chance
     if success:
         _replace_couple(state, target_couple, Couple(
-            partner_a_id=bombshell.id,
+            partner_a_id=heart_throb.id,
             partner_b_id=target_id,
             formed_on_day=state.day,
             formed_via="ceremony",
         ))
     return StealAttempt(
-        bombshell_id=bombshell.id,
+        heart_throb_id=heart_throb.id,
         target_id=target_id,
         abandoned_id=abandoned_id,
         chance=chance,
@@ -93,25 +93,25 @@ def resolve_steal_attempt(
 
 def _relationship_score(state: GameState, actor_id: str, other_id: str) -> int:
     if actor_id == state.player.id:
-        rel = _islander(state, other_id).relationship
+        rel = _heartbreaker(state, other_id).relationship
         return rel.affection + rel.trust
     if other_id == state.player.id:
-        rel = _islander(state, actor_id).relationship
+        rel = _heartbreaker(state, actor_id).relationship
         return rel.affection + rel.trust
-    rel = _islander(state, actor_id).relationship
+    rel = _heartbreaker(state, actor_id).relationship
     return rel.affection + rel.trust
 
 
-def _steal_target(state: GameState, bombshell: IslanderState, couple: Couple) -> str:
+def _steal_target(state: GameState, heart_throb: HeartbreakerState, couple: Couple) -> str:
     candidates = [couple.partner_a_id, couple.partner_b_id]
-    candidates.sort(key=lambda actor_id: (_target_pull(state, bombshell, actor_id), actor_id), reverse=True)
+    candidates.sort(key=lambda actor_id: (_target_draw(state, heart_throb, actor_id), actor_id), reverse=True)
     return candidates[0]
 
 
-def _target_pull(state: GameState, bombshell: IslanderState, actor_id: str) -> int:
+def _target_draw(state: GameState, heart_throb: HeartbreakerState, actor_id: str) -> int:
     if actor_id == state.player.id:
-        return bombshell.relationship.chemistry
-    return _islander(state, actor_id).relationship.chemistry
+        return heart_throb.relationship.chemistry
+    return _heartbreaker(state, actor_id).relationship.chemistry
 
 
 def _replace_couple(state: GameState, old: Couple, new: Couple) -> None:
@@ -125,15 +125,15 @@ def _couple_public_perception(state: GameState, couple: Couple) -> int:
 def _public_perception(state: GameState, actor_id: str) -> int:
     if actor_id == state.player.id:
         return state.player.public_perception
-    return _islander(state, actor_id).public_perception
+    return _heartbreaker(state, actor_id).public_perception
 
 
 def _couple_key(couple: Couple) -> str:
     return "|".join(sorted([couple.partner_a_id, couple.partner_b_id]))
 
 
-def _islander(state: GameState, islander_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == islander_id and not islander.eliminated:
-            return islander
-    raise ValueError(f"unknown active islander: {islander_id}")
+def _heartbreaker(state: GameState, heartbreaker_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id and not heartbreaker.eliminated:
+            return heartbreaker
+    raise ValueError(f"unknown active heartbreaker: {heartbreaker_id}")

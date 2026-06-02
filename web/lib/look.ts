@@ -14,7 +14,7 @@ import type { Gender } from "./types";
 
 export type ArchetypeId = "heartthrob" | "class_clown" | "loyal_friend";
 
-export type IslanderLook = {
+export type HeartbreakerLook = {
   name: string;
   gender: Gender;
   archetype: ArchetypeId;
@@ -23,7 +23,7 @@ export type IslanderLook = {
   outfit: string; // OUTFITS id
   accessories: string[]; // ACCESSORIES ids (multi-select)
   vibe: string; // VIBES id
-  characterId?: string; // ROSTER id when the player picked a pre-made islander
+  characterId?: string; // ROSTER id when the player picked a pre-made heartbreaker
 };
 
 export type SwatchOption = {
@@ -93,14 +93,14 @@ export const VIBES: SwatchOption[] = [
 
 // Outfit palettes drive the casting-card backdrop + accent ring. `category`
 // hints which scene the look reads best in. These are deliberately the same
-// named looks used across the villa (pool / date / party / etc.).
+// named looks used across Sunset Bay (pool / date / party / etc.).
 export const OUTFITS: OutfitOption[] = [
   { id: "arrival", label: "Arrival Linen", category: "Arrival", detail: "Ivory linen co-ord, first-look energy", primary: "#f4e3c0", secondary: "#d7ae72", accent: "#f8ead6" },
   { id: "pool", label: "Pool Teal", category: "Pool", detail: "Daybed-ready poolside glow", primary: "#158a93", secondary: "#7bd1c7", accent: "#76d7d0" },
   { id: "date", label: "Date Night", category: "Date", detail: "Sleek black, evening tension", primary: "#201a1f", secondary: "#6f5a7d", accent: "#b8a7d9" },
   { id: "party", label: "Party Coral", category: "Party", detail: "Coral main-character entrance", primary: "#d94f43", secondary: "#ffae7a", accent: "#ff9e79" },
   { id: "challenge", label: "Challenge", category: "Challenge", detail: "Sporty, bright, ready to win", primary: "#e8b73a", secondary: "#e84d8a", accent: "#fff05a" },
-  { id: "firepit", label: "Firepit White", category: "Ceremony", detail: "Elegant ceremony glow", primary: "#fffaf0", secondary: "#d0c1a7", accent: "#fffdfa" },
+  { id: "flame_deck", label: "Flame Deck White", category: "Ceremony", detail: "Elegant ceremony glow", primary: "#fffaf0", secondary: "#d0c1a7", accent: "#fffdfa" },
   { id: "finale", label: "Finale Gold", category: "Finale", detail: "Premium winner shine", primary: "#ffe48a", secondary: "#9c6b21", accent: "#ffe48a" },
 ];
 
@@ -115,7 +115,7 @@ export const ACCESSORIES: AccessoryOption[] = [
   { id: "rings", label: "Stacked rings", slot: "Hands", icon: "CircleDot" },
 ];
 
-export const DEFAULT_LOOK: IslanderLook = {
+export const DEFAULT_LOOK: HeartbreakerLook = {
   name: "",
   gender: "man",
   archetype: "heartthrob",
@@ -150,8 +150,8 @@ export function findAccessory(id: string): AccessoryOption | undefined {
 const LOOK_PREFIX = "paradise.look.";
 const DRAFT_KEY = "paradise.look.draft";
 
-function sanitize(raw: unknown): IslanderLook {
-  const look = { ...DEFAULT_LOOK, ...(raw as Partial<IslanderLook>) };
+function sanitize(raw: unknown): HeartbreakerLook {
+  const look = { ...DEFAULT_LOOK, ...(raw as Partial<HeartbreakerLook>) };
   // Coerce list-typed and enum-ish fields defensively so a malformed blob
   // never crashes the renderer.
   return {
@@ -174,12 +174,12 @@ function sanitize(raw: unknown): IslanderLook {
   };
 }
 
-export function saveLook(sessionId: string, look: IslanderLook): void {
+export function saveLook(sessionId: string, look: HeartbreakerLook): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(LOOK_PREFIX + sessionId, JSON.stringify(look));
 }
 
-export function loadLook(sessionId: string): IslanderLook | null {
+export function loadLook(sessionId: string): HeartbreakerLook | null {
   if (typeof window === "undefined") return null;
   const raw = window.localStorage.getItem(LOOK_PREFIX + sessionId);
   if (!raw) return null;
@@ -190,12 +190,12 @@ export function loadLook(sessionId: string): IslanderLook | null {
   }
 }
 
-export function saveDraftLook(look: IslanderLook): void {
+export function saveDraftLook(look: HeartbreakerLook): void {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(DRAFT_KEY, JSON.stringify(look));
 }
 
-export function loadDraftLook(): IslanderLook {
+export function loadDraftLook(): HeartbreakerLook {
   if (typeof window === "undefined") return DEFAULT_LOOK;
   const raw = window.localStorage.getItem(DRAFT_KEY);
   if (!raw) return DEFAULT_LOOK;
@@ -207,7 +207,7 @@ export function loadDraftLook(): IslanderLook {
 }
 
 /** Bind the in-progress draft to a freshly created session id. */
-export function commitDraftToSession(sessionId: string, look: IslanderLook): void {
+export function commitDraftToSession(sessionId: string, look: HeartbreakerLook): void {
   saveLook(sessionId, look);
   saveDraftLook(look);
 }

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.contextual_options import validate_follow_up_menu
 from src.game.agents.event_narrator import validate_event_narration
-from src.game.agents.islander_voice import islander_voice_context, validate_exchange
+from src.game.agents.heartbreaker_voice import heartbreaker_voice_context, validate_exchange
 from src.game.engine.actions import ActionKind
 from src.game.eval.golden_models import GoldenCheckResult, GoldenTurnSpec
 from src.game.eval.golden_state_checks import (
@@ -14,9 +14,9 @@ from src.game.eval.golden_state_checks import (
     check_couple_present,
     check_engine_state_invariants,
     check_forced_movement,
-    check_hideaway_consumed,
     check_pending_npc_proposal_cleared,
     check_pending_npc_proposal_from,
+    check_private_suite_consumed,
     check_proposal_outcome,
     check_relationship_delta,
 )
@@ -41,7 +41,7 @@ def run_deterministic_check(
             if turn.exchange is None:
                 return _fail(check_id, "turn has no exchange", turn_spec.id)
             validation_state = turn.state if pre_state is None else pre_state
-            validate_exchange(turn.exchange, islander_voice_context(validation_state, turn.mechanical_result))
+            validate_exchange(turn.exchange, heartbreaker_voice_context(validation_state, turn.mechanical_result))
             return _pass(check_id, "exchange validates", turn_spec.id)
         if check_id == "follow_up_menu_valid":
             if turn.follow_up_menu is None:
@@ -73,7 +73,7 @@ def run_deterministic_check(
         if check_id == "no_exchange":
             if turn.exchange is not None:
                 return _fail(check_id, "turn unexpectedly produced an exchange", turn_spec.id)
-            return _pass(check_id, "turn produced no Islander Voice exchange", turn_spec.id)
+            return _pass(check_id, "turn produced no Heartbreaker Voice exchange", turn_spec.id)
         if check_id == "event_narration_valid":
             if turn.event_narration is None:
                 return _fail(check_id, "turn has no event narration", turn_spec.id)
@@ -100,10 +100,10 @@ def run_deterministic_check(
             if turn.state.pending_challenge is not None:
                 return _fail(check_id, "resolved challenge is still visible", turn_spec.id)
             return _pass(check_id, "resolved challenge is no longer visible", turn_spec.id)
-        if check_id == "casa_active":
-            if turn.state.casa_amor_state is None or turn.state.casa_amor_state.returned:
-                return _fail(check_id, "Casa Amor is not active", turn_spec.id)
-            return _pass(check_id, "Casa Amor is active", turn_spec.id)
+        if check_id == "flush_active":
+            if turn.state.flush_of_hearts_state is None or turn.state.flush_of_hearts_state.returned:
+                return _fail(check_id, "Flush of Hearts is not active", turn_spec.id)
+            return _pass(check_id, "Flush of Hearts is active", turn_spec.id)
         if check_id == "run_outcome_present":
             if turn.state.outcome is None:
                 return _fail(check_id, "run outcome is not set", turn_spec.id)
@@ -132,8 +132,8 @@ def run_deterministic_check(
             return check_couple_present(check_id, turn_spec, turn)
         if check_id.startswith("audience_delta:"):
             return check_audience_delta(check_id, turn_spec, turn)
-        if check_id.startswith("hideaway_consumed:"):
-            return check_hideaway_consumed(check_id, turn_spec, turn, pre_state)
+        if check_id.startswith("private_suite_consumed:"):
+            return check_private_suite_consumed(check_id, turn_spec, turn, pre_state)
         if check_id.startswith("visible_targets_include:"):
             expected_ids = {
                 item.strip()
@@ -141,9 +141,9 @@ def run_deterministic_check(
                 if item.strip()
             }
             visible_ids = {
-                islander.id
-                for islander in turn.state.islanders
-                if islander.location_id == turn.state.location_id and not islander.eliminated
+                heartbreaker.id
+                for heartbreaker in turn.state.heartbreakers
+                if heartbreaker.location_id == turn.state.location_id and not heartbreaker.eliminated
             }
             missing = expected_ids - visible_ids
             if missing:
@@ -166,25 +166,25 @@ def run_deterministic_check(
                     turn_spec.id,
                 )
             return _pass(check_id, "pending_interruption was cleared by the engine", turn_spec.id)
-        if check_id == "villa_update_committed":
-            commit = turn.agent_commits.villa_update
+        if check_id == "resort_update_committed":
+            commit = turn.agent_commits.resort_update
             if commit is None:
-                return _fail(check_id, "no villa update was committed", turn_spec.id)
-            return _pass(check_id, "villa orchestrator commit recorded", turn_spec.id)
+                return _fail(check_id, "no resort update was committed", turn_spec.id)
+            return _pass(check_id, "resort orchestrator commit recorded", turn_spec.id)
         if check_id == "background_kind_isolated":
             return _check_background_kind_isolated(check_id, turn_spec, turn)
-        if check_id == "pull_recorded":
-            return _check_pull_recorded(check_id, turn_spec, turn)
-        if check_id == "pull_succeeded":
-            return _check_pull_outcome(check_id, turn_spec, turn, expected=True)
-        if check_id == "pull_rejected":
-            return _check_pull_outcome(check_id, turn_spec, turn, expected=False)
+        if check_id == "private_chat_recorded":
+            return _check_private_chat_recorded(check_id, turn_spec, turn)
+        if check_id == "private_chat_succeeded":
+            return _check_private_chat_outcome(check_id, turn_spec, turn, expected=True)
+        if check_id == "private_chat_rejected":
+            return _check_private_chat_outcome(check_id, turn_spec, turn, expected=False)
         if check_id == "npc_conversation_still_active":
             return _check_npc_conversation_still_active(check_id, turn_spec, turn)
         if check_id == "npc_conversation_closed":
             return _check_npc_conversation_closed(check_id, turn_spec, turn)
-        if check_id == "pull_rejection_witness_memory":
-            return _check_pull_rejection_witness_memory(check_id, turn_spec, turn)
+        if check_id == "private_chat_rejection_witness_memory":
+            return _check_private_chat_rejection_witness_memory(check_id, turn_spec, turn)
         if check_id == "no_agent_validation_retries":
             return _check_no_agent_validation_retries(check_id, turn_spec, turn, llm_mode)
         return GoldenCheckResult(
@@ -222,32 +222,32 @@ def _check_background_kind_isolated(
     return _pass(check_id, "background batches keep player memories witnessed-only", turn_spec.id)
 
 
-def _check_pull_recorded(check_id: str, turn_spec: GoldenTurnSpec, turn: object) -> GoldenCheckResult:
-    attempt = turn.mechanical_result.pull_attempt
+def _check_private_chat_recorded(check_id: str, turn_spec: GoldenTurnSpec, turn: object) -> GoldenCheckResult:
+    attempt = turn.mechanical_result.private_chat_attempt
     if attempt is None:
-        return _fail(check_id, "no pull attempt was recorded", turn_spec.id)
+        return _fail(check_id, "no private chat attempt was recorded", turn_spec.id)
     return _pass(
         check_id,
-        f"pull recorded for {attempt.target_id}: roll {attempt.roll} vs chance {attempt.chance}, success={attempt.success}",
+        f"private chat recorded for {attempt.target_id}: roll {attempt.roll} vs chance {attempt.chance}, success={attempt.success}",
         turn_spec.id,
     )
 
 
-def _check_pull_outcome(
+def _check_private_chat_outcome(
     check_id: str,
     turn_spec: GoldenTurnSpec,
     turn: object,
     *,
     expected: bool,
 ) -> GoldenCheckResult:
-    attempt = turn.mechanical_result.pull_attempt
+    attempt = turn.mechanical_result.private_chat_attempt
     if attempt is None:
-        return _fail(check_id, "no pull attempt was recorded", turn_spec.id)
+        return _fail(check_id, "no private chat attempt was recorded", turn_spec.id)
     if attempt.success is not expected:
         label = "succeeded" if attempt.success else "rejected"
-        return _fail(check_id, f"pull was {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
+        return _fail(check_id, f"private chat was {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
     label = "succeeded" if expected else "rejected"
-    return _pass(check_id, f"pull {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
+    return _pass(check_id, f"private chat {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
 
 
 def _check_npc_conversation_still_active(
@@ -256,8 +256,8 @@ def _check_npc_conversation_still_active(
     turn: object,
 ) -> GoldenCheckResult:
     blocked_id = (
-        turn.mechanical_result.pull_attempt.blocked_conversation_id
-        if turn.mechanical_result.pull_attempt is not None
+        turn.mechanical_result.private_chat_attempt.blocked_conversation_id
+        if turn.mechanical_result.private_chat_attempt is not None
         else None
     )
     if blocked_id is None:
@@ -277,8 +277,8 @@ def _check_npc_conversation_closed(
     turn: object,
 ) -> GoldenCheckResult:
     blocked_id = (
-        turn.mechanical_result.pull_attempt.blocked_conversation_id
-        if turn.mechanical_result.pull_attempt is not None
+        turn.mechanical_result.private_chat_attempt.blocked_conversation_id
+        if turn.mechanical_result.private_chat_attempt is not None
         else None
     )
     if blocked_id is None:
@@ -286,26 +286,26 @@ def _check_npc_conversation_closed(
     still_present = any(conversation.id == blocked_id for conversation in turn.state.npc_conversations)
     if still_present:
         return _fail(check_id, f"NPC conversation {blocked_id} is still present", turn_spec.id)
-    return _pass(check_id, f"NPC conversation {blocked_id} was removed after the pull", turn_spec.id)
+    return _pass(check_id, f"NPC conversation {blocked_id} was removed after the private chat", turn_spec.id)
 
 
-def _check_pull_rejection_witness_memory(
+def _check_private_chat_rejection_witness_memory(
     check_id: str,
     turn_spec: GoldenTurnSpec,
     turn: object,
 ) -> GoldenCheckResult:
-    attempt = turn.mechanical_result.pull_attempt
+    attempt = turn.mechanical_result.private_chat_attempt
     if attempt is None:
-        return _fail(check_id, "no pull attempt was recorded", turn_spec.id)
+        return _fail(check_id, "no private chat attempt was recorded", turn_spec.id)
     holders = [
-        islander.id
-        for islander in turn.state.islanders
-        for memory in islander.memories
-        if "saw_pull_rejected" in memory.tags and attempt.target_id in memory.tags
+        heartbreaker.id
+        for heartbreaker in turn.state.heartbreakers
+        for memory in heartbreaker.memories
+        if "saw_private_chat_rejected" in memory.tags and attempt.target_id in memory.tags
     ]
     if not holders:
-        return _fail(check_id, f"no witness memory recorded for rejected pull of {attempt.target_id}", turn_spec.id)
-    return _pass(check_id, f"rejected pull witness memory recorded by {sorted(holders)}", turn_spec.id)
+        return _fail(check_id, f"no witness memory recorded for rejected private chat with {attempt.target_id}", turn_spec.id)
+    return _pass(check_id, f"rejected private chat witness memory recorded by {sorted(holders)}", turn_spec.id)
 
 
 def _check_no_agent_validation_retries(

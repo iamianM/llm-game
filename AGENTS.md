@@ -1,4 +1,4 @@
-# LLM-Powered Love Island Roguelite - AI Assistant Guide
+# Paradise Hearts — AI Assistant Guide
 
 *Documentation entry point for a visual novel roguelite dating game powered by AI*
 
@@ -8,11 +8,11 @@
 
 ## Project Overview
 
-**Working Title**: "Isle of Echoes" (or TBD)
+**Working Title**: "Paradise Hearts"
 
-**Core Concept**: A visual novel roguelite dating sim that combines the structure of reality TV shows like *Love Island* with procedurally generated narrative powered by a Large Language Model (LLM).
+**Core Concept**: A visual novel roguelite dating sim that combines the structure of reality dating shows with procedurally generated narrative powered by a Large Language Model (LLM).
 
-**The Innovation**: The LLM acts as a dynamic Game Master, generating unique contestants, dialogue, drama, and events for every playthrough. No two "summers of love" are ever the same.
+**The Innovation**: The LLM acts as a dynamic Game Master, generating unique contestants, dialogue, drama, and events for every playthrough. No two summers of love are ever the same.
 
 **Current Phase**: Playable POC hardening - the deterministic Python engine, CLI, FastAPI adapter, and Next.js browser client exist and must stay in parity.
 
@@ -36,7 +36,7 @@ The previous Vercel AI SDK plan has been superseded. The current browser impleme
 
 **LLM Integration**: Python agents
 - OpenAI Responses structured output behind typed Python agent wrappers
-- Islander Voice, Contextual Options, Event Narrator, Conversation Curator, Villa Orchestrator, and Background Dialogue agents
+- Heartbreaker Voice, Contextual Options, Event Narrator, Conversation Curator, Resort Orchestrator, and Background Dialogue agents
 - Prompts live under `src/game/agents/prompts/` and are user-owned per `ENGINEERING.md` R17
 - The LLM never calculates success, relationship deltas, eliminations, votes, or phase movement
 
@@ -66,7 +66,7 @@ CLI or Browser
   -> FastAPI / direct Python call
   -> Game engine validates available actions
   -> Seeded RNG + deterministic rules calculate MechanicalResult
-  -> Agent layer writes dialogue, event prose, options, and recorded villa commits
+  -> Agent layer writes dialogue, event prose, options, and recorded resort commits
   -> Engine persists state and trace
   -> UI renders visible state, narration, and next actions
 ```
@@ -110,8 +110,8 @@ Rule of thumb:
 
 The repo is past the first playable milestone. The current POC has:
 
-1. A deterministic Python engine with seeded RNG, typed state, action validation, phase clocks, couples, proposals, interruptions, pulls, hideaway, Casa Amor, challenges, final vote, knowledge/fact state, background villa life, and review bookmarks.
-2. A typed Python agent layer for Islander Voice, Contextual Options, Event Narrator, Conversation Curator, Villa Orchestrator, Background Dialogue, Contextual Gossip, and Trait Generator.
+1. A deterministic Python engine with seeded RNG, typed state, action validation, phase clocks, couples, proposals, interruptions, private chats, Paradise Suite, Flush of Hearts, challenges, final vote, knowledge/fact state, background resort life, and review bookmarks.
+2. A typed Python agent layer for Heartbreaker Voice, Contextual Options, Event Narrator, Conversation Curator, Resort Orchestrator, Background Dialogue, Contextual Gossip, and Trait Generator.
 3. A CLI that supports interactive play, deterministic verification, persisted playtest sessions, checkpoints, trace replay, review notes, report packets, and golden LLM evals.
 4. A FastAPI adapter and Next.js browser client that stay thin over the Python engine.
 5. Static review packets for playthroughs and golden eval reports.
@@ -207,7 +207,7 @@ The CLI, browser, and tests must be able to start from the same snapshot and pro
 Current interactive CLI slash commands:
 
 - `/state` prints the visible state.
-- `/background` prints recent background villa activity.
+- `/background` prints recent background resort activity.
 - `/checkpoint <name>` saves a named checkpoint for branch testing.
 - `/hash` prints the deterministic state hash.
 - `/help` prints the available commands.
@@ -269,26 +269,26 @@ Location: `/home/azureuser/pachinko-pop-docs`
 ### Format Decision
 
 **Top Contenders:**
-1. **Love Island** (9/10) - Most dynamic, best roguelite structure
+1. **Paradise Hearts** (9/10) - Most dynamic, best roguelite structure
 2. **The Bachelor** (9/10) - Clear weekly elimination structure
 3. **Love Is Blind** (8/10) - Strong narrative depth, two-act structure
 
-**Format Locked**: **Love Island**
+**Format Locked**: **Paradise Hearts** (reality-dating-show format)
 
-**Why Love Island Works Best:**
+**Why the Reality-Dating-Show Format Works Best:**
 - Daily cycle creates tight roguelite loop
 - Constantly shifting social landscape = high replayability
-- Player has maximum agency (can switch partners, form alliances)
+- Player has maximum agency (can swap partners, form alliances)
 - Multiple relationship stats tracked simultaneously
-- Clear failure states (being "dumped from the island")
+- Clear failure states (being Heart Out)
 
-**Future Question**: Unlockable alternate formats can be revisited after the primary Love Island loop is playable.
+**Future Question**: Unlockable alternate formats can be revisited after the primary Paradise Hearts loop is playable.
 
 ---
 
 ### Core Mechanics (Rough Draft)
 
-#### Player Stats (Your "Islander Vibe")
+#### Player Stats (Your "Heartbreaker Vibe")
 
 **Charm** - Natural charisma and romantic appeal
 - Influences first impressions
@@ -298,36 +298,36 @@ Location: `/home/azureuser/pachinko-pop-docs`
 - Crucial for group settings
 - Wins certain challenges
 
-**Graft** - Active pursuit and flirtation
-- Core *Love Island* concept
+**Spark** - Active pursuit and flirtation
+- Core Paradise Hearts concept
 - Unlocks forward dialogue options
 - Determines how aggressively you pursue partners
 
 **Loyalty** - Faithfulness and commitment
 - Makes partners feel secure
-- Low loyalty opens options with new bombshells
+- Low loyalty opens options with new Heart Throbs
 - Constant tug-of-war mechanic
 
-#### Relationship Stats (The "Villa Graph")
+#### Relationship Stats (The "Resort Graph")
 
 **Couple Strength** (0-100)
 - Primary score with current partner
 - Combines Affection + Trust
 - Main defense against being "stolen"
 
-**Chemistry** (0-100, per Islander)
+**Chemistry** (0-100, per Heartbreaker)
 - Latent attraction score with every other contestant
 - High chemistry with non-partner = drama potential
 - LLM uses this to generate flirtatious options
 
-**Friendship** (0-100, per Islander)
+**Friendship** (0-100, per Heartbreaker)
 - Critical for survival
 - Friends give advice, defend you, might save you in votes
 
 **Public Perception** (0-100)
 - Simulated "audience" score
 - Rises with loyalty, humor, genuine moments
-- Falls with "snakey" behavior
+- Falls with "cooled on" behavior
 - Determines fate in public votes
 
 ---
@@ -337,10 +337,10 @@ Location: `/home/azureuser/pachinko-pop-docs`
 Each day is a turn, consisting of 5 phases:
 
 1. **Morning Chat** - Informal conversations, debrief drama, reinforce friendships
-2. **Daily Challenge** - Stat-based mini-game (Banter, Charm, Graft, Physical)
+2. **Daily Challenge** - Stat-based mini-game (Banter, Charm, Spark, Physical)
 3. **Afternoon Socializing** - Free time to make strategic moves
-4. **"I'VE GOT A TEXT!"** - AI Producer introduces dramatic event
-5. **Evening Event** - Recoupling or elimination ceremony
+4. **"Paradise Calls!"** - AI Producer introduces dramatic event
+5. **Evening Event** - Pairing Ceremony or elimination
 
 **Run Length**: 6 in-game weeks maximum
 
@@ -352,25 +352,25 @@ Each day is a turn, consisting of 5 phases:
 
 #### The AI Producer
 
-The LLM analyzes villa state and makes dramatic interventions:
-- Introduces bombshells when couples are too stable
+The LLM analyzes resort state and makes dramatic interventions:
+- Introduces Heart Throbs when couples are too stable
 - Forces dates between people who just argued
-- Triggers recouplings at strategic moments
+- Triggers Pairing Ceremonies at strategic moments
 - Simulates "America's vote" based on player behavior
 
 #### Dynamic Generation
 
-**Procedural Islanders** - Each run generates new contestants with:
+**Procedural Heartbreakers** - Each run generates new contestants with:
 - Personality archetype ("The Joker," "The Sweetheart," "The Alpha")
 - Physical description
 - Secret insecurity
 - Personal "Type on Paper" (hidden preferences)
 
-**AI Contestant Behavior** - Other Islanders actively:
+**AI Contestant Behavior** - Other Heartbreakers actively:
 - Build their own relationship scores
 - Form alliances
 - Sabotage rivals with high animosity
-- Make strategic coupling decisions
+- Make strategic pairing decisions
 
 #### The Tagging & Scoring System
 
@@ -392,7 +392,7 @@ This is the bridge between LLM and game engine.
    - `"Sincerity"` tag → Check player's Sincerity stat → Success
    - `"Engaged"` tag → Standard positive interaction → +3 Affection
    - `"Listener"` tag → High-value for trust → +2 Trust
-   - `"Matches_Preference"` tag → Aligns with Islander's hidden type → +5 Affection (BONUS!)
+   - `"Matches_Preference"` tag → Aligns with Heartbreaker's hidden type → +5 Affection (BONUS!)
 
 4. **Result added to context for next LLM call**
    - LLM remembers this positive moment
@@ -415,37 +415,37 @@ Temporary boons earned during a season:
 **Challenge Rewards**:
 - One-on-one dates
 - Safety from elimination
-- Advantages in the villa
+- Advantages at Sunset Bay
 
 ---
 
 ### Meta-Progression (The Roguelite "Lite")
 
-**When You're Eliminated**: Run ends, but you gain **Audience Appeal (AP)**
+**When You're Eliminated**: Run ends, but you gain **Heart Beats**
 
-**Earn AP Based On**:
+**Earn Heart Beats Based On**:
 - Days survived
-- Public Perception score
+- Pulse score
 - Memorable moments created
 - Drama generated
 
-**Spend AP at "The Reunion Show"**:
+**Spend Heart Beats at "The Reunion Show"**:
 
 **Casting Tapes** (Starting Archetypes):
-- *The Heartthrob* - Start with +3 Charm
-- *The Class Clown* - Start with +3 Banter, higher initial Public Perception
+- *The Heart Throb* - Start with +3 Charm
+- *The Class Clown* - Start with +3 Banter, higher initial Pulse
 - *The Loyal Friend* - Start with +3 Loyalty, stronger initial friendships
 
 **Social Skills** (Permanent Perks):
-- *Teflon* (300 AP) - 25% less damage from rumors
-- *Expert Grafter* (400 AP) - Graft actions 50% more effective
-- *Gossip Proof* (300 AP) - Rumors about you 25% less effective
-- *Insider Info* (400 AP) - Learn one of lead's hidden "Type on Paper" traits
-- *Challenge Beast* (500 AP) - Small bonus in all daily challenges
+- *Teflon* (300 Heart Beats) - 25% less damage from rumors
+- *Expert Sparker* (400 Heart Beats) - Spark actions 50% more effective
+- *Gossip Proof* (300 Heart Beats) - Rumors about you 25% less effective
+- *Insider Info* (400 Heart Beats) - Learn one of lead's hidden "Type on Paper" traits
+- *Challenge Beast* (500 Heart Beats) - Small bonus in all daily challenges
 
 **Content Unlocks**:
-- *The Hideaway* - Unlock private night with partner (huge Couple Strength boost)
-- *Casa Amor* - Ultimate mid-game twist (boys/girls separated, new temptations)
+- *The Paradise Suite* - Unlock private night with partner (huge Couple Strength boost)
+- *Flush of Hearts* - Ultimate mid-game twist (Heartbreakers separated, new temptations)
 
 ---
 
@@ -554,14 +554,14 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 **2. Reality TV Roguelite Loop**
 - Structured daily cycle (Morning → Challenge → Socializing → Drama → Event)
 - Clear failure states (elimination = permadeath)
-- Meta-progression (Audience Appeal unlocks permanent perks)
+- Meta-progression (Heart Beats unlock permanent perks)
 - High replayability through procedural generation
 
 **3. Dynamic Social Graph**
-- Track relationships with every Islander simultaneously
+- Track relationships with every Heartbreaker simultaneously
 - AI contestants have their own strategies and goals
 - Emergent drama from competing interests
-- Player agency in coupling, alliances, rivalries
+- Player agency in pairing, alliances, rivalries
 
 ---
 
@@ -572,7 +572,7 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 - Stat-building and random events
 - Multiplayer competitive dating
 
-**Love Island The Game** - Format and structure
+**Paradise Hearts The Game** - Format and structure
 - Has the reality TV loop
 - But not procedural or roguelite
 
@@ -589,12 +589,12 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 ### Why This Combination Works
 
 **Never Been Done**: No game combines:
-1. Bachelor/Love Island structure
+1. Bachelor/reality-dating-show structure
 2. Roguelite run-based gameplay
 3. LLM-powered procedural narrative
 
 **Each Component is Proven**:
-- Love Island structure = proven entertainment format
+- Reality-dating-show structure = proven entertainment format
 - Roguelite dating sim = Monster Prom shows it works
 - LLM narrative = AI Dungeon demonstrates the tech
 
@@ -608,13 +608,13 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 
 **Product direction:**
 - **Genre:** Social sandbox with seasonal runs, not a punishing hardcore roguelite.
-- **Format:** Love Island-style villa structure.
+- **Format:** Paradise Hearts-style Sunset Bay structure.
 - **Target run length:** 2-3 hours, roughly 15-20 key days once the full game is built.
 - **Target audience:** Casual-friendly, drama-forward, emotionally legible, and low on opaque failure.
 - **LLM role:** Personality, dialogue, narration, summaries, and authored-feeling texture. The LLM does not own mechanics.
 - **Engine role:** State, RNG, action legality, relationship deltas, votes, eliminations, phase movement, and rewards.
 - **Interaction model:** Static intent/action surface plus dynamic contextual follow-ups.
-- **Information model:** The player sees the villa map, relationship/audience signals, known facts, and memories; hidden truth remains engine-side.
+- **Information model:** The player sees the Sunset Bay map, relationship/audience signals, known facts, and memories; hidden truth remains engine-side.
 - **Testing model:** Deterministic tests protect mechanics; golden LLM evals protect agent behavior and reviewability.
 
 **Current documentation model:**
@@ -638,8 +638,8 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 **High-level questions:**
 - "What is this game?" - `AGENTS.md` (this file)
 - "What are we working on now?" - `docs/current-plan.md`
-- "How does Love Island actually work?" - `Love-Island-Reference.md`
-- "Why Love Island?" - `01-Game-Vision.md`
+- "How does Paradise Hearts actually work?" - `Love-Island-Reference.md`
+- "Why the reality-dating-show format?" - `01-Game-Vision.md`
 - "What's the tech stack?" - `AGENTS.md` ## Tech Stack
 - "What engineering rules apply?" - `ENGINEERING.md`
 - "What checks and tests matter?" - `docs/qa-strategy.md`
@@ -661,13 +661,13 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 | "How does success calculation work?" | 02-Core-Mechanics.md | ## Interaction Success Formula |
 | "How does the LLM work?" | 03-LLM-Architecture.md | ## The Multi-AI System |
 | "When to use code vs LLM?" | 03-LLM-Architecture.md | ## Algorithm vs LLM Boundaries |
-| "What are the data structures?" | 04-State-Management.md | ## Islander State, ## Villa State |
+| "What are the data structures?" | 04-State-Management.md | ## Heartbreaker State, ## Resort State |
 | "How do conversations work?" | 05-Interaction-System.md | ## The Interaction Flow |
 | "What's the menu system?" | 05-Interaction-System.md | ## Hybrid Menu System |
 | "How do contextual follow-ups work?" | 05-Interaction-System.md | ## Conversation Structure & Continuity |
 | "When do conversations end?" | 05-Interaction-System.md | ## Organic Conversation Endings |
 | "Does the LLM generate player dialogue?" | 05-Interaction-System.md | ## Single Exchange Generation |
-| "How do locations work?" | 06-Location-System.md | ## Villa Locations |
+| "How do locations work?" | 06-Location-System.md | ## Sunset Bay Locations |
 | "What actions are available?" | 06-Location-System.md | ## Location-Specific Actions |
 | "How does gossip work?" | 07-Gossip-And-Information.md | ## The Gossip System |
 | "What can the player see?" | 07-Gossip-And-Information.md | ## Information Architecture |
@@ -676,15 +676,15 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 | "What are social events?" | 08-Daily-Loop.md | ## Social Events |
 | "How do interruptions work?" | 09-Social-Dynamics.md | ## Conversation Interruptions |
 | "What are group conversations?" | 09-Social-Dynamics.md | ## Group Conversations |
-| "How does pulling for a chat work?" | 09-Social-Dynamics.md | ## The Pull System |
+| "How does private chat work?" | 09-Social-Dynamics.md | ## The Private Chat System |
 | "How does the Producer AI work?" | 10-Elimination-System.md | ## The Producer AI System |
-| "What are the recoupling rules?" | 10-Elimination-System.md | ## Recoupling Ceremonies |
+| "What are the Pairing Ceremony rules?" | 10-Elimination-System.md | ## Pairing Ceremonies |
 | "How do challenges work?" | 12-Challenges-And-Events.md | ## Challenge System |
 | "What social events exist?" | 12-Challenges-And-Events.md | ## Social Events (Round-Table Sharing) |
-| "When do bombshells arrive?" | 10-Elimination-System.md | ## Bombshell System |
-| "How does Casa Amor work?" | 12-Challenges-And-Events.md | ## Casa Amor |
+| "When do Heart Throbs arrive?" | 10-Elimination-System.md | ## Heart Throb System |
+| "How does Flush of Hearts work?" | 12-Challenges-And-Events.md | ## Flush of Hearts |
 | "How do votes and eliminations work?" | 10-Elimination-System.md | ## Voting and Eliminations |
-| "How does audience ranking work?" | 10-Elimination-System.md | ## Audience/Public Perception System |
+| "How does audience ranking work?" | 10-Elimination-System.md | ## Audience/Pulse System |
 
 **Use `rg` to find specific topics:**
 ```bash
@@ -700,4 +700,4 @@ rg -n "Big 5" 03-LLM-Architecture.md
 
 ---
 
-*This is the main entry point for understanding and developing the LLM-powered Love Island social sandbox game. Use it for orientation, then use the owning system doc and `docs/current-plan.md` for current implementation work.*
+*This is the main entry point for understanding and developing the Paradise Hearts LLM-powered social sandbox game. Use it for orientation, then use the owning system doc and `docs/current-plan.md` for current implementation work.*

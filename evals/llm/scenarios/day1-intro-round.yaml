@@ -9,13 +9,13 @@ character_creation:
     charm: 5
     banter: 9
     eq: 6
-    graft: 5
+    spark: 5
     loyalty: 5
-live_villa_life: false
+live_resort_life: false
 judge_context:
-  - Day-1 opens with the greeting circle at the firepit before First Spark; intros run first, then the player picks an opening partner.
+  - Day-1 opens with the greeting circle at the flame_deck before First Spark; intros run first, then the player picks an opening partner.
   - These are intros, not deep conversations — quick, voice-true, leave the door open.
-  - The Islander Voice agent should make each intro sound like a different person, not the same template with a new name.
+  - The Heartbreaker Voice agent should make each intro sound like a different person, not the same template with a new name.
 turns:
   - id: intro-chloe
     action:
@@ -120,7 +120,7 @@ turns:
       intent_id: intro_deep
     golden: >
       A deeper hello with Blake. He answers in fewer words than expected,
-      with one specific observation about the villa or the player.
+      with one specific observation about the resort or the player.
       Imagine: "Heavy first line. I'll match it. ...You're playing this
       slower than the rest of them. Good."
     checks: *intro_checks
@@ -147,13 +147,13 @@ turns:
           he sounds identical to Maya or like a generic flirt.
   - id: opening-couple-chloe
     action:
-      kind: recouple
+      kind: pair
       target_id: chloe
     golden: >
-      With introductions done, the player crosses the firepit and stops in
-      front of Chloe. Reality-TV beats: the villa registering the choice,
+      With introductions done, the player crosses the flame_deck and stops in
+      front of Chloe. Reality-TV beats: the resort registering the choice,
       Chloe catching the player's eye, the night settling into a first
-      couple. The narrator does not pre-cast anyone as dumped.
+      couple. The narrator does not pre-cast anyone as sent home.
     checks:
       - event_narration_valid
       - agent_traces_present
@@ -161,4 +161,4 @@ turns:
       - id: opening_choice_preserved
         criteria: >
           The narration names the player choosing Chloe and never invents a
-          different partner, a vote, a dumping, or a Flush of Hearts twist.
+          different partner, a vote, a heart_out, or a Flush of Hearts twist.

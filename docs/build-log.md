@@ -36,11 +36,11 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 ## Phase C
 
-- Files added: `src/game/engine/ceremonies.py`, `tests/engine/test_ceremonies.py`, `tests/scenarios/fixtures/recoupling-day3.yaml`, `tests/scenarios/fixtures/bombshell-day4.yaml`, `tests/scenarios/fixtures/elimination-day5.yaml`
+- Files added: `src/game/engine/ceremonies.py`, `tests/engine/test_ceremonies.py`, `tests/scenarios/fixtures/pairing-day3.yaml`, `tests/scenarios/fixtures/heart-throb-day4.yaml`, `tests/scenarios/fixtures/elimination-day5.yaml`
 - Files changed: `src/game/state/models.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, scenario fixture hashes
-- Tests added: recoupling partner choice, leftover elimination, bombshell idempotency, public-perception bounds
+- Tests added: Pairing Ceremony partner choice, leftover elimination, Heart Throb idempotency, public-perception bounds
 - QA result: `make qa` green, 39 tests passed
-- Scenario fixture: `tests/scenarios/fixtures/recoupling-day3.yaml`
+- Scenario fixture: `tests/scenarios/fixtures/pairing-day3.yaml`
 
 ## Phase D
 
@@ -62,7 +62,7 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 - Files added: none
 - Files changed: `src/game/engine/turn.py`, `src/game/engine/simulation.py`, `src/game/engine/ceremonies.py`, `src/game/agents/narrator.py`, `pyproject.toml`, scenario fixtures
-- Tests added: off-screen NPC chat does not mutate player relationships; turn results surface bombshell events
+- Tests added: off-screen NPC chat does not mutate player relationships; turn results surface Heart Throb events
 - QA result: `make qa` green, 41 tests passed
 - Scenario fixture: existing fixtures regenerated after cosmetic-only NPC simulation and visible ceremony events
 
@@ -77,15 +77,15 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase F2
 
 - Files added: `src/game/agents/event_narrator.py`, `src/game/agents/prompts/event_narrator.md`, `tests/agents/test_event_narrator.py`, `review-packet-preview/session-phaseF2.html`
-- Files changed: `src/game/agents/islander_voice.py`, `src/game/agents/prompts/islander_voice.md`, `src/game/engine/turn.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`
-- Tests added: real Islander Voice contract coverage across all 12 intents; real Event Narrator coverage for bombshell, recoupling, and elimination; state hash excludes dialogue text
+- Files changed: `src/game/agents/heartbreaker_voice.py`, `src/game/agents/prompts/heartbreaker_voice.md`, `src/game/engine/turn.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`
+- Tests added: real Heartbreaker Voice contract coverage across all 12 intents; real Event Narrator coverage for heart_throb, Pairing Ceremony, and elimination; state hash excludes dialogue text
 - QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
 - Scenario fixture: existing deterministic fixtures unchanged; F2 preview generated at `review-packet-preview/session-phaseF2.html`
 
 ## Phase F2.1
 
 - Files added: `src/game/agents/prompts/contextual_options.md` for the Phase F3 follow-up menu agent
-- Files changed: `src/game/agents/prompts/islander_voice.md`, `src/game/agents/prompts/event_narrator.md`, `src/game/agents/islander_voice.py`, `src/game/agents/event_narrator.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`, `ENGINEERING.md`, `docs/build-plan-F.md`, `docs/build-plan-A2-E.md`
+- Files changed: `src/game/agents/prompts/heartbreaker_voice.md`, `src/game/agents/prompts/event_narrator.md`, `src/game/agents/heartbreaker_voice.py`, `src/game/agents/event_narrator.py`, `src/game/cli/commands/report.py`, `src/game/reporting/html.py`, `ENGINEERING.md`, `docs/build-plan-F.md`, `docs/build-plan-A2-E.md`
 - Tests added: none; existing agent and engine contracts still cover the behavior
 - QA result: `make qa` green, 40 tests passed; `make test-llm` green, 15 tests passed
 - Mid-phase gate: F2 preview regenerated at `review-packet-preview/session-phaseF2.html`
@@ -134,7 +134,7 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase G5
 
 - Files added: `tests/engine/test_gossip.py`
-- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/engine/conversation.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/contextual_options.py`, `src/game/agents/islander_voice.py`, `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
+- Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/engine/conversation.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/contextual_options.py`, `src/game/agents/heartbreaker_voice.py`, `tests/scenarios/fixtures/conversation-multi-exchange.yaml`
 - Tests added: gossip appears from eligible NPC memories, gossip transfers memories to the player, affection threshold locks gossip, gossip offer content is hash-excluded
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 62 non-LLM tests passed
 - Scenario fixture: `tests/scenarios/fixtures/conversation-multi-exchange.yaml` regenerated after the mock follow-up exit menu became single-exit only
@@ -149,12 +149,12 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 ## Phase G4 corrective
 
-- Files added: `src/game/agents/villa_orchestrator.py`, `src/game/agents/background_dialogue.py`, `src/game/engine/villa.py`, `tests/agents/test_villa_orchestrator.py`, `tests/agents/test_background_dialogue.py`, `tests/engine/test_villa.py`
+- Files added: `src/game/agents/resort_orchestrator.py`, `src/game/agents/background_dialogue.py`, `src/game/engine/resort.py`, `tests/agents/test_resort_orchestrator.py`, `tests/agents/test_background_dialogue.py`, `tests/engine/test_resort.py`
 - Files changed: `src/game/state/models.py`, `src/game/state/snapshot.py`, `src/game/agents/conversation_curator.py`, `src/game/engine/turn.py`, scenario fixtures
 - Files removed: `src/game/engine/simulation.py`, `tests/engine/test_simulation.py`
-- Tests added: VillaUpdate validation, movement application, background conversation start/close, hash exclusion for NPC-NPC dialogue, mock and live agent contract tests
+- Tests added: ResortUpdate validation, movement application, background conversation start/close, hash exclusion for NPC-NPC dialogue, mock and live agent contract tests
 - QA result: Make is not installed in this PowerShell session, so the Makefile targets were run directly: `ruff`, `mypy`, `content lint`, non-LLM pytest, smoke replay, fixture determinism all green; 68 non-LLM tests passed; Orchestrator and Background Dialogue LLM subsets green, 2 LLM tests passed
-- Scenario fixture: existing fixtures regenerated for schema v9 and empty mock VillaUpdate commits
+- Scenario fixture: existing fixtures regenerated for schema v9 and empty mock ResortUpdate commits
 
 ## Phase G4 replay wiring
 
@@ -177,7 +177,7 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 - Files added: `tests/cli/test_play.py`
 - Files changed: `src/game/cli/commands/play.py`, `src/game/engine/rules.py`, `src/game/reporting/html.py`, `tests/engine/test_rules.py`, `tests/engine/test_gossip.py`, `review-packet/`
-- Tests added: CLI villa map rendering, detailed villa update rendering, risk-based follow-up success caps
+- Tests added: CLI resort map rendering, detailed resort update rendering, risk-based follow-up success caps
 - QA result: `ruff`, `mypy`, non-LLM pytest green; manual trace replay still reproduces the same final hash after the balance change
 - Packet: regenerated from `.game_traces/manual-day1.json` at `review-packet/index.html`
 
@@ -191,17 +191,17 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 ## Phase G8.2
 
-- Files added: `src/game/engine/pull.py`, `tests/engine/test_pull.py`, `tests/agents/test_islander_voice_pull_rejected.py`
-- Files changed: `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/islander_voice.py`, `src/game/cli/commands/play.py`, `src/game/reporting/html.py`
-- Tests added: pull chance factors and clamps, contested pull success/failure, pull rejection memories, pull attempt trace fields, pull-rejection Islander Voice contracts
+- Files added: `src/game/engine/private_chat.py`, `tests/engine/test_private_chat.py`, `tests/agents/test_heartbreaker_voice_private_chat_rejected.py`
+- Files changed: `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/agents/heartbreaker_voice.py`, `src/game/cli/commands/play.py`, `src/game/reporting/html.py`
+- Tests added: pull chance factors and clamps, contested pull success/failure, private chat rejection memories, private chat attempt trace fields, private-chat-rejection Heartbreaker Voice contracts
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; pull-rejection LLM subset green, 4 tests passed
 - Scenario fixture: unchanged
 
 ## Phase G8.3
 
-- Files added: `tests/engine/test_interruptions.py`, `tests/agents/test_villa_orchestrator_interruptions.py`
-- Files changed: `src/game/state/models.py`, `src/game/agents/villa_orchestrator.py`, `src/game/engine/actions.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/engine/villa.py`, `src/game/cli/commands/play.py`, scenario fixtures
-- Tests added: VillaUpdate interruption validation, pending interruption wheel injection, welcome/defer/ignore mechanics and memories, Orchestrator interruption contract contexts
+- Files added: `tests/engine/test_interruptions.py`, `tests/agents/test_resort_orchestrator_interruptions.py`
+- Files changed: `src/game/state/models.py`, `src/game/agents/resort_orchestrator.py`, `src/game/engine/actions.py`, `src/game/engine/rules.py`, `src/game/engine/turn.py`, `src/game/engine/resort.py`, `src/game/cli/commands/play.py`, scenario fixtures
+- Tests added: ResortUpdate interruption validation, pending interruption wheel injection, welcome/defer/ignore mechanics and memories, Orchestrator interruption contract contexts
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; Orchestrator interruption LLM subset green, 5 tests passed
 - Scenario fixture: existing fixtures regenerated for schema v10 and pending interruption state shape
 
@@ -216,8 +216,8 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase G8.5
 
 - Files added: `src/game/reporting/eval_dashboard.py`, `tests/reporting/test_html.py`, `review-packet/playthrough-eval.html`
-- Files changed: `src/game/reporting/html.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `tests/agents/test_islander_voice_pull_rejected.py`, `review-packet/`
-- Tests added: session HTML exposes success math, villa snapshots, memories, pulls, interruptions; eval dashboard links assertions back to session turns
+- Files changed: `src/game/reporting/html.py`, `src/game/cli/commands/play.py`, `src/game/cli/commands/report.py`, `tests/agents/test_heartbreaker_voice_private_chat_rejected.py`, `review-packet/`
+- Tests added: session HTML exposes success math, resort snapshots, memories, pulls, interruptions; eval dashboard links assertions back to session turns
 - QA result: `ruff`, `mypy`, non-LLM pytest, content lint, fixture determinism all green; full LLM suite green, 37 tests passed; packet regenerated and verified in the in-app browser at `http://127.0.0.1:8895/review-packet/index.html`
 - Packet: regenerated from `.game_traces/manual-day1.json`; dashboard shows the old recording passes 4/11 playthrough assertions, which is expected until the next G8-aware recorded session is played
 
@@ -252,23 +252,23 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Files changed: state schema, turn/action/rule pipelines, content loading/linting, CLI/report rendering, snapshot hashing, playthrough eval/dashboard, and all scenario hashes for schema v12
 - Tests added: daily challenge scheduling/resolution, producer text scheduling/group-date setup, H2 eval assertions, and `challenge-day1.yaml` / `producer-text-day2.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (145 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
-- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 12`; long day-five-plus fixtures now include the required `CHALLENGE_RESPONSE` for Snog Marry Pie
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 12`; long day-five-plus fixtures now include the required `CHALLENGE_RESPONSE` for Kiss Wed Pass
 
 ## Phase H3
 
 - Files added: `src/game/state/personality.py`, `src/game/engine/compatibility.py`, `src/game/eval/playthrough_trace.py`, `tests/engine/test_compatibility.py`, and `tests/scenarios/fixtures/type-on-paper-reveal.yaml`
-- Files changed: islander state schema, bombshell setup, chance/rule/follow-up math, conversation familiarity updates, Islander Voice context, CLI/report rendering, playthrough eval/dashboard, and all scenario hashes for schema v13
+- Files changed: heartbreaker state schema, Heart Throb setup, chance/rule/follow-up math, conversation familiarity updates, Heartbreaker Voice context, CLI/report rendering, playthrough eval/dashboard, and all scenario hashes for schema v13
 - Tests added: Big 5 / attachment / Type on Paper model checks, compatibility/dealbreaker/attachment modifiers, familiarity/reveal thresholds, compatibility math in rules, H3 playthrough eval assertions, and the Type-on-Paper reveal fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (160 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 13`; `type-on-paper-reveal.yaml` pins familiarity-driven preference reveals
 
 ## Phase H4
 
-- Files added: `src/game/engine/couples.py`, `src/game/engine/hideaway.py`, `content/locations/hideaway.md`, `tests/engine/test_couples.py`, `tests/engine/test_hideaway.py`, and `tests/scenarios/fixtures/hideaway-night.yaml`
-- Files changed: state schema, action/rule/turn-event pipelines, recoupling ceremony events, audience scoring, CLI/report recording/rendering, playthrough eval/dashboard, scenario runner initial-state support, and all scenario hashes for schema v14
-- Tests added: couple strength/ranking/steal math, Hideaway eligibility/consumption/deltas/memories, H4 eval assertions, and the Hideaway night fixture
+- Files added: `src/game/engine/couples.py`, `src/game/engine/private_suite.py`, `content/locations/private_suite.md`, `tests/engine/test_couples.py`, `tests/engine/test_private_suite.py`, and `tests/scenarios/fixtures/private-suite-night.yaml`
+- Files changed: state schema, action/rule/turn-event pipelines, Pairing Ceremony events, audience scoring, CLI/report recording/rendering, playthrough eval/dashboard, scenario runner initial-state support, and all scenario hashes for schema v14
+- Tests added: couple strength/ranking/steal math, Paradise Suite eligibility/consumption/deltas/memories, H4 eval assertions, and the Paradise Suite night fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (176 passed), content lint, smoke `verify-script`, fixture determinism, and full LLM suite (37 passed)
-- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 14`; `hideaway-night.yaml` pins the once-per-run Hideaway reward
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 14`; `private-suite-night.yaml` pins the once-per-run Paradise Suite reward
 
 ## Phase H6
 
@@ -280,18 +280,18 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 ## Phase H5
 
-- Files added: `src/game/state/casa.py`, `src/game/engine/casa_amor.py`, Casa Amor locations, six Casa Amor cast content files, `content/producer_texts/casa_amor_announce.md`, `src/game/reporting/html_math.py`, `tests/engine/test_casa_amor.py`, and two Casa scenario fixtures
-- Files changed: state schema, action/rule/turn-event pipelines, villa orchestration validation/context, CLI/report recording/rendering, content loading/linting, playthrough eval/dashboard, H-index fixture list, and all scenario hashes for schema v15
-- Files removed: stale day-four bombshell producer text and `bombshell-day4.yaml` fixture now superseded by Casa Amor arrival
-- Tests added: Casa entry/cast/location/menu/decision/return/perception/orchestrator-visibility checks, Casa eval assertions, and `casa-amor-arrive.yaml` / `casa-amor-return.yaml`
+- Files added: `src/game/state/flush.py`, `src/game/engine/flush_of_hearts.py`, Flush of Hearts locations, six Flush of Hearts cast content files, `content/producer_texts/flush_of_hearts_announce.md`, `src/game/reporting/html_math.py`, `tests/engine/test_flush_of_hearts.py`, and two Flush of Hearts scenario fixtures
+- Files changed: state schema, action/rule/turn-event pipelines, resort orchestration validation/context, CLI/report recording/rendering, content loading/linting, playthrough eval/dashboard, H-index fixture list, and all scenario hashes for schema v15
+- Files removed: stale day-four Heart Throb producer text and `heart-throb-day4.yaml` fixture now superseded by Flush of Hearts arrival
+- Tests added: Flush of Hearts entry/cast/location/menu/decision/return/perception/orchestrator-visibility checks, Flush of Hearts eval assertions, and `flush-of-hearts-arrive.yaml` / `flush-of-hearts-return.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (203 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (37 passed)
-- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 15`; day-five-plus fixtures now include the required Casa Amor decision before the day-six return
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 15`; day-five-plus fixtures now include the required Flush of Hearts decision before the day-six return
 
 ## Phase H7
 
 - Files added: `src/game/agents/player_autopilot.py`, `src/game/agents/prompts/player_autopilot.md`, `src/game/cli/commands/play_autopilot.py`, `src/game/cli/commands/play_recording.py`, `tests/agents/test_player_autopilot.py`, and `tests/scenarios/fixtures/autopilot-day1.yaml`
-- Files changed: CLI play/report recording surfaces, agent commit schema, scenario replay, playthrough eval/dashboard, contextual follow-up mechanics, background dialogue validation, pull-for-chat Casa location support, and Makefile `autopilot-check`
-- Tests added: Player Autopilot LLM contract tests, mock autopilot end-to-end/replay/rationale tests, supportive follow-up delta coverage, background-dialogue validator retry coverage, Casa pull-location coverage, and autopilot scenario fixture
+- Files changed: CLI play/report recording surfaces, agent commit schema, scenario replay, playthrough eval/dashboard, contextual follow-up mechanics, background dialogue validation, private-chat Flush of Hearts location support, and Makefile `autopilot-check`
+- Tests added: Player Autopilot LLM contract tests, mock autopilot end-to-end/replay/rationale tests, supportive follow-up delta coverage, background-dialogue validator retry coverage, Flush of Hearts private-chat-location coverage, and autopilot scenario fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (218 passed), content lint, fixture determinism, line-cap audit, and full LLM suite (43 passed)
 - Validation note: fast deterministic `autopilot-check` completes and replays byte-identically; bounded real-LLM validation exposed phase-pacing gaps that are addressed by Phase H8 time budgets and NPC autonomy
 
@@ -301,15 +301,15 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - Files changed: state schema, phase advancement, turn pipeline, scenario replay setup, CLI/report time rendering, playthrough eval/dashboard, and all scenario hashes for schema v16
 - Tests added: action time-cost contract, time deduction expiry, phase-clock reset, run-turn auto-advance, H8 pacing eval assertions, and a time-budget expiry scenario fixture
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (223 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed after one retry of a stochastic pre-existing voice-quality assertion)
-- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 16`; day-five Casa fixtures remove one manual `ADVANCE_PHASE` because challenge responses now auto-advance zero-budget challenge phases
+- Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 16`; day-five Flush of Hearts fixtures remove one manual `ADVANCE_PHASE` because challenge responses now auto-advance zero-budget challenge phases
 
 ## Phase H8.2
 
 - Files added: `src/game/engine/arrival_rolls.py`, `src/game/engine/turn_autonomy.py`, `src/game/eval/playthrough_models.py`, `src/game/reporting/html_arrivals.py`, `src/game/state/autonomy.py`, `tests/engine/test_arrival_rolls.py`, `tests/engine/test_npc_summoned.py`, and two scenario fixtures for arrival rolls and summoned exits
-- Files changed: Villa Orchestrator schema/prompt, VillaUpdate validation/application, turn autonomy pipeline, conversation departure math, trace recording, CLI/report rendering, playthrough eval/dashboard, scenario replay scripted VillaUpdates, and all scenario hashes
-- Tests added: arrival roll formulas/clamps/breakdown, NPC summon validation/application/curation/movement, attachment-driven departure modifiers, H8 autonomy eval assertions, scripted VillaUpdate replay, `arrival-roll-interrupt.yaml`, and `npc-summoned-exit.yaml`
+- Files changed: Resort Orchestrator schema/prompt, ResortUpdate validation/application, turn autonomy pipeline, conversation departure math, trace recording, CLI/report rendering, playthrough eval/dashboard, scenario replay scripted ResortUpdates, and all scenario hashes
+- Tests added: arrival roll formulas/clamps/breakdown, NPC summon validation/application/curation/movement, attachment-driven departure modifiers, H8 autonomy eval assertions, scripted ResortUpdate replay, `arrival-roll-interrupt.yaml`, and `npc-summoned-exit.yaml`
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, non-LLM pytest (235 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
-- Prompt note: installed Claude's `villa_orchestrator.md` NPC summoning section verbatim after `## Hard rules`; no other prompt edits made
+- Prompt note: installed Claude's `resort_orchestrator.md` NPC summoning section verbatim after `## Hard rules`; no other prompt edits made
 
 ## Phase H8.3
 
@@ -321,7 +321,7 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 
 ## Phase H8 Validation Hardening
 
-- Files changed: Player Autopilot persona setup, Villa Orchestrator context/retry handling, Conversation Curator context/retry handling, VillaUpdate normalization, and focused regression tests
+- Files changed: Player Autopilot persona setup, Resort Orchestrator context/retry handling, Conversation Curator context/retry handling, ResortUpdate normalization, and focused regression tests
 - Tests added: legal 30-point persona stat coverage, required curator-memory-holder context coverage, locked NPC conversation context coverage, and implicit conversation-end normalization for moved or stale-location NPC conversations
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (244 passed in 8.60s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (43 passed)
 - Validation result: real-LLM loyal validation recorded 61 turns, reached Day 5, and passed H8-specific acceptance signals; real-LLM chaotic validation recorded 83 turns, reached Day 6, and passed H8-specific acceptance signals
@@ -337,40 +337,40 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase H9.1
 
 - Files added: `docs/build-plan-H9.md` and `src/game/state/memory.py`
-- Files changed: canonical state gender schema, character creation, intent filtering, intent catalog, Islander Voice context/prompt, Casa/bombshell cast creation, CLI character card, scenario replay, and all scenario hashes for `SCHEMA_VERSION = 17`
-- Tests added: required character-creation gender, canonical cast gender assignment, same/opposite-sex intent filtering, bromance/gossip-ring mechanical deltas, and Islander Voice LLM coverage for the expanded intent catalog
+- Files changed: canonical state gender schema, character creation, intent filtering, intent catalog, Heartbreaker Voice context/prompt, Flush of Hearts/Heart Throb cast creation, CLI character card, scenario replay, and all scenario hashes for `SCHEMA_VERSION = 17`
+- Tests added: required character-creation gender, canonical cast gender assignment, same/opposite-sex intent filtering, bromance/gossip-ring mechanical deltas, and Heartbreaker Voice LLM coverage for the expanded intent catalog
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (253 passed in 10.53s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
 - Scenario fixture: all fixtures regenerated for `SCHEMA_VERSION = 17`; `character_creation` and `CREATE_CHARACTER` payloads now include the required gender field
 
 ## Phase H9.2
 
 - Files added: `content/archetypes/alpha.md`, `src/game/state/cast.py`, and `tests/engine/test_initial_coupling.py`
-- Files changed: starting cast factory, initial coupling action flow, recoupling ceremony handling, content lint expectations, Islander Voice known-name set, audience/model tests, and all scenario hashes for the expanded starting cast
-- Tests added: eight-islander starting cast, four-men/four-women gender balance, day-one initial coupling options, initial coupling without day-one dumping, and four-couple audience rankings
+- Files changed: starting cast factory, initial coupling action flow, Pairing Ceremony handling, content lint expectations, Heartbreaker Voice known-name set, audience/model tests, and all scenario hashes for the expanded starting cast
+- Tests added: eight-heartbreaker starting cast, four-men/four-women gender balance, day-one initial coupling options, initial coupling without day-one dumping, and four-couple audience rankings
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (258 passed in 10.96s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (51 passed)
 - Scenario fixture: all fixtures regenerated after the cast expansion; pre-created-character fixtures now pin initial couples so they do not block on the new day-one coupling menu
 
 ## Phase H9.3
 
 - Files added: `content/backstories.yaml`
-- Files changed: Islander state schema, content loading/linting, starting/Casa/bombshell cast factories, Islander Voice context/prompt, Contextual Options context/prompt, and all scenario hashes for `SCHEMA_VERSION = 18`
-- Tests added: per-islander backstory loading, Islander Voice backstory context coverage, Islander Voice meta-talk rejection, and Contextual Options specificity checks
+- Files changed: Heartbreaker state schema, content loading/linting, starting/Flush of Hearts/Heart Throb cast factories, Heartbreaker Voice context/prompt, Contextual Options context/prompt, and all scenario hashes for `SCHEMA_VERSION = 18`
+- Tests added: per-heartbreaker backstory loading, Heartbreaker Voice backstory context coverage, Heartbreaker Voice meta-talk rejection, and Contextual Options specificity checks
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (260 passed in 9.61s), content lint, fixture determinism, line-cap audit, and full LLM suite (53 passed)
-- Scenario fixture: all fixtures regenerated for backstory-bearing islander state
+- Scenario fixture: all fixtures regenerated for backstory-bearing heartbreaker state
 
 ## Phase H9.4
 
 - Files added: none
 - Files changed: player state pull-attempt tracking, pull chance math, phase reset behavior, interruption response mechanics, mechanical result trace schema, and all scenario hashes for `SCHEMA_VERSION = 19`
-- Tests added: repeated pull chance penalty, minimum pull clamp after repeated attempts, phase reset for pull attempts, repeated-pull memory creation, ignored-interruption walkaway movement, and forced movement trace coverage
+- Tests added: repeated pull chance penalty, minimum pull clamp after repeated attempts, phase reset for private chat attempts, repeated-pull memory creation, ignored-interruption walkaway movement, and forced movement trace coverage
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (266 passed in 9.31s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
 - Scenario fixture: all fixtures regenerated for pull-attempt tracking and forced-movement trace schema
 
 ## Phase H9.5
 
-- Files added: `content/locations/firepit.md`, `src/game/engine/gather.py`, `src/game/engine/pull_turn.py`, and `src/game/reporting/html_gather.py`
-- Files changed: canonical state schema, action validation/surfacing, time budgets, phase event scheduling, turn pipeline, CLI/report rendering, Casa location set, and all scenario hashes for `SCHEMA_VERSION = 20`
-- Tests added: producer-text gather scheduling, Casa Amor gather resolution, conversation cleanup before gather events, final vote gather resolution, and updated Casa/final-vote tests for the two-step schedule/resolve flow
+- Files added: `content/locations/flame_deck.md`, `src/game/engine/gather.py`, `src/game/engine/private_chat_turn.py`, and `src/game/reporting/html_private_chat.py`
+- Files changed: canonical state schema, action validation/surfacing, time budgets, phase event scheduling, turn pipeline, CLI/report rendering, Flush of Hearts location set, and all scenario hashes for `SCHEMA_VERSION = 20`
+- Tests added: producer-text gather scheduling, Flush of Hearts gather resolution, conversation cleanup before gather events, final vote gather resolution, and updated Flush of Hearts/final-vote tests for the two-step schedule/resolve flow
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (268 passed in 12.04s), content lint, smoke `verify-script`, fixture determinism, line-cap audit, and full LLM suite (53 passed)
 - Scenario fixture: all fixtures regenerated for mandatory gather events; scripts now include `join_gather` where producer texts or ceremonies must interrupt normal play
 
@@ -385,16 +385,16 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase H9.7
 
 - Files added: none
-- Files changed: Villa Orchestrator movement prompt, Orchestrator context rendering, VillaUpdate validation during pending gathers, and related tests
-- Tests added: isolated-player context coverage, pending-gather autonomy rejection, Firepit pull privacy coverage, and two LLM tests for H9.7 movement liveliness
+- Files changed: Resort Orchestrator movement prompt, Orchestrator context rendering, ResortUpdate validation during pending gathers, and related tests
+- Tests added: isolated-player context coverage, pending-gather autonomy rejection, Flame Deck private chat privacy coverage, and two LLM tests for H9.7 movement liveliness
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (274 passed in 10.36s), content lint, fixture determinism, line-cap audit, H9.7 focused LLM suite (3 passed), and full LLM suite (55 passed after increasing the command timeout)
-- Prompt note: installed Claude's H9.7 `villa_orchestrator.md` movement bullet verbatim; no other prompt edits made
+- Prompt note: installed Claude's H9.7 `resort_orchestrator.md` movement bullet verbatim; no other prompt edits made
 
 ## Phase H9.7: fix gather autonomy pause
 
 - Files added: none
 - Files changed: `turn_autonomy.py`, `test_turn.py`
-- Tests added: coverage that the turn scheduling a mandatory gather does not invoke Villa Orchestrator
+- Tests added: coverage that the turn scheduling a mandatory gather does not invoke Resort Orchestrator
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (276 passed), smoke script, content lint, fixture determinism, and line-cap audit
 - Validation note: fixes the H9 real-LLM autopilot crash where an Orchestrator movement was rejected after `ADVANCE_PHASE` scheduled a pending gather
 
@@ -406,36 +406,36 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (277 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Event Narrator suite
 - Validation note: fixes the H9 real-LLM autopilot crash where the narrator wrote `Jordan` for internal id `jordan_start`
 
-## Phase H9.7: retry Islander Voice contract failures
+## Phase H9.7: retry Heartbreaker Voice contract failures
 
 - Files added: none
-- Files changed: `islander_voice.py`, `test_islander_voice.py`
-- Tests added: coverage that Islander Voice retries after a validation failure and feeds the failure reason into the next structured call
-- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (278 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Islander Voice retry coverage
-- Validation note: fixes the H9 real-LLM autopilot crash where Islander Voice returned a valid schema with digit-bearing prose
+- Files changed: `heartbreaker_voice.py`, `test_heartbreaker_voice.py`
+- Tests added: coverage that Heartbreaker Voice retries after a validation failure and feeds the failure reason into the next structured call
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (278 passed), smoke script, content lint, fixture determinism, line-cap audit, and focused Heartbreaker Voice retry coverage
+- Validation note: fixes the H9 real-LLM autopilot crash where Heartbreaker Voice returned a valid schema with digit-bearing prose
 
 ## Phase H10.1
 
-- Files added: `src/game/agents/islander_voice_context.py`, `tests/agents/test_islander_voice_chain.py`
-- Files changed: Islander Voice now sends prior conversation exchanges as native OpenAI messages, the Islander Voice prompt installs Claude's recent-history line replacement verbatim, and Islander Voice stays under the R9 line cap after helper extraction
+- Files added: `src/game/agents/heartbreaker_voice_context.py`, `tests/agents/test_heartbreaker_voice_chain.py`
+- Files changed: Heartbreaker Voice now sends prior conversation exchanges as native OpenAI messages, the Heartbreaker Voice prompt installs Claude's recent-history line replacement verbatim, and Heartbreaker Voice stays under the R9 line cap after helper extraction
 - Tests added: first-exchange message shape, prior exchange alternating user/assistant message shape, prior assistant JSON validation, and current-turn intent/outcome context coverage
-- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (281 passed), smoke script, content lint, fixture determinism, line-cap audit, focused Islander Voice chain tests, and LLM suite rerun note: one stochastic pull-rejection wording miss passed on focused rerun
-- Prompt note: installed Claude's H10.1 `islander_voice.md` recent-history line replacement verbatim; no other prompt edits made
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (281 passed), smoke script, content lint, fixture determinism, line-cap audit, focused Heartbreaker Voice chain tests, and LLM suite rerun note: one stochastic pull-rejection wording miss passed on focused rerun
+- Prompt note: installed Claude's H10.1 `heartbreaker_voice.md` recent-history line replacement verbatim; no other prompt edits made
 
 ## Phase H10.2
 
 - Files added: `tests/engine/test_gossip_propagation.py`
-- Files changed: memory state models now carry `summary` and `gossip_seeds`, conversations retain hash-excluded summaries, Curator validation accepts three-output batches, gossip seeds propagate into `told_by` memories, Islander Voice receives gossip-eligible memories in context, and all scenario hashes were regenerated for `SCHEMA_VERSION = 22`
+- Files changed: memory state models now carry `summary` and `gossip_seeds`, conversations retain hash-excluded summaries, Curator validation accepts three-output batches, gossip seeds propagate into `told_by` memories, Heartbreaker Voice receives gossip-eligible memories in context, and all scenario hashes were regenerated for `SCHEMA_VERSION = 22`
 - Tests added: gossip-seed propagation creates listener memories, attenuates emotional weight, handles unknown listeners, and dedupes against existing memories
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (285 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused Conversation Curator suite, and full LLM suite (55 passed)
-- Prompt note: installed Claude's H10.2 prompt updates for `conversation_curator.md`, `islander_voice.md`, and `villa_orchestrator.md`; no Codex-authored prompt wording changes made
+- Prompt note: installed Claude's H10.2 prompt updates for `conversation_curator.md`, `heartbreaker_voice.md`, and `resort_orchestrator.md`; no Codex-authored prompt wording changes made
 
 ## Phase H10.3
 
-- Files added: `src/game/engine/turn_async.py`, `src/game/engine/villa_validation.py`, and `tests/engine/test_h10_async_routing.py`
-- Files changed: model routing constants now use `gpt-5.4-mini` for Conversation Curator, `gpt-4.1-nano` for Background Dialogue and Player Autopilot, and `gpt-4.1-mini` for Contextual Options; Villa application now has an async path that batches independent background dialogue and curator calls while preserving ordered state mutation; Villa validation moved out of the application module to preserve R9 line limits
-- Tests added: H10 model routing constants and async VillaUpdate application with async background callables
-- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (287 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused async/villa tests, and full LLM suite note: one stochastic pull-rejection wording failure passed on focused rerun
+- Files added: `src/game/engine/turn_async.py`, `src/game/engine/resort_validation.py`, and `tests/engine/test_h10_async_routing.py`
+- Files changed: model routing constants now use `gpt-5.4-mini` for Conversation Curator, `gpt-4.1-nano` for Background Dialogue and Player Autopilot, and `gpt-4.1-mini` for Contextual Options; Resort application now has an async path that batches independent background dialogue and curator calls while preserving ordered state mutation; Resort validation moved out of the application module to preserve R9 line limits
+- Tests added: H10 model routing constants and async ResortUpdate application with async background callables
+- QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (287 passed), content lint, smoke `verify-script`, fixture determinism, line-cap audit, focused async/resort tests, and full LLM suite note: one stochastic private-chat-rejection wording failure passed on focused rerun
 - Architecture note: `run_turn` stays sync-compatible for existing CLI/test callers; `turn_async.run_turn_async` provides the async entry point for callers that already own an event loop
 
 ## Phase H10.4
@@ -457,7 +457,7 @@ Append-only implementation log for `docs/build-plan-A2-E.md`.
 ## Phase H11.2
 
 - Files added: none
-- Files changed: slide reports now populate the sticky side panel with scene state, villa occupants, memory summaries, and native `<dialog>` popouts opened from cast/location buttons
+- Files changed: slide reports now populate the sticky side panel with scene state, resort occupants, memory summaries, and native `<dialog>` popouts opened from cast/location buttons
 - Tests added: slide session coverage for state popout markup and click targets
 - QA result: direct `make qa` equivalents green because `make` is unavailable in this PowerShell session: `ruff`, `mypy`, parallel non-LLM pytest via xdist (300 passed), fixture determinism, and line-cap audit
 - UI note: popouts use native browser dialogs and delegated vanilla JavaScript; no raw JSON is exposed in the rendered session page

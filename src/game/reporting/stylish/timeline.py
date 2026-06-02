@@ -31,18 +31,18 @@ def grouped_days(records: list[dict[str, Any]]) -> list[tuple[int, list[dict[str
 def day_heading(day: int, records: list[dict[str, Any]]) -> str:
     """Render one day heading with highlight tags."""
     tags = sorted({_highlight(record) for record in records if _highlight(record)})
-    label = " | ".join(tags) if tags else "Villa life"
+    label = " | ".join(tags) if tags else "Sunset Bay life"
     return f"<h2 id='day-{day}'>Day {day} <span class='meta'>{escape(label)}</span></h2>"
 
 
 def _day_icon(day: int, records: list[dict[str, Any]]) -> str:
     day_records = [record for record in records if record.get("day") == day]
     highlights = {_highlight(record) for record in day_records}
-    if "Casa Amor" in highlights:
+    if "Flush of Hearts" in highlights:
         return "★"
     if "Drama" in highlights:
         return "★"
-    if "Recoupling" in highlights:
+    if "Pairing" in highlights:
         return "◆"
     if "Challenge" in highlights:
         return "▲"
@@ -53,10 +53,10 @@ def _highlight(record: dict[str, Any]) -> str:
     if record.get("challenge"):
         return "Challenge"
     for event in record.get("ceremony_events", []) if isinstance(record.get("ceremony_events"), list) else []:
-        if isinstance(event, dict) and event.get("kind") in {"recoupling", "steal_attempt"}:
-            return "Recoupling"
-        if isinstance(event, dict) and event.get("kind") in {"bombshell", "elimination"}:
+        if isinstance(event, dict) and event.get("kind") in {"pairing", "steal_attempt"}:
+            return "Pairing"
+        if isinstance(event, dict) and event.get("kind") in {"heart_throb", "elimination"}:
             return "Drama"
-        if isinstance(event, dict) and str(event.get("kind", "")).startswith("casa"):
-            return "Casa Amor"
+        if isinstance(event, dict) and str(event.get("kind", "")).startswith("flush"):
+            return "Flush of Hearts"
     return ""

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.models import (
     CharacterCreation,
     GameState,
@@ -52,9 +52,9 @@ PLAYER_ARCHETYPES: dict[str, PlayerArchetypeDef] = {
 }
 
 DEFAULT_ARCHETYPE_STATS: dict[str, PlayerStats] = {
-    "heartthrob": PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
-    "class_clown": PlayerStats(charm=5, banter=9, eq=6, graft=5, loyalty=5),
-    "loyal_friend": PlayerStats(charm=5, banter=6, eq=5, graft=5, loyalty=9),
+    "heartthrob": PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
+    "class_clown": PlayerStats(charm=5, banter=9, eq=6, spark=5, loyalty=5),
+    "loyal_friend": PlayerStats(charm=5, banter=6, eq=5, spark=5, loyalty=9),
 }
 
 
@@ -93,7 +93,7 @@ def create_character(
     state.character_creation = creation
     _apply_starter_advantage(state, definition)
     # Day 1 begins with the greeting circle (INTROS phase). The narrator
-    # frames it as the firepit; the UI surfaces all islanders regardless of
+    # frames it as the flame_deck; the UI surfaces all heartbreakers regardless of
     # their canonical location while INTROS is active, so we don't need to
     # reassign locations here.
     state.phase = Phase.INTROS
@@ -111,14 +111,14 @@ def reroll_character(state: GameState) -> None:
 
 def _apply_starter_advantage(state: GameState, definition: PlayerArchetypeDef) -> None:
     if definition.starter_advantage == "starter_chemistry":
-        target = find_islander(state, "chloe")
+        target = find_heartbreaker(state, "chloe")
         apply_relationship_delta(target, RelationshipDelta(chemistry=5))
         return
     if definition.starter_advantage == "public_perception_boost":
         state.player.public_perception = 60
         return
     if definition.starter_advantage == "starter_friendship":
-        for islander in state.islanders:
-            apply_relationship_delta(islander, RelationshipDelta(friendship=5))
+        for heartbreaker in state.heartbreakers:
+            apply_relationship_delta(heartbreaker, RelationshipDelta(friendship=5))
         return
     raise ValueError(f"unknown starter advantage: {definition.starter_advantage}")

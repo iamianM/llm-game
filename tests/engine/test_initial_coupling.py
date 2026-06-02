@@ -15,7 +15,7 @@ def test_day1_initial_coupling_offered_to_player() -> None:
 
     actions = available_actions(state)
 
-    assert {spec.action.kind for spec in actions} == {ActionKind.RECOUPLE}
+    assert {spec.action.kind for spec in actions} == {ActionKind.PAIR}
     assert len(actions) == 4
     assert {spec.action.target_id for spec in actions} == {
         "chloe",
@@ -30,7 +30,7 @@ def test_initial_coupling_pairs_player_without_eliminating_leftover_single() -> 
 
     result = run_turn(
         state,
-        PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"),
+        PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
         SeededRng(1),
     )
 
@@ -39,8 +39,8 @@ def test_initial_coupling_pairs_player_without_eliminating_leftover_single() -> 
         Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1, formed_via="opening")
         in result.state.couples
     )
-    assert result.state.islanders[0].familiarity_with_player == 25
-    assert not any(islander.eliminated for islander in result.state.islanders)
+    assert result.state.heartbreakers[0].familiarity_with_player == 25
+    assert not any(heartbreaker.eliminated for heartbreaker in result.state.heartbreakers)
 
 
 def _created_state(gender: Gender) -> GameState:
@@ -49,14 +49,14 @@ def _created_state(gender: Gender) -> GameState:
         state,
         archetype_id="heartthrob",
         gender=gender,
-        stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
+        stats=PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
     )
     # Day-1 now starts in INTROS for the greeting circle. Skip past them for
     # tests that focus on the First Spark / coupling flow.
     state.phase = Phase.MORNING
     state.phase_clock = PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
     state.intro_completed_ids = [
-        islander.id for islander in state.islanders if not islander.eliminated
+        heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
     ]
     state.intro_memory_created = True
     return state

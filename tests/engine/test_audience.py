@@ -38,18 +38,18 @@ def test_audience_score_combines_perception_and_couple_strength() -> None:
     """The player's couple gets a small relationship-derived bonus."""
     state = new_game(1)
     state.player.public_perception = 50
-    state.islanders[0].public_perception = 50
-    state.islanders[0].relationship.affection = 40
-    state.islanders[0].relationship.trust = 20
+    state.heartbreakers[0].public_perception = 50
+    state.heartbreakers[0].relationship.affection = 40
+    state.heartbreakers[0].relationship.trust = 20
     couple = Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)
 
     assert couple_audience_score(state, couple) == 53
 
 
-def test_audience_snapshot_excludes_eliminated_islanders() -> None:
-    """Dumped islanders are no longer ranked in couples."""
+def test_audience_snapshot_excludes_eliminated_heartbreakers() -> None:
+    """Sent Home heartbreakers are no longer ranked in couples."""
     state = new_game(1)
-    state.islanders[0].eliminated = True
+    state.heartbreakers[0].eliminated = True
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
 
     snapshot = audience_snapshot(state)

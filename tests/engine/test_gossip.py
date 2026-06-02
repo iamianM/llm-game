@@ -39,7 +39,7 @@ def test_gossip_pick_transfers_memory_to_player() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         rng,
         contextual_options=lambda *_args: mock_follow_up_menu(),
@@ -64,7 +64,7 @@ def test_gossip_pick_transfers_memory_to_player() -> None:
     assert len(heard) == 1
     assert heard[0].subject_id == "maya"
     assert any(tag.startswith("source_memory:") for tag in heard[0].tags)
-    assert state.islanders[0].relationship.trust == 2
+    assert state.heartbreakers[0].relationship.trust == 2
 
 
 def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
@@ -80,7 +80,7 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
             turn=1,
             weight=7,
             tags=["gossip"],
-            content="Maya looked rattled after Liam pulled away.",
+            content="Maya looked rattled after Liam stepped back.",
         ),
     )
     first_turn = run_turn(
@@ -88,7 +88,7 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
         contextual_options=lambda *_args: mock_contextual_bespoke(npc_will_leave=False),
@@ -105,7 +105,7 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
         contextual_options=lambda *_args: mock_follow_up_menu(),
     )
 
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     assert any(
         memory.subject_id == "maya" and memory.source_id == "player"
         for memory in chloe.memories
@@ -140,7 +140,7 @@ def test_share_gossip_miss_still_suppresses_reoffer() -> None:
 
     assert result.delta.trust == -1
     assert result.stale is False
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     recorded = [m for m in chloe.memories if f"source_memory:{memory.id}" in m.tags]
     assert recorded and "gossip_unconvinced" in recorded[0].tags
     assert recorded[0].emotional_weight < memory.emotional_weight
@@ -166,7 +166,7 @@ def test_stale_share_gossip_is_observable_noop() -> None:
 
     assert result.stale is True
     assert result.delta == result.delta.__class__()  # neutral delta
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     assert chloe.memories == []
 
 
@@ -239,7 +239,7 @@ def test_gossip_offer_content_does_not_affect_state_hash() -> None:
         target_id="chloe",
         started_on_turn=0,
         started_on_day=1,
-        gossip_offers=[state.islanders[0].memories[0]],
+        gossip_offers=[state.heartbreakers[0].memories[0]],
     )
     first_hash = state_hash(state_hash_payload(state))
 
@@ -261,7 +261,7 @@ def test_gossip_injection_is_idempotent_for_recorded_replay() -> None:
 
 def _state_with_chloe_gossip(*, affection: int):
     state = new_game(1)
-    chloe = state.islanders[0]
+    chloe = state.heartbreakers[0]
     chloe.relationship = RelationshipState(affection=affection)
     chloe.memories.append(
         create_memory(
@@ -284,7 +284,7 @@ def _start_chloe_conversation(state):
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
         contextual_options=lambda *_args: mock_follow_up_menu(),

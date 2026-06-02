@@ -42,7 +42,7 @@ def test_openai_trait_generator_retries_with_schema_feedback() -> None:
     generator = OpenAITraitGenerator()
     generator.__dict__["_client"] = SimpleNamespace(responses=fake_responses)
 
-    result = generator.generate_opening_cast(opening_generation_seeds(new_game(1).islanders[:1]))
+    result = generator.generate_opening_cast(opening_generation_seeds(new_game(1).heartbreakers[:1]))
 
     assert result["chloe"].persona.secret_engine == cards["chloe"].persona.secret_engine
     assert len(fake_responses.inputs) == 2

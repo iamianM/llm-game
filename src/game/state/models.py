@@ -9,9 +9,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.state.autonomy import PendingNPCApproach as PendingNPCApproach
 from src.game.state.autonomy import PendingNPCSummon as PendingNPCSummon
-from src.game.state.casa import CasaAmorState as CasaAmorState
-from src.game.state.casa import CasaDecision as CasaDecision
-from src.game.state.casa import VillaName as VillaName
 from src.game.state.event_models import (
     AudienceEntry as AudienceEntry,
 )
@@ -48,12 +45,15 @@ from src.game.state.event_models import (
 from src.game.state.event_models import (
     RelationshipDelta as RelationshipDelta,
 )
+from src.game.state.flush import FlushDecision as FlushDecision
+from src.game.state.flush import FlushOfHeartsState as FlushOfHeartsState
+from src.game.state.flush import ResortName as ResortName
 from src.game.state.memory import Memory as Memory
 from src.game.state.memory import MemoryBatch as MemoryBatch
 from src.game.state.memory import MemoryDraft as MemoryDraft
 from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
-from src.game.state.personality import TypeOnPaper as TypeOnPaper
+from src.game.state.personality import IdealMatch as IdealMatch
 from src.game.state.phase_clock import PhaseClock as PhaseClock
 from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
@@ -86,11 +86,11 @@ class Location(StrEnum):
     KITCHEN = "kitchen"
     TERRACE = "terrace"
     BEDROOM = "bedroom"
-    FIREPIT = "firepit"
-    HIDEAWAY = "hideaway"
-    CASA_POOL = "casa_pool"
-    CASA_KITCHEN = "casa_kitchen"
-    CASA_TERRACE = "casa_terrace"
+    FLAME_DECK = "flame_deck"
+    PRIVATE_SUITE = "private_suite"
+    FLUSH_POOL = "flush_pool"
+    FLUSH_KITCHEN = "flush_kitchen"
+    FLUSH_TERRACE = "flush_terrace"
 
 
 class Mood(StrEnum):
@@ -119,7 +119,7 @@ class PlayerStats(BaseModel):
     charm: int = Field(ge=3, le=9)
     banter: int = Field(ge=3, le=9)
     eq: int = Field(ge=3, le=9)
-    graft: int = Field(ge=3, le=9)
+    spark: int = Field(ge=3, le=9)
     loyalty: int = Field(ge=3, le=9)
 
 
@@ -150,11 +150,11 @@ class PlayerState(BaseModel):
     eliminated: bool = False
     memories: list[Memory] = Field(default_factory=list)
     known_facts: KnownFacts = Field(default_factory=dict)
-    pull_attempts_this_phase: dict[str, int] = Field(default_factory=dict)
+    private_chat_attempts_this_phase: dict[str, int] = Field(default_factory=dict)
 
 
 class RelationshipState(BaseModel):
-    """Player-facing relationship state for one islander."""
+    """Player-facing relationship state for one heartbreaker."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -164,8 +164,8 @@ class RelationshipState(BaseModel):
     friendship: int = Field(default=0, ge=0, le=100)
 
 
-class IslanderState(BaseModel):
-    """Minimal NPC Islander state."""
+class HeartbreakerState(BaseModel):
+    """Minimal NPC Heartbreaker state."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -181,14 +181,14 @@ class IslanderState(BaseModel):
     mood: Mood = Mood.CONTENT
     big5: Big5
     attachment: AttachmentStyle
-    type_on_paper: TypeOnPaper
+    ideal_match: IdealMatch
     familiarity_with_player: int = Field(default=0, ge=0, le=100)
     memories: list[Memory] = Field(default_factory=list)
     trait_card: TraitCard = Field(default_factory=empty_trait_card)
     known_facts: KnownFacts = Field(default_factory=dict)
-    # Mutual NPC↔NPC attraction toward other islanders (other_id -> 0..100).
-    # The villa's own love stories: kept symmetric by the peer engine and grown
-    # deterministically as compatible islanders spend time co-located. Absent on
+    # Mutual NPC↔NPC attraction toward other heartbreakers (other_id -> 0..100).
+    # The resort's own love stories: kept symmetric by the peer engine and grown
+    # deterministically as compatible heartbreakers spend time co-located. Absent on
     # older saves (defaults empty), so the field is backward compatible.
     peer_affinity: dict[str, int] = Field(default_factory=dict)
 
@@ -199,13 +199,13 @@ class Couple(BaseModel):
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
-    formed_via: Literal["opening", "ceremony", "casa_return", "proposal"] = "ceremony"
-    has_used_hideaway: bool = False
+    formed_via: Literal["opening", "ceremony", "flush_return", "proposal"] = "ceremony"
+    has_used_private_suite: bool = False
     last_steal_attempt_chance: int | None = None
     rebound: bool = False
 
 
-class HideawayState(BaseModel):
+class PrivateSuiteState(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     used_on_day: int | None = None
@@ -214,11 +214,11 @@ class HideawayState(BaseModel):
 
 
 class PendingGather(BaseModel):
-    """A mandatory villa gather waiting to resolve."""
+    """A mandatory resort gather waiting to resolve."""
 
     model_config = ConfigDict(extra="forbid")
 
-    kind: Literal["producer_text", "ceremony", "challenge", "casa_announce"]
+    kind: Literal["producer_text", "ceremony", "challenge", "flush_announce"]
     event_id: str
     gather_location: Location
     fires_on_turn: int
@@ -263,7 +263,7 @@ class FollowUpOption(BaseModel):
         "exit",
     ]
     intent_kind: str
-    stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
+    stat_used: Literal["charm", "banter", "eq", "spark", "loyalty"] | None
     risk: Literal["safe", "low", "medium", "high"]
     tone: str
     audience_hint: Literal["+", "-", ""] = ""
@@ -345,7 +345,7 @@ class Conversation(BaseModel):
 
 
 class NPCNPCConversation(BaseModel):
-    """A persistent off-screen conversation between two NPC islanders."""
+    """A persistent off-screen conversation between two NPC heartbreakers."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -358,7 +358,7 @@ class NPCNPCConversation(BaseModel):
     status: Literal["active", "ending", "closed"] = "active"
 
 
-class PendingRecoupleProposal(BaseModel):
+class PendingPairProposal(BaseModel):
     """An NPC proposal awaiting the player's response."""
 
     model_config = ConfigDict(extra="forbid")
@@ -367,7 +367,7 @@ class PendingRecoupleProposal(BaseModel):
     target_id: str = "player"
     chance: int
     audience_hint_accept: Literal["+", "-", ""] = ""
-    reason: str = "recouple_proposal"
+    reason: str = "pair_proposal"
 
 
 class GameState(BaseModel):
@@ -382,9 +382,9 @@ class GameState(BaseModel):
     phase: Phase = Phase.MORNING
     phase_clock: PhaseClock = Field(default_factory=lambda: PhaseClock(phase=Phase.MORNING.value, budget_minutes=120))
     location_id: Location = Location.POOL
-    villa: VillaName = VillaName.MAIN
+    resort: ResortName = ResortName.MAIN
     player: PlayerState
-    islanders: list[IslanderState]
+    heartbreakers: list[HeartbreakerState]
     couples: list[Couple] = Field(default_factory=list)
     active_ambient_id: str | None = None
     consecutive_ambient_turns: int = 0
@@ -395,7 +395,7 @@ class GameState(BaseModel):
     npc_conversations: list[NPCNPCConversation] = Field(default_factory=list)
     pending_npc_summon: PendingNPCSummon | None = None
     pending_npc_approach: PendingNPCApproach | None = None
-    pending_recouple_proposal: PendingRecoupleProposal | None = None
+    pending_pair_proposal: PendingPairProposal | None = None
     heart_throb_briefs: list[dict[str, str]] = Field(default_factory=list)
     character_creation: CharacterCreation | None = None
     audience_snapshots: list[AudienceSnapshot] = Field(default_factory=list)
@@ -407,8 +407,8 @@ class GameState(BaseModel):
     pending_gather: PendingGather | None = None
     pending_group_date: GroupDate | None = None
     daily_recaps: list[DailyRecap] = Field(default_factory=list)
-    hideaway: HideawayState = Field(default_factory=HideawayState)
-    casa_amor_state: CasaAmorState | None = None
+    private_suite: PrivateSuiteState = Field(default_factory=PrivateSuiteState)
+    flush_of_hearts_state: FlushOfHeartsState | None = None
     outcome: RunOutcome | None = None
 
     @property
@@ -421,14 +421,14 @@ def clamp_relationship(value: int) -> int:
 
 
 def new_game(seed: int, *, player_stats: PlayerStats | None = None) -> GameState:
-    from src.game.state.cast import starting_islanders
+    from src.game.state.cast import starting_heartbreakers
 
     return GameState(
         seed=seed,
         player=PlayerState(
             stats=player_stats
             if player_stats is not None
-            else PlayerStats(charm=6, banter=6, eq=6, graft=6, loyalty=6)
+            else PlayerStats(charm=6, banter=6, eq=6, spark=6, loyalty=6)
         ),
-        islanders=starting_islanders(),
+        heartbreakers=starting_heartbreakers(),
     )

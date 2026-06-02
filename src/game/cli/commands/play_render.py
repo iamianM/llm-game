@@ -5,9 +5,9 @@ from __future__ import annotations
 from itertools import groupby
 
 from src.game.engine.actions import ActionKind, ActionSpec
-from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, partner_for, player_couple
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.turn import TurnResult
 from src.game.state.models import GameState, NPCNPCConversation
 
@@ -20,29 +20,29 @@ def print_character_card(state: GameState) -> None:
     print(f"  Gender: {state.player.gender.value}")
     print(
         f"  Stats: Charm {stats.charm}, Banter {stats.banter}, EQ {stats.eq}, "
-        f"Graft {stats.graft}, Loyalty {stats.loyalty}"
+        f"Spark {stats.spark}, Loyalty {stats.loyalty}"
     )
     print(f"  Public perception: {state.player.public_perception}")
 
 
 def print_state(state: GameState, *, debug: bool = False) -> None:
-    """Print the current villa map and player relationship state."""
+    """Print the current location map and player relationship state."""
     _print_minigame_round(state)
     print(f"\nDay {state.day} | {state.phase.value} | turn {state.turn_index}")
-    print(f"Current villa: {state.villa.value}. You are at the {state.location_id.value.upper()}.")
+    print(f"Current resort: {state.resort.value}. You are at the {state.location_id.value.upper()}.")
     print(
         f"Time remaining: {state.phase_clock.remaining} min "
         f"({state.phase_clock.elapsed_minutes}/{state.phase_clock.budget_minutes} used)"
     )
     if 0 < state.phase_clock.remaining <= 20:
         print("It's getting late - phase will end soon.")
-    print("\nVilla:")
-    for location in locations_for_villa(state.villa):
+    print("\nSunset Bay:")
+    for location in locations_for_resort(state.resort):
         occupants = ["you"] if location is state.location_id else []
         occupants.extend(
-            islander.name
-            for islander in state.islanders
-            if islander.location_id is location and not islander.eliminated
+            heartbreaker.name
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.location_id is location and not heartbreaker.eliminated
         )
         line = f"  {location.value.title():<9} -> {', '.join(occupants) if occupants else '(empty)'}"
         conversations = [
@@ -59,19 +59,19 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
         print(line)
 
     print("\nYour relationships:")
-    for islander in state.islanders:
-        if islander.eliminated:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.eliminated:
             continue
-        rel = islander.relationship
+        rel = heartbreaker.relationship
         print(
-            f"  {islander.name:<7} affection {rel.affection:<3} chemistry {rel.chemistry:<3} "
-            f"trust {rel.trust:<3} friendship {rel.friendship:<3} familiarity {islander.familiarity_with_player:<3}"
+            f"  {heartbreaker.name:<7} affection {rel.affection:<3} chemistry {rel.chemistry:<3} "
+            f"trust {rel.trust:<3} friendship {rel.friendship:<3} familiarity {heartbreaker.familiarity_with_player:<3}"
         )
-        revealed = revealed_preferences(islander)
+        revealed = revealed_preferences(heartbreaker)
         if revealed:
             print(f"    known type: {revealed}")
-        if debug and islander.memories:
-            print(f"    memories: {len(islander.memories)}")
+        if debug and heartbreaker.memories:
+            print(f"    memories: {len(heartbreaker.memories)}")
     if state.active_conversation is not None and state.active_conversation.pending_interruption is not None:
         interruption = state.active_conversation.pending_interruption
         print(
@@ -98,13 +98,13 @@ def print_state(state: GameState, *, debug: bool = False) -> None:
     if couple is not None:
         partner_id = partner_for(couple, state.player.id)
         print(f"\nCouple: {name_for(state, partner_id)} | strength {couple_strength(state, couple)}")
-    if state.hideaway.used_on_day is not None:
-        partner = state.hideaway.partner_id or "unknown"
-        print(f"Hideaway used day {state.hideaway.used_on_day} with {name_for(state, partner)}")
-    if state.casa_amor_state is not None:
-        casa = state.casa_amor_state
-        decision = casa.player_decision.value if casa.player_decision is not None else "pending"
-        print(f"Casa Amor: started day {casa.started_on_day}, return day {casa.return_day}, decision {decision}")
+    if state.private_suite.used_on_day is not None:
+        partner = state.private_suite.partner_id or "unknown"
+        print(f"Private Suite used day {state.private_suite.used_on_day} with {name_for(state, partner)}")
+    if state.flush_of_hearts_state is not None:
+        flush = state.flush_of_hearts_state
+        decision = flush.player_decision.value if flush.player_decision is not None else "pending"
+        print(f"Flush of Hearts: started day {flush.started_on_day}, return day {flush.return_day}, decision {decision}")
 
 
 def print_actions(actions: list[ActionSpec]) -> None:
@@ -119,21 +119,21 @@ def print_actions(actions: list[ActionSpec]) -> None:
 def print_turn(turn: TurnResult) -> None:
     """Print the result of one completed turn."""
     result = turn.mechanical_result
-    if result.pull_attempt is not None:
-        outcome = "succeeded" if result.pull_attempt.success else "missed"
+    if result.private_chat_attempt is not None:
+        outcome = "succeeded" if result.private_chat_attempt.success else "missed"
         print(
-            f"Pull attempt: {result.pull_attempt.target_id} "
-            f"({result.pull_attempt.chance}% chance, rolled {result.pull_attempt.roll}) -- {outcome}"
+            f"Private chat attempt: {result.private_chat_attempt.target_id} "
+            f"({result.private_chat_attempt.chance}% chance, rolled {result.private_chat_attempt.roll}) -- {outcome}"
         )
-        if result.pull_attempt.deflection_line:
-            print(result.pull_attempt.deflection_line)
+        if result.private_chat_attempt.deflection_line:
+            print(result.private_chat_attempt.deflection_line)
     for roll in turn.arrival_rolls:
         print(
             f"Arrival: {name_for(turn.state, roll.arriving_npc_id)} walked in. "
             f"Interruption roll {roll.interruption_roll}/{roll.interruption_chance} "
             f"({'hit' if roll.interruption_hit else 'miss'}); "
-            f"pull roll {roll.pull_roll}/{roll.pull_chance} "
-            f"({'hit' if roll.pull_hit else 'miss'})."
+            f"private chat roll {roll.private_chat_roll}/{roll.private_chat_chance} "
+            f"({'hit' if roll.private_chat_hit else 'miss'})."
         )
     if turn.auto_advance:
         print(f"Time passes. -> {turn.state.phase.value}.")
@@ -147,9 +147,9 @@ def print_turn(turn: TurnResult) -> None:
             print(flavor)
     if turn.event_narration is not None:
         print(turn.event_narration.prose)
-    if result.action.kind is ActionKind.HIDEAWAY:
-        partner = turn.state.hideaway.partner_id or "unknown"
-        print(f"Hideaway night: you and {name_for(turn.state, partner)} spent private time together.")
+    if result.action.kind is ActionKind.PRIVATE_SUITE:
+        partner = turn.state.private_suite.partner_id or "unknown"
+        print(f"Private Suite night: you and {name_for(turn.state, partner)} spent private time together.")
     if turn.state.pending_challenge is not None and turn.state.pending_challenge.result is not None:
         challenge = turn.state.pending_challenge
         print(f"Challenge: {challenge.kind} -- {challenge.result}")
@@ -166,8 +166,8 @@ def print_turn(turn: TurnResult) -> None:
             couple = " & ".join(entry.couple)
             marker = " (you)" if entry.is_player_couple else ""
             print(f"  {entry.rank}. {couple}{marker}: {entry.score}")
-    if turn.agent_commits.villa_update is not None:
-        print_villa_update(turn)
+    if turn.agent_commits.resort_update is not None:
+        print_resort_update(turn)
     if turn.follow_up_menu is not None and turn.follow_up_menu.npc_will_leave:
         print(turn.follow_up_menu.npc_exit_line)
     if result.roll is not None and result.success_chance is not None:
@@ -205,9 +205,9 @@ def print_turn(turn: TurnResult) -> None:
     print(f"hash: {turn.state_hash}")
 
 
-def print_villa_update(turn: TurnResult) -> None:
-    """Print named background villa events from the turn commits."""
-    update = turn.agent_commits.villa_update
+def print_resort_update(turn: TurnResult) -> None:
+    """Print named background resort events from the turn commits."""
+    update = turn.agent_commits.resort_update
     if update is None:
         return
     lines: list[str] = []
@@ -233,7 +233,7 @@ def print_villa_update(turn: TurnResult) -> None:
         lines.append(f"Conversation ended ({ended.conversation_id}): {ended.reason}")
     for summon in update.npc_summoned_elsewhere:
         lines.append(
-            f"{name_for(turn.state, summon.npc_id)} was pulled to the "
+            f"{name_for(turn.state, summon.npc_id)} was summoned to the "
             f"{summon.target_location.value} ({summon.reason})"
         )
     for exchange in turn.agent_commits.background_dialogues:
@@ -265,14 +265,14 @@ def print_background_history(records: list[dict[str, object]]) -> None:
         print(f"    {exchange.get('speaker_b_line', '')}")
 
 
-def name_for(state: GameState, islander_id: str) -> str:
-    """Return a display name for an islander id."""
-    if islander_id == "player":
+def name_for(state: GameState, heartbreaker_id: str) -> str:
+    """Return a display name for an heartbreaker id."""
+    if heartbreaker_id == "player":
         return "you"
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            return heartbreaker.name
+    return heartbreaker_id
 
 
 def _print_latest_daily_recap(turn: TurnResult) -> None:
@@ -282,16 +282,16 @@ def _print_latest_daily_recap(turn: TurnResult) -> None:
     if recap.day != turn.state.day - 1:
         return
     if not recap.items:
-        print("While you were busy yesterday: no major villa memories surfaced.")
+        print("While you were busy yesterday: no major Sunset Bay memories surfaced.")
         return
     print("While you were busy yesterday:")
     for item in recap.items:
         print(f"  - {name_for(turn.state, item.holder_id)} remembered {item.subject_id}: {item.content}")
 
 
-def names_for(state: GameState, islander_ids: list[str]) -> str:
-    """Return a display label for multiple islanders."""
-    return " & ".join(name_for(state, islander_id) for islander_id in islander_ids)
+def names_for(state: GameState, heartbreaker_ids: list[str]) -> str:
+    """Return a display label for multiple heartbreakers."""
+    return " & ".join(name_for(state, heartbreaker_id) for heartbreaker_id in heartbreaker_ids)
 
 
 def short_line(line: str, *, limit: int = 120) -> str:
@@ -321,10 +321,10 @@ def _print_follow_up_actions(actions: list[ActionSpec]) -> None:
 
 def _target_name(turn: TurnResult) -> str:
     target_id = turn.mechanical_result.action.target_id
-    for islander in turn.state.islanders:
-        if islander.id == target_id:
-            return islander.name
-    return "Islander"
+    for heartbreaker in turn.state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker.name
+    return "Heartbreaker"
 
 
 def _npc_conversation(state: GameState, conversation_id: str) -> NPCNPCConversation | None:
@@ -407,11 +407,11 @@ _AMBIENT_FLAVOR: dict[str, list[str]] = {
         "Music drifts over from the speakers. Someone laughs at the kitchen end.",
     ],
     "pool_people_watch": [
-        "You watch from the lounger. There's a moment between two islanders that looked too long to be nothing.",
+        "You watch from the lounger. There's a moment between two heartbreakers that looked too long to be nothing.",
         "Two heads bend together near the bar. Whatever they're saying, it's not for the cameras.",
     ],
     "kitchen_make_snack": [
-        "You poke around the kitchen and end up making something half-decent. The villa always feels smaller in here.",
+        "You poke around the kitchen and end up making something half-decent. Sunset Bay always feels smaller in here.",
         "Someone left half a melon out. You finish it because that's just the kind of day it is.",
     ],
     "kitchen_help_out": [
@@ -419,13 +419,13 @@ _AMBIENT_FLAVOR: dict[str, list[str]] = {
     ],
     "terrace_take_air": [
         "The terrace is quieter than the pool. You watch the water from up here for a beat.",
-        "Someone's laugh carries up from the firepit and you find yourself smiling at nothing.",
+        "Someone's laugh carries up from the flame_deck and you find yourself smiling at nothing.",
     ],
     "bedroom_check_outfits": [
-        "You hold up a couple of options in the mirror. The villa light is unforgiving.",
+        "You hold up a couple of options in the mirror. The Sunset Bay light is unforgiving.",
     ],
-    "firepit_sit_quietly": [
-        "You watch the flames. The villa noise dims for a second.",
+    "flame_deck_sit_quietly": [
+        "You watch the flames. The Sunset Bay noise dims for a second.",
         "Someone joins you on the bench without speaking. You appreciate that.",
         "The fire pops. You replay one of today's conversations and wince a little.",
     ],
@@ -447,10 +447,10 @@ def _ambient_flavor(turn: TurnResult, ambient_id: str | None) -> str | None:
 def _label(kind: str) -> str:
     labels = {
         "compatibility_quiz": "Compatibility Quiz",
-        "mr_and_mrs": "The Couples Quiz",
+        "couples_quiz": "The Couples Quiz",
         "heart_rate": "Pulse Race",
         "lie_detector": "Lie Detector",
-        "snog_marry_pie": "Kiss Wed Pass",
+        "kiss_wed_pass": "Kiss Wed Pass",
         "final_couples": "Final Couples Challenge",
     }
     return labels.get(kind, kind.replace("_", " ").title())

@@ -7,7 +7,7 @@ import { getSession, submitTurnStream } from "../../lib/api";
 import type { AvailableAction, SessionResponse, TurnResponse } from "../../lib/types";
 import { playSfx } from "../../lib/sfx";
 import { loadLook } from "../../lib/look";
-import type { ArchetypeId, IslanderLook } from "../../lib/look";
+import type { ArchetypeId, HeartbreakerLook } from "../../lib/look";
 import { useUiStore } from "../../lib/store";
 import { CeremonyOverlay } from "../ceremony/CeremonyOverlay";
 import { DayRecap } from "../chrome/DayRecap";
@@ -28,7 +28,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
   const [pendingTargetId, setPendingTargetId] = useState<string | null>(null);
   const [deferredCeremony, setDeferredCeremony] = useState(false);
-  const [look, setLook] = useState<IslanderLook | null>(null);
+  const [look, setLook] = useState<HeartbreakerLook | null>(null);
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -79,12 +79,12 @@ export function GameStage({ sessionId }: { sessionId: string }) {
 
   // Drive the background score from the live game phase: ceremonies and the
   // build-up to a challenge get the tense bed, nights get the evening bed, and
-  // ordinary villa daytime gets the warm day bed. Leaving the run resets the
+  // ordinary Sunset Bay daytime gets the warm day bed. Leaving the run resets the
   // app-wide player back to the title theme.
   const liveState = lastTurn?.state ?? query.data?.state;
   const livePhase = liveState?.phase;
   const liveTension = Boolean(
-    showCeremony || liveState?.pending_challenge || liveState?.pending_recouple_proposal,
+    showCeremony || liveState?.pending_challenge || liveState?.pending_pair_proposal,
   );
   useEffect(() => {
     if (!livePhase) return;
@@ -94,11 +94,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   }, [livePhase, liveTension, setMusicScene]);
   useEffect(() => () => setMusicScene("title"), [setMusicScene]);
 
-  // A firepit reveal lands: punctuate the overlay with the ceremony sting.
+  // A flame_deck reveal lands: punctuate the overlay with the ceremony sting.
   useEffect(() => {
     if (showCeremony) playSfx("ceremony-reveal");
   }, [showCeremony]);
-  // "A text just came in!" — chime when the villa drops into the daily Text
+  // Paradise Calls — chime when Sunset Bay drops into the daily notice
   // phase, the moment a producer message or gather is announced.
   const prevPhaseRef = useRef<string | undefined>(undefined);
   useEffect(() => {
@@ -117,8 +117,8 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const narration = ceremonyNarration(lastTurn, state);
   const latestRecap = state.daily_recaps[state.daily_recaps.length - 1];
   // Attribute each recap whisper to its holder so the reader can tell whose
-  // first-person "I" each card is (islander name, or "You" for the player).
-  const recapSpeakers = Object.fromEntries(state.islanders.map((islander) => [islander.id, islander.name]));
+  // first-person "I" each card is (heartbreaker name, or "You" for the player).
+  const recapSpeakers = Object.fromEntries(state.heartbreakers.map((heartbreaker) => [heartbreaker.id, heartbreaker.name]));
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
@@ -178,7 +178,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         />
       ) : null}
       {showRecap && latestRecap && !showCeremony ? (
-        <DayRecap recap={latestRecap} villaLabel={state.villa_label} speakers={recapSpeakers} playerId={state.player.id} onClose={() => setShowRecap(false)} />
+        <DayRecap recap={latestRecap} resortLabel={state.resort_label} speakers={recapSpeakers} playerId={state.player.id} onClose={() => setShowRecap(false)} />
       ) : null}
       <style jsx>{`
         /* The stage must fill the space below the 56px TopBar WITHOUT spilling
@@ -213,11 +213,11 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   );
 }
 
-const CASA_KINDS = new Set(["casa_amor_arrival", "casa_amor_decision"]);
+const FLUSH_KINDS = new Set(["flush_of_hearts_arrival", "flush_of_hearts_decision"]);
 const COUPLE_REVEAL_KINDS = new Set([
-  "recoupling",
+  "pairing",
   "partner_stolen",
-  "casa_amor_return_reveal",
+  "flush_of_hearts_return_reveal",
   "final_vote",
 ]);
 
@@ -225,9 +225,9 @@ function ceremonyTitle(event: Record<string, unknown> | undefined, state: Sessio
   const kind = String(event?.kind ?? "");
   const subKind = String(event?.sub_kind ?? "");
   if (kind === "challenge") return displayEventName(subKind || kind);
-  if (kind === "recouple_proposal") return "Heart Swap Proposal";
-  if (kind === "casa_amor_return_reveal") return "Sunset Bay Return";
-  if (CASA_KINDS.has(kind)) return "Flush of Hearts";
+  if (kind === "pair_proposal") return "Heart Swap Proposal";
+  if (kind === "flush_of_hearts_return_reveal") return "Sunset Bay Return";
+  if (FLUSH_KINDS.has(kind)) return "Flush of Hearts";
   if (kind === "producer_text" || kind === "gather_scheduled") return "Paradise Calls";
   if (kind === "elimination") return "Heart Out";
   if (kind === "final_vote") return "Final Vote";
@@ -239,11 +239,11 @@ function ceremonyEyebrow(event: Record<string, unknown> | undefined) {
   const kind = String(event?.kind ?? "");
   if (kind === "challenge") return "Challenge Result";
   if (kind === "producer_text") return "A Text Lands";
-  if (kind === "gather_scheduled") return "At the Firepit";
-  if (kind === "casa_amor_return_reveal") return "Flush of Hearts";
-  if (CASA_KINDS.has(kind)) return "Second Villa";
+  if (kind === "gather_scheduled") return "At the Flame Deck";
+  if (kind === "flush_of_hearts_return_reveal") return "Flush of Hearts";
+  if (FLUSH_KINDS.has(kind)) return "Flush of Hearts";
   if (kind === "final_vote") return "The Last Text";
-  return "At the Firepit";
+  return "At the Flame Deck";
 }
 
 function ceremonyShowsCouples(event: Record<string, unknown> | undefined, state: SessionResponse["state"]) {
@@ -278,8 +278,8 @@ function displayEventName(value: string) {
     final_couples: "Final Couples Challenge",
     heart_rate: "Pulse Race",
     lie_detector: "Lie Detector",
-    mr_and_mrs: "The Couples Quiz",
-    snog_marry_pie: "Kiss Wed Pass",
+    couples_quiz: "The Couples Quiz",
+    kiss_wed_pass: "Kiss Wed Pass",
   };
   return names[value] ?? value.replaceAll("_", " ").replace(/\b\w/g, (match) => match.toUpperCase());
 }

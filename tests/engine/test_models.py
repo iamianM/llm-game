@@ -37,25 +37,25 @@ def test_game_state_forbids_extra_fields() -> None:
 
 def test_player_stats_allows_runtime_growth_above_starting_budget() -> None:
     """Runtime stat growth can exceed the starting 30-point creation budget."""
-    stats = PlayerStats(charm=9, banter=9, eq=6, graft=6, loyalty=6)
+    stats = PlayerStats(charm=9, banter=9, eq=6, spark=6, loyalty=6)
 
-    assert stats.charm + stats.banter + stats.eq + stats.graft + stats.loyalty == 36
+    assert stats.charm + stats.banter + stats.eq + stats.spark + stats.loyalty == 36
 
 
 def test_new_game_assigns_personality_per_npc() -> None:
-    """Starting islanders have deterministic personality profiles."""
+    """Starting heartbreakers have deterministic personality profiles."""
     state = new_game(1)
 
-    assert state.islanders[0].big5.extraversion == 9
-    assert state.islanders[1].attachment is AttachmentStyle.ANXIOUS
-    assert state.islanders[2].type_on_paper.values == ["steadiness", "depth"]
+    assert state.heartbreakers[0].big5.extraversion == 9
+    assert state.heartbreakers[1].attachment is AttachmentStyle.ANXIOUS
+    assert state.heartbreakers[2].ideal_match.values == ["steadiness", "depth"]
 
 
-def test_new_game_assigns_canonical_gender_per_islander() -> None:
-    """Starting islanders carry the H9 gender model used by intent filtering."""
+def test_new_game_assigns_canonical_gender_per_heartbreaker() -> None:
+    """Starting heartbreakers carry the H9 gender model used by intent filtering."""
     state = new_game(1)
 
-    genders = {islander.id: islander.gender for islander in state.islanders}
+    genders = {heartbreaker.id: heartbreaker.gender for heartbreaker in state.heartbreakers}
 
     assert genders == {
         "chloe": Gender.WOMAN,
@@ -69,26 +69,26 @@ def test_new_game_assigns_canonical_gender_per_islander() -> None:
     }
 
 
-def test_new_game_has_8_starting_islanders() -> None:
+def test_new_game_has_8_starting_heartbreakers() -> None:
     state = new_game(1)
 
-    assert len(state.islanders) == 8
+    assert len(state.heartbreakers) == 8
 
 
-def test_backstory_loaded_per_islander() -> None:
+def test_backstory_loaded_per_heartbreaker() -> None:
     state = new_game(1)
 
-    assert all(islander.backstory for islander in state.islanders)
+    assert all(heartbreaker.backstory for heartbreaker in state.heartbreakers)
     assert "primary school teacher" in next(
-        islander.backstory for islander in state.islanders if islander.id == "chloe"
+        heartbreaker.backstory for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe"
     )
 
 
 def test_new_game_gender_balance_4_men_4_women() -> None:
     state = new_game(1)
 
-    assert [islander.gender for islander in state.islanders].count(Gender.MAN) == 4
-    assert [islander.gender for islander in state.islanders].count(Gender.WOMAN) == 4
+    assert [heartbreaker.gender for heartbreaker in state.heartbreakers].count(Gender.MAN) == 4
+    assert [heartbreaker.gender for heartbreaker in state.heartbreakers].count(Gender.WOMAN) == 4
 
 
 def test_clamp_relationship_boundaries() -> None:
@@ -115,7 +115,7 @@ def test_dialogue_does_not_affect_hash() -> None:
         exchanges=[
             ExchangeRecord(
                 turn_index=1,
-                intent_id="friendly_chat_villa",
+                intent_id="friendly_chat_resort",
                 player_dialogue="Original player line.",
                 npc_dialogue="Original NPC line.",
                 npc_tone="warm",

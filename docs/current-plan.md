@@ -25,7 +25,7 @@ Current pillars:
 
 - Deterministic social-sim engine with seeded RNG and typed state.
 - Typed agent layer for dialogue, narration, options, summaries, background
-  villa life, gossip context, and trait generation.
+  resort life, gossip context, and trait generation.
 - Thin browser client over FastAPI.
 - CLI for interactive play, persisted sessions, checkpoints, branch comparison,
   replay, review notes, deterministic verification, and golden LLM evals.
@@ -140,8 +140,8 @@ many systems faster than the UI can make them legible.
 CLI or raw traces to understand what happened.
 
 **Smallest slice:** Review the browser through character creation, opening
-coupling, first chats, interruption/pull moments, challenge, recoupling warning,
-and Day-3 recoupling. Fix only the confusing or unreachable surfaces. Includes
+coupling, first chats, interruption/pull moments, challenge, Pairing Ceremony warning,
+and Day-3 Pairing Ceremony. Fix only the confusing or unreachable surfaces. Includes
 wiring the round-based Compatibility Quiz view that the API now exposes
 (`pending_challenge.stem`, `round_index`, `round_count`, `choices[]` with
 `{choice_id, round_index}` payloads).
@@ -153,7 +153,7 @@ wiring the round-based Compatibility Quiz view that the API now exposes
 and a review packet for the same action path when useful.
 
 **Acceptance:** Every legal engine action in the covered path is reachable in
-the browser, the player can tell why the villa state changed, and no important
+the browser, the player can tell why the resort state changed, and no important
 result is visible only in raw JSON.
 
 ### Remaining Five Minigames
@@ -169,7 +169,7 @@ checklist, and three-layer eval policy from
    (adds the truth/lie axis and event-history lookups).
 3. Pulse Race — [minigames/heart-rate.md](minigames/heart-rate.md)
    (validates reveal-only minigames with one reaction round).
-4. Kiss Wed Pass — [minigames/snog-marry-pie.md](minigames/snog-marry-pie.md)
+4. Kiss Wed Pass — [minigames/kiss-wed-pass.md](minigames/kiss-wed-pass.md)
    (validates constrained-allocation choice sets).
 5. Final Couples Challenge — [minigames/final-couples.md](minigames/final-couples.md)
    (validates cross-minigame aggregation feeding the final vote).

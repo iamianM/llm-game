@@ -43,11 +43,11 @@ def curate_npc_conversation(
     """Curate a closed NPC-NPC conversation."""
     conversation.status = "closed"
     bystander_ids = [
-        islander.id
-        for islander in state.islanders
-        if islander.id not in conversation.participants
-        and not islander.eliminated
-        and islander.location_id == conversation.location_id
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.id not in conversation.participants
+        and not heartbreaker.eliminated
+        and heartbreaker.location_id == conversation.location_id
     ]
     if state.location_id == conversation.location_id:
         bystander_ids.append("player")
@@ -85,24 +85,24 @@ def _safe_curate(
 
 def conversation_bystanders(state: GameState, target_id: str) -> list[str]:
     return [
-        islander.id
-        for islander in state.islanders
-        if islander.id != target_id
-        and not islander.eliminated
-        and islander.location_id == state.location_id
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.id != target_id
+        and not heartbreaker.eliminated
+        and heartbreaker.location_id == state.location_id
     ]
 
 
 def bump_target_familiarity(state: GameState, target_id: str, amount: int) -> None:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            apply_familiarity(islander, amount)
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            apply_familiarity(heartbreaker, amount)
             return
 
 
 def emit_revealed_facts(state: GameState, conversation: Conversation) -> None:
     """Emit KnownFacts for successful tier-revealing conversation intents."""
-    target = next((islander for islander in state.islanders if islander.id == conversation.target_id), None)
+    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == conversation.target_id), None)
     if target is None:
         return
     for exchange in conversation.exchanges:
@@ -120,7 +120,7 @@ def emit_revealed_facts(state: GameState, conversation: Conversation) -> None:
 
 
 def intro_segment_complete(state: GameState) -> bool:
-    """Return whether every non-partner starting islander has been introduced."""
+    """Return whether every non-partner starting heartbreaker has been introduced."""
     if state.phase is not Phase.INTROS:
         return False
     partner_ids = {
@@ -130,9 +130,9 @@ def intro_segment_complete(state: GameState) -> bool:
         if state.player.id in {couple.partner_a_id, couple.partner_b_id} and other_id != state.player.id
     }
     required = {
-        islander.id
-        for islander in state.islanders
-        if not islander.eliminated and islander.id not in partner_ids
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated and heartbreaker.id not in partner_ids
     }
     return required <= set(state.intro_completed_ids)
 
@@ -141,15 +141,15 @@ def intro_memory_batch(state: GameState) -> MemoryBatch:
     """Create the single deterministic memory batch for the Day-1 intro segment."""
     drafts = [
         MemoryDraft(
-            holder_id=islander.id,
+            holder_id=heartbreaker.id,
             subject_id="player",
             content="I properly met the player during Day One intros and got a real first read.",
             source="direct",
             emotional_weight=4,
             tags=["intro", "day_one"],
         )
-        for islander in state.islanders
-        if islander.id in state.intro_completed_ids
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.id in state.intro_completed_ids
     ]
     return MemoryBatch(
         kind="player",

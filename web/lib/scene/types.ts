@@ -42,6 +42,6 @@ export type SceneBeat =
   | { kind: "choice_fan"; spec: ChoiceFanSpec }
   | { kind: "delta_pop"; subjectId: string; deltaKind: "audience" | "affection" | "loyalty"; amount: number; durationMs: number }
   // A short, tonal "your bond just moved" cue ("The spark with Chloe is
-  // electric.") floated near the acted-on islander after an interaction. Like
+  // electric.") floated near the acted-on heartbreaker after an interaction. Like
   // delta_pop it auto-advances (no tap) so it never adds friction to a chat.
   | { kind: "connection_shift"; subjectId: string; text: string; durationMs: number };

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { findOutfit, loadLook, type IslanderLook } from "../../lib/look";
+import { findOutfit, loadLook, type HeartbreakerLook } from "../../lib/look";
 import { playerSprite } from "../../lib/scene/player-sprite";
 import type { SessionState } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
@@ -11,9 +11,9 @@ import { Button } from "../ui/Button";
 export function FinaleScreen({ state, sessionId }: { state: SessionState; sessionId?: string }) {
   const playerCouple = state.couples.find((couple) => couple.is_player_couple);
   const outcome = finaleOutcome(state.outcome);
-  // Load the saved look so the player's own Islander — outfit accent and all —
+  // Load the saved look so the player's own Heartbreaker — outfit accent and all —
   // shows up at their big moment instead of a generic initials disc.
-  const [look, setLook] = useState<IslanderLook | null>(null);
+  const [look, setLook] = useState<HeartbreakerLook | null>(null);
   useEffect(() => {
     if (sessionId) setLook(loadLook(sessionId));
   }, [sessionId]);
@@ -140,7 +140,7 @@ function finaleOutcome(outcome: SessionState["outcome"]) {
     case "won_as_couple":
       return {
         headline: "Sunset Bay has its winners",
-        summary: "The villa fell for you, and the nation voted you home — you take the crown hand in hand.",
+        summary: "Sunset Bay fell for you, and the audience voted you home — you take the crown hand in hand.",
         reward: "The crowd sends you out with a roar.",
       };
     case "runner_up_couple":
@@ -153,12 +153,12 @@ function finaleOutcome(outcome: SessionState["outcome"]) {
       return {
         headline: "You leave Sunset Bay solo",
         summary: "No couple at the final this time, but you walk out with your head high and your story your own.",
-        reward: "The villa carries your name long after you go.",
+        reward: "Sunset Bay carries your name long after you go.",
       };
     case "eliminated":
       return {
         headline: "Your summer ends tonight",
-        summary: "The villa has spoken, and tonight you go Heart Out — carrying every memory you made here with you.",
+        summary: "Sunset Bay has spoken, and tonight you go Heart Out — carrying every memory you made here with you.",
         reward: "Sunset Bay keeps talking about you after you leave.",
       };
     default:

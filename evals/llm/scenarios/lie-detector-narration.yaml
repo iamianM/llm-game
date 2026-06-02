@@ -4,7 +4,7 @@ goal: Prove the narrator dramatises detection outcomes while staying faithful to
 seed: 909
 initial_day: 4
 initial_phase: morning
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: heartthrob
   gender: man
@@ -12,7 +12,7 @@ character_creation:
     charm: 6
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 8
 initial_couples:
   - partner_a_id: player
@@ -77,6 +77,6 @@ turns:
           matches the engine's reveal.
       - id: no_invented_evidence
         criteria: >
-          The narrator does not invent a kiss, hideaway visit, or
-          recouple regret that isn't on the engine record. Lies are
+          The narrator does not invent a kiss, private_suite visit, or
+          pair regret that isn't on the engine record. Lies are
           dramatised against the reveal payloads only.

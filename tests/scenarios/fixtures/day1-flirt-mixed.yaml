@@ -1,7 +1,7 @@
 name: day1-flirt-mixed
 seed: 2
 initial_phase: morning
-expected_hash: 1b146493da8cc84d26872ff6c8c71a312c0e99151dce8d621055fae0528c02fa
+expected_hash: d698b2ff664b7cb5b7a91c1594ea9a3b804944d0377ae28d89426ef15bd1f0e9
 actions:
 - kind: start_conversation
   target_id: chloe
@@ -10,7 +10,7 @@ actions:
   target_id: kitchen
 - kind: start_conversation
   target_id: maya
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: move
   target_id: terrace
 - kind: start_conversation

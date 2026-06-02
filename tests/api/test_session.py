@@ -20,7 +20,7 @@ def test_new_session_returns_view_and_persisted_envelope() -> None:
     assert created.status_code == 201
     payload = created.json()
     assert payload["view"]["session_id"]
-    assert payload["view"]["state"]["villa_label"] == "Sunset Bay"
+    assert payload["view"]["state"]["resort_label"] == "Sunset Bay"
     assert payload["view"]["available_actions"]
     persisted = payload["persisted"]
     assert persisted["session_id"] == payload["view"]["session_id"]

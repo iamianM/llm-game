@@ -122,7 +122,7 @@ Use this before commits that touch agents, prompts, or game logic. It's not in `
 - [ ] The autopilot picks the character creation archetype + stat allocation + each turn's action.
 - [ ] Every player-action turn in the resulting trace has `agent_commits.player_autopilot.rationale` set.
 - [ ] The autopilot trace replays via `play --replay TRACE_PATH` with byte-identical final hash.
-- [ ] Personas affect autopilot behavior: loyal autopilot stays with original partner at Casa Amor; chaotic autopilot tends to escalate flirts and pick risky options; player-persona autopilot tries to optimize the final vote outcome.
+- [ ] Personas affect autopilot behavior: loyal autopilot stays with original partner at Flush of Hearts; chaotic autopilot tends to escalate flirts and pick risky options; player-persona autopilot tries to optimize the final vote outcome.
 - [ ] `verify --playthrough` on an autopilot trace passes both new assertions plus all prior assertions.
 - [ ] HTML report displays the autopilot rationale per player turn.
 - [ ] `make autopilot-check` runs and exits zero on a healthy build.

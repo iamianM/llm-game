@@ -4,7 +4,7 @@ goal: Prove the finale narration names the deterministic winning couple and the 
 seed: 909
 initial_day: 6
 initial_phase: evening
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -12,7 +12,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_couples:
   - partner_a_id: player
@@ -35,14 +35,14 @@ initial_relationships:
     friendship: 25
 judge_context:
   - The final vote outcome is deterministic; the narrator describes the engine's verdict.
-  - The narrator may carry finale weight — the firepit at night, the speeches, the camera holding on each couple — but cannot move the prize.
+  - The narrator may carry finale weight — the flame_deck at night, the speeches, the camera holding on each couple — but cannot move the prize.
 turns:
   - id: schedule-final-vote
     action:
       kind: ambient
       target_id: ambient_wait
     golden: >
-      The villa is called to the firepit one last time. The producer text
+      The resort is called to the flame_deck one last time. The producer text
       lands, the four couples assemble, and the narrator sets the finale
       stakes — months of moments hanging on the next reveal. The outcome
       is still pending.
@@ -60,7 +60,7 @@ turns:
       held look, the cast and the cameras all at once. Imagine: "The host
       reads the result. Maya and Liam win it. Chloe finds the player's
       hand in the dark. Sunset Bay's first season ends with both couples
-      still on the firepit and the cameras pulling away."
+      still on the flame_deck and the cameras drifting away."
     checks:
       - ceremony_events_present
       - event_narration_valid
@@ -77,6 +77,6 @@ turns:
       - id: finale_tone
         criteria: >
           The prose carries finale weight — at least one specific moment
-          (a kiss, a hand, a held look, a camera pull) for the player and
+          (a kiss, a hand, a held look, a camera move) for the player and
           Chloe and for the winning couple if they aren't the same.
           Fail if the narration reads like a vote-tally summary.

@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { Gender } from "../../lib/types";
-import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { findOutfit, findVibe, type HeartbreakerLook } from "../../lib/look";
 import { npcSprite } from "../../lib/scene/npc-art";
 import { playerSprite } from "../../lib/scene/player-sprite";
 import type { CharacterPose, Position } from "../../lib/scene/types";
@@ -16,7 +16,7 @@ type Props = {
   role: "player" | "npc";
   gender?: Gender;
   archetypeId?: string;
-  look?: IslanderLook | null;
+  look?: HeartbreakerLook | null;
   position: Position;
   pose: CharacterPose;
   active: boolean;
@@ -251,7 +251,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
           --lift: 0px;
         }
         @media (max-width: 520px) {
-          /* Love Island mobile framing: figures are big + close, cropping
+          /* Paradise Hearts mobile framing: figures are big + close, cropping
              thigh-up so they fill the stage instead of floating small with a
              slab of dead sky overhead. The bottom-anchored standees have
              transparent headroom, so the box runs tall and the lower anchor

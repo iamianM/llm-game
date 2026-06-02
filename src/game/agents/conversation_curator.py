@@ -18,7 +18,7 @@ from pathlib import Path
 
 from openai import OpenAI
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     AgentGenerationError,
@@ -32,8 +32,8 @@ from src.game.agents.runtime import (
 )
 from src.game.state.models import (
     Conversation,
-    Gender,
     GameState,
+    Gender,
     MemoryBatch,
     MemoryDraft,
     NPCNPCConversation,
@@ -190,7 +190,7 @@ def validate_memory_batch(
     bystander_ids: set[str],
 ) -> None:
     """Fail loud when a memory commit violates the curator contract."""
-    valid_ids = {"player", *(islander.id for islander in state.islanders)}
+    valid_ids = {"player", *(heartbreaker.id for heartbreaker in state.heartbreakers)}
     holders = {memory.holder_id for memory in batch.memories}
     missing_participants = participant_ids - holders
     if missing_participants:
@@ -198,7 +198,7 @@ def validate_memory_batch(
     for memory in batch.memories:
         if memory.holder_id not in valid_ids:
             raise ValueError(f"unknown memory holder_id: {memory.holder_id}")
-        if memory.subject_id not in valid_ids and memory.subject_id != "villa":
+        if memory.subject_id not in valid_ids and memory.subject_id != "resort":
             raise ValueError(f"unknown memory subject_id: {memory.subject_id}")
         if memory.source == "direct" and memory.holder_id not in participant_ids:
             raise ValueError(f"direct memory holder was not a participant: {memory.holder_id}")
@@ -209,7 +209,7 @@ def validate_memory_batch(
     for seed in batch.gossip_seeds:
         if seed.holder_id not in valid_ids:
             raise ValueError(f"unknown gossip seed holder_id: {seed.holder_id}")
-        if seed.subject_id not in valid_ids and seed.subject_id != "villa":
+        if seed.subject_id not in valid_ids and seed.subject_id != "resort":
             raise ValueError(f"unknown gossip seed subject_id: {seed.subject_id}")
 
 
@@ -346,10 +346,10 @@ def _render_npc_context(
     )
 
 
-def _relationship_summary(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            rel = islander.relationship
+def _relationship_summary(state: GameState, heartbreaker_id: str) -> str:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            rel = heartbreaker.relationship
             return (
                 f"affection {rel.affection}, chemistry {rel.chemistry}, "
                 f"trust {rel.trust}, friendship {rel.friendship}"
@@ -360,9 +360,9 @@ def _relationship_summary(state: GameState, islander_id: str) -> str:
 def _name_for(state: GameState, holder_id: str) -> str:
     if holder_id == "player":
         return state.player.name
-    for islander in state.islanders:
-        if islander.id == holder_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == holder_id:
+            return heartbreaker.name
     return holder_id
 
 
@@ -373,9 +373,9 @@ def _pronouns_for_gender(gender: Gender) -> str:
 def _gender_for(state: GameState, holder_id: str) -> Gender | None:
     if holder_id == "player":
         return state.player.gender
-    for islander in state.islanders:
-        if islander.id == holder_id:
-            return islander.gender
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == holder_id:
+            return heartbreaker.gender
     return None
 
 
@@ -393,7 +393,7 @@ def _list_ids(ids: Sequence[str]) -> str:
 
 
 def _valid_subject_ids(state: GameState) -> str:
-    ids = ["player", "villa", *(islander.id for islander in state.islanders if not islander.eliminated)]
+    ids = ["player", "resort", *(heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated)]
     return ", ".join(ids)
 
 
@@ -401,11 +401,11 @@ def _mentioned_third_party_ids(state: GameState, conversation: CuratableConversa
     participant_ids = _participant_ids(conversation)
     mentioned = []
     text = _conversation_text(conversation).lower()
-    for islander in state.islanders:
-        if islander.id in participant_ids or islander.eliminated:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id in participant_ids or heartbreaker.eliminated:
             continue
-        if islander.name.lower() in text:
-            mentioned.append(f"{islander.id} ({islander.name}, {_pronouns_for_gender(islander.gender)})")
+        if heartbreaker.name.lower() in text:
+            mentioned.append(f"{heartbreaker.id} ({heartbreaker.name}, {_pronouns_for_gender(heartbreaker.gender)})")
     return ", ".join(mentioned) if mentioned else "none"
 
 

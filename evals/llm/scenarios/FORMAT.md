@@ -26,7 +26,7 @@ character_creation:              # if omitted, the player has only defaults
     charm: 9
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 5
 initial_day: 3                   # 1..6
 initial_phase: evening           # morning / afternoon / evening / intros / text / event
@@ -43,10 +43,10 @@ initial_npc_conversations:       # seed an off-screen NPC-NPC chat
     topic: Maya and Liam comparing notes on the early couples
     started_on_turn: 0
     status: active
-live_villa_life: false           # set false unless the scenario is testing
-                                 # Villa Orchestrator + Background Dialogue
+live_resort_life: false           # set false unless the scenario is testing
+                                 # Resort Orchestrator + Background Dialogue
 judge_context:                   # short bullets the judge sees as fixed facts
-  - This is a Day 3 firepit beat; recoupling is decided in-engine.
+  - This is a Day 3 flame_deck beat; pairing is decided in-engine.
 ```
 
 ## Turn list
@@ -92,7 +92,7 @@ vocabulary (per ENGINEERING.md R7 and R18).
     under an action that legitimately changes couples.
 
 - **Conversation contract:**
-  - `exchange_valid` — Islander Voice output validates (hidden-cast guard,
+  - `exchange_valid` — Heartbreaker Voice output validates (hidden-cast guard,
     tone enum, gossip-subject allowance).
   - `follow_up_menu_valid` — menu schema + exit invariant + enum values.
   - `exactly_one_exit` — exactly one exit-category option.
@@ -115,7 +115,7 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `challenge_resolved` — pending challenge has a result.
   - `challenge_cleared` — a resolved challenge no longer owns the playable
     surface after its wrap turn.
-  - `casa_active` — Flush of Hearts is active.
+  - `flush_active` — Flush of Hearts is active.
   - `run_outcome_present` — final outcome is set.
   - `location_is:<id>` — player location matches.
   - `relationship_delta:<target>:<field>:<amount>` — exact mechanical
@@ -131,23 +131,23 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `couple_present:<first>:<second>` — the named pair exists in `state.couples`.
   - `audience_delta:<amount>` — the action applied the exact public perception
     delta.
-  - `hideaway_consumed:<partner_id>` — Hideaway state, couple flag, player
+  - `private_suite_consumed:<partner_id>` — Private Suite state, couple flag, player
     location, partner location, used day, and deltas-applied flag all match.
   - `visible_targets_include:id1,id2,...` — listed NPCs are at the player's
     location and not eliminated.
 
-- **Pull mechanics:**
-  - `pull_recorded` — a pull attempt was rolled this turn.
-  - `pull_succeeded` / `pull_rejected` — the attempt resolved as expected.
-  - `npc_conversation_still_active` — after a rejected pull, the original
+- **Private chat mechanics:**
+  - `private_chat_recorded` — a private chat attempt was rolled this turn.
+  - `private_chat_succeeded` / `private_chat_rejected` — the attempt resolved as expected.
+  - `npc_conversation_still_active` — after a rejected private chat, the original
     NPC-NPC conversation persists.
-  - `npc_conversation_closed` — after a successful pull, the original NPC-NPC
+  - `npc_conversation_closed` — after a successful private chat, the original NPC-NPC
     conversation was removed.
-  - `pull_rejection_witness_memory` — rejected pulls leave a witnessed memory
+  - `private_chat_rejection_witness_memory` — rejected private chats leave a witnessed memory
     tagged to the target.
 
-- **Background villa life:**
-  - `villa_update_committed` — orchestrator returned a typed update.
+- **Background resort life:**
+  - `resort_update_committed` — orchestrator returned a typed update.
   - `background_kind_isolated` — background curator batches never write a
     `source=direct` memory with `holder_id=player`.
 
@@ -180,8 +180,8 @@ make llm-eval-real-judge
 
 # or call the CLI directly
 uv run python -m src.game.cli llm-eval \
-  --scenarios evals/llm/scenarios/pull-rejection.yaml \
-  --out review-packet/single-pull \
+  --scenarios evals/llm/scenarios/private-chat-rejection.yaml \
+  --out review-packet/single-private-chat \
   --real-llm --judge \
   --max-workers 1
 ```

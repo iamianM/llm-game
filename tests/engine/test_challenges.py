@@ -53,7 +53,7 @@ def test_compatibility_quiz_success_applies_couple_strength_bonus() -> None:
 
     assert challenge.classification in {"success", "partial"}
     assert challenge.total_points > 0
-    chloe = next(i for i in state.islanders if i.id == "chloe")
+    chloe = next(i for i in state.heartbreakers if i.id == "chloe")
     # Partial gives affection +2; success gives +6. Either way >0.
     assert chloe.relationship.affection > 0
 
@@ -64,7 +64,7 @@ def test_compatibility_quiz_failure_applies_tension() -> None:
 
     assert challenge.classification == "failure"
     assert challenge.total_points == 0
-    chloe = next(i for i in state.islanders if i.id == "chloe")
+    chloe = next(i for i in state.heartbreakers if i.id == "chloe")
     # _delta_for("failure") = RelationshipDelta(affection=-2, trust=-3); applied
     # via apply_relationship_delta which clamps to >=0, so trust ends at 0 or below
     # depending on starting value.
@@ -90,7 +90,7 @@ def test_heart_rate_uses_charm_when_directly_resolved() -> None:
     assert resolved.result is None  # waiting for the reaction round
 
 
-def test_mr_and_mrs_now_round_based() -> None:
+def test_couples_quiz_now_round_based() -> None:
     """The Couples Quiz now uses round-based dispatch; legacy resolve no-ops."""
     state = new_game(1)
     challenge = schedule_challenge(3)
@@ -108,8 +108,8 @@ def test_lie_detector_now_round_based() -> None:
     assert resolved.result is None
 
 
-def test_snog_marry_pie_now_round_based() -> None:
-    """Snog Marry Pie is now a round-based minigame; legacy resolve no-ops."""
+def test_kiss_wed_pass_now_round_based() -> None:
+    """Kiss Wed Pass is now a round-based minigame; legacy resolve no-ops."""
     state = new_game(1)
     challenge = schedule_challenge(5)
     assert challenge is not None

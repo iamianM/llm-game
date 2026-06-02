@@ -3,7 +3,7 @@
 > Historical build plan. This file is kept for implementation context only.
 > Current planning lives in [current-plan.md](current-plan.md).
 
-Through G8, NPCs differ only by archetype label (sweetheart / joker / friend). The Islander Voice prompt sees archetype prose; mechanical math doesn't. H3 adds Big 5 OCEAN traits, attachment styles, and Type on Paper preferences to each NPC. Compatibility math becomes strategic: figuring out what an NPC likes is a real game layer.
+Through G8, NPCs differ only by archetype label (sweetheart / joker / friend). The Heartbreaker Voice prompt sees archetype prose; mechanical math doesn't. H3 adds Big 5 OCEAN traits, attachment styles, and Type on Paper preferences to each NPC. Compatibility math becomes strategic: figuring out what an NPC likes is a real game layer.
 
 **Design sources:** [03-LLM-Architecture.md § Personality System](../03-LLM-Architecture.md), [02-Core-Mechanics.md § Success Calculation Details](../02-Core-Mechanics.md), [05-Interaction-System.md § Preference Matching](../05-Interaction-System.md).
 
@@ -15,7 +15,7 @@ Through G8, NPCs differ only by archetype label (sweetheart / joker / friend). T
 
 ### Personality model extension
 
-Each `IslanderState` gains four nested objects:
+Each `HeartbreakerState` gains four nested objects:
 
 ```python
 class Big5(BaseModel):
@@ -37,7 +37,7 @@ class TypeOnPaper(BaseModel):
     values: list[str]           # e.g. ["loyalty", "adventure", "honesty"]
     dealbreakers: list[str]     # e.g. ["arrogance", "laziness", "drama"]
 
-class IslanderState(BaseModel):
+class HeartbreakerState(BaseModel):
     ...
     big5: Big5
     attachment: AttachmentStyle
@@ -45,11 +45,11 @@ class IslanderState(BaseModel):
     familiarity_with_player: int = Field(default=0, ge=0, le=100)
 ```
 
-These exist for **every** non-player islander (including bombshells). Player has no Big 5 — the player is the camera.
+These exist for **every** non-player heartbreaker (including Heart Throbs). Player has no Big 5 — the player is the camera.
 
 ### Familiarity stat
 
-`familiarity_with_player` grows with every conversation: +1 per exchange in player conversations the islander participates in, +2 per closed conversation with the player as direct target. Caps at 100. Drives Type on Paper revelations.
+`familiarity_with_player` grows with every conversation: +1 per exchange in player conversations the heartbreaker participates in, +2 per closed conversation with the player as direct target. Caps at 100. Drives Type on Paper revelations.
 
 ### Type on Paper revelations
 
@@ -62,7 +62,7 @@ Type on Paper is hidden by default. Bits of it surface as familiarity grows:
 | 75 | `values` |
 | 100 | `dealbreakers` |
 
-Revealed bits show up in the player's state view as a known fact. They also feed into the Islander Voice context so the LLM can naturally have the NPC reference their type ("I love how confident you are — that's exactly my thing").
+Revealed bits show up in the player's state view as a known fact. They also feed into the Heartbreaker Voice context so the LLM can naturally have the NPC reference their type ("I love how confident you are — that's exactly my thing").
 
 ### Compatibility math
 
@@ -116,13 +116,13 @@ Cast in `state/models.py` `new_game()` gets fixed Big 5 / attachment / Type on P
 | Chloe | 7, 6, 9, 8, 4 | secure | values warmth, loyalty; dealbreaker arrogance |
 | Maya | 8, 5, 9, 5, 6 | anxious | values humor, attention; dealbreaker neglect |
 | Liam | 5, 8, 6, 7, 3 | secure | values steadiness, depth; dealbreaker flakiness |
-| Aisha (bombshell) | 8, 7, 9, 5, 6 | avoidant | values ambition, edge; dealbreaker neediness |
+| Aisha (heart_throb) | 8, 7, 9, 5, 6 | avoidant | values ambition, edge; dealbreaker neediness |
 
 These are stored as the new game's deterministic default. Future H8+ can layer procedural generation; for H3 they're hardcoded.
 
-### Islander Voice prompt context
+### Heartbreaker Voice prompt context
 
-The Islander Voice prompt input is extended to include the NPC's Big 5 and attachment style summary. The prompt itself does not change (R17) — the existing context block accepts new fields. The NPC's voice naturally varies because the prompt sees their personality numbers and treats them appropriately.
+The Heartbreaker Voice prompt input is extended to include the NPC's Big 5 and attachment style summary. The prompt itself does not change (R17) — the existing context block accepts new fields. The NPC's voice naturally varies because the prompt sees their personality numbers and treats them appropriately.
 
 For revealed Type on Paper bits, the prompt context includes a `known_preferences` block (only the revealed bits) so the LLM can reference them naturally.
 
@@ -140,12 +140,12 @@ For revealed Type on Paper bits, the prompt context includes a `known_preference
 
 ### Files changed
 
-- [`src/game/state/models.py`](../src/game/state/models.py): Add `Big5`, `AttachmentStyle`, `TypeOnPaper`. Extend `IslanderState` with personality + familiarity. Bump `SCHEMA_VERSION`.
+- [`src/game/state/models.py`](../src/game/state/models.py): Add `Big5`, `AttachmentStyle`, `TypeOnPaper`. Extend `HeartbreakerState` with personality + familiarity. Bump `SCHEMA_VERSION`.
 - [`src/game/state/models.py`](../src/game/state/models.py) `new_game()`: hardcoded personality table per NPC.
 - [`src/game/engine/rules.py`](../src/game/engine/rules.py): success-chance formula extends with compatibility bonus and dealbreaker penalty. Delta application extends with attachment modifier.
 - [`src/game/engine/chance.py`](../src/game/engine/chance.py): `ChanceBreakdown` gains `compatibility_bonus`, `dealbreaker_penalty`, `attachment_delta` fields. Math-rendering updated.
 - [`src/game/engine/turn.py`](../src/game/engine/turn.py): every closed player-NPC conversation bumps target's `familiarity_with_player` by +2; every exchange in any conversation bumps the visible NPC's familiarity by +1.
-- [`src/game/agents/islander_voice.py`](../src/game/agents/islander_voice.py): `IslanderVoiceContext` extends with `big5_summary`, `attachment_style`, `revealed_preferences`. Builder passes them when calling the agent.
+- [`src/game/agents/heartbreaker_voice.py`](../src/game/agents/heartbreaker_voice.py): `HeartbreakerVoiceContext` extends with `big5_summary`, `attachment_style`, `revealed_preferences`. Builder passes them when calling the agent.
 - [`src/game/cli/commands/play.py`](../src/game/cli/commands/play.py): when a Type on Paper bit reveals (a state field crosses the threshold), print a one-line notification: `*** Discovered: Chloe values warmth and loyalty. ***`
 - [`src/game/cli/commands/play_render.py`](../src/game/cli/commands/play_render.py): `_print_state` shows familiarity per NPC + revealed Type on Paper bits.
 - [`src/game/reporting/html_blocks.py`](../src/game/reporting/html_blocks.py): per-turn card shows revealed-this-turn Type on Paper bits prominently.
@@ -157,7 +157,7 @@ For revealed Type on Paper bits, the prompt context includes a `known_preference
 
 - [ ] `make qa` green.
 - [ ] `make test-llm` green.
-- [ ] Each non-player islander has a non-default Big 5 score, attachment style, and Type on Paper at game start.
+- [ ] Each non-player heartbreaker has a non-default Big 5 score, attachment style, and Type on Paper at game start.
 - [ ] `familiarity_with_player` increments on every conversation interaction.
 - [ ] At familiarity 25 the player sees a notification revealing the NPC's physical_type.
 - [ ] At familiarity 50 the personality_type reveals.
@@ -218,7 +218,7 @@ Aggregate stats: `revealed_preference_count` (count of bits revealed across all 
 - ❌ No player Big 5. The player is the camera, not a character with measured personality.
 - ❌ No "personality changes over the run." Big 5 is fixed once set per NPC.
 - ❌ No new agents. Compatibility math is algorithmic.
-- ❌ No prompt edits (R17). The Islander Voice context block extends; the prompt text does not.
+- ❌ No prompt edits (R17). The Heartbreaker Voice context block extends; the prompt text does not.
 
 ---
 
@@ -227,13 +227,13 @@ Aggregate stats: `revealed_preference_count` (count of bits revealed across all 
 - [ ] Read [build-plan-H-index.md](build-plan-H-index.md) pre-flight
 - [ ] Re-read [03-LLM-Architecture.md](../03-LLM-Architecture.md), [02-Core-Mechanics.md](../02-Core-Mechanics.md), [05-Interaction-System.md](../05-Interaction-System.md)
 - [ ] Add `Big5`, `AttachmentStyle`, `TypeOnPaper` Pydantic models
-- [ ] Extend `IslanderState` with personality + familiarity
+- [ ] Extend `HeartbreakerState` with personality + familiarity
 - [ ] Bump `SCHEMA_VERSION`
 - [ ] Set hardcoded personality per NPC in `new_game()`
 - [ ] Write `engine/compatibility.py`
 - [ ] Update `engine/rules.py` and `engine/chance.py` for new chance components
 - [ ] Update `engine/turn.py` to increment familiarity correctly
-- [ ] Update `agents/islander_voice.py` context block for new fields
+- [ ] Update `agents/heartbreaker_voice.py` context block for new fields
 - [ ] Update CLI and HTML rendering to surface familiarity and revealed Type on Paper
 - [ ] Regenerate scenario fixtures
 - [ ] Write the new tests

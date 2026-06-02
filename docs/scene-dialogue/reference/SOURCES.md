@@ -1,7 +1,7 @@
 # Scene-Dialogue Reference Sources
 
 These references were captured before implementation to ground the staged
-scene rewrite in the established Love Island mobile game grammar.
+scene rewrite in the established grammar of reality dating show mobile games.
 
 ## Gameplay / Storefront References
 
@@ -14,9 +14,9 @@ scene rewrite in the established Love Island mobile game grammar.
 - Mobile Gaming Hub beginner guide:
   https://mobilegaminghub.com/love-island-the-game-2-beginners-guide-and-tips-and-tricks/
   - Local capture: `mobilegaminghub-guide.png`.
-  - Useful because it describes the flow as character customization, villa
+  - Useful because it describes the flow as character customization, resort
     entry, meeting characters one by one, and player decisions.
-- BiliBili gameplay video page, "Love Island The Game: Double Trouble - Ep 2":
+- BiliBili gameplay video page (reality dating sim, episode 2):
   https://www.bilibili.tv/video/4787340653369856
   - Local capture: `bilibili-kiss-challenge.png`.
   - Useful as a challenge-flow source page; the player itself did not expose
@@ -31,5 +31,6 @@ scene rewrite in the established Love Island mobile game grammar.
 The available public screenshot galleries are low-resolution, but they show the
 important UX grammar clearly enough: full-background scenes, character cutouts,
 speaker or narrator panels, bottom-positioned player choices, and compact
-choice buttons. Video pages were treated as source context, while screenshot
+choice buttons. These were used as UI inspiration from an established reality
+dating sim; video pages were treated as source context, while screenshot
 pages supplied the reliable local captures.

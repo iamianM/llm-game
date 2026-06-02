@@ -54,18 +54,18 @@ def _couple_audience_score(state: GameState, couple: Couple) -> int:
 def _public_perception_for(state: GameState, actor_id: str) -> int:
     if actor_id == state.player.id:
         return state.player.public_perception
-    for islander in state.islanders:
-        if islander.id == actor_id:
-            return islander.public_perception
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == actor_id:
+            return heartbreaker.public_perception
     return 0
 
 
 def _is_eliminated(state: GameState, actor_id: str) -> bool:
     if actor_id == state.player.id:
         return state.player.eliminated
-    for islander in state.islanders:
-        if islander.id == actor_id:
-            return islander.eliminated
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == actor_id:
+            return heartbreaker.eliminated
     return True
 
 

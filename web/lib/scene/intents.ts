@@ -61,7 +61,7 @@ const INTENT_CATEGORY: Record<string, IntentCategory> = {
   intro_banter: "banter",
   // Free-time conversation start intents (data/balance/intents.yaml)
   friendly_ask_feelings: "friendly",
-  friendly_chat_villa: "friendly",
+  friendly_chat_resort: "friendly",
   friendly_compliment_personality: "friendly",
   flirty_compliment_looks: "flirty",
   flirty_playful_teasing: "flirty",
@@ -87,7 +87,7 @@ const INTENT_CATEGORY: Record<string, IntentCategory> = {
 
 export function categoryFor(intentId: string | null | undefined): IntentCategory {
   if (!intentId) return "banter";
-  // Gossip and pull intents come through as prefixed strings — bucket
+  // Gossip and private-chat intents come through as prefixed strings — bucket
   // them under "banter" so they still appear somewhere.
   if (intentId.startsWith("share_gossip:") || intentId.startsWith("ask_gossip:")) {
     return "banter";

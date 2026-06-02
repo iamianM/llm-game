@@ -3,4 +3,4 @@ id: welcome
 day: 1
 kind: welcome
 ---
-Islanders, welcome to the villa. Let the grafting begin.
+Heartbreakers, welcome to Sunset Bay. Let the sparks begin.

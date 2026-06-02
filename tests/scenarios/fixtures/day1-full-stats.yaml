@@ -1,7 +1,7 @@
 name: day1-full-stats
 seed: 3
 initial_phase: morning
-expected_hash: d532764568803e4b3e8bde690ade8d8f1d474a76f75a2c53133cff5902d3b6b7
+expected_hash: 653489f4e3d298c94979775e45197b11f76b5c54ecf92cea035290977aa47bdc
 actions:
 - kind: start_conversation
   target_id: chloe
@@ -21,7 +21,7 @@ actions:
   target_id: pool
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: ambient
   target_id: ambient_wait
 - kind: ambient

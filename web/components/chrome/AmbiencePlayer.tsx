@@ -3,15 +3,15 @@
 import { useEffect, useRef } from "react";
 import { type MusicScene, useUiStore } from "../../lib/store";
 
-// A low bed of villa room-tone that sits *under* the music, not instead of it.
+// A low bed of resort room-tone that sits *under* the music, not instead of it.
 // Daytime scenes (and the title) get the bright day loop; evenings and tense
 // beats get the night loop. Volume stays well below the score so it reads as
 // atmosphere, never as a second track competing with it.
 const AMBIENCE: Record<MusicScene, string> = {
-  title: "/audio/ambience/villa-day.mp3",
-  day: "/audio/ambience/villa-day.mp3",
-  evening: "/audio/ambience/villa-night.mp3",
-  tension: "/audio/ambience/villa-night.mp3",
+  title: "/audio/ambience/resort-day.mp3",
+  day: "/audio/ambience/resort-day.mp3",
+  evening: "/audio/ambience/resort-night.mp3",
+  tension: "/audio/ambience/resort-night.mp3",
 };
 
 const AMBIENCE_VOLUME = 0.16;

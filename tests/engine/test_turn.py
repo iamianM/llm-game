@@ -31,37 +31,37 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
     )
 
     assert result.state.turn_index == 1
-    assert result.state.islanders[0].relationship.affection == 12
+    assert result.state.heartbreakers[0].relationship.affection == 12
     assert result.exchange is not None
     assert result.exchange.npc_dialogue
     assert result.available_actions
     assert len(result.state_hash) == 64
 
 
-def test_run_turn_survives_islander_voice_raise() -> None:
-    """If Islander Voice exhausts its retries and raises, the conversation beat must
+def test_run_turn_survives_heartbreaker_voice_raise() -> None:
+    """If Heartbreaker Voice exhausts its retries and raises, the conversation beat must
     not dead-screen the player — the turn falls back to the deterministic mock voice
     and still returns a usable exchange plus a follow-up wheel."""
     state = new_game(1)
 
     def boom(*_args, **_kwargs):
-        raise AgentValidationError("islander voice exhausted retries")
+        raise AgentValidationError("heartbreaker voice exhausted retries")
 
     result = run_turn(
         state,
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        islander_voice=boom,
+        heartbreaker_voice=boom,
     )
 
     assert result.exchange is not None
@@ -71,33 +71,33 @@ def test_run_turn_survives_islander_voice_raise() -> None:
     assert result.state.active_conversation is not None
 
 
-def test_run_turn_records_degraded_trace_on_islander_voice_failure() -> None:
+def test_run_turn_records_degraded_trace_on_heartbreaker_voice_failure() -> None:
     """Degrading to the mock voice must leave an observable footprint: a distinct
     degraded=True trace, so "we served a mock this turn" is a first-class countable
     signal in the review packet rather than a silent swallow (ENGINEERING.md R16)."""
     state = new_game(1)
 
     def boom(*_args, **_kwargs):
-        raise AgentValidationError("islander voice exhausted retries")
+        raise AgentValidationError("heartbreaker voice exhausted retries")
 
     result = run_turn(
         state,
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        islander_voice=boom,
+        heartbreaker_voice=boom,
     )
 
     degraded = [trace for trace in result.agent_traces if trace.degraded]
-    assert [trace.agent_name for trace in degraded] == ["islander_voice"]
+    assert [trace.agent_name for trace in degraded] == ["heartbreaker_voice"]
     assert degraded[0].output_type == "degraded_to_mock"
     assert "exhausted retries" in (degraded[0].validation_error or "")
 
 
-def test_run_turn_propagates_non_agent_error_from_islander_voice() -> None:
+def test_run_turn_propagates_non_agent_error_from_heartbreaker_voice() -> None:
     """Only AgentError degrades to a mock. A genuine engine bug (here a KeyError)
     must propagate loud instead of being silently swallowed into a fallback —
     that boundary is exactly what the typed AgentError taxonomy protects
@@ -113,10 +113,10 @@ def test_run_turn_propagates_non_agent_error_from_islander_voice() -> None:
             PlayerAction(
                 kind=ActionKind.START_CONVERSATION,
                 target_id="chloe",
-                intent_id="friendly_chat_villa",
+                intent_id="friendly_chat_resort",
             ),
             SeededRng(1),
-            islander_voice=kaboom,
+            heartbreaker_voice=kaboom,
         )
 
 
@@ -128,7 +128,7 @@ def test_narrated_events_survives_event_narrator_raise() -> None:
     from src.game.engine.turn import _narrated_events
 
     state = new_game(1)
-    events = [CeremonyEvent(kind="recoupling", message="Chloe was chosen.", islander_id="chloe")]
+    events = [CeremonyEvent(kind="pairing", message="Chloe was chosen.", heartbreaker_id="chloe")]
 
     def boom(*_args, **_kwargs):
         raise AgentGenerationError("event narrator exhausted retries")
@@ -156,8 +156,8 @@ def test_run_turn_ambient_wait_advances_phase() -> None:
     assert result.state.turn_index == 1
 
 
-def test_run_turn_schedules_casa_amor_arrival_as_gather() -> None:
-    """Producer texts schedule a mandatory gather before Casa Amor resolves."""
+def test_run_turn_schedules_flush_of_hearts_arrival_as_gather() -> None:
+    """Producer texts schedule a mandatory gather before Flush of Hearts resolves."""
     state = new_game(1)
     state.day = 4
     state.phase = Phase.AFTERNOON
@@ -166,32 +166,32 @@ def test_run_turn_schedules_casa_amor_arrival_as_gather() -> None:
 
     assert result.state.phase is Phase.TEXT
     assert result.state.pending_gather is not None
-    assert result.state.pending_gather.kind == "casa_announce"
+    assert result.state.pending_gather.kind == "flush_announce"
     assert [spec.action.kind for spec in result.available_actions] == [ActionKind.JOIN_GATHER]
 
 
-def test_run_turn_skips_villa_autonomy_after_scheduling_gather() -> None:
+def test_run_turn_skips_resort_autonomy_after_scheduling_gather() -> None:
     """The turn that schedules a mandatory gather does not call Orchestrator."""
     state = new_game(1)
     state.day = 4
     state.phase = Phase.AFTERNOON
 
     def fail_orchestrator(_state):
-        raise AssertionError("villa autonomy should pause while gather is pending")
+        raise AssertionError("resort autonomy should pause while gather is pending")
 
     result = run_turn(
         state,
         PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
         SeededRng(1),
-        villa_orchestrator=fail_orchestrator,
+        resort_orchestrator=fail_orchestrator,
     )
 
     assert result.state.pending_gather is not None
-    assert result.agent_commits.villa_update is None
+    assert result.agent_commits.resort_update is None
 
 
-def test_join_gather_resolves_casa_amor_arrival() -> None:
-    """JOIN_GATHER moves the villa to the firepit and then resolves the event."""
+def test_join_gather_resolves_flush_of_hearts_arrival() -> None:
+    """JOIN_GATHER moves the resort to the flame_deck and then resolves the event."""
     state = new_game(1)
     state.day = 4
     state.phase = Phase.AFTERNOON
@@ -199,9 +199,9 @@ def test_join_gather_resolves_casa_amor_arrival() -> None:
 
     result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(2))
 
-    assert any(event.kind == "casa_amor_arrival" for event in result.ceremony_events)
+    assert any(event.kind == "flush_of_hearts_arrival" for event in result.ceremony_events)
     assert result.state.pending_gather is None
-    assert result.state.casa_amor_state is not None
+    assert result.state.flush_of_hearts_state is not None
     assert result.event_narration is not None
 
 
@@ -211,7 +211,7 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
     rng = SeededRng(1)
     run_turn(
         state,
-        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="friendly_chat_villa"),
+        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="friendly_chat_resort"),
         rng,
         contextual_options=lambda *_args: mock_follow_up_menu(),
     )
@@ -226,8 +226,8 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
     )
     state.pending_gather = PendingGather(
         kind="ceremony",
-        event_id="recoupling_day_3",
-        gather_location=Location.FIREPIT,
+        event_id="pairing_day_3",
+        gather_location=Location.FLAME_DECK,
         fires_on_turn=state.turn_index + 1,
     )
     state.day = 3
@@ -237,7 +237,7 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
 
     assert result.state.active_conversation is None
     assert result.state.npc_conversations == []
-    assert all(islander.location_id is not Location.TERRACE for islander in result.state.islanders)
+    assert all(heartbreaker.location_id is not Location.TERRACE for heartbreaker in result.state.heartbreakers)
     assert result.curator_batches
 
 
@@ -276,7 +276,7 @@ def test_apply_action_does_not_bump_turn_index() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
     )
@@ -293,7 +293,7 @@ def test_wheel_exit_closes_conversation_and_applies_trust_bonus() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         rng,
         contextual_options=lambda *_args: mock_follow_up_menu(),
@@ -341,12 +341,12 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         rng,
         contextual_options=lambda *_args: mock_follow_up_menu(),
     )
-    affection_before = state.islanders[0].relationship.affection
+    affection_before = state.heartbreakers[0].relationship.affection
     calls = 0
 
     def curator(*_args) -> MemoryBatch:
@@ -374,7 +374,7 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
 
     assert result.exchange is None
     assert result.state.active_conversation is None
-    assert state.islanders[0].relationship.affection == affection_before - 1
+    assert state.heartbreakers[0].relationship.affection == affection_before - 1
     assert result.mechanical_result.relationship_deltas["chloe"].affection == -1
     assert calls == 1
     assert result.curator_batches

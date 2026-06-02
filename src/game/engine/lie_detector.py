@@ -1,7 +1,7 @@
 """Lie Detector minigame.
 
 Five rounds. Each prompt names a past event class (a kiss with another
-islander, a hideaway visit, etc.). The player picks one of: truth, mild
+heartbreaker, a private_suite visit, etc.). The player picks one of: truth, mild
 lie, hard lie. Detection chance is computed from familiarity and public
 visibility; caught lies feed gossip propagation.
 
@@ -15,7 +15,7 @@ from typing import TypedDict
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.event_models import (
     Challenge,
     MinigameChoice,
@@ -50,18 +50,18 @@ def _event_truths(state: GameState) -> list[LieEvent]:
     """
     entries: list[LieEvent] = []
     partner = _partner_id(state)
-    # 1. Hideaway: was anyone else in the hideaway?
-    used = state.hideaway.used_on_day is not None
-    hideaway_partner = state.hideaway.partner_id
-    if used and hideaway_partner is not None and hideaway_partner != partner:
+    # 1. Private Suite: was anyone else in the private_suite?
+    used = state.private_suite.used_on_day is not None
+    private_suite_partner = state.private_suite.partner_id
+    if used and private_suite_partner is not None and private_suite_partner != partner:
         entries.append({
-            "prompt": f"Did you visit the Hideaway with anyone other than {find_islander(state, partner).name if partner else 'your partner'}?",
+            "prompt": f"Did you visit the Private Suite with anyone other than {find_heartbreaker(state, partner).name if partner else 'your partner'}?",
             "truth": "yes",
             "severity": "high",
             "visibility": 80,
         })
     # 2. Couple feelings: lingering attraction to a non-partner
-    for npc in sorted(state.islanders, key=lambda i: i.id):
+    for npc in sorted(state.heartbreakers, key=lambda i: i.id):
         if npc.id == partner or npc.eliminated:
             continue
         if npc.relationship.chemistry >= 60:
@@ -74,8 +74,8 @@ def _event_truths(state: GameState) -> list[LieEvent]:
             break
     # 3. First spark regret
     if partner:
-        partner_islander = find_islander(state, partner)
-        if partner_islander.relationship.affection < 30:
+        partner_heartbreaker = find_heartbreaker(state, partner)
+        if partner_heartbreaker.relationship.affection < 30:
             entries.append({
                 "prompt": "Are you still glad you paired with your current partner?",
                 "truth": "no",
@@ -85,7 +85,7 @@ def _event_truths(state: GameState) -> list[LieEvent]:
     # Pad with neutral questions until we have ROUNDS of them
     fallback_questions = [
         ("Have you been authentic with the rest of the cast this week?", "yes", "low", 20),
-        ("Do you think you're the strongest connection on the island?", "no", "low", 15),
+        ("Do you think you're the strongest connection in Sunset Bay?", "no", "low", 15),
         ("If a Heart Throb walked in today, would you stay loyal?", "yes", "mid", 40),
         ("Are you here for love or for the show?", "yes", "mid", 30),
         ("Would you tell your partner if you flirted behind their back?", "yes", "mid", 35),
@@ -100,7 +100,7 @@ def _event_truths(state: GameState) -> list[LieEvent]:
 def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[MinigameRound]:
     events = _event_truths(state)
     partner_name = (
-        find_islander(state, partner_id).name if partner_id and partner_id != "player" else "your partner"
+        find_heartbreaker(state, partner_id).name if partner_id and partner_id != "player" else "your partner"
     )
     rounds: list[MinigameRound] = []
     for index, ev in enumerate(events):
@@ -125,12 +125,12 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         # even to a player who's never seen the show.
         if index == 0:
             scene = (
-                "The cast files into the firepit for the Lie Detector. "
+                "The cast files into the flame_deck for the Lie Detector. "
                 "Every Heartbreaker straps a sensor pad to two fingers and the "
                 f"big screen lights up next to {partner_name}. You're in the hot "
                 "seat. The host reads a question and you pick how you answer. "
                 "Truth, soft spin, or outright lie. The needle decides what the "
-                "villa believes."
+                "Sunset Bay believes."
             )
         else:
             scene = (
@@ -177,7 +177,7 @@ def has_more_rounds(challenge: Challenge) -> bool:
 
 def _detection_chance(state: GameState, partner_id: str, visibility: int) -> int:
     bal = load_minigame_balance().lie_detector.detection
-    partner = find_islander(state, partner_id)
+    partner = find_heartbreaker(state, partner_id)
     fam = partner.familiarity_with_player
     fam_factor = min(bal.familiarity_factor_max, fam * bal.familiarity_factor_max // 100)
     vis_factor = min(bal.visibility_factor_max, visibility * bal.visibility_factor_max // 100)
@@ -272,7 +272,7 @@ def score_lie_detector(state: GameState, challenge: Challenge) -> Challenge:
 
 def apply_lie_detector_result(state: GameState, challenge: Challenge) -> Challenge:
     partner_id = _partner_id(state) or "chloe"
-    partner = find_islander(state, partner_id)
+    partner = find_heartbreaker(state, partner_id)
     cls = challenge.classification or "failure"
     if cls == "success":
         delta = RelationshipDelta(trust=5, affection=1)

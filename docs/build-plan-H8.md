@@ -5,9 +5,9 @@
 
 The H1–H7 phases built a complete game arc, but the autopilot loop Codex hit exposed three structural gaps:
 
-1. **No automatic phase progression.** Days only advance when the player picks `ADVANCE_PHASE`. A real Love Island day passes on its own — phases have time budgets. Without this, the autopilot (or any inefficient player) can spend 100+ turns inside Day 1 Morning.
-2. **NPCs almost never leave conversations on their own.** The `departure_probability` formula in `engine/conversation.py` requires either many exchanges or recent failures. With friendly autopilot picks, NPCs build affection and the chance approaches zero. The Villa Orchestrator can move NPCs around the villa but cannot pull a partner out of the player's active conversation.
-3. **The eval suite checks feature presence, not pacing.** It catches "Hideaway didn't fire" but not "Day 1 took 60 turns."
+1. **No automatic phase progression.** Days only advance when the player picks `ADVANCE_PHASE`. A real Paradise Hearts day passes on its own — phases have time budgets. Without this, the autopilot (or any inefficient player) can spend 100+ turns inside Day 1 Morning.
+2. **NPCs almost never leave conversations on their own.** The `departure_probability` formula in `engine/conversation.py` requires either many exchanges or recent failures. With friendly autopilot picks, NPCs build affection and the chance approaches zero. The Resort Orchestrator can move NPCs around Sunset Bay but cannot pull a partner out of the player's active conversation.
+3. **The eval suite checks feature presence, not pacing.** It catches "Paradise Suite didn't fire" but not "Day 1 took 60 turns."
 
 H8 closes all three. It also addresses **test suite performance** — the regression slices should be fast and independent, and currently they're not.
 
@@ -41,10 +41,10 @@ Action costs:
 | `RESPOND_WITH` | 5 (continuing an open convo is cheaper than starting one) |
 | `END_CONVERSATION` | 0 |
 | `MOVE` | 5 |
-| `HIDEAWAY` | 60 (consumes most of the phase) |
+| `PRIVATE_SUITE` | 60 (consumes most of the phase) |
 | `CHALLENGE_RESPONSE` | 0 |
-| `CASA_DECISION` | 10 |
-| `RECOUPLE` | 0 (ceremony-managed) |
+| `FLUSH_DECISION` | 10 |
+| `PAIR` | 0 (ceremony-managed) |
 | `ADVANCE_PHASE` | 0 (manual override) |
 | Slash commands (`/state`, `/hash`, etc.) | 0 |
 
@@ -77,7 +77,7 @@ class GameState(BaseModel):
 
 1. Apply player action → `MechanicalResult`.
 2. Deduct `time_cost` for the action from `phase_clock.elapsed_minutes`.
-3. Run Villa Orchestrator + background dialogue per existing flow.
+3. Run Resort Orchestrator + background dialogue per existing flow.
 4. If `phase_clock.expired` after step 2, call `advance_phase(state)` and reset `phase_clock`. Mark the trace record's `auto_advance: True`.
 5. Return `TurnResult` with `phase_clock` snapshot included.
 
@@ -90,7 +90,7 @@ CLI feedback (in `play_render.py`):
 
 ### NPC summoning out of player conversations
 
-The Villa Orchestrator already drives off-screen NPC behavior each turn. H8 adds one new output type: **`npc_summoned_elsewhere`** — the orchestrator's way of saying "this NPC needs to leave their current conversation."
+The Resort Orchestrator already drives off-screen NPC behavior each turn. H8 adds one new output type: **`npc_summoned_elsewhere`** — the orchestrator's way of saying "this NPC needs to leave their current conversation."
 
 ```python
 class NPCSummon(BaseModel):
@@ -107,7 +107,7 @@ class NPCSummon(BaseModel):
     target_location: Location
 ```
 
-Added to `VillaUpdate.npc_summoned_elsewhere: list[NPCSummon]`.
+Added to `ResortUpdate.npc_summoned_elsewhere: list[NPCSummon]`.
 
 When the orchestrator emits a summon for the player's current conversation target:
 
@@ -115,7 +115,7 @@ When the orchestrator emits a summon for the player's current conversation targe
 - Engine closes the player's active conversation with `reason: "npc_summoned_elsewhere"`.
 - Curator runs on the closed conversation (Curator output already handles any close reason).
 - NPC's location is updated to `target_location`.
-- A short notification renders in the CLI: `Chloe excuses herself: "Liam just walked in, give me a minute."` (The exit line is generated via Islander Voice with a special intent kind `summoned_exit`, which the engine recognizes and the prompt handles as a brief in-voice goodbye.)
+- A short notification renders in the CLI: `Chloe excuses herself: "Liam just walked in, give me a minute."` (The exit line is generated via Heartbreaker Voice with a special intent kind `summoned_exit`, which the engine recognizes and the prompt handles as a brief in-voice goodbye.)
 - The player's wheel disappears; they're back to the top-level action menu.
 
 When the orchestrator emits a summon for an NPC in an NPC-NPC conversation, the same logic applies but no notification fires (the player isn't there).
@@ -124,7 +124,7 @@ The orchestrator's decision is driven by context already in the prompt (recent m
 
 ### Probabilistic arrival rolls
 
-Currently when the Villa Orchestrator moves an NPC X to the player's location while the player is in a conversation, X just appears in the visible state — silently. H8 adds a **probabilistic interruption / pull roll** that fires automatically when an NPC arrives at the player's location during the player's active conversation.
+Currently when the Resort Orchestrator moves an NPC X to the player's location while the player is in a conversation, X just appears in the visible state — silently. H8 adds a **probabilistic interruption / pull roll** that fires automatically when an NPC arrives at the player's location during the player's active conversation.
 
 Two independent rolls when X arrives:
 
@@ -181,7 +181,7 @@ The user is right that the test suite is slow despite assertions being independe
    - LLM tests not properly skipped when running non-LLM suite (each adds latency through network setup)
 2. **Add `pytest-xdist`** to enable parallel test execution via `pytest -n auto`. Engine tests are pure; scenario fixtures are deterministic and replay from independent state. They parallelize trivially.
 3. **Session-scope content loading.** `tests/conftest.py` adds a session-scoped fixture that loads `content/` once and shares the index across tests via dependency injection. The current per-test loading (~20ms each × 200+ tests) is the bulk of the wall time.
-4. **Lazy LLM client construction.** Agent classes (OpenAIIslanderVoice etc.) currently call `OpenAI()` in `__init__`. Move to lazy construction inside `generate()` so non-LLM tests that mock the agent don't pay the OpenAI client startup.
+4. **Lazy LLM client construction.** Agent classes (OpenAIHeartbreakerVoice etc.) currently call `OpenAI()` in `__init__`. Move to lazy construction inside `generate()` so non-LLM tests that mock the agent don't pay the OpenAI client startup.
 
 After these changes, `make test` should run in under 30 seconds on a modern dev machine vs. the current several minutes.
 
@@ -216,7 +216,7 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
   - `check_auto_advance(state) -> bool` returns True if budget expired.
 - [`src/game/engine/turn.py`](../src/game/engine/turn.py):
   - After applying mechanical result, call `deduct_time(state, action)`.
-  - After Villa Orchestrator + background dialogue runs, call `check_auto_advance`. If True, call `advance_phase` and mark the trace `auto_advance: True`.
+  - After Resort Orchestrator + background dialogue runs, call `check_auto_advance`. If True, call `advance_phase` and mark the trace `auto_advance: True`.
 - [`src/game/state/trace.py`](../src/game/state/trace.py): `TurnTrace` gains `auto_advance: bool = False` and `phase_clock_snapshot: PhaseClock`. Hash-included.
 - [`src/game/cli/commands/play_render.py`](../src/game/cli/commands/play_render.py):
   - State render includes `Time remaining: {n} min`.
@@ -248,7 +248,7 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
 
 ## Phase H8.2 — NPC Autonomy (Summoning + Arrival Rolls)
 
-**Scope.** Villa Orchestrator can pull NPCs out of conversations (player or NPC-NPC). When an NPC arrives at the player's location during an active conversation, the engine rolls for interruption and pull-away independently. Prompt updated.
+**Scope.** Resort Orchestrator can pull NPCs out of conversations (player or NPC-NPC). When an NPC arrives at the player's location during an active conversation, the engine rolls for interruption and pull-away independently. Prompt updated.
 
 **Changes.**
 
@@ -267,12 +267,12 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
 - [`src/game/state/models.py`](../src/game/state/models.py):
   - Add `NPCSummon` Pydantic model.
   - Add `arrival_rolls: list[ArrivalRoll] = []` field on `TurnTrace` and on `TurnResult` (for visibility). `ArrivalRoll` records `arriving_npc_id`, `interruption_chance`, `interruption_rolled`, `interruption_hit`, `pull_chance`, `pull_rolled`, `pull_hit`.
-- [`src/game/agents/villa_orchestrator.py`](../src/game/agents/villa_orchestrator.py):
-  - Extend `VillaUpdate` to include `npc_summoned_elsewhere: list[NPCSummon] = []`.
-- [`src/game/agents/prompts/villa_orchestrator.md`](../src/game/agents/prompts/villa_orchestrator.md): Claude updates the prompt to describe the new `npc_summoned_elsewhere` output and when to fire it. Codex installs verbatim per R17.
-- [`src/game/engine/villa.py`](../src/game/engine/villa.py):
-  - `validate_villa_update` validates each `NPCSummon`: npc must be at the from_conversation's location, conversation must exist and be open, target_location must be a real Location, npc must be a participant.
-  - `apply_villa_update` processes summoning: closes the named conversation with `reason: "npc_summoned_elsewhere"`, moves the NPC, runs Curator on the closed convo.
+- [`src/game/agents/resort_orchestrator.py`](../src/game/agents/resort_orchestrator.py):
+  - Extend `ResortUpdate` to include `npc_summoned_elsewhere: list[NPCSummon] = []`.
+- [`src/game/agents/prompts/resort_orchestrator.md`](../src/game/agents/prompts/resort_orchestrator.md): Claude updates the prompt to describe the new `npc_summoned_elsewhere` output and when to fire it. Codex installs verbatim per R17.
+- [`src/game/engine/resort.py`](../src/game/engine/resort.py):
+  - `validate_resort_update` validates each `NPCSummon`: npc must be at the from_conversation's location, conversation must exist and be open, target_location must be a real Location, npc must be a participant.
+  - `apply_resort_update` processes summoning: closes the named conversation with `reason: "npc_summoned_elsewhere"`, moves the NPC, runs Curator on the closed convo.
 - [`src/game/engine/arrival_rolls.py`](../src/game/engine/arrival_rolls.py) (new):
   - `interruption_chance(state, arriving_npc) -> int`
   - `pull_chance(state, arriving_npc, target_id) -> int`
@@ -280,10 +280,10 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
   - Integrates with `engine/turn.py`: after movements apply, for each NPC that just arrived at the player's location while the player has an active conversation, roll both. Hits queue events for the next turn (interruption pending or summon pending).
 - [`src/game/engine/turn.py`](../src/game/engine/turn.py): Calls arrival rolls after orchestrator applies movements. If interruption hits, sets `state.active_conversation.pending_interruption`. If pull hits, sets a `state.pending_pull_attempt` field that the next orchestrator turn can act on (by emitting an `NPCSummon` for the targeted NPC).
 - [`src/game/engine/conversation.py`](../src/game/engine/conversation.py): `close_conversation` accepts `"npc_summoned_elsewhere"` as a reason. `departure_probability` extended with: avoidant attachment +10 after deep tag, anxious attachment +8 after recent miss, secure attachment unchanged. Big 5 personality factors land here.
-- [`src/game/agents/islander_voice.py`](../src/game/agents/islander_voice.py): When `intent_kind == "summoned_exit"`, the Islander Voice generates a brief in-voice goodbye that references *why* they're leaving (drawn from `NPCSummon.reason`). The existing prompt already handles ad-hoc intent kinds; the context block passes the reason.
+- [`src/game/agents/heartbreaker_voice.py`](../src/game/agents/heartbreaker_voice.py): When `intent_kind == "summoned_exit"`, the Heartbreaker Voice generates a brief in-voice goodbye that references *why* they're leaving (drawn from `NPCSummon.reason`). The existing prompt already handles ad-hoc intent kinds; the context block passes the reason.
 - [`src/game/cli/commands/play_render.py`](../src/game/cli/commands/play_render.py):
   - Renders the goodbye exchange when summoned.
-  - Each turn's villa update prints any arrival rolls: `Aisha arrived. Interruption roll: 38/50 → miss. Pull roll: 41/35 → hit.`
+  - Each turn's resort update prints any arrival rolls: `Aisha arrived. Interruption roll: 38/50 → miss. Pull roll: 41/35 → hit.`
 - [`src/game/reporting/html_blocks.py`](../src/game/reporting/html_blocks.py): Arrival rolls get their own card style.
 - [`src/game/eval/playthrough.py`](../src/game/eval/playthrough.py): Add `npc_initiated_exit_observed` assertion (any conversation closed with `npc_left` or `npc_summoned_elsewhere`), `npc_arrival_rolls_observed` assertion. Aggregate stats: `arrival_rolls_total`, `arrival_interrupt_hits`, `arrival_pull_hits`, `npc_summoned_total`.
 
@@ -304,7 +304,7 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
 - ❌ No NPC-initiated re-entry into the same conversation. Once an NPC is summoned out, they don't return to that conversation in the same phase.
 - ❌ No player override of arrival rolls. The math is the math.
 - ❌ No double-counting: one ArrivalRoll per NPC per arrival. If they move away and come back, that's a new arrival.
-- ❌ No prompt edits beyond the villa_orchestrator update Claude writes.
+- ❌ No prompt edits beyond the resort_orchestrator update Claude writes.
 
 ---
 
@@ -325,11 +325,11 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
 
 - [`pyproject.toml`](../pyproject.toml): Add `pytest-xdist` to dev dependencies.
 - [`Makefile`](../Makefile): `test` target becomes `uv run pytest -m "not llm" -n auto`. `test-llm` stays serial (the LLM tests share rate-limited resources). Add `test-fast` target that runs only the engine unit tests in parallel for ultra-quick iteration.
-- [`src/game/agents/islander_voice.py`](../src/game/agents/islander_voice.py): `OpenAI()` client construction moves from `__init__` to a `@cached_property` so non-LLM paths don't construct it.
+- [`src/game/agents/heartbreaker_voice.py`](../src/game/agents/heartbreaker_voice.py): `OpenAI()` client construction moves from `__init__` to a `@cached_property` so non-LLM paths don't construct it.
 - [`src/game/agents/contextual_options.py`](../src/game/agents/contextual_options.py): Same lazy client construction.
 - [`src/game/agents/event_narrator.py`](../src/game/agents/event_narrator.py): Same.
 - [`src/game/agents/conversation_curator.py`](../src/game/agents/conversation_curator.py): Same.
-- [`src/game/agents/villa_orchestrator.py`](../src/game/agents/villa_orchestrator.py): Same.
+- [`src/game/agents/resort_orchestrator.py`](../src/game/agents/resort_orchestrator.py): Same.
 - [`src/game/agents/background_dialogue.py`](../src/game/agents/background_dialogue.py): Same.
 - [`src/game/agents/player_autopilot.py`](../src/game/agents/player_autopilot.py): Same.
 - [`tests/conftest.py`](../tests/conftest.py):
@@ -357,23 +357,23 @@ After these changes, `make test` should run in under 30 seconds on a modern dev 
 
 ## Prompt update for H8.2
 
-I (Claude) update [`villa_orchestrator.md`](../src/game/agents/prompts/villa_orchestrator.md) to add a new section after the existing `## Hard rules` block. Pre-written here so Codex installs verbatim during H8.2:
+I (Claude) update [`resort_orchestrator.md`](../src/game/agents/prompts/resort_orchestrator.md) to add a new section after the existing `## Hard rules` block. Pre-written here so Codex installs verbatim during H8.2:
 
 ```markdown
 ## NPC summoning (pulling out of conversations)
 
-You may pull an NPC out of any active conversation — the player's conversation or any NPC-NPC conversation — via the `npc_summoned_elsewhere` output field. Use this when an Islander has a strong reason to leave where they are.
+You may pull an NPC out of any active conversation — the player's conversation or any NPC-NPC conversation — via the `npc_summoned_elsewhere` output field. Use this when a Heartbreaker has a strong reason to leave where they are.
 
 Each `NPCSummon`:
 
-- `npc_id` — the Islander leaving.
+- `npc_id` — the Heartbreaker leaving.
 - `from_conversation_id` — the conversation they're leaving. Must be currently active.
 - `reason` — one of: `chemistry_partner_arrived`, `friend_needs_them`, `drama_pull`, `needs_space`, `phase_pressure`.
 - `target_location` — where they're going. Must be different from their current location.
 
 ### When to fire a summon
 
-- **`chemistry_partner_arrived`** — an islander the NPC has high chemistry with just walked into a different location, and the NPC is currently with someone they don't share that chemistry with.
+- **`chemistry_partner_arrived`** — a heartbreaker the NPC has high chemistry with just walked into a different location, and the NPC is currently with someone they don't share that chemistry with.
 - **`friend_needs_them`** — an NPC the holder has a strong friendship memory with appears upset or in drama elsewhere.
 - **`drama_pull`** — the NPC just heard or witnessed something gossip-worthy and wants to share it with someone else.
 - **`needs_space`** — the NPC has been in a deep or vulnerable exchange for multiple exchanges and (per their personality) wants to step away. Avoidant attachment especially.
@@ -387,7 +387,7 @@ Each `NPCSummon`:
 - Do not summon someone you also moved this turn. Moves are for off-screen-to-off-screen drift; summons are for in-conversation extraction.
 ```
 
-No other prompt changes. The new `summoned_exit` intent kind in Islander Voice is handled by the existing ad-hoc intent fallback in `islander_voice_context`.
+No other prompt changes. The new `summoned_exit` intent kind in Heartbreaker Voice is handled by the existing ad-hoc intent fallback in `heartbreaker_voice_context`.
 
 ---
 
@@ -416,16 +416,16 @@ No other prompt changes. The new `summoned_exit` intent kind in Islander Voice i
 - `test_interruption_chance_includes_gossip_memory_count`
 - `test_interruption_chance_includes_jealousy_modifier`
 - `test_interruption_chance_clamped_5_75`
-- `test_pull_chance_includes_chemistry_with_target`
-- `test_pull_chance_subtracts_couple_strength`
-- `test_pull_chance_clamped_3_60`
+- `test_private_chat_chance_includes_chemistry_with_target`
+- `test_private_chat_chance_subtracts_couple_strength`
+- `test_private_chat_chance_clamped_3_60`
 - `test_roll_arrival_records_full_breakdown`
 - `test_arrival_roll_only_fires_when_player_in_conversation`
 - `test_arrival_roll_only_fires_when_npc_just_arrived`
 
 `tests/engine/test_npc_summoned.py`:
-- `test_villa_update_validates_summon_npc_in_named_conversation`
-- `test_villa_update_validates_summon_target_location_real`
+- `test_resort_update_validates_summon_npc_in_named_conversation`
+- `test_resort_update_validates_summon_target_location_real`
 - `test_apply_summon_closes_player_conversation`
 - `test_apply_summon_closes_npc_npc_conversation`
 - `test_apply_summon_runs_curator`
@@ -483,7 +483,7 @@ After all three sub-phases commit:
 
 - ❌ No LLM judge agent in the eval layer. Claude reviews raw stats and per-assertion pass/fail.
 - ❌ No time budget tuning per archetype, persona, or player choice. Budgets are fixed constants.
-- ❌ No new agents. NPC summoning uses the existing Villa Orchestrator output; arrival rolls are deterministic engine math.
+- ❌ No new agents. NPC summoning uses the existing Resort Orchestrator output; arrival rolls are deterministic engine math.
 - ❌ No changes to the autopilot prompt or rails — the rails added during H7 stay. H8's auto-advance removes the *need* for most rails, but the rails remain as belt-and-suspenders.
 - ❌ No reducing test coverage. Performance comes from parallelism + caching, not deletion.
 
@@ -514,14 +514,14 @@ H8 ships as three commits. Each follows the standard pre-flight + per-commit che
 
 ### H8.2 — NPC Autonomy
 
-- [ ] Wait for Claude's updated `villa_orchestrator.md` prompt (provided in this doc)
+- [ ] Wait for Claude's updated `resort_orchestrator.md` prompt (provided in this doc)
 - [ ] Install the prompt update verbatim per R17
-- [ ] Add `NPCSummon`, extend `VillaUpdate` schema, extend `TurnTrace` with `arrival_rolls`
+- [ ] Add `NPCSummon`, extend `ResortUpdate` schema, extend `TurnTrace` with `arrival_rolls`
 - [ ] Write `engine/arrival_rolls.py`
-- [ ] Update `engine/villa.py` validate + apply for `NPCSummon`
+- [ ] Update `engine/resort.py` validate + apply for `NPCSummon`
 - [ ] Wire into `engine/turn.py` after orchestrator runs
 - [ ] Update `engine/conversation.py` to accept `"npc_summoned_elsewhere"` close reason and extend `departure_probability` with attachment factors
-- [ ] Update Islander Voice context to handle `summoned_exit` intent kind
+- [ ] Update Heartbreaker Voice context to handle `summoned_exit` intent kind
 - [ ] Update CLI rendering for goodbye exchange + arrival rolls
 - [ ] Update HTML rendering for arrival roll cards
 - [ ] Regenerate scenario fixtures

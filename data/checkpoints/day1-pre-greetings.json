@@ -14,7 +14,7 @@
       "elapsed_minutes": 0
     },
     "location_id": "pool",
-    "villa": "main",
+    "resort": "main",
     "player": {
       "id": "player",
       "name": "You",
@@ -23,7 +23,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 5,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 5
       },
       "archetype_id": "heartthrob",
@@ -33,9 +33,9 @@
       "eliminated": false,
       "memories": [],
       "known_facts": {},
-      "pull_attempts_this_phase": {}
+      "private_chat_attempts_this_phase": {}
     },
-    "islanders": [
+    "heartbreakers": [
       {
         "id": "chloe",
         "name": "Chloe",
@@ -60,7 +60,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "warm smiles and kind eyes",
           "personality_type": [
             "warm",
@@ -287,8 +287,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "touches her necklace when she wants to leave a conversation",
               "distractors": [],
               "tier": 0,
@@ -515,7 +515,7 @@
         "name": "Maya",
         "gender": "woman",
         "archetype": "joker",
-        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to the villa hoping someone notices when she drops the joke.",
+        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to Sunset Bay hoping someone notices when she drops the joke.",
         "location_id": "kitchen",
         "relationship": {
           "affection": 8,
@@ -534,7 +534,7 @@
           "neuroticism": 6
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "expressive people with bright energy",
           "personality_type": [
             "funny",
@@ -761,8 +761,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "starts doing impressions when she is close to crying",
               "distractors": [],
               "tier": 0,
@@ -1008,7 +1008,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "grounded and easygoing",
           "personality_type": [
             "steady",
@@ -1227,8 +1227,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "checks everyone has water before admitting he is tired",
               "distractors": [],
               "tier": 0,
@@ -1482,7 +1482,7 @@
           "neuroticism": 5
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "sharp style and confident eye contact",
           "personality_type": [
             "ambitious",
@@ -1701,8 +1701,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "straightens cushions when she wants to be touched",
               "distractors": [],
               "tier": 0,
@@ -1956,7 +1956,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "soft warmth and grounded humor",
           "personality_type": [
             "kind",
@@ -2175,8 +2175,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "over-offers tea when she feels unwanted",
               "distractors": [],
               "tier": 0,
@@ -2430,7 +2430,7 @@
           "neuroticism": 4
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "athletic confidence and direct energy",
           "personality_type": [
             "confident",
@@ -2649,8 +2649,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "gets louder when he feels replaceable",
               "distractors": [],
               "tier": 0,
@@ -2904,7 +2904,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "dry wit and calm loyalty",
           "personality_type": [
             "thoughtful",
@@ -3123,8 +3123,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "makes himself useful before saying what he wants",
               "distractors": [],
               "tier": 0,
@@ -3378,7 +3378,7 @@
           "neuroticism": 5
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "bright grin and restless energy",
           "personality_type": [
             "playful",
@@ -3605,8 +3605,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "keeps the bit going three seconds too long",
               "distractors": [],
               "tier": 0,
@@ -3846,7 +3846,7 @@
     "npc_conversations": [],
     "pending_npc_summon": null,
     "pending_npc_approach": null,
-    "pending_recouple_proposal": null,
+    "pending_pair_proposal": null,
     "heart_throb_briefs": [],
     "character_creation": {
       "archetype_id": "heartthrob",
@@ -3855,7 +3855,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 5,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 5
       },
       "rerolled": false
@@ -3869,12 +3869,12 @@
     "pending_gather": null,
     "pending_group_date": null,
     "daily_recaps": [],
-    "hideaway": {
+    "private_suite": {
       "used_on_day": null,
       "partner_id": null,
       "deltas_applied": false
     },
-    "casa_amor_state": null,
+    "flush_of_hearts_state": null,
     "outcome": null
   },
   "trace_records": [],

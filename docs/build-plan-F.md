@@ -21,7 +21,7 @@ Same as [build-plan-A2-E.md](build-plan-A2-E.md), with one change.
    - `make qa` is red and you cannot fix it.
    - A model ID does not work with the available API key.
    - Scope would expand beyond what this plan authorizes.
-5. **Mid-phase checkpoint after F2.** Generate a single HTML page rendering ~10 single-exchange conversations across the four core categories (Friendly/Flirty/Deep/Banter) with the real Islander Voice agent. Save as `review-packet-preview/session-phaseF2.html` and post the path to the user. **Do not continue to F3 without explicit user approval.** This is the voice-quality gate — F3 amplifies whatever voice F2 establishes, so verify it first.
+5. **Mid-phase checkpoint after F2.** Generate a single HTML page rendering ~10 single-exchange conversations across the four core categories (Friendly/Flirty/Deep/Banter) with the real Heartbreaker Voice agent. Save as `review-packet-preview/session-phaseF2.html` and post the path to the user. **Do not continue to F3 without explicit user approval.** This is the voice-quality gate — F3 amplifies whatever voice F2 establishes, so verify it first.
 6. **Final report.** End of F3: regenerate the full review packet (real multi-exchange conversations across the 3 policy scripts). Post the path.
 
 ---
@@ -99,7 +99,7 @@ This means real LLM is required to fully replay a real session, but mock LLM is 
 
 | Agent | Model | Reasoning effort | Why |
 |---|---|---|---|
-| **Islander Voice** | `gpt-4.1-mini` | n/a | Natural dialogue prose. Voice quality dominant. |
+| **Heartbreaker Voice** | `gpt-4.1-mini` | n/a | Natural dialogue prose. Voice quality dominant. |
 | **Contextual Options** | `gpt-5.4-mini` | low | Structured JSON with intent/stat/risk metadata. Tool-call shape. |
 | **Event Narrator** | `gpt-4.1-mini` | n/a | Reality TV narrator prose. |
 
@@ -117,7 +117,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
 
 **Changes.**
 
-- Add `Mood` enum to [`src/game/state/models.py`](../src/game/state/models.py): `HAPPY, FLIRTY, UPSET, ANXIOUS, ANGRY, CONTENT`. Default `CONTENT`. Add `mood: Mood = Mood.CONTENT` to `IslanderState`.
+- Add `Mood` enum to [`src/game/state/models.py`](../src/game/state/models.py): `HAPPY, FLIRTY, UPSET, ANXIOUS, ANGRY, CONTENT`. Default `CONTENT`. Add `mood: Mood = Mood.CONTENT` to `HeartbreakerState`.
 - New file `content/intents.yaml` with this shape (full catalog inline below):
   ```yaml
   intents:
@@ -130,9 +130,9 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
       relationship_deltas:
         success: {affection: 2, trust: 2}
         miss: {affection: 0, trust: 0}
-    - id: friendly_chat_villa
+    - id: friendly_chat_resort
       category: friendly
-      label: "Chat about the villa"
+      label: "Chat about Sunset Bay"
       stat_used: banter
       tags: [casual, friendly]
       unlock_affection: 0
@@ -169,7 +169,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
     - id: flirty_intimate_eye_contact
       category: flirty
       label: "Intimate eye contact"
-      stat_used: graft
+      stat_used: spark
       tags: [flirty, intense]
       unlock_affection: 30
       relationship_deltas:
@@ -234,7 +234,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
 - Rewrite [`src/game/engine/actions.py`](../src/game/engine/actions.py):
   - Delete `TALK`, `FLIRT`, `LISTEN`, `BOLD_FLIRT`, `LEAVE` from `ActionKind` (R3 — no parallel shapes).
   - Add `START_CONVERSATION`, `RESPOND_WITH`, `END_CONVERSATION`.
-  - `available_actions(state)` returns `START_CONVERSATION` per visible-and-not-eliminated islander when no `active_conversation`, otherwise returns conversation-aware options (built in F3; for F1 it's just `END_CONVERSATION` + structurally similar to today).
+  - `available_actions(state)` returns `START_CONVERSATION` per visible-and-not-eliminated heartbreaker when no `active_conversation`, otherwise returns conversation-aware options (built in F3; for F1 it's just `END_CONVERSATION` + structurally similar to today).
 - Rewrite [`src/game/engine/rules.py`](../src/game/engine/rules.py):
   - Delete `_apply_talk`, `_apply_flirt`, `_apply_listen`, `_apply_bold_flirt`.
   - Add `_apply_intent(state, intent, target, rng) -> MechanicalResult` that computes success per the formula in [02-Core-Mechanics.md § Success Calculation Details](../02-Core-Mechanics.md) and applies deltas from the intent's `relationship_deltas` table.
@@ -244,7 +244,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
   Talk to Chloe
     Friendly:
       1. Ask how she's feeling (EQ)
-      2. Chat about the villa (Banter)
+      2. Chat about Sunset Bay (Banter)
       3. Compliment her personality (Charm)
     Flirty: (locked, requires affection 20)
     Deep: (locked, requires affection 40)
@@ -276,16 +276,16 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
 
 ---
 
-## Phase F2: The Islander Voice Agent
+## Phase F2: The Heartbreaker Voice Agent
 
 **Design source:** [11-Conversation-Flow.md § Single Exchange Generation](../11-Conversation-Flow.md), [03-LLM-Architecture.md § Dialogue AI](../03-LLM-Architecture.md).
 
-**Scope.** Wire the real Islander Voice agent. After F1's mechanics resolve, the agent generates both the player's actual dialogue line and the NPC's response in their voice. Still single-exchange — F3 adds multi-exchange.
+**Scope.** Wire the real Heartbreaker Voice agent. After F1's mechanics resolve, the agent generates both the player's actual dialogue line and the NPC's response in their voice. Still single-exchange — F3 adds multi-exchange.
 
 **Changes.**
 
-- Rename `src/game/agents/narrator.py` → `src/game/agents/islander_voice.py`. The existing `mock_narration` becomes `mock_islander_voice` (returns a fixed `Exchange` model, not a string).
-- New Pydantic models in `islander_voice.py`:
+- Rename `src/game/agents/narrator.py` → `src/game/agents/heartbreaker_voice.py`. The existing `mock_narration` becomes `mock_heartbreaker_voice` (returns a fixed `Exchange` model, not a string).
+- New Pydantic models in `heartbreaker_voice.py`:
   ```python
   class Exchange(BaseModel):
       model_config = ConfigDict(extra="forbid")
@@ -294,22 +294,22 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
       npc_tone: Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
       npc_mood_after: Mood
   ```
-- `IslanderVoiceContext` Pydantic model built from `(state, intent, target, mechanical_result)`. Includes archetype prose from `content/archetypes/`, location flavor from `content/locations/`, last 0-2 exchanges from the active conversation (none for the first exchange).
-- New `IslanderVoiceAgent` class:
+- `HeartbreakerVoiceContext` Pydantic model built from `(state, intent, target, mechanical_result)`. Includes archetype prose from `content/archetypes/`, location flavor from `content/locations/`, last 0-2 exchanges from the active conversation (none for the first exchange).
+- New `HeartbreakerVoiceAgent` class:
   - Model: `gpt-4.1-mini` (hardcoded constant).
-  - Prompt: rendered from `src/game/agents/prompts/islander_voice.md` (provided below) with context substitution.
+  - Prompt: rendered from `src/game/agents/prompts/heartbreaker_voice.md` (provided below) with context substitution.
   - Output: structured `Exchange`. Use the OpenAI `responses.create()` API with `response_format` constraining to the `Exchange` schema. If structured-output isn't available on `gpt-4.1-mini`, fall back to instructed JSON + Pydantic validation. **Fail loud on parse failure.**
   - Runtime validation enforces (in this order, all R2 — raise on violation):
     - `player_dialogue` and `npc_dialogue` together 20-150 words.
     - No digits in either dialogue field.
-    - No name of any eliminated or off-scene islander appears in `npc_dialogue`.
+    - No name of any eliminated or off-scene heartbreaker appears in `npc_dialogue`.
     - `npc_mood_after` is in the `Mood` enum.
-- Move the prompt to `src/game/agents/prompts/islander_voice.md`. Use the text from the **Prompts** section below verbatim. Prompts are user-owned (ENGINEERING R17).
+- Move the prompt to `src/game/agents/prompts/heartbreaker_voice.md`. Use the text from the **Prompts** section below verbatim. Prompts are user-owned (ENGINEERING R17).
 - Modify [`src/game/engine/turn.py`](../src/game/engine/turn.py):
   - `TurnResult.narration: str` is replaced with:
     - `exchange: Exchange | None` — set for `START_CONVERSATION` and `RESPOND_WITH`.
     - `event_narration: str | None` — set for ceremony events (Event Narrator agent — see below).
-  - `run_turn` invokes `IslanderVoiceAgent` for conversation actions, calls `EventNarratorAgent` for ceremony triggers.
+  - `run_turn` invokes `HeartbreakerVoiceAgent` for conversation actions, calls `EventNarratorAgent` for ceremony triggers.
 - New `EventNarratorAgent` in `src/game/agents/event_narrator.py`:
   - Model: `gpt-4.1-mini`.
   - Prompt: `src/game/agents/prompts/event_narrator.md` (provided below).
@@ -325,12 +325,12 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
   hash: 8c2f...
   ```
 - Update HTML rendering in [`src/game/reporting/html.py`](../src/game/reporting/html.py) to render exchanges as dialogue blocks with speaker tags, not as paragraph narration.
-- New `tests/agents/test_islander_voice.py` (marked `@pytest.mark.llm`):
+- New `tests/agents/test_heartbreaker_voice.py` (marked `@pytest.mark.llm`):
   - 12 parametrized tests, one per intent in `content/intents.yaml`.
   - Each asserts the runtime contract: word count, no digits, no off-scene names, `npc_mood_after` valid.
   - Smoke: each successfully returns a parseable `Exchange`.
 - New `tests/agents/test_event_narrator.py` (marked `@pytest.mark.llm`):
-  - 3 parametrized tests: bombshell arrival, recoupling, elimination.
+  - 3 parametrized tests: Heart Throb arrival, Pairing Ceremony, elimination.
   - Assert prose is 2-4 sentences, references named participants, no digits.
 - `make test-llm` runs both.
 
@@ -342,7 +342,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
 
 **Acceptance criteria.**
 - `make qa` green (no LLM in default).
-- `make test-llm` green: 15+ tests (12 islander voice + 3 event narrator) pass.
+- `make test-llm` green: 15+ tests (12 heartbreaker voice + 3 event narrator) pass.
 - `make play` produces real dialogue from `gpt-4.1-mini`. One exchange per turn for now.
 - Determinism preserved: replaying a scenario fixture produces the same hash even though dialogue varies. The new `test_dialogue_does_not_affect_hash` proves it.
 - Mid-phase HTML preview generated and path posted.
@@ -375,7 +375,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
       model_config = ConfigDict(extra="forbid")
       text: str
       intent_kind: str  # snake_case tag like "deflect_with_humor"
-      stat_used: Literal["charm", "banter", "eq", "graft", "loyalty"] | None
+      stat_used: Literal["charm", "banter", "eq", "spark", "loyalty"] | None
       risk: Literal["safe", "low", "medium", "high"]
       tone: str
 
@@ -396,11 +396,11 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
     - No option text contains digits.
 - Extend [`src/game/engine/actions.py`](../src/game/engine/actions.py):
   - `available_actions(state)` returns:
-    - When `active_conversation` is None: `START_CONVERSATION` per visible islander + `MOVE` + `ADVANCE_PHASE`.
+    - When `active_conversation` is None: `START_CONVERSATION` per visible heartbreaker + `MOVE` + `ADVANCE_PHASE`.
     - When `active_conversation` is open: `RESPOND_WITH(option_index)` for each option in the latest computed `FollowUpMenu` + `END_CONVERSATION`. The follow-up menu is computed lazily, after the NPC's most recent exchange, and stored in `state.active_conversation.pending_options` (new field).
   - `validate_action(state, action)` enforces conversation invariants: can't `START_CONVERSATION` while one is open; can't `RESPOND_WITH` while closed.
 - Extend [`src/game/engine/turn.py`](../src/game/engine/turn.py):
-  - Handle `START_CONVERSATION`: create conversation, compute initial mechanical result, invoke Islander Voice, store exchange, then invoke Contextual Options to populate next menu.
+  - Handle `START_CONVERSATION`: create conversation, compute initial mechanical result, invoke Heartbreaker Voice, store exchange, then invoke Contextual Options to populate next menu.
   - Handle `RESPOND_WITH`: validate option_index against pending_options, look up the chosen option's `intent_kind` and map it through a code-side `intent_resolver` (resolves natural-language intent_kinds to concrete `Intent` rows by category + stat — fallback to a generic "freeform" intent with neutral deltas). Then same flow as `START_CONVERSATION` for the new exchange.
   - After each exchange, compute `departure_probability`. Pass to Contextual Options. If the agent returns `npc_will_leave=true`, set conversation status to "closing" — the player still sees the exit line in the next exchange render, then the conversation closes automatically.
   - Handle `END_CONVERSATION`: close conversation cleanly.
@@ -430,20 +430,20 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
   - 5 parametrized contexts varying in `departure_probability` (0, 30, 70, 100) and last NPC tone.
   - Assert: option count 2-4, exit option present, no digits, departure logic respects probability hint.
 - **Rewrite the three policy scripts** to use real multi-exchange conversations:
-  - `policy-loyal.yaml`: 4 days of TALK-heavy single-target conversations with Chloe, mixing Friendly/Deep, including Day 5 recoupling.
-  - `policy-chaotic.yaml`: Multi-target chasing — flirt aggressively with Maya, then bombshell Aisha when she arrives, including a high-risk denial follow-up.
+  - `policy-loyal.yaml`: 4 days of TALK-heavy single-target conversations with Chloe, mixing Friendly/Deep, including Day 5 Pairing Ceremony.
+  - `policy-chaotic.yaml`: Multi-target chasing — flirt aggressively with Maya, then heart_throb Aisha when she arrives, including a high-risk denial follow-up.
   - `policy-strategic.yaml`: Long Friendly buildup with Liam, escalate to Deep on Day 3, balanced FLIRT-with-Chloe and friendship-with-Liam.
   - Each script: 8-15 conversation entries (each entry = 3-6 exchanges via `RESPOND_WITH`), plus phase advances, plus ceremony triggers.
 - **Regenerate the review packet** as the final F3 deliverable. Each session HTML renders conversations as dialogue blocks. Index page shows seed, day, conversation count, exchange count.
 - Balance simulation: rewrite [`src/game/reporting/balance.py`](../src/game/reporting/balance.py) to actually vary actions: for each seed, run a policy where at each decision point an `rng.choice` picks from `available_actions`. Mock LLM. Report:
-  - Outcome distribution (player survived / eliminated / partner stolen at recoupling)
-  - Average final affection per islander
+  - Outcome distribution (player survived / eliminated / partner stolen at Pairing Ceremony)
+  - Average final affection per heartbreaker
   - Action category frequency
   - Conversation length distribution
 
 **Acceptance criteria.**
 - `make qa` green.
-- `make test-llm` green: 25+ tests pass (12 islander voice + 3 event narrator + 5 contextual options + 5 conversation contract).
+- `make test-llm` green: 25+ tests pass (12 heartbreaker voice + 3 event narrator + 5 contextual options + 5 conversation contract).
 - `make play` plays multi-exchange conversations end-to-end. A full 6-day session yields 8-20 conversations, each 2-6 exchanges.
 - A new fixture `conversation-multi-exchange.yaml` is verified by `make determinism` (mock LLM).
 - The regenerated review packet shows real multi-exchange conversations across 3 policy scripts.
@@ -463,7 +463,7 @@ No per-call budget cap, no spend tracking, no `LLM_BUDGET_USD` env var. Cost is 
 
 The prompts are user-owned per ENGINEERING R17. They live in the repo at:
 
-- [`src/game/agents/prompts/islander_voice.md`](../src/game/agents/prompts/islander_voice.md) — Islander voice for single-exchange dialogue (F2).
+- [`src/game/agents/prompts/heartbreaker_voice.md`](../src/game/agents/prompts/heartbreaker_voice.md) — Heartbreaker voice for single-exchange dialogue (F2).
 - [`src/game/agents/prompts/event_narrator.md`](../src/game/agents/prompts/event_narrator.md) — Reality TV narrator for ceremonies (F2).
 - [`src/game/agents/prompts/contextual_options.md`](../src/game/agents/prompts/contextual_options.md) — Follow-up menu generator (F3).
 
@@ -480,7 +480,7 @@ Codex installs them by reading these files at runtime. Codex does not modify the
 
 `make qa` after F3: `make smoke` plays a multi-exchange conversation via mock LLM end-to-end. `make determinism` extends to the new `conversation-multi-exchange.yaml` fixture.
 
-`make test-llm` after F3: 25+ tests covering Islander Voice, Contextual Options, Event Narrator.
+`make test-llm` after F3: 25+ tests covering Heartbreaker Voice, Contextual Options, Event Narrator.
 
 ---
 
@@ -490,7 +490,7 @@ In addition to the [build-plan-A2-E.md global anti-goals](build-plan-A2-E.md):
 
 - ❌ **No new ADRs for incremental code changes.** This plan IS the architectural commitment for F1-F3. Only write an ADR if a genuinely new architectural decision arises mid-phase.
 - ❌ **No Vite UI** — still Phase G or later. CLI + HTML report packet remain the review surface.
-- ❌ **No mood propagation, Big 5 mechanics, Type on Paper preferences, group conversations, gossip propagation, Producer AI, Curator agent, Islander Generator agent.** All deferred.
+- ❌ **No mood propagation, Big 5 mechanics, Type on Paper preferences, group conversations, gossip propagation, Producer AI, Curator agent, Heartbreaker Generator agent.** All deferred.
 - ❌ **No conversation interruptions** — single-target single-conversation only.
 - ❌ **No prompt caching infrastructure** — provider defaults are fine.
 - ❌ **No model abstraction layer.** `gpt-4.1-mini` and `gpt-5.4-mini` are hardcoded module constants. If the user wants a different model later, that's a single-line change.

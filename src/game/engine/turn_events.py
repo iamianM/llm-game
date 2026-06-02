@@ -5,12 +5,11 @@ from __future__ import annotations
 from typing import Literal
 
 from src.game.engine.audience import record_audience_snapshot
-from src.game.engine.casa_amor import enter_casa_amor, return_ceremony
 from src.game.engine.ceremonies import (
     CeremonyEvent,
-    RecouplingResult,
+    PairingResult,
     final_vote_ceremony,
-    recoupling,
+    pairing,
 )
 from src.game.engine.challenges import (
     ROUND_BASED_MINIGAMES,
@@ -18,6 +17,7 @@ from src.game.engine.challenges import (
     resolve_challenge,
     schedule_challenge,
 )
+from src.game.engine.flush_of_hearts import enter_flush_of_hearts, return_ceremony
 from src.game.engine.phases import advance_phase
 from src.game.engine.producer_events import producer_text_event_message, schedule_producer_text
 from src.game.engine.state_access import display_name
@@ -32,7 +32,7 @@ from src.game.state.models import (
 )
 from src.game.state.rng import SeededRng
 
-GatherKind = Literal["producer_text", "ceremony", "challenge", "casa_announce"]
+GatherKind = Literal["producer_text", "ceremony", "challenge", "flush_announce"]
 
 
 def advance_phase_with_events(
@@ -42,9 +42,9 @@ def advance_phase_with_events(
     """Advance the clock and return any events created by the transition."""
     events: list[CeremonyEvent] = []
     audience_snapshot: AudienceSnapshot | None = None
-    casa_active = state.casa_amor_state is not None and not state.casa_amor_state.returned
-    if state.phase.value == "evening" and state.day in {3, 5} and not (state.day == 5 and casa_active):
-        events.append(_schedule_gather(state, kind="ceremony", event_id=f"recoupling_day_{state.day}"))
+    flush_active = state.flush_of_hearts_state is not None and not state.flush_of_hearts_state.returned
+    if state.phase.value == "evening" and state.day in {3, 5} and not (state.day == 5 and flush_active):
+        events.append(_schedule_gather(state, kind="ceremony", event_id=f"pairing_day_{state.day}"))
         return events, audience_snapshot
     if state.phase.value == "evening" and state.day >= 6:
         events.append(_schedule_gather(state, kind="ceremony", event_id="final_vote"))
@@ -53,8 +53,8 @@ def advance_phase_with_events(
         audience_snapshot = record_audience_snapshot(state)
     advance_phase(state)
     if state.day == 6 and state.phase is Phase.MORNING:
-        if state.casa_amor_state is not None and not state.casa_amor_state.returned:
-            events.append(_schedule_gather(state, kind="ceremony", event_id="casa_return"))
+        if state.flush_of_hearts_state is not None and not state.flush_of_hearts_state.returned:
+            events.append(_schedule_gather(state, kind="ceremony", event_id="flush_return"))
     events.extend(_scheduled_phase_events(state, rng))
     if (
         state.phase is Phase.CHALLENGE
@@ -116,15 +116,15 @@ def resolve_pending_gather(
     gather = state.pending_gather
     events: list[CeremonyEvent] = []
     audience_snapshot: AudienceSnapshot | None = None
-    if gather.kind in {"producer_text", "casa_announce"}:
+    if gather.kind in {"producer_text", "flush_announce"}:
         if state.pending_text is not None:
             events.append(CeremonyEvent(kind="producer_text", message=producer_text_event_message(state.pending_text)))
-            if state.pending_text.kind == "casa_amor_announce":
-                events.append(enter_casa_amor(state))
+            if state.pending_text.kind == "flush_of_hearts_announce":
+                events.append(enter_flush_of_hearts(state))
         state.pending_text = None
-    elif gather.kind == "ceremony" and gather.event_id.startswith("recoupling"):
-        ceremony = recoupling(state)
-        events.extend(recoupling_events(state, ceremony))
+    elif gather.kind == "ceremony" and gather.event_id.startswith("pairing"):
+        ceremony = pairing(state)
+        events.extend(pairing_events(state, ceremony))
         if ceremony.eliminated_id == state.player.id:
             state.outcome = RunOutcome.ELIMINATED
         audience_snapshot = record_audience_snapshot(state)
@@ -132,10 +132,10 @@ def resolve_pending_gather(
     elif gather.kind == "ceremony" and gather.event_id == "final_vote":
         audience_snapshot = record_audience_snapshot(state)
         events.append(final_vote_ceremony(state))
-    elif gather.kind == "ceremony" and gather.event_id == "casa_return":
-        casa_return = return_ceremony(state)
-        if casa_return is not None:
-            events.append(casa_return)
+    elif gather.kind == "ceremony" and gather.event_id == "flush_return":
+        flush_return = return_ceremony(state)
+        if flush_return is not None:
+            events.append(flush_return)
     elif gather.kind == "challenge":
         challenge = schedule_challenge(state.day)
         if challenge is not None:
@@ -158,20 +158,20 @@ def resolve_pending_gather(
     return events, audience_snapshot
 
 
-def recoupling_events(state: GameState, ceremony: RecouplingResult) -> list[CeremonyEvent]:
-    """Create recoupling and optional dumping events."""
-    events = [CeremonyEvent(kind="recoupling", message="The Pairing Ceremony locks in the next couples.")]
+def pairing_events(state: GameState, ceremony: PairingResult) -> list[CeremonyEvent]:
+    """Create pairing and optional Heart Out events."""
+    events = [CeremonyEvent(kind="pairing", message="The Pairing Ceremony locks in the next couples.")]
     for attempt in ceremony.steal_attempts:
         outcome = "succeeds" if attempt.success else "fails"
         events.append(
             CeremonyEvent(
                 kind="steal_attempt",
                 message=(
-                    f"Heart Throb steal attempt: {display_name(state, attempt.bombshell_id)} "
+                    f"Heart Throb steal attempt: {display_name(state, attempt.heart_throb_id)} "
                     f"tries to steal {display_name(state, attempt.target_id)} from "
                     f"{display_name(state, attempt.abandoned_id)} and {outcome}."
                 ),
-                islander_id=attempt.bombshell_id,
+                heartbreaker_id=attempt.heart_throb_id,
             )
         )
         if attempt.success:
@@ -180,9 +180,9 @@ def recoupling_events(state: GameState, ceremony: RecouplingResult) -> list[Cere
                     kind="partner_stolen",
                     message=(
                         f"Partner stolen: {display_name(state, attempt.target_id)} "
-                        f"pairs with {display_name(state, attempt.bombshell_id)}."
+                        f"pairs with {display_name(state, attempt.heart_throb_id)}."
                     ),
-                    islander_id=attempt.target_id,
+                    heartbreaker_id=attempt.target_id,
                 )
             )
     if ceremony.eliminated_id is not None:
@@ -190,7 +190,7 @@ def recoupling_events(state: GameState, ceremony: RecouplingResult) -> list[Cere
             CeremonyEvent(
                 kind="elimination",
                 message=f"Heart Out: {display_name(state, ceremony.eliminated_id)} leaves Sunset Bay.",
-                islander_id=ceremony.eliminated_id,
+                heartbreaker_id=ceremony.eliminated_id,
             )
         )
     return events
@@ -202,7 +202,7 @@ def challenge_response_event(state: GameState) -> CeremonyEvent | None:
     Round-based minigames advance through several rounds; only fire the
     ceremony event (which triggers the Event Narrator to write a wrap)
     once the challenge has actually resolved. Otherwise every round's
-    response would generate a "the quiz hangs over the villa..." wrap
+    response would generate a "the quiz hangs over Sunset Bay..." wrap
     paragraph mid-quiz, which reads as broken.
     """
     if state.pending_challenge is None:
@@ -226,7 +226,7 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
                 state.pending_challenge = _prepare_round_based_minigame(
                     state, challenge, rng.fork(f"challenge-{state.day}")
                 )
-            elif challenge.kind != "snog_marry_pie":
+            elif challenge.kind != "kiss_wed_pass":
                 state.pending_challenge = resolve_challenge(state, challenge, rng.fork(f"challenge-{state.day}"))
             events.append(
                 CeremonyEvent(
@@ -239,7 +239,7 @@ def _scheduled_phase_events(state: GameState, rng: SeededRng) -> list[CeremonyEv
         state.pending_text = schedule_producer_text(state.day, state)
         if state.pending_text is not None:
             gather_kind: GatherKind = (
-                "casa_announce" if state.pending_text.kind == "casa_amor_announce" else "producer_text"
+                "flush_announce" if state.pending_text.kind == "flush_of_hearts_announce" else "producer_text"
             )
             events.append(_schedule_gather(state, kind=gather_kind, event_id=state.pending_text.id))
     return events
@@ -254,23 +254,23 @@ def _schedule_gather(
     state.pending_gather = PendingGather(
         kind=kind,
         event_id=event_id,
-        gather_location=Location.FIREPIT,
+        gather_location=Location.FLAME_DECK,
         fires_on_turn=state.turn_index + 1,
     )
     return CeremonyEvent(
         kind="gather_scheduled",
-        message=f"Everyone is called to the firepit for {_event_label(event_id)}.",
+        message=f"Everyone is called to the Flame Deck for {_event_label(event_id)}.",
     )
 
 
 def _event_label(event_id: str) -> str:
-    if event_id == "casa_return":
+    if event_id == "flush_return":
         return "the Sunset Bay return"
     if event_id == "final_vote":
         return "the Final Vote"
-    if event_id == "casa_amor_announce":
+    if event_id == "flush_of_hearts_announce":
         return "Flush of Hearts"
-    if event_id.startswith("recoupling"):
+    if event_id.startswith("pairing"):
         return "a Pairing Ceremony"
     return event_id.replace("_", " ")
 
@@ -305,16 +305,16 @@ def _prepare_round_based_minigame(
         return challenge.model_copy(
             update={"rounds": rounds, "participants": ["player", surprise or partner]}
         )
-    if challenge.kind == "snog_marry_pie":
-        from src.game.engine.snog_marry_pie import _partner_id as smp_partner
-        from src.game.engine.snog_marry_pie import build_rounds as smp_build
-        rounds = smp_build(state, rng)
+    if challenge.kind == "kiss_wed_pass":
+        from src.game.engine.kiss_wed_pass import _partner_id as kwp_partner
+        from src.game.engine.kiss_wed_pass import build_rounds as kwp_build
+        rounds = kwp_build(state, rng)
         return challenge.model_copy(
-            update={"rounds": rounds, "participants": ["player", smp_partner(state) or ""]}
+            update={"rounds": rounds, "participants": ["player", kwp_partner(state) or ""]}
         )
-    if challenge.kind == "mr_and_mrs":
-        from src.game.engine.mr_and_mrs import _partner_id as mam_partner
-        from src.game.engine.mr_and_mrs import build_rounds as mam_build
+    if challenge.kind == "couples_quiz":
+        from src.game.engine.couples_quiz import _partner_id as mam_partner
+        from src.game.engine.couples_quiz import build_rounds as mam_build
         from src.game.engine.question_bank import ensure_question_bank
         ensure_question_bank(state)
         partner = mam_partner(state) or "chloe"

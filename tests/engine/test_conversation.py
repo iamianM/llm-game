@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.contextual_options import mock_follow_up_menu
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions, validate_action
 from src.game.engine.conversation import (
     append_exchange,
@@ -26,7 +26,7 @@ def test_conversation_lifecycle_start_append_close() -> None:
     close_conversation(state, "player_exit")
 
     assert state.active_conversation is None
-    assert conversation.exchanges[0].intent_id == "friendly_chat_villa"
+    assert conversation.exchanges[0].intent_id == "friendly_chat_resort"
 
 
 def test_departure_probability_rises_after_miss() -> None:
@@ -63,7 +63,7 @@ def test_cannot_start_two_conversations() -> None:
             PlayerAction(
                 kind=ActionKind.START_CONVERSATION,
                 target_id="chloe",
-                intent_id="friendly_chat_villa",
+                intent_id="friendly_chat_resort",
             ),
         )
 
@@ -101,7 +101,7 @@ def _result(*, success: bool, tags: list[str] | None = None) -> MechanicalResult
         action=PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         success=success,
         relationship_deltas={"chloe": RelationshipDelta(affection=2 if success else -1)},

@@ -14,7 +14,7 @@ from pathlib import Path
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     begin_agent_attempt,
@@ -26,7 +26,7 @@ from src.game.agents.runtime import (
 )
 from src.game.content.archetype_templates import ARCHETYPE_TEMPLATES, ArchetypeTemplate
 from src.game.content.trait_library import opening_trait_cards
-from src.game.state.models import Gender, IslanderState
+from src.game.state.models import Gender, HeartbreakerState
 from src.game.state.traits import CORE_TRAIT_KEYS, PersonaSummary, TraitCard, TraitFact
 
 TRAIT_GENERATOR_MODEL = GAME_AGENT_MODEL
@@ -36,7 +36,7 @@ TRAIT_GENERATOR_MODEL = GAME_AGENT_MODEL
 TRAIT_GENERATOR_REASONING_EFFORT = os.environ.get(
     "LLM_TRAIT_GENERATOR_REASONING_EFFORT", "low"
 )
-# Max parallel single-islander LLM calls during opening cast generation.
+# Max parallel single-heartbreaker LLM calls during opening cast generation.
 TRAIT_GENERATOR_MAX_CONCURRENCY = int(
     os.environ.get("LLM_TRAIT_GENERATOR_MAX_CONCURRENCY", "8")
 )
@@ -105,7 +105,7 @@ class OpenAITraitGenerator:
     def generate_opening_cast(self, seeds: Iterable[GenerationSeed]) -> dict[str, TraitCard]:
         """Generate and validate opening Trait Cards.
 
-        Each seed becomes its own parallel single-islander LLM call (the
+        Each seed becomes its own parallel single-heartbreaker LLM call (the
         opening cast is eight Heartbreakers — a single batched request used
         to take ~5 minutes at high reasoning effort, which was the entire
         boot wait). Secret-engine uniqueness is pre-claimed by assigning each
@@ -257,7 +257,7 @@ _MALE_PRONOUN_RE = re.compile(r"\b(?:his|him|he'?s?|himself)\b", re.IGNORECASE)
 _FEMALE_PRONOUN_RE = re.compile(r"\b(?:her|hers|she'?s?|herself)\b", re.IGNORECASE)
 # Strip "from his/her/their X's Y" possessive tails — common when the model
 # bakes a personal relationship into the value, which would mis-gender or
-# mis-attribute when surfaced as another islander's distractor.
+# mis-attribute when surfaced as another heartbreaker's distractor.
 _POSSESSIVE_TAIL_RE = re.compile(
     r"\s+(?:from\s+)?(?:his|her|their)\s+(?:dad|mum|mom|grandfather|grandmother|nan|gran|sister|brother|ex|first\s+class)\b[\w\s']*\.?$",
     re.IGNORECASE,
@@ -265,7 +265,7 @@ _POSSESSIVE_TAIL_RE = re.compile(
 
 
 def _neutralize_for_distractor(value: str, target_gender: str | None) -> str | None:
-    """Prepare a peer islander's value for use as a distractor on someone
+    """Prepare a peer heartbreaker's value for use as a distractor on someone
     else's quiz card. Returns None if the value carries identity-specific
     pronouns that can't be cleaned without changing meaning.
 
@@ -287,19 +287,19 @@ def _neutralize_for_distractor(value: str, target_gender: str | None) -> str | N
 
 
 def _polish_trait_cards(
-    cards: dict[str, TraitCard], islander_genders: dict[str, str] | None = None
+    cards: dict[str, TraitCard], heartbreaker_genders: dict[str, str] | None = None
 ) -> None:
-    """Clean values + auto-fill distractors from peer islanders.
+    """Clean values + auto-fill distractors from peer heartbreakers.
 
     Runs after the model has produced its raw Trait Cards. Two passes:
     (1) trim trailing performance descriptors off every value so quiz
     cards read as parallel nouns ("Stay by Rihanna", not "Stay by
     Rihanna every time"); (2) for any flavor trait whose distractors are
-    empty, pick three peer islanders' cleaned values for the same key as
+    empty, pick three peer heartbreakers' cleaned values for the same key as
     plausible wrong answers, preferring same-gender peers and stripping
     or skipping values whose pronouns would mis-gender the target.
     """
-    islander_genders = islander_genders or {}
+    heartbreaker_genders = heartbreaker_genders or {}
     for card in cards.values():
         for fact in card.core_traits.values():
             fact.value = _clean_trait_value(fact.value)
@@ -310,21 +310,21 @@ def _polish_trait_cards(
     # Build a peer-value index keyed by (flavor trait key, source_gender)
     # so we can backfill with gender-aware filtering. Without this Chloe's
     # keepsake distractors would include "a cracked bicycle bell from his
-    # dad" — a male islander's value that mis-genders her.
+    # dad" — a male heartbreaker's value that mis-genders her.
     peer_by_gender_key: dict[tuple[str, str], list[str]] = {}
-    for islander_id, card in cards.items():
-        gender = islander_genders.get(islander_id)
+    for heartbreaker_id, card in cards.items():
+        gender = heartbreaker_genders.get(heartbreaker_id)
         if gender is None:
             continue
         for key, fact in card.flavor_traits.items():
             peer_by_gender_key.setdefault((key, gender), []).append(fact.value)
     all_by_key: dict[str, list[tuple[str, str]]] = {}
-    for islander_id, card in cards.items():
-        gender = islander_genders.get(islander_id) or ""
+    for heartbreaker_id, card in cards.items():
+        gender = heartbreaker_genders.get(heartbreaker_id) or ""
         for key, fact in card.flavor_traits.items():
             all_by_key.setdefault(key, []).append((gender, fact.value))
-    for islander_id, card in cards.items():
-        target_gender = islander_genders.get(islander_id) or None
+    for heartbreaker_id, card in cards.items():
+        target_gender = heartbreaker_genders.get(heartbreaker_id) or None
         for key, fact in card.flavor_traits.items():
             if len(fact.distractors) >= 3:
                 continue
@@ -357,38 +357,38 @@ def _polish_trait_cards(
                     break
 
 
-def assign_trait_cards(islanders: list[IslanderState], trait_cards: dict[str, TraitCard]) -> None:
-    """Attach Trait Cards and persona backstory to matching islanders."""
-    genders = {i.id: i.gender.value for i in islanders}
+def assign_trait_cards(heartbreakers: list[HeartbreakerState], trait_cards: dict[str, TraitCard]) -> None:
+    """Attach Trait Cards and persona backstory to matching heartbreakers."""
+    genders = {i.id: i.gender.value for i in heartbreakers}
     _polish_trait_cards(trait_cards, genders)
-    for islander in islanders:
-        card = trait_cards.get(islander.id)
+    for heartbreaker in heartbreakers:
+        card = trait_cards.get(heartbreaker.id)
         if card is None:
             continue
-        islander.trait_card = card
-        islander.backstory = card.persona.history
+        heartbreaker.trait_card = card
+        heartbreaker.backstory = card.persona.history
 
 
-def opening_generation_seeds(islanders: list[IslanderState]) -> list[GenerationSeed]:
-    """Build deterministic generation seeds from starting islanders."""
+def opening_generation_seeds(heartbreakers: list[HeartbreakerState]) -> list[GenerationSeed]:
+    """Build deterministic generation seeds from starting heartbreakers."""
     used: list[str] = []
     seeds: list[GenerationSeed] = []
-    for islander in islanders:
-        template = ARCHETYPE_TEMPLATES.get(islander.archetype, ARCHETYPE_TEMPLATES["friend"])
+    for heartbreaker in heartbreakers:
+        template = ARCHETYPE_TEMPLATES.get(heartbreaker.archetype, ARCHETYPE_TEMPLATES["friend"])
         seeds.append(
             GenerationSeed(
-                slot_id=islander.id,
-                name=islander.name,
+                slot_id=heartbreaker.id,
+                name=heartbreaker.name,
                 archetype_id=template.id,
                 template=template,
-                gender=islander.gender,
+                gender=heartbreaker.gender,
                 age_band=(24, 31),
                 big5=(
-                    islander.big5.openness,
-                    islander.big5.conscientiousness,
-                    islander.big5.extraversion,
-                    islander.big5.agreeableness,
-                    islander.big5.neuroticism,
+                    heartbreaker.big5.openness,
+                    heartbreaker.big5.conscientiousness,
+                    heartbreaker.big5.extraversion,
+                    heartbreaker.big5.agreeableness,
+                    heartbreaker.big5.neuroticism,
                 ),
                 used_secret_engines=tuple(used),
             )
@@ -547,9 +547,9 @@ def _tier_for_core_key(key: str) -> int:
 def _claim_secret_engines(seeds: list[GenerationSeed]) -> list[GenerationSeed]:
     """Pre-assign each seed a unique secret_engine from its archetype pool.
 
-    Lets the opening cast run as parallel single-islander calls without the
+    Lets the opening cast run as parallel single-heartbreaker calls without the
     calls needing to coordinate to avoid duplicate engines. Walks the input
-    order so two islanders sharing an archetype get the archetype's first
+    order so two heartbreakers sharing an archetype get the archetype's first
     two engines; if the pool is exhausted the seed keeps whatever the model
     invents (validate_trait_cards still enforces overall uniqueness).
     """

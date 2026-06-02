@@ -1,4 +1,4 @@
-"""Tests for final public vote resolution."""
+"""Tests for final Pulse vote resolution."""
 
 from __future__ import annotations
 
@@ -60,7 +60,7 @@ def test_final_vote_does_not_override_existing_elimination() -> None:
 
 
 def test_final_vote_fires_only_on_day_six_evening() -> None:
-    """The final vote resolves after the mandatory day-six evening gather."""
+    """The final Pulse vote resolves after the mandatory day-six evening gather."""
     state = new_game(1)
     state.day = 6
     state.phase = Phase.EVENING
@@ -77,8 +77,8 @@ def test_final_vote_fires_only_on_day_six_evening() -> None:
 def test_final_vote_uses_audience_score_plus_couple_strength() -> None:
     """Strong player relationships can break a public-perception tie."""
     state = new_game(1)
-    state.islanders[0].relationship.affection = 60
-    state.islanders[0].relationship.trust = 40
+    state.heartbreakers[0].relationship.affection = 60
+    state.heartbreakers[0].relationship.trust = 40
     state.couples = [
         Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5),
         Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5),
@@ -113,7 +113,7 @@ def test_final_vote_message_names_player_partner() -> None:
     result = final_vote(state)
     message = final_vote_message(result, state)
 
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     assert chloe.name in message
     assert state.player.name in message
     # The raw, name-agnostic label and lowercase ids never reach the player.
@@ -130,20 +130,20 @@ def test_final_vote_message_uses_second_person_verbs_for_nameless_player() -> No
         Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5),
     ]
     runner_up_msg = final_vote_message(final_vote(runner_up), runner_up)
-    assert runner_up_msg == "Final vote: You finish as a runner-up couple."
+    assert runner_up_msg == "Pulse vote: You finish as a runner-up couple."
 
     single = new_game(1)
     single.couples = [Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5)]
     single_msg = final_vote_message(final_vote(single), single)
-    assert single_msg == "Final vote: You reach the finale single."
+    assert single_msg == "Pulse vote: You reach the finale single."
 
-    dumped = new_game(1)
-    dumped.outcome = RunOutcome.ELIMINATED
-    dumped_msg = final_vote_message(final_vote(dumped), dumped)
-    assert dumped_msg == "Final vote: You were already dumped from the island."
+    sent_home_state = new_game(1)
+    sent_home_state.outcome = RunOutcome.ELIMINATED
+    sent_home_msg = final_vote_message(final_vote(sent_home_state), sent_home_state)
+    assert sent_home_msg == "Pulse vote: You were already Heart Out."
 
     # No agreement slip in any branch.
-    for message in (runner_up_msg, single_msg, dumped_msg):
+    for message in (runner_up_msg, single_msg, sent_home_msg):
         assert "You finishes" not in message
         assert "You reaches" not in message
         assert "You was" not in message
@@ -161,7 +161,7 @@ def test_final_vote_message_uses_third_person_verbs_for_named_player() -> None:
 
     message = final_vote_message(final_vote(state), state)
 
-    assert message == "Final vote: Alex finishes as a runner-up couple."
+    assert message == "Pulse vote: Alex finishes as a runner-up couple."
 
 
 def test_final_vote_emits_ceremony_event() -> None:

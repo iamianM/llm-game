@@ -31,7 +31,7 @@
 - ✅ Short enough to complete in one session
 - ✅ Respects player time (not 40+ hour commitment)
 - ✅ Encourages replaying (try different approaches)
-- ✅ Matches "binge 3-4 episodes of Love Island" experience
+- ✅ Matches "binge 3-4 episodes of a reality dating show" experience
 
 **Not 20 minutes (too short):**
 - ❌ Can't build relationships
@@ -59,13 +59,13 @@
 
 **Example progression:**
 ```
-Day 1: Villa entry, initial coupling
+Day 1: Resort entry, initial coupling
 Day 2-3: Getting to know people
 [Skip to Day 5]
-Day 5: First recoupling
+Day 5: First Pairing Ceremony
 Day 6-7: New dynamics
 [Skip to Day 9]
-Day 9: Bombshell arrives
+Day 9: Heart Throb arrives
 ...
 Day 18: Final vote
 ```
@@ -96,7 +96,7 @@ Each played day has **four phases:**
 - Respond to recent drama
 
 **NPCs:**
-- Move around villa autonomously
+- Move around the resort autonomously
 - Have their own conversations
 - Build/damage relationships
 - Create drama
@@ -179,7 +179,7 @@ const challenge = {
 
 1. **Announcement**
    ```
-   🔔 "ISLANDERS, IT'S TIME FOR TODAY'S CHALLENGE!"
+   🔔 "HEARTBREAKERS, IT'S TIME FOR TODAY'S CHALLENGE!"
 
    Today: Couple Compatibility Quiz
    Test how well you know your partner!
@@ -223,7 +223,7 @@ const challenge = {
    - Scheduled for afternoon phase
    - Private time with partner
    - Massive relationship boost
-   - Other Islanders continue without you
+   - Other Heartbreakers continue without you
 
 **Challenge benefits:**
 - ✅ Breaks up social gameplay
@@ -246,11 +246,11 @@ const challenge = {
 - More urgency (evening event approaching)
 - Knowledge of challenge results (winners/losers)
 - Reactions to morning drama
-- Bombshells enter here (if scheduled)
+- Heart Throbs enter here (if scheduled)
 
 **Strategic focus:**
-- If recoupling tonight: Lock down your position
-- If bombshell entered: Assess threat/opportunity
+- If Pairing Ceremony tonight: Lock down your position
+- If Heart Throb entered: Assess threat/opportunity
 - If partner seems distant: Repair relationship
 - If exploring options: Make moves now
 
@@ -260,14 +260,14 @@ AFTERNOON - Day 7
 
 Challenge winner: You and Chloe (won beach date)
 
-You return from your date. The villa feels tense.
+You return from your date. The resort feels tense.
 
 Time available: 90 minutes
 
-⚠️ TONIGHT: Recoupling ceremony (girls choose)
+⚠️ TONIGHT: Pairing Ceremony (girls choose)
 
 New situation:
-• Bombshell Aisha entered while you were on date
+• Heart Throb Aisha entered while you were on date
 • She's been chatting with Marcus
 • Sophie looks upset
 • Chloe is confident (your couple is strong)
@@ -275,7 +275,7 @@ New situation:
 Strategic priorities:
 → Talk to Chloe (ensure she picks you)
 → Talk to Aisha (assess if she's a threat)
-→ Check on Sophie (she might recouple away from Marcus)
+→ Check on Sophie (she might do a Heart Swap away from Marcus)
 → Talk to Marcus (understand his play)
 ```
 
@@ -295,10 +295,10 @@ Strategic priorities:
 **Purpose:** Major dramatic event, state changes, eliminations
 
 **Event types:**
-- **Recoupling ceremony**
-- **Dumping/elimination**
-- **Bombshell arrival**
-- **Casa Amor twist**
+- **Pairing Ceremony**
+- **Heart Out/elimination**
+- **Heart Throb arrival**
+- **Flush of Hearts twist**
 - **Truth/dare drama**
 - **Lie detector test**
 
@@ -308,22 +308,22 @@ Strategic priorities:
 - LLM-generated drama
 - State changes applied
 
-**Example recoupling ceremony:**
+**Example Pairing Ceremony:**
 
 ```
-EVENING - Day 7: Recoupling Ceremony
+EVENING - Day 7: Pairing Ceremony
 
-All Islanders gather around the fire pit.
+All Heartbreakers gather around the Flame Deck.
 
 The girls will choose who they want to couple with.
-The boy not picked will be dumped from the island.
+The boy not picked will go Heart Out.
 
 Current couples:
 • You + Chloe
 • Marcus + Sophie
 • Liam + Emma
 • Tom + (single)
-• Aisha (bombshell, single)
+• Aisha (Heart Throb, single)
 
 The girls choose in this order: Sophie, Chloe, Emma, Aisha
 
@@ -347,7 +347,7 @@ CHLOE'S CHOICE:
 
 Chloe grins. "This is the easiest choice I've had to make."
 
-She walks straight to you. "I'm recoupling with [Player Name]."
+She walks straight to you. "I'm Heart Swapping with [Player Name]."
 
 💕 Your couple is safe!
 💪 Couple Strength: 68 → 75 (public declaration)
@@ -372,7 +372,7 @@ Tom smiles. "Happy to get to know you better."
 
 RESULT: All boys are safe. No one is dumped tonight.
 
-Villa dynamics have shifted:
+Resort dynamics have shifted:
 • Your couple is stronger (public commitment)
 • Marcus and Sophie are still together (but tension remains)
 • Tom is now coupled with Aisha (new dynamic)
@@ -407,16 +407,16 @@ Villa dynamics have shifted:
 **How social events work:**
 ```javascript
 function executeSocialEvent(eventType) {
-  // 1. All Islanders gather at firepit/terrace
-  gatherAllIslanders("firepit")
+  // 1. All Heartbreakers gather at Flame Deck/terrace
+  gatherAllHeartbreakers("flame_deck")
 
   // 2. Announce prompt
   const prompt = socialEventPrompts[eventType]
   displayPrompt(prompt) // e.g., "Share your biggest fear"
 
-  // 3. Each Islander shares (including player)
-  for (const islander of shuffleOrder(allIslanders)) {
-    if (islander === player) {
+  // 3. Each Heartbreaker shares (including player)
+  for (const heartbreaker of shuffleOrder(allHeartbreakers)) {
+    if (heartbreaker === player) {
       // Player chooses tone
       const toneChoice = await showPlayerMenu([
         "Vulnerable (deep connection)",
@@ -437,9 +437,9 @@ function executeSocialEvent(eventType) {
     } else {
       // NPC shares (LLM generates based on personality)
       const npcStory = await LLM.generate({
-        character: islander,
+        character: heartbreaker,
         eventType: eventType,
-        villaContext: currentDrama
+        resortContext: currentDrama
       })
 
       displayStory(npcStory)
@@ -447,7 +447,7 @@ function executeSocialEvent(eventType) {
       // Everyone learns this fact
       addKnowledgeFact({
         fact: npcStory,
-        knownBy: allIslanders,
+        knownBy: allHeartbreakers,
         source: "witnessed"
       })
     }
@@ -457,14 +457,14 @@ function executeSocialEvent(eventType) {
   await generateReactions()
 }
 
-function selectSocialEvent(villaState) {
+function selectSocialEvent(resortState) {
   // Week 1: Light events
-  if (villaState.day <= 5) {
+  if (resortState.day <= 5) {
     return random(["Celebrity Crush", "Most Embarrassing"])
   }
 
   // Week 2: Medium events
-  if (villaState.day <= 10) {
+  if (resortState.day <= 10) {
     return random(["What Are You Looking For", "Never Have I Ever"])
   }
 
@@ -474,7 +474,7 @@ function selectSocialEvent(villaState) {
 ```
 
 **Player benefits:**
-- Learns about Islanders they haven't talked to
+- Learns about Heartbreakers they haven't talked to
 - Creates conversation topics for later
 - Affects perception stats based on tone chosen
 - No time cost (evening is for events)
@@ -514,15 +514,15 @@ function transitionToAfternoon() {
   simulateNPCBehavior(60) // 60 min of challenge time
 
   // 2. Update locations (NPCs moved)
-  redistributeIslanders()
+  redistributeHeartbreakers()
 
   // 3. Set afternoon state
-  villaState.currentPhase = "afternoon"
-  villaState.timeRemaining = 90
+  resortState.currentPhase = "afternoon"
+  resortState.timeRemaining = 90
 
-  // 4. Check for bombshell arrival
-  if (scheduledEvents.some(e => e.type === "bombshell" && e.day === currentDay && e.phase === "afternoon")) {
-    executeBombshellArrival()
+  // 4. Check for Heart Throb arrival
+  if (scheduledEvents.some(e => e.type === "heart_throb" && e.day === currentDay && e.phase === "afternoon")) {
+    executeHeartThrobArrival()
   }
 }
 ```
@@ -531,18 +531,18 @@ function transitionToAfternoon() {
 ```javascript
 function transitionToEvening() {
   // 1. Simulate NPC behavior
-  simulateNPCBehavior(villaState.timeRemaining)
+  simulateNPCBehavior(resortState.timeRemaining)
 
   // 2. Check for scheduled event
   const eveningEvent = scheduledEvents.find(e => e.day === currentDay && e.phase === "evening")
 
   if (eveningEvent) {
-    // Execute major event (recoupling, dumping, etc.)
+    // Execute major event (Pairing Ceremony, Heart Out, etc.)
     executeEveningEvent(eveningEvent)
   } else {
     // Social event (round-table gathering)
     // Triggered when no ceremony scheduled
-    executeSocialEvent(selectSocialEvent(villaState))
+    executeSocialEvent(selectSocialEvent(resortState))
   }
 }
 ```
@@ -553,7 +553,7 @@ function advanceToNextDay() {
   // 1. Apply end-of-day effects
   applyRelationshipDecay()
   updateAllMoods()
-  updatePublicPerception()
+  updatePulse()
 
   // 2. Check for run end
   if (currentDay >= 18 || playerEliminated) {
@@ -562,12 +562,12 @@ function advanceToNextDay() {
   }
 
   // 3. Increment day
-  villaState.currentDay++
-  villaState.currentPhase = "morning"
-  villaState.timeRemaining = 90
+  resortState.currentDay++
+  resortState.currentPhase = "morning"
+  resortState.timeRemaining = 90
 
   // 4. Producer AI decides tomorrow's events
-  const newEvents = await getProducerDecisions(villaState)
+  const newEvents = await getProducerDecisions(resortState)
   scheduleEvents(newEvents)
 
   // 5. Save
@@ -585,7 +585,7 @@ function advanceToNextDay() {
 ### Week 1: Settling In (Days 1-3)
 
 **Goals:**
-- Meet all Islanders
+- Meet all Heartbreakers
 - Form initial couple
 - Build foundation relationships
 - Learn preferences
@@ -593,7 +593,7 @@ function advanceToNextDay() {
 **Events:**
 - Day 1: Initial coupling
 - Day 2: Challenge (icebreaker) + Social event ("Celebrity Crush")
-- Day 3: Recoupling (small stakes)
+- Day 3: Pairing Ceremony (small stakes)
 
 **Difficulty:** Easy
 - Low elimination risk
@@ -611,24 +611,24 @@ function advanceToNextDay() {
 
 **Goals:**
 - Deepen primary relationship
-- Navigate first bombshell
+- Navigate first Heart Throb
 - Build social alliances
 - Manage emerging rivalries
 
 **Events:**
-- Day 5: Bombshell arrival + Challenge
+- Day 5: Heart Throb arrival + Challenge
 - Day 6: Social event ("What Are You Looking For?")
-- Day 7: Recoupling (girls/boys choose)
+- Day 7: Pairing Ceremony (girls/boys choose)
 - Day 8: Public vote (bottom 2 couples)
 - Day 9: Social event ("Never Have I Ever")
 
 **Difficulty:** Moderate
 - Real elimination risk
-- Bombshells create pressure
+- Heart Throbs create pressure
 - Drama intensifies
 
 **Player focus:**
-- Defend couple from bombshell
+- Defend couple from Heart Throb
 - OR explore new connection
 - Build friendships (safety net)
 - Manage reputation
@@ -645,12 +645,12 @@ function advanceToNextDay() {
 
 **Events:**
 - Day 11: Individual vote (bottom 3) + Social event ("Worst Breakup")
-- Day 12-14: Casa Amor (ultimate test, 3-day event)
-- Day 15: Casa Amor recoupling + Social event ("Biggest Fear")
+- Day 12-14: Flush of Hearts (ultimate test, 3-day event)
+- Day 15: Flush of Hearts Pairing Ceremony + Social event ("Biggest Fear")
 
 **Difficulty:** Hard
 - High elimination risk
-- Casa Amor temptations
+- Flush of Hearts temptations
 - Public perception critical
 - Complex social dynamics
 
@@ -672,7 +672,7 @@ function advanceToNextDay() {
 
 **Events:**
 - Day 16: Public vote (bottom 2 couples, down to final 3)
-- Day 17: Final recoupling + Individual vote (down to final 2 couples)
+- Day 17: Final Pairing Ceremony + Individual vote (down to final 2 couples)
 - Day 18: Final vote and winner announcement
 
 **Difficulty:** Moderate (but high stakes)
@@ -697,8 +697,8 @@ Every day, player must balance:
 
 **1. Stay Coupled (Survival)**
 - Maintain Couple Strength ≥50
-- Prevent partner from recoupling away
-- Defend against bombshells
+- Prevent partner from doing a Heart Swap away
+- Defend against Heart Throbs
 
 **2. Build Friendships (Safety Net)**
 - Friends vote to save you
@@ -706,7 +706,7 @@ Every day, player must balance:
 - Friends provide support
 
 **3. Explore New Connections (Opportunity)**
-- High chemistry with bombshells
+- High chemistry with Heart Throbs
 - Better long-term match?
 - Risky but potentially rewarding
 
@@ -744,7 +744,7 @@ Every day, player must balance:
 **The Game-Player:**
 - Keeps options open
 - High chemistry with multiple people
-- Strategic recoupling
+- Strategic Heart Swapping
 - Low public perception
 - Strategy: Wide over deep
 
@@ -786,31 +786,31 @@ Drama Level
     Days
 
 Key moments:
-Day 5: First bombshell
-Day 7: First major recoupling
-Day 9: Second bombshell
-Day 12: Casa Amor (peak drama)
+Day 5: First Heart Throb
+Day 7: First major Pairing Ceremony
+Day 9: Second Heart Throb
+Day 12: Flush of Hearts (peak drama)
 Day 14: Public vote
 Day 16-18: Endgame (lower drama, higher stakes)
 ```
 
 **Pacing strategy:**
 - Start calm (learning phase)
-- Ramp up gradually (bombshells, recouplings)
-- Peak at Casa Amor (maximum chaos)
+- Ramp up gradually (Heart Throbs, Pairing Ceremonies)
+- Peak at Flush of Hearts (maximum chaos)
 - Cool down for finale (emotional payoff)
 
 ---
 
 ## Example Full Day
 
-### Day 7: Recoupling Day
+### Day 7: Pairing Ceremony Day
 
 **Context:**
 - Player coupled with Chloe (Couple Strength: 68)
-- Bombshell Aisha entered Day 5
+- Heart Throb Aisha entered Day 5
 - Marcus and Sophie are fighting
-- Tonight: Girls choose (recoupling)
+- Tonight: Girls choose (Pairing Ceremony)
 
 ---
 
@@ -819,16 +819,16 @@ Day 16-18: Endgame (lower drama, higher stakes)
 ```
 🌅 DAY 7 - MORNING
 
-You wake up in the bedroom. Tonight is recoupling night (girls choose).
+You wake up in the bedroom. Tonight is Pairing Ceremony night (girls choose).
 
 Recent events:
-• Aisha (bombshell) has been grafting on Marcus
+• Aisha (Heart Throb) has been sparking with Marcus
 • Sophie confronted Marcus about it yesterday
 • Chloe seems confident in your couple
 
 Time: 90 minutes
 
-VILLA MAP:
+SUNSET BAY MAP:
 🏊 Pool: Aisha, Marcus, Tom
 💪 Gym: Sophie (working out alone)
 🍳 Kitchen: Chloe, Emma, Liam
@@ -896,11 +896,11 @@ Continue talking to Chloe?
 **Player choice:** End conversation
 
 ```
-You head back out to the villa.
+You head back out to the resort.
 
 Time remaining: 70 minutes
 
-VILLA MAP:
+SUNSET BAY MAP:
 🏊 Pool: Aisha, Marcus, Tom (Aisha and Marcus laughing together)
 💪 Gym: Sophie (still alone)
 🍳 Kitchen: Emma, Liam (chatting)
@@ -955,12 +955,12 @@ What do you say?
 **Player choice:** "What does your gut say?"
 
 ```
-Sophie thinks for a moment. "Honestly? I think I should recouple away from him."
+Sophie thinks for a moment. "Honestly? I think I should do a Heart Swap away from him."
 
 She looks at you. "Tom has been really sweet. I might pick him."
 
 📚 New Information:
-Sophie is planning to recouple with Tom (not Marcus)
+Sophie is planning a Heart Swap to Tom (not Marcus)
 
 This means:
 • Marcus might be available (or picked by Aisha)
@@ -982,7 +982,7 @@ Time remaining: 45 minutes
 
 You could:
 → Talk to Marcus (warning? gather info?)
-→ Talk to Liam (gossip about villa dynamics)
+→ Talk to Liam (gossip about resort dynamics)
 → Talk to Aisha (assess her strategy)
 → Relax until challenge (save energy)
 ```
@@ -1007,27 +1007,27 @@ Liam tells you:
 ```
 🔔 CHALLENGE TIME!
 
-Today's Challenge: "Snog, Marry, Pie"
+Today's Challenge: "Kiss Wed Pass"
 
-Each Islander picks three people:
-- SNOG: Who they'd kiss
-- MARRY: Who they'd couple with long-term
-- PIE: Who they'd pie in the face (least compatible)
+Each Heartbreaker picks three people:
+- KISS: Who they'd kiss
+- WED: Who they'd couple with long-term
+- PASS: Who they'd pass on (least compatible)
 
 This reveals true feelings and creates drama.
 
 Your turn:
-SNOG: ???
-MARRY: ???
-PIE: ???
+KISS: ???
+WED: ???
+PASS: ???
 ```
 
 **[Challenge plays out, drama ensues]**
 
 ```
 Results:
-• You picked: Snog-Chloe, Marry-Chloe, Pie-Marcus
-• Aisha picked: Snog-Marcus, Marry-Marcus, Pie-Tom
+• You picked: Kiss-Chloe, Wed-Chloe, Pass-Marcus
+• Aisha picked: Kiss-Marcus, Wed-Marcus, Pass-Tom
 
 Marcus looks pleased. Sophie looks hurt.
 
@@ -1041,7 +1041,7 @@ Challenge complete.
 ```
 🌤️ AFTERNOON - Day 7
 
-The tension is thick. Recoupling is in 90 minutes.
+The tension is thick. Pairing Ceremony is in 90 minutes.
 
 Aisha is with Marcus at the pool.
 Sophie is in her room, getting ready.
@@ -1062,20 +1062,20 @@ What do you do?
 
 ---
 
-**EVENING EVENT: Recoupling**
+**EVENING EVENT: Pairing Ceremony**
 
 ```
-🔥 RECOUPLING CEREMONY
+🔥 PAIRING CEREMONY
 
 [Dramatic LLM-narrated ceremony as shown earlier]
 
 Results:
-• Sophie recoupled with Tom (dumped Marcus!)
+• Sophie did a Heart Swap to Tom (left Marcus!)
 • Aisha picked Marcus (he's happy)
 • Chloe picked you (strong declaration)
 • Emma picked Liam
 
-Marcus was dumped by Sophie but saved by Aisha.
+Marcus was left by Sophie but saved by Aisha.
 
 New couples:
 • You + Chloe (stronger than ever)
@@ -1083,10 +1083,10 @@ New couples:
 • Sophie + Tom (fresh start)
 • Liam + Emma (stable)
 
-📺 Public Perception: +8 (genuine couple moment)
+📺 Pulse: +8 (genuine couple moment)
 💕 Couple Strength: 75 → 82
 
-Villa dynamics have completely shifted.
+Resort dynamics have completely shifted.
 ```
 
 ---
@@ -1102,12 +1102,12 @@ Day 7 Summary:
 • Liam: +5 Friendship (gossip buddy)
 
 📚 Knowledge Gained:
-• Sophie's recoupling plan (correctly predicted)
+• Sophie's Heart Swap plan (correctly predicted)
 • Aisha's strategy (targeting Marcus)
-• Villa dynamics (major shift)
+• Resort dynamics (major shift)
 
 ⭐ Achievements:
-• "Solid Couple" - Survived first major recoupling
+• "Solid Couple" - Survived first major Pairing Ceremony
 • "Friend Indeed" - Supported Sophie through crisis
 
 💾 Progress saved.
@@ -1167,13 +1167,13 @@ Public Vote Results:
 3rd Place: Sophie and Tom (17%)
 4th Place: Marcus and Aisha (10%)
 
-🏆 YOU WON LOVE ISLAND! 🏆
+🏆 YOU WON PARADISE HEARTS! 🏆
 
 Rewards:
-• 500 Audience Appeal (maximum)
+• 500 Heart Beats (maximum)
 • "Champions" achievement
 • Unlock: "Heartthrob" archetype
-• Unlock: "Villa Legend" perk
+• Unlock: "Sunset Bay Legend" perk
 
 Your story will be remembered.
 

@@ -3,7 +3,7 @@ title: Challenge Result Narration
 goal: Prove the Event Narrator makes a deterministic Compatibility Quiz result feel like a moment, without changing who scored what.
 seed: 505
 initial_phase: intros
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -11,7 +11,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_couples:
   - partner_a_id: player
@@ -84,7 +84,7 @@ turns:
       Final round resolves; the Compatibility Quiz wraps. With 3 correct
       and 2 wrong on a fresh Day-1 partner the classification is
       `failure` or `partial` (engine math); the narrator lands it with a
-      villa-texture beat — laughter, wince, Chloe catching the player's
+      resort-texture beat — laughter, wince, Chloe catching the player's
       eye, the rest of the cast reacting — and names at least one
       specific question/answer pair. No claim of a different score, prize,
       or relationship outcome.
@@ -105,7 +105,7 @@ turns:
           The prose names at least one specific question or answer that
           actually appeared in the rounds (trait_key or correct_value).
           Generic "the quiz ended" prose fails this check.
-      - id: villa_reaction_specific
+      - id: resort_reaction_specific
         criteria: >
           The prose includes a specific cast reaction beat — laughter,
           side-eye, a one-line comment — not a flat status print.

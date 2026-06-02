@@ -7,7 +7,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import PlayerAction
-from src.game.engine.pull import PullAttempt
+from src.game.engine.private_chat import PrivateChatAttempt
 from src.game.state.models import Location, RelationshipDelta
 
 # Closed set of non-fatal engine anomalies worth surfacing in the review packet.
@@ -64,7 +64,7 @@ class MechanicalResult(BaseModel):
     chance_breakdown: ChanceBreakdown | None = None
     relationship_deltas: dict[str, RelationshipDelta] = Field(default_factory=dict)
     tags: list[str] = Field(default_factory=list)
-    pull_attempt: PullAttempt | None = None
+    private_chat_attempt: PrivateChatAttempt | None = None
     forced_movements: list[ForcedMovement] = Field(default_factory=list)
     audience_delta: int = 0
     audience_reason: str | None = None
