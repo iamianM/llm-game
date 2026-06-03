@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { newBlackfenSession } from "../../lib/blackfen/api";
+import { useUiStore } from "../../lib/store";
 import type { BlackfenClassId } from "../../lib/blackfen/types";
 
 const classes: Array<{ id: BlackfenClassId; label: string; body: string }> = [
@@ -17,6 +18,9 @@ export default function BlackfenHome() {
   const [classId, setClassId] = useState<BlackfenClassId>("fighter");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const useLive = useUiStore((s) => s.useLiveLlm);
+  const setUseLive = useUiStore((s) => s.setUseLiveLlm);
+  const mockLlm = !useLive;
 
   useEffect(() => {
     document.title = "Blackfen Road";
@@ -26,7 +30,7 @@ export default function BlackfenHome() {
     setBusy(true);
     setError(null);
     try {
-      const session = await newBlackfenSession({ classId, playerName: name, seed: 42 });
+      const session = await newBlackfenSession({ classId, playerName: name, seed: 42, mockLlm });
       router.push(`/blackfen/play/${session.session_id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not start Blackfen Road.");
@@ -70,6 +74,27 @@ export default function BlackfenHome() {
                   <span className="mt-1 block text-sm text-stone-300">{option.body}</span>
                 </button>
               ))}
+            </div>
+            <div className="mt-4 flex items-center justify-between gap-3 rounded border border-stone-700 bg-stone-900/70 p-3">
+              <span className="text-sm text-stone-300">Story engine</span>
+              <div className="flex rounded border border-stone-600 bg-stone-950 p-1 text-sm">
+                <button
+                  type="button"
+                  aria-pressed={!useLive}
+                  onClick={() => setUseLive(false)}
+                  className={`rounded px-3 py-1.5 ${!useLive ? "bg-amber-300 text-stone-950" : "text-stone-300 hover:text-stone-100"}`}
+                >
+                  Demo
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={useLive}
+                  onClick={() => setUseLive(true)}
+                  className={`rounded px-3 py-1.5 ${useLive ? "bg-amber-300 text-stone-950" : "text-stone-300 hover:text-stone-100"}`}
+                >
+                  Live LLM
+                </button>
+              </div>
             </div>
             {error ? <p className="mt-3 text-sm text-red-300">{error}</p> : null}
             <button

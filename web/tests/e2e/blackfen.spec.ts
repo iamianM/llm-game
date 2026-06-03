@@ -4,6 +4,8 @@ import type { Page } from "@playwright/test";
 test("Blackfen starts and accepts freeform input", async ({ page }) => {
   await page.goto("/blackfen");
   await expect(page.getByRole("heading", { name: "Blackfen Road" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Demo" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Live LLM" })).toBeVisible();
   await page.getByRole("button", { name: "Start Run" }).click();
   await expect(page).toHaveURL(/\/blackfen\/play\//);
   await expect(page.getByRole("heading", { name: "Blackfen Village" })).toBeVisible();

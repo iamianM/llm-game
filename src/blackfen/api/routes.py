@@ -8,8 +8,8 @@ from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
-from src.blackfen.agents.intent import LocalIntentParser
-from src.blackfen.agents.narrator import MockNarrator
+from src.blackfen.agents.intent import LocalIntentParser, OpenAIIntentParser
+from src.blackfen.agents.narrator import MockNarrator, OpenAINarrator
 from src.blackfen.api.models import (
     BlackfenActorView,
     BlackfenItemView,
@@ -34,6 +34,7 @@ from src.blackfen.hash import state_hash
 from src.blackfen.models import GameState
 from src.blackfen.new_game import new_game
 from src.blackfen.rng import SeededRng
+from src.game.agents.runtime import AgentError
 
 router = APIRouter(prefix="/blackfen", tags=["blackfen"])
 
@@ -44,6 +45,8 @@ def new_session(req: NewBlackfenSessionRequest) -> NewBlackfenSessionEnvelope:
     state = new_game(seed, player_name=req.player_name, class_id=req.class_id)
     rng = SeededRng(seed)
     mock = _mock_mode(req.mock_llm)
+    if not mock and not _live_llm_available():
+        raise HTTPException(status_code=503, detail={"error": {"code": "LLM_UNAVAILABLE", "message": "Live LLM mode requires OPENAI_API_KEY on the server."}})
     session_id = str(uuid4())
     persisted = freeze(state, rng, session_id=session_id, mock_llm=mock)
     return NewBlackfenSessionEnvelope(view=_session_response(session_id, state), persisted=persisted)
@@ -58,10 +61,15 @@ def view_session(persisted: BlackfenPersistedSession) -> BlackfenSessionResponse
 @router.post("/session/turn", response_model=BlackfenTurnResponseEnvelope)
 def submit_turn(envelope: BlackfenTurnEnvelope) -> BlackfenTurnResponseEnvelope:
     state, rng = hydrate(envelope.persisted)
+    if not _mock_mode(envelope.persisted.mock_llm) and not _live_llm_available():
+        raise HTTPException(status_code=503, detail={"error": {"code": "LLM_UNAVAILABLE", "message": "Live LLM mode requires OPENAI_API_KEY on the server."}})
+    parser, narrator = _agents_for(envelope.persisted.mock_llm)
     try:
-        turn = run_turn(state, envelope.action.text, rng, parser=LocalIntentParser(), narrator=MockNarrator())
+        turn = run_turn(state, envelope.action.text, rng, parser=parser, narrator=narrator)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail={"error": {"code": "INVALID_ACTION", "message": str(exc)}}) from exc
+    except AgentError as exc:
+        raise HTTPException(status_code=502, detail={"error": {"code": "LLM_UNAVAILABLE", "message": str(exc)}}) from exc
     persisted = freeze(state, rng, session_id=envelope.persisted.session_id, mock_llm=envelope.persisted.mock_llm)
     view = BlackfenTurnResponse(
         state=_state_view(envelope.persisted.session_id, state),
@@ -156,5 +164,15 @@ def _mock_mode(override: bool | None = None) -> bool:
     configured = os.environ.get("BLACKFEN_MOCK_LLM")
     if configured is not None:
         return configured != "0"
-    return True
+    return not bool(os.environ.get("OPENAI_API_KEY"))
+
+
+def _agents_for(mock_llm: bool) -> tuple[LocalIntentParser | OpenAIIntentParser, MockNarrator | OpenAINarrator]:
+    if _mock_mode(mock_llm):
+        return LocalIntentParser(), MockNarrator()
+    return OpenAIIntentParser(), OpenAINarrator()
+
+
+def _live_llm_available() -> bool:
+    return bool(os.environ.get("OPENAI_API_KEY"))
 

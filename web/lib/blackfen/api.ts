@@ -31,6 +31,7 @@ export async function newBlackfenSession(args: {
   classId: BlackfenClassId;
   playerName: string;
   seed?: number;
+  mockLlm: boolean;
 }): Promise<BlackfenSessionResponse> {
   const envelope = await request<BlackfenNewEnvelope>("/blackfen/session/new", {
     method: "POST",
@@ -38,7 +39,7 @@ export async function newBlackfenSession(args: {
       class_id: args.classId,
       player_name: args.playerName.trim() || "You",
       seed: args.seed ?? 42,
-      mock_llm: true
+      mock_llm: args.mockLlm
     })
   });
   blackfenSessionStore.save(envelope.persisted);
