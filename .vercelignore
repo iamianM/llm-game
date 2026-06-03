@@ -1,32 +1,28 @@
 .git
-.github
-.mypy_cache
+.venv
+venv
+__pycache__
 .pytest_cache
 .ruff_cache
-.venv
+.mypy_cache
+.scratch
+.blackfen_saves
+.blackfen_sessions
+.blackfen_traces
 .game_saves
 .game_sessions
 .game_traces
-_gamefeel
-_shots
 review-packet*
-
-docs
-fixtures
-tests
-# Anchor with a leading slash so we only exclude the top-level design
-# canon. Without the anchor, `*.md` matches every markdown file at any
-# depth and silently strips agent prompts (src/game/agents/prompts/*.md)
-# and content markdown (content/**/*.md) from the lambda bundle — which
-# crashes /api/session/new with a FileNotFoundError.
-/*.md
-!/AGENTS.md
-!/ENGINEERING.md
-.scratch
-
-web/.next
 web/node_modules
+web/.next
+web/.next-dev
+web/.next-playwright*
+web/.playwright-results
+web/.playwright-runtime
 web/playwright-report
 web/test-results
-web/tests
 web/tsconfig.tsbuildinfo
+tests
+fixtures
+docs
+.obsidian
