@@ -20,6 +20,7 @@ from src.blackfen.api.models import (
     BlackfenSessionResponse,
     BlackfenSessionState,
     BlackfenTurnEnvelope,
+    BlackfenTurnLogEntry,
     BlackfenTurnResponse,
     BlackfenTurnResponseEnvelope,
     NewBlackfenSessionEnvelope,
@@ -99,6 +100,7 @@ def _state_view(session_id: str, state: GameState) -> BlackfenSessionState:
         inventory=[_item_view(id_) for id_ in state.player.inventory],
         quest_flags=list(state.quest_flags),
         journal=list(state.journal),
+        recent_turns=_recent_turns(state),
         last_narration=state.turns[-1].narration if state.turns else None,
     )
 
@@ -116,6 +118,23 @@ def _npc_view(npc_id: str) -> BlackfenNpcView:
 def _item_view(item_id: str) -> BlackfenItemView:
     item = load_world().items[item_id]
     return BlackfenItemView(id=item.id, name=item.name, kind=item.kind, image=item.image, description=item.description)
+
+
+def _recent_turns(state: GameState) -> list[BlackfenTurnLogEntry]:
+    return [
+        BlackfenTurnLogEntry(
+            turn_index=turn.turn_index,
+            raw_text=turn.raw_text,
+            narration=turn.narration,
+            summary=turn.mechanical_result.summary,
+            damage_to_player=turn.mechanical_result.damage_to_player,
+            damage_to_companion=turn.mechanical_result.damage_to_companion,
+            damage_to_enemies=turn.mechanical_result.damage_to_enemies,
+            items_gained=list(turn.mechanical_result.items_gained),
+            items_lost=list(turn.mechanical_result.items_lost),
+        )
+        for turn in state.turns[-6:]
+    ]
 
 
 def _suggestions(state: GameState) -> list[str]:

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-label="A drowned mire ghoul rising from reeds">
+  <rect width="900" height="900" fill="#0d1515"/>
+  <path d="M0 690 C220 640 360 730 540 692 C710 658 790 620 900 660 L900 900 L0 900 Z" fill="#112729"/>
+  <path d="M390 270 C430 205 510 210 548 275 C594 358 525 422 468 410 C400 396 348 340 390 270 Z" fill="#263b3c"/>
+  <path d="M340 424 C390 365 540 364 600 430 L650 745 C530 790 400 790 288 745 Z" fill="#1b2b2b" stroke="#4c6b67" stroke-width="10"/>
+  <path d="M348 470 L220 605 M585 470 L734 612" stroke="#263b3c" stroke-width="32" stroke-linecap="round"/>
+  <g stroke="#394f3e" stroke-width="9" stroke-linecap="round"><path d="M300 760 C330 620 324 488 250 362"/><path d="M645 760 C610 610 628 500 715 360"/><path d="M455 810 C445 600 470 478 520 360"/></g>
+  <circle cx="430" cy="315" r="12" fill="#9be8f0"/><circle cx="505" cy="315" r="12" fill="#9be8f0"/>
+  <path d="M410 355 C455 385 500 386 545 356" stroke="#091010" stroke-width="10" fill="none"/>
+</svg>

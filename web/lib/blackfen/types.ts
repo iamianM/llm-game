@@ -53,6 +53,18 @@ export type BlackfenItem = {
   description: string;
 };
 
+export type BlackfenTurnLogEntry = {
+  turn_index: number;
+  raw_text: string;
+  narration: string;
+  summary: string;
+  damage_to_player: number;
+  damage_to_companion: number;
+  damage_to_enemies: number;
+  items_gained: string[];
+  items_lost: string[];
+};
+
 export type BlackfenState = {
   session_id: string;
   seed: number;
@@ -69,6 +81,7 @@ export type BlackfenState = {
   inventory: BlackfenItem[];
   quest_flags: string[];
   journal: string[];
+  recent_turns: BlackfenTurnLogEntry[];
   last_narration: string | null;
 };
 

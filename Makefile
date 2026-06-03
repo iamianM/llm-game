@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script blackfen-content-lint blackfen-verify blackfen-web-smoke smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script blackfen-content-lint blackfen-verify blackfen-eval blackfen-web-smoke smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -45,7 +45,10 @@ blackfen-content-lint:
 blackfen-verify:
 	uv run python -m src.blackfen.cli verify --all
 
-qa: lint type-check content-lint blackfen-content-lint test smoke determinism blackfen-verify llm-eval-mock web-check web-contracts blackfen-web-smoke
+blackfen-eval:
+	uv run python -m src.blackfen.cli eval --out review-packet/blackfen-eval
+
+qa: lint type-check content-lint blackfen-content-lint test smoke determinism blackfen-verify blackfen-eval llm-eval-mock web-check web-contracts blackfen-web-smoke
 
 play:
 	uv run python -m src.game.cli play

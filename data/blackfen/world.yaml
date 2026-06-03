@@ -42,9 +42,9 @@ items:
   shrine_bell_token: { id: shrine_bell_token, name: Shrine Bell Clapper, kind: quest, description: A cold iron clapper from the hill shrine bell., image: /images/blackfen/item-longsword.png }
   smuggler_key: { id: smuggler_key, name: Green Copper Key, kind: quest, description: A water-stained key marked with a heron., image: /images/blackfen/item-longsword.png }
 monsters:
-  bramble_wolf: { id: bramble_wolf, name: Bramble Wolf, description: A lean forest wolf with thorns knotted through its pelt., image: /images/blackfen/monster-drowned-knight.png, hit_points: 9, armor_class: 13, attack_bonus: 4, damage: { count: 1, sides: 6, bonus: 2 }, morale: 8 }
-  mire_ghoul: { id: mire_ghoul, name: Mire Ghoul, description: A drowned shape wearing reeds like funeral ribbons., image: /images/blackfen/monster-drowned-knight.png, hit_points: 10, armor_class: 12, attack_bonus: 3, damage: { count: 1, sides: 6, bonus: 1 }, morale: 12 }
-  road_bandit: { id: road_bandit, name: Road Bandit, description: A hungry deserter with a rusted spear and worse judgment., image: /images/blackfen/monster-drowned-knight.png, hit_points: 10, armor_class: 13, attack_bonus: 3, damage: { count: 1, sides: 6, bonus: 2 }, morale: 9 }
+  bramble_wolf: { id: bramble_wolf, name: Bramble Wolf, description: A lean forest wolf with thorns knotted through its pelt., image: /images/blackfen/monster-bramble-wolf.svg, hit_points: 9, armor_class: 13, attack_bonus: 4, damage: { count: 1, sides: 6, bonus: 2 }, morale: 8 }
+  mire_ghoul: { id: mire_ghoul, name: Mire Ghoul, description: A drowned shape wearing reeds like funeral ribbons., image: /images/blackfen/monster-mire-ghoul.svg, hit_points: 10, armor_class: 12, attack_bonus: 3, damage: { count: 1, sides: 6, bonus: 1 }, morale: 12 }
+  road_bandit: { id: road_bandit, name: Road Bandit, description: A hungry deserter with a rusted spear and worse judgment., image: /images/blackfen/monster-road-bandit.png, hit_points: 10, armor_class: 13, attack_bonus: 3, damage: { count: 1, sides: 6, bonus: 2 }, morale: 9 }
   drowned_knight: { id: drowned_knight, name: Drowned Knight, description: A dead oath in black mail still guarding the bell beneath the barrow., image: /images/blackfen/monster-drowned-knight.png, hit_points: 16, armor_class: 15, attack_bonus: 4, damage: { count: 1, sides: 8, bonus: 1 }, morale: 20 }
 npcs:
   elian_moss:
@@ -90,7 +90,7 @@ locations:
     id: hill_shrine
     name: Hill Shrine
     kind: settlement
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-hill-shrine.png
     description: A wind-bent chapel with a cracked bell that never rusts.
     exits: [blackfen_village, north_road, sunken_chapel]
     npcs: [elian_moss]
@@ -100,7 +100,7 @@ locations:
     id: north_road
     name: North Road
     kind: wilderness
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-north-road.png
     description: A cart track vanishing between black pines and old milestone bones.
     exits: [blackfen_village, hill_shrine, rusted_watchtower, witchwood]
     encounter: road_ambush
@@ -109,7 +109,7 @@ locations:
     id: rusted_watchtower
     name: Rusted Watchtower
     kind: dungeon
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-watchtower.png
     description: A collapsed border tower wrapped in thorn roots and old signal chains.
     exits: [north_road, smuggler_tunnel]
     encounter: watchtower_wolves
@@ -119,7 +119,7 @@ locations:
     id: witchwood
     name: Witchwood
     kind: wilderness
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-north-road.png
     description: A damp forest hollow where every path curves toward a different version of the same tree.
     exits: [north_road, sunken_chapel]
     secrets: [bell_fears_dead]
@@ -128,7 +128,7 @@ locations:
     id: smuggler_tunnel
     name: Smuggler Tunnel
     kind: dungeon
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-sunken-chapel.png
     description: A brick-lined drain beneath the old toll road, green with mineral water.
     exits: [rusted_watchtower, sunken_chapel]
     required_flag: smuggler_key_clue
@@ -137,7 +137,7 @@ locations:
     id: sunken_chapel
     name: Sunken Chapel
     kind: dungeon
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-sunken-chapel.png
     description: A half-flooded chapel where bells ring underwater and candles burn blue.
     exits: [hill_shrine, witchwood, smuggler_tunnel, barrow_crypt]
     encounter: chapel_dead
@@ -148,7 +148,7 @@ locations:
     id: barrow_crypt
     name: Barrow Crypt
     kind: dungeon
-    image: /images/blackfen/location-blackfen-village.png
+    image: /images/blackfen/location-barrow-crypt.png
     description: A low stone tomb under the marsh, sealed by roots and the names of the drowned.
     exits: [sunken_chapel]
     encounter: barrow_knight

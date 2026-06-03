@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 900" role="img" aria-label="A bramble wolf in dark woods">
+  <rect width="900" height="900" fill="#10140f"/>
+  <path d="M170 620 C260 460 405 402 568 450 C695 488 770 576 810 700 C620 730 350 724 170 620 Z" fill="#22261f" stroke="#43513f" stroke-width="12"/>
+  <path d="M580 450 L682 322 L700 496 Z" fill="#20241e"/><path d="M345 450 L250 324 L242 498 Z" fill="#20241e"/>
+  <circle cx="390" cy="548" r="16" fill="#d8b65f"/><circle cx="590" cy="548" r="16" fill="#d8b65f"/>
+  <path d="M460 595 L520 595 L490 625 Z" fill="#0a0b09"/>
+  <g stroke="#11140f" stroke-width="9" stroke-linecap="round"><path d="M160 560 C300 520 420 515 600 440"/><path d="M205 662 C330 594 510 655 785 575"/><path d="M248 405 C360 500 484 440 610 348"/></g>
+  <g stroke="#65775f" stroke-width="6" opacity=".55"><path d="M210 520 l-65 -42"/><path d="M250 622 l-78 18"/><path d="M650 485 l74 -54"/><path d="M700 620 l88 22"/></g>
+</svg>

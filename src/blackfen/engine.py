@@ -107,9 +107,19 @@ def _talk(state: GameState, intent: Intent) -> MechanicalResult:
 def _inspect(state: GameState, intent: Intent, rng: SeededRng) -> MechanicalResult:
     world = load_world()
     location = world.locations[state.current_location_id]
+    if state.current_location_id == "barrow_crypt" and "drowned_knight_defeated" in state.quest_flags:
+        state.status = RunStatus.VICTORY
+        return MechanicalResult(
+            intent=intent,
+            summary="You lay the shrine bell clapper against the drowned knight's oath-stone.",
+            details=["The iron answers with one clean note. The water pulls back from the crypt steps."],
+            run_status=state.status,
+        )
     roll = roll_d20(rng, "wisdom check", state.player.abilities.get(Ability.WISDOM, 0), target=11)
     flags: list[str] = []
     details: list[str] = []
+    if intent.approach == "fallback_inspect":
+        details.append("I treated that as looking around for anything useful.")
     if roll.total >= 11:
         flags.extend(flag for flag in location.secrets if flag not in state.quest_flags)
         state.quest_flags.extend(flags)

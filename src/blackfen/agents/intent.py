@@ -50,7 +50,7 @@ class LocalIntentParser:
             return Intent(kind=IntentKind.INSPECT, raw_text=raw)
         if any(word in lowered for word in ("talk", "ask", "speak", "question")) and current.npcs:
             return Intent(kind=IntentKind.TALK, raw_text=raw, target_id=current.npcs[0])
-        return Intent(kind=IntentKind.INSPECT, raw_text=raw)
+        return Intent(kind=IntentKind.INSPECT, raw_text=raw, approach="fallback_inspect")
 
 
 def _has_travel_verb(text: str) -> bool:

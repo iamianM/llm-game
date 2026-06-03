@@ -88,6 +88,18 @@ class BlackfenItemView(BaseModel):
     description: str
 
 
+class BlackfenTurnLogEntry(BaseModel):
+    turn_index: int
+    raw_text: str
+    narration: str
+    summary: str
+    damage_to_player: int
+    damage_to_companion: int
+    damage_to_enemies: int
+    items_gained: list[str]
+    items_lost: list[str]
+
+
 class BlackfenSessionState(BaseModel):
     session_id: str
     seed: int
@@ -104,6 +116,7 @@ class BlackfenSessionState(BaseModel):
     inventory: list[BlackfenItemView]
     quest_flags: list[str]
     journal: list[str]
+    recent_turns: list[BlackfenTurnLogEntry]
     last_narration: str | None
 
 

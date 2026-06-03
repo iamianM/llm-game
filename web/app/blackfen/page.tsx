@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { newBlackfenSession } from "../../lib/blackfen/api";
 import type { BlackfenClassId } from "../../lib/blackfen/types";
 
@@ -17,6 +17,10 @@ export default function BlackfenHome() {
   const [classId, setClassId] = useState<BlackfenClassId>("fighter");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    document.title = "Blackfen Road";
+  }, []);
 
   async function startRun() {
     setBusy(true);
