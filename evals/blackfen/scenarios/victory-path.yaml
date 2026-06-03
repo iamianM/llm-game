@@ -1,0 +1,27 @@
+﻿name: blackfen-victory-path
+seed: 42
+class_id: fighter
+player_name: Mara
+intent: Proves that a freeform-input player can discover the bell lead, open the barrow, defeat the boss, and reach victory through deterministic engine state.
+actions:
+  - talk to Mara Vell
+  - go north road
+  - attack
+  - attack
+  - go rusted watchtower
+  - attack
+  - attack
+  - go north road
+  - go hill shrine
+  - rest
+  - inspect shrine
+  - go sunken chapel
+  - inspect chapel
+  - go barrow crypt
+  - attack
+  - attack
+  - attack
+  - attack
+  - inspect crypt
+expected_hash: fe36c434c6295477
+expected_status: victory

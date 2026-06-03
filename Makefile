@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script blackfen-content-lint blackfen-verify blackfen-web-smoke smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -13,7 +13,7 @@ lint:
 	uv run ruff check .
 
 type-check:
-	uv run mypy src/game/state src/game/engine src/game/content
+	uv run mypy src/game/state src/game/engine src/game/content src/blackfen
 
 content-lint:
 	uv run python -m src.game.cli content lint
@@ -36,7 +36,16 @@ web-check:
 web-contracts:
 	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts
 
-qa: lint type-check content-lint test smoke determinism llm-eval-mock web-check web-contracts
+blackfen-web-smoke:
+	cd web && npm run test:e2e -- tests/e2e/blackfen.spec.ts
+
+blackfen-content-lint:
+	uv run python -m src.blackfen.cli content lint
+
+blackfen-verify:
+	uv run python -m src.blackfen.cli verify --all
+
+qa: lint type-check content-lint blackfen-content-lint test smoke determinism blackfen-verify llm-eval-mock web-check web-contracts blackfen-web-smoke
 
 play:
 	uv run python -m src.game.cli play

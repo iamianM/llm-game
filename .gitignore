@@ -59,6 +59,7 @@ _shots/
 
 # Original PNGs (replaced by WebP)
 web/public/images/**/*.png
+!web/public/images/blackfen/*.png
 .vercel
 
 # Local scratch: probes, audits, sweeps, logs, captures (not part of the codebase)

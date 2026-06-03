@@ -32,7 +32,7 @@ markers = [
 
 [tool.mypy]
 strict = true
-files = ["src/game/state", "src/game/engine", "src/game/content"]
+files = ["src/game/state", "src/game/engine", "src/game/content", "src/blackfen"]
 
 [tool.ruff]
 target-version = "py311"

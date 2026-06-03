@@ -53,6 +53,7 @@ from src.api.serializers import (
 )
 from src.api.session import AgentBundle
 from src.api.streaming import chunk_text, sse
+from src.blackfen.api.routes import router as blackfen_router
 from src.game.agents.trait_generator import (
     OpenAITraitGenerator,
     assign_trait_cards,
@@ -86,6 +87,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(blackfen_router)
 
 # Routes are mounted at the root. On Vercel, the `routePrefix: "/api"` in
 # vercel.json places this whole app behind `/api/*` from the browser's view;

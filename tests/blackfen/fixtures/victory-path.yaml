@@ -1,0 +1,25 @@
+﻿name: blackfen-victory-path
+seed: 42
+player_name: Mara
+class_id: fighter
+actions:
+  - talk to Mara Vell
+  - go north road
+  - attack
+  - attack
+  - go rusted watchtower
+  - attack
+  - attack
+  - go north road
+  - go hill shrine
+  - rest
+  - inspect shrine
+  - go sunken chapel
+  - inspect chapel
+  - go barrow crypt
+  - attack
+  - attack
+  - attack
+  - attack
+  - inspect crypt
+expected_hash: fe36c434c6295477
