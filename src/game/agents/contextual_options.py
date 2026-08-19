@@ -1,8 +1,8 @@
 """Contextual follow-up menu agent.
 
 Design sources:
-- 03-LLM-Architecture.md: Dialogue AI
-- 11-Conversation-Flow.md: Contextual Follow-up Generation
+- docs/design/03-LLM-Architecture.md: Dialogue AI
+- docs/design/11-Conversation-Flow.md: Contextual Follow-up Generation
 
 Implementation rule:
 The agent proposes follow-up choices and departure flavor only. Deterministic

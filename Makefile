@@ -1,4 +1,4 @@
-.PHONY: install test test-fast lint type-check content-lint docs-health scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
+.PHONY: install test test-fast lint type-check content-lint docs-health docs-links scenarios smoke determinism web-check web-contracts qa play verify verify-script smoke-real-llm test-llm llm-eval-mock llm-eval-real llm-eval-real-judge playtest-live dev dev-start dev-stop dev-restart dev-status
 
 install:
 	uv sync --extra dev
@@ -21,6 +21,9 @@ content-lint:
 docs-health:
 	uv run python scripts/docs-health.py
 
+docs-links:
+	uv run python scripts/check-doc-links.py
+
 scenarios:
 	uv run pytest tests/scenarios
 
@@ -36,7 +39,7 @@ web-check:
 web-contracts:
 	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts
 
-qa: lint type-check content-lint test smoke determinism llm-eval-mock web-check web-contracts
+qa: lint type-check content-lint docs-links test smoke determinism llm-eval-mock web-check web-contracts
 
 play:
 	uv run python -m src.game.cli play

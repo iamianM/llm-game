@@ -55,11 +55,13 @@ This is not a shipped product yet. Move forward, regenerate fixtures if needed, 
 
 ## R13. Keep Public Orientation Separate From Implementation Canon
 
-`README.md` is the concise product and portfolio landing page for people who
-are new to the repository. `AGENTS.md` remains the authoritative engineering
-entry point for implementation work. Put detailed system behavior in
-`ENGINEERING.md`, `FORMAT.md`, `INDEX.md`, ADRs, or numbered design docs rather
-than expanding the README into a second source of truth.
+`README.md` is the public product and portfolio landing page for people who are
+new to the repository. It may explain the architecture, CLI, replay, and eval
+story well enough to evaluate the project, but it must link to current system
+docs for the complete contract. `AGENTS.md` remains the authoritative
+engineering entry point for implementation work. Put maintainable system detail
+in `ENGINEERING.md`, `FORMAT.md`, `INDEX.md`, ADRs, or current system docs so the
+README does not become a second source of truth.
 
 ## R14. Git Is User-Owned
 

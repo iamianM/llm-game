@@ -2,7 +2,7 @@
 
 Five weighted-sum rounds (knowledge, chemistry, honesty, banter, audacity)
 that aggregate the season's earlier minigames. The classification feeds the
-final-vote weighting downstream. See ``docs/minigames/final-couples.md``.
+final-vote weighting downstream. See ``docs/systems/minigames/final-couples.md``.
 """
 
 from __future__ import annotations

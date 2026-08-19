@@ -1,8 +1,8 @@
 """Resort Orchestrator agent for off-screen NPC commitments.
 
 Design sources:
-- 09-Social-Dynamics.md: NPC autonomous social life
-- 07-Gossip-And-Information.md: Memory-driven gossip substrate
+- docs/design/09-Social-Dynamics.md: NPC autonomous social life
+- docs/design/07-Gossip-And-Information.md: Memory-driven gossip substrate
 
 Implementation rule:
 The Orchestrator commits structure only. It does not write dialogue and does

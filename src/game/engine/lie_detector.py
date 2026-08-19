@@ -5,7 +5,7 @@ heartbreaker, a private_suite visit, etc.). The player picks one of: truth, mild
 lie, hard lie. Detection chance is computed from familiarity and public
 visibility; caught lies feed gossip propagation.
 
-See ``docs/minigames/lie-detector.md``.
+See ``docs/systems/minigames/lie-detector.md``.
 """
 
 from __future__ import annotations

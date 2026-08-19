@@ -2,7 +2,7 @@
 
 Legacy challenges resolve via :func:`resolve_challenge` (single dice roll). New
 round-based minigames (currently only ``compatibility_quiz``) bypass that path
-and use the shared harness in ``docs/minigame-system.md``.
+and use the shared harness in ``docs/systems/minigames.md``.
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ CHOICE_REQUIRED_CHALLENGES = ROUND_BASED_MINIGAMES
 
 
 def apply_recovery_floor(state: GameState, audience_delta: int, classification: str) -> int:
-    """Shared minigame audience floor; see docs/minigame-system.md §5.2."""
+    """Shared minigame audience floor; see docs/systems/minigames.md §5.2."""
     from src.game.content.minigame_balance import load_minigame_balance
     floor = load_minigame_balance().recovery_floor
     if state.player.public_perception >= floor.audience_threshold:

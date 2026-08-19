@@ -23,7 +23,7 @@ initial_relationships:
     trust: 30
     friendship: 20
 judge_context:
-  - Compatibility Quiz scoring is deterministic engine output (see docs/minigame-system.md §5). The narrator describes the resolved outcome.
+  - Compatibility Quiz scoring is deterministic engine output (see docs/systems/minigames.md §5). The narrator describes the resolved outcome.
   - The narrator may dramatise rounds, reveals, and cast reactions, but cannot change classification, total_points, audience_delta, or relationship deltas.
   - Wrong-answer reveals expose the truth at reduced confidence (`KnownFact.source = "quiz_misread"`, `confidence = 0.5`); the narrator may reference this without inventing a different fact.
 turns:

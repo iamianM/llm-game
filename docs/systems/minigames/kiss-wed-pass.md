@@ -4,7 +4,8 @@
 **Player-facing name:** Kiss Wed Pass
 **Scheduled day:** 5
 **Rollout step:** 5
-**Status:** Spec authored; implementation pending shared harness.
+**Status:** Shipped through the shared round-based challenge harness, with
+deterministic engine coverage and a golden narration scenario.
 
 Validates the constrained-allocation choice pattern: pick exactly one
 heartbreaker for each of three labels. Reuses the shared round shape, but the

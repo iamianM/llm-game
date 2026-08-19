@@ -1,8 +1,8 @@
 """Conversation Curator agent for durable memory commits.
 
 Design sources:
-- 07-Gossip-And-Information.md: The Gossip System
-- 03-LLM-Architecture.md: Curator-style memory extraction
+- docs/design/07-Gossip-And-Information.md: The Gossip System
+- docs/design/03-LLM-Architecture.md: Curator-style memory extraction
 
 Implementation rule:
 The Curator writes memory content and tags only. The engine assigns ids,

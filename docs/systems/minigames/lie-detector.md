@@ -4,7 +4,8 @@
 **Player-facing name:** Lie Detector
 **Scheduled day:** 4
 **Rollout step:** 3
-**Status:** Spec authored; implementation pending shared harness.
+**Status:** Shipped through the shared round-based challenge harness, with
+deterministic engine coverage and a golden narration scenario.
 
 The first minigame where the player chooses *whether to be honest*. Reuses
 the quiz round shape, but the "correct answer" is computed from event

@@ -4,7 +4,8 @@
 **Player-facing name:** Pulse Race
 **Scheduled day:** 2
 **Rollout step:** 4
-**Status:** Spec authored; implementation pending shared harness.
+**Status:** Shipped through the shared round-based challenge harness, with
+deterministic engine coverage and a golden narration scenario.
 
 Validates that the shared harness can host a minigame with **zero player
 input rounds** — only deterministic reveals. The drama is in what the player

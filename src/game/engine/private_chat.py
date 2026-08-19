@@ -1,7 +1,7 @@
 """Private-chat invitation mechanics for contested conversations.
 
 Design sources:
-- 09-Social-Dynamics.md: The private chat system
+- docs/design/09-Social-Dynamics.md: The private chat system
 - docs/build-plan-G8.md: Phase G8.2 Private-Chat
 
 Implementation rule:

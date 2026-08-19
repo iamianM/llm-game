@@ -1,7 +1,7 @@
 """Validation and application for Resort Orchestrator commits.
 
 Design sources:
-- 09-Social-Dynamics.md: autonomous NPC behavior
+- docs/design/09-Social-Dynamics.md: autonomous NPC behavior
 - docs/build-plan-G.md: determinism via recorded agent commits
 
 Implementation rule:

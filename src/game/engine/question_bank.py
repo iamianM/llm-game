@@ -1,6 +1,6 @@
 """Mock-mode Question Bank generator.
 
-See ``docs/minigame-system.md`` §4. The bank is generated once per season
+See ``docs/systems/minigames.md`` §4. The bank is generated once per season
 from existing Trait Cards. In mock mode (no live LLM) this module produces
 deterministic stems by trait_key. A live OpenAI Question Bank agent ships
 as a follow-up PR; until then mock-mode output is sufficient because the
@@ -35,7 +35,7 @@ def build_question_bank(state: GameState) -> QuestionBank:
     """Build the season's Question Bank from Trait Cards.
 
     Deterministic: same seed + same cast = same bank. Sub-seed derived from
-    ``state.seed`` per ``docs/minigame-system.md`` §4.
+    ``state.seed`` per ``docs/systems/minigames.md`` §4.
     """
     bank_seed = state.seed * 2654435761 & 0xFFFFFFFF  # Knuth multiplicative hash
     prompts: dict[str, list[QuestionBankPrompt]] = {"compatibility_quiz": []}

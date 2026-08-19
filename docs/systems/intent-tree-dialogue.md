@@ -4,7 +4,7 @@
 **Owner:** Claude (implementing); Ian (signed off on design).
 **Base commit:** `8d45f47` scene-dialogue: hydrate Live LLM toggle from localStorage post-mount.
 
-This doc captures the locked design for how the player picks what to say in conversations. Read this *and* [docs/scene-dialogue/IMPLEMENTATION-HANDOFF.md](IMPLEMENTATION-HANDOFF.md) together — the scene-dialogue stage delivers the visuals; this doc defines the choice layer that lives inside it.
+This doc captures the locked design for how the player picks what to say in conversations. Read it with [scene-dialogue.md](scene-dialogue.md): the scene-dialogue system delivers the visuals, while this document defines the choice layer inside it.
 
 ---
 

@@ -1,8 +1,8 @@
 """Event Narrator agent for ceremonies and Heart Throb beats.
 
 Design sources:
-- 03-LLM-Architecture.md: Event Narrator AI
-- 10-Elimination-System.md: Pairings, Heart Throbs, Heart Out beats
+- docs/design/03-LLM-Architecture.md: Event Narrator AI
+- docs/design/10-Elimination-System.md: Pairings, Heart Throbs, Heart Out beats
 
 Implementation rule:
 The Event Narrator describes already-resolved ceremony events. It never picks
@@ -353,7 +353,7 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     ]
     # If a round-based minigame just resolved, surface its per-round details so
     # the narrator can name actual picks, reveals, and facets rather than
-    # writing generic "ended in success" prose. See docs/minigame-system.md
+    # writing generic "ended in success" prose. See docs/systems/minigames.md
     # §7 for the narration contract.
     minigame_block = _render_minigame_details(state)
     if minigame_block:

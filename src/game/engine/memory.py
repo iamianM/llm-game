@@ -1,7 +1,7 @@
 """Deterministic memory creation and storage helpers.
 
 Design source:
-- 07-Gossip-And-Information.md: The Gossip System
+- docs/design/07-Gossip-And-Information.md: The Gossip System
 
 Memory text is flavor and excluded from state hashes. Memory identity and
 metadata are deterministic so traces and replays remain stable.

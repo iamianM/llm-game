@@ -1,8 +1,8 @@
 """Compatibility Quiz minigame implementation.
 
 Round-based replacement for the legacy ``compatibility_quiz`` single-roll
-path in :mod:`src.game.engine.challenges`. See ``docs/minigame-system.md``
-for the shared harness contract and ``docs/minigames/compatibility-quiz.md``
+path in :mod:`src.game.engine.challenges`. See ``docs/systems/minigames.md``
+for the shared harness contract and ``docs/systems/minigames/compatibility-quiz.md``
 for this minigame's contract.
 """
 
@@ -54,7 +54,7 @@ def quiz_partner_id(state: GameState) -> str:
 
 
 def is_prompt_eligible(state: GameState, prompt: QuestionBankPrompt) -> bool:
-    """Eligibility per docs/minigames/compatibility-quiz.md §2."""
+    """Eligibility per docs/systems/minigames/compatibility-quiz.md §2."""
     target = find_heartbreaker(state, prompt.target_id)
     used = set(state.quizzed_traits_this_run.get(target.id, []))
     if prompt.trait_key in used:

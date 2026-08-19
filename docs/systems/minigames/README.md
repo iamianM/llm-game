@@ -2,12 +2,12 @@
 
 This folder contains one implementation spec per Paradise Hearts daily
 challenge. Every spec extends the shared contract in
-[../minigame-system.md](../minigame-system.md) — read that first.
+[../minigames.md](../minigames.md) — read that first.
 
 The specs are the source of truth for **how the minigame is currently
 implemented** (present tense once shipped) and **what acceptance evidence
 is required to merge**. Design intent for each challenge lives in
-[../../12-Challenges-And-Events.md](../../12-Challenges-And-Events.md); the
+[../../design/12-Challenges-And-Events.md](../../design/12-Challenges-And-Events.md); the
 specs translate that intent into engine, agent, content, and UI work.
 
 | Day | Engine kind | Player-facing name | Spec | Rollout step |

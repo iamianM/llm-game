@@ -8,16 +8,16 @@
 > **Implementation note.** This document is the design intent for daily
 > challenges. The **shared minigame harness** that turns these from single
 > dice rolls into real player-driven scenes is defined in
-> [docs/minigame-system.md](docs/minigame-system.md). The **per-minigame
-> implementation specs** live under [docs/minigames/](docs/minigames/):
-> [Compatibility Quiz](docs/minigames/compatibility-quiz.md) ·
-> [The Couples Quiz](docs/minigames/couples-quiz.md) ·
-> [Lie Detector](docs/minigames/lie-detector.md) ·
-> [Pulse Race](docs/minigames/heart-rate.md) ·
-> [Kiss Wed Pass](docs/minigames/kiss-wed-pass.md) ·
-> [Final Couples](docs/minigames/final-couples.md). When the implementation
+> [docs/systems/minigames.md](../systems/minigames.md). The **per-minigame
+> implementation specs** live under [docs/systems/minigames/](../systems/minigames/):
+> [Compatibility Quiz](../systems/minigames/compatibility-quiz.md) ·
+> [The Couples Quiz](../systems/minigames/couples-quiz.md) ·
+> [Lie Detector](../systems/minigames/lie-detector.md) ·
+> [Pulse Race](../systems/minigames/heart-rate.md) ·
+> [Kiss Wed Pass](../systems/minigames/kiss-wed-pass.md) ·
+> [Final Couples](../systems/minigames/final-couples.md). When the implementation
 > docs and this canon disagree, the implementation docs win
-> ([current-plan.md](docs/current-plan.md), "Documentation Rules").
+> ([current-plan.md](../current-plan.md), "Documentation Rules").
 
 ---
 

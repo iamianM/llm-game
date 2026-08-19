@@ -6,8 +6,8 @@ groups:
       - vercel.json
     docs:
       - AGENTS.md
-      - docs/phase3-fastapi-contract.md
-      - docs/phase3-ui-spec.md
+      - docs/systems/browser-and-api.md
+      - docs/systems/scene-dialogue.md
       - docs/decisions/0012-nextjs-thin-client-over-vite.md
 
   - id: balance_boundary
@@ -21,14 +21,8 @@ groups:
       - AGENTS.md
       - ENGINEERING.md
       - docs/decisions/0013-balance-data-boundary.md
-      - docs/minigame-system.md
-      - docs/minigames/README.md
-      - docs/minigames/compatibility-quiz.md
-      - docs/minigames/couples-quiz.md
-      - docs/minigames/heart-rate.md
-      - docs/minigames/lie-detector.md
-      - docs/minigames/kiss-wed-pass.md
-      - docs/minigames/final-couples.md
+      - docs/systems/minigames.md
+      - docs/systems/minigames/README.md
 
   - id: checkpoint_replay_contract
     paths:
@@ -38,7 +32,8 @@ groups:
       - src/game/cli/commands/play_session.py
       - src/game/cli/commands/report_compare.py
     docs:
-      - docs/qa-strategy.md
+      - docs/systems/replay-and-review.md
+      - docs/systems/qa.md
       - docs/decisions/0008-snapshot-and-trace-architecture.md
 
   - id: agent_prompt_contract
@@ -46,6 +41,7 @@ groups:
       - src/game/agents/**
     docs:
       - ENGINEERING.md
+      - docs/systems/llm-evals.md
       - docs/decisions/0014-agent-split-after-narrator-v0.md
 
   - id: qa_tooling
@@ -58,7 +54,7 @@ groups:
       - docs/contract-map.yaml
     docs:
       - AGENTS.md
-      - docs/qa-strategy.md
+      - docs/systems/qa.md
 
   - id: llm_eval_system
     paths:
@@ -67,8 +63,8 @@ groups:
       - src/game/cli/commands/eval_llm.py
       - src/game/agents/runtime.py
     docs:
-      - docs/llm-eval-system.md
-      - docs/qa-strategy.md
+      - docs/systems/llm-evals.md
+      - docs/systems/qa.md
       - evals/llm/scenarios/FORMAT.md
 
   - id: current_planning
@@ -97,11 +93,11 @@ groups:
     docs:
       - AGENTS.md
       - docs/current-plan.md
-      - docs/qa-strategy.md
-      - 08-Daily-Loop.md
-      - 09-Social-Dynamics.md
-      - 10-Elimination-System.md
-      - 12-Challenges-And-Events.md
+      - docs/systems/qa.md
+      - docs/design/08-Daily-Loop.md
+      - docs/design/09-Social-Dynamics.md
+      - docs/design/10-Elimination-System.md
+      - docs/design/12-Challenges-And-Events.md
 
   - id: knowledge_foundation
     paths:
@@ -114,10 +110,10 @@ groups:
       - src/game/agents/trait_generator.py
       - src/game/agents/prompts/trait_generator.md
     docs:
-      - docs/phase5-0-knowledge-foundation.md
+      - docs/systems/knowledge.md
       - docs/current-plan.md
-      - 07-Gossip-And-Information.md
-      - 12-Challenges-And-Events.md
+      - docs/design/07-Gossip-And-Information.md
+      - docs/design/12-Challenges-And-Events.md
 
   - id: review_packet_tooling
     paths:
@@ -129,6 +125,6 @@ groups:
       - src/game/state/bookmarks.py
       - src/game/engine/bookmarks.py
     docs:
-      - docs/current-plan.md
-      - docs/qa-strategy.md
-      - docs/subagent-cli-playtest.md
+      - docs/systems/replay-and-review.md
+      - docs/systems/qa.md
+      - docs/workflows/cli-playtesting.md
