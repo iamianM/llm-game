@@ -90,7 +90,7 @@ export function CharacterSprite({ id, name, role, gender = "man", archetypeId = 
             // Next.js "LCP image needs priority" advisory when an NPC is the
             // largest paint, and stops characters from popping in after the
             // backdrop. Off-stage figures get unmounted upstream (position.hidden).
-            <Image src={src} alt="" fill sizes={role === "player" ? "360px" : "260px"} priority />
+            <Image src={src} alt="" fill sizes={role === "player" ? "360px" : "260px"} priority loading="eager" />
           ) : (
             <span>{initials(name)}</span>
           )}
