@@ -85,49 +85,49 @@ class PulseRaceBalance(BaseModel):
     audience: PulseRaceAudience
 
 
-# --- Snog Marry Pie ---
+# --- Kiss Wed Pass ---
 
 
-class SnogMarryPiePoints(BaseModel):
+class KissWedPassPoints(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    snog_partner: int
-    snog_chemistry: int
-    snog_friend: int
-    marry_partner: int
-    marry_chemistry: int
-    marry_friend: int
-    pie_rival: int
-    pie_friend: int
-    pie_partner: int
+    kiss_partner: int
+    kiss_chemistry: int
+    kiss_friend: int
+    wed_partner: int
+    wed_chemistry: int
+    wed_friend: int
+    pass_rival: int
+    pass_friend: int
+    pass_partner: int
 
 
-class SnogMarryPieAudience(BaseModel):
+class KissWedPassAudience(BaseModel):
     model_config = ConfigDict(extra="forbid")
     success: int
     partial: int
     failure: int
-    pie_partner_extra: int
+    pass_partner_extra: int
 
 
-class SnogMarryPieBalance(BaseModel):
+class KissWedPassBalance(BaseModel):
     model_config = ConfigDict(extra="forbid")
     rounds: int = Field(ge=1)
-    per_round_points: SnogMarryPiePoints
+    per_round_points: KissWedPassPoints
     thresholds: _Thresholds
-    audience: SnogMarryPieAudience
+    audience: KissWedPassAudience
 
 
-# --- Mr & Mrs (Couples Quiz) ---
+# --- Couples Quiz (Couples Quiz) ---
 
 
-class MrAndMrsPoints(BaseModel):
+class CouplesQuizPoints(BaseModel):
     model_config = ConfigDict(extra="forbid")
     both_match: int
     one_correct: int
     mismatch: int
 
 
-class MrAndMrsAudience(BaseModel):
+class CouplesQuizAudience(BaseModel):
     model_config = ConfigDict(extra="forbid")
     success: int
     partial: int
@@ -135,12 +135,12 @@ class MrAndMrsAudience(BaseModel):
     streak_three_mismatch_penalty: int
 
 
-class MrAndMrsBalance(BaseModel):
+class CouplesQuizBalance(BaseModel):
     model_config = ConfigDict(extra="forbid")
     rounds: int = Field(ge=1)
-    per_round_points: MrAndMrsPoints
+    per_round_points: CouplesQuizPoints
     thresholds: _Thresholds
-    audience: MrAndMrsAudience
+    audience: CouplesQuizAudience
 
 
 # --- Lie Detector ---
@@ -204,9 +204,9 @@ class FinalCouplesPoints(BaseModel):
     honesty_lie_caught: int
     banter_match: int
     banter_miss: int
-    audacity_rival_pie: int
-    audacity_friend_pie: int
-    audacity_partner_pie: int
+    audacity_rival_callout: int
+    audacity_friend_callout: int
+    audacity_partner_callout: int
 
 
 class FinalCouplesBalance(BaseModel):
@@ -229,8 +229,8 @@ class MinigameBalance(BaseModel):
     recovery_floor: RecoveryFloor
     compatibility_quiz: CompatibilityQuizBalance
     heart_rate: PulseRaceBalance
-    snog_marry_pie: SnogMarryPieBalance
-    mr_and_mrs: MrAndMrsBalance
+    kiss_wed_pass: KissWedPassBalance
+    couples_quiz: CouplesQuizBalance
     lie_detector: LieDetectorBalance
     final_couples: FinalCouplesBalance
 

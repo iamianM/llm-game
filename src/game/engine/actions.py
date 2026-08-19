@@ -20,14 +20,18 @@ from src.game.engine.action_availability import (
     initial_coupling_targets,
     intro_actions,
     needs_initial_coupling,
-    pending_recouple_proposal_actions,
+    pending_pair_proposal_actions,
     player_proposal_eligible,
 )
-from src.game.engine.casa_amor import casa_decision_options, location_villa, locations_for_villa
 from src.game.engine.couples import player_couple
-from src.game.engine.hideaway import hideaway_eligible, hideaway_partner_id
+from src.game.engine.flush_of_hearts import (
+    flush_decision_options,
+    location_resort,
+    locations_for_resort,
+)
 from src.game.engine.intents import available_intents_for, get_intent
-from src.game.state.models import FollowUpOption, GameState, IslanderState, Location, Phase
+from src.game.engine.private_suite import private_suite_eligible, private_suite_partner_id
+from src.game.state.models import FollowUpOption, GameState, HeartbreakerState, Location, Phase
 
 
 class ActionKind(StrEnum):
@@ -38,14 +42,14 @@ class ActionKind(StrEnum):
     RESPOND_WITH = "respond_with"
     END_CONVERSATION = "end_conversation"
     CHALLENGE_RESPONSE = "challenge_response"
-    HIDEAWAY = "hideaway"
-    CASA_DECISION = "casa_decision"
+    PRIVATE_SUITE = "private_suite"
+    FLUSH_DECISION = "flush_decision"
     JOIN_GATHER = "join_gather"
     AMBIENT = "ambient"
     INTRODUCE_TO = "introduce_to"
     MOVE = "move"
-    RECOUPLE = "recouple"
-    PROPOSE_RECOUPLE = "propose_recouple"
+    PAIR = "pair"
+    PROPOSE_PAIR = "propose_pair"
     NPC_PROPOSAL_RESPONSE = "npc_proposal_response"
 
 
@@ -77,18 +81,18 @@ def available_actions(state: GameState) -> list[ActionSpec]:
 
     actions: list[ActionSpec] = []
     if state.pending_gather is not None:
-        # Recoupling ceremonies: surface a partner-pick menu so the player
+        # Pairing ceremonies: surface a partner-pick menu so the player
         # makes the central Day-3/Day-5 decision instead of having the engine
-        # auto-pair them with their current partner. Picking RECOUPLE in this
+        # auto-pair them with their current partner. Picking PAIR in this
         # context resolves the ceremony with the chosen partner; "Stay with"
         # is the explicit no-op pick. If the player is eliminated or has no
-        # eligible opposite-sex islanders left, fall through to JOIN_GATHER.
+        # eligible opposite-sex contestants left, fall through to JOIN_GATHER.
         if (
             state.pending_gather.kind == "ceremony"
-            and state.pending_gather.event_id.startswith("recoupling")
+            and state.pending_gather.event_id.startswith("pairing")
             and not state.player.eliminated
         ):
-            picks = _recoupling_pick_actions(state)
+            picks = _pairing_pick_actions(state)
             if picks:
                 return picks
         return [
@@ -97,20 +101,20 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 label=f"Join gather at the {state.pending_gather.gather_location.value}",
             )
         ]
-    if state.pending_recouple_proposal is not None:
-        return pending_recouple_proposal_actions(state)
-    casa_options = casa_decision_options(state)
-    if casa_options:
+    if state.pending_pair_proposal is not None:
+        return pending_pair_proposal_actions(state)
+    flush_options = flush_decision_options(state)
+    if flush_options:
         return [
             ActionSpec(
                 action=PlayerAction(
-                    kind=ActionKind.CASA_DECISION,
+                    kind=ActionKind.FLUSH_DECISION,
                     target_id=target_id,
                     intent_id=decision.value,
                 ),
                 label=label,
             )
-            for decision, target_id, label in casa_options
+            for decision, target_id, label in flush_options
         ]
     if state.pending_challenge is not None and state.pending_challenge.result is None:
         from src.game.engine.challenges import ROUND_BASED_MINIGAMES
@@ -120,14 +124,14 @@ def available_actions(state: GameState) -> list[ActionSpec]:
                 current = state.pending_challenge.rounds[current_index]
                 # Round-based minigames resolve purely via payload.choice_id;
                 # target_id is advisory metadata. Only set it when the choice
-                # itself names an islander (e.g. snog_marry_pie picks a person).
+                # itself names an heartbreaker (e.g. kiss_wed_pass picks a person).
                 # For answer-based quizzes fact_value is an answer string, so
                 # leave target_id unset rather than tagging every option with the
                 # player's partner id, which misleads the LLM agents/decider and
                 # pollutes telemetry.
-                islander_ids = {islander.id for islander in state.islanders}
+                heartbreaker_ids = {heartbreaker.id for heartbreaker in state.heartbreakers}
                 for choice in current.choices:
-                    choice_target = choice.fact_value if choice.fact_value in islander_ids else None
+                    choice_target = choice.fact_value if choice.fact_value in heartbreaker_ids else None
                     actions.append(
                         ActionSpec(
                             action=PlayerAction(
@@ -143,10 +147,10 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     if needs_initial_coupling(state):
         return [
             ActionSpec(
-                action=PlayerAction(kind=ActionKind.RECOUPLE, target_id=islander.id),
-                label=f"Initial couple with {islander.name}",
+                action=PlayerAction(kind=ActionKind.PAIR, target_id=heartbreaker.id),
+                label=f"Initial couple with {heartbreaker.name}",
             )
-            for islander in initial_coupling_targets(state)
+            for heartbreaker in initial_coupling_targets(state)
         ]
     if state.phase is Phase.INTROS:
         return intro_actions(state)
@@ -154,7 +158,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
     if state.active_conversation is not None:
         interruption = state.active_conversation.pending_interruption
         if interruption is not None:
-            interrupter = _find_islander(state, interruption.interrupter_id)
+            interrupter = _find_heartbreaker(state, interruption.interrupter_id)
             iname = interrupter.name
             accept_label = {
                 "jealous": f"Turn and hear {iname} out",
@@ -192,15 +196,15 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             )
         menu = state.active_conversation.pending_options
         if player_proposal_eligible(state, state.active_conversation.target_id):
-            target = _find_islander(state, state.active_conversation.target_id)
+            target = _find_heartbreaker(state, state.active_conversation.target_id)
             actions.append(
                 ActionSpec(
-                    action=PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id=target.id),
-                    label=f"Ask {target.name} to recouple with you",
+                    action=PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id=target.id),
+                    label=f"Ask {target.name} to pair with you",
                 )
             )
         if menu is not None and not menu.npc_will_leave:
-            target = _find_islander(state, state.active_conversation.target_id)
+            target = _find_heartbreaker(state, state.active_conversation.target_id)
             for index, option in _unlocked_follow_up_options(menu.options, target):
                 actions.append(
                     ActionSpec(
@@ -223,7 +227,7 @@ def available_actions(state: GameState) -> list[ActionSpec]:
 
     if state.pending_npc_approach is not None:
         approach = state.pending_npc_approach
-        approacher = _find_islander(state, approach.npc_id)
+        approacher = _find_heartbreaker(state, approach.npc_id)
         name = approacher.name
         engage_label = {
             "wants_to_chat": f"Welcome {name} over for a chat",
@@ -266,10 +270,10 @@ def available_actions(state: GameState) -> list[ActionSpec]:
             ),
         ]
 
-    for islander in state.islanders:
-        if islander.location_id != state.location_id or islander.eliminated:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.location_id != state.location_id or heartbreaker.eliminated:
             continue
-        if location_villa(islander.location_id) is not state.villa:
+        if location_resort(heartbreaker.location_id) is not state.resort:
             continue
         # Surface one categorized opener per unlocked intent so the free-time
         # CharacterMenu tree (Friendly / Flirty / Deep / Banter) populates from
@@ -277,27 +281,27 @@ def available_actions(state: GameState) -> list[ActionSpec]:
         # into Banter and leaves the other categories falsely locked. The web
         # groups these by category and drills to a sub-intent; the bottom fan /
         # LLM decider see the self-contained "Talk to X — <opener>" label.
-        for intent in available_intents_for(state, islander.id):
+        for intent in available_intents_for(state, heartbreaker.id):
             actions.append(
                 ActionSpec(
                     action=PlayerAction(
                         kind=ActionKind.START_CONVERSATION,
-                        target_id=islander.id,
+                        target_id=heartbreaker.id,
                         intent_id=intent.id,
                     ),
-                    label=f"Talk to {islander.name} — {intent.label}",
+                    label=f"Talk to {heartbreaker.name} — {intent.label}",
                 )
             )
-    if hideaway_eligible(state):
-        partner_id = hideaway_partner_id(state)
-        partner = _find_islander(state, partner_id) if partner_id is not None else None
-        label = "Spend the night in the Hideaway"
+    if private_suite_eligible(state):
+        partner_id = private_suite_partner_id(state)
+        partner = _find_heartbreaker(state, partner_id) if partner_id is not None else None
+        label = "Spend the night in the Private Suite"
         if partner is not None:
-            label = f"Spend the night in the Hideaway with {partner.name}"
-        actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.HIDEAWAY), label=label))
+            label = f"Spend the night in the Private Suite with {partner.name}"
+        actions.append(ActionSpec(action=PlayerAction(kind=ActionKind.PRIVATE_SUITE), label=label))
     if state.phase in {Phase.MORNING, Phase.AFTERNOON}:
-        for location in locations_for_villa(state.villa):
-            if location != state.location_id and location is not Location.HIDEAWAY:
+        for location in locations_for_resort(state.resort):
+            if location != state.location_id and location is not Location.PRIVATE_SUITE:
                 actions.append(
                     ActionSpec(
                         action=PlayerAction(kind=ActionKind.MOVE, target_id=location.value),
@@ -325,7 +329,7 @@ def _ambient_wait_label(state: GameState) -> str:
     """Signpost where letting the clock run actually leads.
 
     On the evenings that gate a mandatory ceremony, spending the rest of the
-    phase doesn't just "let the villa move on" — it convenes the night's big
+    phase doesn't just "let Sunset Bay move on" — it convenes the night's big
     beat: the Final Vote on the last day, a Pairing Ceremony on Days 3 and 5.
     A generic label buries the game's most important moments behind an
     innocuous skip, so a player (or the LLM decider) can chat past the ending
@@ -334,27 +338,27 @@ def _ambient_wait_label(state: GameState) -> str:
     ``advance_phase_with_events``.
     """
     if state.phase is Phase.EVENING:
-        casa_active = (
-            state.casa_amor_state is not None and not state.casa_amor_state.returned
+        flush_active = (
+            state.flush_of_hearts_state is not None and not state.flush_of_hearts_state.returned
         )
         if state.day >= 6:
-            return "It's time — gather everyone at the firepit for the Final Vote"
-        if state.day in {3, 5} and not (state.day == 5 and casa_active):
-            return "It's time — gather everyone at the firepit for the Pairing Ceremony"
-    return "Let the villa move on"
+            return "It's time — gather everyone at the flame_deck for the Final Vote"
+        if state.day in {3, 5} and not (state.day == 5 and flush_active):
+            return "It's time — gather everyone at the flame_deck for the Pairing Ceremony"
+    return "Let Sunset Bay move on"
 
 
-def _recoupling_pick_actions(state: GameState) -> list[ActionSpec]:
-    """Return RECOUPLE picks for a pending recoupling gather.
+def _pairing_pick_actions(state: GameState) -> list[ActionSpec]:
+    """Return PAIR picks for a pending pairing gather.
 
-    Surfaces one option per eligible opposite-sex islander, plus an explicit
+    Surfaces one option per eligible opposite-sex heartbreaker, plus an explicit
     "Stay with <partner>" option when the player is currently coupled. The
-    target list mirrors `recoupling()`'s opposite-sex constraint.
+    target list mirrors `pairing()`'s opposite-sex constraint.
     """
     eligible = [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated and islander.gender != state.player.gender
+        heartbreaker
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated and heartbreaker.gender != state.player.gender
     ]
     if not eligible:
         return []
@@ -367,16 +371,16 @@ def _recoupling_pick_actions(state: GameState) -> list[ActionSpec]:
             )
             break
     picks: list[ActionSpec] = []
-    for islander in eligible:
-        is_current = islander.id == current_partner_id
+    for heartbreaker in eligible:
+        is_current = heartbreaker.id == current_partner_id
         label = (
-            f"Stay with {islander.name}"
+            f"Stay with {heartbreaker.name}"
             if is_current
-            else f"Couple with {islander.name}"
+            else f"Couple with {heartbreaker.name}"
         )
         picks.append(
             ActionSpec(
-                action=PlayerAction(kind=ActionKind.RECOUPLE, target_id=islander.id),
+                action=PlayerAction(kind=ActionKind.PAIR, target_id=heartbreaker.id),
                 label=label,
             )
         )
@@ -397,11 +401,11 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         if action.target_id is None or action.intent_id is None:
             raise ValueError("START_CONVERSATION requires target_id and intent_id")
         try:
-            target = _find_islander(state, action.target_id)
+            target = _find_heartbreaker(state, action.target_id)
         except ValueError as exc:
-            raise ValueError(f"target is not visible in the current villa: {action.model_dump()}") from exc
-        if target.location_id != state.location_id or location_villa(target.location_id) is not state.villa:
-            raise ValueError(f"target is not visible in the current villa: {action.model_dump()}")
+            raise ValueError(f"target is not visible in the current resort: {action.model_dump()}") from exc
+        if target.location_id != state.location_id or location_resort(target.location_id) is not state.resort:
+            raise ValueError(f"target is not visible in the current resort: {action.model_dump()}")
         valid_intents = {intent.id for intent in available_intents_for(state, action.target_id)}
         if action.intent_id not in valid_intents:
             get_intent(action.intent_id)
@@ -434,7 +438,7 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         menu = conversation.pending_options
         if menu is None:
             raise ValueError("active conversation has no pending options")
-        target = _find_islander(state, conversation.target_id)
+        target = _find_heartbreaker(state, conversation.target_id)
         unlocked = dict(_unlocked_follow_up_options(menu.options, target))
         if action.option_index is not None:
             if action.option_index not in unlocked:
@@ -449,20 +453,20 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
         if state.active_conversation is None:
             raise ValueError("cannot end conversation when none is active")
         return
-    if action.kind is ActionKind.PROPOSE_RECOUPLE:
+    if action.kind is ActionKind.PROPOSE_PAIR:
         if state.active_conversation is None:
-            raise ValueError("cannot propose recoupling outside an active conversation")
+            raise ValueError("cannot propose pairing outside an active conversation")
         if action.target_id is None:
-            raise ValueError("PROPOSE_RECOUPLE requires target_id")
+            raise ValueError("PROPOSE_PAIR requires target_id")
         if action.target_id != state.active_conversation.target_id:
-            raise ValueError("recoupling proposal target must be the active conversation target")
+            raise ValueError("pairing proposal target must be the active conversation target")
         if not player_proposal_eligible(state, action.target_id):
-            raise ValueError(f"recoupling proposal is not available: {action.model_dump()}")
+            raise ValueError(f"pairing proposal is not available: {action.model_dump()}")
         return
     if action.kind is ActionKind.NPC_PROPOSAL_RESPONSE:
-        if state.pending_recouple_proposal is None:
-            raise ValueError("no NPC recoupling proposal is waiting")
-        if action.target_id != state.pending_recouple_proposal.proposer_id:
+        if state.pending_pair_proposal is None:
+            raise ValueError("no NPC pairing proposal is waiting")
+        if action.target_id != state.pending_pair_proposal.proposer_id:
             raise ValueError("NPC proposal response target must be the proposer")
         if action.intent_id not in {"accept", "decline_politely", "decline_harshly"}:
             raise ValueError(f"invalid NPC proposal response: {action.model_dump()}")
@@ -484,18 +488,18 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
             return
         if action.target_id is None:
             raise ValueError("CHALLENGE_RESPONSE requires target_id")
-        _find_islander(state, action.target_id)
+        _find_heartbreaker(state, action.target_id)
         return
-    if action.kind is ActionKind.HIDEAWAY:
+    if action.kind is ActionKind.PRIVATE_SUITE:
         if player_couple(state) is None:
-            raise ValueError("Hideaway requires a player couple")
-        if not hideaway_eligible(state):
-            raise ValueError("Hideaway is not available")
+            raise ValueError("Private Suite requires a player couple")
+        if not private_suite_eligible(state):
+            raise ValueError("Private Suite is not available")
         return
-    if action.kind is ActionKind.CASA_DECISION:
+    if action.kind is ActionKind.FLUSH_DECISION:
         valid = [spec.action for spec in available_actions(state)]
         if action not in valid:
-            raise ValueError(f"invalid Casa Amor decision: {action.model_dump()}")
+            raise ValueError(f"invalid Flush of Hearts decision: {action.model_dump()}")
         return
     if action.kind is ActionKind.JOIN_GATHER:
         if state.pending_gather is None:
@@ -515,7 +519,7 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
             raise ValueError("INTRODUCE_TO is only valid during the Day 1 intros segment")
         if action.target_id is None or action.intent_id is None:
             raise ValueError("INTRODUCE_TO requires target_id and intent_id")
-        target = _find_islander(state, action.target_id)
+        target = _find_heartbreaker(state, action.target_id)
         if target.eliminated or target.id in state.intro_completed_ids:
             raise ValueError(f"intro target is unavailable: {action.model_dump()}")
         if action.intent_id not in _INTRO_INTENT_IDS:
@@ -528,7 +532,7 @@ def validate_action(state: GameState, action: PlayerAction) -> None:
 
 def _unlocked_follow_up_options(
     options: list[FollowUpOption],
-    target: IslanderState,
+    target: HeartbreakerState,
 ) -> list[tuple[int, FollowUpOption]]:
     return [
         (index, option)
@@ -537,7 +541,7 @@ def _unlocked_follow_up_options(
     ]
 
 
-def _meets_unlock_threshold(option: FollowUpOption, target: IslanderState) -> bool:
+def _meets_unlock_threshold(option: FollowUpOption, target: HeartbreakerState) -> bool:
     if option.unlock_threshold is None:
         return True
     relationship = target.relationship
@@ -556,9 +560,9 @@ _INTRO_INTENT_IDS = {
 }
 
 
-def _find_islander(state: GameState, target_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander
-    raise ValueError(f"unknown islander: {target_id}")
+def _find_heartbreaker(state: GameState, target_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker
+    raise ValueError(f"unknown heartbreaker: {target_id}")
 

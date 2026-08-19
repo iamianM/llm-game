@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import type { SessionState } from "../../lib/types";
 import { CastGrid } from "./CastGrid";
 import { CastPopout } from "./CastPopout";
 import { CouplesPanel } from "./CouplesPanel";
 import { MemoriesList } from "./MemoriesList";
-import { VillaMap } from "./VillaMap";
+import { ResortMap } from "./ResortMap";
 
-type Props = { state: SessionState; open: boolean; sessionId: string; onClose: () => void; look?: IslanderLook | null };
+type Props = { state: SessionState; open: boolean; sessionId: string; onClose: () => void; look?: HeartbreakerLook | null };
 
 export function RightRail({ state, open, sessionId, onClose, look = null }: Props) {
   const [activeProfile, setActiveProfile] = useState<string | null>(null);
@@ -30,10 +30,10 @@ export function RightRail({ state, open, sessionId, onClose, look = null }: Prop
           <button aria-label="Close right rail" onClick={onClose} className="rail-close"><X size={16} /></button>
         </header>
         <div className="rail-body">
-          <VillaMap snapshot={state.villa_snapshot} />
+          <ResortMap snapshot={state.resort_snapshot} />
           <CouplesPanel couples={state.couples} playerId={state.player.id} playerLook={look} />
           <CastGrid
-            cast={state.islanders}
+            cast={state.heartbreakers}
             onOpenProfile={(npcId) => { setActiveProfile(npcId); onClose(); }}
           />
           <MemoriesList memories={state.player.memories} />

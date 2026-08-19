@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from src.game.state.models import AttachmentStyle, GameState, IslanderState, RelationshipDelta
+from src.game.state.models import AttachmentStyle, GameState, HeartbreakerState, RelationshipDelta
 
 ARCHETYPE_MATCHES = {
     "heartthrob": {"confident", "ambitious", "edge"},
@@ -19,29 +19,29 @@ REVEAL_THRESHOLDS = {
 }
 
 
-def compatibility_bonus(state: GameState, target: IslanderState, tags: list[str]) -> int:
-    """Return the Type-on-Paper compatibility bonus, capped at +20."""
+def compatibility_bonus(state: GameState, target: HeartbreakerState, tags: list[str]) -> int:
+    """Return the Ideal-Match compatibility bonus, capped at +20."""
     matches = 0
     archetype_tags = ARCHETYPE_MATCHES.get(state.player.archetype_id, ARCHETYPE_MATCHES["balanced"])
-    wanted = {item.lower() for item in target.type_on_paper.personality_type + target.type_on_paper.values}
+    wanted = {item.lower() for item in target.ideal_match.personality_type + target.ideal_match.values}
     matches += len(wanted & {tag.lower() for tag in tags})
     matches += len(wanted & archetype_tags)
-    if any(word in target.type_on_paper.physical_type.lower() for word in archetype_tags):
+    if any(word in target.ideal_match.physical_type.lower() for word in archetype_tags):
         matches += 1
     return min(20, matches * 4)
 
 
-def dealbreaker_penalty(target: IslanderState, tags: list[str]) -> int:
+def dealbreaker_penalty(target: HeartbreakerState, tags: list[str]) -> int:
     """Return the dealbreaker penalty for recent player tags."""
     normalized = {tag.lower() for tag in tags}
-    for dealbreaker in target.type_on_paper.dealbreakers:
+    for dealbreaker in target.ideal_match.dealbreakers:
         if dealbreaker.lower() in normalized:
             return 15
     return 0
 
 
 def attachment_delta_modifier(
-    target: IslanderState,
+    target: HeartbreakerState,
     intent_kind: str,
     success: bool,
 ) -> RelationshipDelta:
@@ -68,14 +68,14 @@ def attachment_delta_modifier(
     return RelationshipDelta()
 
 
-def apply_familiarity(target: IslanderState, amount: int) -> None:
+def apply_familiarity(target: HeartbreakerState, amount: int) -> None:
     """Increase familiarity, capped at 100."""
     target.familiarity_with_player = max(0, min(100, target.familiarity_with_player + amount))
 
 
-def revealed_preferences(target: IslanderState) -> dict[str, object]:
-    """Return currently revealed Type-on-Paper fields for an islander."""
-    prefs = target.type_on_paper
+def revealed_preferences(target: HeartbreakerState) -> dict[str, object]:
+    """Return currently revealed Ideal-Match fields for an heartbreaker."""
+    prefs = target.ideal_match
     familiarity = target.familiarity_with_player
     revealed: dict[str, object] = {}
     if familiarity >= REVEAL_THRESHOLDS["physical_type"]:
@@ -91,7 +91,7 @@ def revealed_preferences(target: IslanderState) -> dict[str, object]:
 
 def revealed_preference_count(state: GameState) -> int:
     """Count all revealed preference fields across NPCs."""
-    return sum(len(revealed_preferences(islander)) for islander in state.islanders)
+    return sum(len(revealed_preferences(heartbreaker)) for heartbreaker in state.heartbreakers)
 
 
 def _is_flirty(intent_kind: str) -> bool:

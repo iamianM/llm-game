@@ -103,7 +103,7 @@ class Challenge(BaseModel):
     id: str
     day: int
     kind: str
-    stat_tested: Literal["charm", "banter", "eq", "graft", "loyalty", "combined"]
+    stat_tested: Literal["charm", "banter", "eq", "spark", "loyalty", "combined"]
     participants: list[str] = Field(default_factory=list)
     player_choice: str | None = None
     result: Literal["success", "failure"] | None = None

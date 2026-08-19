@@ -2,17 +2,22 @@
 
 from __future__ import annotations
 
-from src.game.state.models import GameState, IslanderState, RelationshipDelta, clamp_relationship
+from src.game.state.models import (
+    GameState,
+    HeartbreakerState,
+    RelationshipDelta,
+    clamp_relationship,
+)
 
 
-def find_islander(state: GameState, target_id: str | None) -> IslanderState:
-    """Return an Islander by id, failing loud on unknown targets."""
+def find_heartbreaker(state: GameState, target_id: str | None) -> HeartbreakerState:
+    """Return an Heartbreaker by id, failing loud on unknown targets."""
     if target_id is None:
         raise ValueError("target_id is required")
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander
-    raise ValueError(f"unknown islander: {target_id}")
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker
+    raise ValueError(f"unknown heartbreaker: {target_id}")
 
 
 def player_display_name(state: GameState) -> str:
@@ -26,14 +31,14 @@ def player_display_name(state: GameState) -> str:
     name = (getattr(state.player, "name", "") or "").strip()
     if name and name.lower() != "you":
         return name
-    return "the islander"
+    return "the contestant"
 
 
 def display_name(state: GameState, actor_id: str | None) -> str:
     """Resolve an actor id to a display-safe name.
 
     This is the single typed point where an engine event producer turns an
-    islander id (or the ``"player"`` sentinel) into player-facing text, so a raw
+    heartbreaker id (or the ``"player"`` sentinel) into player-facing text, so a raw
     id never reaches a rendered message, a memory, or the narrator context.
     Unknown ids degrade to a humanized form rather than leaking the raw token —
     a structured lookup, never a regex scrub of finished prose (ENGINEERING R7).
@@ -42,14 +47,14 @@ def display_name(state: GameState, actor_id: str | None) -> str:
         return "someone"
     if actor_id == "player":
         return player_display_name(state)
-    for islander in state.islanders:
-        if islander.id == actor_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == actor_id:
+            return heartbreaker.name
     return actor_id.replace("_", " ").strip()
 
 
-def apply_relationship_delta(target: IslanderState, delta: RelationshipDelta) -> None:
-    """Apply a clamped relationship delta to one islander."""
+def apply_relationship_delta(target: HeartbreakerState, delta: RelationshipDelta) -> None:
+    """Apply a clamped relationship delta to one heartbreaker."""
     target.relationship.affection = clamp_relationship(
         target.relationship.affection + delta.affection
     )

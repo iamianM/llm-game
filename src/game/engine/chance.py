@@ -5,7 +5,7 @@ from __future__ import annotations
 from src.game.engine.compatibility import compatibility_bonus, dealbreaker_penalty
 from src.game.engine.intents import Intent, effective_risk
 from src.game.engine.results import ChanceBreakdown
-from src.game.state.models import GameState, IslanderState
+from src.game.state.models import GameState, HeartbreakerState
 
 RISK_SUCCESS_CAP = {
     "safe": 90,
@@ -22,14 +22,14 @@ RISK_SUCCESS_MODIFIER = {
 }
 
 
-def intent_success_chance(state: GameState, target: IslanderState, intent: Intent) -> int:
+def intent_success_chance(state: GameState, target: HeartbreakerState, intent: Intent) -> int:
     """Calculate F1 intent success chance."""
     return intent_success_breakdown(state, target, intent).final_chance
 
 
 def intent_success_breakdown(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     intent: Intent,
 ) -> ChanceBreakdown:
     """Calculate an auditable F1 intent success chance."""
@@ -76,7 +76,7 @@ def intent_success_breakdown(
 
 def follow_up_success_chance(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     stat_used: str | None,
     risk: str,
 ) -> int:
@@ -86,7 +86,7 @@ def follow_up_success_chance(
 
 def follow_up_success_breakdown(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     stat_used: str | None,
     risk: str,
 ) -> ChanceBreakdown:

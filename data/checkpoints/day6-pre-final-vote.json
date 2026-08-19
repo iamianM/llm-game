@@ -13,8 +13,8 @@
       "budget_minutes": 60,
       "elapsed_minutes": 60
     },
-    "location_id": "firepit",
-    "villa": "main",
+    "location_id": "flame_deck",
+    "resort": "main",
     "player": {
       "id": "player",
       "name": "You",
@@ -23,7 +23,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 8,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 9
       },
       "archetype_id": "heartthrob",
@@ -35,7 +35,7 @@
         {
           "id": "mem_cb1d1f6a31a43898",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "The Pairing Ceremony locks in the next couples.",
           "source": "witnessed",
           "source_id": null,
@@ -44,7 +44,7 @@
           "emotional_weight": 5,
           "tags": [
             "ceremony",
-            "recoupling"
+            "pairing"
           ],
           "durable": true,
           "mentioned_subject_ids": []
@@ -52,7 +52,7 @@
         {
           "id": "mem_f6248b78d5efe016",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Compatibility Quiz tested Eq and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -69,7 +69,7 @@
         {
           "id": "mem_4d4ad059ee5d0f48",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Compatibility Quiz ended in failure (6 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -105,8 +105,8 @@
         {
           "id": "mem_9268d7453c64626f",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for welcome.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for welcome.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 1,
@@ -122,7 +122,7 @@
         {
           "id": "mem_ed28071b13211056",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
           "source": "witnessed",
           "source_id": null,
@@ -177,7 +177,7 @@
         {
           "id": "mem_602170c088d4c073",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Pulse Race tested Charm and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -194,7 +194,7 @@
         {
           "id": "mem_7c1fb3ca9fe1f112",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Pulse Race ended in failure (0 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -230,8 +230,8 @@
         {
           "id": "mem_ed74f1c34f2c698d",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for group date invite.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for group date invite.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 2,
@@ -247,7 +247,7 @@
         {
           "id": "mem_9b429bdbb46d2e6f",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
           "source": "witnessed",
           "source_id": null,
@@ -302,7 +302,7 @@
         {
           "id": "mem_e9493b5ac3a93059",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "The Couples Quiz tested Banter and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -319,7 +319,7 @@
         {
           "id": "mem_1106e84e21607396",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "The Couples Quiz ended in failure (3 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -355,8 +355,8 @@
         {
           "id": "mem_d2d2694226ad7b22",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for coupling warning.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for coupling warning.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
@@ -372,7 +372,7 @@
         {
           "id": "mem_d99d8b5113142e95",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
           "source": "witnessed",
           "source_id": null,
@@ -408,8 +408,8 @@
         {
           "id": "mem_479a3c632bbdc903",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 3,
@@ -425,7 +425,7 @@
         {
           "id": "mem_b0b7c37a76d48e4e",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "The Pairing Ceremony locks in the next couples.",
           "source": "witnessed",
           "source_id": null,
@@ -434,7 +434,7 @@
           "emotional_weight": 5,
           "tags": [
             "ceremony",
-            "recoupling"
+            "pairing"
           ],
           "durable": true,
           "mentioned_subject_ids": []
@@ -480,7 +480,7 @@
         {
           "id": "mem_47c0866fa6c0b08b",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Lie Detector tested Loyalty and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -497,7 +497,7 @@
         {
           "id": "mem_081ef58ab1510bc8",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Lie Detector ended in success (13 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -533,8 +533,8 @@
         {
           "id": "mem_b757592965f5d937",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for Flush of Hearts.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for Flush of Hearts.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
@@ -550,7 +550,7 @@
         {
           "id": "mem_fe0a9aca549ad766",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
           "source": "witnessed",
           "source_id": null,
@@ -567,15 +567,15 @@
         {
           "id": "mem_899956e66a7f63ef",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Flush of Hearts begins: you are sent to the second villa.",
+          "subject_id": "resort",
+          "content": "Flush of Hearts begins: you are sent to the Flush resort.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 4,
           "formed_on_turn": 237,
           "emotional_weight": 5,
           "tags": [
-            "casa_amor_arrival",
+            "flush_of_hearts_arrival",
             "ceremony"
           ],
           "durable": true,
@@ -584,7 +584,7 @@
         {
           "id": "mem_775c7047c1e3f60b",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Kiss Wed Pass tested Banter and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -601,7 +601,7 @@
         {
           "id": "mem_cfadca39e48464ec",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Kiss Wed Pass ended in success (7 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -626,7 +626,7 @@
           "formed_on_turn": 244,
           "emotional_weight": 5,
           "tags": [
-            "casa_amor_decision",
+            "flush_of_hearts_decision",
             "ceremony"
           ],
           "durable": true,
@@ -635,8 +635,8 @@
         {
           "id": "mem_8fc02e208c4d8a8b",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for the Sunset Bay return.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 6,
@@ -660,7 +660,7 @@
           "formed_on_turn": 245,
           "emotional_weight": 5,
           "tags": [
-            "casa_amor_return_reveal",
+            "flush_of_hearts_return_reveal",
             "ceremony"
           ],
           "durable": true,
@@ -677,7 +677,7 @@
           "formed_on_turn": 246,
           "emotional_weight": 5,
           "tags": [
-            "casa_amor_return_reveal",
+            "flush_of_hearts_return_reveal",
             "ceremony"
           ],
           "durable": true,
@@ -705,7 +705,7 @@
         {
           "id": "mem_3c59dcc1a0254dc2",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Final Couples Challenge tested combined couple energy and is still pending.",
           "source": "witnessed",
           "source_id": null,
@@ -722,7 +722,7 @@
         {
           "id": "mem_9953d34ccd2ccb82",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Final Couples Challenge ended in success (15 pts).",
           "source": "witnessed",
           "source_id": null,
@@ -758,8 +758,8 @@
         {
           "id": "mem_9750fc2740467d81",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for final vote announce.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for final vote announce.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 6,
@@ -775,7 +775,7 @@
         {
           "id": "mem_e9a347f92a624032",
           "holder_id": "player",
-          "subject_id": "villa",
+          "subject_id": "resort",
           "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
           "source": "witnessed",
           "source_id": null,
@@ -792,8 +792,8 @@
         {
           "id": "mem_6bc08ebe7b1cf57f",
           "holder_id": "player",
-          "subject_id": "villa",
-          "content": "Everyone is called to the firepit for the Final Vote.",
+          "subject_id": "resort",
+          "content": "Everyone is called to the flame_deck for the Final Vote.",
           "source": "witnessed",
           "source_id": null,
           "formed_on_day": 6,
@@ -1198,8 +1198,8 @@
           "confidence": 1.0,
           "citation": "Jordan told you directly on Day 3."
         },
-        "jordan.villa_tell": {
-          "fact_key": "jordan.villa_tell",
+        "jordan.resort_tell": {
+          "fact_key": "jordan.resort_tell",
           "value": "keeps the bit going three seconds too long",
           "source": "direct",
           "source_npc_id": null,
@@ -1216,7 +1216,7 @@
           "learned_on_day": 3,
           "learned_on_turn": 144,
           "confidence": 0.5,
-          "citation": "mr_and_mrs day 3"
+          "citation": "couples_quiz day 3"
         },
         "sophie.karaoke_song": {
           "fact_key": "sophie.karaoke_song",
@@ -1226,7 +1226,7 @@
           "learned_on_day": 3,
           "learned_on_turn": 144,
           "confidence": 0.5,
-          "citation": "mr_and_mrs day 3"
+          "citation": "couples_quiz day 3"
         },
         "sophie.keepsake": {
           "fact_key": "sophie.keepsake",
@@ -1236,7 +1236,7 @@
           "learned_on_day": 3,
           "learned_on_turn": 144,
           "confidence": 0.5,
-          "citation": "mr_and_mrs day 3"
+          "citation": "couples_quiz day 3"
         },
         "marcus.pet_peeve": {
           "fact_key": "marcus.pet_peeve",
@@ -1279,16 +1279,16 @@
           "citation": "Maya told you directly on Day 4."
         }
       },
-      "pull_attempts_this_phase": {}
+      "private_chat_attempts_this_phase": {}
     },
-    "islanders": [
+    "heartbreakers": [
       {
         "id": "chloe",
         "name": "Chloe",
         "gender": "woman",
         "archetype": "sweetheart",
         "backstory": "Twenty-six, primary school teacher from Liverpool. She has been living with her older sister since her ex moved out six months ago. Her sister is pregnant, and Chloe keeps wondering whether she wants children before thirty.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 14,
           "chemistry": 1,
@@ -1306,7 +1306,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "warm smiles and kind eyes",
           "personality_type": [
             "warm",
@@ -1342,7 +1342,7 @@
           {
             "id": "mem_7fd2f5f46fa966e2",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -1351,7 +1351,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -1359,7 +1359,7 @@
           {
             "id": "mem_2cb942d2bf6474f1",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1376,7 +1376,7 @@
           {
             "id": "mem_22ab7a0443e86655",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -1412,8 +1412,8 @@
           {
             "id": "mem_6346daa8bf3b161d",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -1429,7 +1429,7 @@
           {
             "id": "mem_4e43a280e7f864f9",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -1484,7 +1484,7 @@
           {
             "id": "mem_f9dbdeaa9c9943da",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1501,7 +1501,7 @@
           {
             "id": "mem_c94640ad84ea1eb6",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -1537,8 +1537,8 @@
           {
             "id": "mem_c64b952021f2c581",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -1554,7 +1554,7 @@
           {
             "id": "mem_9a770f8bda49f377",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -1609,7 +1609,7 @@
           {
             "id": "mem_c967569e47f274b1",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1626,7 +1626,7 @@
           {
             "id": "mem_873e5cd327e47efb",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -1662,8 +1662,8 @@
           {
             "id": "mem_ee751ca8581e2757",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -1679,7 +1679,7 @@
           {
             "id": "mem_3dc9f1aa1d93e7ad",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -1713,8 +1713,8 @@
           {
             "id": "mem_c3f21e74d30cefd1",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -1730,7 +1730,7 @@
           {
             "id": "mem_7dd9792e95f18cd6",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -1739,7 +1739,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -1785,7 +1785,7 @@
           {
             "id": "mem_6d607d635d023940",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1802,7 +1802,7 @@
           {
             "id": "mem_dd0d0da1413b2205",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -1838,8 +1838,8 @@
           {
             "id": "mem_0fbc1b2ba149ff58",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -1855,7 +1855,7 @@
           {
             "id": "mem_924035165c17469b",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -1872,15 +1872,15 @@
           {
             "id": "mem_9d31bca31589aede",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -1889,7 +1889,7 @@
           {
             "id": "mem_71aa0751c5fd029f",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -1906,7 +1906,7 @@
           {
             "id": "mem_439a39347f584add",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -1931,7 +1931,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -1940,8 +1940,8 @@
           {
             "id": "mem_1c43faab730785b6",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -1965,7 +1965,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -1982,7 +1982,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -1999,7 +1999,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -2027,7 +2027,7 @@
           {
             "id": "mem_48c10fc219be0152",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2044,7 +2044,7 @@
           {
             "id": "mem_c5e57b43630ed827",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -2080,8 +2080,8 @@
           {
             "id": "mem_31481e16522187a3",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -2097,7 +2097,7 @@
           {
             "id": "mem_8d8008eaae39169b",
             "holder_id": "chloe",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -2114,8 +2114,8 @@
           {
             "id": "mem_45073267c2d68ba9",
             "holder_id": "chloe",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -2340,8 +2340,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "touches her necklace when she wants to leave a conversation",
               "distractors": [],
               "tier": 0,
@@ -2568,8 +2568,8 @@
         "name": "Maya",
         "gender": "woman",
         "archetype": "joker",
-        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to the villa hoping someone notices when she drops the joke.",
-        "location_id": "firepit",
+        "backstory": "Twenty-four, content creator from London. She built her following from comedy clips but worries people only expect her to be entertaining. She came to Sunset Bay hoping someone notices when she drops the joke.",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 30,
           "chemistry": 23,
@@ -2587,7 +2587,7 @@
           "neuroticism": 6
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "expressive people with bright energy",
           "personality_type": [
             "funny",
@@ -2623,7 +2623,7 @@
           {
             "id": "mem_b2829f17ddd1e1ca",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -2632,7 +2632,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -2640,7 +2640,7 @@
           {
             "id": "mem_d78452a8494a430b",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2657,7 +2657,7 @@
           {
             "id": "mem_abd4a98a41ee10b2",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -2674,8 +2674,8 @@
           {
             "id": "mem_868320429348dcb9",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -2691,7 +2691,7 @@
           {
             "id": "mem_58f6f3e0e512428e",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -2746,7 +2746,7 @@
           {
             "id": "mem_50976e54b08c9a0f",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2763,7 +2763,7 @@
           {
             "id": "mem_1b645d1036539038",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -2799,8 +2799,8 @@
           {
             "id": "mem_cdea7cd1967af281",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -2816,7 +2816,7 @@
           {
             "id": "mem_9dadb509c4ef2bf4",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -2871,7 +2871,7 @@
           {
             "id": "mem_738a4470a554acbe",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -2888,7 +2888,7 @@
           {
             "id": "mem_a9afc8f815b5f3ae",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -2924,8 +2924,8 @@
           {
             "id": "mem_5af517b82cf50c04",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -2941,7 +2941,7 @@
           {
             "id": "mem_8cbcd43599c09e29",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -2977,8 +2977,8 @@
           {
             "id": "mem_31f9f53702c9086e",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -2994,7 +2994,7 @@
           {
             "id": "mem_ccc28a78f0180d1e",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -3003,7 +3003,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -3049,7 +3049,7 @@
           {
             "id": "mem_53b03bd178afa764",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3066,7 +3066,7 @@
           {
             "id": "mem_2432f147f1854ff4",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -3100,8 +3100,8 @@
           {
             "id": "mem_14487f6d25965aef",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -3117,7 +3117,7 @@
           {
             "id": "mem_16d5378427c3bdf2",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -3134,15 +3134,15 @@
           {
             "id": "mem_0c8a9606011d8e56",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -3151,7 +3151,7 @@
           {
             "id": "mem_b0dd8ca3a435128c",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3168,7 +3168,7 @@
           {
             "id": "mem_4b0672018fb851c8",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -3193,7 +3193,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -3202,8 +3202,8 @@
           {
             "id": "mem_ed9eb3b3928fcd74",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -3227,7 +3227,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -3244,7 +3244,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -3261,7 +3261,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -3289,7 +3289,7 @@
           {
             "id": "mem_5c9d79a92dacb48c",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3306,7 +3306,7 @@
           {
             "id": "mem_31b8aaeb9c84ef4b",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -3342,8 +3342,8 @@
           {
             "id": "mem_59bfd6fe1f24b3d1",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -3359,7 +3359,7 @@
           {
             "id": "mem_491df119e27cbb7e",
             "holder_id": "maya",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -3376,8 +3376,8 @@
           {
             "id": "mem_54d4c8a85c419d1c",
             "holder_id": "maya",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -3602,8 +3602,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "starts doing impressions when she is close to crying",
               "distractors": [],
               "tier": 0,
@@ -3831,7 +3831,7 @@
         "gender": "man",
         "archetype": "friend",
         "backstory": "Twenty-seven, carpenter from Cardiff. He grew up helping his dad restore old houses and still sends half his spare money home. He is steady in public, but he hates feeling like someone's safe second choice.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 8,
           "chemistry": 0,
@@ -3849,7 +3849,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "grounded and easygoing",
           "personality_type": [
             "steady",
@@ -3885,7 +3885,7 @@
           {
             "id": "mem_34037131594dd190",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -3894,7 +3894,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -3902,7 +3902,7 @@
           {
             "id": "mem_bdad7c39aafaf717",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -3919,7 +3919,7 @@
           {
             "id": "mem_934befd6d3a3ae52",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -3936,8 +3936,8 @@
           {
             "id": "mem_5ee7750120a1a484",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -3953,7 +3953,7 @@
           {
             "id": "mem_24df3cf7d07cba5e",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -4008,7 +4008,7 @@
           {
             "id": "mem_2aebe2b24e44cb52",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4025,7 +4025,7 @@
           {
             "id": "mem_08defa20094575d4",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -4061,8 +4061,8 @@
           {
             "id": "mem_0c077d4905ac894a",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -4078,7 +4078,7 @@
           {
             "id": "mem_53291830cbd414ae",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -4133,7 +4133,7 @@
           {
             "id": "mem_349c69b02e188ae9",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4150,7 +4150,7 @@
           {
             "id": "mem_7d24b16d2c315b83",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -4186,8 +4186,8 @@
           {
             "id": "mem_97338e1aad597071",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -4203,7 +4203,7 @@
           {
             "id": "mem_b90f63cf4f092fba",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -4239,8 +4239,8 @@
           {
             "id": "mem_63bd58d4a7d5a4ae",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -4256,7 +4256,7 @@
           {
             "id": "mem_ab71bd53439d9468",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -4265,7 +4265,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -4311,7 +4311,7 @@
           {
             "id": "mem_38f682cfb9a0a7fa",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4328,7 +4328,7 @@
           {
             "id": "mem_7a7ec24cb6370ebd",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -4364,8 +4364,8 @@
           {
             "id": "mem_37253219ab4fa39d",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -4381,7 +4381,7 @@
           {
             "id": "mem_a23863aba980e289",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -4398,15 +4398,15 @@
           {
             "id": "mem_1a51a081460175ac",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -4415,7 +4415,7 @@
           {
             "id": "mem_d9f8fae08d8fdd09",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4432,7 +4432,7 @@
           {
             "id": "mem_b791692288871d40",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -4457,7 +4457,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -4466,8 +4466,8 @@
           {
             "id": "mem_404507bb29a990a5",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -4491,7 +4491,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -4508,7 +4508,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -4525,7 +4525,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -4553,7 +4553,7 @@
           {
             "id": "mem_16da41d69d8d398f",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -4570,7 +4570,7 @@
           {
             "id": "mem_6de5708a2b2c3cc5",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -4606,8 +4606,8 @@
           {
             "id": "mem_f6f4d43e792c717e",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -4623,7 +4623,7 @@
           {
             "id": "mem_5093f6c13a5710cd",
             "holder_id": "liam",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -4640,8 +4640,8 @@
           {
             "id": "mem_ba7b494b1909c19d",
             "holder_id": "liam",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -4858,8 +4858,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "checks everyone has water before admitting he is tired",
               "distractors": [],
               "tier": 0,
@@ -5095,7 +5095,7 @@
         "gender": "woman",
         "archetype": "alpha",
         "backstory": "Twenty-five, junior barrister from Bristol. Sophie is used to winning arguments and being underestimated in the same breath. She came in determined not to let charm distract her from what people actually do.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 35,
           "chemistry": 14,
@@ -5113,7 +5113,7 @@
           "neuroticism": 5
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "sharp style and confident eye contact",
           "personality_type": [
             "ambitious",
@@ -5149,7 +5149,7 @@
           {
             "id": "mem_ee4564f5fb6835e0",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -5158,7 +5158,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -5166,7 +5166,7 @@
           {
             "id": "mem_b42ff57e4fe037e7",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5237,7 +5237,7 @@
           {
             "id": "mem_41438c47a5ca8cd8",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5273,8 +5273,8 @@
           {
             "id": "mem_718387bf17f17ce8",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -5290,7 +5290,7 @@
           {
             "id": "mem_7cd6143ec8d8dec1",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -5326,7 +5326,7 @@
           {
             "id": "mem_b0cc8963a60fb5d9",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5343,7 +5343,7 @@
           {
             "id": "mem_e0dcf172e8900681",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5360,8 +5360,8 @@
           {
             "id": "mem_2b917d0aa7b99e64",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -5377,7 +5377,7 @@
           {
             "id": "mem_1e9038a2d6322e42",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -5432,7 +5432,7 @@
           {
             "id": "mem_f4e040f15700f059",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5449,7 +5449,7 @@
           {
             "id": "mem_a7ab9969f26b7a19",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5466,8 +5466,8 @@
           {
             "id": "mem_6afbaf782fa70ccc",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -5483,7 +5483,7 @@
           {
             "id": "mem_c35c9adfcf1592ba",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -5519,8 +5519,8 @@
           {
             "id": "mem_026fd5e460f7e53d",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -5536,7 +5536,7 @@
           {
             "id": "mem_81e91097e5c4b3eb",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -5545,7 +5545,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -5589,7 +5589,7 @@
           {
             "id": "mem_3b19051beb8e236f",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5606,7 +5606,7 @@
           {
             "id": "mem_5bafb0915cced86a",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5623,8 +5623,8 @@
           {
             "id": "mem_e0bb3f7008d19c20",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -5640,7 +5640,7 @@
           {
             "id": "mem_3837577890af4749",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -5657,15 +5657,15 @@
           {
             "id": "mem_1b21e8104b76a1c2",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -5674,7 +5674,7 @@
           {
             "id": "mem_66b2bd5ce9eeda5c",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5691,7 +5691,7 @@
           {
             "id": "mem_8c60e91bef80eb80",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5716,7 +5716,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -5725,8 +5725,8 @@
           {
             "id": "mem_4aa9788634e69ac0",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -5750,7 +5750,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -5767,7 +5767,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -5784,7 +5784,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -5812,7 +5812,7 @@
           {
             "id": "mem_112868b3f1bb228f",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -5829,7 +5829,7 @@
           {
             "id": "mem_491d87d54b9fc8a0",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -5865,8 +5865,8 @@
           {
             "id": "mem_502f3aada0bfb755",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -5882,7 +5882,7 @@
           {
             "id": "mem_2b9b94b2a2a4f2ed",
             "holder_id": "sophie",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -5899,8 +5899,8 @@
           {
             "id": "mem_5fd61e1c9fa6aa52",
             "holder_id": "sophie",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -6117,8 +6117,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "straightens cushions when she wants to be touched",
               "distractors": [],
               "tier": 0,
@@ -6354,7 +6354,7 @@
         "gender": "woman",
         "archetype": "sweetheart",
         "backstory": "Twenty-three, neonatal nurse from Leeds. Nia is gentle until someone lies to her, then she goes quiet and remembers everything. She wants a partner who can be calm without being boring.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 9,
           "chemistry": 0,
@@ -6372,7 +6372,7 @@
           "neuroticism": 4
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "soft warmth and grounded humor",
           "personality_type": [
             "kind",
@@ -6408,7 +6408,7 @@
           {
             "id": "mem_ca2ee3bec5fc31ea",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -6417,7 +6417,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -6425,7 +6425,7 @@
           {
             "id": "mem_3b3b316a8e06333f",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -6442,7 +6442,7 @@
           {
             "id": "mem_153d69854737172a",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -6459,8 +6459,8 @@
           {
             "id": "mem_537c151ec125b4ba",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -6476,7 +6476,7 @@
           {
             "id": "mem_0d60faaffbd5e856",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -6531,7 +6531,7 @@
           {
             "id": "mem_54bed663470c1eb5",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -6548,7 +6548,7 @@
           {
             "id": "mem_21c6334649e664b5",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -6584,8 +6584,8 @@
           {
             "id": "mem_2e9a2f4e4851382a",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -6601,7 +6601,7 @@
           {
             "id": "mem_be6fdca88585f463",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -6656,7 +6656,7 @@
           {
             "id": "mem_3f9b4d37f69371f6",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -6673,7 +6673,7 @@
           {
             "id": "mem_0f386ef8116a8c21",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -6709,8 +6709,8 @@
           {
             "id": "mem_03f7d2f0100a3d5a",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -6726,7 +6726,7 @@
           {
             "id": "mem_b1b9f2b341aefb38",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -6762,8 +6762,8 @@
           {
             "id": "mem_40b0814bfd7f6aec",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -6779,7 +6779,7 @@
           {
             "id": "mem_d82c33ac41901040",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -6788,7 +6788,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -6834,7 +6834,7 @@
           {
             "id": "mem_3ec802b2402d4926",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -6851,7 +6851,7 @@
           {
             "id": "mem_3978773dc10b2a6c",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -6887,8 +6887,8 @@
           {
             "id": "mem_61d039e522fde81a",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -6904,7 +6904,7 @@
           {
             "id": "mem_604aebb4d5cfbcb2",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -6921,15 +6921,15 @@
           {
             "id": "mem_62d5ec3beb349aa8",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -6938,7 +6938,7 @@
           {
             "id": "mem_a4b8901438d425a0",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -6955,7 +6955,7 @@
           {
             "id": "mem_0a944e28c1e50057",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -6980,7 +6980,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -6989,8 +6989,8 @@
           {
             "id": "mem_1a790622e9f8bbf3",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -7014,7 +7014,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -7031,7 +7031,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -7048,7 +7048,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -7076,7 +7076,7 @@
           {
             "id": "mem_2fbb663d7876ec29",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -7093,7 +7093,7 @@
           {
             "id": "mem_ae254a6d8474d20b",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -7129,8 +7129,8 @@
           {
             "id": "mem_72371ede9b2eb38b",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -7146,7 +7146,7 @@
           {
             "id": "mem_fa22df88f3491e33",
             "holder_id": "nia",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -7163,8 +7163,8 @@
           {
             "id": "mem_190abfa2c3eeef13",
             "holder_id": "nia",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -7381,8 +7381,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "over-offers tea when she feels unwanted",
               "distractors": [],
               "tier": 0,
@@ -7618,7 +7618,7 @@
         "gender": "man",
         "archetype": "alpha",
         "backstory": "Twenty-eight, personal trainer from Manchester. Marcus used to be a semi-pro footballer until a knee injury ended it at twenty-three. He is close with his four-year-old nephew and worries the show makes him look shallow.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 42,
           "chemistry": 0,
@@ -7636,7 +7636,7 @@
           "neuroticism": 4
         },
         "attachment": "avoidant",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "athletic confidence and direct energy",
           "personality_type": [
             "confident",
@@ -7672,7 +7672,7 @@
           {
             "id": "mem_4545bab355749521",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -7681,7 +7681,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -7689,7 +7689,7 @@
           {
             "id": "mem_ee639616e2bf3f89",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -7706,7 +7706,7 @@
           {
             "id": "mem_de0af5485267146d",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -7742,8 +7742,8 @@
           {
             "id": "mem_c14357e7b935ee6e",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -7759,7 +7759,7 @@
           {
             "id": "mem_469eccbed79e5940",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -7814,7 +7814,7 @@
           {
             "id": "mem_fff13c744680dfc1",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -7831,7 +7831,7 @@
           {
             "id": "mem_1641766ca5d5c2f8",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -7865,8 +7865,8 @@
           {
             "id": "mem_df879bfb3fa09cd4",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -7882,7 +7882,7 @@
           {
             "id": "mem_37379c532df798cb",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -7937,7 +7937,7 @@
           {
             "id": "mem_70a879583a691740",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -7954,7 +7954,7 @@
           {
             "id": "mem_f4f82158dce639a9",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -7988,8 +7988,8 @@
           {
             "id": "mem_8157e62924454b2f",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -8005,7 +8005,7 @@
           {
             "id": "mem_672f451b2345a532",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -8041,8 +8041,8 @@
           {
             "id": "mem_9d175001f13262ef",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -8058,7 +8058,7 @@
           {
             "id": "mem_a478bd58f51b66d2",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -8067,7 +8067,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -8113,7 +8113,7 @@
           {
             "id": "mem_094b86ee9a3299ed",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -8130,7 +8130,7 @@
           {
             "id": "mem_f44de6d3cc4f670f",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -8166,8 +8166,8 @@
           {
             "id": "mem_fa707e71e030f05d",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -8183,7 +8183,7 @@
           {
             "id": "mem_17727d6c13df5042",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -8200,15 +8200,15 @@
           {
             "id": "mem_4e5e708e65a66540",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -8217,7 +8217,7 @@
           {
             "id": "mem_49ffc61be5bdf1d1",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -8234,7 +8234,7 @@
           {
             "id": "mem_8c80e232ffb39c50",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -8259,7 +8259,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -8268,8 +8268,8 @@
           {
             "id": "mem_d92457ea7709a3d5",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -8293,7 +8293,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -8310,7 +8310,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -8327,7 +8327,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -8355,7 +8355,7 @@
           {
             "id": "mem_68bf0e280542d32b",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -8372,7 +8372,7 @@
           {
             "id": "mem_2d09f2c264a4ad2c",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -8408,8 +8408,8 @@
           {
             "id": "mem_ff0e06741d3a6a45",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -8425,7 +8425,7 @@
           {
             "id": "mem_b245d4604e7c95eb",
             "holder_id": "marcus",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -8442,8 +8442,8 @@
           {
             "id": "mem_e18c9e8264d3db22",
             "holder_id": "marcus",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -8660,8 +8660,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "gets louder when he feels replaceable",
               "distractors": [],
               "tier": 0,
@@ -8897,7 +8897,7 @@
         "gender": "man",
         "archetype": "friend",
         "backstory": "Twenty-six, music teacher from Brighton. Blake plays piano in hotel bars on weekends and pretends not to care when people call him soft. He notices who listens when the loudest people talk.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 8,
           "chemistry": 0,
@@ -8915,7 +8915,7 @@
           "neuroticism": 3
         },
         "attachment": "secure",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "dry wit and calm loyalty",
           "personality_type": [
             "thoughtful",
@@ -8951,7 +8951,7 @@
           {
             "id": "mem_bab50abf6d37ed2e",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -8960,7 +8960,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -8968,7 +8968,7 @@
           {
             "id": "mem_6fe351372a96178d",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -8985,7 +8985,7 @@
           {
             "id": "mem_216b5b7d964dd4f0",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -9002,8 +9002,8 @@
           {
             "id": "mem_da16ca30ee20d31a",
             "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -9019,7 +9019,7 @@
           {
             "id": "mem_06c9a2fe5c84addd",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -9074,7 +9074,7 @@
           {
             "id": "mem_b10ff685c6f4949f",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -9091,7 +9091,7 @@
           {
             "id": "mem_60a6b8baf344519e",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -9127,8 +9127,8 @@
           {
             "id": "mem_3ccb1c061d3b2a8b",
             "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -9144,7 +9144,7 @@
           {
             "id": "mem_7ed9d6549c5fc32c",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -9199,7 +9199,7 @@
           {
             "id": "mem_1beb77d3ca88297a",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -9216,7 +9216,7 @@
           {
             "id": "mem_c1e968b54566f36d",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -9252,8 +9252,8 @@
           {
             "id": "mem_a4f1ba56253c7a35",
             "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -9269,7 +9269,7 @@
           {
             "id": "mem_89ef3831465d9cb7",
             "holder_id": "blake",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -9305,8 +9305,8 @@
           {
             "id": "mem_f76942de0f6c2b94",
             "holder_id": "blake",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -9523,8 +9523,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "makes himself useful before saying what he wants",
               "distractors": [],
               "tier": 0,
@@ -9760,7 +9760,7 @@
         "gender": "man",
         "archetype": "joker",
         "backstory": "Twenty-four, events host from Birmingham. Jordan is quick with a grin and quicker to panic when attention shifts away from him. He wants to be wanted without having to admit how much.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 97,
           "chemistry": 0,
@@ -9778,7 +9778,7 @@
           "neuroticism": 5
         },
         "attachment": "anxious",
-        "type_on_paper": {
+        "ideal_match": {
           "physical_type": "bright grin and restless energy",
           "personality_type": [
             "playful",
@@ -9814,7 +9814,7 @@
           {
             "id": "mem_f93290099885d269",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -9823,7 +9823,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -9831,7 +9831,7 @@
           {
             "id": "mem_63df830941fb5e7a",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz tested Eq and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -9848,7 +9848,7 @@
           {
             "id": "mem_d81988176bc692f5",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Compatibility Quiz ended in failure (6 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -9882,8 +9882,8 @@
           {
             "id": "mem_55632cbda873f26c",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for welcome.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for welcome.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 1,
@@ -9899,7 +9899,7 @@
           {
             "id": "mem_e37ac5dce9c04ffc",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Welcome text: Heartbreakers, welcome to Sunset Bay. Let the sparks begin.",
             "source": "witnessed",
             "source_id": null,
@@ -9950,7 +9950,7 @@
           {
             "id": "mem_8f644ac1210f07ec",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race tested Charm and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -9967,7 +9967,7 @@
           {
             "id": "mem_58fce4dbea975248",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pulse Race ended in failure (0 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -9984,8 +9984,8 @@
           {
             "id": "mem_dfa2eb559b2269d0",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for group date invite.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for group date invite.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 2,
@@ -10001,7 +10001,7 @@
           {
             "id": "mem_83eda866a40a7a37",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Date text: Heartbreakers, tomorrow morning two of you will join the player for a group date.",
             "source": "witnessed",
             "source_id": null,
@@ -10052,7 +10052,7 @@
           {
             "id": "mem_9833792b54778748",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -10069,7 +10069,7 @@
           {
             "id": "mem_a72d7737f714dba4",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Couples Quiz ended in failure (3 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -10086,8 +10086,8 @@
           {
             "id": "mem_9b541189f8e324c8",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for coupling warning.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for coupling warning.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -10103,7 +10103,7 @@
           {
             "id": "mem_3385e377d58235ea",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Pairing Ceremony text: Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
             "source": "witnessed",
             "source_id": null,
@@ -10139,8 +10139,8 @@
           {
             "id": "mem_72ab39b02148b5ab",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for a Pairing Ceremony.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for a Pairing Ceremony.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 3,
@@ -10156,7 +10156,7 @@
           {
             "id": "mem_40e66cd747f108a4",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "The Pairing Ceremony locks in the next couples.",
             "source": "witnessed",
             "source_id": null,
@@ -10165,7 +10165,7 @@
             "emotional_weight": 5,
             "tags": [
               "ceremony",
-              "recoupling"
+              "pairing"
             ],
             "durable": true,
             "mentioned_subject_ids": []
@@ -10211,7 +10211,7 @@
           {
             "id": "mem_6c0d8b5a42e71cdf",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector tested Loyalty and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -10228,7 +10228,7 @@
           {
             "id": "mem_b5bd5be2d0af9806",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Lie Detector ended in success (13 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -10264,8 +10264,8 @@
           {
             "id": "mem_090a7d70c89b90e5",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for Flush of Hearts.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for Flush of Hearts.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
@@ -10281,7 +10281,7 @@
           {
             "id": "mem_fd02fbe0b2f41c59",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -10298,15 +10298,15 @@
           {
             "id": "mem_69dbd16f16c79a8e",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -10315,7 +10315,7 @@
           {
             "id": "mem_b55791bdae252c5a",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -10332,7 +10332,7 @@
           {
             "id": "mem_5a7ef5c203a942d2",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -10357,7 +10357,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -10366,8 +10366,8 @@
           {
             "id": "mem_08cf6879ac927b6d",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -10391,7 +10391,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -10408,7 +10408,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -10425,7 +10425,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -10453,7 +10453,7 @@
           {
             "id": "mem_98f517b4f67d054f",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -10470,7 +10470,7 @@
           {
             "id": "mem_a7a67bbeefa87b56",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -10506,8 +10506,8 @@
           {
             "id": "mem_46e0a4fbaa528f31",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -10523,7 +10523,7 @@
           {
             "id": "mem_47003180265bd98e",
             "holder_id": "jordan",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -10540,8 +10540,8 @@
           {
             "id": "mem_6b8c9b5fd81e23f2",
             "holder_id": "jordan",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -10766,8 +10766,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "keeps the bit going three seconds too long",
               "distractors": [],
               "tier": 0,
@@ -11003,7 +11003,7 @@
         "gender": "man",
         "archetype": "smooth",
         "backstory": "Twenty-seven, cocktail bar owner from Bristol. Beau is smooth with strangers and private with friends. He is testing whether the player wants excitement or just reassurance.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 37,
           "chemistry": 9,
@@ -11021,8 +11021,8 @@
           "neuroticism": 5
         },
         "attachment": "secure",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -11040,7 +11040,7 @@
           {
             "id": "mem_697fc54470f0bba4",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -11057,15 +11057,15 @@
           {
             "id": "mem_ed63e53a33d92bc4",
             "holder_id": "beau",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -11074,7 +11074,7 @@
           {
             "id": "mem_00350a5782446e85",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -11091,7 +11091,7 @@
           {
             "id": "mem_8104cc08adb9d995",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -11116,7 +11116,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -11125,8 +11125,8 @@
           {
             "id": "mem_051bdf55ca8babe1",
             "holder_id": "beau",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -11150,7 +11150,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -11167,7 +11167,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -11184,7 +11184,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -11212,7 +11212,7 @@
           {
             "id": "mem_e5be194f7593dc69",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -11229,7 +11229,7 @@
           {
             "id": "mem_53f278dd19ea24a1",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -11263,8 +11263,8 @@
           {
             "id": "mem_2fae6dc0b747393c",
             "holder_id": "beau",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -11280,7 +11280,7 @@
           {
             "id": "mem_6db5dfe1dfa23327",
             "holder_id": "beau",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -11297,8 +11297,8 @@
           {
             "id": "mem_d976e1ef869113bd",
             "holder_id": "beau",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -11514,8 +11514,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "answers lightly",
               "distractors": [],
               "tier": 0,
@@ -11548,7 +11548,7 @@
         "gender": "man",
         "archetype": "sweetheart",
         "backstory": "Twenty-four, trainee paramedic from Sheffield. Jules is sweet under pressure and awkward when he has to sell himself. He notices kindness quickly and remembers dismissiveness longer.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 10,
           "chemistry": 7,
@@ -11566,8 +11566,8 @@
           "neuroticism": 5
         },
         "attachment": "anxious",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -11585,7 +11585,7 @@
           {
             "id": "mem_5f50295546f51c6e",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -11602,15 +11602,15 @@
           {
             "id": "mem_1b8fb7ebda2140d4",
             "holder_id": "jules",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -11619,7 +11619,7 @@
           {
             "id": "mem_6086c18176b7c0bd",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -11636,7 +11636,7 @@
           {
             "id": "mem_9c73387a4600247b",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -11661,7 +11661,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -11670,8 +11670,8 @@
           {
             "id": "mem_33d6aff5a1119a3d",
             "holder_id": "jules",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -11695,7 +11695,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -11712,7 +11712,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -11729,7 +11729,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -11757,7 +11757,7 @@
           {
             "id": "mem_5e7b6962dbb1a645",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -11774,7 +11774,7 @@
           {
             "id": "mem_963bc2e0ae57aa8e",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -11810,8 +11810,8 @@
           {
             "id": "mem_89c3ad2d6d370736",
             "holder_id": "jules",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -11827,7 +11827,7 @@
           {
             "id": "mem_755f1ff11f1b90be",
             "holder_id": "jules",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -11844,8 +11844,8 @@
           {
             "id": "mem_c767af02962fbb85",
             "holder_id": "jules",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12061,8 +12061,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "smiles wider when she is about to test someone",
               "distractors": [],
               "tier": 0,
@@ -12095,7 +12095,7 @@
         "gender": "man",
         "archetype": "heartthrob",
         "backstory": "Twenty-eight, personal trainer from Manchester. Mateo knows exactly how he looks and is tired of people assuming that is all there is. He talks about his nephew when he trusts someone.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 24,
           "chemistry": 10,
@@ -12113,8 +12113,8 @@
           "neuroticism": 5
         },
         "attachment": "avoidant",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -12132,7 +12132,7 @@
           {
             "id": "mem_2e9dae8e40a62ff1",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -12149,15 +12149,15 @@
           {
             "id": "mem_567b921d99dac825",
             "holder_id": "mateo",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -12166,7 +12166,7 @@
           {
             "id": "mem_7c8f35c06ab767b9",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -12183,7 +12183,7 @@
           {
             "id": "mem_04473b2a99a49646",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -12208,7 +12208,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -12217,8 +12217,8 @@
           {
             "id": "mem_0002cb924f139f62",
             "holder_id": "mateo",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12242,7 +12242,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -12259,7 +12259,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -12276,7 +12276,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -12302,7 +12302,7 @@
           {
             "id": "mem_eda4cf6a7a1dffd0",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -12319,7 +12319,7 @@
           {
             "id": "mem_686b370ef1f365e3",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -12355,8 +12355,8 @@
           {
             "id": "mem_6981b48016b06d70",
             "holder_id": "mateo",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12372,7 +12372,7 @@
           {
             "id": "mem_a617c1577bda1b9c",
             "holder_id": "mateo",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -12389,8 +12389,8 @@
           {
             "id": "mem_10c15f0f774ea690",
             "holder_id": "mateo",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12606,8 +12606,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "goes very still before making a power move",
               "distractors": [],
               "tier": 0,
@@ -12640,7 +12640,7 @@
         "gender": "woman",
         "archetype": "joker",
         "backstory": "Twenty-five, fashion buyer from London. Sasha has a sharp eye for insecurity and a softer side she hides behind jokes. She likes people who can keep up without performing.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 10,
           "chemistry": 8,
@@ -12658,8 +12658,8 @@
           "neuroticism": 5
         },
         "attachment": "secure",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -12677,7 +12677,7 @@
           {
             "id": "mem_6ffa7a408db40fca",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -12694,15 +12694,15 @@
           {
             "id": "mem_d89003c4d9e3b1b5",
             "holder_id": "sasha",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -12711,7 +12711,7 @@
           {
             "id": "mem_959965bed1a9a74a",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -12728,7 +12728,7 @@
           {
             "id": "mem_bef2d53601c276d8",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -12753,7 +12753,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -12762,8 +12762,8 @@
           {
             "id": "mem_29edc02b44901f71",
             "holder_id": "sasha",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12787,7 +12787,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -12804,7 +12804,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -12821,7 +12821,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -12849,7 +12849,7 @@
           {
             "id": "mem_67176c0b0058b6e8",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -12866,7 +12866,7 @@
           {
             "id": "mem_5455fe9068e82f8f",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -12902,8 +12902,8 @@
           {
             "id": "mem_4cc25b2b13090a7f",
             "holder_id": "sasha",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -12919,7 +12919,7 @@
           {
             "id": "mem_c308fb13d2f57ab4",
             "holder_id": "sasha",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -12936,8 +12936,8 @@
           {
             "id": "mem_3e34ad9b36179799",
             "holder_id": "sasha",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -13153,8 +13153,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "mirrors people until she forgets her own opinion",
               "distractors": [],
               "tier": 0,
@@ -13185,9 +13185,9 @@
         "id": "zara",
         "name": "Zara",
         "gender": "woman",
-        "archetype": "bombshell",
+        "archetype": "alpha",
         "backstory": "Twenty-six, club promoter from Essex. Zara treats flirting like a chessboard and hates predictable moves. She wants someone bold enough to surprise her without trying to manage her.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 10,
           "chemistry": 10,
@@ -13205,8 +13205,8 @@
           "neuroticism": 5
         },
         "attachment": "avoidant",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -13224,7 +13224,7 @@
           {
             "id": "mem_9cb5548ecfc0441b",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -13241,15 +13241,15 @@
           {
             "id": "mem_d36fce2f9b5726b1",
             "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -13258,7 +13258,7 @@
           {
             "id": "mem_f4803d2f384b4bba",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -13275,7 +13275,7 @@
           {
             "id": "mem_3680f82d26908e0e",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -13300,7 +13300,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -13309,8 +13309,8 @@
           {
             "id": "mem_2ce6a9360cc7065b",
             "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -13334,7 +13334,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -13351,7 +13351,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -13368,7 +13368,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -13396,7 +13396,7 @@
           {
             "id": "mem_d96f616db17de9a7",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -13413,7 +13413,7 @@
           {
             "id": "mem_15195b63138a916f",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -13449,8 +13449,8 @@
           {
             "id": "mem_4aff027a1b76a276",
             "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -13466,7 +13466,7 @@
           {
             "id": "mem_73c25cf03841fdc6",
             "holder_id": "zara",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -13483,8 +13483,8 @@
           {
             "id": "mem_42fbef16fec8e924",
             "holder_id": "zara",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -13700,8 +13700,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "smiles wider when she is about to test someone",
               "distractors": [],
               "tier": 0,
@@ -13734,7 +13734,7 @@
         "gender": "woman",
         "archetype": "friend",
         "backstory": "Twenty-three, graduate student from Nottingham. Noor is observant, warm, and more strategic than she first appears. She listens for what people avoid saying.",
-        "location_id": "firepit",
+        "location_id": "flame_deck",
         "relationship": {
           "affection": 10,
           "chemistry": 6,
@@ -13752,8 +13752,8 @@
           "neuroticism": 5
         },
         "attachment": "anxious",
-        "type_on_paper": {
-          "physical_type": "fresh Casa Amor confidence",
+        "ideal_match": {
+          "physical_type": "fresh Flush confidence",
           "personality_type": [
             "curious",
             "bold"
@@ -13771,7 +13771,7 @@
           {
             "id": "mem_e38d606a0d24ca87",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Flush of Hearts text: Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
             "source": "witnessed",
             "source_id": null,
@@ -13788,15 +13788,15 @@
           {
             "id": "mem_e96f2aadad77a2ba",
             "holder_id": "noor",
-            "subject_id": "villa",
-            "content": "Flush of Hearts begins: you are sent to the second villa.",
+            "subject_id": "resort",
+            "content": "Flush of Hearts begins: you are sent to the Flush resort.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 4,
             "formed_on_turn": 237,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_arrival",
+              "flush_of_hearts_arrival",
               "ceremony"
             ],
             "durable": true,
@@ -13805,7 +13805,7 @@
           {
             "id": "mem_f177750dd8ff53cc",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass tested Banter and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -13822,7 +13822,7 @@
           {
             "id": "mem_9cefb2eea139a8c7",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Kiss Wed Pass ended in success (7 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -13847,7 +13847,7 @@
             "formed_on_turn": 244,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_decision",
+              "flush_of_hearts_decision",
               "ceremony"
             ],
             "durable": true,
@@ -13856,8 +13856,8 @@
           {
             "id": "mem_9ba0aa1593e1212e",
             "holder_id": "noor",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Sunset Bay return.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Sunset Bay return.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -13881,7 +13881,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -13898,7 +13898,7 @@
             "formed_on_turn": 245,
             "emotional_weight": 9,
             "tags": [
-              "casa_amor",
+              "flush_of_hearts",
               "return_reveal"
             ],
             "durable": true,
@@ -13915,7 +13915,7 @@
             "formed_on_turn": 246,
             "emotional_weight": 5,
             "tags": [
-              "casa_amor_return_reveal",
+              "flush_of_hearts_return_reveal",
               "ceremony"
             ],
             "durable": true,
@@ -13943,7 +13943,7 @@
           {
             "id": "mem_21850e1d0c695593",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge tested combined couple energy and is still pending.",
             "source": "witnessed",
             "source_id": null,
@@ -13960,7 +13960,7 @@
           {
             "id": "mem_d3913a3c6065747a",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Couples Challenge ended in success (15 pts).",
             "source": "witnessed",
             "source_id": null,
@@ -13996,8 +13996,8 @@
           {
             "id": "mem_528f0dd07736962b",
             "holder_id": "noor",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for final vote announce.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for final vote announce.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -14013,7 +14013,7 @@
           {
             "id": "mem_108e68f0335e43fd",
             "holder_id": "noor",
-            "subject_id": "villa",
+            "subject_id": "resort",
             "content": "Final Vote text: Heartbreakers, tonight the Pulse vote decides the winning couple.",
             "source": "witnessed",
             "source_id": null,
@@ -14030,8 +14030,8 @@
           {
             "id": "mem_1ecb3a3f9a105e98",
             "holder_id": "noor",
-            "subject_id": "villa",
-            "content": "Everyone is called to the firepit for the Final Vote.",
+            "subject_id": "resort",
+            "content": "Everyone is called to the flame_deck for the Final Vote.",
             "source": "witnessed",
             "source_id": null,
             "formed_on_day": 6,
@@ -14247,8 +14247,8 @@
               "reveal_tags": [],
               "mechanical": false
             },
-            "villa_tell": {
-              "key": "villa_tell",
+            "resort_tell": {
+              "key": "resort_tell",
               "value": "goes very still before making a power move",
               "distractors": [],
               "tier": 0,
@@ -14281,8 +14281,8 @@
         "partner_a_id": "player",
         "partner_b_id": "sophie",
         "formed_on_day": 6,
-        "formed_via": "casa_return",
-        "has_used_hideaway": false,
+        "formed_via": "flush_return",
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -14291,7 +14291,7 @@
         "partner_b_id": "chloe",
         "formed_on_day": 3,
         "formed_via": "ceremony",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -14300,7 +14300,7 @@
         "partner_b_id": "maya",
         "formed_on_day": 3,
         "formed_via": "ceremony",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       },
@@ -14309,12 +14309,12 @@
         "partner_b_id": "nia",
         "formed_on_day": 3,
         "formed_via": "ceremony",
-        "has_used_hideaway": false,
+        "has_used_private_suite": false,
         "last_steal_attempt_chance": null,
         "rebound": false
       }
     ],
-    "active_ambient_id": "firepit_sit_quietly",
+    "active_ambient_id": "flame_deck_sit_quietly",
     "consecutive_ambient_turns": 12,
     "intro_completed_ids": [
       "chloe",
@@ -14341,7 +14341,7 @@
     "npc_conversations": [],
     "pending_npc_summon": null,
     "pending_npc_approach": null,
-    "pending_recouple_proposal": null,
+    "pending_pair_proposal": null,
     "heart_throb_briefs": [
       {
         "target_npc_id": "jordan",
@@ -14357,7 +14357,7 @@
         "charm": 9,
         "banter": 6,
         "eq": 5,
-        "graft": 5,
+        "spark": 5,
         "loyalty": 5
       },
       "rerolled": false
@@ -14618,7 +14618,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Blake is hiding from the villa?",
+            "stem": "What's the one thing Blake is hiding from Sunset Bay?",
             "correct_value": "he wrote a breakup speech for himself",
             "distractors": [
               "he lied on his application",
@@ -14816,13 +14816,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_blake_villa_tell",
+            "id": "cq_blake_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "blake",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Blake's villa tell.",
+            "stem": "Tell us about Blake's resort tell.",
             "correct_value": "makes himself useful before saying what he wants",
             "distractors": [],
             "flavor_tags": []
@@ -14898,7 +14898,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Chloe is hiding from the villa?",
+            "stem": "What's the one thing Chloe is hiding from Sunset Bay?",
             "correct_value": "she found the ring in his sock drawer and panicked before he could ask",
             "distractors": [
               "she still texts that ex",
@@ -15096,13 +15096,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_chloe_villa_tell",
+            "id": "cq_chloe_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "chloe",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Chloe's villa tell.",
+            "stem": "Tell us about Chloe's resort tell.",
             "correct_value": "touches her necklace when she wants to leave a conversation",
             "distractors": [],
             "flavor_tags": []
@@ -15178,7 +15178,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Jordan is hiding from the villa?",
+            "stem": "What's the one thing Jordan is hiding from Sunset Bay?",
             "correct_value": "he has panic attacks before hosting nights and calls them pre-show buzz",
             "distractors": [
               "he has a secret child",
@@ -15388,13 +15388,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_jordan_villa_tell",
+            "id": "cq_jordan_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "jordan",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Jordan's villa tell.",
+            "stem": "Tell us about Jordan's resort tell.",
             "correct_value": "keeps the bit going three seconds too long",
             "distractors": [],
             "flavor_tags": []
@@ -15470,7 +15470,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Liam is hiding from the villa?",
+            "stem": "What's the one thing Liam is hiding from Sunset Bay?",
             "correct_value": "he still keeps her old voicemail",
             "distractors": [
               "he quit medicine once",
@@ -15668,13 +15668,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_liam_villa_tell",
+            "id": "cq_liam_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "liam",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Liam's villa tell.",
+            "stem": "Tell us about Liam's resort tell.",
             "correct_value": "checks everyone has water before admitting he is tired",
             "distractors": [],
             "flavor_tags": []
@@ -15750,7 +15750,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Marcus is hiding from the villa?",
+            "stem": "What's the one thing Marcus is hiding from Sunset Bay?",
             "correct_value": "sleeps four hours a night and runs on caffeine and dread",
             "distractors": [
               "hides therapy",
@@ -15948,13 +15948,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_marcus_villa_tell",
+            "id": "cq_marcus_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "marcus",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Marcus's villa tell.",
+            "stem": "Tell us about Marcus's resort tell.",
             "correct_value": "gets louder when he feels replaceable",
             "distractors": [],
             "flavor_tags": []
@@ -16030,7 +16030,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Maya is hiding from the villa?",
+            "stem": "What's the one thing Maya is hiding from Sunset Bay?",
             "correct_value": "still has the unsent letter in her bedside drawer",
             "distractors": [
               "she is secretly in therapy",
@@ -16228,13 +16228,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_maya_villa_tell",
+            "id": "cq_maya_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "maya",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Maya's villa tell.",
+            "stem": "Tell us about Maya's resort tell.",
             "correct_value": "starts doing impressions when she is close to crying",
             "distractors": [],
             "flavor_tags": []
@@ -16310,7 +16310,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Nia is hiding from the villa?",
+            "stem": "What's the one thing Nia is hiding from Sunset Bay?",
             "correct_value": "she still has the unused anniversary menu folded in her purse",
             "distractors": [
               "she lied about her job",
@@ -16508,13 +16508,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_nia_villa_tell",
+            "id": "cq_nia_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "nia",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Nia's villa tell.",
+            "stem": "Tell us about Nia's resort tell.",
             "correct_value": "over-offers tea when she feels unwanted",
             "distractors": [],
             "flavor_tags": []
@@ -16590,7 +16590,7 @@
             "trait_key": "hidden_secret",
             "tier": 4,
             "mechanical": true,
-            "stem": "What's the one thing Sophie is hiding from the villa?",
+            "stem": "What's the one thing Sophie is hiding from Sunset Bay?",
             "correct_value": "she once hired a private coach to learn how to cry on command and still could not",
             "distractors": [
               "she faked a proposal",
@@ -16788,13 +16788,13 @@
             "flavor_tags": []
           },
           {
-            "id": "cq_sophie_villa_tell",
+            "id": "cq_sophie_resort_tell",
             "minigame_kind": "compatibility_quiz",
             "target_id": "sophie",
-            "trait_key": "villa_tell",
+            "trait_key": "resort_tell",
             "tier": 0,
             "mechanical": false,
-            "stem": "Tell us about Sophie's villa tell.",
+            "stem": "Tell us about Sophie's resort tell.",
             "correct_value": "straightens cushions when she wants to be touched",
             "distractors": [],
             "flavor_tags": []
@@ -16806,7 +16806,7 @@
     "pending_gather": {
       "kind": "ceremony",
       "event_id": "final_vote",
-      "gather_location": "firepit",
+      "gather_location": "flame_deck",
       "fires_on_turn": 307
     },
     "pending_group_date": {
@@ -17036,16 +17036,16 @@
         "items": []
       }
     ],
-    "hideaway": {
+    "private_suite": {
       "used_on_day": null,
       "partner_id": null,
       "deltas_applied": false
     },
-    "casa_amor_state": {
+    "flush_of_hearts_state": {
       "started_on_day": 4,
       "return_day": 6,
       "original_partner_id": "sophie",
-      "casa_islander_ids": [
+      "flush_heartbreaker_ids": [
         "beau",
         "jules",
         "mateo",
@@ -17053,7 +17053,7 @@
         "zara",
         "noor"
       ],
-      "main_villa_partner_ids": [
+      "sunset_bay_partner_ids": [
         "chloe",
         "maya",
         "liam",

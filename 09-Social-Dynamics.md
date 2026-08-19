@@ -21,10 +21,10 @@
 
 ## Overview
 
-### Core Love Island Dynamics
+### Core Paradise Hearts Dynamics
 
-**The "Pull for a Chat"** is essential to Love Island:
-- Bombshells steal people mid-conversation
+**The "Private Chat"** is essential to Paradise Hearts:
+- Heart Throbs steal people mid-conversation
 - Partners get interrupted by rivals
 - Drama happens when pulls are blocked
 - Public vs. private interruptions matter
@@ -48,7 +48,7 @@ function shouldNPCInterrupt(npc, targetConversation) {
 
   // 1. ROMANTIC INTEREST
   if (npc.interests.includes(targetConversation.participant.id)) {
-    interruptChance += 40  // wants to graft
+    interruptChance += 40  // wants to spark
 
     // Higher if target is their "type"
     if (matchesPreferences(targetConversation.participant, npc.preferences)) {
@@ -57,12 +57,12 @@ function shouldNPCInterrupt(npc, targetConversation) {
   }
 
   // 2. STRATEGIC TIMING
-  if (villaState.scheduledEvents.some(e => e.type === "recoupling" && e.day === villaState.currentDay)) {
-    interruptChance += 30  // urgency before recoupling
+  if (resortState.scheduledEvents.some(e => e.type === "pairing_ceremony" && e.day === resortState.currentDay)) {
+    interruptChance += 30  // urgency before Pairing Ceremony
   }
 
   // 3. PERSONALITY
-  interruptChance += npc.stats.graft * 3  // 0-30 based on graft stat
+  interruptChance += npc.stats.spark * 3  // 0-30 based on spark stat
   interruptChance += (npc.personality.extraversion - 5) * 2  // -10 to +10
 
   // 4. RELATIONSHIP WITH CONVERSATION PARTNER
@@ -87,16 +87,16 @@ function shouldNPCInterrupt(npc, targetConversation) {
 **Example scenarios:**
 
 ```javascript
-// Scenario 1: Bombshell grafting
+// Scenario 1: Heart Throb sparking
 const aisha = {
   interests: ["player"],
-  stats: { graft: 9 },
+  stats: { spark: 9 },
   personality: { extraversion: 9 }
 }
 
 // Player is talking to Chloe at pool (public)
 shouldNPCInterrupt(aisha, { participant: player, location: pool })
-// Returns: 40 (romantic interest) + 27 (graft) + 8 (extraversion) = 75% chance
+// Returns: 40 (romantic interest) + 27 (spark) + 8 (extraversion) = 75% chance
 
 // Scenario 2: Anxious partner
 const chloe = {
@@ -126,7 +126,7 @@ shouldNPCInterrupt(aisha, { participant: player, location: terrace })
 {
   situation: "interruption",
   target: chloe,  // your partner
-  interrupter: aisha,  // bombshell
+  interrupter: aisha,  // Heart Throb
   playerCurrentlyTalking: true,
   location: pool  // public
 }
@@ -159,7 +159,7 @@ What do you do?
     chloe_trust: +3,        // respects your confidence
     chloe_mood: "neutral",
     aisha_animosity: 0,      // no conflict created
-    public_perception: +2    // mature, confident behavior
+    pulse: +2    // mature, confident behavior
   },
 
   outcome: "conversation_ends",
@@ -172,7 +172,7 @@ What do you do?
   },
 
   risks: [
-    "Aisha can graft on Chloe without interference",
+    "Aisha can spark with Chloe without interference",
     "Chloe might be swayed if Aisha is persuasive",
     "No control over what they discuss"
   ],
@@ -183,7 +183,7 @@ What do you do?
 
 **LLM Prompt:**
 ```
-You are generating the outcome of a Love Island interruption.
+You are generating the outcome of a Paradise Hearts interruption.
 
 Situation: Player allowed Aisha to pull Chloe away for a chat.
 
@@ -225,7 +225,7 @@ You notice Aisha glancing back at you with a slight smirk.
     modifiers: {
       chloe_affection: chloe.relationships.player.affection / 2,  // 0-50
       couple_strength: getCoupleStrength(player, chloe) / 4,      // 0-25
-      aisha_graft_penalty: -(aisha.stats.graft * 5),              // -45
+      aisha_spark_penalty: -(aisha.stats.spark * 5),              // -45
       chloe_curiosity: chloeWantsToTalkToAisha ? -20 : 0
     }
   },
@@ -244,7 +244,7 @@ You notice Aisha glancing back at you with a slight smirk.
     chloe_trust: -2,           // she wanted to go
     chloe_mood: "uncomfortable",
     aisha_animosity: +5,
-    public_perception: -3,      // looks controlling
+    pulse: -3,      // looks controlling
 
     outcome: "chloe_goes_anyway",
     dialogue: "Chloe looks uncomfortable. \"Actually, I should see what she wants.\" She goes with Aisha, glancing back apologetically."
@@ -257,13 +257,13 @@ You notice Aisha glancing back at you with a slight smirk.
 **Success Calculation Example:**
 ```javascript
 // Player + Chloe: Strong couple (affection 65, couple strength 75)
-// Aisha: High graft (9)
+// Aisha: High spark (9)
 // Chloe: Slightly curious about what Aisha wants
 
 const chance = 50  // base
   + (65 / 2)       // +32.5 (affection bonus)
   + (75 / 4)       // +18.75 (couple strength)
-  - (9 * 5)        // -45 (Aisha's graft)
+  - (9 * 5)        // -45 (Aisha's spark)
   - 20             // -20 (Chloe is curious)
 
 // = 36.25% chance of success
@@ -287,7 +287,7 @@ const chance = 50  // base
     base: 30,  // harder than delay
     modifiers: {
       couple_strength: getCoupleStrength(player, chloe) / 2,  // 0-50
-      aisha_graft_penalty: -(aisha.stats.graft * 7),          // -63
+      aisha_spark_penalty: -(aisha.stats.spark * 7),          // -63
       public_location_penalty: location.privacy === "public" ? -15 : 0
     }
   },
@@ -296,7 +296,7 @@ const chance = 50  // base
     chloe_trust: +5,           // defended relationship
     chloe_affection: +3,
     aisha_animosity: +10,      // made an enemy
-    public_perception: -5,      // seen as possessive
+    pulse: -5,      // seen as possessive
 
     outcome: "aisha_walks_away_angry",
     dialogue: "Aisha's eyes narrow. \"Wow, okay.\" She walks away, clearly annoyed. Chloe looks surprised but stays."
@@ -307,7 +307,7 @@ const chance = 50  // base
     chloe_animosity: +3,
     chloe_mood: "angry",
     aisha_animosity: +8,
-    public_perception: -8,      // looks insecure
+    pulse: -8,      // looks insecure
 
     outcome: "major_backfire",
     dialogue: "Chloe stands up abruptly. \"Don't speak for me.\" She walks off with Aisha, clearly annoyed at you. Others are watching.",
@@ -348,11 +348,11 @@ const chance = 50  // base
     type: "group",
     participants: ["player", "chloe", "aisha"],
     tension: "high",
-    aisha_can_graft: false  // can't graft effectively with player present
+    aisha_can_spark: false  // can't spark effectively with player present
   },
 
   consequences: {
-    positive: "Prevents Aisha from grafting privately",
+    positive: "Prevents Aisha from sparking privately",
     negative: "Chloe might be annoyed you didn't give her space",
     awkward: "Three-way conversation is tense"
   },
@@ -407,14 +407,14 @@ What do you do?
     aisha_mood: "pleased",
 
     // Public perception
-    public_perception: player.stats.loyalty > 7 ? 0 : -3  // loyal players less penalized
+    pulse: player.stats.loyalty > 7 ? 0 : -3  // loyal players less penalized
   },
 
   outcome: "switch_conversation",
 
   risks: [
     "Chloe will worry while you're gone",
-    "Chloe might graft on someone else (counter-move)",
+    "Chloe might spark with someone else (counter-move)",
     "Signals you're open to exploring options"
   ],
 
@@ -462,7 +462,7 @@ function calculatePartnerReaction(partner, interrupter, player) {
 
   // STRATEGIC COUNTER-MOVE
   if (partnerHasOtherInterests(partner)) {
-    partner.counter_graft = true
+    partner.counter_spark = true
     partner.dialogue = "Sure. Actually, I might go chat with Marcus while you're gone."
     trustChange = 0  // neutral - they'll use the time too
   }
@@ -499,7 +499,7 @@ function calculatePartnerReaction(partner, interrupter, player) {
   chloe_trust: 0,
   chloe_mood: "strategic",
   chloe_dialogue: "Sure. Actually, I might go chat with Marcus while you're gone.",
-  chloe_action: "graft_on_marcus",  // counter-move!
+  chloe_action: "spark_on_marcus",  // counter-move!
   creates_drama: true
 }
 ```
@@ -528,7 +528,7 @@ function calculatePartnerReaction(partner, interrupter, player) {
     if_ignored: {
       aisha_animosity: +10,
       aisha_interest: -15,  // might move on
-      public_perception: -5  // seen as rude
+      pulse: -5  // seen as rude
     }
   },
 
@@ -555,7 +555,7 @@ function calculatePartnerReaction(partner, interrupter, player) {
     aisha_interest: -10,        // might move on to other targets
     aisha_mood: "rejected",
 
-    public_perception: {
+    pulse: {
       if_loyal_player: +5,      // audience loves loyalty
       if_exploring: -3          // or looks scared of temptation
     }
@@ -590,7 +590,7 @@ function calculatePartnerReaction(partner, interrupter, player) {
 
   aisha_decision: {
     if_important: "awkward_three_way_chat",  // she needs to say something
-    if_grafting: "backs_off",                // can't graft in front of Chloe
+    if_sparking: "backs_off",                // can't spark in front of Chloe
 
     dialogue_if_backs_off: "Aisha hesitates. \"Actually, never mind. It can wait.\" She walks away, annoyed."
   }
@@ -613,17 +613,17 @@ function shouldCheckForInterception(movement) {
   }
 
   // 2. LOW DRAMA PERIODS - Low chance
-  if (villaState.metrics.dramaLevel < 30 && villaState.timeRemaining > 60) {
+  if (resortState.metrics.dramaLevel < 30 && resortState.timeRemaining > 60) {
     return random(100) < 10  // 10% chance
   }
 
   // 3. HIGH STAKES MOMENTS - High chance
-  if (villaState.scheduledEvents.some(e => e.type === "recoupling" && e.day === villaState.currentDay)) {
-    return random(100) < 50  // 50% chance - people want to talk before recoupling
+  if (resortState.scheduledEvents.some(e => e.type === "pairing_ceremony" && e.day === resortState.currentDay)) {
+    return random(100) < 50  // 50% chance - people want to talk before Pairing Ceremony
   }
 
   // 4. SOMEONE LOOKING FOR YOU
-  if (getIslandersLookingForPlayer().length > 0) {
+  if (getHeartbreakersLookingForPlayer().length > 0) {
     return random(100) < 70  // 70% chance
   }
 
@@ -671,7 +671,7 @@ function handleMovementInterception(player, targetLocation) {
 }
 
 function chooseInterceptor(path) {
-  const candidatesInArea = getIslandersInArea(path.midpoint)
+  const candidatesInArea = getHeartbreakersInArea(path.midpoint)
 
   if (candidatesInArea.length === 0) return null
 
@@ -682,8 +682,8 @@ function chooseInterceptor(path) {
     // High chemistry = wants to talk
     weight += npc.relationships.player.chemistry / 5
 
-    // High graft = actively pursuing
-    weight += npc.stats.graft * 3
+    // High spark = actively pursuing
+    weight += npc.stats.spark * 3
 
     // Romantic interest
     if (npc.interests.includes("player")) {
@@ -715,7 +715,7 @@ function determineInterceptionReason(interceptor, player) {
   // Why are they stopping you?
 
   if (interceptor.interests.includes("player") && !interceptor.coupledWith) {
-    return "graft"  // wants to flirt
+    return "spark"  // wants to flirt
   }
 
   if (interceptor.coupledWith === player.id && interceptor.mood === "anxious") {
@@ -830,11 +830,11 @@ What do you do?
 ```
 You stop briefly.
 
-"Look, I'll keep this quick," Marcus says. "Aisha has been asking a lot about you and Chloe. I think she's planning to make a move before the recoupling."
+"Look, I'll keep this quick," Marcus says. "Aisha has been asking a lot about you and Chloe. I think she's planning to make a move before the Pairing Ceremony."
 
 He pats your shoulder. "Just thought you should know, mate."
 
-📚 New Information: Aisha planning to graft on you before recoupling
+📚 New Information: Aisha planning to spark with you before Pairing Ceremony
 
 💬 Friendship with Marcus +3
 
@@ -861,7 +861,7 @@ He pats your shoulder. "Just thought you should know, mate."
   consequences: {
     missed_information: true,  // didn't learn about Aisha
     damaged_relationship: true,
-    public_perception: -2  // others might have seen
+    pulse: -2  // others might have seen
   }
 }
 ```
@@ -874,20 +874,20 @@ He pats your shoulder. "Just thought you should know, mate."
 
 ```javascript
 function checkForGroupChat(location) {
-  const islandersHere = getIslandersAtLocation(location)
+  const heartbreakersHere = getHeartbreakersAtLocation(location)
 
   // Need 2-3 others present (player + 2-3 NPCs = 3-4 total)
-  if (islandersHere.length < 2 || islandersHere.length > 3) {
+  if (heartbreakersHere.length < 2 || heartbreakersHere.length > 3) {
     return null  // no group chat option
   }
 
   // Check if they're already in a group conversation
-  const groupActivity = analyzeGroupActivity(islandersHere)
+  const groupActivity = analyzeGroupActivity(heartbreakersHere)
 
   if (groupActivity.type === "group_chat") {
     return {
       type: "joinable_group",
-      participants: islandersHere,
+      participants: heartbreakersHere,
       activity: groupActivity.description
     }
   }
@@ -962,7 +962,7 @@ const groupActions = {
         affection: +2,
         mood: "happy"
       },
-      public_perception: +3,
+      pulse: +3,
       llm_prompt: "Generate group laughing at player's joke"
     },
 
@@ -978,7 +978,7 @@ const groupActions = {
   },
 
   share_gossip: {
-    label: "Share villa gossip",
+    label: "Share resort gossip",
     requires: "have_gossip",
 
     outcome: {
@@ -987,10 +987,10 @@ const groupActions = {
       effects: {
         if_juicy: {
           all_participants: { friendship: +2 },  // interesting info
-          public_perception: +2
+          pulse: +2
         },
         if_mean: {
-          public_perception: -5,  // seen as stirring drama
+          pulse: -5,  // seen as stirring drama
           target_of_gossip: { animosity_from_all: +3 }
         }
       },
@@ -1030,13 +1030,13 @@ const groupActions = {
     outcome: {
       if_coupled_with_target: {
         target: { chemistry: +3, affection: +2 },
-        public_perception: +5,  // cute couple
+        pulse: +5,  // cute couple
         others: { reaction: "supportive" }
       },
 
       if_not_coupled: {
         target: { chemistry: +5 },
-        public_perception: -3,  // playing the field
+        pulse: -3,  // playing the field
         current_partner_if_present: { trust: -10, animosity: +8 },  // drama!
         others: { reaction: "awkward" }
       },
@@ -1113,7 +1113,7 @@ async function executeGroupAction(action, participants) {
 **Example LLM Prompt:**
 
 ```
-You are generating a Love Island group conversation.
+You are generating a Paradise Hearts group conversation.
 
 Location: Pool
 Participants:
@@ -1183,7 +1183,7 @@ Continue group chat?
 ```
 POOL AREA
 
-You see several Islanders scattered around the pool:
+You see several Heartbreakers scattered around the pool:
 • Chloe, Liam, Emma (chatting together)
 • Marcus, Aisha (by the far end)
 • Sophie, Tom (in the pool)
@@ -1249,11 +1249,11 @@ function executeNPCInterruption(interrupter, targetConversation) {
       target: target.id,
       abandoned: targetConversation.otherPerson,
       location: targetConversation.location,
-      witnessed_by: getIslandersAtLocation(targetConversation.location)
+      witnessed_by: getHeartbreakersAtLocation(targetConversation.location)
     })
 
     // Add to knowledge (witnesses know this happened)
-    const witnesses = getIslandersAtLocation(targetConversation.location)
+    const witnesses = getHeartbreakersAtLocation(targetConversation.location)
     for (let witness of witnesses) {
       witness.knowledge.push({
         fact: `${interrupter.name} pulled ${target.name} away from ${targetConversation.otherPerson.name}`,
@@ -1300,7 +1300,7 @@ What do you do?
 
 ### Interruption Strategy
 
-**Offensive (grafting):**
+**Offensive (sparking):**
 - Pull targets away from partners
 - Creates private time
 - Tests couple strength
@@ -1327,7 +1327,7 @@ What do you do?
 ### Timing Interruptions
 
 **Best times to interrupt:**
-- Before recoupling (make final moves)
+- Before Pairing Ceremony (make final moves)
 - After drama (comfort/capitalize)
 - When target is vulnerable (alone, upset)
 - Public locations (witnesses)

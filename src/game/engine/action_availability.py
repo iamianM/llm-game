@@ -4,23 +4,23 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from src.game.engine.casa_amor import location_villa
-from src.game.state.models import GameState, IslanderState, Phase
+from src.game.engine.flush_of_hearts import location_resort
+from src.game.state.models import GameState, HeartbreakerState, Phase
 
 if TYPE_CHECKING:
     from src.game.engine.actions import ActionSpec
 
 
-def pending_recouple_proposal_actions(state: GameState) -> list[ActionSpec]:
+def pending_pair_proposal_actions(state: GameState) -> list[ActionSpec]:
     from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction
 
-    if state.pending_recouple_proposal is None:
+    if state.pending_pair_proposal is None:
         return []
-    proposer = find_islander(state, state.pending_recouple_proposal.proposer_id)
+    proposer = find_heartbreaker(state, state.pending_pair_proposal.proposer_id)
     return [
         ActionSpec(
             action=PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id=proposer.id, intent_id="accept"),
-            label=f"Accept {proposer.name}'s recoupling proposal",
+            label=f"Accept {proposer.name}'s pairing proposal",
         ),
         ActionSpec(
             action=PlayerAction(
@@ -50,15 +50,15 @@ def needs_initial_coupling(state: GameState) -> bool:
     )
 
 
-def initial_coupling_targets(state: GameState) -> list[IslanderState]:
+def initial_coupling_targets(state: GameState) -> list[HeartbreakerState]:
     targets = [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.gender != state.player.gender
-        and location_villa(islander.location_id) is state.villa
+        heartbreaker
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
+        and heartbreaker.gender != state.player.gender
+        and location_resort(heartbreaker.location_id) is state.resort
     ]
-    return sorted(targets, key=lambda islander: (islander.name, islander.id))
+    return sorted(targets, key=lambda heartbreaker: (heartbreaker.name, heartbreaker.id))
 
 
 def intro_actions(state: GameState) -> list[ActionSpec]:
@@ -77,27 +77,27 @@ def intro_actions(state: GameState) -> list[ActionSpec]:
         for other_id in (couple.partner_a_id, couple.partner_b_id)
         if state.player.id in {couple.partner_a_id, couple.partner_b_id} and other_id != state.player.id
     }
-    for islander in state.islanders:
-        if islander.eliminated or islander.id in state.intro_completed_ids or islander.id in partner_ids:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.eliminated or heartbreaker.id in state.intro_completed_ids or heartbreaker.id in partner_ids:
             continue
         for intent_id, label in labels.items():
-            if intent_id == "intro_flirty" and islander.gender == state.player.gender:
+            if intent_id == "intro_flirty" and heartbreaker.gender == state.player.gender:
                 continue
             actions.append(
                 ActionSpec(
                     action=PlayerAction(
                         kind=ActionKind.INTRODUCE_TO,
-                        target_id=islander.id,
+                        target_id=heartbreaker.id,
                         intent_id=intent_id,
                     ),
-                    label=f"{islander.name}: {label}",
+                    label=f"{heartbreaker.name}: {label}",
                 )
             )
     return actions
 
 
 def player_proposal_eligible(state: GameState, target_id: str) -> bool:
-    target = find_islander(state, target_id)
+    target = find_heartbreaker(state, target_id)
     if target.eliminated or target.gender == state.player.gender:
         return False
     for couple in state.couples:
@@ -110,8 +110,8 @@ def player_proposal_eligible(state: GameState, target_id: str) -> bool:
     return rel.chemistry >= 60 and rel.affection >= 50
 
 
-def find_islander(state: GameState, target_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander
-    raise ValueError(f"unknown islander: {target_id}")
+def find_heartbreaker(state: GameState, target_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker
+    raise ValueError(f"unknown heartbreaker: {target_id}")

@@ -31,7 +31,7 @@ determinism:
 	uv run python -m src.game.cli verify --all
 
 web-check:
-	cd web && npm run type-check
+	cd web && npm run lint && npm run type-check
 
 web-contracts:
 	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts

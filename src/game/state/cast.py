@@ -8,34 +8,34 @@ from src.game.state.models import (
     AttachmentStyle,
     Big5,
     Gender,
-    IslanderState,
+    HeartbreakerState,
+    IdealMatch,
     Location,
     RelationshipState,
-    TypeOnPaper,
 )
 from src.game.state.traits import KnownFact, TraitCard
 
 
-def starting_islanders() -> list[IslanderState]:
-    """Return the H9 eight-islander starting cast."""
+def starting_heartbreakers() -> list[HeartbreakerState]:
+    """Return the H9 eight-heartbreaker starting cast."""
     backstories = load_backstories()
     trait_cards = opening_trait_cards()
     cast = [
-        _islander("chloe", "Chloe", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.POOL, 10, (7, 6, 9, 8, 4), AttachmentStyle.SECURE, "warm smiles and kind eyes", ["warm", "confident"], ["loyalty", "honesty"], ["arrogance"]),
-        _islander("maya", "Maya", Gender.WOMAN, "joker", backstories, trait_cards, Location.KITCHEN, 8, (8, 5, 9, 5, 6), AttachmentStyle.ANXIOUS, "expressive people with bright energy", ["funny", "attentive"], ["humor", "attention"], ["neglect"]),
-        _islander("liam", "Liam", Gender.MAN, "friend", backstories, trait_cards, Location.TERRACE, 6, (5, 8, 6, 7, 3), AttachmentStyle.SECURE, "grounded and easygoing", ["steady", "thoughtful"], ["steadiness", "depth"], ["flakiness"]),
-        _islander("sophie", "Sophie", Gender.WOMAN, "alpha", backstories, trait_cards, Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
-        _islander("nia", "Nia", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
-        _islander("marcus", "Marcus", Gender.MAN, "alpha", backstories, trait_cards, Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
-        _islander("blake", "Blake", Gender.MAN, "friend", backstories, trait_cards, Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
-        _islander("jordan", "Jordan", Gender.MAN, "joker", backstories, trait_cards, Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
+        _heartbreaker("chloe", "Chloe", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.POOL, 10, (7, 6, 9, 8, 4), AttachmentStyle.SECURE, "warm smiles and kind eyes", ["warm", "confident"], ["loyalty", "honesty"], ["arrogance"]),
+        _heartbreaker("maya", "Maya", Gender.WOMAN, "joker", backstories, trait_cards, Location.KITCHEN, 8, (8, 5, 9, 5, 6), AttachmentStyle.ANXIOUS, "expressive people with bright energy", ["funny", "attentive"], ["humor", "attention"], ["neglect"]),
+        _heartbreaker("liam", "Liam", Gender.MAN, "friend", backstories, trait_cards, Location.TERRACE, 6, (5, 8, 6, 7, 3), AttachmentStyle.SECURE, "grounded and easygoing", ["steady", "thoughtful"], ["steadiness", "depth"], ["flakiness"]),
+        _heartbreaker("sophie", "Sophie", Gender.WOMAN, "alpha", backstories, trait_cards, Location.BEDROOM, 7, (7, 8, 8, 5, 5), AttachmentStyle.AVOIDANT, "sharp style and confident eye contact", ["ambitious", "direct"], ["drive", "confidence"], ["clinginess"]),
+        _heartbreaker("nia", "Nia", Gender.WOMAN, "sweetheart", backstories, trait_cards, Location.TERRACE, 7, (8, 7, 7, 8, 4), AttachmentStyle.SECURE, "soft warmth and grounded humor", ["kind", "steady"], ["honesty", "patience"], ["cruelty"]),
+        _heartbreaker("marcus", "Marcus", Gender.MAN, "alpha", backstories, trait_cards, Location.KITCHEN, 7, (6, 8, 8, 5, 4), AttachmentStyle.AVOIDANT, "athletic confidence and direct energy", ["confident", "protective"], ["ambition", "loyalty"], ["indecision"]),
+        _heartbreaker("blake", "Blake", Gender.MAN, "friend", backstories, trait_cards, Location.BEDROOM, 6, (6, 7, 6, 8, 3), AttachmentStyle.SECURE, "dry wit and calm loyalty", ["thoughtful", "funny"], ["humor", "depth"], ["showboating"]),
+        _heartbreaker("jordan", "Jordan", Gender.MAN, "joker", backstories, trait_cards, Location.POOL, 6, (7, 5, 9, 6, 5), AttachmentStyle.ANXIOUS, "bright grin and restless energy", ["playful", "attentive"], ["fun", "reassurance"], ["being ignored"]),
     ]
     _seed_npc_known_facts(cast)
     return cast
 
 
-def _islander(
-    islander_id: str,
+def _heartbreaker(
+    heartbreaker_id: str,
     name: str,
     gender: Gender,
     archetype: str,
@@ -49,14 +49,14 @@ def _islander(
     personality_type: list[str],
     values: list[str],
     dealbreakers: list[str],
-) -> IslanderState:
+) -> HeartbreakerState:
     openness, conscientiousness, extraversion, agreeableness, neuroticism = big5
-    return IslanderState(
-        id=islander_id,
+    return HeartbreakerState(
+        id=heartbreaker_id,
         name=name,
         gender=gender,
         archetype=archetype,
-        backstory=backstories[islander_id],
+        backstory=backstories[heartbreaker_id],
         location_id=location,
         relationship=RelationshipState(affection=affection),
         big5=Big5(
@@ -67,17 +67,17 @@ def _islander(
             neuroticism=neuroticism,
         ),
         attachment=attachment,
-        type_on_paper=TypeOnPaper(
+        ideal_match=IdealMatch(
             physical_type=physical_type,
             personality_type=personality_type,
             values=values,
             dealbreakers=dealbreakers,
         ),
-        trait_card=trait_cards[islander_id],
+        trait_card=trait_cards[heartbreaker_id],
     )
 
 
-def _seed_npc_known_facts(cast: list[IslanderState]) -> None:
+def _seed_npc_known_facts(cast: list[HeartbreakerState]) -> None:
     """Give NPCs enough public trivia about each other for early gossip hooks."""
     for holder in cast:
         for subject in cast:

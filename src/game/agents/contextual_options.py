@@ -20,7 +20,7 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_gossip import with_gossip_options as with_gossip_options
-from src.game.agents.islander_voice import Exchange, load_dotenv_local
+from src.game.agents.heartbreaker_voice import Exchange, load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     AgentGenerationError,
@@ -74,7 +74,7 @@ class ContextualOptionsContext(BaseModel):
     charm: int
     banter: int
     eq: int
-    graft: int
+    spark: int
     loyalty: int
     departure_probability: int
     gossip_memories: str
@@ -194,7 +194,7 @@ def contextual_options_context(
 ) -> ContextualOptionsContext:
     """Build prompt context for one follow-up menu."""
     target_id = result.action.target_id
-    target = next((islander for islander in state.islanders if islander.id == target_id), None)
+    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == target_id), None)
     if target is None:
         raise ValueError(f"contextual options target not found: {target_id}")
     stats = state.player.stats
@@ -220,7 +220,7 @@ def contextual_options_context(
         charm=stats.charm,
         banter=stats.banter,
         eq=stats.eq,
-        graft=stats.graft,
+        spark=stats.spark,
         loyalty=stats.loyalty,
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
@@ -346,11 +346,11 @@ def _render_context(context: ContextualOptionsContext) -> str:
             f"Recent exchange history: {context.recent_history}",
             "Player stats:",
             f"charm {context.charm}, banter {context.banter}, eq {context.eq}, "
-            f"graft {context.graft}, loyalty {context.loyalty}",
+            f"spark {context.spark}, loyalty {context.loyalty}",
             f"Departure probability: {context.departure_probability}",
             f"already_present: {', '.join(context.already_present) or 'none'}",
             f"Gossip-eligible memories: {context.gossip_memories}",
-            f"Already explored with this Islander (past chats — do not re-open):\n{context.explored_threads}",
+            f"Already explored with this Heartbreaker (past chats — do not re-open):\n{context.explored_threads}",
             "Write the bespoke follow-up additions now.",
         ]
     )
@@ -389,9 +389,9 @@ def _memory_line(state: GameState, memory: Memory) -> str:
     )
 
 def _subject_name(state: GameState, memory: Memory) -> str:
-    for islander in state.islanders:
-        if islander.id == memory.subject_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == memory.subject_id:
+            return heartbreaker.name
     return memory.subject_id
 
 

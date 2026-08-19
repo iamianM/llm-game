@@ -1,0 +1,22 @@
+name: flush-of-hearts-return
+seed: 12
+initial_day: 4
+initial_phase: afternoon
+initial_couples:
+- partner_a_id: player
+  partner_b_id: chloe
+  formed_on_day: 3
+actions:
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+expected_hash: a4f93453f07e27d61fa3af1cd499f2c8e7b0f8b7257db92447e1e0fb2998b20d

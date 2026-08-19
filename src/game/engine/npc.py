@@ -3,7 +3,7 @@
 Design sources:
 - 01-Game-Vision.md: autonomous NPC behavior
 - 03-LLM-Architecture.md: NPC Behavior Simulator
-- 09-Social-Dynamics.md: interruptions, group chats, pulls for chat
+- 09-Social-Dynamics.md: interruptions, group chats, private chats
 
 Implementation rule:
 NPC behavior starts deterministic and algorithmic. LLM-enhanced NPC decisions

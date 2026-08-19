@@ -3,7 +3,7 @@ seed: 42
 actions:
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: respond_with
   intent_id: joke_back
 - kind: respond_with
@@ -13,4 +13,4 @@ actions:
 - kind: respond_with
   intent_id: end_softly
 initial_phase: morning
-expected_hash: 881f023c13d84e93623fb3617cbf243471a0174a6264fc6975a78632c65c4989
+expected_hash: 2899819b4b405c3a63dc0ba2015f0746dc71d524f4684752ad0357721944f80d

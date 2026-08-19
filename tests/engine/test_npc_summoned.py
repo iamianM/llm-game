@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from src.game.agents.villa_orchestrator import NPCSummon, VillaUpdate
+from src.game.agents.resort_orchestrator import NPCSummon, ResortUpdate
 from src.game.engine.conversation import departure_probability, start_conversation
-from src.game.engine.villa import apply_villa_update, validate_villa_update
+from src.game.engine.resort import apply_resort_update, validate_resort_update
 from src.game.state.models import (
     BackgroundExchangeRecord,
     ExchangeRecord,
@@ -24,9 +24,9 @@ def test_validate_summon_requires_named_conversation_participant() -> None:
     state = new_game(1)
 
     with pytest.raises(ValueError, match="player_active summon"):
-        validate_villa_update(
+        validate_resort_update(
             state,
-            VillaUpdate(
+            ResortUpdate(
                 npc_summoned_elsewhere=[
                     NPCSummon(
                         npc_id="maya",
@@ -43,9 +43,9 @@ def test_apply_summon_closes_player_conversation_and_runs_curator() -> None:
     state = new_game(1)
     start_conversation(state, "chloe", 1)
 
-    changes = apply_villa_update(
+    changes = apply_resort_update(
         state,
-        VillaUpdate(
+        ResortUpdate(
             npc_summoned_elsewhere=[
                 NPCSummon(
                     npc_id="chloe",
@@ -59,7 +59,7 @@ def test_apply_summon_closes_player_conversation_and_runs_curator() -> None:
     )
 
     assert state.active_conversation is None
-    assert state.islanders[0].location_id is Location.TERRACE
+    assert state.heartbreakers[0].location_id is Location.TERRACE
     assert changes.curator_batches
     assert changes.curator_batches[0].kind == "player"
 
@@ -83,18 +83,18 @@ def test_apply_summon_closes_npc_npc_conversation() -> None:
             )
         ],
     )
-    state.islanders[1].location_id = Location.KITCHEN
-    state.islanders[2].location_id = Location.KITCHEN
+    state.heartbreakers[1].location_id = Location.KITCHEN
+    state.heartbreakers[2].location_id = Location.KITCHEN
     state.npc_conversations = [conversation]
 
-    changes = apply_villa_update(
+    changes = apply_resort_update(
         state,
-        VillaUpdate(
+        ResortUpdate(
             npc_summoned_elsewhere=[
                 NPCSummon(
                     npc_id="maya",
                     from_conversation_id="npcconv_test",
-                    reason="drama_pull",
+                    reason="drama_summon",
                     target_location=Location.POOL,
                 )
             ]
@@ -103,14 +103,14 @@ def test_apply_summon_closes_npc_npc_conversation() -> None:
     )
 
     assert state.npc_conversations == []
-    assert state.islanders[1].location_id is Location.POOL
+    assert state.heartbreakers[1].location_id is Location.POOL
     assert changes.curator_batches
     assert changes.curator_batches[0].kind == "background"
 
 
 def test_departure_probability_increases_for_avoidant_deep_exchange() -> None:
     state = new_game(1)
-    chloe = state.islanders[0]
+    chloe = state.heartbreakers[0]
     chloe.attachment = AttachmentStyle.AVOIDANT
     conversation = start_conversation(state, "chloe", 1)
     conversation.exchanges = [_exchange(success=True, tags=["deep"]) for _ in range(11)]
@@ -120,7 +120,7 @@ def test_departure_probability_increases_for_avoidant_deep_exchange() -> None:
 
 def test_departure_probability_increases_for_anxious_miss() -> None:
     state = new_game(1)
-    maya = state.islanders[1]
+    maya = state.heartbreakers[1]
     maya.attachment = AttachmentStyle.ANXIOUS
     conversation = start_conversation(state, "maya", 1)
     conversation.exchanges.append(_exchange(success=False, tags=["banter"]))

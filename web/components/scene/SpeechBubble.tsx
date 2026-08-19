@@ -24,7 +24,7 @@ export function SpeechBubble({ anchorId, role, speaker, text, position, canAdvan
   // SceneDialogueStage can call.
   const revealRef = useRef(revealAll);
   useEffect(() => { revealRef.current = revealAll; }, [revealAll]);
-  // Love Island framing: the speech bubble is PINNED to the top of the stage
+  // Paradise Hearts framing: the speech bubble is PINNED to the top of the stage
   // (not floating over the speaker), so big foreground figures are never
   // clipped or covered and the eye reads name → line → who's talking below.
   // It biases horizontally toward the speaker so the tail still gestures at the

@@ -1,12 +1,13 @@
-# Love Island Mobile Reference Observations
+# Reality Dating Sim Reference Observations
 
 ## Conversation Scene Grammar
 
-The reference screenshots use a full-scene background with character art placed
-directly over the environment. Characters are not inside cards during normal
-play; the card-like elements are reserved for speech, narration, and choices.
-This is the main lesson for Paradise Hearts: the cast should feel physically
-present in Sunset Bay, while UI should float over them.
+The reference screenshots from a reality dating show mobile game use a
+full-scene background with character art placed directly over the environment.
+Characters are not inside cards during normal play; the card-like elements are
+reserved for speech, narration, and choices. This is the main lesson for
+Paradise Hearts: the cast should feel physically present in Sunset Bay, while
+UI should float over them.
 
 Characters are staged as cutouts with strong silhouettes. The active speaker is
 usually foregrounded by scale and placement rather than by a heavy outline.

@@ -14,7 +14,7 @@ def test_action_time_costs_match_phase_budget_contract() -> None:
     assert action_time_cost(PlayerAction(kind=ActionKind.START_CONVERSATION)) == 20
     assert action_time_cost(PlayerAction(kind=ActionKind.RESPOND_WITH)) == 5
     assert action_time_cost(PlayerAction(kind=ActionKind.MOVE, target_id="kitchen")) == 5
-    assert action_time_cost(PlayerAction(kind=ActionKind.HIDEAWAY)) == 60
+    assert action_time_cost(PlayerAction(kind=ActionKind.PRIVATE_SUITE)) == 60
     assert action_time_cost(PlayerAction(kind=ActionKind.AMBIENT, target_id="pool_lounge")) == 20
 
 
@@ -53,7 +53,7 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
             PlayerAction(
                 kind=ActionKind.START_CONVERSATION,
                 target_id="chloe",
-                intent_id="friendly_chat_villa",
+                intent_id="friendly_chat_resort",
             ),
             rng,
         )
@@ -68,7 +68,7 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
         PlayerAction(
             kind=ActionKind.START_CONVERSATION,
             target_id="chloe",
-            intent_id="friendly_chat_villa",
+            intent_id="friendly_chat_resort",
         ),
         rng,
     )

@@ -21,18 +21,18 @@ def _skip_intros(state) -> None:
     state.phase = Phase.MORNING
     state.phase_clock = PhaseClock(phase=Phase.MORNING.value, budget_minutes=120)
     state.intro_completed_ids = [
-        islander.id for islander in state.islanders if not islander.eliminated
+        heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
     ]
     state.intro_memory_created = True
 
 
 def test_starting_cast_has_distinct_trait_cards() -> None:
     state = new_game(1)
-    engines = [islander.trait_card.persona.secret_engine for islander in state.islanders]
+    engines = [heartbreaker.trait_card.persona.secret_engine for heartbreaker in state.heartbreakers]
     assert len(engines) == 8
     assert len(set(engines)) == 8
-    assert all("hidden_secret" in islander.trait_card.core_traits for islander in state.islanders)
-    assert all(len(islander.trait_card.flavor_traits) >= 6 for islander in state.islanders)
+    assert all("hidden_secret" in heartbreaker.trait_card.core_traits for heartbreaker in state.heartbreakers)
+    assert all(len(heartbreaker.trait_card.flavor_traits) >= 6 for heartbreaker in state.heartbreakers)
 
 
 def test_opening_coupling_reveals_partner_surface_facts() -> None:
@@ -41,12 +41,12 @@ def test_opening_coupling_reveals_partner_surface_facts() -> None:
         state,
         archetype_id="heartthrob",
         gender=Gender.MAN,
-        stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
+        stats=PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
     )
     _skip_intros(state)
     run_turn(
         state,
-        PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"),
+        PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
         SeededRng(1),
     )
     assert {"chloe.occupation", "chloe.hometown", "chloe.age"} <= set(state.player.known_facts)
@@ -58,16 +58,16 @@ def test_successful_proposal_reveals_new_partner_surface_facts() -> None:
         state,
         archetype_id="heartthrob",
         gender=Gender.MAN,
-        stats=PlayerStats(charm=9, banter=6, eq=5, graft=5, loyalty=5),
+        stats=PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
     )
     _skip_intros(state)
-    run_turn(state, PlayerAction(kind=ActionKind.RECOUPLE, target_id="chloe"), SeededRng(1))
-    maya = next(islander for islander in state.islanders if islander.id == "maya")
+    run_turn(state, PlayerAction(kind=ActionKind.PAIR, target_id="chloe"), SeededRng(1))
+    maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
     maya.relationship.affection = 100
     maya.relationship.chemistry = 100
     state.active_conversation = Conversation(target_id="maya", started_on_turn=state.turn_index, started_on_day=state.day)
 
-    apply_action(state, PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id="maya"), SeededRng(1))
+    apply_action(state, PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id="maya"), SeededRng(1))
 
     assert {"maya.occupation", "maya.hometown", "maya.age"} <= set(state.player.known_facts)
 
@@ -86,7 +86,7 @@ def test_intro_reveals_tier_one_known_facts() -> None:
 
 def test_deep_intent_reveals_tier_three_fact_at_familiarity() -> None:
     state = new_game(1)
-    target = next(islander for islander in state.islanders if islander.id == "chloe")
+    target = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     target.familiarity_with_player = 50
     fact = emit_fact_reveal(state, target, get_intent("deep_ask_life"))
     assert fact is not None
@@ -96,7 +96,7 @@ def test_deep_intent_reveals_tier_three_fact_at_familiarity() -> None:
 
 def test_gossip_distortion_never_shares_hidden_secret() -> None:
     state = new_game(1)
-    speaker = next(islander for islander in state.islanders if islander.id == "maya")
+    speaker = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
     speaker.known_facts.clear()
     speaker.known_facts["chloe.hidden_secret"] = KnownFact(
         fact_key="chloe.hidden_secret",
@@ -112,7 +112,7 @@ def test_gossip_distortion_never_shares_hidden_secret() -> None:
 
 def test_gossip_shares_non_secret_known_fact() -> None:
     state = new_game(2)
-    speaker = next(islander for islander in state.islanders if islander.id == "maya")
+    speaker = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
     speaker.known_facts.clear()
     speaker.known_facts["chloe.occupation"] = KnownFact(
         fact_key="chloe.occupation",
@@ -140,7 +140,7 @@ def test_follow_up_templates_continue_fact_reveals() -> None:
 
 def test_conversation_close_emits_known_fact() -> None:
     state = new_game(1)
-    target = next(islander for islander in state.islanders if islander.id == "chloe")
+    target = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     target.relationship.affection = 50
     target.familiarity_with_player = 50
     rng = SeededRng(1)

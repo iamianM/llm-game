@@ -48,7 +48,7 @@ const CHALLENGE_THEME: Record<string, {
     kicker: "Monitors live",
     mode: "pulse",
   },
-  mr_and_mrs: {
+  couples_quiz: {
     title: "The Couples Quiz",
     kicker: "Private answers, public stakes",
     mode: "quiz",
@@ -58,7 +58,7 @@ const CHALLENGE_THEME: Record<string, {
     kicker: "The needle decides",
     mode: "detector",
   },
-  snog_marry_pie: {
+  kiss_wed_pass: {
     title: "Kiss Wed Pass",
     kicker: "Three cards, no hiding",
     mode: "cards",
@@ -218,14 +218,14 @@ function challengeTheme(kind: string) {
 }
 
 function PulseRaceCast({ state, round }: { state: SessionState; round: number }) {
-  const cast = state.islanders.filter((islander) => !islander.eliminated).slice(0, 6);
+  const cast = state.heartbreakers.filter((heartbreaker) => !heartbreaker.eliminated).slice(0, 6);
   return (
     <div className="pulse-cast">
-      {cast.map((islander, index) => {
-        const value = 28 + ((islander.id.length * 13 + round * 17 + index * 9) % 62);
+      {cast.map((heartbreaker, index) => {
+        const value = 28 + ((heartbreaker.id.length * 13 + round * 17 + index * 9) % 62);
         return (
-          <div className="pulse-row" key={islander.id}>
-            <span>{islander.name}</span>
+          <div className="pulse-row" key={heartbreaker.id}>
+            <span>{heartbreaker.name}</span>
             <div><i style={{ width: `${value}%` }} /></div>
             <b>{value}</b>
           </div>

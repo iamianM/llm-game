@@ -32,7 +32,7 @@
 **NOT this (pure visual novel):**
 ```
 [Choice 1] "Honestly? I'm here to find genuine love. I'm tired of the games."
-[Choice 2] "I mean, who wouldn't want a summer in a villa? But yeah, hoping to meet someone."
+[Choice 2] "I mean, who wouldn't want a summer at a resort? But yeah, hoping to meet someone."
 [Choice 3] "I just wanted the Instagram followers." (Joke)
 ```
 Problems: Slow, reading-heavy, can't scan quickly
@@ -43,7 +43,7 @@ Talk to Chloe
 
 Friendly:
 → Ask how she's feeling
-→ Chat about the villa
+→ Chat about the resort
 → Compliment her personality
 
 Flirty: 💕
@@ -206,7 +206,7 @@ const coreMenu = {
     unlocked: true, // always
     options: [
       "Ask how they're feeling",
-      "Chat about the villa",
+      "Chat about the resort",
       "Compliment their personality"
     ]
   },
@@ -273,10 +273,10 @@ if (recentDramaInvolves(target)) {
 // If player is coupled with someone else (risky)
 if (player.coupledWith && player.coupledWith !== target.id) {
   contextualOptions.push({
-    category: "graft",
+    category: "spark",
     icon: "🔥",
     option: "Pull them for a private chat (risky)",
-    statUsed: "graft",
+    statUsed: "spark",
     warning: "Your partner might find out"
   })
 }
@@ -311,7 +311,7 @@ Talk to Chloe
 
 Friendly: 💬
 → Ask how she's feeling
-→ Chat about the villa
+→ Chat about the resort
 → Compliment her personality
 
 Flirty: 💕
@@ -416,7 +416,7 @@ Player selects "Talk to Chloe" from location view.
 
 ```javascript
 function initiateConversation(targetId) {
-  const target = getIslanderById(targetId)
+  const target = getHeartbreakerById(targetId)
 
   // Check if target is available
   if (target.currentLocation !== player.currentLocation) {
@@ -769,7 +769,7 @@ const relationshipChanges = {
     failure: { friendship: -2, animosity: +1 }
   },
 
-  graft: {
+  spark: {
     success: { chemistry: +7, affection: +5, familiarity: +2 },
     failure: { animosity: +4, chemistry: -2 }
   },
@@ -848,12 +848,12 @@ const unlockTiers = {
 
   60: {
     name: "Close/Romantic",
-    unlocks: ["kiss", "cuddle", "define_relationship", "hideaway_invite"]
+    unlocks: ["kiss", "cuddle", "define_relationship", "private_suite_invite"]
   },
 
   80: {
     name: "Strong Couple",
-    unlocks: ["confession", "future_planning", "hideaway_overnight"]
+    unlocks: ["confession", "future_planning", "private_suite_overnight"]
   }
 }
 
@@ -1058,9 +1058,9 @@ const phaseBudgets = {
 Possible actions:
 - Talk to Chloe (20 min)
 - Talk to Liam (20 min)
-- Talk to new bombshell Aisha (20 min)
+- Talk to new Heart Throb Aisha (20 min)
 - Work out with Marcus (35 min)
-- Move around villa (5 min each)
+- Move around the resort (5 min each)
 
 **Can't do everything. Must choose.**
 
@@ -1074,7 +1074,7 @@ Talk to Chloe (partner, need to reassure): -20 min
 Talk to Liam (friend, might have gossip): -20 min
 → 50 min remaining
 
-Talk to Aisha (new bombshell, competitor): -20 min
+Talk to Aisha (new Heart Throb, competitor): -20 min
 → 30 min remaining
 
 Talk to Marcus (rival, causing drama): -20 min
@@ -1100,5 +1100,5 @@ Phase ends.
 
 **Related Files:**
 - **11-Conversation-Flow.md** - Multi-exchange conversations, contextual follow-ups, organic endings
-- **06-Location-System.md** - Spatial gameplay and villa layout
-- **09-Social-Dynamics.md** - Conversation interruptions, "pull for a chat", group conversations
+- **06-Location-System.md** - Spatial gameplay and resort layout
+- **09-Social-Dynamics.md** - Conversation interruptions, "private chat", group conversations

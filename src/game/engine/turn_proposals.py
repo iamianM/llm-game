@@ -1,4 +1,4 @@
-"""Turn pipeline helpers for recoupling proposal side effects."""
+"""Turn pipeline helpers for pairing proposal side effects."""
 
 from __future__ import annotations
 
@@ -19,16 +19,16 @@ def proposal_event(state: GameState, result: MechanicalResult) -> CeremonyEvent 
         return None
     proposal = ProposalOutcome.model_validate(result.proposal_outcome)
     sub_kind = "accepted" if proposal.accepted else "rejected"
-    kind = "npc_proposal_response" if "npc_proposal_response" in result.tags else "recouple_proposal"
-    islander_id = proposal.proposer_id if proposal.proposer_id != "player" else proposal.target_id
+    kind = "npc_proposal_response" if "npc_proposal_response" in result.tags else "pair_proposal"
+    heartbreaker_id = proposal.proposer_id if proposal.proposer_id != "player" else proposal.target_id
     return CeremonyEvent(
         kind=kind,
         sub_kind=sub_kind,
         message=(
-            f"Recoupling proposal {sub_kind}: {display_name(state, proposal.proposer_id)} "
+            f"Pairing proposal {sub_kind}: {display_name(state, proposal.proposer_id)} "
             f"asked {display_name(state, proposal.target_id)}."
         ),
-        islander_id=islander_id,
+        heartbreaker_id=heartbreaker_id,
     )
 
 

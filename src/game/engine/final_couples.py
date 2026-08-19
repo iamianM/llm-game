@@ -10,7 +10,7 @@ from __future__ import annotations
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.event_models import Challenge, MinigameChoice, MinigameReveal, MinigameRound
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
@@ -28,7 +28,7 @@ def _partner_id(state: GameState) -> str | None:
 def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[MinigameRound]:
     assert state.question_bank is not None
     rounds: list[MinigameRound] = []
-    partner = find_islander(state, partner_id)
+    partner = find_heartbreaker(state, partner_id)
 
     # Round 0 — Knowledge: one Compatibility-Quiz-style question on partner
     bank_pool = [p for p in state.question_bank.prompts.get("compatibility_quiz", []) if p.target_id == partner_id]
@@ -43,7 +43,7 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             index=0, prompt_id=knowledge_prompt.id, target_id=partner_id,
             trait_key=knowledge_prompt.trait_key, tier=knowledge_prompt.tier, mechanical=knowledge_prompt.mechanical,
             stem=(
-                "The Final Couples Challenge starts at the firepit. The host walks "
+                "The Final Couples Challenge starts at the flame_deck. The host walks "
                 "the surviving couples through five facets: knowledge, chemistry, "
                 "honesty, banter, audacity. Round one is Knowledge. The host "
                 f"reads a fact about {partner.name} and you pick the right answer "
@@ -83,7 +83,7 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
         index=3, prompt_id="final_banter", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
             "Round four is Banter. The host plays back three soundbites the "
-            f"villa heard from {partner.name} this week and asks which one is "
+            f"Sunset Bay heard from {partner.name} this week and asks which one is "
             "the inside joke only the two of you actually get."
         ),
         choices=[
@@ -92,21 +92,21 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
             MinigameChoice(id="callback_safe", label="The safe one.", fact_value="miss", is_correct=False, distractor_source="generator"),
         ],
     ))
-    non_partners = sorted([i for i in state.islanders if not i.eliminated and i.id != "player" and i.id != partner_id], key=lambda i: i.relationship.affection)
+    non_partners = sorted([i for i in state.heartbreakers if not i.eliminated and i.id != "player" and i.id != partner_id], key=lambda i: i.relationship.affection)
     rival = non_partners[0].id if non_partners else partner_id
     friend = non_partners[-1].id if len(non_partners) > 1 else partner_id
     rounds.append(MinigameRound(
         index=4, prompt_id="final_audacity", target_id=partner_id, trait_key=None, tier=0, mechanical=False,
         stem=(
-            "Round five is Audacity. The producer wheels out a tray of pies "
-            "for the season's traditional last laugh. You get exactly one and "
-            "you have to pick someone to pie. The room knows everyone you've "
-            "ever clashed with this season; the cameras are waiting."
+            "Round five is Audacity. The producer hands you one Spotlight card "
+            "for the season's sharpest final read. You have to call out one "
+            "person in front of the room. Everyone knows who you've clashed "
+            "with this season; the cameras are waiting."
         ),
         choices=[
-            MinigameChoice(id=f"pie_{rival}", label=f"{find_islander(state, rival).name}", fact_value=f"rival:{rival}", is_correct=True, distractor_source="generator"),
-            MinigameChoice(id=f"pie_{friend}", label=f"{find_islander(state, friend).name}", fact_value=f"friend:{friend}", is_correct=False, distractor_source="generator"),
-            MinigameChoice(id=f"pie_{partner_id}", label=f"{partner.name}", fact_value=f"partner:{partner_id}", is_correct=False, distractor_source="generator"),
+            MinigameChoice(id=f"callout_{rival}", label=f"{find_heartbreaker(state, rival).name}", fact_value=f"rival:{rival}", is_correct=True, distractor_source="generator"),
+            MinigameChoice(id=f"callout_{friend}", label=f"{find_heartbreaker(state, friend).name}", fact_value=f"friend:{friend}", is_correct=False, distractor_source="generator"),
+            MinigameChoice(id=f"callout_{partner_id}", label=f"{partner.name}", fact_value=f"partner:{partner_id}", is_correct=False, distractor_source="generator"),
         ],
     ))
     return rounds
@@ -153,7 +153,7 @@ def score_final_couples(state: GameState, challenge: Challenge) -> Challenge:
     weights = bal.facet_weights
     p = bal.per_round_points
     partner_id = _partner_id(state) or "chloe"
-    partner = find_islander(state, partner_id)
+    partner = find_heartbreaker(state, partner_id)
 
     total = 0
     new_rounds: list[MinigameRound] = []
@@ -182,11 +182,11 @@ def score_final_couples(state: GameState, challenge: Challenge) -> Challenge:
         elif facet == "audacity":
             tag = (chosen.fact_value or "").split(":")[0]
             if tag == "rival":
-                pts = p.audacity_rival_pie
+                pts = p.audacity_rival_callout
             elif tag == "friend":
-                pts = p.audacity_friend_pie
+                pts = p.audacity_friend_callout
             elif tag == "partner":
-                pts = p.audacity_partner_pie
+                pts = p.audacity_partner_callout
             else:
                 pts = 0
         else:
@@ -216,7 +216,7 @@ def score_final_couples(state: GameState, challenge: Challenge) -> Challenge:
 
 def apply_final_couples_result(state: GameState, challenge: Challenge) -> Challenge:
     partner_id = _partner_id(state) or "chloe"
-    partner = find_islander(state, partner_id)
+    partner = find_heartbreaker(state, partner_id)
     cls = challenge.classification or "failure"
     if cls == "success":
         delta = RelationshipDelta(affection=8, trust=4)

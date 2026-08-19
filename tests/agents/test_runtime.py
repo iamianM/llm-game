@@ -75,9 +75,9 @@ def test_record_agent_trace_captures_attempt_model_output_and_reasoning() -> Non
             ],
         )
         record_agent_trace(
-            agent_name="islander_voice",
+            agent_name="heartbreaker_voice",
             model=GAME_AGENT_MODEL,
-            prompt_path="src/game/agents/prompts/islander_voice.md",
+            prompt_path="src/game/agents/prompts/heartbreaker_voice.md",
             response=response,
             output={"npc_tone": "warm"},
         )
@@ -145,9 +145,9 @@ def test_record_agent_trace_sanitizes_unparsed_response_output_items() -> None:
             },
         )()
         record_agent_trace(
-            agent_name="villa_orchestrator",
+            agent_name="resort_orchestrator",
             model=GAME_AGENT_MODEL,
-            prompt_path="src/game/agents/prompts/villa_orchestrator.md",
+            prompt_path="src/game/agents/prompts/resort_orchestrator.md",
             response=response,
             output=None,
         )

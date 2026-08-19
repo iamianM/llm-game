@@ -1,7 +1,7 @@
 name: day6-full-run
 seed: 6
 initial_phase: morning
-expected_hash: 050d8a5d9ad551a73e53a1e89ad058b9029991918897cd01d4a11267974c11a9
+expected_hash: b6aa0c151ae55b4b4625427bfb1df855b5bd2554c8d10edba93efcaf2d4ed6d5
 actions:
 - kind: ambient
   target_id: ambient_wait

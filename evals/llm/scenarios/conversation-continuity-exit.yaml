@@ -3,7 +3,7 @@ title: Conversation Continuity And Exit
 goal: Prove a multi-turn Chloe chat actually remembers itself — every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.
 seed: 202
 initial_location: pool
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -11,7 +11,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_relationships:
   chloe:

@@ -4,7 +4,7 @@ goal: Prove the Event Narrator handles alternating player/partner rounds and nam
 seed: 313
 initial_day: 3
 initial_phase: morning
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -12,7 +12,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 6
-    graft: 5
+    spark: 5
     loyalty: 8
 initial_couples:
   - partner_a_id: player
@@ -34,7 +34,7 @@ turns:
       target_id: ambient_wait
     golden: >
       Morning ends, the Couples Quiz scene begins. pending_challenge.kind
-      == "mr_and_mrs". Six rounds queued, alternating between
+      == "couples_quiz". Six rounds queued, alternating between
       player-about-partner and partner-about-player.
     checks:
       - ceremony_events_present

@@ -28,7 +28,7 @@ def _ceremony_body(scene: Scene) -> str:
     for record in scene.records:
         narration = record.get("event_narration")
         events = record.get("ceremony_events") if isinstance(record.get("ceremony_events"), list) else []
-        # Surface event messages (e.g. "Dumping decision: maya leaves the villa.")
+        # Surface event messages (e.g. "Heart Out decision: maya leaves the resort.")
         event_message_lines: list[str] = []
         for ev in events:
             if isinstance(ev, dict):
@@ -166,7 +166,7 @@ def _gather_body(scene: Scene) -> str:
                     f"<div class='ceremony-feature'><div class='prose'>{escape(prose)}</div></div>"
                 )
     blocks.extend(_agent_trace_details(scene.records))
-    return "".join(blocks) or "<p class='muted'>The villa gathers.</p>"
+    return "".join(blocks) or "<p class='muted'>Sunset Bay gathers.</p>"
 
 
 # ============================================================================
@@ -183,11 +183,11 @@ def _background_body(scene: Scene) -> str:
         dialogues = commits.get("background_dialogues")
         if not isinstance(dialogues, list):
             continue
-        villa = commits.get("villa_update") or {}
+        resort = commits.get("resort_update") or {}
         location_lookup: list[str] = []
-        starts = villa.get("conversation_starts") or [] if isinstance(villa, dict) else []
+        starts = resort.get("conversation_starts") or [] if isinstance(resort, dict) else []
         continues_list = (
-            villa.get("conversation_continues") or [] if isinstance(villa, dict) else []
+            resort.get("conversation_continues") or [] if isinstance(resort, dict) else []
         )
         for start in starts:
             if isinstance(start, dict):
@@ -220,7 +220,7 @@ def _background_body(scene: Scene) -> str:
                 f"<div class='inline-body'>{mem_html}</div></details>"
             )
     vignettes.extend(_agent_trace_details(scene.records))
-    return "".join(vignettes) or "<p class='muted'>Quiet villa moment.</p>"
+    return "".join(vignettes) or "<p class='muted'>Quiet Sunset Bay moment.</p>"
 
 
 # ============================================================================
@@ -234,10 +234,10 @@ def _movement_body(scene: Scene) -> str:
         commits = record.get("agent_commits")
         if not isinstance(commits, dict):
             continue
-        villa = commits.get("villa_update")
-        if not isinstance(villa, dict):
+        resort = commits.get("resort_update")
+        if not isinstance(resort, dict):
             continue
-        movements = villa.get("npc_movements") or []
+        movements = resort.get("npc_movements") or []
         for m in movements:
             if not isinstance(m, dict):
                 continue
@@ -250,7 +250,7 @@ def _movement_body(scene: Scene) -> str:
                 f" <span class='muted'>· {escape(reason)}</span></div></div>"
             )
     lines.extend(_agent_trace_details(scene.records))
-    return "".join(lines) or "<p class='muted'>People shifting around the villa.</p>"
+    return "".join(lines) or "<p class='muted'>People shifting around Sunset Bay.</p>"
 
 
 # ============================================================================

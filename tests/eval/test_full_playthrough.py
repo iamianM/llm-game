@@ -22,7 +22,7 @@ from src.api.app import app
 
 # Forward-progress action picker, ported from the proven API drive script.
 # Priority: resolve scripted beats (continue/advance/...) -> make a decision in a
-# quiz/vote/recoupling -> pass time in free-roam (ambient) -> start a
+# quiz/vote/pairing -> pass time in free-roam (ambient) -> start a
 # conversation -> move -> anything. This mirrors how a player who just wants to
 # reach the end would tap through, so it exercises the real progression spine
 # without needing the LLM decider.
@@ -31,7 +31,7 @@ _DECISION_KINDS = (
     "answer",
     "answer_quiz",
     "vote",
-    "recouple",
+    "pair",
     "pick",
     "select",
     "choose",

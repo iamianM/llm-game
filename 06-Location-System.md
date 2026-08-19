@@ -1,6 +1,6 @@
 # Location System
 
-*Villa layout, spatial gameplay, and location-based actions*
+*Resort layout, spatial gameplay, and location-based actions*
 
 **Document Status:** ✅ Complete
 **Last Updated:** 2025-10-08
@@ -9,7 +9,7 @@
 
 ## Table of Contents
 
-- [Villa Overview](#villa-overview)
+- [Resort Overview](#resort-overview)
 - [Location Specifications](#location-specifications)
 - [Location-Specific Actions](#location-specific-actions)
 - [Movement System](#movement-system)
@@ -20,11 +20,11 @@
 
 ---
 
-## Villa Overview
+## Resort Overview
 
-### The Love Island Villa
+### Sunset Bay
 
-The villa is divided into **discrete locations** (not a continuous map).
+The resort is divided into **discrete locations** (not a continuous map).
 
 **Design philosophy:**
 - Each location serves a specific social purpose
@@ -47,7 +47,7 @@ The villa is divided into **discrete locations** (not a continuous map).
 
 **Private** (2 capacity, requires invitation):
 - Terrace (when claimed)
-- Hideaway (requires unlock)
+- Paradise Suite (requires unlock)
 
 ---
 
@@ -59,7 +59,7 @@ The villa is divided into **discrete locations** (not a continuous map).
 {
   id: "pool",
   name: "Pool Area",
-  description: "The heart of the villa. Sun loungers, a sparkling blue pool, and always buzzing with activity.",
+  description: "The heart of the resort. Sun loungers, a sparkling blue pool, and always buzzing with activity.",
 
   capacity: 8,
   privacy: "public",
@@ -110,7 +110,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     deep: -5       // too public for deep talks
   },
 
-  backgroundImage: "/backgrounds/villa-pool-day.jpg",
+  backgroundImage: "/backgrounds/resort-pool-day.jpg",
   ambientSound: "pool-water-splashing.mp3"
 }
 ```
@@ -178,7 +178,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     flirty: +5      // showing off physique
   },
 
-  backgroundImage: "/backgrounds/villa-gym.jpg",
+  backgroundImage: "/backgrounds/resort-gym.jpg",
   ambientSound: "gym-equipment.mp3"
 }
 ```
@@ -232,7 +232,7 @@ The villa is divided into **discrete locations** (not a continuous map).
       requires: "relationship_40",
       statUsed: "banter",
       effects: { chemistry: +6, friendship: +5, mood: "happy" },
-      sideEffect: "makes_mess" // might annoy neat Islanders
+      sideEffect: "makes_mess" // might annoy neat Heartbreakers
     }
   ],
 
@@ -243,7 +243,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     flirty: +3
   },
 
-  backgroundImage: "/backgrounds/villa-kitchen.jpg",
+  backgroundImage: "/backgrounds/resort-kitchen.jpg",
   ambientSound: "kitchen-ambient.mp3"
 }
 ```
@@ -311,7 +311,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     gossip: +10      // classic bedroom gossip
   },
 
-  backgroundImage: "/backgrounds/villa-bedroom.jpg",
+  backgroundImage: "/backgrounds/resort-bedroom.jpg",
   ambientSound: "bedroom-ambient.mp3"
 }
 ```
@@ -386,7 +386,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     friendly: +5
   },
 
-  backgroundImage: "/backgrounds/villa-terrace-night.jpg",
+  backgroundImage: "/backgrounds/resort-terrace-night.jpg",
   ambientSound: "night-crickets.mp3"
 }
 ```
@@ -399,7 +399,7 @@ The villa is divided into **discrete locations** (not a continuous map).
 {
   id: "beach",
   name: "Beach",
-  description: "Private beach just steps from the villa. Sand, waves, and romantic sunsets.",
+  description: "Private beach just steps from the resort. Sand, waves, and romantic sunsets.",
 
   capacity: 6,
   privacy: "semi-private",
@@ -439,12 +439,12 @@ The villa is divided into **discrete locations** (not a continuous map).
       requires: "coupled + relationship_60",
       statUsed: null,
       effects: { affection: +5, chemistry: +4, mood: "happy" },
-      publicPerceptionBonus: +3 // audience loves this
+      pulseBonus: +3 // audience loves this
     },
     {
       id: "beach_volleyball",
       name: "Beach volleyball (group)",
-      requires: "4+_islanders",
+      requires: "4+_heartbreakers",
       statUsed: "physical",
       effects: { friendship: +5, mood: "energized" }
     }
@@ -457,19 +457,19 @@ The villa is divided into **discrete locations** (not a continuous map).
     flirty: +8
   },
 
-  backgroundImage: "/backgrounds/villa-beach.jpg",
+  backgroundImage: "/backgrounds/resort-beach.jpg",
   ambientSound: "ocean-waves.mp3"
 }
 ```
 
 ---
 
-### Hideaway
+### Paradise Suite
 
 ```javascript
 {
-  id: "hideaway",
-  name: "The Hideaway",
+  id: "private_suite",
+  name: "The Paradise Suite",
   description: "Ultra-private luxury bedroom. Only accessible to challenge winners or as special rewards.",
 
   capacity: 2,
@@ -484,7 +484,7 @@ The villa is divided into **discrete locations** (not a continuous map).
 
   unlockableActions: [
     {
-      id: "hideaway_overnight",
+      id: "private_suite_overnight",
       name: "Spend the night together",
       requires: "coupled + relationship_70 + unlock",
       duration: 480, // 8 hours (happens overnight)
@@ -497,15 +497,15 @@ The villa is divided into **discrete locations** (not a continuous map).
         mood: "euphoric"
       },
       milestone: true,
-      publicPerceptionBonus: +5 // audience loves committed couples
+      pulseBonus: +5 // audience loves committed couples
     },
     {
-      id: "hideaway_confession",
+      id: "private_suite_confession",
       name: "Deepest confession",
       requires: "relationship_75",
       statUsed: "emotional_intelligence",
       effects: { trust: +12, affection: +10, familiarity: +15 },
-      outcome: "reveals_secret" // might reveal Islander's secret
+      outcome: "reveals_secret" // might reveal Heartbreaker's secret
     }
   ],
 
@@ -515,7 +515,7 @@ The villa is divided into **discrete locations** (not a continuous map).
     intimate: +30    // special intimate category
   },
 
-  backgroundImage: "/backgrounds/villa-hideaway.jpg",
+  backgroundImage: "/backgrounds/resort-private-suite.jpg",
   ambientSound: "romantic-ambient.mp3"
 }
 ```
@@ -631,13 +631,13 @@ function checkRequirement(requirement, location, target, player) {
       return target.currentActivity === "working_out"
 
     case "evening_phase":
-      return villaState.currentPhase === "evening"
+      return resortState.currentPhase === "evening"
 
     case "coupled":
       return player.coupledWith === target.id
 
     case "2+_same_gender":
-      const sameGender = getIslandersAtLocation(location).filter(i => i.gender === player.gender)
+      const sameGender = getHeartbreakersAtLocation(location).filter(i => i.gender === player.gender)
       return sameGender.length >= 2
 
     // ... more requirements
@@ -669,58 +669,58 @@ function moveToLocation(newLocationId) {
   }
 
   // Check capacity
-  if (location.islandersPresent.length >= location.capacity) {
+  if (location.heartbreakersPresent.length >= location.capacity) {
     return error(`${location.name} is full.`)
   }
 
   // Move player
   const oldLocation = locations[player.currentLocation]
-  oldLocation.islandersPresent = oldLocation.islandersPresent.filter(id => id !== "player")
+  oldLocation.heartbreakersPresent = oldLocation.heartbreakersPresent.filter(id => id !== "player")
 
-  location.islandersPresent.push("player")
+  location.heartbreakersPresent.push("player")
   player.currentLocation = newLocationId
 
   // Time cost
   const timeCost = 5
-  villaState.timeRemaining -= timeCost
+  resortState.timeRemaining -= timeCost
 
   // Update view
   return {
     newLocation: location,
     timeCost: timeCost,
-    islandersHere: location.islandersPresent.map(id => getIslanderById(id))
+    heartbreakersHere: location.heartbreakersPresent.map(id => getHeartbreakerById(id))
   }
 }
 ```
 
-### Villa Map Display
+### Resort Map Display
 
 ```javascript
-function getVillaMapState() {
+function getResortMapState() {
   return {
     locations: Object.values(locations).map(loc => ({
       id: loc.id,
       name: loc.name,
-      islandersPresent: loc.islandersPresent.map(id => ({
+      heartbreakersPresent: loc.heartbreakersPresent.map(id => ({
         id: id,
-        name: getIslanderById(id).name,
-        activity: getIslanderById(id).currentActivity
+        name: getHeartbreakerById(id).name,
+        activity: getHeartbreakerById(id).currentActivity
       })),
       capacity: loc.capacity,
-      isFull: loc.islandersPresent.length >= loc.capacity,
+      isFull: loc.heartbreakersPresent.length >= loc.capacity,
       isLocked: loc.requiresUnlock && !player.unlockedLocations.includes(loc.id),
       requiresInvitation: loc.requiresInvitation,
-      isPlayerHere: loc.islandersPresent.includes("player")
+      isPlayerHere: loc.heartbreakersPresent.includes("player")
     })),
     currentLocation: player.currentLocation,
-    timeRemaining: villaState.timeRemaining
+    timeRemaining: resortState.timeRemaining
   }
 }
 ```
 
 **UI Display:**
 ```
-VILLA MAP                         Time Remaining: 70 min
+SUNSET BAY MAP                    Time Remaining: 70 min
 
 🏊 Pool (4/8)                      [YOU ARE HERE]
    • You
@@ -744,7 +744,7 @@ VILLA MAP                         Time Remaining: 70 min
 🏖️ Beach (0/6)
    (Empty)
 
-💎 Hideaway 🔒 Locked
+💎 Paradise Suite 🔒 Locked
    (Win a challenge to unlock)
 
 ---
@@ -763,7 +763,7 @@ Where do you want to go?
 
 ```javascript
 function inviteToLocation(targetId, locationId) {
-  const target = getIslanderById(targetId)
+  const target = getHeartbreakerById(targetId)
   const location = locations[locationId]
 
   // Check if location allows invitations
@@ -828,7 +828,7 @@ function calculateInviteAcceptance(target, location, player) {
   }
 
   // Attachment style
-  if (target.attachmentStyle === "avoidant" && location.id === "hideaway") {
+  if (target.attachmentStyle === "avoidant" && location.id === "private_suite") {
     chance -= 20 // avoidants resist intimacy
   }
 
@@ -838,7 +838,7 @@ function calculateInviteAcceptance(target, location, player) {
   }
 
   // Time of day
-  if (location.id === "terrace" && villaState.currentPhase === "evening") {
+  if (location.id === "terrace" && resortState.currentPhase === "evening") {
     chance += 10 // terrace is romantic at night
   }
 
@@ -876,7 +876,7 @@ function calculateInviteAcceptance(target, location, player) {
 
 **Scenario 1: Reassure Partner**
 
-Player coupled with Chloe, new bombshell Aisha arrived.
+Player coupled with Chloe, new Heart Throb Aisha arrived.
 
 Option A: Public reassurance (pool)
 - ✅ Others see your loyalty → +Public Perception
@@ -890,7 +890,7 @@ Option B: Private reassurance (terrace)
 - ❌ No public proof of loyalty
 - ❌ Takes more time (invite + chat)
 
-**Scenario 2: Graft on New Bombshell**
+**Scenario 2: Spark with New Heart Throb**
 
 Player wants to explore connection with Aisha while coupled.
 
@@ -962,13 +962,13 @@ function chooseNPCLocation(npc) {
 
   // Strategic: Go where romantic interest is
   if (npc.interests.length > 0) {
-    const interestLocation = getIslanderById(npc.interests[0]).currentLocation
+    const interestLocation = getHeartbreakerById(npc.interests[0]).currentLocation
     options.push({ location: interestLocation, weight: 6 })
   }
 
   // Strategic: Avoid rivals
   if (npc.threats.length > 0) {
-    const rivalLocation = getIslanderById(npc.threats[0]).currentLocation
+    const rivalLocation = getHeartbreakerById(npc.threats[0]).currentLocation
     options = options.filter(o => o.location !== rivalLocation)
   }
 
@@ -1097,21 +1097,21 @@ function playActionAnimation(actionId, participants) {
 ```javascript
 const locationBackgrounds = {
   pool: {
-    day: "/backgrounds/villa-pool-day.jpg",
-    evening: "/backgrounds/villa-pool-sunset.jpg",
-    night: "/backgrounds/villa-pool-night.jpg"
+    day: "/backgrounds/resort-pool-day.jpg",
+    evening: "/backgrounds/resort-pool-sunset.jpg",
+    night: "/backgrounds/resort-pool-night.jpg"
   },
 
   gym: {
-    day: "/backgrounds/villa-gym.jpg",
-    evening: "/backgrounds/villa-gym-evening.jpg",
-    night: "/backgrounds/villa-gym-night.jpg"
+    day: "/backgrounds/resort-gym.jpg",
+    evening: "/backgrounds/resort-gym-evening.jpg",
+    night: "/backgrounds/resort-gym-night.jpg"
   },
 
   terrace: {
-    day: "/backgrounds/villa-terrace-day.jpg",
-    evening: "/backgrounds/villa-terrace-sunset.jpg",
-    night: "/backgrounds/villa-terrace-stars.jpg"
+    day: "/backgrounds/resort-terrace-day.jpg",
+    evening: "/backgrounds/resort-terrace-sunset.jpg",
+    night: "/backgrounds/resort-terrace-stars.jpg"
   },
 
   // ...

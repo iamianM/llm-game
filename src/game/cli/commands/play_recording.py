@@ -9,9 +9,9 @@ from typing import Any
 
 from src.game.engine.actions import PlayerAction
 from src.game.engine.bookmarks import bookmarks_for_turn
-from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.turn import TurnResult
 from src.game.state.models import GameState
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -25,7 +25,7 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "turn": state.turn_index,
         "day": state.day,
         "phase": state.phase.value,
-        "villa": state.villa.value,
+        "resort": state.resort.value,
         "location": state.location_id.value,
         "player_public_perception": state.player.public_perception,
         "phase_clock": state.phase_clock.model_dump(mode="json"),
@@ -33,10 +33,10 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "auto_advance": turn.auto_advance,
         "arrival_rolls": [roll.model_dump(mode="json") for roll in turn.arrival_rolls],
         "visible_state": _visible_state(state),
-        "villa_snapshot": _villa_snapshot(state),
+        "resort_snapshot": _resort_snapshot(state),
         "couple_strength": _player_couple_strength(state),
-        "hideaway": state.hideaway.model_dump(mode="json"),
-        "casa_amor": None if state.casa_amor_state is None else state.casa_amor_state.model_dump(mode="json"),
+        "private_suite": state.private_suite.model_dump(mode="json"),
+        "flush_of_hearts": None if state.flush_of_hearts_state is None else state.flush_of_hearts_state.model_dump(mode="json"),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
@@ -51,9 +51,9 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
         "daily_recaps": [recap.model_dump(mode="json") for recap in state.daily_recaps],
         "revealed_preferences": {
-            islander.id: revealed
-            for islander in state.islanders
-            if (revealed := revealed_preferences(islander))
+            heartbreaker.id: revealed
+            for heartbreaker in state.heartbreakers
+            if (revealed := revealed_preferences(heartbreaker))
         },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "agent_traces": [trace.model_dump(mode="json") for trace in turn.agent_traces],
@@ -103,14 +103,14 @@ def trace_mode(args: argparse.Namespace) -> TraceMode:
 
 def _visible_state(state: GameState) -> str:
     parts = []
-    for islander in state.islanders:
-        if islander.location_id == state.location_id and not islander.eliminated:
-            rel = islander.relationship
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.location_id == state.location_id and not heartbreaker.eliminated:
+            rel = heartbreaker.relationship
             parts.append(
-                f"{islander.name}: affection {rel.affection}, chemistry {rel.chemistry}, "
+                f"{heartbreaker.name}: affection {rel.affection}, chemistry {rel.chemistry}, "
                 f"trust {rel.trust}, friendship {rel.friendship}"
             )
-    return "; ".join(parts) if parts else "No visible islanders."
+    return "; ".join(parts) if parts else "No visible heartbreakers."
 
 
 def _player_couple_strength(state: GameState) -> int | None:
@@ -118,14 +118,14 @@ def _player_couple_strength(state: GameState) -> int | None:
     return None if couple is None else couple_strength(state, couple)
 
 
-def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
+def _resort_snapshot(state: GameState) -> dict[str, list[str]]:
     snapshot: dict[str, list[str]] = {}
-    for location in locations_for_villa(state.villa):
+    for location in locations_for_resort(state.resort):
         occupants = ["you"] if location is state.location_id else []
         occupants.extend(
-            islander.name
-            for islander in state.islanders
-            if islander.location_id is location and not islander.eliminated
+            heartbreaker.name
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.location_id is location and not heartbreaker.eliminated
         )
         snapshot[location.value] = occupants
     return snapshot

@@ -16,11 +16,11 @@ def turns_with_category(records: list[dict[str, Any]], category: str) -> list[in
     return [turn(record) for record in records if record_category(record) == category]
 
 
-def turns_with_pull(records: list[dict[str, Any]], *, success: bool | None = None) -> list[int]:
+def turns_with_private_chat_attempt(records: list[dict[str, Any]], *, success: bool | None = None) -> list[int]:
     turns: list[int] = []
     for record in records:
-        pull = as_dict(record.get("mechanical_result")).get("pull_attempt")
-        if isinstance(pull, dict) and (success is None or pull.get("success") is success):
+        private_chat = as_dict(record.get("mechanical_result")).get("private_chat_attempt")
+        if isinstance(private_chat, dict) and (success is None or private_chat.get("success") is success):
             turns.append(turn(record))
     return turns
 
@@ -28,7 +28,7 @@ def turns_with_pull(records: list[dict[str, Any]], *, success: bool | None = Non
 def turns_with_interruption(records: list[dict[str, Any]]) -> list[int]:
     turns: list[int] = []
     for record in records:
-        update = as_dict(as_dict(record.get("agent_commits")).get("villa_update"))
+        update = as_dict(as_dict(record.get("agent_commits")).get("resort_update"))
         interruptions = update.get("npc_interruptions")
         if isinstance(interruptions, list) and interruptions:
             turns.append(turn(record))
@@ -101,8 +101,8 @@ def turns_with_couple_strength(records: list[dict[str, Any]]) -> list[int]:
     return [turn(record) for record in records if isinstance(record.get("couple_strength"), int)]
 
 
-def turns_with_hideaway(records: list[dict[str, Any]]) -> list[int]:
-    return [turn(record) for record in records if as_dict(record.get("action")).get("kind") == "hideaway"]
+def turns_with_private_suite(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if as_dict(record.get("action")).get("kind") == "private_suite"]
 
 
 def turns_with_steal_attempt(records: list[dict[str, Any]]) -> list[int]:
@@ -113,27 +113,27 @@ def turns_with_steal_attempt(records: list[dict[str, Any]]) -> list[int]:
     ]
 
 
-def turns_with_casa_amor(records: list[dict[str, Any]]) -> list[int]:
-    return [turn(record) for record in records if record.get("villa") == "casa_amor"]
+def turns_with_flush_of_hearts(records: list[dict[str, Any]]) -> list[int]:
+    return [turn(record) for record in records if record.get("resort") == "flush_of_hearts"]
 
 
-def turns_with_casa_return(records: list[dict[str, Any]]) -> list[int]:
+def turns_with_flush_return(records: list[dict[str, Any]]) -> list[int]:
     return [
         turn(record)
         for record in records
         if any(
-            as_dict(event).get("kind") == "casa_amor_return_reveal"
+            as_dict(event).get("kind") == "flush_of_hearts_return_reveal"
             for event in as_list(record.get("ceremony_events"))
         )
     ]
 
 
-def turns_with_casa_swing(records: list[dict[str, Any]]) -> list[int]:
+def turns_with_flush_swing(records: list[dict[str, Any]]) -> list[int]:
     return [
         turn(record)
         for record in records
         if any(
-            as_dict(event).get("kind") in {"casa_amor_decision", "casa_amor_return_reveal"}
+            as_dict(event).get("kind") in {"flush_of_hearts_decision", "flush_of_hearts_return_reveal"}
             for event in as_list(record.get("ceremony_events"))
         )
     ]
@@ -158,7 +158,7 @@ def turns_with_arrival_rolls(records: list[dict[str, Any]]) -> list[int]:
 def turns_with_npc_initiated_exit(records: list[dict[str, Any]]) -> list[int]:
     turns: list[int] = []
     for record in records:
-        update = as_dict(as_dict(record.get("agent_commits")).get("villa_update"))
+        update = as_dict(as_dict(record.get("agent_commits")).get("resort_update"))
         if as_list(update.get("npc_summoned_elsewhere")):
             turns.append(turn(record))
             continue
@@ -207,8 +207,8 @@ def revealed_preference_count(final_state: dict[str, Any] | None) -> int:
     if final_state is None:
         return 0
     count = 0
-    for islander in as_list(final_state.get("islanders")):
-        familiarity = as_dict(islander).get("familiarity_with_player")
+    for heartbreaker in as_list(final_state.get("heartbreakers")):
+        familiarity = as_dict(heartbreaker).get("familiarity_with_player")
         if isinstance(familiarity, int):
             count += int(familiarity >= 25) + int(familiarity >= 50)
             count += int(familiarity >= 75) + int(familiarity >= 100)

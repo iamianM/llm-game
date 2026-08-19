@@ -101,8 +101,8 @@ available_gossip = get_available_gossip(speaker, player)
 
 **✅ Event Triggering**
 ```python
-if should_trigger_recoupling(villa_state):
-    schedule_event(state, event_type="recoupling", day=day, phase=phase)
+if should_trigger_pairing_ceremony(resort_state):
+    schedule_event(state, event_type="pairing_ceremony", day=day, phase=phase)
 # Code decides when events happen.
 ```
 
@@ -114,9 +114,9 @@ compatibility = calculate_compatibility(player, target)
 
 ### LLM Handles (Narrative Systems)
 
-**✅ Islander Personality Generation**
+**✅ Heartbreaker Personality Generation**
 ```python
-islander = await generate_islander(archetype)
+heartbreaker = await generate_heartbreaker(archetype)
 # LLM creates name, backstory, personality, and appearance.
 ```
 
@@ -197,23 +197,23 @@ Long-term, we do not use one LLM for everything. We use **specialized AI calls**
 
 **When it runs:** Future layer, likely once per day or at phase boundaries after deterministic scheduling works.
 
-**Input shape:** A compact, code-derived villa summary: day, phase, couple stability, drama level, scheduled constraints, recent events, and valid event candidates.
+**Input shape:** A compact, code-derived resort summary: day, phase, couple stability, drama level, scheduled constraints, recent events, and valid event candidates.
 
-**Output shape:** A typed event suggestion that code validates against allowed events. The Producer may recommend a bombshell, recoupling, date, challenge, or twist, but Python still schedules the event and applies all mechanics.
+**Output shape:** A typed event suggestion that code validates against allowed events. The Producer may recommend a Heart Throb, Pairing Ceremony, date, challenge, or twist, but Python still schedules the event and applies all mechanics.
 
 **POC status:** Deferred. Initial event selection is deterministic Python.
 
 ---
 
-### 2. Islander Generator AI
+### 2. Heartbreaker Generator AI
 
-**Job:** Create complete Islander personalities
+**Job:** Create complete Heartbreaker personalities
 
-**When it runs:** When new Islander enters villa (start + bombshells)
+**When it runs:** When new Heartbreaker enters Sunset Bay (start + Heart Throbs)
 
-**Input shape:** Archetype id, gender/presentation constraints, existing cast summary, and any production role such as original Islander or bombshell.
+**Input shape:** Archetype id, gender/presentation constraints, existing cast summary, and any production role such as original Heartbreaker or Heart Throb.
 
-**Output shape:** A Pydantic-validated Islander profile: identity, appearance, Big 5 traits, attachment style, preferences, backstory, secret, entrance line, and strategy.
+**Output shape:** A Pydantic-validated Heartbreaker profile: identity, appearance, Big 5 traits, attachment style, preferences, backstory, secret, entrance line, and strategy.
 
 **POC status:** Use deterministic seed characters or tiny content stubs first. LLM generation can be added after state models and replay are stable.
 
@@ -229,7 +229,7 @@ Long-term, we do not use one LLM for everything. We use **specialized AI calls**
 
 **v0 name:** Narrator agent.
 
-**Input shape:** `MechanicalResult`, visible scene context, target Islander personality summary, recent visible history, and relevant content snippets.
+**Input shape:** `MechanicalResult`, visible scene context, target Heartbreaker personality summary, recent visible history, and relevant content snippets.
 
 **Output shape:** A validated narration commit. It may include prose, dialogue, tone tags, and display hints, but it must not invent mechanics or mutate state.
 
@@ -338,7 +338,7 @@ Long-term, we do not use one LLM for everything. We use **specialized AI calls**
 
 Layered on top of Big 5 for relationship behavior:
 
-**Secure (40% of Islanders)**
+**Secure (40% of Heartbreakers)**
 - Comfortable with intimacy and independence
 - Trusts easily, communicates well
 - Balanced expectations
@@ -348,7 +348,7 @@ Layered on top of Big 5 for relationship behavior:
 - Not overly jealous
 - Appreciates reassurance but doesn't need constant validation
 
-**Anxious (30% of Islanders)**
+**Anxious (30% of Heartbreakers)**
 - Craves closeness, fears abandonment
 - Needs frequent reassurance
 - Worries about partner's feelings
@@ -359,7 +359,7 @@ Layered on top of Big 5 for relationship behavior:
 - Trust drops faster when neglected
 - Responds very positively to attention
 
-**Avoidant (20% of Islanders)**
+**Avoidant (20% of Heartbreakers)**
 - Values independence, uncomfortable with too much intimacy
 - Pulls away when things get serious
 - Struggles with vulnerability
@@ -370,7 +370,7 @@ Layered on top of Big 5 for relationship behavior:
 - May sabotage relationships when they get too close
 - Needs space
 
-**Fearful (10% of Islanders)**
+**Fearful (10% of Heartbreakers)**
 - Wants closeness but fears getting hurt
 - Push-pull behavior
 - Trust issues
@@ -383,7 +383,7 @@ Layered on top of Big 5 for relationship behavior:
 
 ### Type on Paper (Preferences)
 
-Each Islander has discoverable preferences:
+Each Heartbreaker has discoverable preferences:
 
 ```python
 preferences = Preferences(
@@ -397,7 +397,7 @@ preferences = Preferences(
 **How preferences work:**
 
 ```python
-def check_preference_match(player: PlayerState, target: IslanderState) -> int:
+def check_preference_match(player: PlayerState, target: HeartbreakerState) -> int:
     match_bonus = 0
 
     if player_matches_physical_type(player, target.preferences.physical_type):
@@ -460,7 +460,7 @@ BAD:
 **4. Include recent context, not full history**
 ```
 GOOD:
-"Recent context: Kissed 2 days ago, player been loyal, new bombshell arrived"
+"Recent context: Kissed 2 days ago, player been loyal, new Heart Throb arrived"
 
 BAD:
 [Sends entire conversation history - 2000 tokens]
@@ -479,7 +479,7 @@ BAD:
 
 **Dialogue Generation Template:**
 ```
-You are {CHARACTER_NAME}, a {AGE}-year-old {OCCUPATION} on Love Island.
+You are {CHARACTER_NAME}, a {AGE}-year-old {OCCUPATION} on Paradise Hearts.
 
 PERSONALITY (Big 5):
 - Openness: {OPENNESS}/10
@@ -518,9 +518,9 @@ Requirements:
 - No narration tags
 ```
 
-**Islander Generation Template:**
+**Heartbreaker Generation Template:**
 ```
-Generate a Love Island contestant.
+Generate a Paradise Hearts contestant.
 
 REQUIREMENTS:
 - Archetype: {ARCHETYPE}
@@ -537,7 +537,7 @@ Ensure:
 - Preferences are specific but achievable
 - Secret creates potential drama
 - Personality matches archetype
-- Unique from existing Islanders: {EXISTING_NAMES}
+- Unique from existing Heartbreakers: {EXISTING_NAMES}
 ```
 
 ---
@@ -546,8 +546,8 @@ Ensure:
 
 ### Per-Run Breakdown
 
-**Islander Generation:**
-- 10 Islanders × $0.005 = **$0.05**
+**Heartbreaker Generation:**
+- 10 Heartbreakers × $0.005 = **$0.05**
 
 **Dialogue Generation:**
 - 50 interactions × $0.0024 = **$0.12**
@@ -586,11 +586,11 @@ Ensure:
 
 **1. Prompt caching**
 - Use provider/model prompt caching where available
-- Cache Islander personalities (reused every conversation)
+- Cache Heartbreaker personalities (reused every conversation)
 - Save ~30% on dialogue calls
 
 **2. Batch operations**
-- Generate all Islanders at run start (one call)
+- Generate all Heartbreakers at run start (one call)
 - Cheaper than individual calls
 
 **3. Reduce context size**
@@ -614,7 +614,7 @@ Ensure:
 - Player expects immediate response
 - Anything longer feels broken
 
-**Islander generation:** <5 seconds
+**Heartbreaker generation:** <5 seconds
 - Happens at run start, player expects brief load
 - Can show loading screen
 
@@ -633,9 +633,9 @@ async for chunk in narrator.stream(mechanical_result, visible_context):
 
 **2. Parallel generation**
 ```python
-# Generate all starting Islanders concurrently when LLM generation is enabled.
-islanders = await asyncio.gather(
-    *(generate_islander(archetype) for archetype in archetypes)
+# Generate all starting Heartbreakers concurrently when LLM generation is enabled.
+heartbreakers = await asyncio.gather(
+    *(generate_heartbreaker(archetype) for archetype in archetypes)
 )
 # 5 seconds total instead of 5 x 5 = 25 seconds.
 ```

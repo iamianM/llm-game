@@ -12,7 +12,7 @@ from __future__ import annotations
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.event_models import (
     Challenge,
     MinigameChoice,
@@ -33,31 +33,31 @@ def _partner_id(state: GameState) -> str | None:
 
 
 def _player_chemistry_with(state: GameState, npc_id: str) -> int:
-    target = find_islander(state, npc_id)
+    target = find_heartbreaker(state, npc_id)
     return target.relationship.chemistry
 
 
 def _matrix_entries(state: GameState) -> list[tuple[str, str, int, int]]:
     """Build ordered (performer, observer, bpm, chemistry) tuples.
 
-    Includes player <-> islander pairs in both directions and islander <->
-    islander pairs (deterministic ordering by id). For the player side the
-    chemistry value comes from the islander relationship store (the same
+    Includes player <-> heartbreaker pairs in both directions and heartbreaker <->
+    heartbreaker pairs (deterministic ordering by id). For the player side the
+    chemistry value comes from the heartbreaker relationship store (the same
     value used elsewhere in the engine).
     """
     entries: list[tuple[str, str, int, int]] = []
-    islanders = sorted([i for i in state.islanders if not i.eliminated], key=lambda i: i.id)
-    for islander in islanders:
-        chem = islander.relationship.chemistry
+    heartbreakers = sorted([i for i in state.heartbreakers if not i.eliminated], key=lambda i: i.id)
+    for heartbreaker in heartbreakers:
+        chem = heartbreaker.relationship.chemistry
         bpm = 60 + int(chem * 0.4)
-        # player -> islander
-        entries.append(("player", islander.id, bpm, chem))
-        # islander -> player
-        entries.append((islander.id, "player", bpm, chem))
+        # player -> heartbreaker
+        entries.append(("player", heartbreaker.id, bpm, chem))
+        # heartbreaker -> player
+        entries.append((heartbreaker.id, "player", bpm, chem))
     # NPC pairs: no symmetric chemistry store today (it's player-anchored),
     # so derive an estimate from familiarity + couple status for visual matrix.
-    for a in islanders:
-        for b in islanders:
+    for a in heartbreakers:
+        for b in heartbreakers:
             if a.id >= b.id:
                 continue
             estimate = (a.familiarity_with_player + b.familiarity_with_player) // 4
@@ -70,12 +70,12 @@ def _surprise_target_id(state: GameState) -> tuple[str | None, int]:
     partner = _partner_id(state)
     best_id: str | None = None
     best_chem = -1
-    for islander in sorted(state.islanders, key=lambda i: i.id):
-        if islander.eliminated or islander.id == partner:
+    for heartbreaker in sorted(state.heartbreakers, key=lambda i: i.id):
+        if heartbreaker.eliminated or heartbreaker.id == partner:
             continue
-        if islander.relationship.chemistry > best_chem:
-            best_chem = islander.relationship.chemistry
-            best_id = islander.id
+        if heartbreaker.relationship.chemistry > best_chem:
+            best_chem = heartbreaker.relationship.chemistry
+            best_id = heartbreaker.id
     return best_id, best_chem
 
 
@@ -87,10 +87,10 @@ def _partner_surprise(state: GameState) -> tuple[str | None, int]:
     partner = _partner_id(state)
     if partner is None:
         return None, 0
-    # Rough proxy: pick the non-player islander whose familiarity with the
+    # Rough proxy: pick the non-player heartbreaker whose familiarity with the
     # partner is highest (deterministic).
     candidates = [
-        i for i in state.islanders
+        i for i in state.heartbreakers
         if not i.eliminated and i.id != "player" and i.id != partner
     ]
     if not candidates:
@@ -98,15 +98,15 @@ def _partner_surprise(state: GameState) -> tuple[str | None, int]:
     candidates.sort(key=lambda i: (-i.familiarity_with_player, i.id))
     pick = candidates[0]
     # Score the proxy as a fraction of partner familiarity with player.
-    partner_islander = find_islander(state, partner)
-    proxy = min(100, pick.familiarity_with_player + partner_islander.familiarity_with_player // 4)
+    partner_heartbreaker = find_heartbreaker(state, partner)
+    proxy = min(100, pick.familiarity_with_player + partner_heartbreaker.familiarity_with_player // 4)
     return pick.id, proxy
 
 
 def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[MinigameRound]:
     """Build a 3-round 'read the room' Pulse Race.
 
-    Pulse Race is the show's chemistry-reveal moment: every islander wears a
+    Pulse Race is the show's chemistry-reveal moment: every heartbreaker wears a
     monitor and reactions are projected publicly. We turn that into a
     playable beat — the player tries to *guess* who pinged hardest at whom.
     The "answer" for every round is the engine's actual highest-chemistry
@@ -123,14 +123,14 @@ def build_rounds(state: GameState, partner_id: str, rng: SeededRng) -> list[Mini
     matrix = _matrix_entries(state)
     reveals = _matrix_reveals(matrix)
     cast_ids = [
-        islander.id
-        for islander in sorted(state.islanders, key=lambda i: i.id)
-        if not islander.eliminated and islander.id != "player"
+        heartbreaker.id
+        for heartbreaker in sorted(state.heartbreakers, key=lambda i: i.id)
+        if not heartbreaker.eliminated and heartbreaker.id != "player"
     ]
     rounds: list[MinigameRound] = []
     partner_name = (
-        find_islander(state, partner_id).name
-        if partner_id and partner_id != "player" and any(i.id == partner_id for i in state.islanders)
+        find_heartbreaker(state, partner_id).name
+        if partner_id and partner_id != "player" and any(i.id == partner_id for i in state.heartbreakers)
         else None
     )
 
@@ -212,11 +212,11 @@ def _matrix_reveals(matrix: list[tuple[str, str, int, int]]) -> list[MinigameRev
 
 
 def _observers_for_player(state: GameState, cast_ids: list[str]) -> list[tuple[str, int]]:
-    """Return (islander_id, chemistry) sorted by who's most into the player."""
+    """Return (heartbreaker_id, chemistry) sorted by who's most into the player."""
     ranked: list[tuple[str, int]] = []
-    for islander_id in cast_ids:
-        target = find_islander(state, islander_id)
-        ranked.append((islander_id, target.relationship.chemistry))
+    for heartbreaker_id in cast_ids:
+        target = find_heartbreaker(state, heartbreaker_id)
+        ranked.append((heartbreaker_id, target.relationship.chemistry))
     ranked.sort(key=lambda pair: (-pair[1], pair[0]))
     return ranked
 
@@ -224,18 +224,18 @@ def _observers_for_player(state: GameState, cast_ids: list[str]) -> list[tuple[s
 def _observers_for_npc(state: GameState, npc_id: str, cast_ids: list[str]) -> list[tuple[str, int]]:
     """NPC-to-NPC chemistry isn't tracked directly; approximate from familiarity.
 
-    Returns (islander_id, score) sorted highest score first. The Pulse Race
+    Returns (heartbreaker_id, score) sorted highest score first. The Pulse Race
     spec accepts this estimate because Day 2 has no NPC-NPC chemistry
     interactions to draw from.
     """
-    npc = find_islander(state, npc_id)
+    npc = find_heartbreaker(state, npc_id)
     ranked: list[tuple[str, int]] = []
-    for islander_id in cast_ids:
-        if islander_id == npc_id:
+    for heartbreaker_id in cast_ids:
+        if heartbreaker_id == npc_id:
             continue
-        other = find_islander(state, islander_id)
+        other = find_heartbreaker(state, heartbreaker_id)
         score = (npc.familiarity_with_player + other.familiarity_with_player) // 4
-        ranked.append((islander_id, score))
+        ranked.append((heartbreaker_id, score))
     ranked.sort(key=lambda pair: (-pair[1], pair[0]))
     return ranked
 
@@ -276,23 +276,23 @@ def _build_guess_round(
         )
     correct_id, correct_score = ranked[0]
     pool: list[str] = []
-    for islander_id, _score in ranked[1:]:
-        if islander_id not in pool and islander_id != correct_id:
-            pool.append(islander_id)
+    for heartbreaker_id, _score in ranked[1:]:
+        if heartbreaker_id not in pool and heartbreaker_id != correct_id:
+            pool.append(heartbreaker_id)
         if len(pool) >= 3:
             break
     if len(pool) < 3:
-        for islander_id in decoys:
-            if islander_id == correct_id or islander_id in pool:
+        for heartbreaker_id in decoys:
+            if heartbreaker_id == correct_id or heartbreaker_id in pool:
                 continue
-            pool.append(islander_id)
+            pool.append(heartbreaker_id)
             if len(pool) >= 3:
                 break
     pool = pool[:3]
     choices: list[MinigameChoice] = [
         MinigameChoice(
             id="correct",
-            label=find_islander(state, correct_id).name,
+            label=find_heartbreaker(state, correct_id).name,
             fact_value=correct_id,
             is_correct=True,
             distractor_source="trait_card",
@@ -302,7 +302,7 @@ def _build_guess_round(
         choices.append(
             MinigameChoice(
                 id=f"distractor_{d_index}",
-                label=find_islander(state, distractor_id).name,
+                label=find_heartbreaker(state, distractor_id).name,
                 fact_value=distractor_id,
                 is_correct=False,
                 distractor_source="trait_card",
@@ -385,7 +385,7 @@ def _guess_reaction_deltas(state: GameState, challenge: Challenge) -> dict[str, 
     """Apply small relationship deltas tied to each round's guess.
 
     Right guesses about the player's own pulse (round 3) reward the picked
-    islander with chemistry +1 — the player publicly clocked the spike.
+    heartbreaker with chemistry +1 — the player publicly clocked the spike.
     Right guesses about the partner (round 2) earn the partner trust +1.
     Right guesses about who's into the player (round 1) earn audience
     favour through the classification path; no per-NPC delta. Wrong
@@ -401,12 +401,12 @@ def _guess_reaction_deltas(state: GameState, challenge: Challenge) -> dict[str, 
         if "player_spiked_for" in prompt:
             target_id = chosen.fact_value or ""
             if target_id and target_id != "player":
-                target = find_islander(state, target_id)
+                target = find_heartbreaker(state, target_id)
                 delta = RelationshipDelta(chemistry=1)
                 apply_relationship_delta(target, delta)
                 deltas[target_id] = delta
         elif "who_spiked_for_partner" in prompt and partner:
-            target = find_islander(state, partner)
+            target = find_heartbreaker(state, partner)
             delta = RelationshipDelta(trust=1)
             apply_relationship_delta(target, delta)
             deltas[partner] = delta

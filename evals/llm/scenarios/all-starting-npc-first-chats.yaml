@@ -1,8 +1,8 @@
 id: all-starting-npc-first-chats
 title: First Chat With Every Starting NPC
-goal: Prove Islander Voice, Contextual Options, and Curator give every starting Heartbreaker a distinct, voice-true first conversation that earns the player wanting to come back.
+goal: Prove Heartbreaker Voice, Contextual Options, and Curator give every starting Heartbreaker a distinct, voice-true first conversation that earns the player wanting to come back.
 seed: 303
-live_villa_life: false
+live_resort_life: false
 initial_phase_budget_minutes: 240
 initial_relationships:
   chloe:
@@ -38,7 +38,7 @@ judge_context:
   - This is a launch-cast breadth scenario; the bar is "would the player want to keep talking to this Heartbreaker?", not finale-level depth.
   - Each chat should land a specific opening beat for that NPC, not the same warm greeting refitted with a different name.
   - Endings should leave a clean memory trail; the engine, not the LLM, owns relationship deltas.
-  - Live villa autonomy is disabled here so every target stays put; Villa Orchestrator + Background Dialogue are covered by separate scenarios.
+  - Live resort autonomy is disabled here so every target stays put; Resort Orchestrator + Background Dialogue are covered by separate scenarios.
 turns:
   - id: chat-chloe
     arrange_player_location: pool
@@ -112,7 +112,7 @@ turns:
       grin he wants to feel chosen. The exchange should land a quick laugh
       and then a tiny crack of honesty he'd never lead with. Imagine:
       "Mate, I've been on form, obviously. ...Okay, fine, I keep waiting
-      for someone to actually pull me for a chat. You're the first."
+      for someone to actually ask me for a private chat. You're the first."
     checks: *conversation_checks
     judge_checks:
       - id: jordan_voice_fit
@@ -376,7 +376,7 @@ turns:
           a generic warm-friend voice.
       - id: intent_specific
         criteria: >
-          The exchange responds to "how are you reading the villa" with a
+          The exchange responds to "how are you reading the resort" with a
           specific strategic read, not a generic chat or a flirt.
       - id: followups_playable
         criteria: >

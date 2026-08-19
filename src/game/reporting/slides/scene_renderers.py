@@ -41,7 +41,7 @@ SCENE_KIND_LABEL = {
     "gather": "Gather",
     "background": "Background",
     "movement": "Movement",
-    "ambient": "Villa time",
+    "ambient": "Sunset Bay time",
     "day_boundary": "Day end",
     "turn": "Moment",
 }
@@ -112,11 +112,11 @@ def _scene_title(scene: Scene) -> str:
     if scene.kind == "gather":
         return "Everyone gathers"
     if scene.kind == "background":
-        return "Around the villa"
+        return "Around Sunset Bay"
     if scene.kind == "movement":
-        return "Villa shifts"
+        return "Sunset Bay shifts"
     if scene.kind == "ambient":
-        return "Villa time"
+        return "Sunset Bay time"
     if scene.kind == "day_boundary":
         return f"Day {first.get('day', '?')} wraps"
     return f"Turn {first.get('turn', '?')}"

@@ -50,11 +50,11 @@ def state_hash_payload(state: GameState) -> dict[str, object]:
     player = payload.get("player")
     if isinstance(player, dict):
         _strip_memory_content(player.get("memories"))
-    islanders = payload.get("islanders")
-    if isinstance(islanders, list):
-        for islander in islanders:
-            if isinstance(islander, dict):
-                _strip_memory_content(islander.get("memories"))
+    heartbreakers = payload.get("heartbreakers")
+    if isinstance(heartbreakers, list):
+        for heartbreaker in heartbreakers:
+            if isinstance(heartbreaker, dict):
+                _strip_memory_content(heartbreaker.get("memories"))
     npc_conversations = payload.get("npc_conversations")
     if isinstance(npc_conversations, list):
         for conversation in npc_conversations:

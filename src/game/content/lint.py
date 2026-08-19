@@ -14,7 +14,7 @@ from src.game.content.loader import load_content
 from src.game.engine.challenges import DAILY_CHALLENGE_SCHEDULE
 from src.game.engine.intents import load_intents
 from src.game.engine.producer_events import PRODUCER_TEXT_SCHEDULE
-from src.game.state.cast import starting_islanders
+from src.game.state.cast import starting_heartbreakers
 from src.game.state.models import Location
 
 
@@ -41,35 +41,35 @@ def run_lint() -> None:
     if missing_texts:
         raise ValueError(f"missing producer text content: {sorted(missing_texts)}")
     intents = load_intents()
-    valid_stats = {"charm", "banter", "eq", "graft", "loyalty"}
+    valid_stats = {"charm", "banter", "eq", "spark", "loyalty"}
     bad_stats = sorted({intent.stat_used for intent in intents} - valid_stats)
     if bad_stats:
         raise ValueError(f"invalid intent stat references: {bad_stats}")
-    if len(index.casa_amor_cast) != 6:
-        raise ValueError("Casa Amor cast must contain exactly 6 islanders")
-    genders = [member.gender for member in index.casa_amor_cast.values()]
+    if len(index.flush_of_hearts_cast) != 6:
+        raise ValueError("Flush of Hearts cast must contain exactly 6 heartbreakers")
+    genders = [member.gender for member in index.flush_of_hearts_cast.values()]
     if genders.count("m") != 3 or genders.count("f") != 3:
-        raise ValueError("Casa Amor cast must contain 3 men and 3 women")
-    starting_names = {islander.name for islander in starting_islanders()}
-    casa_names = [member.name for member in index.casa_amor_cast.values()]
-    duplicate_names = sorted(starting_names & set(casa_names))
+        raise ValueError("Flush of Hearts cast must contain 3 men and 3 women")
+    starting_names = {heartbreaker.name for heartbreaker in starting_heartbreakers()}
+    flush_names = [member.name for member in index.flush_of_hearts_cast.values()]
+    duplicate_names = sorted(starting_names & set(flush_names))
     if duplicate_names:
-        raise ValueError(f"Casa Amor display names duplicate the starting cast: {duplicate_names}")
-    repeated_casa_names = sorted({name for name in casa_names if casa_names.count(name) > 1})
-    if repeated_casa_names:
-        raise ValueError(f"Casa Amor display names must be unique: {repeated_casa_names}")
+        raise ValueError(f"Flush of Hearts display names duplicate the starting cast: {duplicate_names}")
+    repeated_flush_names = sorted({name for name in flush_names if flush_names.count(name) > 1})
+    if repeated_flush_names:
+        raise ValueError(f"Flush of Hearts display names must be unique: {repeated_flush_names}")
     expected_backstories = {
-        islander.id for islander in starting_islanders()
-    } | {"aisha", *set(index.casa_amor_cast)}
+        heartbreaker.id for heartbreaker in starting_heartbreakers()
+    } | {"aisha", *set(index.flush_of_hearts_cast)}
     missing_backstories = expected_backstories - set(index.backstories)
     if missing_backstories:
-        raise ValueError(f"missing islander backstories: {sorted(missing_backstories)}")
+        raise ValueError(f"missing heartbreaker backstories: {sorted(missing_backstories)}")
     print(
         "content lint: "
         f"{len(index.archetypes)} archetype(s), {len(index.locations)} location(s), "
         f"{len(index.player_archetypes)} player archetype(s), "
         f"{len(index.challenges)} challenge(s), {len(index.producer_texts)} producer text(s), "
-        f"{len(index.casa_amor_cast)} casa islander(s), "
+        f"{len(index.flush_of_hearts_cast)} flush heartbreaker(s), "
         f"{len(index.backstories)} backstory item(s), "
         f"{len(intents)} balance intent(s)"
     )

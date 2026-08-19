@@ -60,8 +60,8 @@ class ProducerTextContent(BaseModel):
     body: str
 
 
-class CasaAmorCastContent(BaseModel):
-    """Authored Casa Amor cast member content."""
+class FlushOfHeartsCastContent(BaseModel):
+    """Authored Flush of Hearts cast member content."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -82,5 +82,5 @@ class ContentIndex(BaseModel):
     player_archetypes: dict[str, PlayerArchetypeContent]
     challenges: dict[str, ChallengeContent]
     producer_texts: dict[str, ProducerTextContent]
-    casa_amor_cast: dict[str, CasaAmorCastContent]
+    flush_of_hearts_cast: dict[str, FlushOfHeartsCastContent]
     backstories: dict[str, str]

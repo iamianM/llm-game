@@ -17,7 +17,7 @@ def test_daily_recap_appends_once_per_completed_day() -> None:
         turn=3,
         weight=8,
         tags=["spark"],
-        content="Chloe remembered a villa-defining moment.",
+        content="Chloe remembered a resort-defining moment.",
     )
     add_memory(state, memory)
     state.day = 2
@@ -62,7 +62,7 @@ def test_daily_recap_rewrites_the_player_label_to_second_person() -> None:
     assert "the player" not in surfaced
     assert surfaced == "I appreciated you checking in, and your calm steadied me."
     # The underlying memory keeps its name-agnostic phrasing.
-    assert "the player" in state.islanders[0].memories[-1].content
+    assert "the player" in state.heartbreakers[0].memories[-1].content
 
 
 def test_daily_recap_diversifies_across_storylines() -> None:
@@ -120,13 +120,13 @@ def test_daily_recap_collapses_identical_witnessed_content() -> None:
     # The recap must surface it once, not fill every slot. (Uses a non-ceremony
     # gossip tag so the dedupe — not the ceremony filter — is what collapses it.)
     state = new_game(1)
-    shared = "The villa buzzed about a dramatic exit."
-    for holder in ["player", *[islander.id for islander in state.islanders[:5]]]:
+    shared = "Sunset Bay buzzed about a dramatic exit."
+    for holder in ["player", *[heartbreaker.id for heartbreaker in state.heartbreakers[:5]]]:
         add_memory(
             state,
             create_memory(
                 holder_id=holder,
-                subject_id="villa",
+                subject_id="resort",
                 source="witnessed",
                 day=1,
                 turn=2,
@@ -145,23 +145,23 @@ def test_daily_recap_collapses_identical_witnessed_content() -> None:
 
 
 def test_daily_recap_drops_every_ceremony_tagged_memory() -> None:
-    # ``remember_ceremony_events`` stamps every procedural villa announcement
-    # with the ``"ceremony"`` tag (firepit gathers, eliminations, challenges,
-    # Flush of Hearts text, recouplings). Matching that single tag must drop them
+    # ``remember_ceremony_events`` stamps every procedural resort announcement
+    # with the ``"ceremony"`` tag (flame_deck gathers, eliminations, challenges,
+    # Flush of Hearts text, pairings). Matching that single tag must drop them
     # all — including event kinds with no dedicated denylist entry — so leaked
     # cast ids ("jordan_start leaves") and stage labels never reach the player.
     state = new_game(1)
     ceremony_lines = [
         ("elimination", "Heart Out: jordan_start leaves Sunset Bay."),
-        ("casa_amor_arrival", "Flush of Hearts begins: you are sent to the second villa."),
-        ("recoupling", "The Pairing Ceremony locks in the next couples."),
+        ("flush_of_hearts_arrival", "Flush of Hearts begins: you are sent to the Flush resort."),
+        ("pairing", "The Pairing Ceremony locks in the next couples."),
     ]
     for kind, content in ceremony_lines:
         add_memory(
             state,
             create_memory(
                 holder_id="player",
-                subject_id="villa",
+                subject_id="resort",
                 source="witnessed",
                 day=1,
                 turn=2,
@@ -259,12 +259,12 @@ def test_daily_recap_rewrites_bare_player_label_to_second_person() -> None:
     assert recap.items[0].content == "You leaned in, and your smile gave it away."
 
 
-def test_daily_recap_drops_procedural_firepit_announcements() -> None:
-    # Stage directions ("called to the firepit") and producer-text events carry
+def test_daily_recap_drops_procedural_flame_deck_announcements() -> None:
+    # Stage directions ("called to the flame_deck") and producer-text events carry
     # internal labels and are things the player saw directly — not whispers.
     state = new_game(1)
     procedural = [
-        ("gather_scheduled", "Everyone is called to the firepit for a Pairing Ceremony."),
+        ("gather_scheduled", "Everyone is called to the flame_deck for a Pairing Ceremony."),
         ("producer_text", "Pairing Ceremony text: Heartbreakers, choose wisely."),
         ("challenge", "The Couples Quiz tested Banter and is still pending."),
     ]
@@ -273,7 +273,7 @@ def test_daily_recap_drops_procedural_firepit_announcements() -> None:
             state,
             create_memory(
                 holder_id="player",
-                subject_id="villa",
+                subject_id="resort",
                 source="witnessed",
                 day=1,
                 turn=2,
@@ -303,7 +303,7 @@ def test_daily_recap_drops_procedural_firepit_announcements() -> None:
     assert recap is not None
     contents = [item.content for item in recap.items]
     assert contents == ["Chloe kept glancing your way all evening."]
-    assert not any("firepit" in c or "text:" in c.lower() for c in contents)
+    assert not any("flame_deck" in c or "text:" in c.lower() for c in contents)
 
 
 def test_daily_recap_capitalizes_sentence_initial_player_label() -> None:

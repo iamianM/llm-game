@@ -158,7 +158,7 @@ p{margin:.4em 0}
 .couple-row .couple-names{flex:1;line-height:1.2}
 .couple-row .couple-strength{font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
 
-.villa-map{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.resort-map{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .map-cell{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:54px;display:flex;flex-direction:column;gap:3px}
 .map-cell.player-here{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-soft)}
 .map-cell .loc-name{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}

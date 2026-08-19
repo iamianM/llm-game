@@ -1,6 +1,6 @@
 # The Couples Quiz (Mr & Mrs)
 
-**Engine kind:** `mr_and_mrs`
+**Engine kind:** `couples_quiz`
 **Player-facing name:** The Couples Quiz
 **Scheduled day:** 3
 **Rollout step:** 2
@@ -20,8 +20,8 @@ score. Mismatches expose how well — or how little — the couple knows each
 other on TV.
 
 The Day-3 timing is intentional: it lands the night before the first
-recoupling, so a strong Couples Quiz buys the player relationship momentum
-heading into the swap, and a weak one creates a "should we even be a couple"
+Pairing Ceremony, so a strong Couples Quiz buys the player relationship momentum
+heading into the Heart Swap, and a weak one creates a "should we even be a couple"
 beat the producer will exploit.
 
 ## 2. Round shape
@@ -37,8 +37,8 @@ Six rounds, structured as alternating directions:
 
 Each round:
 
-- `target_id` is whichever islander the question is about.
-- `prompt_id` from the `mr_and_mrs` Question Bank pool.
+- `target_id` is whichever heartbreaker the question is about.
+- `prompt_id` from the `couples_quiz` Question Bank pool.
 - `choices` for player-controlled rounds; partner-controlled rounds carry a
   single `chosen_id` filled in by the engine.
 - `points = 3` per match (both partners give the same answer or both
@@ -47,7 +47,7 @@ Each round:
 ## 3. Scoring
 
 ```yaml
-mr_and_mrs:
+couples_quiz:
   rounds: 6
   per_round_points:
     both_match: 3
@@ -135,13 +135,13 @@ judge's faithfulness check.
 Same shape as Compatibility Quiz (system doc §8). Only the changes:
 
 - `src/game/engine/knowledge.py` — `partner_guess_about_player` helper.
-- `src/game/engine/challenges.py` — `score_mr_and_mrs`,
-  `apply_mr_and_mrs_result`. The scoring function handles alternating
+- `src/game/engine/challenges.py` — `score_couples_quiz`,
+  `apply_couples_quiz_result`. The scoring function handles alternating
   directions.
 - `web/components/stage/GameStage.tsx` — visual distinction between
   player-controlled and partner-controlled rounds (a small "Chloe answers"
   header on partner rounds).
-- `tests/engine/test_mr_and_mrs.py` — partner derivation, alternating
+- `tests/engine/test_couples_quiz.py` — partner derivation, alternating
   rounds, streak detection.
 
 ## 8. Acceptance
@@ -153,7 +153,7 @@ A reviewer can:
   `partner_guess_about_player`.
 - Confirm the streak detection by reading a fixture where three consecutive
   mismatches trigger the `lost_in_the_loop` reveal.
-- Open the `mr-and-mrs-narration.yaml` golden eval and confirm the narrator
+- Open the `couples-quiz-narration.yaml` golden eval and confirm the narrator
   named at least two specific mismatches.
 
 ## 9. Fun notes
@@ -161,8 +161,8 @@ A reviewer can:
 - The two-sided structure is what makes this funny. The narration should
   lean on contrast: "She thinks your love language is words. You think hers
   is touch. Neither of you is right."
-- Day 3 is right before the first recoupling. A failure here should plant
+- Day 3 is right before the first Pairing Ceremony. A failure here should plant
   a real seed of doubt — the player should leave wondering if the couple is
-  actually compatible heading into the swap.
+  actually compatible heading into the Heart Swap.
 - A `success` should feel like a public proof of compatibility that the
   producer will reference in next-day texts.

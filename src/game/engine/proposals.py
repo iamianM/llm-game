@@ -1,4 +1,4 @@
-"""Recoupling proposal mechanics."""
+"""Pairing proposal mechanics."""
 
 from __future__ import annotations
 
@@ -13,10 +13,10 @@ from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft
 from src.game.state.models import (
     Couple,
     GameState,
-    IslanderState,
+    HeartbreakerState,
     Mood,
     NPCNPCConversation,
-    PendingRecoupleProposal,
+    PendingPairProposal,
     RelationshipDelta,
     RelationshipState,
     clamp_relationship,
@@ -31,7 +31,7 @@ PROPOSAL_AFFECTION_THRESHOLD = 50
 
 
 class ProposalOutcome(BaseModel):
-    """Structured result of one recoupling proposal."""
+    """Structured result of one pairing proposal."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -45,8 +45,8 @@ class ProposalOutcome(BaseModel):
 
 
 def player_proposal_eligible(state: GameState, target_id: str) -> bool:
-    """Return whether the player can ask ``target_id`` to recouple."""
-    target = _islander(state, target_id)
+    """Return whether the player can ask ``target_id`` to pair."""
+    target = _heartbreaker(state, target_id)
     if target.eliminated or target.gender == state.player.gender or _partner_id(state, state.player.id) == target.id:
         return False
     rel = target.relationship
@@ -54,10 +54,10 @@ def player_proposal_eligible(state: GameState, target_id: str) -> bool:
 
 
 def apply_player_proposal(state: GameState, target_id: str, rng: SeededRng) -> tuple[MechanicalResult, ProposalOutcome]:
-    """Resolve a player-initiated recoupling proposal and mutate state."""
+    """Resolve a player-initiated pairing proposal and mutate state."""
     if not player_proposal_eligible(state, target_id):
-        raise ValueError(f"recoupling proposal is not available: {target_id}")
-    target = _islander(state, target_id)
+        raise ValueError(f"pairing proposal is not available: {target_id}")
+    target = _heartbreaker(state, target_id)
     chance = proposal_accept_chance(state, proposer_id=state.player.id, target_id=target.id)
     roll = rng.randint(1, 100)
     accepted = roll <= chance
@@ -79,16 +79,16 @@ def apply_player_proposal(state: GameState, target_id: str, rng: SeededRng) -> t
         target.relationship = _add_delta(target.relationship, delta)
         public_delta = _successful_player_audience_delta(state)
         reason = "they saw it as bold" if public_delta >= 0 else "they thought it looked snakey"
-        tags = ["recouple_proposal", "accepted", "steal"]
+        tags = ["pair_proposal", "accepted", "steal"]
     else:
         delta = RelationshipDelta(affection=-5, chemistry=-5, trust=-2)
         target.relationship = _add_delta(target.relationship, delta)
         if old_player_partner_id is not None:
-            old_partner = _islander(state, old_player_partner_id)
+            old_partner = _heartbreaker(state, old_player_partner_id)
             old_partner.relationship = _add_delta(old_partner.relationship, RelationshipDelta(trust=-4))
         public_delta = -4
-        reason = "they thought the graft looked desperate"
-        tags = ["recouple_proposal", "rejected", "failed_steal"]
+        reason = "they thought the spark looked desperate"
+        tags = ["pair_proposal", "rejected", "failed_steal"]
     state.player.public_perception = clamp_relationship(state.player.public_perception + public_delta)
     result = MechanicalResult(
         action=_proposal_action(target.id),
@@ -105,18 +105,18 @@ def apply_player_proposal(state: GameState, target_id: str, rng: SeededRng) -> t
 
 
 def maybe_trigger_npc_player_proposal(state: GameState, rng: SeededRng) -> ProposalOutcome | None:
-    """Create a pending NPC proposal when a drifting NPC is ready to graft."""
-    if state.pending_recouple_proposal is not None or state.active_conversation is not None:
+    """Create a pending NPC proposal when a drifting NPC is ready to spark."""
+    if state.pending_pair_proposal is not None or state.active_conversation is not None:
         return None
     candidates = [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.gender != state.player.gender
-        and _partner_id(state, state.player.id) != islander.id
-        and islander.relationship.chemistry >= PROPOSAL_CHEMISTRY_THRESHOLD
-        and islander.relationship.affection >= PROPOSAL_AFFECTION_THRESHOLD
-        and _current_strength(state, islander.id) <= 50
+        heartbreaker
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
+        and heartbreaker.gender != state.player.gender
+        and _partner_id(state, state.player.id) != heartbreaker.id
+        and heartbreaker.relationship.chemistry >= PROPOSAL_CHEMISTRY_THRESHOLD
+        and heartbreaker.relationship.affection >= PROPOSAL_AFFECTION_THRESHOLD
+        and _current_strength(state, heartbreaker.id) <= 50
     ]
     if not candidates:
         return None
@@ -125,7 +125,7 @@ def maybe_trigger_npc_player_proposal(state: GameState, rng: SeededRng) -> Propo
     chance = proposal_accept_chance(state, proposer_id=proposer.id, target_id=proposer.id)
     if rng.randint(1, 100) > max(20, min(80, chance)):
         return None
-    state.pending_recouple_proposal = PendingRecoupleProposal(
+    state.pending_pair_proposal = PendingPairProposal(
         proposer_id=proposer.id,
         chance=chance,
         audience_hint_accept=_audience_hint_for_accept(state),
@@ -143,10 +143,10 @@ def maybe_trigger_npc_player_proposal(state: GameState, rng: SeededRng) -> Propo
 
 def apply_npc_proposal_response(state: GameState, intent_id: str) -> tuple[MechanicalResult, ProposalOutcome]:
     """Resolve the player's response to a pending NPC proposal."""
-    pending = state.pending_recouple_proposal
+    pending = state.pending_pair_proposal
     if pending is None:
         raise ValueError("no NPC proposal is waiting")
-    proposer = _islander(state, pending.proposer_id)
+    proposer = _heartbreaker(state, pending.proposer_id)
     accepted = intent_id == "accept"
     old_player_partner_id = _partner_id(state, state.player.id)
     old_target_partner_id = _partner_id(state, proposer.id)
@@ -175,7 +175,7 @@ def apply_npc_proposal_response(state: GameState, intent_id: str) -> tuple[Mecha
         audience_delta = 1 if intent_id == "decline_politely" else -1
         tags = ["npc_proposal_response", intent_id]
         reason = "they respected the clear answer" if audience_delta > 0 else "they thought the rejection was harsh"
-    state.pending_recouple_proposal = None
+    state.pending_pair_proposal = None
     state.player.public_perception = clamp_relationship(state.player.public_perception + audience_delta)
     from src.game.engine.actions import ActionKind, PlayerAction
 
@@ -198,8 +198,8 @@ def maybe_form_single_npc_couple_from_conversation(
 ) -> MemoryBatch | None:
     """Let two single NPCs organically couple after a flirty background conversation."""
     first_id, second_id = conversation.participants
-    first = _islander(state, first_id)
-    second = _islander(state, second_id)
+    first = _heartbreaker(state, first_id)
+    second = _heartbreaker(state, second_id)
     if first.gender == second.gender or _partner_id(state, first.id) is not None or _partner_id(state, second.id) is not None:
         return None
     if len(conversation.exchanges) < 2 or not any("flirt" in exchange.tone.lower() for exchange in conversation.exchanges):
@@ -240,7 +240,7 @@ def maybe_form_single_npc_couple_from_conversation(
 
 def proposal_accept_chance(state: GameState, *, proposer_id: str, target_id: str) -> int:
     """Return deterministic acceptance chance for ``target_id``."""
-    target = _islander(state, target_id)
+    target = _heartbreaker(state, target_id)
     rel = target.relationship
     current = _couple_for_actor(state, target_id)
     current_strength = 0 if current is None else couple_strength(state, current)
@@ -253,11 +253,11 @@ def proposal_accept_chance(state: GameState, *, proposer_id: str, target_id: str
 def proposal_memory_batch(state: GameState, outcome: ProposalOutcome) -> MemoryBatch:
     """Create deterministic memories and gossip seeds for a proposal."""
     npc_id = outcome.proposer_id if outcome.target_id == state.player.id else outcome.target_id
-    npc = _islander(state, npc_id)
+    npc = _heartbreaker(state, npc_id)
     actor = npc.name if outcome.target_id == state.player.id else "Player"
     target_name = "player" if outcome.target_id == state.player.id else npc.name
     status = "accepted" if outcome.accepted else "rejected"
-    gist = f"{actor} proposed to recouple with {target_name}, and {target_name} {status}."
+    gist = f"{actor} proposed to pair with {target_name}, and {target_name} {status}."
     drafts = [
         MemoryDraft(
             holder_id="player",
@@ -265,7 +265,7 @@ def proposal_memory_batch(state: GameState, outcome: ProposalOutcome) -> MemoryB
             content=gist,
             source="direct",
             emotional_weight=8 if outcome.accepted else 7,
-            tags=["recouple_proposal", status],
+            tags=["pair_proposal", status],
         ),
         MemoryDraft(
             holder_id=npc.id,
@@ -273,19 +273,19 @@ def proposal_memory_batch(state: GameState, outcome: ProposalOutcome) -> MemoryB
             content=gist,
             source="direct",
             emotional_weight=8 if outcome.accepted else 7,
-            tags=["recouple_proposal", status],
+            tags=["pair_proposal", status],
         ),
     ]
-    for dumped_id in [outcome.old_player_partner_id, outcome.old_target_partner_id]:
-        if dumped_id is not None and dumped_id not in {outcome.target_id, "player"}:
+    for former_partner_id in [outcome.old_player_partner_id, outcome.old_target_partner_id]:
+        if former_partner_id is not None and former_partner_id not in {outcome.target_id, "player"}:
             drafts.append(
                 MemoryDraft(
-                    holder_id=dumped_id,
+                    holder_id=former_partner_id,
                     subject_id="player",
                     content=gist,
                     source="witnessed",
                     emotional_weight=8,
-                    tags=["recouple_proposal", "dumped"],
+                    tags=["pair_proposal", "former_partner"],
                 )
             )
     return MemoryBatch(
@@ -298,7 +298,7 @@ def proposal_memory_batch(state: GameState, outcome: ProposalOutcome) -> MemoryB
                 holder_id=npc.id,
                 gist=gist,
                 emotional_weight=8,
-                tags=["recouple_proposal", status],
+                tags=["pair_proposal", status],
             )
         ],
     )
@@ -306,16 +306,16 @@ def proposal_memory_batch(state: GameState, outcome: ProposalOutcome) -> MemoryB
 
 def _apply_successful_player_steal(
     state: GameState,
-    target: IslanderState,
+    target: HeartbreakerState,
     old_player_partner_id: str | None,
     old_target_partner_id: str | None,
 ) -> None:
     _form_proposal_couple(state, state.player.id, target.id, rebound=False)
-    for dumped_id in [old_player_partner_id, old_target_partner_id]:
-        if dumped_id is not None and dumped_id != target.id:
-            dumped = _islander(state, dumped_id)
-            dumped.mood = Mood.UPSET
-            dumped.public_perception = clamp_relationship(dumped.public_perception + 2)
+    for former_partner_id in [old_player_partner_id, old_target_partner_id]:
+        if former_partner_id is not None and former_partner_id != target.id:
+            former_partner = _heartbreaker(state, former_partner_id)
+            former_partner.mood = Mood.UPSET
+            former_partner.public_perception = clamp_relationship(former_partner.public_perception + 2)
     target.public_perception = clamp_relationship(target.public_perception - 3)
 
 
@@ -376,11 +376,11 @@ def _couple_for_actor(state: GameState, actor_id: str) -> Couple | None:
     return None
 
 
-def _islander(state: GameState, islander_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == islander_id and not islander.eliminated:
-            return islander
-    raise ValueError(f"unknown active islander: {islander_id}")
+def _heartbreaker(state: GameState, heartbreaker_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id and not heartbreaker.eliminated:
+            return heartbreaker
+    raise ValueError(f"unknown active heartbreaker: {heartbreaker_id}")
 
 
 def _add_delta(rel: RelationshipState, delta: RelationshipDelta) -> RelationshipState:
@@ -391,8 +391,8 @@ def _add_delta(rel: RelationshipState, delta: RelationshipDelta) -> Relationship
     return rel
 
 
-def _npc_persona_bias(target: IslanderState) -> int:
-    if target.archetype in {"bombshell", "joker"}:
+def _npc_persona_bias(target: HeartbreakerState) -> int:
+    if target.archetype in {"heart_throb", "joker"}:
         return 10
     if target.archetype in {"sweetheart"}:
         return -15
@@ -402,4 +402,4 @@ def _npc_persona_bias(target: IslanderState) -> int:
 def _proposal_action(target_id: str) -> PlayerAction:
     from src.game.engine.actions import ActionKind, PlayerAction
 
-    return PlayerAction(kind=ActionKind.PROPOSE_RECOUPLE, target_id=target_id)
+    return PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id=target_id)

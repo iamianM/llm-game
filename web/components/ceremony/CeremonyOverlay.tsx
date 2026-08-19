@@ -1,6 +1,6 @@
 "use client";
 
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import type { CoupleSummary } from "../../lib/types";
 import { Narration } from "./Narration";
 import { PairingList } from "./PairingList";
@@ -13,7 +13,7 @@ type Props = {
   showCouples: boolean;
   onContinue: () => void;
   playerId?: string;
-  playerLook?: IslanderLook | null;
+  playerLook?: HeartbreakerLook | null;
 };
 
 export function CeremonyOverlay({ title, eyebrow, narration, couples, showCouples, onContinue, playerId, playerLook = null }: Props) {

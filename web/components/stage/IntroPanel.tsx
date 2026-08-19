@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { AvailableAction, IslanderSummary, SessionState } from "../../lib/types";
+import type { AvailableAction, HeartbreakerSummary, SessionState } from "../../lib/types";
 import {
   INTRO_DYNAMICS,
   INTRO_RESPONSES,
@@ -9,7 +9,6 @@ import {
   introActionsForTarget,
   nextIntroTarget,
   responseFor,
-  type IntroDynamic,
 } from "../../lib/intros";
 import { NpcPortrait } from "./NpcPortrait";
 
@@ -39,11 +38,11 @@ export function IntroPanel({
   onChoose,
   onIntrosDone,
 }: Props) {
-  const islandersById = useMemo(
-    () => Object.fromEntries(state.islanders.map((islander) => [islander.id, islander])),
-    [state.islanders],
+  const heartbreakersById = useMemo(
+    () => Object.fromEntries(state.heartbreakers.map((heartbreaker) => [heartbreaker.id, heartbreaker])),
+    [state.heartbreakers],
   );
-  const nextTarget = nextIntroTarget(state.islanders, actions, state.player.id);
+  const nextTarget = nextIntroTarget(state.heartbreakers, actions, state.player.id);
 
   // Snapshot of who the player is currently talking to and what they said. Set
   // on click, cleared once the response is captured into `completed`.
@@ -72,8 +71,8 @@ export function IntroPanel({
   // Resolve who to render. While in flight or showing the completed exchange,
   // we render that NPC. Otherwise we render the next fresh intro target.
   const displayTargetId = inFlight?.targetId ?? completed?.targetId ?? nextTarget?.id ?? null;
-  const displayTarget: IslanderSummary | null = displayTargetId
-    ? islandersById[displayTargetId] ?? null
+  const displayTarget: HeartbreakerSummary | null = displayTargetId
+    ? heartbreakersById[displayTargetId] ?? null
     : null;
 
   if (!displayTarget) {

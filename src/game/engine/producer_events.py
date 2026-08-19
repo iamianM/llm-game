@@ -34,9 +34,9 @@ PRODUCER_TEXT_SCHEDULE: dict[int, ProducerTextDef] = {
         "Heartbreakers, tonight there will be a Pairing Ceremony. Choose wisely.",
     ),
     4: ProducerTextDef(
-        "casa_amor_announce",
+        "flush_of_hearts_announce",
         4,
-        "casa_amor_announce",
+        "flush_of_hearts_announce",
         "Heartbreakers, pack a bag. Flush of Hearts is open, and every connection is about to be tested.",
     ),
     6: ProducerTextDef(
@@ -68,9 +68,9 @@ def schedule_producer_text(day: int, state: GameState) -> ProducerText | None:
             day=3,
         )
     if definition.kind == "coupling_warning":
-        for islander in state.islanders:
-            if not islander.eliminated:
-                islander.mood = Mood.ANXIOUS
+        for heartbreaker in state.heartbreakers:
+            if not heartbreaker.eliminated:
+                heartbreaker.mood = Mood.ANXIOUS
     return text
 
 
@@ -81,7 +81,7 @@ def producer_text_event_message(text: ProducerText) -> str:
 
 def _producer_text_label(kind: str) -> str:
     labels = {
-        "casa_amor_announce": "Flush of Hearts text",
+        "flush_of_hearts_announce": "Flush of Hearts text",
         "coupling_warning": "Pairing Ceremony text",
         "final_vote_announce": "Final Vote text",
         "group_date_invite": "Date text",

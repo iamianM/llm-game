@@ -30,11 +30,11 @@ def close_conversations_for_gather(
 
 
 def move_everyone_to_gather(state: GameState) -> None:
-    """Move every active islander and the player to the pending gather location."""
+    """Move every active heartbreaker and the player to the pending gather location."""
     if state.pending_gather is None:
         raise ValueError("cannot move to gather without pending gather")
     location = state.pending_gather.gather_location
     state.location_id = location
-    for islander in state.islanders:
-        if not islander.eliminated:
-            islander.location_id = location
+    for heartbreaker in state.heartbreakers:
+        if not heartbreaker.eliminated:
+            heartbreaker.location_id = location

@@ -15,7 +15,7 @@ async function bodyScroll(page: import("@playwright/test").Page) {
 
 test("title fits viewport without scroll", async ({ page }) => {
   await page.goto("/");
-  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("heading", { name: "Paradise Hearts" })).toBeVisible();
   const m = await bodyScroll(page);
   expect(m.overflowY).toBe("hidden");
   expect(m.bodyScroll).toBeLessThanOrEqual(1);
@@ -23,7 +23,7 @@ test("title fits viewport without scroll", async ({ page }) => {
 
 test("new-run fits viewport without scroll", async ({ page }) => {
   await page.goto("/new-run");
-  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("heading", { name: "Choose your Heartbreaker" })).toBeVisible();
   const m = await bodyScroll(page);
   expect(m.overflowY).toBe("hidden");
   expect(m.bodyScroll).toBeLessThanOrEqual(1);
@@ -31,7 +31,7 @@ test("new-run fits viewport without scroll", async ({ page }) => {
 
 test("stage fits viewport without scroll", async ({ page }) => {
   await page.goto("/new-run");
-  await page.getByRole("button", { name: "Step into Sunset Bay" }).click();
+  await page.getByRole("button", { name: /^Play as / }).click();
   await expect(page.getByTestId("choice-fan").or(page.getByText("Arrivals"))).toBeVisible();
   const m = await bodyScroll(page);
   expect(m.overflowY).toBe("hidden");

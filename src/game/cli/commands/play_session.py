@@ -11,8 +11,8 @@ from src.game.agents.background_dialogue import OpenAIBackgroundDialogue
 from src.game.agents.contextual_options import ContextualOptionsAgent
 from src.game.agents.conversation_curator import OpenAIConversationCurator
 from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.islander_voice import OpenAIIslanderVoice
-from src.game.agents.villa_orchestrator import OpenAIVillaOrchestrator
+from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
+from src.game.agents.resort_orchestrator import OpenAIResortOrchestrator
 from src.game.cli.commands.play_recording import record_from_turn, write_recording
 from src.game.cli.commands.play_render import print_actions, print_state, print_turn
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
@@ -46,7 +46,7 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     start.add_argument("--record", default=None)
     start.add_argument("--archetype", default="loyal_friend")
     start.add_argument("--gender", choices=[g.value for g in Gender], default="man")
-    start.add_argument("--stats", help="comma-separated charm,banter,eq,graft,loyalty")
+    start.add_argument("--stats", help="comma-separated charm,banter,eq,spark,loyalty")
     start.add_argument("--mock-llm", action="store_true")
     start.set_defaults(func=_start)
 
@@ -167,11 +167,11 @@ def _choose(args: argparse.Namespace) -> int:
         state,
         action,
         rng,
-        islander_voice=None if package.get("mock_llm") else OpenAIIslanderVoice().generate,
+        heartbreaker_voice=None if package.get("mock_llm") else OpenAIHeartbreakerVoice().generate,
         contextual_options=None if package.get("mock_llm") else ContextualOptionsAgent().generate,
         event_narrator=None if package.get("mock_llm") else OpenAIEventNarrator().narrate,
         conversation_curator=None if package.get("mock_llm") else OpenAIConversationCurator().curate,
-        villa_orchestrator=None if package.get("mock_llm") else OpenAIVillaOrchestrator().decide,
+        resort_orchestrator=None if package.get("mock_llm") else OpenAIResortOrchestrator().decide,
         background_dialogue=None if package.get("mock_llm") else OpenAIBackgroundDialogue().generate,
     )
     state = turn.state
@@ -253,12 +253,12 @@ def _parse_stats(raw: str | None, archetype: str) -> PlayerStats:
         return DEFAULT_ARCHETYPE_STATS[archetype]
     values = [int(part.strip()) for part in raw.split(",") if part.strip()]
     if len(values) != 5:
-        raise ValueError("--stats must provide charm,banter,eq,graft,loyalty")
+        raise ValueError("--stats must provide charm,banter,eq,spark,loyalty")
     return PlayerStats(
         charm=values[0],
         banter=values[1],
         eq=values[2],
-        graft=values[3],
+        spark=values[3],
         loyalty=values[4],
     )
 

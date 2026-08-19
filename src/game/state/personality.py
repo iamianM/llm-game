@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AttachmentStyle(StrEnum):
-    """How an islander responds to intimacy and setbacks."""
+    """How an heartbreaker responds to intimacy and setbacks."""
 
     SECURE = "secure"
     ANXIOUS = "anxious"
@@ -17,7 +17,7 @@ class AttachmentStyle(StrEnum):
 
 
 class Big5(BaseModel):
-    """Fixed OCEAN personality scores for an islander."""
+    """Fixed OCEAN personality scores for an heartbreaker."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -28,7 +28,7 @@ class Big5(BaseModel):
     neuroticism: int = Field(ge=1, le=10)
 
 
-class TypeOnPaper(BaseModel):
+class IdealMatch(BaseModel):
     """Hidden preferences revealed as familiarity grows."""
 
     model_config = ConfigDict(extra="forbid")

@@ -14,7 +14,7 @@ from typing import TypeVar
 from src.game.content.minigame_balance import load_minigame_balance
 from src.game.engine.audience import player_couple
 from src.game.engine.challenges import apply_recovery_floor
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.event_models import (
     Challenge,
     MinigameChoice,
@@ -22,7 +22,7 @@ from src.game.state.event_models import (
     MinigameRound,
     QuestionBankPrompt,
 )
-from src.game.state.models import GameState, IslanderState, RelationshipDelta
+from src.game.state.models import GameState, HeartbreakerState, RelationshipDelta
 from src.game.state.rng import SeededRng
 from src.game.state.traits import TIER_THRESHOLDS, KnownFact
 
@@ -42,20 +42,20 @@ def _shuffle_in_place(items: list[T], rng: SeededRng) -> None:
 
 
 def quiz_partner_id(state: GameState) -> str:
-    """Return the islander id the quiz tests. Uses the current player couple."""
+    """Return the heartbreaker id the quiz tests. Uses the current player couple."""
     couple = player_couple(state)
     if couple is not None:
         return couple.partner_b_id if couple.partner_a_id == "player" else couple.partner_a_id
-    # Fall back to the first islander deterministically.
-    for islander in state.islanders:
-        if not islander.eliminated:
-            return islander.id
+    # Fall back to the first heartbreaker deterministically.
+    for heartbreaker in state.heartbreakers:
+        if not heartbreaker.eliminated:
+            return heartbreaker.id
     raise ValueError("no eligible quiz partner")
 
 
 def is_prompt_eligible(state: GameState, prompt: QuestionBankPrompt) -> bool:
     """Eligibility per docs/minigames/compatibility-quiz.md §2."""
-    target = find_islander(state, prompt.target_id)
+    target = find_heartbreaker(state, prompt.target_id)
     used = set(state.quizzed_traits_this_run.get(target.id, []))
     if prompt.trait_key in used:
         return False
@@ -109,9 +109,9 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
             if len(selected) >= QUIZ_ROUNDS:
                 break
 
-    # The full bank, used when we need cross-islander distractors (e.g. flavor
+    # The full bank, used when we need cross-heartbreaker distractors (e.g. flavor
     # traits whose trait card has no curated distractors). Without this the
-    # fallback used to pull other-trait values from the same target, producing
+    # fallback used to read other-trait values from the same target, producing
     # nonsense like "26" as a distractor for a karaoke-song question.
     full_bank = state.question_bank.prompts.get("compatibility_quiz", [])
 
@@ -119,15 +119,15 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
     for index, prompt in enumerate(selected[:QUIZ_ROUNDS]):
         round_rng = rng.fork(f"compat_quiz::round::{index}")
         # Build choice list: correct + up to 3 distractors. Distractors come from
-        # the trait card first, then from other islanders' values for the SAME
+        # the trait card first, then from other heartbreakers' values for the SAME
         # trait_key (so a "karaoke song" question's wrong answers are also
         # karaoke songs), and only as a last resort from other traits on the
-        # same target. Cross-islander values get gender-filtered so a
+        # same target. Cross-heartbreaker values get gender-filtered so a
         # woman's quiz doesn't get "from his dad" distractors mixed in.
         from src.game.agents.trait_generator import _neutralize_for_distractor
-        round_target = find_islander(state, target_id)
+        round_target = find_heartbreaker(state, target_id)
         target_gender = round_target.gender.value if round_target.gender else None
-        peer_islander_genders = {i.id: (i.gender.value if i.gender else None) for i in state.islanders}
+        peer_heartbreaker_genders = {i.id: (i.gender.value if i.gender else None) for i in state.heartbreakers}
         distractors: list[str] = []
         for value in prompt.distractors:
             if value != prompt.correct_value and value not in distractors:
@@ -141,7 +141,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
                 for other in full_bank
                 if other.trait_key == prompt.trait_key and other.target_id != prompt.target_id
             ]
-            same_key_others.sort(key=lambda p: (peer_islander_genders.get(p.target_id) != target_gender, p.id))
+            same_key_others.sort(key=lambda p: (peer_heartbreaker_genders.get(p.target_id) != target_gender, p.id))
             for other in same_key_others:
                 if other.correct_value == prompt.correct_value:
                     continue
@@ -155,7 +155,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
                 if len(distractors) >= 3:
                     break
         # Final fallback: pad from any prompt of the same target (these are
-        # always gender-safe since they describe the same islander).
+        # always gender-safe since they describe the same heartbreaker).
         if len(distractors) < 3:
             for other in pool:
                 if other.correct_value not in distractors and other.correct_value != prompt.correct_value:
@@ -187,7 +187,7 @@ def build_rounds(state: GameState, target_id: str, rng: SeededRng) -> list[Minig
         _shuffle_in_place(choices, round_rng)
 
         if index == 0:
-            partner_name = find_islander(state, target_id).name
+            partner_name = find_heartbreaker(state, target_id).name
             scene = (
                 f"The Compatibility Quiz starts. {partner_name} is sat across "
                 "from you on the bench while the host reads five questions about "
@@ -296,7 +296,7 @@ def attach_round_reaction(state: GameState, challenge: Challenge, round_index: i
     if not target_id:
         return challenge
     from src.game.engine.compatibility_quiz_reactions import reaction_line
-    partner_name = find_islander(state, target_id).name
+    partner_name = find_heartbreaker(state, target_id).name
     # Fork once per quiz (not per round) so all rounds in the same quiz
     # share the same RNG-driven shift, letting round_index rotate cleanly.
     rng = SeededRng(state.seed).fork(f"compat_quiz::reaction::{state.day}")
@@ -330,7 +330,7 @@ def _delta_for(classification: str) -> RelationshipDelta:
 def apply_compatibility_quiz_result(state: GameState, challenge: Challenge) -> Challenge:
     """Apply side effects: relationship delta, audience, KnownFacts, memories."""
     target_id = quiz_partner_id(state) if len(challenge.participants) < 2 else challenge.participants[1]
-    target = find_islander(state, target_id)
+    target = find_heartbreaker(state, target_id)
     cls = challenge.classification or "failure"
     delta = _delta_for(cls)
     apply_relationship_delta(target, delta)
@@ -407,7 +407,7 @@ def apply_compatibility_quiz_result(state: GameState, challenge: Challenge) -> C
 
 
 def _familiarity_gap_hint(
-    state: GameState, target: IslanderState, challenge: Challenge
+    state: GameState, target: HeartbreakerState, challenge: Challenge
 ) -> MinigameReveal | None:
     """Surface a producer-aside if the player was close to unlocking Tier 2.
 
@@ -440,7 +440,7 @@ def _familiarity_gap_hint(
 
 
 def _record_caught_unprepared(
-    target: IslanderState, trait_key: str, day: int, turn_index: int
+    target: HeartbreakerState, trait_key: str, day: int, turn_index: int
 ) -> None:
     """Attach a ``caught_unprepared`` memory to the partner.
 

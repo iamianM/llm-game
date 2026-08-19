@@ -74,9 +74,9 @@ def _mentioned_subject_ids(state: GameState, content: str) -> list[str]:
     if not content:
         return []
     mentioned: list[str] = []
-    for islander in state.islanders:
-        if re.search(rf"\b{re.escape(islander.name)}\b", content):
-            mentioned.append(islander.id)
+    for heartbreaker in state.heartbreakers:
+        if re.search(rf"\b{re.escape(heartbreaker.name)}\b", content):
+            mentioned.append(heartbreaker.id)
     return mentioned
 
 
@@ -139,7 +139,7 @@ def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) 
     for event in events:
         kind = event.kind
         message = event.message
-        subject_id = event.islander_id or "villa"
+        subject_id = event.heartbreaker_id or "resort"
         tags = [kind, "ceremony"]
         for holder_id in _all_holder_ids(state):
             add_memory(
@@ -150,7 +150,7 @@ def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) 
                     source="witnessed",
                     day=state.day,
                     turn=state.turn_index,
-                    weight=7 if kind in {"bombshell", "elimination"} else 5,
+                    weight=7 if kind in {"heart_throb", "elimination"} else 5,
                     tags=tags,
                     content=message,
                 ),
@@ -160,14 +160,14 @@ def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) 
 def _holder_memory_list(state: GameState, holder_id: str) -> list[Memory]:
     if holder_id == "player":
         return state.player.memories
-    for islander in state.islanders:
-        if islander.id == holder_id:
-            return islander.memories
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == holder_id:
+            return heartbreaker.memories
     raise ValueError(f"unknown memory holder: {holder_id}")
 
 
 def _all_holder_ids(state: GameState) -> list[str]:
-    return ["player"] + [islander.id for islander in state.islanders if not islander.eliminated]
+    return ["player"] + [heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated]
 
 
 def _interested_listeners(state: GameState, seed: GossipSeed) -> list[str]:
@@ -180,9 +180,9 @@ def _interested_listeners(state: GameState, seed: GossipSeed) -> list[str]:
     if listeners:
         return listeners[:3]
     return [
-        islander.id
-        for islander in state.islanders
-        if not islander.eliminated and islander.id not in {seed.holder_id, seed.subject_id}
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated and heartbreaker.id not in {seed.holder_id, seed.subject_id}
     ][:1]
 
 

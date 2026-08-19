@@ -37,14 +37,14 @@ def test_timeline_marks_challenge_day() -> None:
     assert "▲ Day 1" in day_nav([record])
 
 
-def test_timeline_marks_recoupling_day() -> None:
-    record = _record() | {"ceremony_events": [{"kind": "recoupling"}]}
+def test_timeline_marks_pairing_day() -> None:
+    record = _record() | {"ceremony_events": [{"kind": "pairing"}]}
 
     assert "◆ Day 1" in day_nav([record])
 
 
-def test_timeline_marks_casa_amor_day() -> None:
-    record = _record() | {"ceremony_events": [{"kind": "casa_amor_departure"}]}
+def test_timeline_marks_flush_of_hearts_day() -> None:
+    record = _record() | {"ceremony_events": [{"kind": "flush_of_hearts_departure"}]}
 
     assert "★ Day 1" in day_nav([record])
 

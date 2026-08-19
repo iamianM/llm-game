@@ -1,12 +1,12 @@
 name: npc-summoned-exit
 seed: 41
 initial_phase: morning
-expected_hash: 69afc1499edaced69c54a3598ab91e1e3105790cc199f248c94d1926d48efaf5
+expected_hash: bd4e05ea0127a05bc9818238a8c46b8a7b8b9ff4351facd0ff07b8f1169eb035
 actions:
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
-villa_updates:
+  intent_id: friendly_chat_resort
+resort_updates:
 - npc_summoned_elsewhere:
   - npc_id: chloe
     from_conversation_id: player_active

@@ -23,8 +23,8 @@ Across every conversation surface — Day-1 intros, free-time chats, in-conversa
 | 3 | Locked-category UX | **Plan B: always visible, dimmed with hint.** Locked categories show a one-line unlock condition. | Visible-but-locked dial telegraphs the engagement loop ("more opens up if you keep going"). |
 | 4 | Tree depth per context | Intros: flat (4 leaves). Free-time conversation start: 2 levels (category → sub-intent). In-conversation follow-ups: flat with category chips. Minigames: no tree (literal answers). | Intros are 4 dynamics that ARE the leaves. Free-time has 3-9 sub-intents grouped by category. In-conversation menus are already engine-pruned to 3-4. |
 | 5 | Two-step bubble flow | Click intent → player bubble appears with generated line → tap → NPC bubble appears. | Lets the player read what they actually said before the reaction lands. Decouples player-voice and NPC-voice prompts so each has a focused job. |
-| 6 | LLM call shape | **Two sequential agents per turn:** `player_voice` then `npc_voice`. NPC sees the verbatim player line. | Today's single `islander_voice` writes both lines from intent alone — NPC reply is grounded in intent, not in *what the player said*. Splitting fixes that. |
-| 7 | Greetings | **Dynamic, parallel pre-gen.** New `npc_greeter` agent fires N concurrent calls (one per islander) at intros start. Mock mode keeps templates. | Static templates feel canned. Parallel generation puts wall-time at ~3-5s for 8 NPCs. |
+| 6 | LLM call shape | **Two sequential agents per turn:** `player_voice` then `npc_voice`. NPC sees the verbatim player line. | Today's single `heartbreaker_voice` writes both lines from intent alone — NPC reply is grounded in intent, not in *what the player said*. Splitting fixes that. |
+| 7 | Greetings | **Dynamic, parallel pre-gen.** New `npc_greeter` agent fires N concurrent calls (one per heartbreaker) at intros start. Mock mode keeps templates. | Static templates feel canned. Parallel generation puts wall-time at ~3-5s for 8 NPCs. |
 | 8 | Cost in live mode | 2 LLM calls per conversation turn (was 1). Intros add 8 parallel greeter calls at start. Free-time and follow-ups the same. | Acceptable — live is opt-in, mock is unchanged. |
 
 ---
@@ -49,7 +49,7 @@ Sourced from `data/balance/intents.yaml`. **Friendly** and **Banter** are always
 | Category | Sub-intent | unlock_affection |
 |----------|-----------|------------------|
 | Friendly | `friendly_ask_feelings` — "Ask how they're feeling" | 0 |
-| Friendly | `friendly_chat_villa` — "Chat about the villa" | 0 |
+| Friendly | `friendly_chat_resort` — "Chat about the resort" | 0 |
 | Friendly | `friendly_compliment_personality` — "Compliment their personality" | 0 |
 | Flirty | `flirty_compliment_looks` — "Compliment their looks" | 20 |
 | Flirty | `flirty_playful_teasing` — "Playful teasing" | 20 |
@@ -121,7 +121,7 @@ The two LLM calls happen **on the server in one HTTP roundtrip**. The UI then di
 
 **Input fields:**
 - `state.player.archetype_id`, `state.player.gender`, `state.player.name`, `state.player.known_facts[]`
-- `target_id` and the target's IslanderSummary (name, archetype, mood, recent affection/chemistry/trust)
+- `target_id` and the target's HeartbreakerSummary (name, archetype, mood, recent affection/chemistry/trust)
 - `intent_id` and the catalogued metadata (category, tags, stat_used)
 - Last 3-5 exchanges between player and target (if any) — `state.npc_conversations[target_id]` tail
 - Top 3 memories involving the target — `state.memories` filtered by subject_id/holder_id
@@ -153,7 +153,7 @@ The two LLM calls happen **on the server in one HTTP roundtrip**. The UI then di
 
 ### Mock fallbacks
 
-Both agents have mock implementations that mirror today's `mock_islander_voice` templates. Demo mode never makes LLM calls. Templates live in:
+Both agents have mock implementations that mirror today's `mock_heartbreaker_voice` templates. Demo mode never makes LLM calls. Templates live in:
 - `src/game/agents/player_voice.py` → `mock_player_voice()`
 - `src/game/agents/npc_voice.py` → `mock_npc_voice()`
 
@@ -174,7 +174,7 @@ Both agents have mock implementations that mirror today's `mock_islander_voice` 
 ### Wiring
 
 - Triggered once at intros start (right after `create_character`).
-- Fires N parallel calls (8 islanders by default) via `ThreadPoolExecutor`, like `trait_generator.generate_opening_cast`.
+- Fires N parallel calls (8 heartbreakers by default) via `ThreadPoolExecutor`, like `trait_generator.generate_opening_cast`.
 - Results populate a new state field: `state.intros.greetings: dict[str, str]`.
 - The scene-dialogue stage reads this in `planIntroScene`. If the dict is empty (mock mode or pre-feature checkpoint), falls back to `greetingFor()` in `web/lib/intros.ts`.
 
@@ -210,7 +210,7 @@ Click an unlocked category → menu replaces with sub-intent list:
 │ CHLOE                                ✕   │
 ├──────────────────────────────────────────┤
 │  Ask how she's feeling                   │
-│  Chat about the villa                    │
+│  Chat about the resort                   │
 │  Compliment her personality              │
 └──────────────────────────────────────────┘
 ```
@@ -262,8 +262,8 @@ The chevron pulses on each bubble; tapping anywhere advances.
 - `src/game/state/event_models.py` — add `IntrosState` with `greetings: dict[str, str]`.
 - `src/game/state/models.py` — add `intros: IntrosState | None = None` to `GameState`. Bump `SCHEMA_VERSION` 26 → 27.
 - `src/game/engine/character_creation.py` — call greeter (live) and populate `state.intros.greetings`.
-- `src/game/agents/islander_voice.py` — keep as a *thin* shim that runs player_voice + npc_voice in sequence and returns Exchange (so existing callers don't break during the rollout).
-- `src/game/engine/turn.py` — already uses `islander_voice` callable, no further change.
+- `src/game/agents/heartbreaker_voice.py` — keep as a *thin* shim that runs player_voice + npc_voice in sequence and returns Exchange (so existing callers don't break during the rollout).
+- `src/game/engine/turn.py` — already uses `heartbreaker_voice` callable, no further change.
 - `src/api/app.py` — wire greeter into `AgentBundle.live()` and `AgentBundle.mock()`.
 - `src/api/serializers.py` — refresh `action_label` for `introduce_to` to use new verb phrases.
 
@@ -282,7 +282,7 @@ class IntrosState(BaseModel):
 ```python
 @dataclass(frozen=True)
 class AgentBundle:
-    islander_voice: IslanderVoiceFn       # composed shim
+    heartbreaker_voice: HeartbreakerVoiceFn  # composed shim
     player_voice: PlayerVoiceFn           # new
     npc_voice: NpcVoiceFn                 # new
     npc_greeter: NpcGreeterFn             # new
@@ -310,7 +310,7 @@ Added to the scenario check vocabulary:
 
 ### Scenario refresh
 
-- `day1-intro-round`: keep the 8 intros + final recouple. Each intro turn's `judge_checks` add `player_voice_grounded` + `npc_voice_grounded`.
+- `day1-intro-round`: keep the 8 intros + First Spark Pairing. Each intro turn's `judge_checks` add `player_voice_grounded` + `npc_voice_grounded`.
 - `interruption-accept`, `interruption-defer`, `interruption-ignore`: add `npc_voice_grounded` to assert NPC reply references the player line.
 - `pull-success`, `pull-rejection`: same.
 
@@ -323,7 +323,7 @@ Each agent records its full prompt input + reasoning summary (if reasoning_effor
 ## 8. Sequencing
 
 1. **doc + agent skeletons** — this PR's first commit. Adds player_voice/npc_voice/npc_greeter modules with mock impls only; live impls stubbed.
-2. **engine wiring** — `islander_voice` becomes the composed shim. `state.intros` field added. `character_creation` calls greeter (mock returns empty dict for now). Tests stay green.
+2. **engine wiring** — `heartbreaker_voice` becomes the composed shim. `state.intros` field added. `character_creation` calls greeter (mock returns empty dict for now). Tests stay green.
 3. **UI: intro labels + two-step beats** — drop the `responseFor()` preview text, surface intent labels via `action_label`, split Exchange into two SceneBeats. SceneDirector wires the new flow.
 4. **UI: tree CharacterMenu** — categorized two-level expansion. Locked categories with hint copy.
 5. **Live impls + prompts** — write the three live agent prompts. Wire `AgentBundle.live()`. Run mock evals to confirm shape unchanged.

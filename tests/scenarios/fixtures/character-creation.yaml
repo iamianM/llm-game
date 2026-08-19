@@ -1,7 +1,7 @@
 name: character-creation
 seed: 11
 initial_phase: morning
-expected_hash: 68ec89278a76ad4a3d7b22f266bc217165be97b7e7196c99a80b8ecdcfff5a66
+expected_hash: 6608623646289867ce89bf5962e35acf67537eb6293ba809577c4054b9d3750d
 actions:
 - kind: create_character
   payload:
@@ -12,5 +12,5 @@ actions:
       charm: 9
       banter: 6
       eq: 4
-      graft: 5
+      spark: 5
       loyalty: 6

@@ -4,15 +4,15 @@ from __future__ import annotations
 
 from src.game.engine.actions import ActionKind
 from src.game.engine.couples import player_couple
-from src.game.engine.state_access import find_islander
+from src.game.engine.state_access import find_heartbreaker
 from src.game.eval.golden_models import GoldenCheckResult, GoldenTurnSpec
 from src.game.state.models import GameState, Location
 
 COUPLE_CHANGING_KINDS: frozenset[ActionKind] = frozenset(
     {
-        ActionKind.RECOUPLE,
-        ActionKind.PROPOSE_RECOUPLE,
-        ActionKind.CASA_DECISION,
+        ActionKind.PAIR,
+        ActionKind.PROPOSE_PAIR,
+        ActionKind.FLUSH_DECISION,
         ActionKind.NPC_PROPOSAL_RESPONSE,
         ActionKind.JOIN_GATHER,
     }
@@ -112,7 +112,7 @@ def check_pending_npc_proposal_from(
     if not isinstance(turn, TurnResult):
         return _fail(check_id, "turn did not produce a TurnResult", turn_spec.id)
     expected = check_id.removeprefix("pending_npc_proposal_from:")
-    pending = turn.state.pending_recouple_proposal
+    pending = turn.state.pending_pair_proposal
     if pending is None:
         return _fail(check_id, "no pending NPC proposal", turn_spec.id)
     if pending.proposer_id != expected:
@@ -129,8 +129,8 @@ def check_pending_npc_proposal_cleared(
 
     if not isinstance(turn, TurnResult):
         return _fail(check_id, "turn did not produce a TurnResult", turn_spec.id)
-    if turn.state.pending_recouple_proposal is not None:
-        pending = turn.state.pending_recouple_proposal
+    if turn.state.pending_pair_proposal is not None:
+        pending = turn.state.pending_pair_proposal
         return _fail(check_id, f"pending proposal still waiting from {pending.proposer_id}", turn_spec.id)
     return _pass(check_id, "pending NPC proposal cleared", turn_spec.id)
 
@@ -198,7 +198,7 @@ def check_audience_delta(
     return _pass(check_id, f"audience delta is {expected}", turn_spec.id)
 
 
-def check_hideaway_consumed(
+def check_private_suite_consumed(
     check_id: str,
     turn_spec: GoldenTurnSpec,
     turn: object,
@@ -208,36 +208,36 @@ def check_hideaway_consumed(
 
     if not isinstance(turn, TurnResult):
         return _fail(check_id, "turn did not produce a TurnResult", turn_spec.id)
-    expected_partner_id = check_id.removeprefix("hideaway_consumed:")
+    expected_partner_id = check_id.removeprefix("private_suite_consumed:")
     state = turn.state
-    hideaway = state.hideaway
+    private_suite = state.private_suite
     violations: list[str] = []
-    if hideaway.partner_id != expected_partner_id:
-        violations.append(f"partner_id expected {expected_partner_id}, got {hideaway.partner_id}")
-    if hideaway.used_on_day is None:
+    if private_suite.partner_id != expected_partner_id:
+        violations.append(f"partner_id expected {expected_partner_id}, got {private_suite.partner_id}")
+    if private_suite.used_on_day is None:
         violations.append("used_on_day was not set")
-    elif pre_state is not None and hideaway.used_on_day != pre_state.day:
-        violations.append(f"used_on_day expected {pre_state.day}, got {hideaway.used_on_day}")
-    if not hideaway.deltas_applied:
+    elif pre_state is not None and private_suite.used_on_day != pre_state.day:
+        violations.append(f"used_on_day expected {pre_state.day}, got {private_suite.used_on_day}")
+    if not private_suite.deltas_applied:
         violations.append("deltas_applied is false")
-    if state.location_id is not Location.HIDEAWAY:
-        violations.append(f"player location expected hideaway, got {state.location_id.value}")
-    partner = find_islander(state, expected_partner_id)
-    if partner.location_id is not Location.HIDEAWAY:
-        violations.append(f"{expected_partner_id} location expected hideaway, got {partner.location_id.value}")
+    if state.location_id is not Location.PRIVATE_SUITE:
+        violations.append(f"player location expected private_suite, got {state.location_id.value}")
+    partner = find_heartbreaker(state, expected_partner_id)
+    if partner.location_id is not Location.PRIVATE_SUITE:
+        violations.append(f"{expected_partner_id} location expected private_suite, got {partner.location_id.value}")
     couple = player_couple(state)
-    if couple is None or not couple.has_used_hideaway:
-        violations.append("player couple did not record has_used_hideaway")
+    if couple is None or not couple.has_used_private_suite:
+        violations.append("player couple did not record has_used_private_suite")
     if violations:
         return GoldenCheckResult(
             id=check_id,
             kind="deterministic",
             result="fail",
-            reason=f"{len(violations)} Hideaway invariant(s) violated",
+            reason=f"{len(violations)} Private Suite invariant(s) violated",
             evidence="\n".join(violations),
             turn_id=turn_spec.id,
         )
-    return _pass(check_id, f"Hideaway consumed with {expected_partner_id}", turn_spec.id)
+    return _pass(check_id, f"Private Suite consumed with {expected_partner_id}", turn_spec.id)
 
 
 def check_engine_state_invariants(
@@ -271,8 +271,8 @@ def check_engine_state_invariants(
         violations.append(
             f"player.archetype_id changed: {pre_state.player.archetype_id} -> {post.player.archetype_id}"
         )
-    pre_eliminated = {islander.id for islander in pre_state.islanders if islander.eliminated}
-    post_eliminated = {islander.id for islander in post.islanders if islander.eliminated}
+    pre_eliminated = {heartbreaker.id for heartbreaker in pre_state.heartbreakers if heartbreaker.eliminated}
+    post_eliminated = {heartbreaker.id for heartbreaker in post.heartbreakers if heartbreaker.eliminated}
     resurrected = pre_eliminated - post_eliminated
     if resurrected:
         violations.append(f"eliminated Heartbreakers were brought back: {sorted(resurrected)}")
@@ -280,7 +280,7 @@ def check_engine_state_invariants(
     pre_couples = _couple_set(pre_state)
     post_couples = _couple_set(post)
     if pre_couples != post_couples and action_kind not in COUPLE_CHANGING_KINDS:
-        # The villa runs its own off-screen love stories: two single NPCs can
+        # The resort runs its own off-screen love stories: two single NPCs can
         # quietly couple up on any turn (peer attraction), so a pure NPC↔NPC
         # *addition* is legitimate regardless of the player's action. What must
         # never happen silently is an existing couple dissolving or the *player*

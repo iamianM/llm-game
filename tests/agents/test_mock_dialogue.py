@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 
-from src.game.agents.islander_voice import VALID_TONES, mock_islander_voice
+from src.game.agents.heartbreaker_voice import VALID_TONES, mock_heartbreaker_voice
 from src.game.agents.mock_dialogue import (
     _DEFAULT,
     _LINES,
@@ -95,7 +95,7 @@ def test_none_roll_is_treated_as_zero() -> None:
     assert with_none == with_zero
 
 
-def test_mock_islander_voice_returns_valid_exchange() -> None:
+def test_mock_heartbreaker_voice_returns_valid_exchange() -> None:
     """End-to-end: the agent entry point yields an in-character, mock-detectable
     exchange that names the target and carries a valid tone/mood."""
     state = new_game(1)
@@ -110,7 +110,7 @@ def test_mock_islander_voice_returns_valid_exchange() -> None:
         roll=1,
     )
 
-    exchange = mock_islander_voice(state, result)
+    exchange = mock_heartbreaker_voice(state, result)
 
     assert "Chloe" in exchange.player_dialogue
     assert exchange.npc_dialogue in MOCK_NPC_LINES

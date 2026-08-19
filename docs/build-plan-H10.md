@@ -15,11 +15,11 @@ No new gameplay surface. Same six agents, smarter wiring.
 
 ## Architectural Decisions
 
-### Native conversation chains for Islander Voice (H10.1)
+### Native conversation chains for Heartbreaker Voice (H10.1)
 
-Today: every Islander Voice call rebuilds the conversation context as a text block injected into the user message ("Recent exchange history: ..."). This wastes tokens, doesn't use the model's native attention over prior turns, and forces us to make a "how many exchanges do we include" decision.
+Today: every Heartbreaker Voice call rebuilds the conversation context as a text block injected into the user message ("Recent exchange history: ..."). This wastes tokens, doesn't use the model's native attention over prior turns, and forces us to make a "how many exchanges do we include" decision.
 
-After H10.1: Islander Voice calls within a single player conversation pass the **full prior exchanges as a real OpenAI messages array** (alternating user/assistant turns). The system prompt stays static. Each new turn's user message contains only what's *new*: the intent the player picked, the resolved mechanical outcome, the scene context for this exchange.
+After H10.1: Heartbreaker Voice calls within a single player conversation pass the **full prior exchanges as a real OpenAI messages array** (alternating user/assistant turns). The system prompt stays static. Each new turn's user message contains only what's *new*: the intent the player picked, the resolved mechanical outcome, the scene context for this exchange.
 
 **Implementation:** client-side messages array (not server-side `previous_response_id`). This keeps the recording/replay model clean — the trace already stores every exchange, so we can rebuild the messages array on replay from trace data without OpenAI server state.
 
@@ -29,7 +29,7 @@ def build_voice_messages(
     conversation: Conversation,
     new_turn_context: NewTurnContext,
 ) -> list[dict[str, str]]:
-    """Build the message array for the next Islander Voice call.
+    """Build the message array for the next Heartbreaker Voice call.
 
     First message is a 'scene set' user message describing the conversation
     opening. Subsequent messages alternate user (engine sets the next turn's
@@ -48,7 +48,7 @@ The Exchange JSON serialized as the assistant message lets the model see what it
 
 **Conversation close cleans up nothing in the API sense** (it's stateless on our side anyway). The Curator runs as today.
 
-**Replay determinism:** `RecordedIslanderVoice` replays from trace records as today — the message-array shape doesn't change the recorded Exchange contract.
+**Replay determinism:** `RecordedHeartbreakerVoice` replays from trace records as today — the message-array shape doesn't change the recorded Exchange contract.
 
 ### Three-output Conversation Curator (H10.2)
 
@@ -82,11 +82,11 @@ This is engine logic, not LLM logic — once the Curator emits seeds, the engine
 
 | Agent | Today | After H10.3 | Why |
 |---|---|---|---|
-| Islander Voice | gpt-4.1-mini | gpt-4.1-mini (keep) | Player reads every word; prose quality matters most |
+| Heartbreaker Voice | gpt-4.1-mini | gpt-4.1-mini (keep) | Player reads every word; prose quality matters most |
 | Event Narrator | gpt-4.1-mini | gpt-4.1-mini (keep) | Reality TV narrator voice; player reads it |
 | **Conversation Curator** | gpt-4.1-mini | **gpt-5.4-mini (low reasoning)** | Multi-output structured task with judgment (memory vs summary vs gossip); benefits from reasoning |
 | Contextual Options | gpt-5.4-mini | gpt-4.1-mini (after H10.4 shrinks scope) | Now produces only 1-2 bespoke options; prose-leaning |
-| Villa Orchestrator | gpt-5.4-mini | gpt-5.4-mini (keep) | Structured world-state planning |
+| Resort Orchestrator | gpt-5.4-mini | gpt-5.4-mini (keep) | Structured world-state planning |
 | **Background Dialogue** | gpt-4.1-mini | **gpt-4.1-nano** | Off-screen, summarized for player; speed and cost matter |
 | **Player Autopilot** | gpt-4.1-mini | **gpt-4.1-nano** | Testing tool, not player-facing |
 
@@ -94,7 +94,7 @@ All model IDs hardcoded module constants. No abstraction layer (R6).
 
 ### Parallel background calls (H10.3)
 
-Today, multiple Background Dialogue calls fire sequentially within `apply_villa_update`. If the Villa Orchestrator says three NPC convos continue + one starts, that's four sequential API calls (~4-8 sec). Same for Curator runs on multiple convos closing in one turn.
+Today, multiple Background Dialogue calls fire sequentially within `apply_resort_update`. If the Resort Orchestrator says three NPC convos continue + one starts, that's four sequential API calls (~4-8 sec). Same for Curator runs on multiple convos closing in one turn.
 
 After H10.3: parallel via `asyncio.gather`. The OpenAI client supports async. The bottleneck on player turn latency drops meaningfully.
 
@@ -102,7 +102,7 @@ After H10.3: parallel via `asyncio.gather`. The OpenAI client supports async. Th
 - `run_turn` gets an async sibling `run_turn_async` that the CLI invokes via `asyncio.run`.
 - Background Dialogue agent gets an async method `generate_async`.
 - Conversation Curator agent gets an async method `curate_async`.
-- `apply_villa_update` becomes async and uses `asyncio.gather` for parallel calls.
+- `apply_resort_update` becomes async and uses `asyncio.gather` for parallel calls.
 - Sync wrapper preserved for tests that don't care about parallelism.
 
 **Replay determinism preserved:** recorded agent commits replay in order from the trace. Parallel execution only matters during live runs.
@@ -171,15 +171,15 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 
 ---
 
-## Phase H10.1 — Native Conversation Chains for Islander Voice
+## Phase H10.1 — Native Conversation Chains for Heartbreaker Voice
 
 **Scope.** Replace the in-prompt "Recent history" text block with a real OpenAI messages array carrying alternating user/assistant turns from the conversation's prior exchanges.
 
 ### Changes
 
-**Agent (`agents/islander_voice.py`):**
+**Agent (`agents/heartbreaker_voice.py`):**
 - New `build_voice_messages(state, conversation, new_turn_context) -> list[dict]` helper.
-- `OpenAIIslanderVoice.generate` calls `responses.parse` with `input=messages` (list) instead of `input=rendered_text_block`.
+- `OpenAIHeartbreakerVoice.generate` calls `responses.parse` with `input=messages` (list) instead of `input=rendered_text_block`.
 - The system prompt loads from disk as today (unchanged).
 - `NewTurnContext` is a small Pydantic struct: chosen intent, outcome (success/miss), mechanical change summary, scene context for *this* turn (location, others present).
 - The new turn's user message is a single concise prompt: "The player chose [intent]. Mechanical outcome: [success/miss]. Location: [loc]. Others present: [list]. Write the exchange."
@@ -189,20 +189,20 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 - No new fields. The `Conversation.exchanges` list already records everything needed to rebuild the messages array.
 
 **Engine (`engine/turn.py`):**
-- Where Islander Voice is invoked for `START_CONVERSATION` and `RESPOND_WITH`, passes the conversation + new turn context. No more in-prompt history serialization.
+- Where Heartbreaker Voice is invoked for `START_CONVERSATION` and `RESPOND_WITH`, passes the conversation + new turn context. No more in-prompt history serialization.
 
 **Recorded agent (`engine/recorded_agents.py`):**
-- `RecordedIslanderVoice` continues to read recorded Exchanges from trace. Messages array is irrelevant for replay; the recorded Exchange IS the output.
+- `RecordedHeartbreakerVoice` continues to read recorded Exchanges from trace. Messages array is irrelevant for replay; the recorded Exchange IS the output.
 
 **Mock agent:**
-- `mock_islander_voice` unchanged — it's a deterministic stub.
+- `mock_heartbreaker_voice` unchanged — it's a deterministic stub.
 
 **Prompt:**
-- [`islander_voice.md`](../src/game/agents/prompts/islander_voice.md) keeps its `## Context` section but removes the "Recent exchange history" line (because the LLM now sees actual prior turns as messages, not as a context block). Claude updates this; Codex installs verbatim per R17.
+- [`heartbreaker_voice.md`](../src/game/agents/prompts/heartbreaker_voice.md) keeps its `## Context` section but removes the "Recent exchange history" line (because the LLM now sees actual prior turns as messages, not as a context block). Claude updates this; Codex installs verbatim per R17.
 
 ### Tests
 
-- `tests/agents/test_islander_voice_chain.py`:
+- `tests/agents/test_heartbreaker_voice_chain.py`:
   - `test_build_voice_messages_first_exchange_has_one_scene_and_one_turn_user_message`
   - `test_build_voice_messages_includes_prior_exchanges_as_alternating_messages`
   - `test_assistant_message_for_prior_exchange_is_valid_exchange_json`
@@ -213,7 +213,7 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 
 - [ ] `make qa` green.
 - [ ] `make test-llm` green.
-- [ ] Islander Voice API requests contain a messages array, not a single context block.
+- [ ] Heartbreaker Voice API requests contain a messages array, not a single context block.
 - [ ] Mid-conversation calls include all prior exchanges as alternating user/assistant messages.
 - [ ] Conversation closes cleanly — no leftover state on the agent side.
 - [ ] Replay via `play --replay TRACE` produces byte-identical state hash.
@@ -222,7 +222,7 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 ### Anti-goals
 
 - No use of OpenAI's `previous_response_id` chain (we use client-side messages array for replay friendliness).
-- No persistent state on agent objects (Islander Voice stays stateless across conversations).
+- No persistent state on agent objects (Heartbreaker Voice stays stateless across conversations).
 - No prompt edits Codex authors (R17).
 
 ---
@@ -310,23 +310,23 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 ### Changes
 
 **Model constants (each agent module):**
-- `ISLANDER_VOICE_MODEL = "gpt-4.1-mini"` (unchanged)
+- `HEARTBREAKER_VOICE_MODEL = "gpt-4.1-mini"` (unchanged)
 - `EVENT_NARRATOR_MODEL = "gpt-4.1-mini"` (unchanged)
 - `CONVERSATION_CURATOR_MODEL = "gpt-5.4-mini"` (was gpt-4.1-mini)
 - `CONTEXTUAL_OPTIONS_MODEL = "gpt-4.1-mini"` (was gpt-5.4-mini, scope shrunk in H10.4)
-- `VILLA_ORCHESTRATOR_MODEL = "gpt-5.4-mini"` (unchanged)
+- `RESORT_ORCHESTRATOR_MODEL = "gpt-5.4-mini"` (unchanged)
 - `BACKGROUND_DIALOGUE_MODEL = "gpt-4.1-nano"` (was gpt-4.1-mini)
 - `PLAYER_AUTOPILOT_MODEL = "gpt-4.1-nano"` (was gpt-4.1-mini)
 
-**Curator (gpt-5.4-mini):** add `reasoning={"effort": "low"}` to the call params, same pattern as Villa Orchestrator.
+**Curator (gpt-5.4-mini):** add `reasoning={"effort": "low"}` to the call params, same pattern as Resort Orchestrator.
 
 **Async agents:**
 - `OpenAIBackgroundDialogue.generate_async(state, ...) -> BackgroundExchange` — awaitable wrapper using `AsyncOpenAI`.
 - `OpenAIConversationCurator.curate_async(state, ...) -> CuratorOutput` — same.
 - Sync versions of both remain as `generate` and `curate` that internally use `asyncio.run` (for tests and mock paths). Document that production code uses the async versions inside async `run_turn`.
 
-**Engine (`engine/villa.py`, `engine/turn.py`):**
-- `apply_villa_update_async(state, update, agents, rng)` becomes async.
+**Engine (`engine/resort.py`, `engine/turn.py`):**
+- `apply_resort_update_async(state, update, agents, rng)` becomes async.
 - All Background Dialogue calls fire in parallel via `asyncio.gather`.
 - All Curator calls for conversations closing in this turn fire in parallel via `asyncio.gather`.
 - Engine `run_turn_async` is the new entry point; `run_turn` is a sync shim calling `asyncio.run(run_turn_async(...))`.
@@ -348,7 +348,7 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
   - `test_parallel_calls_complete_independently`
 - `tests/engine/test_turn_async.py`:
   - `test_run_turn_async_matches_sync_for_same_inputs`
-  - `test_apply_villa_update_parallel_preserves_hash`
+  - `test_apply_resort_update_parallel_preserves_hash`
 - `tests/agents/test_curator_async.py`:
   - `test_async_curate_returns_valid_output`
   - `test_curator_model_constant_is_gpt_5_4_mini`
@@ -395,7 +395,7 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
   - Return assembled FollowUpMenu.
 
 **Engine (`engine/turn.py`):**
-- After Islander Voice generates an Exchange and the engine knows the conversation is open:
+- After Heartbreaker Voice generates an Exchange and the engine knows the conversation is open:
   1. Compute defaults via code.
   2. Compute tone-reactions via code.
   3. Call Contextual Options agent for bespoke + leave-judgment.
@@ -457,7 +457,7 @@ Net effect: wheel feels richer (specific bespoke options) and more reliable (cod
 
 ## Prompt updates Claude owns (pre-written here)
 
-### Update for `islander_voice.md` (H10.1) — remove the recent-history context line
+### Update for `heartbreaker_voice.md` (H10.1) — remove the recent-history context line
 
 Replace the line in `## Context`:
 
@@ -469,19 +469,19 @@ with:
 
 (Other context lines unchanged.)
 
-### Update for `islander_voice.md` (H10.2) — gossip drop section
+### Update for `heartbreaker_voice.md` (H10.2) — gossip drop section
 
 Add after the existing `## Gender pair voice` section (or wherever the existing prompt has the natural insertion point):
 
 ```markdown
 ## Gossip you hold
 
-The user message may include `gossip_eligible_memories` — memories you (the Islander) hold about people other than the player. If a player line, the conversation topic, or the current scene naturally invites bringing one up, work it into your reply. Don't force it, don't drop everything at once — one well-placed mention per exchange when it lands.
+The user message may include `gossip_eligible_memories` — memories you (the Heartbreaker) hold about people other than the player. If a player line, the conversation topic, or the current scene naturally invites bringing one up, work it into your reply. Don't force it, don't drop everything at once — one well-placed mention per exchange when it lands.
 
 Natural drops:
 - Player asks about your day → reference something you witnessed off-screen.
-- Player mentions another islander by name → share what you know if relevant.
-- Player asks a deep question → answer with a story that involves another islander.
+- Player mentions another heartbreaker by name → share what you know if relevant.
+- Player asks a deep question → answer with a story that involves another heartbreaker.
 
 If no gossip fits the moment, don't add any. Forcing gossip into a wrong moment reads as awkward; the player notices.
 ```
@@ -509,10 +509,10 @@ Example: "Player and Chloe spent the morning at the pool. Chloe opened up about 
 
 Explicit "this is worth telling someone else" moments. Each seed:
 
-- `subject_id` — who the gossip is about. Must be an islander mentioned in the conversation (not necessarily a participant).
+- `subject_id` — who the gossip is about. Must be a heartbreaker mentioned in the conversation (not necessarily a participant).
 - `gist` — one short line, third-person, that the holder could repeat aloud.
 - `holder_id` — who can spread it (one of the conversation participants or a listed bystander).
-- `spreadable_to` — list of islander ids likely to be interested (high chemistry with subject, alliance with holder, recent drama). Can be empty.
+- `spreadable_to` — list of heartbreaker ids likely to be interested (high chemistry with subject, alliance with holder, recent drama). Can be empty.
 - `emotional_weight` — 1-10.
 
 Only flag a moment as a gossip seed if it's genuinely worth talking about — a confession, a flirt revealed, a betrayal seen, a vulnerable confession. Routine warmth is not a gossip seed.
@@ -551,10 +551,10 @@ A bespoke option references something specific. Generic intents (apologize, esca
 - A specific moment from earlier in this conversation ("Circle back to the loyalty question")
 
 **Wrong (generic — code adds these):** "Apologize", "Push the flirt", "End on a high note", "Tease back".
-**Right (specific — code can't write these):** "Ask about Liam's accent again", "Circle back to her ex", "Bring up the bombshell tension", "Tell her you saw her watching Marcus".
+**Right (specific — code can't write these):** "Ask about Liam's accent again", "Circle back to her ex", "Bring up the heart_throb tension", "Tell her you saw her watching Marcus".
 ```
 
-### Update for `villa_orchestrator.md` (H10.2) — gossip spread note
+### Update for `resort_orchestrator.md` (H10.2) — gossip spread note
 
 Add at the end of `## How to decide`:
 
@@ -567,19 +567,19 @@ Add at the end of `## How to decide`:
 ## Done checklist for Codex
 
 ### H10.1 — Native Conversation Chains
-- [ ] Wait for Claude's updated `islander_voice.md` (recent-history line replacement only)
+- [ ] Wait for Claude's updated `heartbreaker_voice.md` (recent-history line replacement only)
 - [ ] Install verbatim per R17
-- [ ] Write `build_voice_messages` helper in `agents/islander_voice.py`
-- [ ] Refactor `OpenAIIslanderVoice.generate` to pass messages array to `responses.parse`
+- [ ] Write `build_voice_messages` helper in `agents/heartbreaker_voice.py`
+- [ ] Refactor `OpenAIHeartbreakerVoice.generate` to pass messages array to `responses.parse`
 - [ ] Add `NewTurnContext` Pydantic model with intent, outcome, scene fields
 - [ ] Tests for message-array construction
 - [ ] Run `make qa`, `make test-llm`
 - [ ] Verify replay determinism on existing scenario fixtures
 - [ ] Append build log
-- [ ] Commit: `Phase H10.1: native conversation chains for Islander Voice`
+- [ ] Commit: `Phase H10.1: native conversation chains for Heartbreaker Voice`
 
 ### H10.2 — Three-Output Curator + Gossip Spread
-- [ ] Wait for Claude's updated `conversation_curator.md` and `islander_voice.md` (gossip drop section) and `villa_orchestrator.md` (gossip spread note)
+- [ ] Wait for Claude's updated `conversation_curator.md` and `heartbreaker_voice.md` (gossip drop section) and `resort_orchestrator.md` (gossip spread note)
 - [ ] Install all three updates verbatim per R17
 - [ ] Add `GossipSeed`, update `CuratorOutput` schema
 - [ ] Add `summary` field to `Conversation`
@@ -600,7 +600,7 @@ Add at the end of `## How to decide`:
 - [ ] Add `generate_async` to Background Dialogue
 - [ ] Add `curate_async` to Conversation Curator
 - [ ] Add `run_turn_async` to `engine/turn.py`
-- [ ] Refactor `apply_villa_update` to async with `asyncio.gather`
+- [ ] Refactor `apply_resort_update` to async with `asyncio.gather`
 - [ ] Sync `run_turn` wraps async via `asyncio.run`
 - [ ] Tests for async correctness and parallel hash preservation
 - [ ] Verify replay determinism
@@ -649,7 +649,7 @@ Add at the end of `## How to decide`:
 
 After H10 commits:
 
-1. Islander Voice has natural conversation memory across exchanges — model attention works as intended; no re-templated context per turn.
+1. Heartbreaker Voice has natural conversation memory across exchanges — model attention works as intended; no re-templated context per turn.
 2. Curator's outputs make daily recaps meaningful, gossip propagation explicit, and conversation history queryable through structured summaries.
 3. Live turns are visibly faster — multiple background conversations and curator calls run in parallel.
 4. Wheel labels feel rich and varied — code-guaranteed defaults plus bespoke moment-specific options from a leaner LLM call.

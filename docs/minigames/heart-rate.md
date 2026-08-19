@@ -13,8 +13,8 @@ learns, not in what they choose.
 ## 1. Player experience
 
 Day 2. The producer announces Pulse Race. The cast files into a room with
-chest-strap heart-rate monitors. One by one, each islander performs a short
-flirty bit for every other islander. Heart rates spike based on the actual
+chest-strap heart-rate monitors. One by one, each heartbreaker performs a short
+flirty bit for every other heartbreaker. Heart rates spike based on the actual
 chemistry scores stored in the engine — scores the player has never seen
 directly. The results are projected publicly. The player learns whose pulse
 they raised, whose pulse raised theirs, and where the season's hidden
@@ -151,7 +151,7 @@ A reviewer can:
   beat with strong audience approval, not a fizzle. Make sure the wrap
   language matches.
 - A `partial` classification (partner has chemistry with someone else)
-  should reliably set up Casa Amor's emotional stakes. The trace's
+  should reliably set up the Flush of Hearts' emotional stakes. The trace's
   `gossip_seeds` table should pick this up automatically.
 
 ## 9. Open questions

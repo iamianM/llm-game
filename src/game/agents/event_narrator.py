@@ -1,8 +1,8 @@
-"""Event Narrator agent for ceremonies and bombshell beats.
+"""Event Narrator agent for ceremonies and Heart Throb beats.
 
 Design sources:
 - 03-LLM-Architecture.md: Event Narrator AI
-- 10-Elimination-System.md: Recouplings, Bombshells, Dumpings
+- 10-Elimination-System.md: Pairings, Heart Throbs, Heart Out beats
 
 Implementation rule:
 The Event Narrator describes already-resolved ceremony events. It never picks
@@ -19,7 +19,7 @@ from pathlib import Path
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     AgentGenerationError,
@@ -32,7 +32,7 @@ from src.game.agents.runtime import (
     record_agent_trace,
 )
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.models import Gender, GameState, Phase
+from src.game.state.models import GameState, Gender, Phase
 
 EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
 EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
@@ -131,7 +131,7 @@ def mock_event_narration(state: GameState, events: list[CeremonyEvent]) -> Event
     """Return deterministic mock event narration for tests and replay."""
     sentences = [_mock_event_sentence(state, event) for event in events]
     if not sentences:
-        sentences = ["The villa watches as the moment lands."]
+        sentences = ["Sunset Bay watches as the moment lands."]
     return EventNarration(prose=" ".join(sentences))
 
 
@@ -152,7 +152,7 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
         raise ValueError(
             f"event narration leaked engine token(s) {leaked}: {prose!r}"
         )
-    required = [event.islander_id for event in events if event.islander_id is not None]
+    required = [event.heartbreaker_id for event in events if event.heartbreaker_id is not None]
     lower_prose = prose.lower()
     missing = [name for name in required if not _mentions_participant(lower_prose, name)]
     if missing:
@@ -167,7 +167,7 @@ _KV_TOKEN = re.compile(r"\b[a-zA-Z]\w*=")
 # A bare stat abbreviation. "EQ" is our emotional-intelligence stat; a reality-TV
 # narrator never literally says it, yet nano likes to free-associate
 # "Compatibility Quiz" -> "EQ test" and slip it in. The other stats (charm,
-# graft, banter, loyalty) are ordinary English words used in natural prose, so
+# spark, banter, loyalty) are ordinary English words used in natural prose, so
 # only the unambiguous abbreviation is barred here; the prompt forbids the rest.
 _STAT_JARGON = re.compile(r"\beq\b", re.IGNORECASE)
 
@@ -180,27 +180,29 @@ def _leaked_tokens(prose: str) -> list[str]:
     return found
 
 
-def _mentions_participant(lower_prose: str, islander_id: str) -> bool:
-    base = islander_id.lower()
+def _mentions_participant(lower_prose: str, heartbreaker_id: str) -> bool:
+    base = heartbreaker_id.lower()
     aliases = {base, base.replace("_", " ")}
-    # Starting-cast ids are bare first names; Casa Amor bombshells keep an
+    # Starting-cast ids are bare first names; Flush arrivals keep an
     # "_ht" suffix (e.g. "sam_ht"). Strip any suffix segment so the first-name
     # display form the narrator actually writes is matched either way.
     aliases.add(base.split("_", 1)[0])
-    return any(alias in lower_prose for alias in aliases)
+    return any(re.search(rf"\b{re.escape(alias)}\b", lower_prose) for alias in aliases)
 
 
 def _mock_event_sentence(state: GameState, event: CeremonyEvent) -> str:
-    if event.kind == "recoupling":
-        return "At the firepit, the Pairing Ceremony locks in the next couples."
+    if event.kind == "pairing":
+        return "At the Flame Deck, the Pairing Ceremony locks in the next couples."
     if event.kind == "elimination":
-        return f"{_name_for(state, event.islander_id)} is Heart Out, and Sunset Bay feels the shift."
+        return f"{_name_for(state, event.heartbreaker_id)} is Heart Out, and Sunset Bay feels the shift."
     if event.kind == "challenge":
         return f"The {_event_label(event.sub_kind or event.kind)} result lands, changing the mood around the pool."
-    if event.kind == "casa_amor_arrival":
-        return "Flush of Hearts opens, sending you into the second villa with every connection under pressure."
-    if event.kind == "casa_amor_return_reveal":
+    if event.kind == "flush_of_hearts_arrival":
+        return "Flush of Hearts opens, sending you into the Flush resort with every connection under pressure."
+    if event.kind == "flush_of_hearts_return_reveal":
         return f"The Sunset Bay return reveal: {event.message}"
+    if event.kind == "gather_scheduled":
+        return event.message.replace("flame_deck", "Flame Deck")
     return event.message
 
 
@@ -209,26 +211,26 @@ def _name_for(state: GameState, actor_id: str | None) -> str:
         return "Someone"
     if actor_id == "player":
         return _player_name(state)
-    for islander in state.islanders:
-        if islander.id == actor_id:
-            return islander.name
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == actor_id:
+            return heartbreaker.name
     return actor_id
 
 
 def _cast_pronoun_lines(state: GameState) -> str:
-    """`Name — pronouns` for every living islander.
+    """`Name — pronouns` for every living heartbreaker.
 
-    Casa Amor heart-throbs and starters alike can carry unisex names (Jules,
+    Flush heart-throbs and starters alike can carry unisex names (Jules,
     Sam, Riley, Noor), and the narrator writes third person — so without this it
     guesses gender from the name and calls a man "she". The player is omitted:
     the contestant rule already governs how to refer to them.
     """
     lines = [
-        f"- {islander.name}: {'she/her' if islander.gender == Gender.WOMAN else 'he/him'}"
-        for islander in state.islanders
-        if not islander.eliminated
+        f"- {heartbreaker.name}: {'she/her' if heartbreaker.gender == Gender.WOMAN else 'he/him'}"
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
     ]
-    return "\n".join(lines) if lines else "- (no islanders in scene)"
+    return "\n".join(lines) if lines else "- (no heartbreakers in scene)"
 
 
 def _player_has_name(state: GameState) -> bool:
@@ -246,10 +248,10 @@ def _player_name(state: GameState) -> str:
     """How the narrator should refer to the human player in prose.
 
     When the player set a real name, the Event Narrator names them in third
-    person like any other islander. When no name was set, address them in
+    person like any other heartbreaker. When no name was set, address them in
     SECOND PERSON ("you") — consistent with the daily recap, natural for a beat
     shown to the player, and impossible to garble into a hallucinated name the
-    way the old abstract label "the islander" was (gpt-5-nano once rendered it
+    way the old abstract label "the heartbreaker" was (gpt-5-nano once rendered it
     as "Eq stands beside Chloe").
     """
     name = (getattr(state.player, "name", "") or "").strip()
@@ -265,32 +267,32 @@ def _event_label(kind: str) -> str:
         "final_couples": "Final Couples Challenge",
         "heart_rate": "Pulse Race",
         "lie_detector": "Lie Detector",
-        "mr_and_mrs": "The Couples Quiz",
-        "snog_marry_pie": "Kiss Wed Pass",
+        "couples_quiz": "The Couples Quiz",
+        "kiss_wed_pass": "Kiss Wed Pass",
     }
     return labels.get(kind, kind.replace("_", " ").title())
 
 
-# Recouplings, eliminations, and partner-steals all play out at the evening
-# firepit. The engine rolls the clock straight to the next morning the instant a
-# recoupling pick resolves (so the post-ceremony "while you were busy" daily
+# Pairings, eliminations, and partner-steals all play out at the evening
+# flame_deck. The engine rolls the clock straight to the next morning the instant a
+# pairing pick resolves (so the post-ceremony "while you were busy" daily
 # recap can fire), which would otherwise hand the narrator a "morning" phase for
 # a scene that canonically happens at night — producing prose like "Chloe's hand
 # cuts through the morning tension" over a torch-lit ceremony. Pin those beats
 # back to the evening of the day they occurred.
-_FIREPIT_CEREMONY_KINDS = frozenset(
-    {"recoupling", "elimination", "steal_attempt", "partner_stolen"}
+_FLAME_DECK_CEREMONY_KINDS = frozenset(
+    {"pairing", "elimination", "steal_attempt", "partner_stolen"}
 )
 
 
 def _narration_when(state: GameState, events: list[CeremonyEvent]) -> tuple[int, str]:
     """Return the (day, phase label) the events should be narrated as.
 
-    Normally this is just the live clock, but a firepit ceremony narrated after
+    Normally this is just the live clock, but a flame_deck ceremony narrated after
     the clock has already rolled into the next morning is pinned back to that
     ceremony's evening so the time-of-day never contradicts the scene.
     """
-    if state.phase is Phase.MORNING and {event.kind for event in events} & _FIREPIT_CEREMONY_KINDS:
+    if state.phase is Phase.MORNING and {event.kind for event in events} & _FLAME_DECK_CEREMONY_KINDS:
         return max(1, state.day - 1), Phase.EVENING.value
     return state.day, state.phase.value
 
@@ -298,7 +300,7 @@ def _narration_when(state: GameState, events: list[CeremonyEvent]) -> tuple[int,
 def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_lines = "\n".join(
         f"- {event.kind}: {event.message}"
-        + (f" (about {_name_for(state, event.islander_id)})" if event.islander_id else " (no named islander)")
+        + (f" (about {_name_for(state, event.heartbreaker_id)})" if event.heartbreaker_id else " (no named heartbreaker)")
         for event in events
     )
     named = _player_has_name(state)
@@ -314,7 +316,7 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         contestant_rule = (
             "- The human contestant is the reader. Address them in SECOND PERSON "
             'as "you"/"your" — never invent a name for them and never refer to '
-            'them in the third person: not "the player", "the islander", "the '
+            'them in the third person: not "the player", "the heartbreaker", "the '
             'contestant", "he", "she", or "they". An event message already phrased '
             'in second person (it starts with "You ") is the contestant\'s OWN '
             'action: keep that voice — narrate it as "you" (e.g. "you and Chloe '
@@ -325,15 +327,15 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         subject = "you"
     semantics = [
         contestant_rule,
-        f"- recouple_proposal rejected means the target did not accept {possessive} proposal.",
-        "- npc_proposal_incoming means a pending ask, not an accepted recoupling or couple change.",
-        f"- recoupling narration should name {possessive} partner when the current couple is known.",
-        f"- hideaway means {subject} and the named partner leave for a private suite beat.",
+        f"- pair_proposal rejected means the target did not accept {possessive} proposal.",
+        "- npc_proposal_incoming means a pending ask, not an accepted pairing or couple change.",
+        f"- pairing narration should name {possessive} partner when the current couple is known.",
+        f"- private_suite means {subject} and the named partner leave for a private suite beat.",
     ]
     event_kinds = {event.kind for event in events}
-    if "hideaway" in event_kinds and "gather_scheduled" in event_kinds:
+    if "private_suite" in event_kinds and "gather_scheduled" in event_kinds:
         semantics.append(
-            "- If hideaway appears with gather_scheduled, narrate only the Hideaway. "
+            "- If private_suite appears with gather_scheduled, narrate only the Private Suite. "
             "The scheduled gather is a later UI/state fact, not part of the private suite beat."
         )
     narration_day, narration_phase = _narration_when(state, events)
@@ -391,18 +393,18 @@ def _render_minigame_details(state: GameState) -> str:
         return ""
     # Only round-based minigames carry meaningful per-round structure
     # (legacy single-roll resolutions don\'t populate the `rounds` list).
-    # Resolve every islander id to a human *name* (third person, including the
+    # Resolve every heartbreaker id to a human *name* (third person, including the
     # player). We never feed raw ids or the "id (Name)" format here: the model
     # grounds prose in this block and will copy whatever token we hand it —
     # including a leaked raw id like "sam_ht" or a doubled "Chloe (Chloe)".
     # A bare resolved name is always prose-safe.
-    def _person(islander_id: str) -> str:
-        if not islander_id:
+    def _person(heartbreaker_id: str) -> str:
+        if not heartbreaker_id:
             return "someone"
-        name = _name_for(state, islander_id)
-        # _name_for echoes the id back when no islander matches; humanize that
+        name = _name_for(state, heartbreaker_id)
+        # _name_for echoes the id back when no heartbreaker matches; humanize that
         # fallback so a stray id can never reach player-facing prose.
-        return name if name != islander_id else _humanize(islander_id)
+        return name if name != heartbreaker_id else _humanize(heartbreaker_id)
 
     participants_str = ", ".join(_person(p) for p in challenge.participants)
     lines = [

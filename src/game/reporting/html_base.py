@@ -14,7 +14,7 @@ a{color:#7a2d12} code{font-size:12px}
 .turn summary{cursor:pointer;font-size:22px;font-weight:700}
 .meta{color:#655d52;font-size:14px}.success{color:#17633a}.miss{color:#9b2d20}
 .pill{display:inline-block;border:1px solid #d8d0c2;border-radius:999px;padding:4px 10px;margin:2px;background:#fff}
-.math{border-left:4px solid #17633a}.pull-attempt{border-left:4px solid #d8793f}.interruption{border-left:4px solid #6b3fa0}.memory{border-left:4px solid #7a2d12}
+.math{border-left:4px solid #17633a}.private-chat-attempt{border-left:4px solid #d8793f}.interruption{border-left:4px solid #6b3fa0}.memory{border-left:4px solid #7a2d12}
 table{border-collapse:collapse;width:100%;background:#fff}th,td{border:1px solid #d8d0c2;padding:8px;text-align:left}
 .bar{height:14px;background:#d8793f;display:inline-block;vertical-align:middle}
 """

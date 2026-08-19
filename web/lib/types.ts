@@ -51,7 +51,7 @@ export type ApiRelationship = {
 export const RELATIONSHIP_BONDS = ["chemistry", "affection", "trust", "friendship"] as const;
 export type RelationshipBond = (typeof RELATIONSHIP_BONDS)[number];
 
-export type IslanderSummary = {
+export type HeartbreakerSummary = {
   id: string;
   name: string;
   gender: Gender;
@@ -87,8 +87,8 @@ export type SessionState = {
   turn_index: number;
   location_id: string;
   location_label: string;
-  villa: string;
-  villa_label: string;
+  resort: string;
+  resort_label: string;
   phase_clock: Record<string, unknown>;
   player: {
     id: string;
@@ -99,14 +99,14 @@ export type SessionState = {
     stats: Record<string, number>;
     memories: ApiMemory[];
   };
-  islanders: IslanderSummary[];
+  heartbreakers: HeartbreakerSummary[];
   couples: CoupleSummary[];
   audience: { public_perception: number; recent_delta: number | null; trend: string };
-  pending_recouple_proposal: Record<string, unknown> | null;
+  pending_pair_proposal: Record<string, unknown> | null;
   pending_challenge: Record<string, unknown> | null;
   outcome: string | null;
   active_conversation_target_id: string | null;
-  villa_snapshot: Record<string, string[]>;
+  resort_snapshot: Record<string, string[]>;
   daily_recaps: Array<Record<string, unknown>>;
   intros_greetings: Record<string, string>;
 };
@@ -135,7 +135,7 @@ export type TurnResponse = {
   memories_formed: Array<Record<string, unknown>>;
   background_activity: Array<Record<string, unknown>>;
   // Short, in-world line for how this action shifted the player's bond with the
-  // acted-on islander ("The spark with Chloe is electric."). Null when no bond
+  // acted-on heartbreaker ("The spark with Chloe is electric."). Null when no bond
   // moved (idle moves, exits) — surfaced inline in-scene. Optional to match the
   // generated OpenAPI type (the field carries a Pydantic default).
   connection_shift?: string | null;
@@ -152,7 +152,7 @@ export type CastDetail = {
   backstory: string;
   familiarity: number;
   relationship: ApiRelationship;
-  type_on_paper: Record<string, unknown | null>;
+  ideal_match: Record<string, unknown | null>;
   known_facts: ApiKnownFact[];
   memories: ApiMemory[];
   coupled_with: string | null;

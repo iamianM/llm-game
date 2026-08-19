@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from src.game.engine.actions import PlayerAction
-from src.game.engine.casa_amor import locations_for_villa
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.results import ChanceBreakdown, ForcedMovement, MechanicalResult
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.models import GameState, Location, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -24,7 +24,7 @@ def defer_chance(state: GameState, interrupter_id: str) -> int:
 
 def defer_chance_breakdown(state: GameState, interrupter_id: str) -> ChanceBreakdown:
     """Return an auditable chance that a polite deferral lands well."""
-    interrupter = find_islander(state, interrupter_id)
+    interrupter = find_heartbreaker(state, interrupter_id)
     stat = state.player.stats.eq
     stat_contribution = stat * 4
     affection_contribution = interrupter.relationship.affection // 4
@@ -56,8 +56,8 @@ def apply_interruption_response(
     if conversation is None or conversation.pending_interruption is None:
         raise ValueError("interruption response requires a pending interruption")
     interruption = conversation.pending_interruption
-    current = find_islander(state, conversation.target_id)
-    interrupter = find_islander(state, interruption.interrupter_id)
+    current = find_heartbreaker(state, conversation.target_id)
+    interrupter = find_heartbreaker(state, interruption.interrupter_id)
     intent_id = action.intent_id
     deltas: dict[str, RelationshipDelta] = {}
     roll: int | None = None
@@ -133,16 +133,16 @@ def remember_interruption_snub(
             content=f"I remember the player leaving me feeling {tag.replace('_', ' ')}.",
         ),
     )
-    for islander in state.islanders:
+    for heartbreaker in state.heartbreakers:
         if (
-            islander.id != interrupter_id
-            and not islander.eliminated
-            and islander.location_id == state.location_id
+            heartbreaker.id != interrupter_id
+            and not heartbreaker.eliminated
+            and heartbreaker.location_id == state.location_id
         ):
             add_memory(
                 state,
                 create_memory(
-                    holder_id=islander.id,
+                    holder_id=heartbreaker.id,
                     subject_id="player",
                     source="witnessed",
                     day=state.day,
@@ -158,10 +158,10 @@ def remember_interruption_snub(
 
 
 def _walkaway_location(state: GameState, interrupter_id: str, rng: SeededRng) -> Location:
-    interrupter = find_islander(state, interrupter_id)
+    interrupter = find_heartbreaker(state, interrupter_id)
     candidates = [
         location
-        for location in sorted(locations_for_villa(state.villa), key=lambda item: item.value)
+        for location in sorted(locations_for_resort(state.resort), key=lambda item: item.value)
         if location != interrupter.location_id
     ]
     return rng.choice(candidates)

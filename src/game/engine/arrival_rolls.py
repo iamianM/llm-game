@@ -1,11 +1,11 @@
-"""Arrival interruption and pull-away rolls."""
+"""Arrival interruption and summon-away rolls."""
 
 from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.couples import couple_strength, partner_for
-from src.game.state.models import GameState, IslanderState
+from src.game.state.models import GameState, HeartbreakerState
 from src.game.state.rng import SeededRng
 
 
@@ -19,12 +19,12 @@ class ArrivalRoll(BaseModel):
     interruption_chance: int = Field(ge=5, le=75)
     interruption_roll: int = Field(ge=1, le=100)
     interruption_hit: bool
-    pull_chance: int = Field(ge=3, le=60)
-    pull_roll: int = Field(ge=1, le=100)
-    pull_hit: bool
+    private_chat_chance: int = Field(ge=3, le=60)
+    private_chat_roll: int = Field(ge=1, le=100)
+    private_chat_hit: bool
 
 
-def interruption_chance(state: GameState, arriving: IslanderState) -> int:
+def interruption_chance(state: GameState, arriving: HeartbreakerState) -> int:
     """Chance that an arriving NPC interrupts to talk to the player."""
     target_id = state.active_conversation.target_id if state.active_conversation else ""
     chance = 12 + (arriving.relationship.chemistry * 2)
@@ -36,9 +36,9 @@ def interruption_chance(state: GameState, arriving: IslanderState) -> int:
     return max(5, min(75, chance))
 
 
-def pull_chance(state: GameState, arriving: IslanderState, target_id: str) -> int:
-    """Chance that an arriving NPC pulls the player's target away."""
-    target = _islander(state, target_id)
+def private_chat_chance(state: GameState, arriving: HeartbreakerState, target_id: str) -> int:
+    """Chance that an arriving NPC summons the player's target away."""
+    target = _heartbreaker(state, target_id)
     chance = 8 + (max(arriving.relationship.chemistry, target.relationship.chemistry) * 2)
     chance += _recent_drama_count(arriving) * 4
     chance -= _target_couple_strength(state, target_id)
@@ -46,35 +46,35 @@ def pull_chance(state: GameState, arriving: IslanderState, target_id: str) -> in
     return max(3, min(60, chance))
 
 
-def roll_arrival(state: GameState, arriving: IslanderState, rng: SeededRng) -> ArrivalRoll:
-    """Roll interruption and pull-away attempts for one arriving NPC."""
+def roll_arrival(state: GameState, arriving: HeartbreakerState, rng: SeededRng) -> ArrivalRoll:
+    """Roll interruption and summon-away attempts for one arriving NPC."""
     if state.active_conversation is None:
         raise ValueError("arrival rolls require an active player conversation")
     target_id = state.active_conversation.target_id
     interrupt_chance = interruption_chance(state, arriving)
     interrupt_roll = rng.randint(1, 100)
-    target_pull_chance = pull_chance(state, arriving, target_id)
-    target_pull_roll = rng.randint(1, 100)
+    target_private_chat_chance = private_chat_chance(state, arriving, target_id)
+    target_private_chat_roll = rng.randint(1, 100)
     return ArrivalRoll(
         arriving_npc_id=arriving.id,
         target_id=target_id,
         interruption_chance=interrupt_chance,
         interruption_roll=interrupt_roll,
         interruption_hit=interrupt_roll <= interrupt_chance,
-        pull_chance=target_pull_chance,
-        pull_roll=target_pull_roll,
-        pull_hit=target_pull_roll <= target_pull_chance,
+        private_chat_chance=target_private_chat_chance,
+        private_chat_roll=target_private_chat_roll,
+        private_chat_hit=target_private_chat_roll <= target_private_chat_chance,
     )
 
 
-def _recent_gossip_count(islander: IslanderState) -> int:
-    return sum(1 for memory in islander.memories[-5:] if memory.emotional_weight >= 5)
+def _recent_gossip_count(heartbreaker: HeartbreakerState) -> int:
+    return sum(1 for memory in heartbreaker.memories[-5:] if memory.emotional_weight >= 5)
 
 
-def _recent_drama_count(islander: IslanderState) -> int:
+def _recent_drama_count(heartbreaker: HeartbreakerState) -> int:
     return sum(
         1
-        for memory in islander.memories[-5:]
+        for memory in heartbreaker.memories[-5:]
         if memory.emotional_weight >= 6 or any(tag in {"drama", "gossip", "witnessed"} for tag in memory.tags)
     )
 
@@ -95,10 +95,10 @@ def _jealousy_modifier(
     return 0
 
 
-def _mood_modifier(islander: IslanderState) -> int:
-    if islander.mood.value in {"angry", "upset", "anxious"}:
+def _mood_modifier(heartbreaker: HeartbreakerState) -> int:
+    if heartbreaker.mood.value in {"angry", "upset", "anxious"}:
         return 5
-    if islander.mood.value == "happy":
+    if heartbreaker.mood.value == "happy":
         return -5
     return 0
 
@@ -115,11 +115,11 @@ def _target_couple_strength(state: GameState, target_id: str) -> int:
 def _public_perception(state: GameState, actor_id: str) -> int:
     if actor_id == state.player.id:
         return state.player.public_perception
-    return _islander(state, actor_id).public_perception
+    return _heartbreaker(state, actor_id).public_perception
 
 
-def _islander(state: GameState, islander_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == islander_id and not islander.eliminated:
-            return islander
-    raise ValueError(f"unknown active islander: {islander_id}")
+def _heartbreaker(state: GameState, heartbreaker_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id and not heartbreaker.eliminated:
+            return heartbreaker
+    raise ValueError(f"unknown active heartbreaker: {heartbreaker_id}")

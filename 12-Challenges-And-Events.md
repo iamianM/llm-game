@@ -14,7 +14,7 @@
 > [The Couples Quiz](docs/minigames/couples-quiz.md) ·
 > [Lie Detector](docs/minigames/lie-detector.md) ·
 > [Pulse Race](docs/minigames/heart-rate.md) ·
-> [Kiss Wed Pass](docs/minigames/snog-marry-pie.md) ·
+> [Kiss Wed Pass](docs/minigames/kiss-wed-pass.md) ·
 > [Final Couples](docs/minigames/final-couples.md). When the implementation
 > docs and this canon disagree, the implementation docs win
 > ([current-plan.md](docs/current-plan.md), "Documentation Rules").
@@ -25,7 +25,7 @@
 
 - [Challenge System (No Physical)](#-challenge-system-no-physical)
 - [Social Events (Round-Table Sharing)](#-social-events-round-table-sharing)
-- [Casa Amor](#-casa-amor-days-12-14)
+- [Flush of Hearts](#-flush-of-hearts-days-12-14)
 - [Special Events](#-special-events)
 
 ---
@@ -97,7 +97,7 @@ function compatibilityChallenge(couple) {
 "Who's most likely to play games?"
 
 Your vote:
-[ ] Marcus (He's been grafting on everyone)
+[ ] Marcus (He's been sparking with everyone)
 [ ] Aisha (She's strategic)
 [ ] Yourself (Own it, be funny)
 [ ] Tom (Safe choice, won't offend)
@@ -114,7 +114,7 @@ Your vote:
 **Example: "Rank the Couples (Most to Least Compatible)"**
 
 **Format:**
-1. Islanders secretly rank couples 1-4
+1. Heartbreakers secretly rank couples 1-4
 2. Results revealed publicly
 3. Drama ensues
 
@@ -134,20 +134,20 @@ Your vote:
 
 **Questions:**
 - "Do you still have feelings for your ex-coupling?"
-- "Have you kissed anyone else in the villa?"
+- "Have you kissed anyone else at the resort?"
 - "Am I your #1 choice?"
-- "Would you recouple if the right person came in?"
+- "Would you do a Heart Swap if the right person came in?"
 
 **How It Works:**
 ```javascript
-function lieDetectorTest(question, islander) {
-  const truthValue = getActualTruth(islander, question)
+function lieDetectorTest(question, heartbreaker) {
+  const truthValue = getActualTruth(heartbreaker, question)
   // e.g., "Have you kissed anyone else?" → check kiss history
 
-  const islanderClaims = getPlayerAnswer(question)
+  const heartbreakerClaims = getPlayerAnswer(question)
   // Player says "No"
 
-  if (islanderClaims === truthValue) {
+  if (heartbreakerClaims === truthValue) {
     return { result: "TRUTH", effect: "Partner relieved" }
   } else {
     return { result: "LIE", effect: "Partner devastated, trust -20" }
@@ -164,7 +164,7 @@ function lieDetectorTest(question, islander) {
 
 **Rewards:** None (just drama)
 
-#### 4. Heart Rate Challenge (Most Popular)
+#### 4. Pulse Race (Most Popular)
 
 **IMPORTANT: NON-INTERACTIVE** - Algorithm calculates results, exposes hidden chemistry scores
 
@@ -182,8 +182,8 @@ function heartRateChallenge() {
   // Everyone performs for everyone (not interactive, just calculated)
   const results = []
 
-  islanders.forEach(performer => {
-    islanders.filter(i => i !== performer).forEach(target => {
+  heartbreakers.forEach(performer => {
+    heartbreakers.filter(i => i !== performer).forEach(target => {
       const chemistry = getRelationship(performer, target).chemistry
       const heartRate = 60 + (chemistry * 0.4) // 60-100 BPM
 
@@ -203,7 +203,7 @@ function heartRateChallenge() {
 
 **Player Experience (NON-INTERACTIVE, just watch results):**
 ```
-HEART RATE CHALLENGE RESULTS:
+PULSE RACE RESULTS:
 
 When YOU performed:
 - Chloe (partner): 92 BPM (+32) ✅ Expected
@@ -234,29 +234,29 @@ When OTHERS performed for YOU:
 - Public knowledge (everyone sees everyone's reactions)
 
 **Rewards:**
-- Winner (highest total reactions) gets Hideaway access
+- Winner (highest total reactions) gets Paradise Suite access
 
 ### Challenge Scheduling
 
 **Producer AI decides challenges based on:**
 
 ```javascript
-function selectChallenge(villaState) {
+function selectChallenge(resortState) {
   // Week 1: Light, fun challenges
-  if (villaState.day <= 5) {
+  if (resortState.day <= 5) {
     return random(["Couple Quiz", "Who's Most Likely"])
   }
 
   // Week 2: Test couples
-  if (villaState.day <= 10) {
+  if (resortState.day <= 10) {
     if (strongCouplesCount >= 2) {
-      return "Heart Rate Challenge" // create doubt
+      return "Pulse Race" // create doubt
     }
     return "Rank Couples" // force opinions
   }
 
   // Week 3+: High stakes
-  if (villaState.day > 10) {
+  if (resortState.day > 10) {
     return "Lie Detector Test" // expose secrets
   }
 }
@@ -272,20 +272,20 @@ function selectChallenge(villaState) {
 
 **Create bonding moments** without challenges or eliminations
 
-**Generate knowledge and gossip** - Islanders share stories, everyone learns facts
+**Generate knowledge and gossip** - Heartbreakers share stories, everyone learns facts
 
 **Lower-cost content** - No complex mechanics, just sharing + reactions
 
 ### Format
 
-**Location:** Firepit or terrace (all Islanders gather)
+**Location:** Flame Deck or terrace (all Heartbreakers gather)
 
 **Structure:**
 1. Producer announces prompt/theme
-2. Each Islander shares in turn (random order)
+2. Each Heartbreaker shares in turn (random order)
 3. Player chooses tone when it's their turn
 4. LLM generates player's story based on tone
-5. Islanders react based on personalities
+5. Heartbreakers react based on personalities
 6. Everyone learns the facts shared (added to knowledge system)
 
 **Player Interaction:**
@@ -303,10 +303,10 @@ function selectChallenge(villaState) {
 **How It Works:**
 ```javascript
 function neverHaveIEver() {
-  const order = shuffleOrder(allIslanders)
+  const order = shuffleOrder(allHeartbreakers)
 
-  order.forEach(islander => {
-    if (islander === player) {
+  order.forEach(heartbreaker => {
+    if (heartbreaker === player) {
       // Player chooses tone
       const toneChoice = showPlayerMenu([
         "Vulnerable - Share something meaningful you've never done",
@@ -319,7 +319,7 @@ function neverHaveIEver() {
         prompt: "Generate a 'never have I ever' statement",
         tone: toneChoice,
         archetype: player.archetype,
-        context: villaState
+        context: resortState
       })
 
       // Apply effects
@@ -328,15 +328,15 @@ function neverHaveIEver() {
     } else {
       // NPC shares (LLM generates based on personality)
       const npcStory = await LLM.generate({
-        character: islander,
+        character: heartbreaker,
         prompt: "Generate never have I ever statement",
-        personality: islander.personality
+        personality: heartbreaker.personality
       })
 
       // Everyone learns this fact
       addKnowledge({
         fact: npcStory,
-        knownBy: allIslanders,
+        knownBy: allHeartbreakers,
         source: "witnessed"
       })
     }
@@ -777,7 +777,7 @@ async function generatePlayerStory(event, tone, player) {
     backstory: player.backstoryHints, // if any
     context: {
       currentCouple: player.coupledWith,
-      villaPosition: player.audienceRank,
+      resortPosition: player.audienceRank,
       recentEvents: getRecentEvents(2)
     }
   }
@@ -819,7 +819,7 @@ Nothing too dramatic."
 
 ```javascript
 function processSocialEvent(event) {
-  allIslanders.forEach(speaker => {
+  allHeartbreakers.forEach(speaker => {
     const story = speaker === player ?
       playerStory :
       await generateNPCStory(speaker, event)
@@ -830,7 +830,7 @@ function processSocialEvent(event) {
       speaker: speaker.id,
       content: story,
       emotionalDepth: getTone(story), // vulnerable/funny/deflect
-      knownBy: allIslanders.map(i => i.id), // everyone witnessed
+      knownBy: allHeartbreakers.map(i => i.id), // everyone witnessed
       source: "social_event",
       day: currentDay
     }
@@ -838,7 +838,7 @@ function processSocialEvent(event) {
     addKnowledgeFact(fact)
 
     // NPCs remember this for future conversations
-    // Can reference: "You mentioned at the firepit that..."
+    // Can reference: "You mentioned at the Flame Deck that..."
   })
 }
 ```
@@ -850,14 +850,14 @@ function processSocialEvent(event) {
 
 ---
 
-## 🏝️ Casa Amor (Days 12-14)
+## 🏝️ Flush of Hearts (Days 12-14)
 
 ### What It Is
 
-**The villa splits:**
-- Original boys stay in main villa
-- 3 new girls arrive (bombshells)
-- Original girls go to "Casa Amor" villa
+**The resort splits:**
+- Original boys stay in Sunset Bay
+- 3 new girls arrive (Heart Throbs)
+- Original girls go to "Flush of Hearts" location
 - 3 new boys arrive there
 - **No communication for 3 days**
 
@@ -868,17 +868,17 @@ function processSocialEvent(event) {
 #### Day 12 Morning: The Split
 
 ```
-📱 "Islanders, the girls must pack their bags immediately.
-   You're going to Casa Amor!"
+📱 "Heartbreakers, the girls must pack their bags immediately.
+   You're going to the Flush of Hearts!"
 
 [Girls leave, boys stay]
 
-MAIN VILLA (Player if male):
+SUNSET BAY (Player if male):
 - You + 3 other original boys
 - 3 new girls arrive
 - Build new connections OR stay loyal
 
-CASA AMOR VILLA (Player if female):
+FLUSH OF HEARTS (Player if female):
 - You + 3 other original girls
 - 3 new boys arrive
 - Build new connections OR stay loyal
@@ -889,45 +889,45 @@ CASA AMOR VILLA (Player if female):
 **Player Experience:**
 
 ```
-You're in Casa Amor (if female) or Main Villa (if male).
+You're in the Flush of Hearts (if female) or Sunset Bay (if male).
 
-New bombshells designed to be your type:
+New Heart Throbs designed to be your type:
 - Jake: 85 chemistry (adventurous, your type)
 - Ryan: 70 chemistry (funny, compatible)
 - Marcus: 60 chemistry (loyal, safe)
 
-Your original partner (Chloe) is in other villa with new boys.
+Your original partner (Chloe) is in the other location with new boys.
 You have NO IDEA what she's doing.
 
 Time: 3 days (morning + afternoon phases only)
 ```
 
-**Each day in Casa Amor:**
-1. Morning: Free socializing with new bombshells
-2. Afternoon: No challenges, just graft/talk
-3. Evening: See snippets from other villa (optional twist)
+**Each day in Flush of Hearts:**
+1. Morning: Free socializing with new Heart Throbs
+2. Afternoon: No challenges, just spark/talk
+3. Evening: See snippets from other location (optional twist)
 
 **The Postcard Twist (Optional Drama Boost):**
 ```
-📱 "Islanders, you've received a postcard from the other villa..."
+📱 "Heartbreakers, you've received a postcard from the other location..."
 
 [Image shown: Chloe sitting close to new boy, laughing]
 
 Caption: "Having a great time! 😘"
 
-⚠️ Is she recoupling? Or just being friendly?
+⚠️ Is she doing a Heart Swap? Or just being friendly?
 You don't know. Paranoia sets in.
 ```
 
-#### Day 14 Evening: The Recoupling
+#### Day 14 Evening: The Pairing Ceremony
 
 **Format: Girls Choose (Most Dramatic)**
 
-**Both villas reunite at firepit:**
+**Both groups reunite at Flame Deck:**
 
 ```
-1. Original girls return to main villa
-2. New Casa Amor girls stay in lineup
+1. Original girls return to Sunset Bay
+2. New Flush of Hearts girls stay in lineup
 3. Girls choose one by one:
 
 CHLOE (Player's Original Partner):
@@ -938,16 +938,16 @@ A) "...he's been loyal and I trust him. [Player Name]"
    → Stayed loyal, couple reunites ❤️
 
 B) "...we have a real spark. Jake."
-   → Recoupled with Casa boy 💔 Player heartbroken
+   → Heart Swapped with Flush boy 💔 Player heartbroken
 
-Player's reaction options (if Chloe recoupled):
-- Accept it gracefully (high EQ, +5 audience)
-- Get angry (dramatic, +8 audience but -10 with Chloe)
-- Recouple with new girl too (mutual, clean break)
+Player's reaction options (if Chloe Heart Swapped):
+- Accept it gracefully (high EQ, +5 Pulse)
+- Get angry (dramatic, +8 Pulse but -10 with Chloe)
+- Heart Swap with new girl too (mutual, clean break)
 
 2. PLAYER'S TURN (if male):
    - Stick with Chloe (if she picked you)
-   - OR recouple with Casa girl (betrayal)
+   - OR Heart Swap with Flush girl (betrayal)
 
 3. Other couples resolve...
 ```
@@ -960,71 +960,71 @@ Player's reaction options (if Chloe recoupled):
 - Trust maxed out
 - Often leads to victory
 
-**Outcome 2: Player Loyal, Partner Recoupled**
+**Outcome 2: Player Loyal, Partner Heart Swapped**
 - Player heartbroken
 - Audience sympathy (+10 individual score)
 - Player now single (must find new match)
 - Becomes underdog story
 
-**Outcome 3: Both Recoupled**
+**Outcome 3: Both Heart Swapped**
 - Clean break
 - No hard feelings
 - Both in new couples
 - Audience neutral (looks like it wasn't real)
 
-**Outcome 4: Player Recoupled, Partner Loyal**
+**Outcome 4: Player Heart Swapped, Partner Loyal**
 - Partner devastated
 - Audience hates player (-15 score)
 - Player in new couple but low trust
 - Hard to recover
 
-### Casa Amor Success Rates (NPC Behavior)
+### Flush of Hearts Heart Swap Rates (NPC Behavior)
 
-**NPCs decide to recouple based on:**
+**NPCs decide whether to Heart Swap based on:**
 ```javascript
-function npcCasaAmorDecision(npc, originalPartner, bestCasaMatch) {
+function npcFlushOfHeartsDecision(npc, originalPartner, bestFlushMatch) {
   const originalStrength = getRelationship(npc, originalPartner).strength
-  const casaChemistry = getRelationship(npc, bestCasaMatch).chemistry
+  const flushChemistry = getRelationship(npc, bestFlushMatch).chemistry
 
-  let recoupleChance = 0
+  let swapChance = 0
 
   // Base decision
-  if (originalStrength < 60) recoupleChance = 70 // weak couple, likely switch
-  if (originalStrength < 100) recoupleChance = 40 // decent couple, maybe switch
-  if (originalStrength >= 100) recoupleChance = 15 // strong couple, unlikely
+  if (originalStrength < 60) swapChance = 70 // weak couple, likely switch
+  if (originalStrength < 100) swapChance = 40 // decent couple, maybe switch
+  if (originalStrength >= 100) swapChance = 15 // strong couple, unlikely
 
-  // Casa chemistry modifier
-  recoupleChance += (casaChemistry - 50) // high chemistry = more tempted
+  // Flush chemistry modifier
+  swapChance += (flushChemistry - 50) // high chemistry = more tempted
 
   // Personality modifier
-  if (npc.stats.loyalty < 4) recoupleChance += 20 // low loyalty
-  if (npc.attachmentStyle === "avoidant") recoupleChance += 15
+  if (npc.stats.loyalty < 4) swapChance += 20 // low loyalty
+  if (npc.attachmentStyle === "avoidant") swapChance += 15
 
   // Drama boost (producer AI)
-  if (tooManyCouplesStayedLoyal) recoupleChance += 20 // force some drama
+  if (tooManyCouplesStayedLoyal) swapChance += 20 // force some drama
 
-  return random(100) < recoupleChance
+  return random(100) < swapChance
 }
 ```
 
-**Expected:** 2-3 out of 4 couples will have at least one person recouple
+**Expected:** 2-3 out of 4 couples will have at least one person Heart Swap
 
 ---
 
 ## 🎭 Special Events
 
-### Event: Hideaway Access
+### Event: Paradise Suite Access
 
 **What:** Private bedroom for one couple, overnight
 
 **When:** Reward for challenge OR Producer AI gift to strong couple
 
 **Effects:**
-- Couple goes to Hideaway (removed from villa for evening)
+- Couple goes to Paradise Suite (removed from resort for evening)
 - Private conversation (3-5 exchanges, very intimate)
 - Massive relationship boost:
   ```javascript
-  hideawayEffects = {
+  privateSuiteEffects = {
     chemistry: +30,
     affection: +20,
     trust: +15,
@@ -1034,16 +1034,16 @@ function npcCasaAmorDecision(npc, originalPartner, bestCasaMatch) {
 
 **Strategic Value:**
 - Makes couple very strong (harder to break)
-- But removes couple from villa drama (boring if overused)
+- But removes couple from resort drama (boring if overused)
 
 **Producer AI logic:**
 ```javascript
-function shouldOfferHideaway(state) {
+function shouldOfferPrivateSuite(state) {
   // Reward challenge winner
   if (challengeJustCompleted) return true
 
   // Boost struggling but genuine couple
-  if (state.playerCouple.strength > 100 && state.playerCouple.audienceRank === 4) {
+  if (state.playerCouple.strength > 100 && state.playerCouple.pulseRank === 4) {
     return true // help them with romantic content
   }
 
@@ -1053,7 +1053,7 @@ function shouldOfferHideaway(state) {
 
 ### Event: Forced Date
 
-**What:** Producer chooses 2 Islanders to go on date
+**What:** Producer chooses 2 Heartbreakers to go on date
 
 **When:** Triggered by Producer AI for drama
 
@@ -1062,15 +1062,15 @@ function shouldOfferHideaway(state) {
 **Scenario 1: Test Player's Couple**
 ```
 📱 "Marcus and Chloe, you're going on a date.
-   Please get ready to leave the villa."
+   Please get ready to leave the resort."
 
 ⚠️ Chloe is YOUR partner!
 
 She's going on a date with Marcus (high chemistry: 75)
 
 While they're gone:
-- You stay in villa (see other couples, build jealousy)
-- OR graft on someone else (strategic backup)
+- You stay at the resort (see other couples, build jealousy)
+- OR spark with someone else (strategic backup)
 ```
 
 **Scenario 2: Help Single Player**
@@ -1087,18 +1087,18 @@ This is Producer helping you find a match
 - Romantic location (beach, rooftop dinner)
 - 3-5 conversation exchanges
 - +20 chemistry bonus (forced proximity)
-- Return to villa, drama ensues
+- Return to resort, drama ensues
 
 ### Event: Love Triangle Lock-In
 
-**What:** Producer forces 3 Islanders to spend evening together
+**What:** Producer forces 3 Heartbreakers to spend evening together
 
 **When:** Love triangle detected (2 people fancy same person)
 
 **Example:**
 ```
 📱 "Marcus, Chloe, and [Player Name], you three will spend
-   the evening in the Hideaway. No one else allowed."
+   the evening in the Paradise Suite. No one else allowed."
 
 Setup: You and Marcus both fancy Chloe
 
@@ -1119,6 +1119,6 @@ Forced to confront it:
 **Last Updated:** 2025-10-08
 
 **Related Files:**
-- **10-Elimination-System.md** - Producer AI, recouplings, voting, bombshells
+- **10-Elimination-System.md** - Producer AI, Pairing Ceremonies, voting, Heart Throbs
 - **08-Daily-Loop.md** - Daily phase structure and timing
 - **07-Gossip-And-Information.md** - Knowledge system used by social events

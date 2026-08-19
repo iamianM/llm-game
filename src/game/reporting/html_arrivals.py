@@ -22,9 +22,9 @@ def arrival_roll_block(record: dict[str, Any]) -> str:
             f"Interruption {escape(str(item.get('interruption_roll', '?')))}/"
             f"{escape(str(item.get('interruption_chance', '?')))} "
             f"{'hit' if item.get('interruption_hit') is True else 'miss'}; "
-            f"pull {escape(str(item.get('pull_roll', '?')))}/"
-            f"{escape(str(item.get('pull_chance', '?')))} "
-            f"{'hit' if item.get('pull_hit') is True else 'miss'}."
+            f"private chat {escape(str(item.get('private_chat_roll', '?')))}/"
+            f"{escape(str(item.get('private_chat_chance', '?')))} "
+            f"{'hit' if item.get('private_chat_hit') is True else 'miss'}."
             "</li>"
         )
     return (

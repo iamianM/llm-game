@@ -39,7 +39,7 @@ def daily_recap_block(day: int, records: list[dict[str, Any]]) -> str:
     if not isinstance(items, list):
         return ""
     if not items:
-        body = "<p>No major villa memories surfaced.</p>"
+        body = "<p>No major Sunset Bay memories surfaced.</p>"
     else:
         body = "<ul>" + "".join(_recap_item(item) for item in items if isinstance(item, dict)) + "</ul>"
     return f"<div class='card background'><p><b>While you were busy yesterday</b></p>{body}</div>"

@@ -9,14 +9,14 @@ from pathlib import Path
 from typing import Any
 
 from src.game.agents.contextual_options import ContextualOptionsAgent
-from src.game.agents.islander_voice import OpenAIIslanderVoice
+from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
 from src.game.cli.commands.report_compare import compare_cmd
 from src.game.cli.commands.review import review_notes_for_trace
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.bookmarks import bookmarks_for_turn
-from src.game.engine.casa_amor import locations_for_villa
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.turn import run_turn
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
@@ -176,15 +176,15 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
     """Build the mandatory Phase F2 single-exchange voice preview."""
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    state = new_game(42, player_stats=PlayerStats(charm=3, banter=3, eq=3, graft=3, loyalty=3))
-    for islander in state.islanders:
-        islander.location_id = Location.POOL
+    state = new_game(42, player_stats=PlayerStats(charm=3, banter=3, eq=3, spark=3, loyalty=3))
+    for heartbreaker in state.heartbreakers:
+        heartbreaker.location_id = Location.POOL
     rng = SeededRng(42)
-    islander_voice = OpenAIIslanderVoice().generate
+    heartbreaker_voice = OpenAIHeartbreakerVoice().generate
     contextual_options = ContextualOptionsAgent().generate
     actions = [
         ("chloe", "friendly_ask_feelings", 10),
-        ("chloe", "friendly_chat_villa", 10),
+        ("chloe", "friendly_chat_resort", 10),
         ("chloe", "friendly_compliment_personality", 10),
         ("maya", "flirty_compliment_looks", 20),
         ("maya", "flirty_playful_teasing", 20),
@@ -207,14 +207,14 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
             state,
             action,
             rng,
-            islander_voice=islander_voice,
+            heartbreaker_voice=heartbreaker_voice,
             contextual_options=contextual_options,
         )
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
 
     preface = (
-        "<p><b>About this preview.</b> This page demonstrates the Islander Voice agent across "
+        "<p><b>About this preview.</b> This page demonstrates the Heartbreaker Voice agent across "
         "all four conversation categories. Affection is pre-warmed before each turn to the intent's "
         "unlock threshold so every tier is visible — a real session evolves these values gradually. "
         "Player stats are deliberately set to the minimum (3 across all five stats) so misses are "
@@ -238,17 +238,17 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "turn": state.turn_index,
         "day": state.day,
         "phase": state.phase.value,
-        "villa": state.villa.value,
+        "resort": state.resort.value,
         "location": state.location_id.value,
         "player_public_perception": state.player.public_perception,
         "visible_state": _visible_state(state),
-        "villa_snapshot": _villa_snapshot(state),
+        "resort_snapshot": _resort_snapshot(state),
         "couple_strength": _player_couple_strength(state),
-        "hideaway": state.hideaway.model_dump(mode="json"),
-        "casa_amor": (
+        "private_suite": state.private_suite.model_dump(mode="json"),
+        "flush_of_hearts": (
             None
-            if state.casa_amor_state is None
-            else state.casa_amor_state.model_dump(mode="json")
+            if state.flush_of_hearts_state is None
+            else state.flush_of_hearts_state.model_dump(mode="json")
         ),
         "input_hash": input_hash,
         "action": action.model_dump(mode="json"),
@@ -272,9 +272,9 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
         "daily_recaps": [recap.model_dump(mode="json") for recap in state.daily_recaps],
         "revealed_preferences": {
-            islander.id: revealed
-            for islander in state.islanders
-            if (revealed := revealed_preferences(islander))
+            heartbreaker.id: revealed
+            for heartbreaker in state.heartbreakers
+            if (revealed := revealed_preferences(heartbreaker))
         },
         "agent_commits": turn.agent_commits.model_dump(mode="json"),
         "agent_traces": [trace.model_dump(mode="json") for trace in turn.agent_traces],
@@ -284,23 +284,23 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
 
 
 def _set_preview_target(state: GameState, target_id: str, affection: int) -> None:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            islander.location_id = state.location_id
-            islander.relationship.affection = affection
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            heartbreaker.location_id = state.location_id
+            heartbreaker.relationship.affection = affection
             return
     raise ValueError(f"preview target not found: {target_id}")
 
 
 def _visible_state(state: GameState) -> str:
     parts = []
-    for islander in state.islanders:
-        if islander.location_id == state.location_id and not islander.eliminated:
-            rel = islander.relationship
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.location_id == state.location_id and not heartbreaker.eliminated:
+            rel = heartbreaker.relationship
             parts.append(
-                f"{islander.name}: affection {rel.affection}, chemistry {rel.chemistry}, trust {rel.trust}"
+                f"{heartbreaker.name}: affection {rel.affection}, chemistry {rel.chemistry}, trust {rel.trust}"
             )
-    return "; ".join(parts) if parts else "No visible islanders."
+    return "; ".join(parts) if parts else "No visible heartbreakers."
 
 
 def _player_couple_strength(state: GameState) -> int | None:
@@ -308,14 +308,14 @@ def _player_couple_strength(state: GameState) -> int | None:
     return None if couple is None else couple_strength(state, couple)
 
 
-def _villa_snapshot(state: GameState) -> dict[str, list[str]]:
+def _resort_snapshot(state: GameState) -> dict[str, list[str]]:
     snapshot: dict[str, list[str]] = {}
-    for location in locations_for_villa(state.villa):
+    for location in locations_for_resort(state.resort):
         occupants = ["you"] if location is state.location_id else []
         occupants.extend(
-            islander.name
-            for islander in state.islanders
-            if islander.location_id is location and not islander.eliminated
+            heartbreaker.name
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.location_id is location and not heartbreaker.eliminated
         )
         snapshot[location.value] = occupants
     return snapshot
@@ -371,7 +371,7 @@ def _clean_packet_output(out: Path) -> None:
 
 def _final_state_summary(final_state: dict[str, Any], llm_mode: str, mode: str, persona: str | None) -> str:
     player = final_state.get("player")
-    islanders = final_state.get("islanders")
+    heartbreakers = final_state.get("heartbreakers")
     memory_lines: list[str] = []
     if isinstance(player, dict):
         memories = player.get("memories")
@@ -380,12 +380,12 @@ def _final_state_summary(final_state: dict[str, Any], llm_mode: str, mode: str, 
         outcome = final_state.get("outcome")
         if isinstance(outcome, str):
             memory_lines.append(f"<li>Final outcome: {outcome}</li>")
-    if isinstance(islanders, list):
-        for islander in islanders:
-            if not isinstance(islander, dict):
+    if isinstance(heartbreakers, list):
+        for heartbreaker in heartbreakers:
+            if not isinstance(heartbreaker, dict):
                 continue
-            memories = islander.get("memories")
-            name = islander.get("name", islander.get("id", "islander"))
+            memories = heartbreaker.get("memories")
+            name = heartbreaker.get("name", heartbreaker.get("id", "heartbreaker"))
             if isinstance(memories, list):
                 memory_lines.append(f"<li>{name} memories: {len(memories)}</li>")
     return (

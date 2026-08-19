@@ -1,23 +1,23 @@
 name: time-budget-expiry
 seed: 31
 initial_phase: morning
-expected_hash: 32f9688e4437af736b6df9d5874a58f496c22eacf243fe1a8df3944780438701
+expected_hash: ab539d6a96826bd5c261fb62ea9f024c1f426f221d0bc2c4c4270ff92a4cbd52
 actions:
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
+  intent_id: friendly_chat_resort

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from src.game.engine.memory import add_memory, create_memory
-from src.game.state.models import GameState, IslanderState, RelationshipDelta
+from src.game.state.models import GameState, HeartbreakerState, RelationshipDelta
 from src.game.state.rng import SeededRng
 from src.game.state.traits import KnownFact
 
@@ -127,7 +127,7 @@ def apply_share_gossip_follow_up(
 
 def share_gossip(state: GameState, speaker_id: str, subject_id: str) -> KnownFact | None:
     """Transfer one known fact from speaker to player with possible distortion."""
-    speaker = _islander(state, speaker_id)
+    speaker = _heartbreaker(state, speaker_id)
     fact = _fact_about(speaker, subject_id)
     if fact is None:
         return None
@@ -155,13 +155,13 @@ def gossip_subjects_for(state: GameState, speaker_id: str) -> list[str]:
     """Return subject ids the speaker can gossip about.
 
     Only subjects that still resolve to a member of the current cast are
-    offered. A fact whose subject id no longer maps to a live islander (e.g. a
+    offered. A fact whose subject id no longer maps to a live heartbreaker (e.g. a
     stale id carried in older save data, or a phantom left behind by a cast
     change) is dropped here so the follow-up menu never offers — and the turn
-    loop never has to resolve — gossip about someone who is not in the villa.
+    loop never has to resolve — gossip about someone who is not in the resort.
     """
-    speaker = _islander(state, speaker_id)
-    cast_ids = {islander.id for islander in state.islanders}
+    speaker = _heartbreaker(state, speaker_id)
+    cast_ids = {heartbreaker.id for heartbreaker in state.heartbreakers}
     subjects = {
         fact.fact_key.split(".", 1)[0]
         for fact in speaker.known_facts.values()
@@ -173,7 +173,7 @@ def gossip_subjects_for(state: GameState, speaker_id: str) -> list[str]:
     )
 
 
-def _fact_about(speaker: IslanderState, subject_id: str) -> KnownFact | None:
+def _fact_about(speaker: HeartbreakerState, subject_id: str) -> KnownFact | None:
     facts = [
         fact for fact in speaker.known_facts.values()
         if fact.fact_key.startswith(f"{subject_id}.") and not fact.fact_key.endswith(".hidden_secret")
@@ -186,7 +186,7 @@ def _distorted_value(state: GameState, fact: KnownFact, rng: SeededRng) -> str:
     if rng.randint(1, 100) > 30:
         return fact.value
     subject_id, trait_key = fact.fact_key.split(".", 1)
-    subject = next((islander for islander in state.islanders if islander.id == subject_id), None)
+    subject = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == subject_id), None)
     if subject is None:
         # The fact's subject is no longer in the cast (stale id). Pass the value
         # through undistorted rather than hard-crashing the turn.
@@ -197,8 +197,8 @@ def _distorted_value(state: GameState, fact: KnownFact, rng: SeededRng) -> str:
     return rng.choice(trait.distractors)
 
 
-def _islander(state: GameState, islander_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander
-    raise ValueError(f"unknown islander: {islander_id}")
+def _heartbreaker(state: GameState, heartbreaker_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            return heartbreaker
+    raise ValueError(f"unknown heartbreaker: {heartbreaker_id}")

@@ -25,16 +25,15 @@ from src.game.eval.playthrough_trace import (
     turns_with_audience,
     turns_with_auto_advance,
     turns_with_background,
-    turns_with_casa_amor,
-    turns_with_casa_return,
-    turns_with_casa_swing,
     turns_with_category,
     turns_with_ceremony,
     turns_with_challenge,
     turns_with_compatibility,
     turns_with_couple_strength,
+    turns_with_flush_of_hearts,
+    turns_with_flush_return,
+    turns_with_flush_swing,
     turns_with_group_date,
-    turns_with_hideaway,
     turns_with_interruption,
     turns_with_interruption_response,
     turns_with_low_chance,
@@ -42,8 +41,9 @@ from src.game.eval.playthrough_trace import (
     turns_with_npc_initiated_exit,
     turns_with_outcome,
     turns_with_phase_overage,
+    turns_with_private_chat_attempt,
+    turns_with_private_suite,
     turns_with_producer_text,
-    turns_with_pull,
     turns_with_reveals,
     turns_with_steal_attempt,
 )
@@ -90,8 +90,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     conversations_started = 0
     wheel_exits = 0
     walk_aways = 0
-    pull_attempts = 0
-    pull_failures = 0
+    private_chat_attempts = 0
+    private_chat_failures = 0
     interruptions_fired = 0
     interruption_responses = 0
     interruption_response_kinds: set[str] = set()
@@ -107,19 +107,19 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
     group_dates_held = 0
     compatibility_bonus_observed = 0
     max_couple_strength_reached = 0
-    hideaway_used = False
+    private_suite_used = False
     steal_attempts_total = 0
     steal_successes = 0
-    casa_amor_visited = False
-    casa_amor_player_decision: str | None = None
-    casa_amor_partners_swapped = False
-    casa_perception_before: int | None = None
-    casa_perception_after: int | None = None
+    flush_of_hearts_visited = False
+    flush_of_hearts_player_decision: str | None = None
+    flush_of_hearts_partners_swapped = False
+    flush_perception_before: int | None = None
+    flush_perception_after: int | None = None
     auto_advances_total = 0
     phase_counts: Counter[tuple[int, str]] = Counter()
     arrival_rolls_total = 0
     arrival_interrupt_hits = 0
-    arrival_pull_hits = 0
+    arrival_private_chat_hits = 0
     npc_summoned_total = 0
     npc_left_total = 0
 
@@ -128,8 +128,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         result = as_dict(record.get("mechanical_result"))
         result_action = as_dict(result.get("action"))
         commits = as_dict(record.get("agent_commits"))
-        villa_update = as_dict(commits.get("villa_update"))
-        pull = result.get("pull_attempt")
+        resort_update = as_dict(commits.get("resort_update"))
+        private_chat = result.get("private_chat_attempt")
         turn_number = turn(record)
 
         kind = str(action.get("kind", ""))
@@ -149,14 +149,14 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             wheel_exits += 1
         if kind == "end_conversation":
             walk_aways += 1
-        if isinstance(pull, dict):
-            pull_attempts += 1
-            if pull.get("success") is False:
-                pull_failures += 1
-        interruptions = villa_update.get("npc_interruptions")
+        if isinstance(private_chat, dict):
+            private_chat_attempts += 1
+            if private_chat.get("success") is False:
+                private_chat_failures += 1
+        interruptions = resort_update.get("npc_interruptions")
         if isinstance(interruptions, list):
             interruptions_fired += len(interruptions)
-        summoned = villa_update.get("npc_summoned_elsewhere")
+        summoned = resort_update.get("npc_summoned_elsewhere")
         if isinstance(summoned, list):
             npc_summoned_total += len(summoned)
         rolls = record.get("arrival_rolls")
@@ -165,7 +165,7 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
             for arrival_roll in rolls:
                 arrival = as_dict(arrival_roll)
                 arrival_interrupt_hits += int(arrival.get("interruption_hit") is True)
-                arrival_pull_hits += int(arrival.get("pull_hit") is True)
+                arrival_private_chat_hits += int(arrival.get("private_chat_hit") is True)
         follow_up_menu = as_dict(record.get("follow_up_menu"))
         if follow_up_menu.get("npc_will_leave") is True:
             npc_left_total += 1
@@ -213,22 +213,22 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         strength = record.get("couple_strength")
         if isinstance(strength, int):
             max_couple_strength_reached = max(max_couple_strength_reached, strength)
-        if kind == "hideaway":
-            hideaway_used = True
-        if record.get("villa") == "casa_amor":
-            casa_amor_visited = True
-        casa = record.get("casa_amor")
-        if isinstance(casa, dict):
-            decision = casa.get("player_decision")
+        if kind == "private_suite":
+            private_suite_used = True
+        if record.get("resort") == "flush_of_hearts":
+            flush_of_hearts_visited = True
+        flush = record.get("flush_of_hearts")
+        if isinstance(flush, dict):
+            decision = flush.get("player_decision")
             if isinstance(decision, str):
-                casa_amor_player_decision = decision
-            casa_amor_partners_swapped = casa_amor_partners_swapped or casa.get("partners_swapped") is True
-            before = casa.get("player_perception_before")
-            after = casa.get("player_perception_after")
+                flush_of_hearts_player_decision = decision
+            flush_of_hearts_partners_swapped = flush_of_hearts_partners_swapped or flush.get("partners_swapped") is True
+            before = flush.get("player_perception_before")
+            after = flush.get("player_perception_after")
             if isinstance(before, int):
-                casa_perception_before = before
+                flush_perception_before = before
             if isinstance(after, int):
-                casa_perception_after = after
+                flush_perception_after = after
         if turn_number < 0:
             raise ValueError("recorded turn must be non-negative")
 
@@ -245,8 +245,8 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         conversations_started=conversations_started,
         wheel_exits=wheel_exits,
         walk_aways=walk_aways,
-        pull_attempts=pull_attempts,
-        pull_failures=pull_failures,
+        private_chat_attempts=private_chat_attempts,
+        private_chat_failures=private_chat_failures,
         interruptions_fired=interruptions_fired,
         interruption_responses=interruption_responses,
         interruption_response_kinds=sorted(interruption_response_kinds),
@@ -263,22 +263,22 @@ def _stats(records: list[dict[str, Any]], final_state: dict[str, Any] | None) ->
         revealed_preference_count=revealed_preference_count(final_state),
         compatibility_bonus_observed=compatibility_bonus_observed,
         max_couple_strength_reached=max_couple_strength_reached,
-        hideaway_used=hideaway_used,
+        private_suite_used=private_suite_used,
         steal_attempts_total=steal_attempts_total,
         steal_successes=steal_successes,
-        casa_amor_visited=casa_amor_visited,
-        casa_amor_player_decision=casa_amor_player_decision,
-        casa_amor_partners_swapped=casa_amor_partners_swapped,
-        casa_amor_perception_swing=(
+        flush_of_hearts_visited=flush_of_hearts_visited,
+        flush_of_hearts_player_decision=flush_of_hearts_player_decision,
+        flush_of_hearts_partners_swapped=flush_of_hearts_partners_swapped,
+        flush_of_hearts_perception_swing=(
             0
-            if casa_perception_before is None or casa_perception_after is None
-            else casa_perception_after - casa_perception_before
+            if flush_perception_before is None or flush_perception_after is None
+            else flush_perception_after - flush_perception_before
         ),
         auto_advances_total=auto_advances_total,
         avg_actions_per_phase=round(avg_actions_per_phase, 2),
         arrival_rolls_total=arrival_rolls_total,
         arrival_interrupt_hits=arrival_interrupt_hits,
-        arrival_pull_hits=arrival_pull_hits,
+        arrival_private_chat_hits=arrival_private_chat_hits,
         npc_summoned_total=npc_summoned_total,
         npc_left_total=npc_left_total,
         final_day=final_day,
@@ -295,8 +295,8 @@ def _assertions(
     return [
         _assert("wheel_exit", "At least one graceful wheel exit", stats.wheel_exits >= 1, f"{stats.wheel_exits} wheel exit(s)", turns_with_category(records, "exit")),
         _assert("walk_away", "At least one curt walk-away", stats.walk_aways >= 1, f"{stats.walk_aways} walk-away action(s)", turns_with_action(records, "end_conversation")),
-        _assert("pull_attempt", "At least one pull-for-chat attempt", stats.pull_attempts >= 1, f"{stats.pull_attempts} pull attempt(s)", turns_with_pull(records)),
-        _assert("pull_failure", "At least one failed pull attempt", stats.pull_failures >= 1, f"{stats.pull_failures} failed pull(s)", turns_with_pull(records, success=False)),
+        _assert("private_chat_attempt", "At least one private-chat attempt", stats.private_chat_attempts >= 1, f"{stats.private_chat_attempts} private chat attempt(s)", turns_with_private_chat_attempt(records)),
+        _assert("private_chat_failure", "At least one failed private chat attempt", stats.private_chat_failures >= 1, f"{stats.private_chat_failures} failed private chat attempt(s)", turns_with_private_chat_attempt(records, success=False)),
         _assert("interruption_fired", "At least one NPC interruption fired", stats.interruptions_fired >= 1, f"{stats.interruptions_fired} interruption(s)", turns_with_interruption(records)),
         _assert(
             "interruption_answered",
@@ -308,21 +308,21 @@ def _assertions(
         _assert("memory_coverage", "Each major NPC has at least three memories", all(memory_holders.get(npc_id, 0) >= 3 for npc_id in ("chloe", "maya", "liam")), f"memory counts: {dict(memory_holders)}", turns_with_memories(records)),
         _assert("low_chance_rolls", "At least three rolls below sixty percent", stats.low_chance_rolls >= 3, f"{stats.low_chance_rolls} low-chance roll(s)", turns_with_low_chance(records)),
         _assert("gossip_pick", "At least one gossip option was picked", stats.gossip_picks >= 1, f"{stats.gossip_picks} gossip pick(s)", turns_with_category(records, "gossip")),
-        _assert("ceremony_event_observed", "At least one ceremony or bombshell event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", turns_with_ceremony(records)),
+        _assert("ceremony_event_observed", "At least one ceremony or Heart Throb event occurred", stats.ceremony_events >= 1, f"{stats.ceremony_events} ceremony event(s)", turns_with_ceremony(records)),
         _assert("background_life", "Background NPC dialogue happened", stats.background_dialogues >= 1, f"{stats.background_dialogues} background exchange(s)", turns_with_background(records)),
         _assert("outcome_assigned", "Run has a defined outcome", stats.outcome is not None, f"outcome: {stats.outcome or 'none'}", turns_with_outcome(records)),
         _assert("audience_ranking_per_day", "Audience rankings were recorded", stats.audience_snapshots >= 1, f"{stats.audience_snapshots} audience snapshot(s)", turns_with_audience(records)),
         _assert("challenge_fired_each_day", "At least five daily challenges completed", stats.challenges_completed >= 5, f"{stats.challenges_completed} challenge(s)", turns_with_challenge(records)),
         _assert("producer_texts_fired", "At least three producer texts fired", stats.producer_texts_fired >= 3, f"{stats.producer_texts_fired} producer text(s)", turns_with_producer_text(records)),
         _assert("group_date_observed", "At least one group date was scheduled", stats.group_dates_held >= 1, f"{stats.group_dates_held} group date turn(s)", turns_with_group_date(records)),
-        _assert("type_on_paper_revealed", "At least one Type on Paper bit was revealed", stats.revealed_preference_count >= 1, f"{stats.revealed_preference_count} revealed bit(s)", turns_with_reveals(records)),
+        _assert("ideal_match_revealed", "At least one Ideal Match bit was revealed", stats.revealed_preference_count >= 1, f"{stats.revealed_preference_count} revealed bit(s)", turns_with_reveals(records)),
         _assert("compatibility_bonus_observed", "At least one roll used compatibility bonus", stats.compatibility_bonus_observed >= 1, f"{stats.compatibility_bonus_observed} compatibility roll(s)", turns_with_compatibility(records)),
         _assert("couple_strength_visible", "Couple strength surfaced in the trace", stats.max_couple_strength_reached >= 1, f"max couple strength {stats.max_couple_strength_reached}", turns_with_couple_strength(records)),
-        _assert("hideaway_used_when_eligible", "Hideaway was used after reaching high couple strength", stats.max_couple_strength_reached < 70 or stats.hideaway_used, f"hideaway used: {stats.hideaway_used}", turns_with_hideaway(records)),
-        _assert("steal_attempt_observed", "At least one bombshell steal attempt occurred", stats.steal_attempts_total >= 1, f"{stats.steal_attempts_total} steal attempt(s), {stats.steal_successes} success(es)", turns_with_steal_attempt(records)),
-        _assert("casa_amor_phase_observed", "Casa Amor phase was observed", stats.casa_amor_visited, f"visited: {stats.casa_amor_visited}", turns_with_casa_amor(records)),
-        _assert("casa_amor_return_resolved", "Casa Amor return was resolved", stats.casa_amor_player_decision is not None, f"decision: {stats.casa_amor_player_decision or 'none'}", turns_with_casa_return(records)),
-        _assert("casa_amor_perception_swing", "Casa Amor created a major perception swing", abs(stats.casa_amor_perception_swing) >= 6, f"swing: {stats.casa_amor_perception_swing}", turns_with_casa_swing(records)),
+        _assert("private_suite_used_when_eligible", "Private Suite was used after reaching high couple strength", stats.max_couple_strength_reached < 70 or stats.private_suite_used, f"private_suite used: {stats.private_suite_used}", turns_with_private_suite(records)),
+        _assert("steal_attempt_observed", "At least one Heart Throb steal attempt occurred", stats.steal_attempts_total >= 1, f"{stats.steal_attempts_total} steal attempt(s), {stats.steal_successes} success(es)", turns_with_steal_attempt(records)),
+        _assert("flush_of_hearts_phase_observed", "Flush of Hearts phase was observed", stats.flush_of_hearts_visited, f"visited: {stats.flush_of_hearts_visited}", turns_with_flush_of_hearts(records)),
+        _assert("flush_of_hearts_return_resolved", "Flush of Hearts return was resolved", stats.flush_of_hearts_player_decision is not None, f"decision: {stats.flush_of_hearts_player_decision or 'none'}", turns_with_flush_return(records)),
+        _assert("flush_of_hearts_perception_swing", "Flush of Hearts created a major perception swing", abs(stats.flush_of_hearts_perception_swing) >= 6, f"swing: {stats.flush_of_hearts_perception_swing}", turns_with_flush_swing(records)),
         _assert("phase_action_count_reasonable", "Average actions per phase is reasonable", stats.avg_actions_per_phase <= 12, f"avg actions/phase: {stats.avg_actions_per_phase}", turns_with_phase_overage(records)),
         _assert("time_expired_advance_observed", "At least one phase advanced because time expired", stats.auto_advances_total >= 1, f"{stats.auto_advances_total} auto-advance turn(s)", turns_with_auto_advance(records)),
         _assert("npc_initiated_exit_observed", "At least one NPC initiated an exit", stats.npc_summoned_total + stats.npc_left_total >= 1, f"{stats.npc_summoned_total} summon(s), {stats.npc_left_total} npc-left menu(s)", turns_with_npc_initiated_exit(records)),

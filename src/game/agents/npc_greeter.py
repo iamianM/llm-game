@@ -3,7 +3,7 @@
 Implementation rule:
 This agent writes a single, voice-true opening line per NPC for the Day-1
 greeting circle. Called once at intros start (right after character
-creation) and parallelized across all islanders.
+creation) and parallelized across all heartbreakers.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ from pathlib import Path
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     begin_agent_attempt,
@@ -28,7 +28,7 @@ from src.game.agents.runtime import (
     reasoning_request_kwargs,
     record_agent_trace,
 )
-from src.game.state.models import GameState, IslanderState
+from src.game.state.models import GameState, HeartbreakerState
 
 NPC_GREETER_MODEL = GAME_AGENT_MODEL
 NPC_GREETER_REASONING_EFFORT = os.environ.get("LLM_NPC_GREETER_REASONING_EFFORT", "low")
@@ -39,14 +39,14 @@ _NPC_GREETER_PROMPT_FILE = Path(__file__).parent / "prompts" / "npc_greeter.md"
 
 
 class GreetingLine(BaseModel):
-    """One generated opening greeting from an islander to the player."""
+    """One generated opening greeting from an heartbreaker to the player."""
 
     model_config = ConfigDict(extra="forbid")
 
     greeting: str
 
 
-# Returns a dict of islander_id -> greeting line, populated for every
+# Returns a dict of heartbreaker_id -> greeting line, populated for every
 # non-eliminated NPC the player will meet during Day-1 intros.
 NpcGreeterFn = Callable[[GameState], dict[str, str]]
 
@@ -65,7 +65,7 @@ class OpenAINpcGreeter:
     def generate(self, state: GameState) -> dict[str, str]:
         """Generate greetings for every Day-1 intro target, in parallel.
 
-        Eight islanders is the default opening cast; sequential calls would
+        Eight heartbreakers is the default opening cast; sequential calls would
         add ~5-8s of wall-time to the casting screen. Parallelizing brings
         that down to roughly the slowest single call.
         """
@@ -95,7 +95,7 @@ class OpenAINpcGreeter:
         return await asyncio.to_thread(self.generate, state)
 
     def _greet_one_with_retries(
-        self, state: GameState, target: IslanderState, instructions: str
+        self, state: GameState, target: HeartbreakerState, instructions: str
     ) -> str:
         rendered = _render_context(state, target)
         last_error: ValueError | None = None
@@ -106,7 +106,7 @@ class OpenAINpcGreeter:
                 input_text = (
                     f"{rendered}\n\nPrevious GreetingLine failed validation: "
                     f"{last_error}. Return a corrected GreetingLine (one short opening "
-                    "sentence in this islander's voice; no stage directions in asterisks)."
+                    "sentence in this heartbreaker's voice; no stage directions in asterisks)."
                 )
             attempt_token = begin_agent_attempt(attempt_number)
             try:
@@ -174,11 +174,11 @@ def validate_greeting(text: str, *, target_name: str) -> None:
         raise ValueError("greeting must not include stage directions in asterisks")
 
 
-def _intro_targets(state: GameState) -> list[IslanderState]:
-    return [islander for islander in state.islanders if not islander.eliminated]
+def _intro_targets(state: GameState) -> list[HeartbreakerState]:
+    return [heartbreaker for heartbreaker in state.heartbreakers if not heartbreaker.eliminated]
 
 
-def _render_context(state: GameState, target: IslanderState) -> str:
+def _render_context(state: GameState, target: HeartbreakerState) -> str:
     persona = (
         target.trait_card.persona.one_line
         if target.trait_card and target.trait_card.persona
@@ -188,10 +188,10 @@ def _render_context(state: GameState, target: IslanderState) -> str:
         [
             f"You are {target.name}, a {target.archetype}. You are a {target.gender}.",
             f"Persona: {persona or 'easygoing, voice-true to your archetype.'}",
-            f"Day {state.day}, {state.phase.value}, at the firepit.",
+            f"Day {state.day}, {state.phase.value}, at the flame_deck.",
             f"You are meeting the player for the first time. Player is a {state.player.gender}.",
             "Write ONE short opening greeting in your voice — first-person, addressed to the player.",
-            "Reference something specific about them or this villa moment, not generic small talk.",
+            "Reference something specific about them or this Sunset Bay moment, not generic small talk.",
             "Do NOT include asterisks or stage directions; just the spoken line.",
         ]
     )

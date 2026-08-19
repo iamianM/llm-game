@@ -50,8 +50,8 @@ def test_background_dialogue_rejects_first_person_body_language() -> None:
 def test_background_dialogue_context_supplies_cast_pronouns() -> None:
     """The background voice gets a pronoun roster so unisex names aren't guessed."""
     state = new_game(1)
-    chloe = next(i for i in state.islanders if i.id == "chloe")
-    liam = next(i for i in state.islanders if i.id == "liam")
+    chloe = next(i for i in state.heartbreakers if i.id == "chloe")
+    liam = next(i for i in state.heartbreakers if i.id == "liam")
     assert chloe.gender is Gender.WOMAN
     assert liam.gender is Gender.MAN
 
@@ -63,9 +63,9 @@ def test_background_dialogue_context_supplies_cast_pronouns() -> None:
 
 
 def test_background_dialogue_cast_pronouns_exclude_eliminated() -> None:
-    """A Heart Out islander drops off the background pronoun roster."""
+    """A Heart Out heartbreaker drops off the background pronoun roster."""
     state = new_game(1)
-    eliminated = next(i for i in state.islanders if i.id == "nia")
+    eliminated = next(i for i in state.heartbreakers if i.id == "nia")
     eliminated.eliminated = True
 
     rendered = _render_context(state, _conversation(), "")
@@ -90,6 +90,6 @@ def _conversation() -> NPCNPCConversation:
         id="npcconv_test",
         participants=["chloe", "maya"],
         location_id=Location.POOL,
-        topic="comparing notes about the new bombshell",
+        topic="comparing notes about the new Heart Throb",
         started_on_turn=1,
     )

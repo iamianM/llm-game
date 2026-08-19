@@ -41,18 +41,18 @@ heart_rate:
     lean_in_bonus: 3
     apologize_penalty: -2
 
-snog_marry_pie:
+kiss_wed_pass:
   rounds: 3
   per_round_points:
-    snog_partner: 2
-    snog_chemistry: 3
-    snog_friend: 1
-    marry_partner: 3
-    marry_chemistry: 2
-    marry_friend: 1
-    pie_rival: 3
-    pie_friend: -3
-    pie_partner: -5
+    kiss_partner: 2
+    kiss_chemistry: 3
+    kiss_friend: 1
+    wed_partner: 3
+    wed_chemistry: 2
+    wed_friend: 1
+    pass_rival: 3
+    pass_friend: -3
+    pass_partner: -5
   thresholds:
     success: 6
     partial: 2
@@ -60,9 +60,9 @@ snog_marry_pie:
     success: 5
     partial: 2
     failure: -4
-    pie_partner_extra: -3
+    pass_partner_extra: -3
 
-mr_and_mrs:
+couples_quiz:
   rounds: 6
   per_round_points:
     both_match: 3
@@ -118,9 +118,9 @@ final_couples:
     honesty_lie_caught: -2
     banter_match: 1
     banter_miss: 0
-    audacity_rival_pie: 1
-    audacity_friend_pie: -1
-    audacity_partner_pie: -3
+    audacity_rival_callout: 1
+    audacity_friend_callout: -1
+    audacity_partner_callout: -3
   thresholds:
     success: 12
     partial: 6

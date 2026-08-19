@@ -5,7 +5,7 @@ SLIDE_JS = r"""
   const scenes=[...document.querySelectorAll('.scene')];
   const sceneBtns=[...document.querySelectorAll('.scene-btn')];
   const dayPills=[...document.querySelectorAll('.day-pill')];
-  const mapHost=document.getElementById('villa-map-host');
+  const mapHost=document.getElementById('resort-map-host');
   let meta=[];
   try{meta=JSON.parse(document.getElementById('scene-meta').textContent||'[]');}catch(e){}
   let current=0;
@@ -15,20 +15,20 @@ SLIDE_JS = r"""
     return String(n).split('_')[0].replace(/^./,c=>c.toUpperCase());
   }
 
-  function renderVillaMap(snapshot){
+  function renderResortMap(snapshot){
     if(!mapHost)return;
     if(!snapshot||Object.keys(snapshot).length===0){
-      mapHost.innerHTML="<p class='muted small'>No villa map for this scene.</p>";
+      mapHost.innerHTML="<p class='muted small'>No location map for this scene.</p>";
       return;
     }
-    const order=['pool','kitchen','terrace','bedroom','firepit','hideaway'];
+    const order=['pool','kitchen','terrace','bedroom','flame_deck','private_suite'];
     const keys=Object.keys(snapshot).sort((a,b)=>{
       const ia=order.indexOf(a),ib=order.indexOf(b);
       return (ia<0?99:ia)-(ib<0?99:ib);
     });
     const cells=keys.map(loc=>{
       const occ=snapshot[loc]||[];
-      if(loc==='hideaway'&&occ.length===0)return'';
+      if(loc==='private_suite'&&occ.length===0)return'';
       const playerHere=occ.some(o=>String(o).toLowerCase()==='you');
       const names=occ.map(o=>{
         const s=String(o);
@@ -39,7 +39,7 @@ SLIDE_JS = r"""
       const people=names.length?names.join(', '):"<span class='muted'>—</span>";
       return `<div class='${cls}'><div class='loc-name'>${loc.toUpperCase()}</div><div class='loc-people'>${people}</div></div>`;
     }).join('');
-    mapHost.innerHTML=`<div class='villa-map'>${cells}</div>`;
+    mapHost.innerHTML=`<div class='resort-map'>${cells}</div>`;
   }
 
   function highlightDay(day){
@@ -56,7 +56,7 @@ SLIDE_JS = r"""
     const m=meta[current];
     if(m){
       highlightDay(m.day);
-      renderVillaMap(m.villa_snapshot);
+      renderResortMap(m.resort_snapshot);
       const activeBtn=document.querySelector(`.scene-btn[data-scene-index='${current}']`);
       if(activeBtn&&activeBtn.scrollIntoView){
         activeBtn.scrollIntoView({block:'nearest',behavior:'smooth'});

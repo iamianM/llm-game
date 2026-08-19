@@ -32,7 +32,7 @@ def update_public_perception(
         reason = "they thought the flirt missed"
     elif "ambient_repeat" in result.tags:
         delta = -2
-        reason = "they wanted more graft"
+        reason = "they wanted more spark"
     before = state.player.public_perception
     state.player.public_perception = clamp_relationship(state.player.public_perception + delta)
     result.audience_delta = state.player.public_perception - before

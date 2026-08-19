@@ -21,7 +21,7 @@ engine bug, that's noted too.
 ## Codex sequencing
 
 Decisions confirmed with the project owner. Phase 1 is the foundation, Phase 2
-adds the steal/graft drama mechanics that depend on Phase 1 state existing.
+adds the steal/spark drama mechanics that depend on Phase 1 state existing.
 
 ### Phase 1 (foundation — build in this order)
 
@@ -48,8 +48,8 @@ adds the steal/graft drama mechanics that depend on Phase 1 state existing.
 
 ### Phase 2 (drama mechanics — after Phase 1 lands)
 
-7. **Player-initiated recoupling proposal** — new §14
-8. **NPC-initiated recoupling proposal** — new §14
+7. **Player-initiated Pairing Ceremony proposal** — new §14
+8. **NPC-initiated Pairing Ceremony proposal** — new §14
 9. **Singles handling** (no auto-pair after a steal; organic drift via background) — new §14
 
 ### Phase 3+ (polish, defer until core feels right)
@@ -62,16 +62,16 @@ adds the steal/graft drama mechanics that depend on Phase 1 state existing.
 
 ---
 
-## 1. Day-1 ceremony is named "recoupling"
+## 1. Day-1 ceremony is named "Pairing Ceremony"
 
 **Observation.** The first ceremony on Day 1, turn 1, fires with
-`ceremony_events: [{kind: "recoupling", message: "Recoupling ceremony completed."}]`.
+`ceremony_events: [{kind: "pairing", message: "Pairing Ceremony completed."}]`.
 On the show, Day 1 is the **opening coupling** — first pairings from a lineup, not
 a re-pairing. The renderer translates the label for Day 1 only, but the engine
 event kind is the same as later ceremonies.
 
-**Root cause.** `src/game/engine/ceremonies/` reuses the `recoupling` event kind
-for both first coupling and subsequent recouplings. Downstream code (audience
+**Root cause.** `src/game/engine/ceremonies/` reuses the `pairing` event kind
+for both first coupling and subsequent Pairing Ceremonies. Downstream code (audience
 weighting, drama generation, narrator prompt) treats them identically.
 
 **Proposed fix.** Introduce a distinct `opening_coupling` ceremony kind used on
@@ -122,8 +122,8 @@ volume.
 | Trigger | Source |
 |---|---|
 | Player picks an exit intent (end_softly / walk_away) | `apply_action` resolves exit kind |
-| NPC ends the conversation themselves | islander_voice signals `npc_departure` |
-| NPC interrupted away by orchestrator | `villa_update.npc_summoned_elsewhere` includes the active conversation's target |
+| NPC ends the conversation themselves | heartbreaker_voice signals `npc_departure` |
+| NPC interrupted away by orchestrator | `resort_update.npc_summoned_elsewhere` includes the active conversation's target |
 | Conversation cut by event (gather scheduled, ceremony fires) | phase/ceremony resolver closes active conversation |
 | Phase budget expires mid-conversation | `auto_advance` closes any open conversation |
 
@@ -134,7 +134,7 @@ conversation transcript + state at end) and emits one batch.
 - Move the curator call out of per-turn `run_turn` into the conversation-end
   resolver(s).
 - For background conversations, fire the curator when a specific
-  `conversation_ends` event lands in `villa_update`, scoped to that one
+  `conversation_ends` event lands in `resort_update`, scoped to that one
   conversation.
 - Single batch per conversation. No more "two batches in one turn's commits"
   cases — each batch corresponds to one closed conversation.
@@ -153,13 +153,13 @@ Liam↔Sophie, etc. couples that *exist conceptually* (the show requires everyon
 be coupled) aren't represented as data.
 
 **Root cause.** The `couples` model in `src/game/state/models.py` (or wherever
-`Couple` lives) is populated only by player `recouple` actions. NPC pairings
-formed by the Producer/Recoupling ceremony aren't materialized.
+`Couple` lives) is populated only by player `pair` actions. NPC pairings
+formed by the Producer/Pairing Ceremony aren't materialized.
 
 ### Day-1 opening coupling flow
 
 1. Player picks first from all opposite-gender (or as-configured) non-partner
-   islanders. Existing `RECOUPLE` action handles this.
+   heartbreakers. Existing `PAIR` action handles this.
 2. After the player's pick is locked, the engine runs **greedy
    compatibility-based matching** for the remaining 6 NPCs:
 
@@ -187,9 +187,9 @@ formed by the Producer/Recoupling ceremony aren't materialized.
 
 3. All NPC couples written to `state.couples` alongside the player couple.
 
-### Subsequent recouplings
+### Subsequent Pairing Ceremonies
 
-For Day-3+ forced recouplings, the same algorithm runs but with relationship
+For Day-3+ forced Pairing Ceremonies, the same algorithm runs but with relationship
 state mixed in:
 
 ```
@@ -205,7 +205,7 @@ Player picks first (as today). Then the algorithm pairs the rest.
 
 ### Singles after a player-initiated steal (Phase 2)
 
-When the player triggers a recoupling proposal (§14) and steals a partner,
+When the player triggers a Pairing Ceremony proposal (§14) and steals a partner,
 the two left-behind NPCs become **single** — they do NOT auto-pair. This is
 deliberate and show-accurate. See §14 for how singles drift.
 
@@ -216,15 +216,15 @@ class Couple:
     partner_a_id: str
     partner_b_id: str
     formed_on_day: int
-    formed_via: Literal["opening", "ceremony", "casa_return", "proposal"]
-    has_used_hideaway: bool = False
+    formed_via: Literal["opening", "ceremony", "flush_return", "proposal"]
+    has_used_private_suite: bool = False
     rebound: bool = False  # True if formed after a steal (lower base appeal)
 ```
 
-Add to islanders:
+Add to heartbreakers:
 
 ```python
-class Islander:
+class Heartbreaker:
     ...
     coupled: bool   # derived from state.couples membership; or a couple_id field
 ```
@@ -233,10 +233,10 @@ class Islander:
 
 Required to unblock:
 - Audience ranking of all couples (issue #12, §13)
-- Casa Amor partner-swapping with real consequences
+- Flush of Hearts partner-swapping with real consequences
 - Dumping stakes ("lowest-ranked couple is at risk" needs all couples ranked)
 - Right-rail Couples panel showing the whole field
-- Recoupling proposal (§14) — you can't steal what isn't there
+- Pairing Ceremony proposal (§14) — you can't steal what isn't there
 
 ---
 
@@ -245,7 +245,7 @@ Required to unblock:
 **Observation.** 18 of 75 turns are `start_conversation` and 12 of those target
 Chloe. The loyal autopilot uses `friendly_ask_feelings` to open and `end_softly`
 to close, almost every conversation. The player never has substantive
-interactions with Liam, Sophie, Jordan, Marcus, Blake, Zara, or Nia until Casa
+interactions with Liam, Sophie, Jordan, Marcus, Blake, Zara, or Nia until Flush of Hearts
 Amor (which is forced).
 
 **Root cause.** The autopilot's persona heuristic in
@@ -253,12 +253,12 @@ Amor (which is forced).
 heavily for the "loyal" persona, with no diversity counter.
 
 **Proposed fix.** Add a per-day quota to all personas: "must talk to ≥ N
-distinct islanders before defaulting to partner" (N=3 day 1, N=2 days 2-3, N=1
+distinct heartbreakers before defaulting to partner" (N=3 day 1, N=2 days 2-3, N=1
 later). Persona still flavors which option to pick *once* the target is
 selected.
 
 **Renderer note.** This is the most "this game has a problem" issue the user
-hit. Right-rail Cast panel now makes it obvious that 6 of 8 islanders are
+hit. Right-rail Cast panel now makes it obvious that 6 of 8 heartbreakers are
 unfamiliar by Day 3.
 
 ---
@@ -282,7 +282,7 @@ before the first challenge phase begins. Forced — player cannot skip.
 
 ```
 Introduce yourself to:
-  1. Liam (firepit)
+  1. Liam (flame_deck)
   2. Marcus (kitchen)
   3. Jordan (pool)
   4. Sophie (terrace)
@@ -298,7 +298,7 @@ Player picks them in any order. Each pick opens a **mini-conversation**:
   - **Flirty** — playful, suggestive
   - **Deep** — vulnerable, sincere
   - **Banter** — jokes, teasing
-- Islander Voice agent generates the NPC's response, flavored by their
+- Heartbreaker Voice agent generates the NPC's response, flavored by their
   personality + the chosen dynamic
 - One more exchange (player picks a follow-up dynamic, NPC responds)
 - **NPC ends the conversation** after the second exchange ("Cool — catch you
@@ -346,8 +346,8 @@ supports either.
 
 ## 7. Narrator prose is one-sentence and generic
 
-**Observation.** Day 1 opening coupling narration: *"The islanders gather by the
-pool, the tension thick as the first recoupling ceremony unfolds. Without a
+**Observation.** Day 1 opening coupling narration: *"The heartbreakers gather by the
+pool, the tension thick as the first Pairing Ceremony unfolds. Without a
 single name called…"* — one sentence, doesn't say who picked whom, no specific
 reactions, no setup for the next beat.
 
@@ -357,9 +357,9 @@ a single `prose` string with no structural requirement.
 **Proposed fix.** Restructure the narrator output to a schema:
 ```python
 class EventNarration:
-    setup: str           # "Everyone gathered around the firepit at dusk..."
+    setup: str           # "Everyone gathered around the flame_deck at dusk..."
     beats: list[str]     # who chose whom, with reactions ("Marcus stepped forward and picked Zara...")
-    reactions: dict[str, str]  # per-islander notable reactions
+    reactions: dict[str, str]  # per-heartbreaker notable reactions
     hook: str            # closing line that sets up the next phase
 ```
 The renderer can lay each section out with appropriate prominence.
@@ -369,7 +369,7 @@ The renderer can lay each section out with appropriate prominence.
 ## 8. Challenges are single dice rolls, no minigame
 
 **Observation.** All six challenge kinds (compatibility quiz, heart rate, Mr &
-Mrs, lie detector, snog/marry/pie, final couples) resolve as
+Mrs, lie detector, kiss/wed/pass, final couples) resolve as
 `MechanicalResult` with a single roll vs target chance. No questions, no
 ranking, no per-NPC reveals.
 
@@ -378,7 +378,7 @@ stat check.
 
 **Proposed fix.** Out of scope for v0 but worth flagging. Each challenge kind
 should produce reveals (compatibility quiz: NPCs' Type on Paper inferences;
-heart rate: who set whose heart racing — reveals chemistry deltas; Mr & Mrs:
+heart rate: who set whose heart racing — reveals chemistry deltas; The Couples Quiz:
 exposes how well couples know each other → affects couple strength).
 
 ---
@@ -404,7 +404,7 @@ transitions.
 — literally every phase transition. The autopilot ends afternoon at 30/120 min
 (after one conversation), skips the remaining 90 min for zero cost, jumps to
 text phase. This is why the player only meets Chloe and never has time to find
-other islanders.
+other heartbreakers.
 
 **Root cause.** `engine/actions.py:197` unconditionally appends
 `ADVANCE_PHASE` to `available_actions()`. Cost in `engine/time_budget.py:21`
@@ -415,7 +415,7 @@ default exit.
 
 Phases advance only via:
 - The phase time budget expiring (`auto_advance` already implemented)
-- A forced ceremony event (producer text, recoupling, etc.)
+- A forced ceremony event (producer text, Pairing Ceremony, etc.)
 - (Safety net) After N consecutive turns where the player has zero
   meaningful options available — engine auto-advances to avoid soft-lock
 
@@ -442,7 +442,7 @@ class AmbientOption:
     time_cost: int                 # minutes consumed from phase clock
     mood_effect: str | None        # "relaxed" | "energized" | "anxious" | None
     stat_trickle: dict[str, int]   # {"charm": 1} — small bumps
-    npc_encounter_boost: int       # 0–30, added to villa orchestrator's
+    npc_encounter_boost: int       # 0–30, added to resort orchestrator's
                                    # P(NPC initiates chat with player) for this turn
 ```
 
@@ -456,13 +456,13 @@ class AmbientOption:
 | Kitchen | Make a snack | 15m | nourished | — | +15 |
 | Kitchen | Tidy up | 20m | content | — | +10 |
 | Terrace | Sit and think | 20m | reflective | — | +5 |
-| Terrace | Stretch | 15m | energized | +1 graft | +10 |
+| Terrace | Stretch | 15m | energized | +1 spark | +10 |
 | Bedroom | Get ready | 30m | confident | +1 charm | +5 |
 | Bedroom | Nap | 60m | rested | — | 0 |
-| Firepit | Sit by the fire | 25m | reflective | — | +20 |
-| Firepit | Watch the stars | 15m | reflective | — | +10 |
-| Gym (if added) | Work out | 30m | energized | +1 graft | +15 |
-| Gym | Stretch | 15m | energized | +1 graft | +5 |
+| Flame Deck | Sit by the fire | 25m | reflective | — | +20 |
+| Flame Deck | Watch the stars | 15m | reflective | — | +10 |
+| Gym (if added) | Work out | 30m | energized | +1 spark | +15 |
+| Gym | Stretch | 15m | energized | +1 spark | +5 |
 
 ### Mechanics integration
 
@@ -479,7 +479,7 @@ class AmbientOption:
 2. **Mood/stat effects** are small per-action and rate-limited (max +1 per
    stat per phase, max one mood update per turn).
 
-3. **NPC encounter** — `npc_encounter_boost` is consumed by the villa
+3. **NPC encounter** — `npc_encounter_boost` is consumed by Sunset Bay
    orchestrator on the same turn. The orchestrator already decides NPC
    movements; with the boost, it weighs "NPC walks over and starts a chat with
    the player" higher. Selection of *which* NPC favors:
@@ -501,7 +501,7 @@ class AmbientOption:
    mechanic.
 
 5. **Audience appeal penalty** — consecutive ambient actions without a chat
-   drop public perception slightly ("not grafting"). Soft signal — three in a
+   drop public perception slightly ("not sparking"). Soft signal — three in a
    row before a real interaction is fine, six in a row drops appeal by ~5.
 
 6. **Autopilot policy** — personas pick ambient when:
@@ -520,7 +520,7 @@ class AmbientOption:
    current location.
 3. **Rules** (`engine/rules.py` / `apply_action`): handle `AMBIENT` —
    deduct `time_cost`, apply mood/stat, log boost for the orchestrator.
-4. **Orchestrator hint**: pass `npc_encounter_boost` into the villa
+4. **Orchestrator hint**: pass `npc_encounter_boost` into Sunset Bay
    orchestrator's NPC-initiation rolls for the current turn. Track which NPC
    approaches (if any) and produce a `npc_initiated_conversation` event.
 5. **Engine reaction to NPC initiation**: if orchestrator says "Liam walks
@@ -534,7 +534,7 @@ class AmbientOption:
    keeps firing on next budget tick, that's fine — phases just end. But if
    the budget is 0 and no event fires, force-advance (already handled).
 8. **Autopilot** (`agents/player_autopilot.py`): update prompt to weigh
-   ambient options vs chats. Each persona has a "grafting threshold" — when
+   ambient options vs chats. Each persona has a "sparking threshold" — when
    below it, ambient is acceptable; when above, must initiate a chat.
 9. **Tests/fixtures**: every fixture that contains `advance_phase` must be
    regenerated with ambient choices or natural auto-advance. Schema-version
@@ -563,7 +563,7 @@ phase transitions are organic.
 ## 10. Producer texts fire on time but don't feel like events
 
 **Observation.** Producer texts ("group_date_invite", "coupling_warning",
-"casa_amor_announce", "final_vote_announce") fire as expected via
+"flush_of_hearts_announce", "final_vote_announce") fire as expected via
 `ceremony_events`. But each is a one-line message with no narrative wrapping.
 The renderer surfaces them as small cards, but they read like system messages,
 not show beats.
@@ -591,7 +591,7 @@ ceremonies.
 - winning couple
 - runner-up couples
 - per-couple final audience score
-- per-islander journey summary (e.g. "stayed loyal through Casa Amor", "biggest
+- per-heartbreaker journey summary (e.g. "stayed loyal through Flush of Hearts", "biggest
   arc: ...")
 - AP awarded (for the meta-progression layer)
 
@@ -691,9 +691,9 @@ strength over time, with annotations for events).
 
 ---
 
-## 14. Recoupling proposal (Phase 2 — player and NPC initiated)
+## 14. Pairing Ceremony proposal (Phase 2 — player and NPC initiated)
 
-The show's "steal/graft" mechanic. Not just ceremony recouplings — any
+The show's "steal/spark" mechanic. Not just Pairing Ceremonies — any
 contestant can propose to break a couple at any time once chemistry/affection
 is high enough. Depends on §4 (NPC couples must exist as state) and §3
 (curator at conversation end so the proposal moment generates a memory).
@@ -702,17 +702,17 @@ is high enough. Depends on §4 (NPC couples must exist as state) and §3
 
 Player-initiated:
 - Player ↔ non-partner NPC chemistry ≥ 60 AND affection ≥ 50
-- Unlocks `ActionKind.PROPOSE_RECOUPLE` action in the menu when chatting with
+- Unlocks `ActionKind.PROPOSE_PAIR` action in the menu when chatting with
   that NPC, OR as a special option in the contextual wheel during a chat
 
 NPC-initiated:
 - NPC ↔ player chemistry ≥ 60 AND affection ≥ 50 AND NPC's current couple
   strength ≤ some threshold (~50 — they're drifting from their partner)
-- Villa orchestrator decides to trigger: NPC walks up at a moment (during
+- Resort orchestrator decides to trigger: NPC walks up at a moment (during
   ambient or at the start of an action turn) — "Look, I need to tell you
   something serious…"
 - Symmetric: NPC can also propose to other NPCs (background drama — surfaces
-  via gossip + recoupling state changes, no player-visible UI for now)
+  via gossip + Pairing Ceremony state changes, no player-visible UI for now)
 
 ### Acceptance roll
 
@@ -751,23 +751,23 @@ After:
 
 - Proposer takes a small audience hit (looked desperate / disloyal)
 - Proposer's relationship with target NPC takes a chemistry/affection hit
-- Gossip seed propagates ("X tried to graft Y; Y said no")
+- Gossip seed propagates ("X tried to spark Y; Y said no")
 - Proposer's current partner finds out (through gossip; takes a trust hit
   toward proposer)
 
 ### Singles handling (no auto-pair)
 
 After a successful steal, the two left-behind NPCs are **single**:
-- `Islander.coupled = False` (or removed from any active Couple)
+- `Heartbreaker.coupled = False` (or removed from any active Couple)
 - Mood crashes to "heartbroken" / "scrambling"
-- Audience perception drops slightly for being dumped — but recovers quickly
+- Audience perception drops slightly for being Heart Out — but recovers quickly
   if they handle it well
 - They can:
-  - Pursue any other islander via their own chemistry/affection growth
+  - Pursue any other heartbreaker via their own chemistry/affection growth
   - End up "rebounding" with each other if they organically pair (their
     background interactions can build chemistry; once thresholds met, they
     couple up via the same proposal mechanic)
-  - Get paired forcibly at the next forced recoupling ceremony — and if they
+  - Get paired forcibly at the next forced Pairing Ceremony — and if they
     fail to attract anyone by then, one is at risk of dumping
 
 The engine doesn't force any of this. Singles drift in background chats and
@@ -778,35 +778,35 @@ either pair up organically, get paired at ceremony, or risk elimination.
 - Successful steal: bold (+2 if highly attractive proposer, -2 if disloyal
   reputation, net ~0 unless one side is extreme)
 - Failed proposal: petty/desperate (-3 to -5)
-- Being the *target* of a successful steal: sympathetic +2 to the dumped
+- Being the *target* of a successful steal: sympathetic +2 to the Heart Out
   party; mild boost to the bold proposer; the cheating partner takes the
   biggest hit (-3 to -5 if they accepted)
 
 ### Implementation
 
-1. Add `ActionKind.PROPOSE_RECOUPLE` with target_id = receiver NPC.
+1. Add `ActionKind.PROPOSE_PAIR` with target_id = receiver NPC.
 2. Eligibility check in `available_actions(state)`: only surface when
    thresholds met with a non-partner.
 3. `apply_action` handles the proposal:
    - Roll acceptance
    - Mutate couples on accept
-   - Generate ceremony_event of kind `recouple_proposal` with sub-kind
+   - Generate ceremony_event of kind `pair_proposal` with sub-kind
      `accepted` / `rejected`
    - Generate gossip seeds either way
    - Fire curator on the active conversation (it's now ending dramatically)
-4. Villa orchestrator gets a new path: NPC-initiated proposal. New event
+4. Resort orchestrator gets a new path: NPC-initiated proposal. New event
    kind `npc_proposal_incoming` surfaces to the player as a forced
    conversation start.
-5. Singles state — extend `Islander` schema or derive from `state.couples`.
+5. Singles state — extend `Heartbreaker` schema or derive from `state.couples`.
 6. Audience module updated with proposal-specific reactions.
 
 ### Open questions for Phase 2 kickoff
 
-- How does the Hideaway interact with this? Currently the player can use the
-  Hideaway with their partner. Should a stolen couple immediately unlock
-  Hideaway? Probably no — needs a cool-down to feel earned.
-- Casa Amor + steal interactions: Casa already does its own recouple. Does a
-  steal during Casa propagate to the post-Casa reveal? Probably yes — but the
+- How does the Paradise Suite interact with this? Currently the player can use the
+  Paradise Suite with their partner. Should a stolen couple immediately unlock
+  Paradise Suite? Probably no — needs a cool-down to feel earned.
+- Flush of Hearts + steal interactions: Flush of Hearts already does its own Pairing Ceremony. Does a
+  steal during Flush of Hearts propagate to the post-Flush of Hearts reveal? Probably yes — but the
   reveal scene needs to handle it.
 - How visible are NPC↔NPC proposals to the player? Just gossip seeds, or a
   visible "NPC X proposed to NPC Y" event chip in the day boundary recap?
@@ -825,7 +825,7 @@ Roughly:
 | 5 | Autopilot coasts on one NPC | **High** — visible game-feel bug | S |
 | 9b | `advance_phase` free for player | **High** — root cause of #5 + skipped content | S |
 | 6 | No Day-1 onboarding | **High** — first-run experience | M |
-| 1 | Day-1 recoupling label | **Med** — narrative correctness | S |
+| 1 | Day-1 Pairing Ceremony label | **Med** — narrative correctness | S |
 | 7 | Narrator prose is thin | **Med** — feel | S (prompt) |
 | 2 | Phase anchors not in engine | **Med** — clean abstraction | S |
 | 9 | Auto-advance never trips | **Med** — broken mechanic | S |

@@ -6,7 +6,7 @@ from collections import Counter
 from pathlib import Path
 
 from src.game.agents.contextual_options import mock_follow_up_menu
-from src.game.agents.islander_voice import Exchange
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.intents import available_intents_for
 from src.game.engine.rules import MechanicalResult
@@ -55,10 +55,10 @@ def run_balance(seeds: int, _script_path: Path) -> tuple[Counter[str], Counter[s
 
 def _stats_for_seed(seed: int) -> PlayerStats:
     profiles = [
-        PlayerStats(charm=8, banter=7, eq=6, graft=6, loyalty=3),
-        PlayerStats(charm=6, banter=8, eq=5, graft=8, loyalty=3),
-        PlayerStats(charm=6, banter=6, eq=8, graft=4, loyalty=6),
-        PlayerStats(charm=7, banter=5, eq=7, graft=5, loyalty=6),
+        PlayerStats(charm=8, banter=7, eq=6, spark=6, loyalty=3),
+        PlayerStats(charm=6, banter=8, eq=5, spark=8, loyalty=3),
+        PlayerStats(charm=6, banter=6, eq=8, spark=4, loyalty=6),
+        PlayerStats(charm=7, banter=5, eq=7, spark=5, loyalty=6),
     ]
     return profiles[(seed - 1) % len(profiles)]
 

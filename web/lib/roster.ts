@@ -1,14 +1,14 @@
-// Playable roster — the pre-made islanders the player picks from in place of
+// Playable roster — the pre-made heartbreakers the player picks from in place of
 // the old build-your-own creator. Picking one sets *everything*: gender, a
 // fixed name, the in-scene standee art, and a preset look recipe (so the HUD
 // crest, couple chips and outfit aura all read correctly). There is no text
 // entry and no per-field customization — a pick is the whole identity.
 //
 // These ids never overlap the NPC cast (see scene/npc-art.ts): the player is
-// always someone the villa hasn't met as an NPC. Standee art lives at
+// always someone Sunset Bay hasn't met as an NPC. Standee art lives at
 // /images/player/roster_<id>.webp, baked by _roster_convert.py.
 
-import type { ArchetypeId, IslanderLook } from "./look";
+import type { ArchetypeId, HeartbreakerLook } from "./look";
 import type { Gender } from "./types";
 
 export type RosterCharacter = {
@@ -117,7 +117,7 @@ export function rosterSprite(id: string): string {
 }
 
 /** Materialize the full look recipe a roster pick commits to the session. */
-export function rosterLook(character: RosterCharacter): IslanderLook {
+export function rosterLook(character: RosterCharacter): HeartbreakerLook {
   return {
     name: character.name,
     gender: character.gender,

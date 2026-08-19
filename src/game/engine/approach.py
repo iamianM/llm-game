@@ -22,12 +22,12 @@ from __future__ import annotations
 
 from src.game.content.ambient import get_ambient_option
 from src.game.engine.actions import PlayerAction
-from src.game.engine.casa_amor import locations_for_villa
+from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.interruptions import remember_interruption_snub
 from src.game.engine.results import ForcedMovement, MechanicalResult
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.autonomy import ApproachReason, PendingNPCApproach
-from src.game.state.models import GameState, IslanderState, Location, RelationshipDelta
+from src.game.state.models import GameState, HeartbreakerState, Location, RelationshipDelta
 from src.game.state.rng import SeededRng
 
 APPROACH_INTENT_KINDS = {
@@ -37,16 +37,16 @@ APPROACH_INTENT_KINDS = {
     "ignore_approach",
 }
 
-# Floor desire so a co-located NPC always has *some* pull while the player idles.
+# Floor desire so a co-located NPC always has *some* draw while the player idles.
 APPROACH_BASE = 6
 # Desire is read directly as a percent chance; cap so idling never feels swarmed.
 APPROACH_CAP = 80
 
 
-def approach_candidates(state: GameState) -> list[IslanderState]:
+def approach_candidates(state: GameState) -> list[HeartbreakerState]:
     """Free, co-located NPCs who could seek out the idle player.
 
-    Excludes eliminated islanders and anyone locked in an active NPC-NPC
+    Excludes eliminated heartbreakers and anyone locked in an active NPC-NPC
     conversation — they are busy elsewhere and cannot also approach.
     """
     locked: set[str] = set()
@@ -54,15 +54,15 @@ def approach_candidates(state: GameState) -> list[IslanderState]:
         if conversation.status == "active":
             locked.update(conversation.participants)
     return [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.id not in locked
-        and islander.location_id == state.location_id
+        heartbreaker
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
+        and heartbreaker.id not in locked
+        and heartbreaker.location_id == state.location_id
     ]
 
 
-def approach_chance(state: GameState, npc: IslanderState, encounter_boost: int | None = None) -> int:
+def approach_chance(state: GameState, npc: HeartbreakerState, encounter_boost: int | None = None) -> int:
     """Percent chance that ``npc`` walks up to the idle player this turn."""
     if encounter_boost is None:
         encounter_boost = _ambient_encounter_boost(state)
@@ -120,7 +120,7 @@ def apply_approach_response(
     approach = state.pending_npc_approach
     if approach is None:
         raise ValueError("approach response requires a pending approach")
-    npc = find_islander(state, approach.npc_id)
+    npc = find_heartbreaker(state, approach.npc_id)
     intent_id = action.intent_id
     tags = ["approach", str(intent_id), approach.reason, approach.warmth]
     deltas: dict[str, RelationshipDelta] = {}
@@ -177,7 +177,7 @@ def apply_approach_response(
     )
 
 
-def _approach_reason(npc: IslanderState) -> ApproachReason:
+def _approach_reason(npc: HeartbreakerState) -> ApproachReason:
     if _recent_player_gossip(npc) > 0:
         return "has_gossip"
     if npc.relationship.chemistry >= 25:
@@ -196,29 +196,29 @@ def _ambient_encounter_boost(state: GameState) -> int:
         return 0
 
 
-def _recent_player_gossip(islander: IslanderState) -> int:
+def _recent_player_gossip(heartbreaker: HeartbreakerState) -> int:
     return sum(
         1
-        for memory in islander.memories[-5:]
+        for memory in heartbreaker.memories[-5:]
         if memory.subject_id == "player" and memory.emotional_weight >= 5
     )
 
 
-def _mood_modifier(islander: IslanderState) -> int:
-    if islander.mood.value == "flirty":
+def _mood_modifier(heartbreaker: HeartbreakerState) -> int:
+    if heartbreaker.mood.value == "flirty":
         return 6
-    if islander.mood.value == "happy":
+    if heartbreaker.mood.value == "happy":
         return 3
-    if islander.mood.value in {"upset", "anxious", "angry"}:
+    if heartbreaker.mood.value in {"upset", "anxious", "angry"}:
         return -4
     return 0
 
 
-def _walkaway_location(state: GameState, npc: IslanderState, rng: SeededRng) -> Location:
+def _walkaway_location(state: GameState, npc: HeartbreakerState, rng: SeededRng) -> Location:
     candidates = [
         location
-        for location in sorted(locations_for_villa(state.villa), key=lambda item: item.value)
-        if location != npc.location_id and location is not Location.HIDEAWAY
+        for location in sorted(locations_for_resort(state.resort), key=lambda item: item.value)
+        if location != npc.location_id and location is not Location.PRIVATE_SUITE
     ]
     if not candidates:
         return npc.location_id

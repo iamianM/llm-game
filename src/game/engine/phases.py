@@ -33,12 +33,12 @@ PHASE_BUDGETS: dict[Phase, int] = {
 def is_finale_evening(state: GameState) -> bool:
     """True on the last night, once the Final Vote is the only beat left.
 
-    On Day ``MAX_DAYS`` evening the villa is winding down to the Final Vote — the
+    On Day ``MAX_DAYS`` evening the resort is winding down to the Final Vote — the
     climactic gather that ``advance_phase_with_events`` convenes when the evening
     budget expires. Letting fresh NPC approaches and conversation interruptions
     keep firing on this night buries the one action that matters (gathering the
-    cast at the firepit) under endless unsolicited small talk, so callers use
-    this to let the villa settle and surface the Final Vote CTA cleanly. The
+    cast at the flame_deck) under endless unsolicited small talk, so callers use
+    this to let the resort settle and surface the Final Vote CTA cleanly. The
     player can still start their own conversations and the cast still mills
     about — only unsolicited demands on the player are held back.
     """
@@ -47,7 +47,7 @@ def is_finale_evening(state: GameState) -> bool:
 
 def advance_phase(state: GameState) -> None:
     """Advance the multi-day v0 clock and disperse NPCs into the new phase."""
-    state.player.pull_attempts_this_phase = {}
+    state.player.private_chat_attempts_this_phase = {}
     state.active_ambient_id = None
     state.consecutive_ambient_turns = 0
     state.pending_npc_approach = None
@@ -107,8 +107,8 @@ def _disperse_into_phase(state: GameState) -> None:
 
     The Sims-style needs layer only advertises during free-roam phases, so this
     is a no-op during CHALLENGE / INTROS / COMPLETE. It is the single chokepoint
-    that makes the cast leave the firepit after an event and re-cluster by phase
-    (morning -> bedroom/kitchen, afternoon -> pool, night -> terrace/firepit).
+    that makes the cast leave the flame_deck after an event and re-cluster by phase
+    (morning -> bedroom/kitchen, afternoon -> pool, night -> terrace/flame_deck).
     Deterministic: the jitter rng is forked from the seed, day, and new phase.
     """
     from src.game.engine.needs import plan_and_apply

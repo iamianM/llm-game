@@ -1,4 +1,4 @@
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import type { CoupleSummary } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 
@@ -9,7 +9,7 @@ export function CouplesPanel({
 }: {
   couples: CoupleSummary[];
   playerId?: string;
-  playerLook?: IslanderLook | null;
+  playerLook?: HeartbreakerLook | null;
 }) {
   const lookFor = (id: string) => (id === playerId ? playerLook : null);
   return (

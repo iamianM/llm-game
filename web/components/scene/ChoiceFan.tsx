@@ -67,7 +67,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
         );
       })}
       <style jsx global>{`
-        /* Love Island mobile framing: the player's options stack as dark,
+        /* Paradise Hearts mobile framing: the player's options stack as dark,
            translucent, full-width rounded buttons pinned to the bottom. */
         .choice-fan {
           position: absolute;
@@ -92,7 +92,7 @@ export function ChoiceFan({ actions, locked, onChoose }: Props) {
           padding-right: 4px;
           mask-image: linear-gradient(180deg, transparent, #000 12px, #000 calc(100% - 18px), transparent);
         }
-        /* A lone CTA (e.g. "Join everyone at Firepit", "Continue") shouldn't
+        /* A lone CTA (e.g. "Join everyone at Flame Deck", "Continue") shouldn't
            stretch into a near-empty full-width bar — center a tidy pill. */
         .choice-fan.is-single {
           grid-template-columns: minmax(0, 340px);
@@ -211,7 +211,7 @@ function displayLabel(label: string): string {
 
 function categoryChip(action: AvailableAction) {
   // Only show chips when the action is a conversation-style turn — minigame
-  // answers, recoupling picks, and ceremony joins shouldn't get a category tag.
+  // answers, pairing picks, and ceremony joins shouldn't get a category tag.
   const conversational = new Set([
     "introduce_to",
     "start_conversation",

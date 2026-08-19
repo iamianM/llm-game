@@ -49,11 +49,11 @@ def _conversation_body(scene: Scene) -> str:
 
 
 def _record_has_any_turn_data(record: dict[str, Any]) -> bool:
-    """True if this turn has mechanics, pull, or memories even without an exchange."""
+    """True if this turn has mechanics, private chat, or memories even without an exchange."""
     result = record.get("mechanical_result") or {}
     if isinstance(result.get("chance_breakdown"), dict):
         return True
-    if isinstance(result.get("pull_attempt"), dict):
+    if isinstance(result.get("private_chat_attempt"), dict):
         return True
     commits = record.get("agent_commits") or {}
     if isinstance(commits, dict):
@@ -174,7 +174,7 @@ def _inline_blocks_for_record(
     bg_html = _inline_background_activity(record)
     if bg_html:
         blocks.append(
-            f"<details class='inline-detail bg-detail'><summary>Meanwhile around the villa</summary>"
+            f"<details class='inline-detail bg-detail'><summary>Meanwhile around Sunset Bay</summary>"
             f"<div class='inline-body'>{bg_html}</div></details>"
         )
     trace_html = agent_trace_detail(record)

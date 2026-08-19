@@ -28,7 +28,7 @@ The knowledge layer exists to make these things true:
 - Gossip intent is a real mechanic — NPCs share other NPCs' facts at lower
   confidence, sometimes distorted
 - Heart Throbs are generated as state-conditioned disruptors via a separate
-  pipeline that analyzes villa state and writes a persona designed to threaten
+  pipeline that analyzes resort state and writes a persona designed to threaten
   a specific existing connection
 - The cast popout's right rail surfaces what the player has learned about each
   NPC, with citations
@@ -38,7 +38,7 @@ parallel fact model or a separate scoring path.
 
 ## 1. Schema
 
-All new types live in `src/game/state/traits.py`. `IslanderState` and
+All new types live in `src/game/state/traits.py`. `HeartbreakerState` and
 `PlayerState` in `src/game/state/models.py` gain references to them.
 
 ### `PersonaSummary`
@@ -135,7 +135,7 @@ class KnownFact(BaseModel):
     learned_on_turn: int
     confidence: float       # 0.0-1.0
     citation: str           # human prose for popout: "Chloe told you at the
-                            # firepit on Day 3 evening"
+                            # Flame Deck on Day 3 evening"
 ```
 
 ### `KnownFacts`
@@ -149,7 +149,7 @@ KnownFacts = dict[str, KnownFact]   # key = "{npc_id}.{trait_key}"
 Added to state models:
 
 ```python
-class IslanderState:
+class HeartbreakerState:
     # ...existing fields...
     trait_card: TraitCard
     known_facts: KnownFacts = Field(default_factory=dict)
@@ -370,7 +370,7 @@ For each trait, write 3 distractors that are:
 
 ### Step 4 — Cache and store
 
-The complete TraitCard is written into `state.islanders[i].trait_card`.
+The complete TraitCard is written into `state.heartbreakers[i].trait_card`.
 Determinism: same seed → same RNG → same archetype assignments → same
 generation prompts → same outputs (with the LLM's temperature 0 in
 generation mode).
@@ -399,7 +399,7 @@ class ThreatMode(StrEnum):
     BREAK_RIVAL = "break_rival"              # threaten a non-player couple
     SHAKE_ALLIANCE = "shake_alliance"        # high chemistry with target's friends
     EXPOSE_HISTORY = "expose_history"        # share past with target
-    INJECT_CHAOS = "inject_chaos"            # high-graft, low-loyalty disruptor
+    INJECT_CHAOS = "inject_chaos"            # high-spark, low-loyalty disruptor
 
 
 class HeartThrobBrief(BaseModel):
@@ -605,7 +605,7 @@ Suggested mapping (codex tunes during implementation):
 
 | Intent kind | Reveal tier | Notes |
 |---|---|---|
-| `friendly_chat_villa` | 1 | random tier-1 fact |
+| `friendly_chat_resort` | 1 | random tier-1 fact |
 | `friendly_compliment_personality` | 2 | random tier-2 fact if familiarity ≥ 25 |
 | `friendly_ask_about_them` | 1-2 | tier scales with familiarity |
 | `deep_ask_life` | 3 | random tier-3 fact if familiarity ≥ 50 |
@@ -631,7 +631,7 @@ to emit `KnownFact` entries when:
 def emit_fact_reveal(
     state: GameState,
     intent: ContextualOption,
-    target_npc: Islander,
+    target_npc: Heartbreaker,
     holder_id: str = "player",
 ) -> KnownFact | None:
     if intent.reveal_tier == 0:
@@ -679,9 +679,9 @@ The gossip exchange:
 ```python
 def share_gossip(
     state: GameState,
-    speaker: Islander,
+    speaker: Heartbreaker,
     listener_id: str,
-    subject_npc: Islander,
+    subject_npc: Heartbreaker,
 ) -> KnownFact | None:
     # Speaker shares one of their known facts about subject_npc
     speaker_facts_about_subject = [
@@ -709,7 +709,7 @@ def share_gossip(
         confidence=0.6,
         citation=f"{speaker.name} told you on Day {state.day} that {subject_npc.name}...",
     )
-    state.find_islander(listener_id).known_facts[known.fact_key] = known
+    state.find_heartbreaker(listener_id).known_facts[known.fact_key] = known
     return known
 ```
 
@@ -782,7 +782,7 @@ When an NPC's voice agent speaks, the agent's context already includes their
 PersonaSummary + their trait_card. The voice agent should naturally reference
 flavor traits in dialogue — e.g., Chloe might mention her fridge magnet
 collection unprompted if it's contextually relevant. This is a prompt-update
-to the Islander Voice agent: *"You may reference your flavor traits when it
+to the Heartbreaker Voice agent: *"You may reference your flavor traits when it
 naturally fits — they make you feel like a real person."*
 
 No new mechanic; just a prompt extension.
@@ -803,7 +803,7 @@ The current implementation is split across these surfaces:
 - `src/game/engine/knowledge.py` handles direct fact reveals.
 - `src/game/engine/gossip.py` handles lower-confidence fact sharing.
 - `src/game/engine/heart_throb_brief.py`, `src/game/engine/ceremonies.py`, and
-  `src/game/engine/casa_amor.py` use state-conditioned Heart Throb briefs.
+  `src/game/engine/flush_of_hearts.py` use state-conditioned Heart Throb briefs.
 - CLI, browser, and review packet surfaces should render known facts as player
   knowledge, not as hidden truth dumps.
 
@@ -837,7 +837,7 @@ The active roadmap for knowledge consumers lives in
 - Distractor batch (opening cast): 1 call, ~1500 tokens out (96 distractor sets)
 - Heart Throb generation: 2 calls per run (1 + 3 batched), ~1500 tokens each
 - Curator extension: negligible (no new LLM calls; uses existing curator pass)
-- Gossip exchanges: no extra LLM call; gossip uses existing Islander Voice
+- Gossip exchanges: no extra LLM call; gossip uses existing Heartbreaker Voice
   with extended context
 
 Total new LLM cost per real-LLM run: **~9000 tokens, < $0.50 at current pricing.**

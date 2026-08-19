@@ -1,15 +1,15 @@
 """Needs-driven NPC movement — Sims-style location advertisement.
 
 Deterministic engine rules (not an LLM agent; ADR-0003/0007 forbid a Director
-agent). Each villa location *advertises* need-satisfaction that shifts with the
+agent). Each resort location *advertises* need-satisfaction that shifts with the
 phase / time of day. Free NPCs score the reachable locations and drift toward
-the strongest pull, with inertia so they don't stampede every turn.
+the strongest draw, with inertia so they don't stampede every turn.
 
-Post-event dispersal is emergent rather than special-cased: the firepit only
+Post-event dispersal is emergent rather than special-cased: the flame_deck only
 advertises strongly in the evening, so when a gather or ceremony ends (the whole
-cast clustered at the firepit) everyone re-scores and scatters to wherever
+cast clustered at the flame_deck) everyone re-scores and scatters to wherever
 they're motivated to be — bedroom / kitchen in the morning, pool in the
-afternoon, terrace / firepit at night.
+afternoon, terrace / flame_deck at night.
 
 Design sources:
 - docs/engine-issues-from-h11-review.md §9b (ambient loop + npc_encounter)
@@ -22,49 +22,49 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.engine.casa_amor import location_villa, locations_for_villa
 from src.game.engine.couples import partner_for
-from src.game.state.models import GameState, IslanderState, Location, Phase
+from src.game.engine.flush_of_hearts import location_resort, locations_for_resort
+from src.game.state.models import GameState, HeartbreakerState, Location, Phase
 from src.game.state.personality import Big5
 from src.game.state.rng import SeededRng
 
-LocationRole = Literal["pool", "kitchen", "terrace", "bedroom", "firepit"]
+LocationRole = Literal["pool", "kitchen", "terrace", "bedroom", "flame_deck"]
 
-# Each concrete location (main villa + Casa Amor) maps to a role so the
-# advertisement table works in either villa. The Hideaway is intentionally
+# Each concrete location (Sunset Bay + Flush of Hearts) maps to a role so the
+# advertisement table works in either resort. The Private Suite is intentionally
 # absent — it is a special couple location, never a needs destination.
 ROLE_OF: dict[Location, LocationRole] = {
     Location.POOL: "pool",
-    Location.CASA_POOL: "pool",
+    Location.FLUSH_POOL: "pool",
     Location.KITCHEN: "kitchen",
-    Location.CASA_KITCHEN: "kitchen",
+    Location.FLUSH_KITCHEN: "kitchen",
     Location.TERRACE: "terrace",
-    Location.CASA_TERRACE: "terrace",
+    Location.FLUSH_TERRACE: "terrace",
     Location.BEDROOM: "bedroom",
-    Location.FIREPIT: "firepit",
+    Location.FLAME_DECK: "flame_deck",
 }
 
-# How strongly each location role pulls NPCs during the free-roam phases.
+# How strongly each location role draws NPCs during the free-roam phases.
 # CHALLENGE / INTROS are scripted (no needs movement) and COMPLETE is terminal,
 # so they are intentionally absent — callers must treat "phase not in table" as
 # "no needs movement this turn".
 PHASE_ADVERTISEMENT: dict[Phase, dict[LocationRole, int]] = {
-    Phase.MORNING: {"bedroom": 30, "kitchen": 28, "pool": 12, "terrace": 12, "firepit": 5},
-    Phase.AFTERNOON: {"pool": 32, "kitchen": 16, "terrace": 16, "bedroom": 6, "firepit": 6},
-    Phase.TEXT: {"kitchen": 22, "terrace": 22, "pool": 14, "bedroom": 10, "firepit": 10},
-    Phase.EVENING: {"terrace": 30, "firepit": 26, "kitchen": 16, "pool": 8, "bedroom": 6},
+    Phase.MORNING: {"bedroom": 30, "kitchen": 28, "pool": 12, "terrace": 12, "flame_deck": 5},
+    Phase.AFTERNOON: {"pool": 32, "kitchen": 16, "terrace": 16, "bedroom": 6, "flame_deck": 6},
+    Phase.TEXT: {"kitchen": 22, "terrace": 22, "pool": 14, "bedroom": 10, "flame_deck": 10},
+    Phase.EVENING: {"terrace": 30, "flame_deck": 26, "kitchen": 16, "pool": 8, "bedroom": 6},
 }
 
 # Hysteresis: an NPC only relocates when the best destination beats their current
-# spot by this margin. Keeps the villa from reshuffling wholesale every turn.
+# spot by this margin. Keeps Sunset Bay from reshuffling wholesale every turn.
 MOVE_THRESHOLD = 7
 # Inertia bonus added to the NPC's current-location score.
 STAY_BONUS = 8
-# Per-person social weight, capped, so locations with people present pull
+# Per-person social weight, capped, so locations with people present draw
 # extraverts and repel introverts without runaway clumping.
 SOCIAL_CAP = 10
-# A present couple partner is a strong romantic pull.
-PARTNER_PULL = 18
+# A present couple partner is a strong romantic draw.
+PARTNER_DRAW = 18
 
 
 class NeedsMovement(BaseModel):
@@ -81,22 +81,23 @@ class NeedsMovement(BaseModel):
 
 
 def reachable_locations(state: GameState) -> list[Location]:
-    """Return the needs-eligible locations for the active villa, sorted."""
+    """Return the needs-eligible locations for the active resort, sorted."""
     return sorted(
-        (loc for loc in locations_for_villa(state.villa) if loc in ROLE_OF),
+        (loc for loc in locations_for_resort(state.resort) if loc in ROLE_OF),
         key=lambda loc: loc.value,
     )
 
 
-def free_npcs(state: GameState) -> list[IslanderState]:
+def free_npcs(state: GameState) -> list[HeartbreakerState]:
     """Return NPCs that may be moved this turn.
 
-    Excludes eliminated islanders, anyone locked in an active NPC-NPC
+    Excludes eliminated contestants, anyone locked in an active NPC-NPC
     conversation, and the partner the player is actively talking to. During
-    Casa Amor only NPCs already in the *active* villa are eligible: the needs
-    layer advertises just this villa's locations, so an islander stranded in
-    the other villa would always score ``-999`` for "stay put" and get yanked
-    across the divide. Gating here keeps the two villas physically separate.
+    Flush of Hearts only NPCs already in the *active* resort are eligible: the
+    needs layer advertises just this resort's locations, so a contestant
+    stranded in the other resort would always score ``-999`` for "stay put" and
+    get yanked across the divide. Gating here keeps the two resorts physically
+    separate.
     """
     locked: set[str] = set()
     for conversation in state.npc_conversations:
@@ -106,18 +107,18 @@ def free_npcs(state: GameState) -> list[IslanderState]:
         state.active_conversation.target_id if state.active_conversation is not None else None
     )
     return [
-        islander
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.id not in locked
-        and islander.id != active_target
-        and location_villa(islander.location_id) is state.villa
+        heartbreaker
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
+        and heartbreaker.id not in locked
+        and heartbreaker.id != active_target
+        and location_resort(heartbreaker.location_id) is state.resort
     ]
 
 
 def _personality_affinity(role: LocationRole, big5: Big5) -> int:
-    """Small secondary pull from personality. Big5 traits are 1-10 (5 = neutral)."""
-    if role in ("pool", "firepit"):
+    """Small secondary draw from personality. Big5 traits are 1-10 (5 = neutral)."""
+    if role in ("pool", "flame_deck"):
         return (big5.extraversion - 5) * 2
     if role == "kitchen":
         return (big5.agreeableness - 5) + (big5.conscientiousness - 5)
@@ -131,14 +132,14 @@ def _personality_affinity(role: LocationRole, big5: Big5) -> int:
 def _headcount(state: GameState, location: Location, exclude_id: str) -> int:
     return sum(
         1
-        for islander in state.islanders
-        if not islander.eliminated
-        and islander.id != exclude_id
-        and islander.location_id == location
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
+        and heartbreaker.id != exclude_id
+        and heartbreaker.location_id == location
     )
 
 
-def _social_pull(state: GameState, npc: IslanderState, location: Location) -> int:
+def _social_draw(state: GameState, npc: HeartbreakerState, location: Location) -> int:
     heads = _headcount(state, location, npc.id)
     if heads == 0:
         return 0
@@ -151,22 +152,22 @@ def _social_pull(state: GameState, npc: IslanderState, location: Location) -> in
     return max(-SOCIAL_CAP, min(SOCIAL_CAP, heads * per))
 
 
-def _romance_pull(state: GameState, npc: IslanderState, location: Location) -> int:
+def _romance_draw(state: GameState, npc: HeartbreakerState, location: Location) -> int:
     for couple in state.couples:
         if npc.id not in {couple.partner_a_id, couple.partner_b_id}:
             continue
         partner_id = partner_for(couple, npc.id)
         if partner_id == state.player.id:
             return 0  # the player isn't an NPC we can locate here
-        partner = _islander_or_none(state, partner_id)
+        partner = _heartbreaker_or_none(state, partner_id)
         if partner is not None and partner.location_id == location:
-            return PARTNER_PULL
+            return PARTNER_DRAW
     return 0
 
 
 def destination_score(
     state: GameState,
-    npc: IslanderState,
+    npc: HeartbreakerState,
     location: Location,
     rng: SeededRng,
 ) -> int:
@@ -174,8 +175,8 @@ def destination_score(
     role = ROLE_OF[location]
     advertisement = PHASE_ADVERTISEMENT.get(state.phase, {})
     score = advertisement.get(role, 0)
-    score += _social_pull(state, npc, location)
-    score += _romance_pull(state, npc, location)
+    score += _social_draw(state, npc, location)
+    score += _romance_draw(state, npc, location)
     score += _personality_affinity(role, npc.big5)
     if location == npc.location_id:
         score += STAY_BONUS
@@ -226,12 +227,12 @@ def plan_needs_movements(state: GameState, rng: SeededRng) -> list[NeedsMovement
 
 
 def apply_needs_movements(state: GameState, moves: list[NeedsMovement]) -> None:
-    """Apply planned moves to islander locations."""
-    by_id = {islander.id: islander for islander in state.islanders}
+    """Apply planned moves to heartbreaker locations."""
+    by_id = {heartbreaker.id: heartbreaker for heartbreaker in state.heartbreakers}
     for move in moves:
-        islander = by_id.get(move.npc_id)
-        if islander is not None and not islander.eliminated:
-            islander.location_id = move.to_location
+        heartbreaker = by_id.get(move.npc_id)
+        if heartbreaker is not None and not heartbreaker.eliminated:
+            heartbreaker.location_id = move.to_location
 
 
 def plan_and_apply(state: GameState, rng: SeededRng) -> list[NeedsMovement]:
@@ -241,8 +242,8 @@ def plan_and_apply(state: GameState, rng: SeededRng) -> list[NeedsMovement]:
     return moves
 
 
-def _islander_or_none(state: GameState, islander_id: str) -> IslanderState | None:
-    for islander in state.islanders:
-        if islander.id == islander_id and not islander.eliminated:
-            return islander
+def _heartbreaker_or_none(state: GameState, heartbreaker_id: str) -> HeartbreakerState | None:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id and not heartbreaker.eliminated:
+            return heartbreaker
     return None

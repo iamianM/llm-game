@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { findOutfit, findVibe, type IslanderLook } from "../../lib/look";
+import { findOutfit, findVibe, type HeartbreakerLook } from "../../lib/look";
 import { isRosterId } from "../../lib/roster";
 import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
 
@@ -11,10 +11,10 @@ import { hasOutfitStandee, playerSprite } from "../../lib/scene/player-sprite";
  * (a soft duotone wash + accent ring + glow) so wardrobe/energy choices read
  * visibly without any runtime image generation. Vercel-safe.
  *
- * Shared by the /create casting card and the in-villa Wardrobe modal so the
+ * Shared by the casting card and the Sunset Bay wardrobe modal so the
  * preview is pixel-identical in both places.
  */
-export function LookStage({ look, compact = false }: { look: IslanderLook; compact?: boolean }) {
+export function LookStage({ look, compact = false }: { look: HeartbreakerLook; compact?: boolean }) {
   const outfit = findOutfit(look.outfit);
   const vibe = findVibe(look.vibe);
   const src = playerSprite(look.archetype, look.gender, look.outfit, look.characterId);
@@ -37,7 +37,7 @@ export function LookStage({ look, compact = false }: { look: IslanderLook; compa
       <span className="stage-glow" aria-hidden />
       <span className="stage-arch" aria-hidden />
       <div className="sprite-wrap">
-        <Image src={src} alt="" fill sizes={compact ? "120px" : "(max-width: 760px) 70vw, 460px"} priority={!compact} style={{ objectFit: "contain", objectPosition: "50% 100%" }} />
+        <Image src={src} alt="" fill sizes={compact ? "120px" : "(max-width: 760px) 70vw, 460px"} priority={!compact} loading={compact ? "lazy" : "eager"} style={{ objectFit: "contain", objectPosition: "50% 100%" }} />
         <span className="sprite-tint" aria-hidden />
       </div>
       <span className="floor-shadow" aria-hidden />

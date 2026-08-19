@@ -7,12 +7,12 @@ initial_relationships:
     trust: 0
     friendship: 0
 initial_phase: morning
-expected_hash: 8030cfe69d9bd63321284afe2e8515f998dea7a2e97dc6f601b7f09dfb3d8d80
+expected_hash: 728efc057b7fdabbdda6046ba373eaaee4d3f0fd645195e181478998938e99cf
 actions:
 - kind: start_conversation
   target_id: chloe
-  intent_id: friendly_chat_villa
-villa_updates:
+  intent_id: friendly_chat_resort
+resort_updates:
 - npc_movements:
   - npc_id: maya
     target_location: pool

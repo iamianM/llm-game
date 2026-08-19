@@ -20,14 +20,14 @@ from src.game.state.models import (
 
 
 def test_display_translates_protected_terms() -> None:
-    assert display("recoupling") == "Pairing Ceremony"
-    assert display("snog_marry_pie") == "Kiss Wed Pass"
-    assert display("casa_amor") == "Flush of Hearts"
-    assert display("casa_amor_return_reveal") == "Sunset Bay Return"
+    assert display("pairing") == "Pairing Ceremony"
+    assert display("kiss_wed_pass") == "Kiss Wed Pass"
+    assert display("flush_of_hearts") == "Flush of Hearts"
+    assert display("flush_of_hearts_return_reveal") == "Sunset Bay Return"
     assert display("opening") == "First Spark"
     assert display("intros") == "Arrivals"
     assert display("main") == "Sunset Bay"
-    assert display("bombshell") == "Heart Throb"
+    assert display("heart_throb") == "Heart Throb"
 
 
 def test_follow_up_actions_are_player_facing_and_hide_capped_pulse() -> None:
@@ -76,17 +76,17 @@ def test_follow_up_actions_are_player_facing_and_hide_capped_pulse() -> None:
         (ActionKind.MOVE, "pool", None, "Move to Pool"),
         (ActionKind.START_CONVERSATION, "chloe", None, "Talk to Chloe"),
         (ActionKind.END_CONVERSATION, None, None, "Walk away"),
-        (ActionKind.RECOUPLE, "liam", None, "Pair with Liam"),
-        (ActionKind.PROPOSE_RECOUPLE, "liam", None, "Ask Liam for a Heart Swap"),
+        (ActionKind.PAIR, "liam", None, "Pair with Liam"),
+        (ActionKind.PROPOSE_PAIR, "liam", None, "Ask Liam for a Heart Swap"),
         (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "accept", "Accept Liam's Heart Swap proposal"),
         (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "decline_politely", "Decline Liam politely"),
         (ActionKind.NPC_PROPOSAL_RESPONSE, "liam", "decline_harshly", "Decline Liam harshly"),
         (ActionKind.INTRODUCE_TO, "chloe", "intro_flirty", "Flirt with Chloe"),
         (ActionKind.INTRODUCE_TO, "chloe", "intro_deep", "Get deep with Chloe"),
         (ActionKind.INTRODUCE_TO, "chloe", None, "Greet Chloe"),
-        (ActionKind.CASA_DECISION, None, "return_with_original", "Return loyal"),
-        (ActionKind.CASA_DECISION, "liam", "return_with_new", "Return with Liam"),
-        (ActionKind.CASA_DECISION, None, "return_single", "Return solo"),
+        (ActionKind.FLUSH_DECISION, None, "return_with_original", "Return loyal"),
+        (ActionKind.FLUSH_DECISION, "liam", "return_with_new", "Return with Liam"),
+        (ActionKind.FLUSH_DECISION, None, "return_single", "Return solo"),
     ],
 )
 def test_action_label_covers_every_player_action(
@@ -114,9 +114,9 @@ def test_action_label_falls_back_to_spec_label_for_unmatched_branches() -> None:
 def test_join_gather_action_label_is_player_facing() -> None:
     state = new_game(1)
     state.pending_gather = PendingGather(
-        kind="casa_announce",
-        event_id="casa_amor_announce",
-        gather_location=Location.FIREPIT,
+        kind="flush_announce",
+        event_id="flush_of_hearts_announce",
+        gather_location=Location.FLAME_DECK,
         fires_on_turn=state.turn_index,
     )
     spec = ActionSpec(
@@ -124,12 +124,12 @@ def test_join_gather_action_label_is_player_facing() -> None:
         label="fallback",
     )
 
-    assert action_label(state, spec) == "Join everyone at Firepit"
+    assert action_label(state, spec) == "Join everyone at Flame Deck"
 
 
 def test_checkpoint_labels_hide_engine_event_names() -> None:
-    assert _humanize("day3-recoupling-ceremony") == "Day 3 Pairing Ceremony"
-    assert _humanize("day4-casa-amor-announce") == "Day 4 Flush of Hearts Announce"
+    assert _humanize("day3-pairing-ceremony") == "Day 3 Pairing Ceremony"
+    assert _humanize("day4-flush-of-hearts-announce") == "Day 4 Flush of Hearts Announce"
     assert _humanize("day1-pre-compatibility-quiz") == "Day 1 Before Compatibility Quiz"
 
 

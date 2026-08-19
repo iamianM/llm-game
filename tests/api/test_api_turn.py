@@ -37,7 +37,7 @@ def test_submit_invalid_turn_returns_400() -> None:
 
     response = client.post(
         "/session/turn",
-        json={"persisted": created["persisted"], "action": {"kind": "hideaway"}},
+        json={"persisted": created["persisted"], "action": {"kind": "private_suite"}},
     )
 
     assert response.status_code == 400

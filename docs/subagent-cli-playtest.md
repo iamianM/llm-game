@@ -1,6 +1,6 @@
 # Subagent CLI Playtest Protocol
 
-This protocol is for Codex subagents asked to play Isle of Echoes as a real
+This protocol is for Codex subagents asked to play Paradise Hearts as a real
 player through the CLI. The goal is to battle-test game feel and feature
 coverage, not to generate a perfect deterministic fixture.
 
@@ -19,7 +19,7 @@ coverage, not to generate a perfect deterministic fixture.
   the game for you.
 - Do not edit code, prompts, fixtures, docs, or content during the playtest.
 - Choose actions from the visible CLI menu as a player would, based on the
-  current villa state and your persona.
+  current resort state and your persona.
 - Use `/state`, `/background`, `/checkpoint <name>`, and `/hash` as player-side
   inspection tools when useful.
 - Record the run to `.game_traces/<descriptive-name>.json`.
@@ -36,19 +36,19 @@ targeted engine and renderer fixes, branch from the closest existing checkpoint:
 
 ```bash
 uv run python -m src.game.cli play-session resume \
-  --name recoupling-branch \
-  --from-checkpoint day3-text-recoupling-warning \
-  --record .game_traces/recoupling-branch.json
-uv run python -m src.game.cli play-session show --name recoupling-branch
-uv run python -m src.game.cli play-session choose --name recoupling-branch --action <n>
+  --name pairing-branch \
+  --from-checkpoint day3-text-pairing-warning \
+  --record .game_traces/pairing-branch.json
+uv run python -m src.game.cli play-session show --name pairing-branch
+uv run python -m src.game.cli play-session choose --name pairing-branch --action <n>
 ```
 
 Save named checkpoints before major irreversible choices:
 
 ```bash
 uv run python -m src.game.cli play-session checkpoint \
-  --name recoupling-branch \
-  --checkpoint before-day3-recoupling
+  --name pairing-branch \
+  --checkpoint before-day3-pairing
 ```
 
 When reporting, distinguish:
@@ -66,13 +66,13 @@ Use this persona unless the caller provides another one:
 
 - Gender: man
 - Archetype: loyal friend
-- Core goal: build one convincing primary couple while still learning the villa.
+- Core goal: build one convincing primary couple while still learning Sunset Bay.
 - Style: emotionally intelligent, curious, not passive.
 - Risk appetite: take medium risks when the situation supports them; take at
   least a few high-risk actions to test balance.
-- Social coverage: do not tunnel on one islander. Meet everyone, move locations,
+- Social coverage: do not tunnel on one heartbreaker. Meet everyone, move locations,
   ask gossip when it appears, and check background activity.
-- Romance coverage: build a main connection, but test at least one pull/chat with
+- Romance coverage: build a main connection, but test at least one private chat with
   someone who is busy or in another conversation.
 
 ## Coverage Goals
@@ -84,16 +84,16 @@ Try to hit as many as possible without forcing nonsense:
 - Complete all Day-1 intros with varied dynamics, not all Friendly.
 - Use at least three different ambient actions.
 - Move through at least three locations.
-- Start conversations with at least four different islanders.
+- Start conversations with at least four different Heartbreakers.
 - Use at least one Friendly, Flirty, Deep, Banter, Bromance, or Gossip Ring option
   where available and contextually appropriate.
 - Pick at least one gossip option if it surfaces.
-- Trigger or attempt at least one pull-for-chat situation.
+- Trigger or attempt at least one private-chat situation.
 - Respond to interruption options if they appear.
 - Let at least one phase expire naturally through time budget.
 - Use `/background` at least once after background conversations have happened.
 - Save at least two checkpoints: one after Day-1 intros and one before a major
-  ceremony or Casa Amor decision.
+  ceremony or Flush of Hearts decision.
 - Reach at least Day 3. Prefer a full run to finale if the game remains healthy.
 
 ## Reporting Back

@@ -20,15 +20,15 @@ def bookmarks_for_turn(turn: TurnResult) -> list[Bookmark]:
                 note=event.message,
             )
         )
-    pull = turn.mechanical_result.pull_attempt
-    if pull is not None and not pull.success:
+    private_chat = turn.mechanical_result.private_chat_attempt
+    if private_chat is not None and not private_chat.success:
         bookmarks.append(
             Bookmark(
                 turn=turn_index,
-                kind="pull_failed",
+                kind="private_chat_declined",
                 category="anomaly",
-                title="Pull failed",
-                note=f"{pull.target_id} declined the pull.",
+                title="Private chat declined",
+                note=f"{private_chat.target_id} declined the private chat.",
             )
         )
     if "gossip_stale_noop" in turn.mechanical_result.anomalies:

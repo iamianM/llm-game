@@ -27,7 +27,7 @@ groups:
       - docs/minigames/couples-quiz.md
       - docs/minigames/heart-rate.md
       - docs/minigames/lie-detector.md
-      - docs/minigames/snog-marry-pie.md
+      - docs/minigames/kiss-wed-pass.md
       - docs/minigames/final-couples.md
 
   - id: checkpoint_replay_contract
@@ -87,12 +87,12 @@ groups:
       - src/game/engine/time_budget.py
       - src/game/engine/ceremonies.py
       - src/game/engine/producer_events.py
-      - src/game/engine/casa_amor.py
+      - src/game/engine/flush_of_hearts.py
       - src/game/engine/final_vote.py
       - src/game/engine/proposals.py
-      - src/game/engine/pull.py
+      - src/game/engine/private_chat_turn.py
       - src/game/engine/interruptions.py
-      - src/game/engine/hideaway.py
+      - src/game/engine/private_suite.py
       - src/game/engine/gather.py
     docs:
       - AGENTS.md

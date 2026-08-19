@@ -288,8 +288,8 @@ def _response_details(response: object) -> str | None:
     details = _get(response, "incomplete_details") or _get(response, "error")
     if details is None:
         return None
-    dumped = _dump_output(details)
-    return dumped if isinstance(dumped, str) else str(dumped)
+    output = _dump_output(details)
+    return output if isinstance(output, str) else str(output)
 
 
 def _response_output_text(response: object) -> object:

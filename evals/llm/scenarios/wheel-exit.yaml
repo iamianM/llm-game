@@ -3,7 +3,7 @@ title: Conversation Wheel Exit
 goal: Prove choosing the exit option from a conversation wheel is a voiced, graceful close with curator memories, not the same path as the top-level walk-away action.
 seed: 2121
 initial_location: pool
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: loyal_friend
   gender: woman
@@ -11,7 +11,7 @@ character_creation:
     charm: 5
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 9
 initial_relationships:
   chloe:
@@ -35,7 +35,7 @@ turns:
       pending_options:
         npc_will_leave: false
         options:
-          - label: Ask what she really wants from the villa
+          - label: Ask what she really wants from the resort
             category: deep
             intent_kind: ask_future
             stat_used: eq

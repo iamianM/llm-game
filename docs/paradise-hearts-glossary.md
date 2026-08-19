@@ -1,8 +1,13 @@
 # Paradise Hearts — Final Glossary
 
-**Status:** Locked. All player-facing copy in Phase 3 UI uses these terms. Engine
-internals (action kinds, ceremony event kinds, location IDs) keep their generic
-identifiers through Phase 3; a separate post-Phase-3 rename PR aligns them.
+**Status:** Locked. All player-facing copy uses these terms. The engine
+internals (action kinds, ceremony event kinds, location IDs, Python modules,
+and UI components) have now been renamed to match this branding — see the
+table at the end of this file for the current engine identifiers. No Love
+Island residue remains in code, content, tests, or docs. The only intentional
+exceptions are `Love-Island-Reference.md` (a design analysis of the source
+format) and `Game-Naming-And-Branding.md` (the branding decision trail), which
+are kept verbatim as historical references.
 
 ## Brand
 
@@ -106,47 +111,47 @@ it back toward this tone.
   mugged off" (it's "cooled on"), "dumped from the island" (it's "Heart
   Out"), "I've got a text" (it's "Paradise Calls").
 
-## Engine internal names (UNCHANGED through Phase 3)
+## Engine internal names (current)
 
-The FastAPI server translates structured engine identifiers into display
-strings. The engine code itself keeps the existing generic names; a post-Phase-3
-rename PR aligns them. Do not use free-text keyword replacement to rewrite
+The engine identifiers have been renamed to match this branding. The FastAPI
+server still translates these structured identifiers into display strings (see
+`src/api/display.py`). Do not use free-text keyword replacement to rewrite
 narration, memories, or prompt output; fix those at their structured source.
 
 | Engine identifier | Display string |
 |---|---|
-| `bombshell` | Heart Throb |
-| `casa_amor` | Flush of Hearts |
-| `casa_amor_announce` | Flush of Hearts Announcement |
-| `casa_amor_arrival` | Flush of Hearts Arrival |
-| `casa_amor_decision` | Flush of Hearts Decision |
-| `casa_amor_return_reveal` | Sunset Bay Return |
-| `casa_pool` (location) | Sirens' Cove · Pool |
-| `casa_kitchen` (location) | Sirens' Cove · Kitchen |
-| `recouple` (action) | Heart Swap |
-| `recoupling` (event) | Pairing Ceremony |
+| `heart_throb` | Heart Throb |
+| `flush_of_hearts` | Flush of Hearts |
+| `flush_of_hearts_announce` | Flush of Hearts Announcement |
+| `flush_of_hearts_arrival` | Flush of Hearts Arrival |
+| `flush_of_hearts_decision` | Flush of Hearts Decision |
+| `flush_of_hearts_return_reveal` / `flush_return` | Sunset Bay Return |
+| `flush_pool` (location) | Flush of Hearts Pool |
+| `flush_kitchen` (location) | Flush of Hearts Kitchen |
+| `flush_terrace` (location) | Flush of Hearts Terrace |
+| `pair` (action) | Heart Swap |
+| `pairing` (event) | Pairing Ceremony |
 | `opening` (formed_via value) | First Spark |
 | `proposal` (formed_via value) | Heart Swap Proposal |
-| `hideaway` | Paradise Suite |
+| `private_suite` | Paradise Suite |
+| `flame_deck` (location) | Flame Deck |
 | `elimination` | Heart Out |
-| `villa: paradise` (state) | Sunset Bay |
-| `villa: casa_amor` (state) | Sirens' Cove |
+| `resort: main` (state) | Sunset Bay |
+| `resort: flush_of_hearts` (state) | Flush of Hearts |
 | `phase: intros` | Arrivals |
 | Challenge `compatibility_quiz` | Compatibility Quiz |
 | Challenge `heart_rate` | Pulse Race |
-| Challenge `mr_and_mrs` | The Couples Quiz |
-| Challenge `snog_marry_pie` | Kiss Wed Pass |
+| Challenge `couples_quiz` | The Couples Quiz |
+| Challenge `kiss_wed_pass` | Kiss Wed Pass |
 | Challenge `lie_detector` | Lie Detector |
 | Challenge `final_couples` | Final Couples Challenge |
 | `audience_appeal` / `AP` | Heart Beats |
 | `public_perception` | Pulse |
 
-(Note: "Sirens' Cove" was an alternate name considered for Casa Amor — we
-landed on Flush of Hearts. Kept here as the **internal location label** for
-where the Flush of Hearts contestants come from, to give the geography
-character — but UI surfaces everything as "Flush of Hearts" by default.
-If this feels redundant during implementation, simplify to just "Flush of
-Hearts" everywhere and drop Sirens' Cove. Codex's call.)
+(Note: "Sirens' Cove" was an alternate internal label once considered for the
+Flush of Hearts location. The implementation simplified to "Flush of Hearts"
+everywhere and dropped Sirens' Cove; the location ids are `flush_pool`,
+`flush_kitchen`, and `flush_terrace`.)
 
 ## Capitalization
 

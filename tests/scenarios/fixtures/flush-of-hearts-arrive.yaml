@@ -1,0 +1,10 @@
+name: flush-of-hearts-arrive
+seed: 11
+initial_day: 4
+initial_phase: afternoon
+actions:
+- kind: ambient
+  target_id: ambient_wait
+- kind: ambient
+  target_id: ambient_wait
+expected_hash: 2f2ff062e6dd42a13d5377e32e82b0bedbb137f269c9f4314a20a6579ddd8147

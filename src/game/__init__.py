@@ -1,4 +1,4 @@
-"""Game engine package for the Love Island social sandbox.
+"""Game engine package for the Paradise Hearts social sandbox.
 
 Design sources:
 - AGENTS.md: Tech Stack, Current Status

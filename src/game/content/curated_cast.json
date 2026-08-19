@@ -163,7 +163,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "touches her necklace when she wants to leave a conversation",
           "tier": 0,
           "mechanical": false
@@ -332,7 +332,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "starts doing impressions when she is close to crying",
           "tier": 0,
           "mechanical": false
@@ -496,7 +496,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "checks everyone has water before admitting he is tired",
           "tier": 0,
           "mechanical": false
@@ -665,7 +665,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "straightens cushions when she wants to be touched",
           "tier": 0,
           "mechanical": false
@@ -834,7 +834,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "over-offers tea when she feels unwanted",
           "tier": 0,
           "mechanical": false
@@ -1003,7 +1003,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "gets louder when he feels replaceable",
           "tier": 0,
           "mechanical": false
@@ -1172,7 +1172,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "makes himself useful before saying what he wants",
           "tier": 0,
           "mechanical": false
@@ -1346,7 +1346,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "keeps the bit going three seconds too long",
           "tier": 0,
           "mechanical": false
@@ -1521,7 +1521,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "answers lightly",
           "tier": 0,
           "mechanical": false
@@ -1699,7 +1699,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "smiles wider when she is about to test someone",
           "tier": 0,
           "mechanical": false
@@ -1877,7 +1877,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "goes very still before making a power move",
           "tier": 0,
           "mechanical": false
@@ -2055,7 +2055,7 @@
           "tier": 0,
           "mechanical": false
         },
-        "villa_tell": {
+        "resort_tell": {
           "value": "mirrors people until she forgets her own opinion",
           "tier": 0,
           "mechanical": false

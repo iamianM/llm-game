@@ -47,6 +47,8 @@ web/node_modules/
 web/.next/
 web/.next-dev/
 web/.next-playwright*/
+web/AGENTS.md
+web/CLAUDE.md
 web/.playwright-results/
 web/.playwright-runtime/
 web/dist/
@@ -70,9 +72,6 @@ web/_*.json
 web/_*.png
 web/_*/
 web/web/
-# ...but keep the two committed dev helpers
-!web/_gamefeel.cjs
-!web/_mobile.cjs
 # Golden-playthrough run artifacts (the .spec.ts stays tracked)
 web/tests/golden/run.log
 web/tests/golden/index.html

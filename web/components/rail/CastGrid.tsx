@@ -1,7 +1,7 @@
-import type { IslanderSummary } from "../../lib/types";
+import type { HeartbreakerSummary } from "../../lib/types";
 import { Avatar } from "../ui/Avatar";
 
-export function CastGrid({ cast, onOpenProfile }: { cast: IslanderSummary[]; onOpenProfile: (npcId: string) => void }) {
+export function CastGrid({ cast, onOpenProfile }: { cast: HeartbreakerSummary[]; onOpenProfile: (npcId: string) => void }) {
   return (
     <section className="rail-section">
       <h3 className="rail-section-title">Heartbreakers</h3>

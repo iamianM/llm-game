@@ -9,10 +9,10 @@ intents:
     relationship_deltas:
       success: {affection: 2, trust: 2}
       miss: {affection: 0, trust: 0}
-  - id: friendly_chat_villa
+  - id: friendly_chat_resort
     reveal_tier: 1
     category: friendly
-    label: "Chat about the villa"
+    label: "Chat about Sunset Bay"
     stat_used: banter
     tags: [casual, friendly]
     unlock_affection: 0
@@ -51,7 +51,7 @@ intents:
   - id: flirty_intimate_eye_contact
     category: flirty
     label: "Intimate eye contact"
-    stat_used: graft
+    stat_used: spark
     tags: [flirty, intense]
     unlock_affection: 30
     relationship_deltas:
@@ -162,7 +162,7 @@ intents:
       miss: {friendship: -1}
   - id: gossip_ring_vent
     category: gossip_ring
-    label: "Vent about villa pressure"
+    label: "Vent about Sunset Bay pressure"
     stat_used: eq
     tags: [gossip_ring, vulnerable, support]
     unlock_affection: 0
@@ -172,8 +172,8 @@ intents:
   - id: gossip_ring_strategize
     category: gossip_ring
     label: "Strategize about a boy"
-    stat_used: graft
-    tags: [gossip_ring, strategy, graft]
+    stat_used: spark
+    tags: [gossip_ring, strategy, spark]
     unlock_affection: 10
     relationship_deltas:
       success: {trust: 2, friendship: 2, affection: 1}

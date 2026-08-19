@@ -9,7 +9,7 @@ from typing import Literal
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import GAME_AGENT_MODEL, reasoning_request_kwargs
 from src.game.eval.golden_models import GoldenCheckResult, GoldenTurnSpec, JudgeCheckSpec
 
@@ -121,17 +121,17 @@ JUDGE_INSTRUCTIONS = (
     "Use the golden as expected INTENT and shape, not as a script. "
     "CRITICAL: The fields under `actual` named `ceremony_events`, `challenge`, "
     "`mechanical_result`, `producer_text`, `pending_gather`, `audience_snapshot`, "
-    "`revealed_preferences`, `daily_recaps`, `villa_snapshot`, `location`, "
+    "`revealed_preferences`, `daily_recaps`, `resort_snapshot`, `location`, "
     "`day`, and `phase` are the engine's deterministic ground truth. When a "
     "judge criterion asks whether the narrator 'matches the recorded outcome' "
-    "(winner, couples, eliminated islander, classification, BPMs, proposal "
+    "(winner, couples, eliminated heartbreaker, classification, BPMs, proposal "
     "result, etc.), compare ONLY against those engine fields — never against "
     "names that appear in the golden's 'Imagine:' illustrative example. The "
     "illustrative example shows the desired shape and tone of prose, not which "
-    "specific islanders should win or lose. If the engine recorded `player and "
+    "specific heartbreakers should win or lose. If the engine recorded `player and "
     "chloe win` and the narration says the same, that passes a "
     "final_outcome_faithful check even if the golden's Imagine: paragraph "
-    "named different islanders. "
+    "named different heartbreakers. "
     "Return pass when the actual output is a reasonable semantic match to the "
     "criterion AND consistent with engine ground truth. "
     "Return fail only for a material mismatch grounded in the visible actual output. "
@@ -180,7 +180,7 @@ def _actual_payload(record: dict[str, object]) -> dict[str, object]:
         "revealed_preferences": record.get("revealed_preferences"),
         "daily_recaps": record.get("daily_recaps"),
         "visible_state": record.get("visible_state"),
-        "villa_snapshot": record.get("villa_snapshot"),
+        "resort_snapshot": record.get("resort_snapshot"),
         "location": record.get("location"),
         "day": record.get("day"),
         "phase": record.get("phase"),

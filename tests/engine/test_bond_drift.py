@@ -1,4 +1,4 @@
-"""Tests for overnight bond drift (the villa moving between the player's scenes).
+"""Tests for overnight bond drift (the resort moving between the player's scenes).
 
 Covers the three drift kinds (consolidation / roving / fade), the soft
 ceiling/floor that keep passivity from substituting for real scenes, and the
@@ -18,18 +18,18 @@ from src.game.engine.phases import MAX_DAYS, advance_phase
 from src.game.state.models import Couple, Phase, new_game
 
 
-def _couple_with_player(state, islander_id: str) -> None:
+def _couple_with_player(state, heartbreaker_id: str) -> None:
     state.couples.append(
-        Couple(partner_a_id=state.player.id, partner_b_id=islander_id, formed_on_day=1)
+        Couple(partner_a_id=state.player.id, partner_b_id=heartbreaker_id, formed_on_day=1)
     )
 
 
-def _couple_two_islanders(state, a_id: str, b_id: str) -> None:
+def _couple_two_heartbreakers(state, a_id: str, b_id: str) -> None:
     state.couples.append(Couple(partner_a_id=a_id, partner_b_id=b_id, formed_on_day=1))
 
 
-def _npc(state, islander_id: str):
-    return next(n for n in state.islanders if n.id == islander_id)
+def _npc(state, heartbreaker_id: str):
+    return next(n for n in state.heartbreakers if n.id == heartbreaker_id)
 
 
 # --- consolidation (coupled with the player) ---------------------------------
@@ -94,7 +94,7 @@ def test_roving_cools_romance_but_spares_the_platonic_layer() -> None:
     marcus.relationship.chemistry = 40
     marcus.relationship.trust = 40
     marcus.relationship.friendship = 40
-    _couple_two_islanders(state, "marcus", "sophie")
+    _couple_two_heartbreakers(state, "marcus", "sophie")
 
     drift = plan_drift_for(state, marcus)
 
@@ -110,7 +110,7 @@ def test_roving_never_drags_below_the_soft_floor() -> None:
     marcus = _npc(state, "marcus")
     marcus.relationship.affection = SOFT_FLOOR
     marcus.relationship.chemistry = SOFT_FLOOR + 1
-    _couple_two_islanders(state, "marcus", "sophie")
+    _couple_two_heartbreakers(state, "marcus", "sophie")
 
     drift = plan_drift_for(state, marcus)
 
@@ -121,7 +121,7 @@ def test_roving_never_drags_below_the_soft_floor() -> None:
 # --- fade (unpartnered) ------------------------------------------------------
 
 
-def test_fade_cools_an_unpartnered_islander() -> None:
+def test_fade_cools_an_unpartnered_heartbreaker() -> None:
     state = new_game(1)
     liam = _npc(state, "liam")
     liam.relationship.affection = 30
@@ -152,26 +152,26 @@ def test_fade_leaves_an_already_lapsed_bond_alone() -> None:
 # --- apply_overnight_drift over the whole cast -------------------------------
 
 
-def test_apply_returns_only_islanders_that_actually_moved() -> None:
+def test_apply_returns_only_heartbreakers_that_actually_moved() -> None:
     state = new_game(1)
     # Park everyone at the floor so fade is a no-op...
-    for npc in state.islanders:
+    for npc in state.heartbreakers:
         npc.relationship.affection = SOFT_FLOOR
         npc.relationship.chemistry = SOFT_FLOOR
         npc.relationship.trust = SOFT_FLOOR
         npc.relationship.friendship = SOFT_FLOOR
-    # ...except one islander coupled with the player, who consolidates.
+    # ...except one heartbreaker coupled with the player, who consolidates.
     chloe = _npc(state, "chloe")
     chloe.relationship.affection = 20
     _couple_with_player(state, "chloe")
 
     moved = apply_overnight_drift(state)
 
-    assert [d.islander_id for d in moved] == ["chloe"]
+    assert [d.heartbreaker_id for d in moved] == ["chloe"]
     assert chloe.relationship.affection == 21
 
 
-def test_apply_skips_eliminated_islanders() -> None:
+def test_apply_skips_eliminated_heartbreakers() -> None:
     state = new_game(1)
     liam = _npc(state, "liam")
     liam.relationship.affection = 30
@@ -180,7 +180,7 @@ def test_apply_skips_eliminated_islanders() -> None:
 
     moved = apply_overnight_drift(state)
 
-    assert all(d.islander_id != "liam" for d in moved)
+    assert all(d.heartbreaker_id != "liam" for d in moved)
     assert liam.relationship.affection == 30  # untouched
     assert liam.relationship.chemistry == 30
 
@@ -190,7 +190,7 @@ def test_apply_mutates_bonds_through_the_clamping_chokepoint() -> None:
     marcus = _npc(state, "marcus")
     marcus.relationship.affection = 40
     marcus.relationship.chemistry = 40
-    _couple_two_islanders(state, "marcus", "sophie")
+    _couple_two_heartbreakers(state, "marcus", "sophie")
 
     apply_overnight_drift(state)
 
@@ -229,6 +229,6 @@ def test_final_night_rolls_to_complete_without_drift() -> None:
     advance_phase(state)
 
     assert state.phase is Phase.COMPLETE
-    # The villa has wrapped; no overnight drift on a night that never comes.
+    # The resort has wrapped; no overnight drift on a night that never comes.
     assert liam.relationship.affection == 30
     assert liam.relationship.chemistry == 30

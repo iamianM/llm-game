@@ -1,4 +1,4 @@
-"""Villa autonomy helpers used by the turn pipeline."""
+"""Resort autonomy helpers used by the turn pipeline."""
 
 from __future__ import annotations
 
@@ -6,108 +6,108 @@ import asyncio
 
 from src.game.agents.background_dialogue import BackgroundDialogueFn
 from src.game.agents.conversation_curator import ConversationCuratorFn
+from src.game.agents.resort_orchestrator import (
+    NPCMovement,
+    ResortOrchestratorFn,
+    ResortUpdate,
+    mock_resort_orchestrator,
+)
 from src.game.agents.runtime import (
     AgentError,
     AgentValidationError,
     record_agent_degradation,
 )
-from src.game.agents.villa_orchestrator import (
-    NPCMovement,
-    VillaOrchestratorFn,
-    VillaUpdate,
-    mock_villa_orchestrator,
-)
 from src.game.engine.arrival_rolls import ArrivalRoll, roll_arrival
 from src.game.engine.peer import advance_peer_attractions, maybe_form_peer_couples
 from src.game.engine.phases import is_finale_evening
-from src.game.engine.villa import (
-    AppliedVillaChanges,
-    apply_villa_update_async,
+from src.game.engine.resort import (
+    AppliedResortChanges,
+    apply_resort_update_async,
     pending_to_summon,
 )
-from src.game.engine.villa_validation import normalize_villa_update, validate_villa_update
+from src.game.engine.resort_validation import normalize_resort_update, validate_resort_update
 from src.game.state.autonomy import PendingNPCSummon
-from src.game.state.models import GameState, IslanderState, Location, NPCInterruption
+from src.game.state.models import GameState, HeartbreakerState, Location, NPCInterruption
 from src.game.state.rng import SeededRng
 
 
-def apply_villa_turn(
+def apply_resort_turn(
     state: GameState,
     rng: SeededRng,
-    villa_orchestrator: VillaOrchestratorFn | None,
+    resort_orchestrator: ResortOrchestratorFn | None,
     *,
     background_dialogue: BackgroundDialogueFn | None,
     conversation_curator: ConversationCuratorFn | None,
-) -> tuple[VillaUpdate, AppliedVillaChanges, list[ArrivalRoll]]:
+) -> tuple[ResortUpdate, AppliedResortChanges, list[ArrivalRoll]]:
     return asyncio.run(
-        apply_villa_turn_async(
+        apply_resort_turn_async(
             state,
             rng,
-            villa_orchestrator,
+            resort_orchestrator,
             background_dialogue=background_dialogue,
             conversation_curator=conversation_curator,
         )
     )
 
 
-async def apply_villa_turn_async(
+async def apply_resort_turn_async(
     state: GameState,
     rng: SeededRng,
-    villa_orchestrator: VillaOrchestratorFn | None,
+    resort_orchestrator: ResortOrchestratorFn | None,
     *,
     background_dialogue: BackgroundDialogueFn | None,
     conversation_curator: ConversationCuratorFn | None,
-) -> tuple[VillaUpdate, AppliedVillaChanges, list[ArrivalRoll]]:
+) -> tuple[ResortUpdate, AppliedResortChanges, list[ArrivalRoll]]:
     """Apply one orchestrator turn with parallel background agents."""
     if state.pending_gather is not None:
-        villa_update = VillaUpdate()
-        return villa_update, AppliedVillaChanges(villa_update=villa_update), []
+        resort_update = ResortUpdate()
+        return resort_update, AppliedResortChanges(resort_update=resort_update), []
     # Intros are a tight scripted meet-and-greet — the cast watches the
     # player work the room, so there's no value in firing the orchestrator
     # (background NPC movements / new NPC-NPC chats) per intro turn. Skip
     # it during INTROS to cut ~10-15s of LLM latency per intro.
     from src.game.state.models import Phase
     if state.phase is Phase.INTROS:
-        villa_update = VillaUpdate()
-        return villa_update, AppliedVillaChanges(villa_update=villa_update), []
-    orchestrate = mock_villa_orchestrator if villa_orchestrator is None else villa_orchestrator
+        resort_update = ResortUpdate()
+        return resort_update, AppliedResortChanges(resort_update=resort_update), []
+    orchestrate = mock_resort_orchestrator if resort_orchestrator is None else resort_orchestrator
     base_update = _safe_orchestrate(state, orchestrate)
-    villa_update = _merge_pending_summon(state, base_update)
-    if villa_update is not base_update:
+    resort_update = _merge_pending_summon(state, base_update)
+    if resort_update is not base_update:
         # _merge_pending_summon spliced in a pending summon. The base update and
         # the summon are each valid alone, but together they can conflict — e.g.
         # the orchestrator validly moved the active partner this turn while the
-        # summon also pulls that same partner away ("cannot summon and move the
+        # summon also summons that same partner away ("cannot summon and move the
         # same NPC"). That clash would otherwise surface inside
-        # apply_villa_update_async and dead-screen the turn, so re-validate the
+        # apply_resort_update_async and dead-screen the turn, so re-validate the
         # combined update and fall back to the already-valid base (skip the
         # summon this turn) if it no longer holds.
         try:
-            validate_villa_update(state, villa_update)
+            validate_resort_update(state, resort_update)
         except ValueError:
-            villa_update = base_update
-    pre_locations = {islander.id: islander.location_id for islander in state.islanders}
-    villa_changes = await apply_villa_update_async(
+            resort_update = base_update
+    pre_locations = {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers}
+    resort_changes = await apply_resort_update_async(
         state,
-        villa_update,
+        resort_update,
         rng,
         background_dialogue=background_dialogue,
         conversation_curator=conversation_curator,
     )
-    # The villa has its own love stories: islanders grow attracted to each other
+    # The resort has its own love stories: heartbreakers grow attracted to each other
     # as they spend time co-located, and single pairs who click hard enough
     # couple up off-screen. Both feed the gossip mill + morning recap. Run after
     # the orchestrator's movements land so attraction reflects this turn's
     # positions.
     peer_memories = advance_peer_attractions(state, rng.fork("peer-advance"))
     peer_memories.extend(maybe_form_peer_couples(state, rng.fork("peer-couple")))
-    villa_changes.memories.extend(peer_memories)
-    arrival_rolls = _roll_arrivals_for_movements(state, villa_update.npc_movements, pre_locations, rng)
-    return villa_update, villa_changes, arrival_rolls
+    resort_changes.memories.extend(peer_memories)
+    arrival_rolls = _roll_arrivals_for_movements(state, resort_update.npc_movements, pre_locations, rng)
+    return resort_update, resort_changes, arrival_rolls
 
 
-def _safe_orchestrate(state: GameState, orchestrate: VillaOrchestratorFn) -> VillaUpdate:
-    """Run the villa orchestrator without ever dead-screening the player's turn.
+def _safe_orchestrate(state: GameState, orchestrate: ResortOrchestratorFn) -> ResortUpdate:
+    """Run the resort orchestrator without ever dead-screening the player's turn.
 
     The orchestrator only drives *ambient* flavor — background NPC movement and
     NPC-NPC chatter. The live agent retries on validation failure and then
@@ -115,35 +115,35 @@ def _safe_orchestrate(state: GameState, orchestrate: VillaOrchestratorFn) -> Vil
     propagating up here would crash the whole turn and discard the player's
     actual exchange, so on any failure — the agent giving up, or an update that
     still fails validation even after near-miss id repair — we degrade to an
-    empty update. The villa simply holds still for one turn instead of throwing a
+    empty update. The resort simply holds still for one turn instead of throwing a
     dead screen. Validating here (before the summon is merged in) also keeps a
     pending summon intact even when the LLM's own movement/chatter is unusable.
     """
     try:
         update = orchestrate(state)
-        update = normalize_villa_update(state, update)
+        update = normalize_resort_update(state, update)
         try:
-            validate_villa_update(state, update)
+            validate_resort_update(state, update)
         except ValueError as exc:
             # The orchestrator's own update failed the engine contract even after
             # near-miss id repair; treat it as an agent-validation degradation so
-            # the villa holds still for a turn instead of dead-screening.
+            # the resort holds still for a turn instead of dead-screening.
             raise AgentValidationError(str(exc)) from exc
         return update
     except AgentError as exc:
-        record_agent_degradation("villa_orchestrator", exc)
-        return VillaUpdate()
+        record_agent_degradation("resort_orchestrator", exc)
+        return ResortUpdate()
 
 
-def _merge_pending_summon(state: GameState, villa_update: VillaUpdate) -> VillaUpdate:
+def _merge_pending_summon(state: GameState, resort_update: ResortUpdate) -> ResortUpdate:
     pending = state.pending_npc_summon
-    if pending is None or villa_update.npc_summoned_elsewhere:
-        return villa_update
+    if pending is None or resort_update.npc_summoned_elsewhere:
+        return resort_update
     if not _pending_summon_still_valid(state, pending):
         state.pending_npc_summon = None
-        return villa_update
+        return resort_update
     state.pending_npc_summon = None
-    return villa_update.model_copy(update={"npc_summoned_elsewhere": [pending_to_summon(pending)]})
+    return resort_update.model_copy(update={"npc_summoned_elsewhere": [pending_to_summon(pending)]})
 
 
 def _pending_summon_still_valid(state: GameState, pending: PendingNPCSummon) -> bool:
@@ -173,14 +173,14 @@ def _roll_arrivals_for_movements(
             continue
         if movement.npc_id == state.active_conversation.target_id:
             continue
-        arriving = _find_islander(state, movement.npc_id)
+        arriving = _find_heartbreaker(state, movement.npc_id)
         roll = roll_arrival(state, arriving, rng.fork(f"arrival-{movement.npc_id}"))
         rolls.append(roll)
         _apply_arrival_roll(state, roll, arriving)
     return rolls
 
 
-def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: IslanderState) -> None:
+def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: HeartbreakerState) -> None:
     active = state.active_conversation
     if active is None:
         return
@@ -190,7 +190,7 @@ def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: IslanderS
             reason="has_gossip" if _recent_high_weight_memories(arriving) else "jealous",
             urgency="insistent" if roll.interruption_chance >= 50 else "polite",
         )
-    if roll.pull_hit and state.pending_npc_summon is None:
+    if roll.private_chat_hit and state.pending_npc_summon is None:
         state.pending_npc_summon = PendingNPCSummon(
             npc_id=active.target_id,
             from_conversation_id="player_active",
@@ -199,12 +199,12 @@ def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: IslanderS
         )
 
 
-def _recent_high_weight_memories(islander: IslanderState) -> bool:
-    return any(memory.emotional_weight >= 5 for memory in islander.memories[-5:])
+def _recent_high_weight_memories(heartbreaker: HeartbreakerState) -> bool:
+    return any(memory.emotional_weight >= 5 for memory in heartbreaker.memories[-5:])
 
 
-def _find_islander(state: GameState, islander_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == islander_id and not islander.eliminated:
-            return islander
-    raise ValueError(f"unknown islander: {islander_id}")
+def _find_heartbreaker(state: GameState, heartbreaker_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id and not heartbreaker.eliminated:
+            return heartbreaker
+    raise ValueError(f"unknown heartbreaker: {heartbreaker_id}")

@@ -27,7 +27,7 @@ def test_available_intents_filter_by_affection_unlocks() -> None:
     intents = available_intents_for(state, "chloe")
     ids = {intent.id for intent in intents}
 
-    assert "friendly_chat_villa" in ids
+    assert "friendly_chat_resort" in ids
     assert "banter_tell_joke" in ids
     assert "flirty_compliment_looks" not in ids
     assert "deep_share_feelings" not in ids
@@ -36,7 +36,7 @@ def test_available_intents_filter_by_affection_unlocks() -> None:
 def test_flirty_unlocks_at_affection_threshold() -> None:
     """Flirty intents unlock once relationship reaches the configured threshold."""
     state = new_game(1)
-    state.islanders[0].relationship.affection = 20
+    state.heartbreakers[0].relationship.affection = 20
 
     ids = {intent.id for intent in available_intents_for(state, "chloe")}
 
@@ -46,7 +46,7 @@ def test_flirty_unlocks_at_affection_threshold() -> None:
 def test_intent_filter_blocks_flirty_on_same_sex_pair() -> None:
     state = new_game(1)
     state.player.gender = Gender.MAN
-    liam = next(islander for islander in state.islanders if islander.id == "liam")
+    liam = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "liam")
     liam.location_id = state.location_id
     liam.relationship.affection = 40
 
@@ -59,7 +59,7 @@ def test_intent_filter_blocks_flirty_on_same_sex_pair() -> None:
 def test_intent_filter_blocks_bromance_on_opposite_sex_pair() -> None:
     state = new_game(1)
     state.player.gender = Gender.MAN
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     chloe.relationship.affection = 40
 
     ids = {intent.id for intent in available_intents_for(state, "chloe")}
@@ -72,7 +72,7 @@ def test_intent_filter_blocks_bromance_on_opposite_sex_pair() -> None:
 def test_intent_filter_blocks_gossip_ring_on_men() -> None:
     state = new_game(1)
     state.player.gender = Gender.MAN
-    liam = next(islander for islander in state.islanders if islander.id == "liam")
+    liam = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "liam")
     liam.location_id = state.location_id
     liam.relationship.affection = 40
 
@@ -84,7 +84,7 @@ def test_intent_filter_blocks_gossip_ring_on_men() -> None:
 def test_woman_same_sex_pair_gets_gossip_ring_not_flirty() -> None:
     state = new_game(1)
     state.player.gender = Gender.WOMAN
-    chloe = next(islander for islander in state.islanders if islander.id == "chloe")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     chloe.relationship.affection = 40
 
     ids = {intent.id for intent in available_intents_for(state, "chloe")}

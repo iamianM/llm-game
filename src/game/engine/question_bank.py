@@ -4,7 +4,7 @@ See ``docs/minigame-system.md`` §4. The bank is generated once per season
 from existing Trait Cards. In mock mode (no live LLM) this module produces
 deterministic stems by trait_key. A live OpenAI Question Bank agent ships
 as a follow-up PR; until then mock-mode output is sufficient because the
-canonical truth (``correct_value`` and ``distractors``) is pulled from the
+canonical truth (``correct_value`` and ``distractors``) is read from the
 Trait Card and never invented by either path.
 """
 
@@ -27,7 +27,7 @@ _STEMS: dict[str, str] = {
     "pet_peeve": "What's {name}'s biggest pet peeve?",
     "insecurity": "What is {name} most insecure about?",
     "past_heartbreak": "What was {name}'s last heartbreak?",
-    "hidden_secret": "What's the one thing {name} is hiding from the villa?",
+    "hidden_secret": "What's the one thing {name} is hiding from Sunset Bay?",
 }
 
 
@@ -39,19 +39,19 @@ def build_question_bank(state: GameState) -> QuestionBank:
     """
     bank_seed = state.seed * 2654435761 & 0xFFFFFFFF  # Knuth multiplicative hash
     prompts: dict[str, list[QuestionBankPrompt]] = {"compatibility_quiz": []}
-    for islander in sorted(state.islanders, key=lambda i: i.id):
-        card = islander.trait_card
+    for heartbreaker in sorted(state.heartbreakers, key=lambda i: i.id):
+        card = heartbreaker.trait_card
         for key in sorted(card.core_traits):
             fact = card.core_traits[key]
             prompts["compatibility_quiz"].append(
                 QuestionBankPrompt(
-                    id=f"cq_{islander.id}_{key}",
+                    id=f"cq_{heartbreaker.id}_{key}",
                     minigame_kind="compatibility_quiz",
-                    target_id=islander.id,
+                    target_id=heartbreaker.id,
                     trait_key=key,
                     tier=fact.tier,
                     mechanical=fact.mechanical,
-                    stem=_stem_for(islander.name, key),
+                    stem=_stem_for(heartbreaker.name, key),
                     correct_value=fact.value,
                     distractors=list(fact.distractors),
                 )
@@ -60,13 +60,13 @@ def build_question_bank(state: GameState) -> QuestionBank:
             fact = card.flavor_traits[key]
             prompts["compatibility_quiz"].append(
                 QuestionBankPrompt(
-                    id=f"cq_{islander.id}_{key}",
+                    id=f"cq_{heartbreaker.id}_{key}",
                     minigame_kind="compatibility_quiz",
-                    target_id=islander.id,
+                    target_id=heartbreaker.id,
                     trait_key=key,
                     tier=fact.tier,
                     mechanical=fact.mechanical,
-                    stem=_stem_for(islander.name, key),
+                    stem=_stem_for(heartbreaker.name, key),
                     correct_value=fact.value,
                     distractors=list(fact.distractors),
                 )

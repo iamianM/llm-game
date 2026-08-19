@@ -22,8 +22,8 @@ class PlaythroughStats(BaseModel):
     conversations_started: int
     wheel_exits: int
     walk_aways: int
-    pull_attempts: int
-    pull_failures: int
+    private_chat_attempts: int
+    private_chat_failures: int
     interruptions_fired: int
     interruption_responses: int
     interruption_response_kinds: list[str] = Field(default_factory=list)
@@ -40,18 +40,18 @@ class PlaythroughStats(BaseModel):
     revealed_preference_count: int = 0
     compatibility_bonus_observed: int = 0
     max_couple_strength_reached: int = 0
-    hideaway_used: bool = False
+    private_suite_used: bool = False
     steal_attempts_total: int = 0
     steal_successes: int = 0
-    casa_amor_visited: bool = False
-    casa_amor_player_decision: str | None = None
-    casa_amor_partners_swapped: bool = False
-    casa_amor_perception_swing: int = 0
+    flush_of_hearts_visited: bool = False
+    flush_of_hearts_player_decision: str | None = None
+    flush_of_hearts_partners_swapped: bool = False
+    flush_of_hearts_perception_swing: int = 0
     auto_advances_total: int = 0
     avg_actions_per_phase: float = 0.0
     arrival_rolls_total: int = 0
     arrival_interrupt_hits: int = 0
-    arrival_pull_hits: int = 0
+    arrival_private_chat_hits: int = 0
     npc_summoned_total: int = 0
     npc_left_total: int = 0
     final_day: int = 0

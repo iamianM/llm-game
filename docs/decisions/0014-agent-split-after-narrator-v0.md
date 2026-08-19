@@ -6,7 +6,7 @@ Accepted. Supersedes `0003-one-narrator-agent-for-v0.md` for the current POC.
 
 ## Context
 
-The earliest implementation decision limited the POC to one Narrator agent until the deterministic loop was proven. The engine, CLI, scenario tests, FastAPI adapter, and browser client now exist. The codebase has separate typed wrappers for Islander Voice, Contextual Options, Event Narrator, Conversation Curator, Villa Orchestrator, and Background Dialogue.
+The earliest implementation decision limited the POC to one Narrator agent until the deterministic loop was proven. The engine, CLI, scenario tests, FastAPI adapter, and browser client now exist. The codebase has separate typed wrappers for Heartbreaker Voice, Contextual Options, Event Narrator, Conversation Curator, Resort Orchestrator, and Background Dialogue.
 
 ## Decision
 
@@ -15,7 +15,7 @@ Keep the multi-agent split, but preserve the original boundary: agents narrate, 
 Each agent surface must stay typed and mockable. Non-LLM tests use mock agents or recorded traces by default.
 
 Agent context may include visible, engine-owned setup facts that the model must
-respond to, such as a successful pull for chat, pending proposal, or resolved
+respond to, such as a successful private chat attempt, pending proposal, or resolved
 event. Those facts are passed as structured context from `MechanicalResult` or
 canonical state; they are not agent decisions and they must not be inferred from
 free-text history when the engine already knows them.

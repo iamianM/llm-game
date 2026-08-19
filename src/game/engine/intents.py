@@ -15,7 +15,7 @@ from typing import Literal, cast
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.game.state.models import GameState, Gender, IslanderState, RelationshipDelta
+from src.game.state.models import GameState, Gender, HeartbreakerState, RelationshipDelta
 
 
 class IntentCategory(StrEnum):
@@ -125,14 +125,14 @@ def effective_risk(intent: Intent) -> Risk:
     return intent.risk or CATEGORY_DEFAULT_RISK[intent.category]
 
 
-def _find_visible_target(state: GameState, target_id: str) -> IslanderState:
-    for islander in state.islanders:
+def _find_visible_target(state: GameState, target_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
         if (
-            islander.id == target_id
-            and not islander.eliminated
-            and islander.location_id == state.location_id
+            heartbreaker.id == target_id
+            and not heartbreaker.eliminated
+            and heartbreaker.location_id == state.location_id
         ):
-            return islander
+            return heartbreaker
     raise ValueError(f"target is not visible: {target_id}")
 
 

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { IslanderLook } from "../../lib/look";
+import type { HeartbreakerLook } from "../../lib/look";
 import { isRosterId, rosterSprite } from "../../lib/roster";
 import { npcSprite } from "../../lib/scene/npc-art";
 import { PlayerCrest } from "../look/PlayerCrest";
@@ -8,9 +8,9 @@ const PALETTE = ["#b9502f", "#5b7c4f", "#c8932a", "#4a8fb8", "#8a5f78", "#7c654f
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl" | "responsive";
 
-export function Avatar({ id, name, size = "md", look = null }: { id: string; name: string; size?: Size; look?: IslanderLook | null }) {
+export function Avatar({ id, name, size = "md", look = null }: { id: string; name: string; size?: Size; look?: HeartbreakerLook | null }) {
   // A roster pick has a real face — crop its standee into the disc so the HUD,
-  // couples list and finale all show the player's chosen islander. Legacy/
+  // couples list and finale all show the player's chosen heartbreaker. Legacy/
   // checkpoint sessions carry a look without a roster id and fall back to the
   // look-aware casting crest. NPCs keep their photo; unknown ids keep a
   // monogram disc.
@@ -47,6 +47,7 @@ export function Avatar({ id, name, size = "md", look = null }: { id: string; nam
           alt=""
           fill
           sizes={imageSizes(size)}
+          loading={size === "xl" || size === "responsive" ? "eager" : "lazy"}
           className="object-cover"
           style={{ objectPosition: "50% 18%" }}
           aria-hidden

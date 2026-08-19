@@ -4,7 +4,7 @@ goal: Prove the Event Narrator dramatises a Pulse Race result using the recorded
 seed: 707
 initial_day: 2
 initial_phase: morning
-live_villa_life: false
+live_resort_life: false
 character_creation:
   archetype_id: heartthrob
   gender: man
@@ -12,7 +12,7 @@ character_creation:
     charm: 7
     banter: 6
     eq: 5
-    graft: 5
+    spark: 5
     loyalty: 7
 initial_couples:
   - partner_a_id: player

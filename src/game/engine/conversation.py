@@ -14,7 +14,7 @@ from src.game.state.models import (
     Conversation,
     ExchangeRecord,
     GameState,
-    IslanderState,
+    HeartbreakerState,
     Memory,
     Mood,
 )
@@ -55,7 +55,7 @@ def start_conversation(state: GameState, target_id: str, turn_index: int) -> Con
 
 def eligible_gossip_memories(state: GameState, target_id: str) -> list[Memory]:
     """Return gossip memories the target may share with the player."""
-    target = _target_islander(state, target_id)
+    target = _target_heartbreaker(state, target_id)
     if target.relationship.affection < 25:
         return []
     known_source_ids = {
@@ -161,7 +161,7 @@ def _attachment_departure_modifier(
     conversation: Conversation,
     recent: list[ExchangeRecord],
 ) -> int:
-    target = _target_islander(state, conversation.target_id)
+    target = _target_heartbreaker(state, conversation.target_id)
     if target.attachment is AttachmentStyle.AVOIDANT and any(
         "deep" in record.tags or "vulnerable" in record.tags for record in recent
     ):
@@ -178,12 +178,12 @@ def _last_two_repeat(conversation: Conversation) -> bool:
 
 
 def _target_relationship_strength(state: GameState, target_id: str) -> int:
-    rel = _target_islander(state, target_id).relationship
+    rel = _target_heartbreaker(state, target_id).relationship
     return rel.affection + rel.chemistry + rel.trust + rel.friendship
 
 
-def _target_islander(state: GameState, target_id: str) -> IslanderState:
-    for islander in state.islanders:
-        if islander.id == target_id:
-            return islander
+def _target_heartbreaker(state: GameState, target_id: str) -> HeartbreakerState:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == target_id:
+            return heartbreaker
     raise ValueError(f"unknown conversation target: {target_id}")

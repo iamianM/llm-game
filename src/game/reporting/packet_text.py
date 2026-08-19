@@ -9,11 +9,11 @@ from typing import Any
 def notes(records: list[dict[str, Any]], final_hash: str | None, llm_mode: str) -> str:
     """Render packet notes markdown."""
     conversation_turns = sum(1 for record in records if record.get("exchange") is not None)
-    villa_turns = sum(
+    resort_turns = sum(
         1
         for record in records
         if isinstance(record.get("agent_commits"), dict)
-        and record["agent_commits"].get("villa_update") is not None
+        and record["agent_commits"].get("resort_update") is not None
     )
     return f"""# Notes
 
@@ -21,14 +21,14 @@ def notes(records: list[dict[str, Any]], final_hash: str | None, llm_mode: str) 
 
 This packet renders one recorded playthrough from trace data. It contains
 {len(records)} turn(s), {conversation_turns} player conversation turn(s), and
-{villa_turns} turn(s) with recorded villa agent commits.
+{resort_turns} turn(s) with recorded Sunset Bay agent commits.
 
 LLM mode: `{llm_mode}`. {plain_llm_mode_note(llm_mode)}
 
 ## What felt good
 
 The report keeps player dialogue, follow-up wheel options, relationship deltas,
-ceremony narration, and off-screen villa commits together in one inspectable
+ceremony narration, and off-screen Sunset Bay commits together in one inspectable
 artifact.
 
 ## What felt off
@@ -39,7 +39,7 @@ memories, and gossip surfacing rather than aggregate win-rate conclusions.
 ## Open questions
 
 - Did the wheel choices feel Sims-like and short enough?
-- Did off-screen villa commits make the world feel alive?
+- Did off-screen Sunset Bay commits make the world feel alive?
 - Did memories and gossip surface at the right level of specificity?
 
 Final hash: `{final_hash or "unknown"}`

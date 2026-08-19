@@ -1,9 +1,9 @@
 # LLM Eval System
 
-This doc describes the current golden LLM eval system for the game. The system
-adapts the working eval pattern from
-`C:\Users\Mcian\projects\steno-livekit-agent` branch `feat/prompt-overlays-sdk`.
-The important LiveKit findings are:
+This doc describes the current golden LLM eval system for the game. It adapts
+production-agent principles: deterministic scenario setup, typed outputs,
+inspectable failures, regression reruns, and human review. The important
+findings are:
 
 - Run eval turns through production code, not a mock prompt harness.
 - Seed earlier turns from authored goldens so every evaluated turn is isolated and replayable.
@@ -60,7 +60,7 @@ boundary. Broad playthrough coverage still belongs to deterministic traces.
 
 ### S1: Start Chat With Every Starting NPC
 
-Goal: prove Islander Voice and Contextual Options work across the launch cast.
+Goal: prove Heartbreaker Voice and Contextual Options work across the launch cast.
 
 Turns:
 
@@ -75,7 +75,7 @@ Deterministic checks:
 - `player_dialogue` and `npc_dialogue` validate.
 - `follow_up_menu` exists unless the action intentionally exits.
 - exactly one exit option exists in the menu.
-- no hidden islander names appear in the visible exchange.
+- no hidden heartbreaker names appear in the visible exchange.
 - output state hash is replayable.
 
 Judge checks:
@@ -115,21 +115,21 @@ Judge checks:
 - The exit feels like a social close, not an abrupt system action.
 - Memories summarize what happened, not what the model guessed.
 
-### S3: Pull, Interruption, And Recovery
+### S3: Private Chat, Interruption, And Recovery
 
 Goal: stress the places where agent commits and deterministic social rules meet.
 
 Turns:
 
 - Seed an active NPC-NPC conversation.
-- Attempt to pull one NPC.
+- Attempt to pull one NPC for a private chat.
 - Cover one success and one rejection via fixed seeds.
 - Trigger an interruption while the player is in conversation.
 - Accept, defer, and ignore in separate scenario variants.
 
 Deterministic checks:
 
-- pull chance, roll, and outcome are recorded.
+- private chat chance, roll, and outcome are recorded.
 - rejection keeps the original NPC-NPC conversation active.
 - success closes or summons through validated engine paths.
 - interruption commit validates.
@@ -137,10 +137,10 @@ Deterministic checks:
 
 Judge checks:
 
-- rejection dialogue does not contradict the failed pull.
-- interruption reason feels grounded in the current villa state.
+- rejection dialogue does not contradict the failed private chat request.
+- interruption reason feels grounded in the current resort state.
 
-### S4: Background Villa Life
+### S4: Background Resort Life
 
 Goal: prove the world keeps moving without polluting player-facing memory.
 
@@ -151,7 +151,7 @@ Turns:
 
 Deterministic checks:
 
-- Villa Orchestrator commit validates.
+- Resort Orchestrator commit validates.
 - Background Dialogue validates.
 - Background Curator emits `kind: background`.
 - Player-relevant memory panel excludes background-only memories.
@@ -168,8 +168,8 @@ Goal: prove resolved events get narrated without the LLM changing outcomes.
 
 Turns:
 
-- Run recoupling.
-- Run dumping/final vote when the engine supports it in the scenario fixture.
+- Run the Pairing Ceremony.
+- Run Heart Out/final vote when the engine supports it in the scenario fixture.
 
 Deterministic checks:
 
@@ -278,35 +278,35 @@ The suite currently contains nineteen golden scenarios:
 - `day1-intro-round.yaml` checks the first communal intro beat and pending
   gather state.
 - `all-starting-npc-first-chats.yaml` starts and closes a first chat with every
-  starting Islander across pool, kitchen, terrace, and bedroom, with per-NPC
+  starting Heartbreaker across pool, kitchen, terrace, and bedroom, with per-NPC
   voice expectations.
-- `conversation-continuity-exit.yaml` checks Islander Voice, Contextual Options,
+- `conversation-continuity-exit.yaml` checks Heartbreaker Voice, Contextual Options,
   Conversation Curator, validation retries, judge checks, and reasoning traces.
 - `wheel-exit.yaml` checks the conversation-wheel exit path separately from the
   top-level walk-away action.
 - `challenge-result-narration.yaml` checks challenge resolution and narration.
-- `producer-casa-announce.yaml` checks Casa Amor announcement state and event
+- `producer-flush-announce.yaml` checks Flush of Hearts announcement state and event
   narration.
-- `recoupling-dumping.yaml` checks ceremony events around recoupling and dumping.
-- `player-recouple-proposal.yaml` checks a player-driven recoupling proposal.
+- `pairing-heart-out.yaml` checks ceremony events around the Pairing Ceremony and Heart Out.
+- `player-pair-proposal.yaml` checks a player-driven Heart Swap proposal.
 - `npc-proposal-incoming.yaml` checks an NPC proposal as a pending ask, then
   accepts it and verifies the exact couple, relationship, and audience results.
 - `npc-proposal-decline.yaml` checks a harsh NPC proposal decline without
   changing couples.
 - `final-vote-ending.yaml` checks run-ending outcome narration.
-- `pull-success.yaml` and `pull-rejection.yaml` check both sides of pulling an
-  NPC out of a background conversation.
+- `private-chat-success.yaml` and `private-chat-rejection.yaml` check both sides of
+  pulling an NPC out of a background conversation for a private chat.
 - `interruption-accept.yaml`, `interruption-defer.yaml`, and
   `interruption-ignore.yaml` split the three interruption response paths.
-- `background-villa-life.yaml` checks Villa Orchestrator, Background Dialogue,
+- `background-resort-life.yaml` checks Resort Orchestrator, Background Dialogue,
   and background memory isolation.
-- `hideaway-night.yaml` checks Hideaway state consumption, exact relationship
-  deltas, the dedicated hideaway event, and privacy narration.
+- `private-suite-night.yaml` checks Paradise Suite state consumption, exact relationship
+  deltas, the dedicated private suite event, and privacy narration.
 
 The generated `index.html` is the primary review surface. It intentionally hides
 hashes and raw JSON by default, and instead renders scenario goals, authored
 goldens, deterministic checks, judge findings, engine results, dialogue,
-follow-up menus, ceremony/event output, memories, villa summaries, and model
+follow-up menus, ceremony/event output, memories, resort summaries, and model
 reasoning traces. Reviewers can filter by status, search across scenario text,
 sort scenarios, jump by scenario chip, and expand only failing turns.
 
@@ -345,7 +345,7 @@ This is reliable for this repo because the LLM is downstream of deterministic me
 
 The system does not ask a judge to determine whether the game is correct. The engine and validators do that. The judge only checks whether authored narrative expectations match the actual text after raw evidence is already stored.
 
-The LiveKit branch proved two key implementation details:
+Prior production use proved two key implementation details:
 
 - independent golden-seeded turn replay avoids multi-turn flakiness while still exercising production code
 - reasoning summaries make model mistakes inspectable without relying on vibes

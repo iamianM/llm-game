@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { findHairColor, findSkinTone, findVibe, type IslanderLook } from "../../lib/look";
+import { findHairColor, findSkinTone, findVibe, type HeartbreakerLook } from "../../lib/look";
 
 /**
  * A deterministic, Vercel-safe "casting crest" for the player.
@@ -20,7 +20,7 @@ type Size = "xs" | "sm" | "md" | "lg" | "xl" | "responsive";
 
 const DIMS: Record<Exclude<Size, "responsive">, number> = { xs: 22, sm: 30, md: 44, lg: 80, xl: 168 };
 
-export function PlayerCrest({ look, name, size = "md" }: { look: IslanderLook; name: string; size?: Size }) {
+export function PlayerCrest({ look, name, size = "md" }: { look: HeartbreakerLook; name: string; size?: Size }) {
   const skin = findSkinTone(look.skinTone).value;
   const hair = findHairColor(look.hairColor).value;
   const vibe = findVibe(look.vibe).value;

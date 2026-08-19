@@ -20,12 +20,12 @@
   /* Tropical / location gradients */
   --grad-title: radial-gradient(120% 80% at 50% -10%, #f4b06a 0%, #d4633e 18%, #6b2a1f 42%, #1a0e0a 70%, #070504 100%);
   --grad-pool: radial-gradient(140% 80% at 50% 8%, #79c2dc 0%, #3d7da0 28%, #1d4a68 55%, #0e2737 85%);
-  --grad-firepit: radial-gradient(120% 90% at 50% 110%, #f4a13a 0%, #b04518 30%, #531b0e 60%, #1a0a06 95%);
+  --grad-flame_deck: radial-gradient(120% 90% at 50% 110%, #f4a13a 0%, #b04518 30%, #531b0e 60%, #1a0a06 95%);
   --grad-kitchen: radial-gradient(120% 90% at 50% -10%, #e9bf65 0%, #b6862b 30%, #5e4615 65%, #1a1208 95%);
   --grad-terrace: radial-gradient(120% 90% at 50% 8%, #c9d8a6 0%, #82a065 30%, #3f5530 65%, #131a0a 95%);
   --grad-bedroom: radial-gradient(120% 90% at 50% 5%, #d8a4a9 0%, #8e5961 30%, #4a2a30 65%, #1a0a0d 95%);
   --grad-suite: radial-gradient(120% 90% at 50% 5%, #c79be2 0%, #693e88 28%, #2c1948 55%, #0a0413 90%);
-  --grad-casa: radial-gradient(140% 90% at 50% 8%, #aa8cd4 0%, #5a4188 28%, #2a1b4c 55%, #0d0820 90%);
+  --grad-flush: radial-gradient(140% 90% at 50% 8%, #aa8cd4 0%, #5a4188 28%, #2a1b4c 55%, #0d0820 90%);
 
   /* Shadows */
   --shadow-sm:0 2px 8px rgba(0,0,0,.18);

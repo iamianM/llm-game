@@ -12,7 +12,7 @@ AmbientCategory = Literal["relax", "observe", "self_care", "social"]
 
 
 class AmbientOption(BaseModel):
-    """One non-conversation action available at a villa location."""
+    """One non-conversation action available at a resort location."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -29,7 +29,7 @@ AMBIENT_OPTIONS: tuple[AmbientOption, ...] = (
     AmbientOption(
         id="ambient_wait",
         location=Location.POOL,
-        label="Take in the villa",
+        label="Take in Sunset Bay",
         category="relax",
         mood_effect="neutral",
         stat_trickle={},
@@ -81,9 +81,9 @@ AMBIENT_OPTIONS: tuple[AmbientOption, ...] = (
         npc_encounter_boost=8,
     ),
     AmbientOption(
-        id="terrace_scan_villa",
+        id="terrace_scan_resort",
         location=Location.TERRACE,
-        label="Scan the villa from above",
+        label="Scan Sunset Bay from above",
         category="observe",
         mood_effect="watchful",
         stat_trickle={"banter": 1},
@@ -108,9 +108,9 @@ AMBIENT_OPTIONS: tuple[AmbientOption, ...] = (
         npc_encounter_boost=7,
     ),
     AmbientOption(
-        id="firepit_sit_quietly",
-        location=Location.FIREPIT,
-        label="Sit quietly by the firepit",
+        id="flame_deck_sit_quietly",
+        location=Location.FLAME_DECK,
+        label="Sit quietly by the flame_deck",
         category="relax",
         mood_effect="thoughtful",
         stat_trickle={"loyalty": 1},

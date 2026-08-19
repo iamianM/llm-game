@@ -13,7 +13,7 @@ import {
   findVibe,
   saveLook,
   type ArchetypeId,
-  type IslanderLook,
+  type HeartbreakerLook,
 } from "../../lib/look";
 import type { Gender } from "../../lib/types";
 import { LookStage } from "../look/LookStage";
@@ -24,21 +24,21 @@ type Identity = { name: string; gender: Gender; archetype: ArchetypeId };
 type Props = {
   sessionId: string;
   /** Current persisted look for this session (may be null for legacy runs). */
-  currentLook: IslanderLook | null;
+  currentLook: HeartbreakerLook | null;
   /** Fixed character identity from the engine — keeps the standee on-model. */
   identity: Identity;
   /** Called with the new look after the player saves, so the scene restyles live. */
-  onApply: (look: IslanderLook) => void;
+  onApply: (look: HeartbreakerLook) => void;
 };
 
 /** Merge the editable cosmetic draft over the locked engine identity. */
-function withIdentity(look: IslanderLook, identity: Identity): IslanderLook {
+function withIdentity(look: HeartbreakerLook, identity: Identity): HeartbreakerLook {
   return { ...look, name: identity.name, gender: identity.gender, archetype: identity.archetype };
 }
 
 /**
- * In-villa wardrobe. The creator promises "you can change your look any time at
- * the villa" — this fulfils it. Identity (name / gender / opening archetype) is
+ * Sunset Bay wardrobe. The creator promises "you can change your look any time at
+ * the resort" — this fulfils it. Identity (name / gender / opening archetype) is
  * fixed by the engine, so the modal only edits the cosmetic levers that visibly
  * restyle the in-scene player: outfit palette, accessories, and energy. Saving
  * persists the look recipe to localStorage (Vercel-safe, no runtime image gen)
@@ -47,7 +47,7 @@ function withIdentity(look: IslanderLook, identity: Identity): IslanderLook {
 export function WardrobeModal({ sessionId, currentLook, identity, onApply }: Props) {
   const open = useUiStore((s) => s.wardrobeOpen);
   const setOpen = useUiStore((s) => s.setWardrobe);
-  const [draft, setDraft] = useState<IslanderLook>(() =>
+  const [draft, setDraft] = useState<HeartbreakerLook>(() =>
     withIdentity(currentLook ?? DEFAULT_LOOK, identity)
   );
 
@@ -94,7 +94,7 @@ export function WardrobeModal({ sessionId, currentLook, identity, onApply }: Pro
       <div role="dialog" aria-modal="true" aria-labelledby="wardrobe-title" className="wd-frame">
         <section className="wd-card">
           <header className="wd-head">
-            <p className="wd-eyebrow"><Shirt size={12} /> Villa Wardrobe</p>
+            <p className="wd-eyebrow"><Shirt size={12} /> Sunset Bay Wardrobe</p>
             <h2 id="wardrobe-title">Restyle {identity.name || "your look"}</h2>
             <button onClick={() => setOpen(false)} className="wd-close" aria-label="Close"><X size={18} /></button>
           </header>
@@ -105,7 +105,7 @@ export function WardrobeModal({ sessionId, currentLook, identity, onApply }: Pro
               <div className="wd-stage">
                 <LookStage look={draft} />
                 <div className="wd-nameplate">
-                  <span className="wd-name">{identity.name || "Your Islander"}</span>
+                  <span className="wd-name">{identity.name || "Your Heartbreaker"}</span>
                   <span className="wd-sub">{archetype.label} · {findVibe(draft.vibe).label}</span>
                 </div>
                 <div className="wd-badge-rail">

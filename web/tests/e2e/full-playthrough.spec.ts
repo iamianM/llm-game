@@ -42,7 +42,7 @@ test("complete mock playthrough reaches finale", async ({ page }) => {
       if (/Flush of Hearts/i.test(ceremonyText)) sawFlushOfHearts = true;
       if (/Heart Throb/i.test(ceremonyText)) await page.screenshot({ path: out("ceremony-heart-throb.png"), fullPage: true });
       if (/Flush of Hearts/i.test(ceremonyText)) await page.screenshot({ path: out("ceremony-flush-of-hearts.png"), fullPage: true });
-      if (/Heart Swap Proposal/i.test(ceremonyText)) await page.screenshot({ path: out("recouple-proposal.png"), fullPage: true });
+      if (/Heart Swap Proposal/i.test(ceremonyText)) await page.screenshot({ path: out("pair-proposal.png"), fullPage: true });
       if (/Pairing Ceremony/i.test(ceremonyText)) await page.screenshot({ path: out("ceremony-pairing.png"), fullPage: true });
       await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
       await page.getByRole("button", { name: "Continue" }).click();

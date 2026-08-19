@@ -15,7 +15,7 @@ from src.game.engine.interruptions import (
     apply_interruption_response,
 )
 from src.game.engine.results import MechanicalAnomaly, MechanicalResult
-from src.game.engine.state_access import apply_relationship_delta, find_islander
+from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
 from src.game.state.models import GameState, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -119,7 +119,7 @@ def apply_follow_up(state: GameState, action: PlayerAction, rng: SeededRng) -> M
         raise ValueError("RESPOND_WITH requires active conversation pending options")
     option_index = follow_up_option_index(state, action)
     option = conversation.pending_options.options[option_index]
-    target = find_islander(state, conversation.target_id)
+    target = find_heartbreaker(state, conversation.target_id)
     breakdown = follow_up_success_breakdown(state, target, option.stat_used, option.risk)
     roll = rng.randint(1, 100)
     success = roll <= breakdown.final_chance

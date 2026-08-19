@@ -116,7 +116,7 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     if not mock:
         try:
             generator = OpenAITraitGenerator()
-            assign_trait_cards(state.islanders, generator.generate_opening_cast(opening_generation_seeds(state.islanders)))
+            assign_trait_cards(state.heartbreakers, generator.generate_opening_cast(opening_generation_seeds(state.heartbreakers)))
         except Exception as exc:
             logger.exception("real-mode trait generation failed")
             raise _http_error(
@@ -135,7 +135,7 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     except ValueError as exc:
         raise _http_error(400, "VALIDATION_ERROR", str(exc)) from exc
     # Live mode pre-generates the greeting circle in parallel so the player
-    # hears voice-true opening lines per islander instead of templates.
+    # hears voice-true opening lines per heartbreaker instead of templates.
     if not mock:
         try:
             from src.game.agents.npc_greeter import OpenAINpcGreeter
@@ -261,11 +261,11 @@ async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
             turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
         except ValueError as exc:
             logger.exception(
-                "turn rejected: session=%s day=%s phase=%s villa=%s loc=%s action=%s",
+                "turn rejected: session=%s day=%s phase=%s resort=%s loc=%s action=%s",
                 session_id,
                 state.day,
                 state.phase.value,
-                state.villa.value,
+                state.resort.value,
                 state.location_id.value,
                 envelope.action.model_dump(mode="json"),
             )
@@ -317,11 +317,11 @@ def _run_turn(state: GameState, rng: SeededRng, envelope: TurnEnvelope, agents: 
         state,
         action,
         rng,
-        islander_voice=agents.islander_voice,
+        heartbreaker_voice=agents.heartbreaker_voice,
         contextual_options=agents.contextual_options,
         event_narrator=agents.event_narrator,
         conversation_curator=agents.conversation_curator,
-        villa_orchestrator=agents.villa_orchestrator,
+        resort_orchestrator=agents.resort_orchestrator,
         background_dialogue=agents.background_dialogue,
     )
     logger.info(

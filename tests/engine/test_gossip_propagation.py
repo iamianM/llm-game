@@ -11,7 +11,7 @@ def test_propagate_gossip_seeds_creates_told_by_memory_on_listener() -> None:
     state = new_game(1)
     seed = GossipSeed(
         subject_id="chloe",
-        gist="Chloe looked rattled after Jordan pulled away at the firepit.",
+        gist="Chloe looked rattled after Jordan stepped back at the flame_deck.",
         holder_id="maya",
         spreadable_to=["liam"],
         emotional_weight=8,
@@ -30,7 +30,7 @@ def test_propagation_attenuates_weight() -> None:
     state = new_game(1)
     seed = GossipSeed(
         subject_id="chloe",
-        gist="Chloe seemed unsure about the recoupling.",
+        gist="Chloe seemed unsure about the pairing.",
         holder_id="maya",
         spreadable_to=["liam"],
         emotional_weight=7,
@@ -46,7 +46,7 @@ def test_propagation_skips_unknown_listener() -> None:
     state = new_game(1)
     seed = GossipSeed(
         subject_id="chloe",
-        gist="Chloe seemed unsure about the recoupling.",
+        gist="Chloe seemed unsure about the pairing.",
         holder_id="maya",
         spreadable_to=["unknown"],
         emotional_weight=7,
@@ -72,12 +72,12 @@ def test_propagation_dedupes_against_existing_memories() -> None:
             turn=6,
             weight=5,
             tags=["gossip"],
-            content="Chloe looked rattled after Jordan pulled away at the firepit.",
+            content="Chloe looked rattled after Jordan stepped back at the flame_deck.",
         ),
     )
     seed = GossipSeed(
         subject_id="chloe",
-        gist="Chloe looked rattled after Jordan pulled away at the firepit.",
+        gist="Chloe looked rattled after Jordan stepped back at the flame_deck.",
         holder_id="maya",
         spreadable_to=["liam"],
         emotional_weight=8,

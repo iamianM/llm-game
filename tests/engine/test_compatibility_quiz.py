@@ -224,7 +224,7 @@ def test_correct_answer_writes_compatibility_quiz_known_facts_at_full_confidence
 def test_wrong_answer_creates_caught_unprepared_memory_per_round() -> None:
     state = _state_with_partner()
     _drive_quiz(state, ["wrong"] * 5)
-    chloe = next(i for i in state.islanders if i.id == "chloe")
+    chloe = next(i for i in state.heartbreakers if i.id == "chloe")
     caught = [m for m in chloe.memories if "caught_unprepared" in m.tags]
     assert len(caught) == 5
 
@@ -232,7 +232,7 @@ def test_wrong_answer_creates_caught_unprepared_memory_per_round() -> None:
 def test_correct_answers_skip_caught_unprepared_memory() -> None:
     state = _state_with_partner()
     _drive_quiz(state, ["correct"] * 5)
-    chloe = next(i for i in state.islanders if i.id == "chloe")
+    chloe = next(i for i in state.heartbreakers if i.id == "chloe")
     assert not any("caught_unprepared" in m.tags for m in chloe.memories)
 
 

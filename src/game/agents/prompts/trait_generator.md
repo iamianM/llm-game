@@ -26,7 +26,7 @@ valid structured data matching the provided schema.
   past_heartbreak, hidden_secret.
 - Every Trait Card must include 6-10 non-mechanical `flavor_traits`.
   These are specific details the voice model can mention naturally:
-  karaoke_song, comfort_show, unexpected_skill, keepsake, villa_tell,
+  karaoke_song, comfort_show, unexpected_skill, keepsake, resort_tell,
   rainy_day_habit, guilty_pleasure, or similarly concrete keys.
   Flavor traits must be tier 0 and mechanical false.
 - Tier one facts are surface facts. Tier two facts are everyday preferences.
@@ -49,7 +49,7 @@ valid structured data matching the provided schema.
   comfort shows (`["Detectorists", "Fleabag", "Friday Night Dinner"]`).
   Distractors must be wrong but plausible enough that a stranger to this
   Heartbreaker could believably guess them.
-- Do not use Love Island terms. Use Paradise Hearts language when the show is
+- Do not use Paradise Hearts terms. Use Paradise Hearts language when the show is
   mentioned: Heartbreaker, Sunset Bay, Heart Throb, Flush of Hearts, Pulse.
 - Return only one JSON object with a top-level `cast` object keyed by slot_id.
   Each entry must contain `persona`, `core_traits`, and `flavor_traits`.

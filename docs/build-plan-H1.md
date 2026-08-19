@@ -21,9 +21,9 @@ Three starting archetypes, each with a stat bonus and one starter advantage:
 
 | Archetype | Stat bonus | Starter advantage |
 |---|---|---|
-| **Heartthrob** | charm +3 | Starts with chemistry +5 with one random islander of their gender preference |
+| **Heartthrob** | charm +3 | Starts with chemistry +5 with one random heartbreaker of their gender preference |
 | **Class Clown** | banter +3 | Starts at public perception 60 instead of 50 |
-| **Loyal Friend** | loyalty +3 | Friendship +5 with all starting islanders |
+| **Loyal Friend** | loyalty +3 | Friendship +5 with all starting heartbreakers |
 
 Each archetype is authored as a content file under `content/player_archetypes/<id>.md` with frontmatter: `id`, `display_name`, `stat_bonus_name`, `stat_bonus_value`, `starter_advantage` (a structured token, see below), and prose body for narration. Content lint validates the schema.
 
@@ -45,11 +45,11 @@ This means scenario fixtures can pin a character. New action kind: `CREATE_CHARA
 
 ### Public perception drives the outcome
 
-Public perception per islander already exists in state ([state/models.py](../src/game/state/models.py)). H1 makes it drive the final outcome:
+Public perception per heartbreaker already exists in state ([state/models.py](../src/game/state/models.py)). H1 makes it drive the final outcome:
 
-- **Each day end**, audience scoring runs: each surviving islander's public perception updates based on the day's events (positive moments +1–+3, negative moments -1–-3, drama -1 to subject -2 to instigator, etc.). The math is deterministic algorithmic, not LLM. Each ceremony or interruption already updates perception in G8.
+- **Each day end**, audience scoring runs: each surviving heartbreaker's public perception updates based on the day's events (positive moments +1–+3, negative moments -1–-3, drama -1 to subject -2 to instigator, etc.). The math is deterministic algorithmic, not LLM. Each ceremony or interruption already updates perception in G8.
 - **Couple audience score** = average of the two partners' public perceptions, plus a couple-strength bonus.
-- **End of day** prints a small audience ranking: "Couples ranked: 1. Maya & Liam (78), 2. You & Chloe (72), 3. Marcus & Sophie (60). Single islanders are out of the running."
+- **End of day** prints a small audience ranking: "Couples ranked: 1. Maya & Liam (78), 2. You & Chloe (72), 3. Marcus & Sophie (60). Single heartbreakers are out of the running."
 
 ### Final vote ceremony
 
@@ -58,7 +58,7 @@ Day 6 evening triggers a new ceremony: `final_vote`. Logic in [engine/final_vote
 1. Compute final couple ranking by (audience_score + couple_strength_bonus).
 2. Top couple wins.
 3. Second couple is runner-up.
-4. Single islanders are "left single" (not eliminated, just unpartnered at the end).
+4. Single heartbreakers are "left single" (not eliminated, just unpartnered at the end).
 5. If the player was eliminated earlier in the run, the outcome is already `ELIMINATED` — final vote still fires for narration but the player doesn't have an outcome stake.
 
 ### Run outcome enum
@@ -169,11 +169,11 @@ Each item is binary and testable.
   - `test_audience_snapshot_includes_all_active_couples`
   - `test_audience_snapshot_ranks_by_score_descending`
   - `test_audience_score_combines_avg_perception_and_couple_strength`
-  - `test_audience_snapshot_excludes_eliminated_islanders`
+  - `test_audience_snapshot_excludes_eliminated_heartbreakers`
 
 ### Scenario fixtures (mock LLM)
 
-- `tests/scenarios/fixtures/character-creation.yaml`: pins a Heartthrob with charm 9 / banter 6 / eq 4 / graft 5 / loyalty 6. Assertions hash matches after creation.
+- `tests/scenarios/fixtures/character-creation.yaml`: pins a Heartthrob with charm 9 / banter 6 / eq 4 / spark 5 / loyalty 6. Assertions hash matches after creation.
 - `tests/scenarios/fixtures/day6-final-vote.yaml`: runs through 6 days (mock LLM) and asserts the final state hash includes `outcome`.
 
 ### CLI tests
@@ -199,7 +199,7 @@ Both are added to the dashboard. The "Aggregate Stats" table gains: `outcome`, `
 
 ## Anti-goals
 
-- ❌ No procedural NPC generation in H1. Cast remains Chloe/Maya/Liam + Aisha bombshell. H3 might add more.
+- ❌ No procedural NPC generation in H1. Cast remains Chloe/Maya/Liam + Aisha heart_throb. H3 might add more.
 - ❌ No new Big 5 / Type on Paper mechanics. Those are H3.
 - ❌ No new archetypes beyond the three named. H1 is the minimum viable creation flow.
 - ❌ No multiple-stat archetype bonuses. Each archetype bumps exactly one stat.

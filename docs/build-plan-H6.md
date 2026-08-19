@@ -68,7 +68,7 @@ A session HTML page has three persistent regions and a scrollable timeline:
 
 ### Avatar placeholders
 
-Each NPC and the player get a small colored circle with their initials. Colors are deterministic from a hash of the islander id, so the same NPC has the same color across runs. Renders as inline SVG:
+Each NPC and the player get a small colored circle with their initials. Colors are deterministic from a hash of the heartbreaker id, so the same NPC has the same color across runs. Renders as inline SVG:
 
 ```html
 <svg width="32" height="32" viewBox="0 0 32 32">
@@ -81,12 +81,12 @@ No external assets. Helper function `avatar_svg(id, name) -> str` in `src/game/r
 
 ### Day timeline
 
-Six day cells (or 8 if Casa Amor is in the trace) shown as a vertical navigation list on the left. Each day cell has a small icon indicating the highlight:
+Six day cells (or 8 if Flush of Hearts is in the trace) shown as a vertical navigation list on the left. Each day cell has a small icon indicating the highlight:
 
 - ● Normal day
 - ▲ Challenge day
-- ◆ Recoupling day
-- ★ Drama day (bombshell / Casa Amor / elimination)
+- ◆ Pairing Ceremony day
+- ★ Drama day (heart_throb / Flush of Hearts / elimination)
 
 Click jumps to that day's section. Active day highlighted.
 
@@ -111,7 +111,7 @@ Function `perception_graph_svg(timeline_records) -> str` in `src/game/reporting/
 
 A node-edge graph showing who knows what. Each NPC is a node (their avatar circle). Each memory creates an edge from holder → subject, weighted by emotional_weight (line thickness). Different edge colors per source (direct = solid, witnessed = dashed, told_by = dotted).
 
-Rendered as inline SVG with a simple force-directed layout computed at generation time (Python, deterministic). Function `memory_web_svg(memories, islanders) -> str` in `src/game/reporting/memory_web.py`.
+Rendered as inline SVG with a simple force-directed layout computed at generation time (Python, deterministic). Function `memory_web_svg(memories, heartbreakers) -> str` in `src/game/reporting/memory_web.py`.
 
 The web is shown once per run at the end of the report. Limited to memories above weight 4 to avoid clutter.
 
@@ -169,12 +169,12 @@ The three-column layout collapses to single column under 700px width. Sticky nav
 - [ ] Sticky day timeline on the left navigates to each day section.
 - [ ] Sticky couple status panel on the right shows every active couple with strength bar.
 - [ ] Public perception line graph renders one line per couple, color-coded.
-- [ ] Memory web renders nodes for each non-eliminated islander, edges for memories of weight ≥ 4.
+- [ ] Memory web renders nodes for each non-eliminated heartbreaker, edges for memories of weight ≥ 4.
 - [ ] Each per-turn card has avatars for the player and the NPC they spoke with.
 - [ ] Math breakdown is collapsed by default and expandable.
 - [ ] Mobile: under 700px width, layout collapses to single column.
-- [ ] Casa Amor (if present in the trace) is visually marked in the timeline.
-- [ ] A specific Hideaway turn (if present) is rendered with a distinct, gentler card style.
+- [ ] Flush of Hearts (if present in the trace) is visually marked in the timeline.
+- [ ] A specific Paradise Suite turn (if present) is rendered with a distinct, gentler card style.
 - [ ] Final outcome (if present) is rendered with a clear, dramatic end-of-report block.
 
 ---
@@ -188,8 +188,8 @@ The three-column layout collapses to single column under 700px width. Sticky nav
   - `test_stylish_session_html_self_contained_no_external_refs`
   - `test_avatar_svg_color_deterministic_from_id`
   - `test_timeline_marks_challenge_day`
-  - `test_timeline_marks_recoupling_day`
-  - `test_timeline_marks_casa_amor_day`
+  - `test_timeline_marks_Pairing Ceremony_day`
+  - `test_timeline_marks_flush_of_hearts_day`
   - `test_couple_status_panel_shows_all_active_couples`
   - `test_couple_status_panel_highlights_player_couple`
   - `test_perception_graph_renders_one_line_per_couple`

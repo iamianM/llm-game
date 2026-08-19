@@ -28,8 +28,8 @@ A scene is a coherent narrative unit derived from the trace. The scene compiler 
 | Scene type | Trigger | Contents |
 |---|---|---|
 | `conversation` | `START_CONVERSATION` opens → conversation closes | All exchanges (player line + NPC line), the wheel rendered for each turn, mechanical outcomes, memories created, conversation summary |
-| `ceremony` | Ceremony event fires (recoupling, bombshell, Casa Amor return, elimination, final vote) | Event narration, before/after state diff, ranked couples afterward |
-| `movement_burst` | ≥ 2 NPC movements in same turn OR player MOVE action | Villa map snapshot before + after, which NPCs went where with reasons |
+| `ceremony` | Ceremony event fires (Pairing Ceremony, heart_throb, Flush of Hearts return, elimination, final vote) | Event narration, before/after state diff, ranked couples afterward |
+| `movement_burst` | ≥ 2 NPC movements in same turn OR player MOVE action | Resort map snapshot before + after, which NPCs went where with reasons |
 | `gather_event` | Gather fires (H9.5) | The gather location, the producer text or ceremony that triggered it, who was there |
 | `background_window` | A run of turns with notable background dialogue but no player conversation | Background convo summaries from the run, memories that propagated as gossip |
 | `day_boundary` | Phase wraps from EVENING to MORNING | Daily recap (H9.6), end-of-day audience ranking, couples standing |
@@ -70,7 +70,7 @@ Clicking a cast avatar opens a popout `<dialog>` containing:
 - Revealed Type on Paper bits (H3)
 - Relationship breakdown with player (affection, chemistry, trust, friendship — visual bars, no raw numbers required to be visible)
 - Recent memories about the player (last 5, in their voice)
-- Recent memories about other islanders (last 5 — these are the gossip seeds the player could ask about)
+- Recent memories about other heartbreakers (last 5 — these are the gossip seeds the player could ask about)
 - Current mood
 
 The popout is keyboard-dismissable (`Escape` closes). Closing the popout returns focus to the main scene.
@@ -84,15 +84,15 @@ The trace gains a `bookmarks: list[Bookmark]` field per turn. Engine emits these
 | Bookmark kind | Trigger |
 |---|---|
 | `ceremony` | Any ceremony event fires |
-| `casa_amor_entry` | Player enters Casa Amor villa |
-| `casa_amor_return` | Day 6 morning return ceremony |
-| `hideaway` | Hideaway used |
-| `bombshell_arrival` | New islander arrives |
-| `elimination` | Any islander eliminated |
+| `flush_of_hearts_entry` | Player enters Flush of Hearts resort |
+| `flush_of_hearts_return` | Day 6 morning return ceremony |
+| `private_suite` | Paradise Suite used |
+| `heart_throb_arrival` | New heartbreaker arrives |
+| `elimination` | Any heartbreaker eliminated |
 | `final_vote` | Final vote ceremony fires |
 | `drama_memory` | A memory of weight ≥ 8 is created |
 | `gather_event` | Gather event fires (H9.5) |
-| `pull_failure` | A pull-for-chat attempt fails |
+| `pull_failure` | A private-chat attempt fails |
 | `interruption_ignored` | Player ignores an interruption (H9.5) |
 | `npc_summoned` | NPC summoned out of player conversation (H8.2) |
 | `gossip_propagated` | Memory propagated via told_by chain (H10.2) |
@@ -140,7 +140,7 @@ Reviewer bookmark categories:
 
 Three checkpoint types:
 
-1. **Auto-checkpoints** — engine writes a snapshot at every major boundary. Stored at `.game_saves/auto/<seed>/<day>_<phase>.json`. Boundaries: day rollover, post-ceremony, pre-Casa-Amor, post-Casa-Amor-return, pre-final-vote.
+1. **Auto-checkpoints** — engine writes a snapshot at every major boundary. Stored at `.game_saves/auto/<seed>/<day>_<phase>.json`. Boundaries: day rollover, post-ceremony, pre-Flush-of-Hearts, post-Flush-of-Hearts-return, pre-final-vote.
 
 2. **Named checkpoints** — player creates via slash command in `make play`: `/checkpoint <name>`. Stored at `.game_saves/named/<name>.json`. Includes both the snapshot and the trace-so-far.
 
@@ -223,8 +223,8 @@ This shifts testing from "run a 30-min full playthrough to test one variation" t
 
 **New module (`src/game/reporting/slides/state_panel.py`):**
 - `render_state_panel(final_state, current_scene_index, all_scenes) -> str` returns the side panel HTML. The panel shows state as-of the current scene's turn (so navigating updates the side panel via embedded JS).
-- `render_cast_avatar(islander, scene_state) -> str` returns the small clickable avatar card.
-- `render_npc_popout(islander, scene_state) -> str` returns the `<dialog>` body for an NPC popout.
+- `render_cast_avatar(heartbreaker, scene_state) -> str` returns the small clickable avatar card.
+- `render_npc_popout(heartbreaker, scene_state) -> str` returns the `<dialog>` body for an NPC popout.
 - `render_couple_popout(couple, scene_state) -> str` returns couple-detail popout.
 
 **Side panel structure:**
@@ -239,7 +239,7 @@ This shifts testing from "run a 30-min full playthrough to test one variation" t
 - Revealed Type on Paper bits (H3) — shown as a small list. Unrevealed bits shown as `???`.
 - Relationship with player: four bars (affection, chemistry, trust, friendship). No raw numbers — width of bar tells the story.
 - Recent memories about the player (last 5, in their voice).
-- Recent memories about other islanders (last 5, with the subject's avatar inline).
+- Recent memories about other heartbreakers (last 5, with the subject's avatar inline).
 - Their current mood with a one-line description.
 
 **Popout contents (Couple):**
@@ -387,9 +387,9 @@ class ReviewerNotesFile(BaseModel):
 **Auto-checkpoint triggers (`engine/turn.py`):**
 After turn execution, if any of these are true, write an auto-checkpoint:
 - Day rolled over (phase wrapped EVENING → MORNING)
-- Ceremony fired (recoupling, bombshell, elimination, final vote)
-- Casa Amor entered or returned
-- Hideaway used
+- Ceremony fired (Pairing Ceremony, heart_throb, elimination, final vote)
+- Flush of Hearts entered or returned
+- Paradise Suite used
 - Final outcome assigned
 
 **CLI play (`cli/commands/play.py`):**
@@ -423,8 +423,8 @@ After turn execution, if any of these are true, write an auto-checkpoint:
 `tests/engine/test_auto_checkpoints.py`:
 - `test_auto_checkpoint_on_day_rollover`
 - `test_auto_checkpoint_after_ceremony`
-- `test_auto_checkpoint_on_casa_amor_entry`
-- `test_auto_checkpoint_on_hideaway_use`
+- `test_auto_checkpoint_on_flush_of_hearts_entry`
+- `test_auto_checkpoint_on_private_suite_use`
 
 `tests/cli/test_checkpoint_flow.py`:
 - `test_slash_checkpoint_creates_named_save`
@@ -529,16 +529,16 @@ The new review workflow becomes:
 5. **For testing variations: Codex uses checkpoints.**
    ```bash
    # Create a named checkpoint at an interesting moment
-   make play  # play to day 3 evening, then type /checkpoint pre-recoupling
+   make play  # play to day 3 evening, then type /checkpoint pre-Pairing Ceremony
    
    # Branch and try two variations
-   make play --from-checkpoint pre-recoupling --branch-name loyal-recoupling --record .game_traces/...
-   make play --from-checkpoint pre-recoupling --branch-name chaotic-recoupling --record .game_traces/...
+   make play --from-checkpoint pre-Pairing Ceremony --branch-name loyal-Pairing Ceremony --record .game_traces/...
+   make play --from-checkpoint pre-Pairing Ceremony --branch-name chaotic-Pairing Ceremony --record .game_traces/...
    
    # Compare
-   python -m src.game.cli report compare --checkpoint pre-recoupling \
-     --trace-a .game_traces/h11-loyal_loyal-recoupling.json \
-     --trace-b .game_traces/h11-loyal_chaotic-recoupling.json \
+   python -m src.game.cli report compare --checkpoint pre-Pairing Ceremony \
+     --trace-a .game_traces/h11-loyal_loyal-Pairing Ceremony.json \
+     --trace-b .game_traces/h11-loyal_chaotic-Pairing Ceremony.json \
      --out compare.html
    ```
    Two 5-min branches instead of two 30-min playthroughs. Claude reviews the comparison HTML.

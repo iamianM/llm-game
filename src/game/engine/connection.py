@@ -1,6 +1,6 @@
 """Composite Connection: a single, legible read on where the player stands.
 
-The engine stores four raw 0-100 bonds per islander (affection, chemistry,
+The engine stores four raw 0-100 bonds per heartbreaker (affection, chemistry,
 trust, friendship). Those are mechanically useful but they are a poor thing to
 *show* a player: four abstract numbers with no sense of "where am I with this
 person." This module is the single source of truth for turning those bonds into
@@ -52,7 +52,7 @@ _TIERS: tuple[tuple[int, str], ...] = (
 # report the one the player would *feel* most in a dating context.
 _PRIORITY = ("chemistry", "affection", "trust", "friendship")
 
-# (dimension, sign) -> (small, medium, big) phrasing. {name} is the islander's
+# (dimension, sign) -> (small, medium, big) phrasing. {name} is the heartbreaker's
 # display name. Tonal, present tense, no digits, no stat words.
 _PHRASES: dict[tuple[str, str], tuple[str, str, str]] = {
     ("chemistry", "+"): (
@@ -71,9 +71,9 @@ _PHRASES: dict[tuple[str, str], tuple[str, str, str]] = {
         "{name} is properly into you.",
     ),
     ("affection", "-"): (
-        "{name} pulls back a little.",
+        "{name} steps back a little.",
         "{name} cools on you.",
-        "{name} is pulling away.",
+        "{name} is drifting away.",
     ),
     ("trust", "+"): (
         "{name} lets their guard down a touch.",

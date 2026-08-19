@@ -2,7 +2,7 @@
 
 **Status:** docs landed (this PR); implementation NOT started.
 **Owner of implementation:** codex (with Claude reviewing the merge).
-**Base commit:** `c7ef42f Game-feel polish: ChallengeSpectacle, mobile drawer, finale, snog-marry-pie bug fix`.
+**Base commit:** `c7ef42f Game-feel polish: ChallengeSpectacle, mobile drawer, finale, kiss-wed-pass bug fix`.
 
 This document is the contract between the spec and the PR codex will write. If something is ambiguous, the answer is in the **Decisions locked** table; if the answer is not there, ask before guessing.
 
@@ -10,7 +10,7 @@ This document is the contract between the spec and the PR codex will write. If s
 
 ## 0. What we're building, in one paragraph
 
-Replace the current dashboard-style UI (left panel = dialogue, right panel = choice menu, idle = CastRing) with a **mobile-first staged scene**: the villa background fills the screen, the player's character stands in the foreground bottom-center, NPCs stand in the environment, dialogue appears as **speech bubbles anchored to whoever is talking**, and player response options appear as **bubbles near the player's character**. Tapping anywhere advances long dialogue (split into consecutive bubbles). When the player picks who to talk to, the chosen NPC **walks/zooms forward**, the rest dim and recede. The same scene grammar carries through minigames: characters enter, perform, exit; the host/narrator speaks as a distinct **top-anchored narrator bubble**; the player's choices stay anchored to the player. Existing engine actions/contracts are unchanged — this is a pure renderer rewrite.
+Replace the current dashboard-style UI (left panel = dialogue, right panel = choice menu, idle = CastRing) with a **mobile-first staged scene**: the resort background fills the screen, the player's character stands in the foreground bottom-center, NPCs stand in the environment, dialogue appears as **speech bubbles anchored to whoever is talking**, and player response options appear as **bubbles near the player's character**. Tapping anywhere advances long dialogue (split into consecutive bubbles). When the player picks who to talk to, the chosen NPC **walks/zooms forward**, the rest dim and recede. The same scene grammar carries through minigames: characters enter, perform, exit; the host/narrator speaks as a distinct **top-anchored narrator bubble**; the player's choices stay anchored to the player. Existing engine actions/contracts are unchanged — this is a pure renderer rewrite.
 
 ---
 
@@ -31,13 +31,13 @@ Replace the current dashboard-style UI (left panel = dialogue, right panel = cho
 
 ## 2. Required research before coding (step 0)
 
-The user explicitly asked codex to study the Love Island mobile game more before implementing:
+The user explicitly asked codex to study a reality dating show mobile game more before implementing:
 
-> "for pulse we should see like a cut scene of the thing happening where it shows the characters interacting and the come into the screen and go away maybe you need to research the love island mobile game more and make it more like that. it works clearly as it's very popular"
+> "for pulse we should see like a cut scene of the thing happening where it shows the characters interacting and the come into the screen and go away maybe you need to research a reality dating sim more and make it more like that. it works clearly as it's very popular"
 
 **Codex must, before writing code:**
 
-1. Find 2–3 gameplay videos of the Love Island mobile game (Fusebox Games' *Love Island: The Game*) covering: a free-time conversation scene, a recoupling/firepit scene, a minigame/challenge cutscene.
+1. Find 2–3 gameplay videos of a reality dating show mobile game covering: a free-time conversation scene, a Pairing Ceremony/Flame Deck scene, a minigame/challenge cutscene.
 2. Capture 6–10 reference screenshots into `docs/scene-dialogue/reference/` (clearly labelled, with timestamps and source link in a `reference/SOURCES.md`).
 3. Document in `docs/scene-dialogue/reference/observations.md`:
    - Bubble shape, max chars per bubble, pagination indicator
@@ -84,7 +84,7 @@ The observations doc is a hard prerequisite for step 4 (`SceneDirector` design).
 
 ### Engine / API
 
-**No engine changes.** The renderer reads existing `TurnResponse` fields (`exchange.npc_dialogue`, `event_narration.prose`, `available_actions`, `state.location_id`, `state.player`, `state.islanders`, `state.pending_challenge`, `state.couples`). Anything the renderer needs that isn't already serialized is a *bug in the spec* — surface it before coding.
+**No engine changes.** The renderer reads existing `TurnResponse` fields (`exchange.npc_dialogue`, `event_narration.prose`, `available_actions`, `state.location_id`, `state.player`, `state.heartbreakers`, `state.pending_challenge`, `state.couples`). Anything the renderer needs that isn't already serialized is a *bug in the spec* — surface it before coding.
 
 The only allowed serializer touch:
 - `src/api/serializers.py`: add `state.player.archetype_id` and `state.player.gender` to the player block of the session payload **if and only if** they aren't already there (verify via `web/lib/types.ts:Player`). If they are, no change.
@@ -118,7 +118,7 @@ export type CameraShot =
   | "speaker_focus"     // single NPC forward, player midground
   | "narrator_full"     // wide group, dimmed, narrator bubble dominates
   | "minigame_board"    // ChallengeSpectacle takes center, characters around
-  | "cutscene"          // off-stage characters animate through (pulse race, casa amor arrival)
+  | "cutscene"          // off-stage characters animate through (pulse race, flush of hearts arrival)
   ;
 
 export type CharacterPose =
@@ -145,17 +145,17 @@ export function planScene(
 - `speech` / `narrator` beats wait for tap before the next beat fires.
 - `camera` / `reaction` / `delta_pop` are time-bounded (auto-advance).
 - A `choice_fan` beat ends the sequence; the next `planScene` call happens after the player submits an action.
-- Long `exchange.npc_dialogue` gets paginated by `paginateBubble(text)` in `web/lib/scene/pagination.ts` — paragraphs first, then sentence-pack to ≤ `MAX_BUBBLE_CHARS = 180` (revise after Love Island reference observations land).
+- Long `exchange.npc_dialogue` gets paginated by `paginateBubble(text)` in `web/lib/scene/pagination.ts` — paragraphs first, then sentence-pack to ≤ `MAX_BUBBLE_CHARS = 180` (revise after reality dating sim reference observations land).
 
 **Minigame mapping** (per pending_challenge.kind):
 
 | Kind | Opening cut | Per-round cuts | Wrap cut |
 |------|-------------|----------------|----------|
 | `compatibility_quiz` | `wide_group` → host enters → `narrator_full` reads stem → `two_shot` (player + round target) | `speaker_focus` on target → `choice_fan` → `delta_pop` + `reacting_*` on target | `wide_group` reaction beats per round, then board recap |
-| `mr_and_mrs` (couples quiz) | Booth cutscene: `narrator_full` "soundproof booth" → swap to `speaker_focus` on partner | Partner's recorded answer floats in as a *replay bubble* (distinct style) → `choice_fan` → reveal | Couples align side-by-side, score pops |
+| `couples_quiz` (couples quiz) | Booth cutscene: `narrator_full` "soundproof booth" → swap to `speaker_focus` on partner | Partner's recorded answer floats in as a *replay bubble* (distinct style) → `choice_fan` → reveal | Couples align side-by-side, score pops |
 | `pulse_race` | Reveal montage: each non-player struts forward briefly (`cutscene`) → `narrator_full` sets up guess | `speaker_focus` on each candidate as bubble preview → `choice_fan` (player picks) → reveal pose | Pair-up reveal |
 | `lie_detector` | Sensor pads close-up insert (`cutscene`) → `narrator_full` | NPC delivers a statement (`speaker_focus`) → `choice_fan` truth/spin/bald-faced → needle insert | Aggregate score |
-| `snog_marry_pie` | Card stack cutscene → host (`narrator_full`) | Card flip per NPC; `choice_fan` is just three options | Player's three pairings shown |
+| `kiss_wed_pass` | Card stack cutscene → host (`narrator_full`) | Card flip per NPC; `choice_fan` is just three options | Player's three pairings shown |
 | `final_couples` | Facet eyebrow (`narrator_full`) → `two_shot` per facet round | `speaker_focus` + `choice_fan` | Final tally pose |
 
 All theme-specific *board* rendering stays in `ChallengeSpectacle` and is mounted as a child of `SceneDialogueStage` when `camera.shot === "minigame_board"`.
@@ -223,7 +223,7 @@ Six new files at `web/public/images/player/`:
 
 Style requirements:
 - Three-quarter view, full body or knees-up
-- Same warm villa lighting as existing NPC photos
+- Same warm resort lighting as existing NPC photos
 - Transparent background
 - Visually distinct per archetype (heartthrob = confident lean, class_clown = bright open posture, loyal_friend = grounded relaxed)
 - Visually distinct per gender
@@ -272,7 +272,7 @@ Rules:
 4. If a single sentence exceeds `maxChars`, soft-wrap on clause boundaries (`,` `;` `—`).
 5. Never produce an empty page; never break inside a markdown bold/italic span (no markdown is supported in bubbles today — verify).
 
-`MAX_BUBBLE_CHARS` starts at **180** and is revisited after the Love Island reference observations land. The constant lives in `web/lib/scene/pagination.ts`, NOT inlined.
+`MAX_BUBBLE_CHARS` starts at **180** and is revisited after the reality dating sim reference observations land. The constant lives in `web/lib/scene/pagination.ts`, NOT inlined.
 
 ---
 
@@ -282,9 +282,9 @@ Source of truth: `web/lib/types.ts`. Renderer reads ONLY these fields. If anythi
 
 | What scene needs | From engine |
 |------------------|-------------|
-| Background image | `state.location_id` → `VillaBackground` keeps its current mapping |
+| Background image | `state.location_id` → `ResortBackground` keeps its current mapping |
 | Player sprite | `state.player.archetype_id` + `state.player.gender` |
-| Visible NPCs | `state.islanders` (filter to `present === true`, exclude `id === state.player.id`) |
+| Visible NPCs | `state.heartbreakers` (filter to `present === true`, exclude `id === state.player.id`) |
 | Active speaker | `lastTurn.exchange.npc_id` (when `exchange` present) |
 | NPC dialogue | `lastTurn.exchange.npc_dialogue` |
 | Player line in-scene | `lastTurn.exchange.player_line` (rendered as a player bubble before the NPC bubble) |
@@ -312,7 +312,7 @@ A PR is mergeable when **all** of the following hold. The PR description must re
 
 ### New e2e coverage (`web/tests/e2e/scene-dialogue.spec.ts`)
 
-- `idle scene shows player + all present NPCs` — load a bundled checkpoint at day-1 morning; assert `[data-testid="character-sprite"]` count = islanders + 1; player sprite has `data-role="player"`; player has `data-position="bottom"`.
+- `idle scene shows player + all present NPCs` — load a bundled checkpoint at day-1 morning; assert `[data-testid="character-sprite"]` count = heartbreakers + 1; player sprite has `data-role="player"`; player has `data-position="bottom"`.
 - `NPC speaks → bubble anchored to NPC` — start a conversation; assert speech bubble's `data-anchor-id` matches the NPC id; assert bubble is above the NPC sprite.
 - `narrator beat → narrator bubble at top, no character bubble` — trigger any `gather_scheduled` event; assert `[data-testid="narrator-bubble"]` is visible, top-anchored, no `[data-testid="speech-bubble"]`.
 - `tap anywhere advances bubble` — paginate a long line of dialogue; tap on the stage background; assert bubble text changed to the next page.
@@ -326,7 +326,7 @@ A PR is mergeable when **all** of the following hold. The PR description must re
 
 ### Manual playtest checklist (codex must run before opening the PR; report results in the PR description)
 
-For each of the 9 bundled checkpoints (`day1-pre-compatibility-quiz`, `day2-pre-pulse-race`, `day3-pre-couples-quiz`, `day3-recoupling-ceremony`, `day4-casa-amor-announce`, `day4-pre-lie-detector`, `day5-pre-kiss-wed-pass`, `day6-pre-final-couples`, `day6-pre-final-vote`):
+For each of the 9 bundled checkpoints (`day1-pre-compatibility-quiz`, `day2-pre-pulse-race`, `day3-pre-couples-quiz`, `day3-pairing-ceremony`, `day4-flush-of-hearts-announce`, `day4-pre-lie-detector`, `day5-pre-kiss-wed-pass`, `day6-pre-final-couples`, `day6-pre-final-vote`):
 
 - [ ] Stage loads without console errors
 - [ ] Player sprite is visible at bottom-center
@@ -364,9 +364,9 @@ Codex measures with `next build && npx serve out` and Chrome DevTools throttling
 - Custom character creator (hair, outfit, skin tone). The 6 player sprites are it.
 - Lip-sync / talk animation on the cutouts. Pose changes only.
 - Per-emotion sprite variants (one sprite per character; pose is achieved by transform + filter).
-- Animated villa background. Static image stays.
+- Animated resort background. Static image stays.
 - Day/night lighting shifts on cutouts. Defer.
-- Sims-style action wheel. The user explicitly rejected it for conversation; reserve the wheel concept for later non-dialogue actions (move location, open villa info).
+- Sims-style action wheel. The user explicitly rejected it for conversation; reserve the wheel concept for later non-dialogue actions (move location, open resort info).
 
 ---
 
@@ -409,7 +409,7 @@ web/
 │   ├── stage/
 │   │   ├── GameStage.tsx           ← slimmed: only wraps SceneDialogueStage + modals
 │   │   ├── ChallengeSpectacle.tsx  ← refactored as embedded board
-│   │   ├── VillaBackground.tsx     ← unchanged
+│   │   ├── ResortBackground.tsx    ← unchanged
 │   │   ├── TopBar.tsx              ← unchanged
 │   │   ├── PulseMeter.tsx          ← unchanged or absorbed into ChallengeSpectacle
 │   │   ├── DeltaChip.tsx           ← unchanged (re-used by delta_pop beat)

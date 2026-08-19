@@ -1,6 +1,6 @@
 # Core Mechanics
 
-*The fundamental gameplay systems that power Isle of Echoes*
+*The fundamental gameplay systems that power Paradise Hearts*
 
 **Document Status:** ✅ Complete
 **Last Updated:** 2025-10-08
@@ -16,7 +16,7 @@
 - [Relationship Change Calculation](#relationship-change-calculation)
 - [Relationship Thresholds](#relationship-thresholds)
 - [Couple Strength](#couple-strength)
-- [Public Perception](#public-perception)
+- [Pulse (Public Perception)](#pulse-public-perception)
 - [Win Conditions](#win-conditions)
 - [NPC Stats](#npc-stats)
 
@@ -125,40 +125,40 @@ const eqBonus = player.stats.emotional_iq * 5 // 15-45%
 
 ---
 
-### Graft (3-9)
+### Spark (3-9)
 
-**What it is:** Active pursuit and flirtation intensity (Love Island core concept)
+**What it is:** Active pursuit and flirtation intensity (core Paradise Hearts concept)
 
 **Affects:**
 - Bold move success rates (+15% to +45% bonus)
-- Ability to pursue coupled Islanders
-- "Pull for chat" effectiveness
-- Competitive grafting
-- Bombshell-style gameplay
+- Ability to pursue coupled Heartbreakers
+- Private chat effectiveness
+- Competitive sparking
+- Heart Throb-style gameplay
 
-**Success bonus:** Graft × 5%
-- Graft 3 = +15% success on bold actions
-- Graft 6 = +30% success
-- Graft 9 = +45% success
+**Success bonus:** Spark × 5%
+- Spark 3 = +15% success on bold actions
+- Spark 6 = +30% success
+- Spark 9 = +45% success
 
 **Unlocks advanced options:**
-- **Graft 5:** **UNLOCKS "Bold 🔥" CATEGORY** (entire category requires Graft 5+)
+- **Spark 5:** **UNLOCKS "Bold 🔥" CATEGORY** (entire category requires Spark 5+)
   - Steal a kiss
   - Pull for private chat
-- **Graft 7:** "Steal from couple" action (approach coupled Islander romantically)
-- **Graft 8:** "Public declaration" action (dramatic moment, high risk/reward)
+- **Spark 7:** "Steal from couple" action (approach coupled Heartbreaker romantically)
+- **Spark 8:** "Public declaration" action (dramatic moment, high risk/reward)
 
 **Example usage:**
 ```javascript
-// Trying to graft on a coupled Islander
-const graftBonus = player.stats.graft * 5 // 15-45%
+// Trying to spark with a coupled Heartbreaker
+const sparkBonus = player.stats.spark * 5 // 15-45%
 const coupledPenalty = targetIsCoupled ? -20 : 0
-const success = baseChance + graftBonus + coupledPenalty
+const success = baseChance + sparkBonus + coupledPenalty
 ```
 
-**Special mechanic:** Graft actions can damage Trust with current partner and create Animosity with rivals
+**Special mechanic:** Spark actions can damage Trust with current partner and create Animosity with rivals
 
-**Playstyle:** High Graft builds are bold pursuers (Heartthrob/Bombshell archetypes)
+**Playstyle:** High Spark builds are bold pursuers (Heartthrob/Heart Throb archetypes)
 
 ---
 
@@ -175,7 +175,7 @@ const success = baseChance + graftBonus + coupledPenalty
 - **Loyalty 5-6:** Neutral (normal anxiety levels)
 - **Loyalty 3-4:** Partner anxiety increases by 3 per day (they worry about you)
 
-**Guilt Penalty (when grafting on others while coupled):**
+**Guilt Penalty (when sparking with others while coupled):**
 - **Loyalty 7+:** -20% success penalty when flirting with others (feels wrong, less confident)
 - **Loyalty 5-6:** -10% penalty
 - **Loyalty 3-4:** No penalty (can play the field guilt-free)
@@ -197,7 +197,7 @@ if (player.stats.loyalty <= 4) {
   partner.anxiety += 3 // worries about player
 }
 
-// Grafting on someone else while coupled
+// Sparking with someone else while coupled
 if (action.type === "flirt" && player.coupledWith !== target.id) {
   let guiltPenalty = 0
   if (player.stats.loyalty >= 7) guiltPenalty = -20
@@ -212,13 +212,13 @@ if (action.type === "flirt" && player.coupledWith !== target.id) {
 
 **Playstyle:**
 - High Loyalty = Loyal Romantic archetype
-- Low Loyalty = Strategic Player / Bombshell archetypes
+- Low Loyalty = Strategic Player / Heart Throb archetypes
 
 ---
 
 ## Relationship Stats
 
-Tracked **per Islander** - every character has these stats with you (and with each other).
+Tracked **per Heartbreaker** - every character has these stats with you (and with each other).
 
 ### Affection (0-100)
 
@@ -253,7 +253,7 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 **Increases from:**
 - Successful flirts (+4-6)
 - Physical proximity activities (+3-5)
-- Romantic locations (terrace, hideaway) (+5-8)
+- Romantic locations (terrace, Paradise Suite) (+5-8)
 - Matching physical preferences (+10)
 - Intimate moments (+8-12)
 
@@ -388,7 +388,7 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 
 **Options (examples):**
 - Ask how they're feeling
-- Chat about the villa
+- Chat about the resort
 - Compliment their personality
 - Talk about shared interests
 - Offer support
@@ -475,13 +475,13 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 
 **Purpose:** Actively pursue romantic connection (risky)
 
-**Requirements:** **Graft 5+** (entire category locked below Graft 5)
+**Requirements:** **Spark 5+** (entire category locked below Spark 5)
 
 **Options (examples):**
-- Pull them for a private chat (requires Graft 5+)
-- Steal a kiss (requires Graft 5+)
-- Steal from couple (requires Graft 7+)
-- Public declaration (requires Graft 8+)
+- Pull them for a private chat (requires Spark 5+)
+- Steal a kiss (requires Spark 5+)
+- Steal from couple (requires Spark 7+)
+- Public declaration (requires Spark 8+)
 
 **Primary stats affected:**
 - Chemistry +5-8 (if successful)
@@ -489,7 +489,7 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 - Animosity +5-10 from their current partner (if coupled)
 - Public Perception -2-5 (if seen as sneaky)
 
-**Stat used:** Graft (Graft × 5% success bonus)
+**Stat used:** Spark (Spark × 5% success bonus)
 
 **When to use:** Pursuing new connections, competing for someone
 
@@ -515,7 +515,7 @@ Tracked **per Islander** - every character has these stats with you (and with ea
 
 **Stat used:** Loyalty (higher Loyalty = more convincing)
 
-**When to use:** Partner seems worried, bombshell arrived, before recoupling
+**When to use:** Partner seems worried, Heart Throb arrived, before Pairing Ceremony
 
 **Contextual:** Only available with current partner or when concerns exist
 
@@ -556,7 +556,7 @@ function calculateInteractionSuccess(action, target, player, context) {
   let chance = 50 // Starting point
 
   // 2. STAT BONUS (15-45)
-  const relevantStat = action.statUsed // "charm", "banter", "graft", "eq"
+  const relevantStat = action.statUsed // "charm", "banter", "spark", "eq"
   if (relevantStat) {
     const statValue = player.stats[relevantStat] // 3-9
     const statBonus = statValue * 5 // 15-45
@@ -589,7 +589,7 @@ function calculateInteractionSuccess(action, target, player, context) {
   }
 
   // Time of day bonus
-  if (action.preferredTime === villaState.currentPhase) {
+  if (action.preferredTime === resortState.currentPhase) {
     chance += 5
   }
 
@@ -765,7 +765,7 @@ function applyRelationshipChange(action, target, success) {
         changes.affection += 2
         break
 
-      case "graft":
+      case "spark":
         changes.chemistry += 7
         changes.affection += 5
         changes.familiarity += 2
@@ -806,7 +806,7 @@ function applyRelationshipChange(action, target, success) {
         // Felt too vulnerable, pulled back
         break
 
-      case "graft":
+      case "spark":
         changes.animosity += 3
         changes.chemistry -= 2
         // Rejected, feels disrespected
@@ -836,7 +836,7 @@ function applyRelationshipChange(action, target, success) {
 
   // If flirting with someone else while coupled
   if (action.category === "flirty" && player.coupledWith && player.coupledWith !== target.id) {
-    const partner = getIslanderById(player.coupledWith)
+    const partner = getHeartbreakerById(player.coupledWith)
 
     // Risk of being caught
     const caughtChance = isPrivateLocation(player.currentLocation) ? 10 : 40
@@ -899,7 +899,7 @@ Certain interactions unlock at specific relationship levels:
 - Physical intimacy options
 - "Define the relationship" talks
 - Strategic couple planning
-- Hideaway access (if coupled)
+- Paradise Suite access (if coupled)
 
 **Locked:**
 - Most intimate options
@@ -909,7 +909,7 @@ Certain interactions unlock at specific relationship levels:
 - Most intimate interactions
 - Future planning
 - "I'm falling for you" confessions
-- Hideaway overnight
+- Paradise Suite overnight
 - Joint strategy sessions
 
 ---
@@ -928,7 +928,7 @@ function calculateCoupleStrength(player, partner) {
   const strength = (affection * 0.4) + (trust * 0.4) + (chemistry * 0.2)
 
   // Bonus for time together
-  const daysCoupled = villaState.currentDay - coupleFormedDay
+  const daysCoupled = resortState.currentDay - coupleFormedDay
   const timeBonus = Math.min(10, daysCoupled * 2) // max +10
 
   // Penalty for high animosity
@@ -941,8 +941,8 @@ function calculateCoupleStrength(player, partner) {
 ```
 
 **Couple Strength determines:**
-- Resistance to being stolen by bombshells
-- Likelihood of staying together during recoupling
+- Resistance to being stolen by Heart Throbs
+- Likelihood of staying together during Pairing Ceremony
 - Chance of winning final vote
 - Partner's willingness to forgive mistakes
 
@@ -955,12 +955,12 @@ function calculateCoupleStrength(player, partner) {
 
 ---
 
-## Public Perception
+## Pulse (Public Perception)
 
 The simulated "audience" has an opinion of you (see 10-Elimination-System.md for full audience ranking system):
 
 ```javascript
-function calculatePublicPerception(player) {
+function calculatePulse(player) {
   let perception = 50 // neutral start
 
   // BONUSES
@@ -1011,12 +1011,12 @@ function calculatePublicPerception(player) {
 }
 ```
 
-**Public Perception affects:**
+**Pulse (Public Perception) affects:**
 - Individual audience ranking (1-8, visible to player)
 - Couple audience ranking (1-4, visible to player)
 - Final vote outcome
 - Elimination risk (bottom 2-3 at risk)
-- Meta-progression rewards (Audience Appeal)
+- Meta-progression rewards (Heart Beats)
 
 ---
 
@@ -1032,7 +1032,7 @@ Multiple paths to "winning":
 - Win final vote
 
 **Rewards:**
-- Maximum Audience Appeal (500 AP)
+- Maximum Heart Beats (500 Heart Beats)
 - "Winners" achievement
 - Unlock special archetypes
 
@@ -1040,20 +1040,20 @@ Multiple paths to "winning":
 **Requirements:**
 - Individual Audience Rank = 1-2
 - NOT necessarily coupled (can be single)
-- High friendship across villa (avg 60+)
+- High friendship across Sunset Bay (avg 60+)
 
 **Rewards:**
-- High Audience Appeal (400 AP)
+- High Heart Beats (400 Heart Beats)
 - "Fan Favorite" achievement
 
 ### Friendship Ending (Alt Good Ending)
 **Requirements:**
-- Leave villa with at least 2 friendships ≥80
+- Leave Sunset Bay with at least 2 friendships ≥80
 - Individual Audience Rank ≤5
 - Doesn't matter if coupled
 
 **Rewards:**
-- Moderate Audience Appeal (300 AP)
+- Moderate Heart Beats (300 Heart Beats)
 - "True Friends" achievement
 
 ### Chaos Agent (Unique Ending)
@@ -1063,23 +1063,23 @@ Multiple paths to "winning":
 - Individual Audience Rank doesn't matter
 
 **Rewards:**
-- Moderate Audience Appeal (250 AP)
+- Moderate Heart Beats (250 Heart Beats)
 - "Chaos Incarnate" achievement
 - Unlock "Chaos Agent" archetype
 
-### Dumped (Failure - but early)
+### Heart Out (Failure - but early)
 **Requirements:**
 - Eliminated before Day 10
 
 **Rewards:**
-- Low Audience Appeal (50-100 AP based on days survived)
+- Low Heart Beats (50-100 Heart Beats based on days survived)
 
-### Dumped (Failure - late)
+### Heart Out (Failure - late)
 **Requirements:**
 - Eliminated Days 10-17
 
 **Rewards:**
-- Moderate Audience Appeal (150-250 AP based on performance)
+- Moderate Heart Beats (150-250 Heart Beats based on performance)
 
 ---
 
@@ -1092,7 +1092,7 @@ const npcStats = {
   // Social Stats (3-9, same range as player)
   charm: random(3, 9),
   banter: random(3, 9),
-  graft: random(3, 9),
+  spark: random(3, 9),
   loyalty: random(3, 9),
   emotional_intelligence: random(3, 9),
 

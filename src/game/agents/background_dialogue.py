@@ -5,7 +5,7 @@ Design sources:
 - 07-Gossip-And-Information.md: Gossip-generating memories
 
 Implementation rule:
-This agent writes NPC-NPC dialogue only. Villa structure comes from the
+This agent writes NPC-NPC dialogue only. Resort structure comes from the
 Orchestrator; memory extraction comes from the Curator.
 """
 
@@ -22,7 +22,7 @@ from typing import Literal
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict
 
-from src.game.agents.islander_voice import load_dotenv_local
+from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
     GAME_AGENT_MODEL,
     AgentGenerationError,
@@ -211,34 +211,34 @@ def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: s
 
 def _bystanders(state: GameState, conversation: NPCNPCConversation) -> str:
     ids = [
-        islander.id
-        for islander in state.islanders
-        if islander.id not in conversation.participants
-        and not islander.eliminated
-        and islander.location_id == conversation.location_id
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.id not in conversation.participants
+        and not heartbreaker.eliminated
+        and heartbreaker.location_id == conversation.location_id
     ]
     if state.location_id == conversation.location_id:
         ids.append("player")
     return ", ".join(ids) if ids else "none"
 
 
-def _name_for(state: GameState, islander_id: str) -> str:
-    for islander in state.islanders:
-        if islander.id == islander_id:
-            return islander.name
-    return islander_id
+def _name_for(state: GameState, heartbreaker_id: str) -> str:
+    for heartbreaker in state.heartbreakers:
+        if heartbreaker.id == heartbreaker_id:
+            return heartbreaker.name
+    return heartbreaker_id
 
 
 def _cast_pronouns(state: GameState) -> str:
-    """`Name: pronouns` for every living islander.
+    """`Name: pronouns` for every living heartbreaker.
 
     The two speakers — or a bystander they react to — may be unisex-named
     (Jules, Sam, Riley, Noor), so the name alone does not reveal gender. This
     roster lets the background voice pick the right pronoun instead of guessing.
     """
     lines = [
-        f"{islander.name}: {'she/her' if islander.gender == Gender.WOMAN else 'he/him'}"
-        for islander in state.islanders
-        if not islander.eliminated
+        f"{heartbreaker.name}: {'she/her' if heartbreaker.gender == Gender.WOMAN else 'he/him'}"
+        for heartbreaker in state.heartbreakers
+        if not heartbreaker.eliminated
     ]
     return ", ".join(lines) if lines else "none"

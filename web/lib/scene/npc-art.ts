@@ -4,7 +4,7 @@
 // _roster_convert.py. Players never appear here — their art resolves through
 // player-sprite.ts from the chosen roster character.
 const NPC_SLOT_IDS = [
-  // Opening villa cast (6 women + 6 men, incl. heart-throb pool).
+  // Opening resort cast (6 women + 6 men, incl. heart-throb pool).
   "chloe",
   "maya",
   "sophie",
@@ -17,7 +17,7 @@ const NPC_SLOT_IDS = [
   "jordan",
   "sam_ht",
   "ellis_ht",
-  // Casa Amor arrivals (3 men + 3 women).
+  // Flush of Hearts arrivals (3 men + 3 women).
   "beau",
   "jules",
   "mateo",

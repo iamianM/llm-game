@@ -4,10 +4,10 @@ player_stats:
   charm: 7
   banter: 7
   eq: 7
-  graft: 3
+  spark: 3
   loyalty: 6
 initial_phase: morning
-expected_hash: b8c70ecc89c136a5f85123fc74e03a4b525dfe23fdda179dd2dba320c58ae2d8
+expected_hash: 23a91d0e4891c1802b2eb377779c0b5912f01095ae03ed6471f8d67837706c58
 actions:
 - kind: start_conversation
   target_id: chloe

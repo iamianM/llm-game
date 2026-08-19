@@ -1,4 +1,4 @@
-"""Tests for H10.3 model routing and async villa application."""
+"""Tests for H10.3 model routing and async resort application."""
 
 from __future__ import annotations
 
@@ -10,9 +10,9 @@ from src.game.agents.background_dialogue import (
 )
 from src.game.agents.contextual_options import CONTEXTUAL_OPTIONS_MODEL
 from src.game.agents.conversation_curator import CONVERSATION_CURATOR_MODEL
+from src.game.agents.resort_orchestrator import NewConversation, ResortUpdate
 from src.game.agents.runtime import GAME_AGENT_MODEL, GAME_AGENT_REASONING_EFFORT
-from src.game.agents.villa_orchestrator import NewConversation, VillaUpdate
-from src.game.engine.villa import apply_villa_update_async
+from src.game.engine.resort import apply_resort_update_async
 from src.game.state.models import GameState, Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
 
@@ -25,16 +25,16 @@ def test_h10_model_routing_constants() -> None:
     assert CONTEXTUAL_OPTIONS_MODEL == GAME_AGENT_MODEL
 
 
-def test_apply_villa_update_async_accepts_parallel_background_callables() -> None:
+def test_apply_resort_update_async_accepts_parallel_background_callables() -> None:
     state = new_game(1)
-    for islander in state.islanders[:4]:
-        islander.location_id = Location.POOL
-    first_pair = [state.islanders[0].id, state.islanders[1].id]
-    second_pair = [state.islanders[2].id, state.islanders[3].id]
-    update = VillaUpdate(
+    for heartbreaker in state.heartbreakers[:4]:
+        heartbreaker.location_id = Location.POOL
+    first_pair = [state.heartbreakers[0].id, state.heartbreakers[1].id]
+    second_pair = [state.heartbreakers[2].id, state.heartbreakers[3].id]
+    update = ResortUpdate(
         conversation_starts=[
             NewConversation(participants=first_pair, location=Location.POOL, topic="pool gossip"),
-            NewConversation(participants=second_pair, location=Location.POOL, topic="villa strategy"),
+            NewConversation(participants=second_pair, location=Location.POOL, topic="resort strategy"),
         ]
     )
 
@@ -47,7 +47,7 @@ def test_apply_villa_update_async_accepts_parallel_background_callables() -> Non
         return mock_background_dialogue(game_state, conversation, nudge)
 
     changes = asyncio.run(
-        apply_villa_update_async(
+        apply_resort_update_async(
             state,
             update,
             SeededRng(1),

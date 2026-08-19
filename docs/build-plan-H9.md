@@ -12,9 +12,9 @@ This phase is mostly **prompt refinement, context enrichment, and a handful of s
 - NPC responses talk about talking instead of about anything concrete
 - Background NPC chats sound more interesting than the player's chats
 - Gossip is surface-level
-- Villa feels small and static (4 people, no movement)
+- Resort feels small and static (4 people, no movement)
 - No gender awareness — flirting with same-sex NPC felt wrong
-- Pull-for-chat retry has no cooldown
+- Private Chat retry has no cooldown
 - Ignored interruption doesn't actually walk away
 - Producer texts and ceremonies don't change what the player is doing
 
@@ -39,7 +39,7 @@ class PlayerState(BaseModel):
     ...
     gender: Gender
 
-class IslanderState(BaseModel):
+class HeartbreakerState(BaseModel):
     ...
     gender: Gender
 ```
@@ -68,25 +68,25 @@ New intents to author for the two new categories:
 **Gossip Ring** (women-with-women):
 - `gossip_ring_dish_about_him` — talk about a specific man, banter-coded
 - `gossip_ring_vent` — emotional, vulnerable, eq-coded
-- `gossip_ring_strategize` — "what should I do about Marcus?", graft-coded
+- `gossip_ring_strategize` — "what should I do about Marcus?", spark-coded
 - `gossip_ring_alliance` — "we have each other's backs", loyalty-coded
 
 Each authored in `content/intents.yaml` with category, stat_used, tags, unlock_threshold, success/miss deltas (same shape as existing intents).
 
 ### NPC backstory as a context field
 
-Each NPC gains a `backstory: str` field (3-5 sentences) — concrete life details the Islander Voice can pull from. Examples:
+Each NPC gains a `backstory: str` field (3-5 sentences) — concrete life details the Heartbreaker Voice can pull from. Examples:
 
 - Chloe: "Twenty-six, primary school teacher from Liverpool. Living with her older sister since her ex moved out six months ago. Sister's pregnant and Chloe's been thinking a lot about whether she wants kids before thirty."
 - Marcus: "Twenty-eight, personal trainer from Manchester. Used to be a semi-pro footballer until a knee injury at twenty-three. Has a four-year-old nephew he's incredibly close to. Worried this show makes him look shallow."
 
-Stored per islander in `state.islanders[i].backstory`. Set at `new_game` per the existing hardcoded cast table. Hash-included.
+Stored per heartbreaker in `state.heartbreakers[i].backstory`. Set at `new_game` per the existing hardcoded cast table. Hash-included.
 
-Backstory is passed into Islander Voice context. The voice can reference it naturally ("My ex moved out and now my sister's pregnant — I keep thinking about whether I'm ready for that").
+Backstory is passed into Heartbreaker Voice context. The voice can reference it naturally ("My ex moved out and now my sister's pregnant — I keep thinking about whether I'm ready for that").
 
 ### Pull retry cooldown
 
-`Conversation` and `IslanderState` get a `pull_attempts_this_phase: dict[str, int]` field on the player — keyed by target_id, incremented on every START_CONVERSATION pull attempt during the current phase, reset on phase advance.
+`Conversation` and `HeartbreakerState` get a `pull_attempts_this_phase: dict[str, int]` field on the player — keyed by target_id, incremented on every START_CONVERSATION private chat attempt during the current phase, reset on phase advance.
 
 `pull_chance` math extends:
 ```
@@ -111,7 +111,7 @@ Producer texts and ceremonies become **gather events**. When a gather event fire
 
 1. Any active player conversation closes with reason `gather_event`. Curator runs on the closed conversation.
 2. Any active NPC-NPC conversations close with reason `gather_event`. Curator runs on each.
-3. All islanders (including player) move to a designated `gather_location` (firepit for producer texts and ceremonies; specific for some events like Hideaway).
+3. All heartbreakers (including player) move to a designated `gather_location` (flame_deck for producer texts and ceremonies; specific for some events like Paradise Suite).
 4. The event plays out — Event Narrator writes the gather prose, the event resolves mechanically.
 5. After the event resolves, time advances by the event's `time_cost` and the phase clock continues.
 
@@ -119,7 +119,7 @@ New state field on `GameState`: `pending_gather: PendingGather | None`. When the
 
 ```python
 class PendingGather(BaseModel):
-    kind: Literal["producer_text", "ceremony", "challenge", "casa_announce"]
+    kind: Literal["producer_text", "ceremony", "challenge", "flush_announce"]
     event_id: str
     gather_location: Location
     fires_on_turn: int
@@ -127,7 +127,7 @@ class PendingGather(BaseModel):
 
 New action kind: `JOIN_GATHER`. Auto-injected as the only valid action when a gather is pending. Player picks it; the gather resolves.
 
-Note: the "firepit" location is new. Add `FIREPIT` to the `Location` enum.
+Note: the "flame_deck" location is new. Add `FLAME_DECK` to the `Location` enum.
 
 ### Background dialogue visibility
 
@@ -139,7 +139,7 @@ The HTML report already includes background_dialogues per turn but truncates dis
 
 ### Movement liveliness
 
-The Villa Orchestrator prompt currently says "Most turns, most Islanders stay put. A turn with four movements should be unusual." This is too cautious for the small cast. Update to encourage 1-2 movements per turn on average. Plus the per-archetype drift weights become more aggressive:
+The Resort Orchestrator prompt currently says "Most turns, most Heartbreakers stay put. A turn with four movements should be unusual." This is too cautious for the small cast. Update to encourage 1-2 movements per turn on average. Plus the per-archetype drift weights become more aggressive:
 
 - Joker / extraverts: 50% movement chance per turn
 - Sweetheart / friend / introverts: 25% movement chance per turn
@@ -156,9 +156,9 @@ These are now suggestions in the prompt, not hard constraints. The orchestrator 
 
 **State (`state/models.py`):**
 - Add `Gender` enum (`MAN`, `WOMAN`).
-- Add `gender: Gender` to `PlayerState` and `IslanderState`.
+- Add `gender: Gender` to `PlayerState` and `HeartbreakerState`.
 - Bump `SCHEMA_VERSION`.
-- Hardcoded cast gender table at `new_game()`: Chloe/Maya/Sophie/Nia/Zara women; Liam/Marcus/Blake/Jordan men. Aisha (bombshell) woman.
+- Hardcoded cast gender table at `new_game()`: Chloe/Maya/Sophie/Nia/Zara women; Liam/Marcus/Blake/Jordan men. Aisha (heart_throb) woman.
 
 **Intent catalog (`content/intents.yaml`):**
 - Extend `IntentCategory` enum with `BROMANCE` and `GOSSIP_RING`.
@@ -175,10 +175,10 @@ These are now suggestions in the prompt, not hard constraints. The orchestrator 
 - Trace records gender choice as part of character_creation commit.
 
 **Prompts:**
-- Claude updates [`islander_voice.md`](../src/game/agents/prompts/islander_voice.md) — the context block already accepts arbitrary fields; the prompt gains a new section "## Gender pair voice":
+- Claude updates [`heartbreaker_voice.md`](../src/game/agents/prompts/heartbreaker_voice.md) — the context block already accepts arbitrary fields; the prompt gains a new section "## Gender pair voice":
   - Opposite sex pairs: romantic possibility on the table; tone shifts with category.
   - Same sex same gender (men): bromance — banter, mutual support, scheming about women, occasional ribbing. Avoid romantic subtext.
-  - Same sex same gender (women): gossip-y, more emotionally direct, alliance-building, conversations about men in the villa.
+  - Same sex same gender (women): gossip-y, more emotionally direct, alliance-building, conversations about men in Sunset Bay.
 
 ### Tests
 - `test_gender_required_in_character_creation`
@@ -187,11 +187,11 @@ These are now suggestions in the prompt, not hard constraints. The orchestrator 
 - `test_intent_filter_blocks_gossip_ring_on_men`
 - `test_bromance_intent_applies_friendship_delta`
 - `test_gossip_ring_intent_applies_trust_delta`
-- `test_new_game_assigns_canonical_gender_per_islander`
+- `test_new_game_assigns_canonical_gender_per_heartbreaker`
 
 ### Acceptance
 - [ ] `make qa` green.
-- [ ] `make test-llm` green with the updated islander_voice prompt.
+- [ ] `make test-llm` green with the updated heartbreaker_voice prompt.
 - [ ] `make play` asks for gender during character creation.
 - [ ] A man-player talking to Liam never sees FLIRTY options; sees BROMANCE options.
 - [ ] A woman-player talking to Chloe sees GOSSIP_RING options instead of FLIRTY.
@@ -207,7 +207,7 @@ These are now suggestions in the prompt, not hard constraints. The orchestrator 
 
 ## Phase H9.2 — Cast Expansion to 8 Starters
 
-**Scope.** Author 4 new starting islanders (2 men, 2 women). Update `new_game()` to instantiate the full 4-couple cast. Adjust recoupling and audience math for 4 couples.
+**Scope.** Author 4 new starting heartbreakers (2 men, 2 women). Update `new_game()` to instantiate the full 4-couple cast. Adjust Pairing Ceremony and audience math for 4 couples.
 
 ### Changes
 
@@ -215,36 +215,36 @@ These are now suggestions in the prompt, not hard constraints. The orchestrator 
 - 4 existing archetypes (sweetheart, joker, friend, plus add a new `alpha` for ambitious/competitive types).
 
 **Cast (hardcoded in `state/models.py` `new_game()`):**
-- Existing: Chloe (sweetheart, woman), Maya (joker, woman), Liam (friend, man), Aisha (bombshell, woman).
+- Existing: Chloe (sweetheart, woman), Maya (joker, woman), Liam (friend, man), Aisha (heart_throb, woman).
 - New starters: Sophie (alpha, woman), Nia (sweetheart, woman), Marcus (alpha, man), Blake (friend, man).
-- Total starting cast: 4 women + 4 men = 8 islanders. Aisha remains the bombshell that arrives via Casa Amor flow.
+- Total starting cast: 4 women + 4 men = 8 heartbreakers. Aisha remains the Heart Throb that arrives via Flush of Hearts flow.
 
-Each new islander gets full personality state: Big 5, attachment, Type on Paper, backstory (H9.3 below), archetype prose, gender.
+Each new heartbreaker gets full personality state: Big 5, attachment, Type on Paper, backstory (H9.3 below), archetype prose, gender.
 
 **Engine (`engine/ceremonies.py`):**
-- Initial recoupling at Day 1 morning — players pair up. Player picks their initial couple from one of the 4 opposite-sex islanders.
+- Initial Pairing Ceremony at Day 1 morning — players pair up. Player picks their initial couple from one of the 4 opposite-sex heartbreakers.
 - Audience math scales to 4 couples: ranking is 1/4, 2/4, 3/4, 4/4.
 
-**Casa Amor (`engine/casa_amor.py`):**
-- 6 Casa Amor islanders still split 3 men / 3 women. Casting unchanged.
+**Flush of Hearts (`engine/flush_of_hearts.py`):**
+- 6 Flush of Hearts heartbreakers still split 3 men / 3 women. Casting unchanged.
 
 ### Tests
-- `test_new_game_has_8_starting_islanders`
+- `test_new_game_has_8_starting_heartbreakers`
 - `test_new_game_gender_balance_4_men_4_women`
 - `test_day1_initial_coupling_offered_to_player`
-- `test_recoupling_handles_4_couples`
+- `test_Pairing Ceremony_handles_4_couples`
 - `test_audience_ranking_displays_1_of_4`
 
 ### Acceptance
 - [ ] `make qa` green.
-- [ ] `make play` opens with 8 islanders visible across the villa.
+- [ ] `make play` opens with 8 heartbreakers visible across Sunset Bay.
 - [ ] Initial Day 1 morning includes a coupling ceremony where player picks first.
 - [ ] Final vote ranks 4 couples.
 - [ ] Scenario fixtures regenerated for the new cast size.
 
 ### Anti-goals
 - No procedural cast generation. Cast is hardcoded.
-- No adjusting Casa Amor cast size (stays at 6).
+- No adjusting Flush of Hearts cast size (stays at 6).
 - No new archetype proliferation. One new (`alpha`) is enough.
 
 ---
@@ -256,8 +256,8 @@ Each new islander gets full personality state: Big 5, attachment, Type on Paper,
 ### Changes
 
 **State (`state/models.py`):**
-- Add `backstory: str` to `IslanderState`. Hash-included.
-- Hardcoded backstories per islander in `new_game()`.
+- Add `backstory: str` to `HeartbreakerState`. Hash-included.
+- Hardcoded backstories per heartbreaker in `new_game()`.
 
 **Backstory content** (in `state/models.py` factory or moved to `content/backstories.yaml` for editability):
 
@@ -270,38 +270,38 @@ backstories:
   ...
 ```
 
-Loaded by `content/loader.py`. Lint validates one backstory per islander.
+Loaded by `content/loader.py`. Lint validates one backstory per heartbreaker.
 
 **Prompts (Claude rewrites):**
 
 1. [`contextual_options.md`](../src/game/agents/prompts/contextual_options.md) — tighten label specificity:
-   - Add new hard rule: "Labels must reference something specific from the last NPC line, the conversation history, the islander's revealed Type on Paper, or their backstory. Generic labels ('Ask something deeper', 'Tell a joke') are wrong. Specific labels ('Ask why she really came on the show', 'Joke about his Cardiff accent') are right."
+   - Add new hard rule: "Labels must reference something specific from the last NPC line, the conversation history, the heartbreaker's revealed Type on Paper, or their backstory. Generic labels ('Ask something deeper', 'Tell a joke') are wrong. Specific labels ('Ask why she really came on the show', 'Joke about his Cardiff accent') are right."
    - Add example block showing 4 good vs 4 bad labels.
 
-2. [`islander_voice.md`](../src/game/agents/prompts/islander_voice.md) — forbid meta-conversation:
-   - Add new hard rule: "Do not write meta-conversational dialogue. 'I'm enjoying our chat' or 'It's nice talking to you' are wrong. Talk about specific things: your backstory, the villa, other islanders, plans, doubts, opinions about people."
+2. [`heartbreaker_voice.md`](../src/game/agents/prompts/heartbreaker_voice.md) — forbid meta-conversation:
+   - Add new hard rule: "Do not write meta-conversational dialogue. 'I'm enjoying our chat' or 'It's nice talking to you' are wrong. Talk about specific things: your backstory, Sunset Bay, other heartbreakers, plans, doubts, opinions about people."
    - Add: "Pull from the provided backstory — reference one concrete detail per exchange when natural."
 
-**Context (`agents/islander_voice.py`):**
-- `IslanderVoiceContext` gains `npc_backstory: str` and `recent_exchange_topics: list[str]` (extracted from the conversation's accumulated_tags).
+**Context (`agents/heartbreaker_voice.py`):**
+- `HeartbreakerVoiceContext` gains `npc_backstory: str` and `recent_exchange_topics: list[str]` (extracted from the conversation's accumulated_tags).
 - Builder passes both into the rendered context.
 
 ### Tests
-- `test_islander_voice_context_includes_backstory`
-- `test_backstory_loaded_per_islander`
+- `test_heartbreaker_voice_context_includes_backstory`
+- `test_backstory_loaded_per_heartbreaker`
 - LLM (mark llm):
-  - `test_islander_voice_avoids_meta_talk` — assert dialogue does not contain phrases like "our conversation", "talking with you", "this chat"
+  - `test_heartbreaker_voice_avoids_meta_talk` — assert dialogue does not contain phrases like "our conversation", "talking with you", "this chat"
   - `test_contextual_options_labels_are_specific` — assert labels are not in a blocklist of generic phrases
 
 ### Acceptance
 - [ ] `make qa` green.
 - [ ] `make test-llm` green; new specificity assertions pass.
-- [ ] Hand-eyeball check: 10 sampled labels from a recorded session are all specific (reference an islander, a backstory bit, a recent moment, or a current decision).
-- [ ] Hand-eyeball check: 10 sampled exchanges contain at least one concrete topic from the NPC's backstory or the villa.
+- [ ] Hand-eyeball check: 10 sampled labels from a recorded session are all specific (reference a heartbreaker, a backstory bit, a recent moment, or a current decision).
+- [ ] Hand-eyeball check: 10 sampled exchanges contain at least one concrete topic from the NPC's backstory or Sunset Bay.
 
 ### Anti-goals
 - No automated dialogue grading via LLM judge. Manual sampling is the check.
-- No procedural backstory generation. Hardcoded per islander.
+- No procedural backstory generation. Hardcoded per heartbreaker.
 - No prompt edits Codex authors (R17). Claude rewrites both prompts.
 
 ---
@@ -315,10 +315,10 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 **State (`state/models.py`):**
 - Add `pull_attempts_this_phase: dict[str, int]` to `PlayerState`. Reset on phase advance.
 
-**Engine (`engine/pull.py`):**
+**Engine (`engine/private_chat.py`):**
 - `pull_chance` subtracts `15 × pull_attempts_this_phase.get(target_id, 0)`.
-- After a pull attempt resolves (hit or miss), increment `pull_attempts_this_phase[target_id]`.
-- After 2 failed pull attempts on the same target, generate a memory on the target: holder=target_id, subject=player, content="Player kept pulling me away today — felt a bit much", weight=6, tags=["player_kept_pulling"]. Algorithmic memory; no LLM call.
+- After a private chat attempt resolves (hit or miss), increment `pull_attempts_this_phase[target_id]`.
+- After 2 failed private chat attempts on the same target, generate a memory on the target: holder=target_id, subject=player, content="Player kept pulling me away today — felt a bit much", weight=6, tags=["player_kept_pulling"]. Algorithmic memory; no LLM call.
 
 **Engine (`engine/phases.py`):**
 - On `advance_phase`, reset `state.player.pull_attempts_this_phase = {}`.
@@ -328,9 +328,9 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 - Trace records the movement as part of the interruption resolution.
 
 ### Tests
-- `test_pull_chance_drops_with_repeated_attempts`
+- `test_private_chat_chance_drops_with_repeated_attempts`
 - `test_three_failed_pulls_clamped_near_minimum`
-- `test_pull_attempts_reset_on_phase_advance`
+- `test_private_chat_attempts_reset_on_phase_advance`
 - `test_repeated_pull_creates_clingy_memory`
 - `test_ignore_interruption_moves_interrupter_away`
 - `test_ignore_interruption_trace_records_movement`
@@ -339,7 +339,7 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 - [ ] `make qa` green.
 - [ ] After failing a pull, the second pull on same target shows a visibly lower chance in the math breakdown.
 - [ ] Three failed pulls in same phase generates a `player_kept_pulling` memory on the target.
-- [ ] After ignoring an interruption, the interrupter's location is different in the next turn's villa snapshot.
+- [ ] After ignoring an interruption, the interrupter's location is different in the next turn's resort snapshot.
 
 ### Anti-goals
 - No "pull harder" stat-buy mechanic. The cooldown is structural.
@@ -354,7 +354,7 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 ### Changes
 
 **State (`state/models.py`):**
-- Add `FIREPIT` to `Location` enum.
+- Add `FLAME_DECK` to `Location` enum.
 - Add `PendingGather` Pydantic model.
 - Add `pending_gather: PendingGather | None` to `GameState`.
 
@@ -363,11 +363,11 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 - `available_actions(state)`: when `pending_gather is not None`, the only valid action is `JOIN_GATHER`.
 
 **Engine (`engine/turn.py`):**
-- On producer text fire (existing producer_events.py logic): set `state.pending_gather = PendingGather(kind="producer_text", event_id=..., gather_location=FIREPIT, fires_on_turn=current_turn+1)`.
-- On ceremony fire (recoupling, bombshell, final vote, Casa Amor): same — set `pending_gather`.
+- On producer text fire (existing producer_events.py logic): set `state.pending_gather = PendingGather(kind="producer_text", event_id=..., gather_location=FLAME_DECK, fires_on_turn=current_turn+1)`.
+- On ceremony fire (Pairing Ceremony, heart_throb, final vote, Flush of Hearts): same — set `pending_gather`.
 - On `JOIN_GATHER` action:
   - Close all active conversations (player and NPC-NPC) with reason `gather_event`. Curator runs on each.
-  - Move all islanders + player to `gather_location`.
+  - Move all heartbreakers + player to `gather_location`.
   - Trigger the actual event (Event Narrator narration, mechanical resolution).
   - Clear `pending_gather`.
   - Deduct the event's time_cost from `phase_clock`.
@@ -379,11 +379,11 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 - Same — ceremonies set pending_gather instead of firing inline.
 
 **CLI (`cli/commands/play.py`):**
-- When `pending_gather is not None`, the action menu shows only `JOIN_GATHER` with a label like `"Everyone gathers at the firepit"`. No other options.
+- When `pending_gather is not None`, the action menu shows only `JOIN_GATHER` with a label like `"Everyone gathers at the flame_deck"`. No other options.
 - Player presses it; the event narrates, then play resumes.
 
 **HTML (`reporting/html_blocks.py`):**
-- Gather turns get a distinct card style (full-width, dramatic) showing the gather location, the event narration, and "Everyone moved to the firepit."
+- Gather turns get a distinct card style (full-width, dramatic) showing the gather location, the event narration, and "Everyone moved to the flame_deck."
 
 ### Tests
 - `test_producer_text_sets_pending_gather`
@@ -397,14 +397,14 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 
 ### Acceptance
 - [ ] `make qa` green.
-- [ ] In `make play`, when a producer text fires while in conversation, the conversation closes and the next action menu shows only `Join gather at the firepit`.
-- [ ] After joining the gather, all islanders are at the firepit in the visible state.
+- [ ] In `make play`, when a producer text fires while in conversation, the conversation closes and the next action menu shows only `Join gather at the flame_deck`.
+- [ ] After joining the gather, all heartbreakers are at the flame_deck in the visible state.
 - [ ] After the event resolves, play continues normally.
-- [ ] Ceremonies (recoupling, bombshell, final vote) all gather everyone before firing.
+- [ ] Ceremonies (Pairing Ceremony, heart_throb, final vote) all gather everyone before firing.
 
 ### Anti-goals
 - No skipping gather events. Player cannot decline.
-- No partial gather (some islanders stay behind). Everyone moves.
+- No partial gather (some heartbreakers stay behind). Everyone moves.
 - No gather lasting multiple phases. Resolves in one turn.
 
 ---
@@ -451,20 +451,20 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 
 ## Phase H9.7 — Movement Liveliness
 
-**Scope.** Update villa_orchestrator prompt for more frequent movement. Tune archetype drift weights.
+**Scope.** Update resort_orchestrator prompt for more frequent movement. Tune archetype drift weights.
 
 ### Changes
 
 **Prompt (Claude rewrites):**
-- [`villa_orchestrator.md`](../src/game/agents/prompts/villa_orchestrator.md): Update the "How to decide → Movement" guidance:
-  - Replace "Most turns, most Islanders stay put. A turn with four movements should be unusual." with: "Movement should feel like a living villa. On most turns, expect 1-2 islanders to move based on chemistry, drama, or restlessness. Extraverts (Big 5 E ≥ 7, jokers, alphas) drift roughly every other turn. Introverts (Big 5 E ≤ 5, friends) drift less. Islanders mid-conversation rarely move (only if pulled or summoned)."
-- Add: "An empty villa is dead. If the player has been alone in a location for two consecutive turns, gently pull an islander toward them based on chemistry."
+- [`resort_orchestrator.md`](../src/game/agents/prompts/resort_orchestrator.md): Update the "How to decide → Movement" guidance:
+  - Replace "Most turns, most Heartbreakers stay put. A turn with four movements should be unusual." with: "Movement should feel like a living resort. On most turns, expect 1-2 heartbreakers to move based on chemistry, drama, or restlessness. Extraverts (Big 5 E ≥ 7, jokers, alphas) drift roughly every other turn. Introverts (Big 5 E ≤ 5, friends) drift less. Heartbreakers mid-conversation rarely move (only if pulled or summoned)."
+- Add: "An empty resort is dead. If the player has been alone in a location for two consecutive turns, gently pull a heartbreaker toward them based on chemistry."
 
 **State (`state/models.py`):**
 - No state changes; movement is orchestrator-driven.
 
-**Engine (`engine/villa.py`):**
-- Add validation that movements still respect existing constraints (not during ceremonies, not for eliminated islanders).
+**Engine (`engine/resort.py`):**
+- Add validation that movements still respect existing constraints (not during ceremonies, not for eliminated heartbreakers).
 
 ### Tests
 - LLM (mark llm):
@@ -475,7 +475,7 @@ Loaded by `content/loader.py`. Lint validates one backstory per islander.
 - [ ] `make qa` green.
 - [ ] `make test-llm` green; movement frequency assertions pass.
 - [ ] In a real-LLM playthrough, the trace shows averaged ≥ 1 movement per turn across a 6-day run.
-- [ ] Hand-eyeball: in `make play`, the villa map shifts visibly each turn.
+- [ ] Hand-eyeball: in `make play`, Sunset Bay map shifts visibly each turn.
 
 ### Anti-goals
 - No forced movement. The orchestrator decides; we just guide its priors.
@@ -494,29 +494,29 @@ Insert after the existing "Hard rules" block:
 
 Generic labels are wrong. Labels must reference something concrete:
 
-- The Islander's last line ("Ask what she means about her ex")
+- The Heartbreaker's last line ("Ask what she means about her ex")
 - A topic from earlier in the conversation ("Push the Marcus question further")
 - A revealed Type on Paper bit ("Compliment her ambition")
-- A villa event the Islander has memories about ("Bring up the kitchen drama")
-- The Islander's backstory if it's been referenced ("Ask about the carpentry job")
+- A resort event the Heartbreaker has memories about ("Bring up the kitchen drama")
+- The Heartbreaker's backstory if it's been referenced ("Ask about the carpentry job")
 
 **Wrong:** "Ask something deeper", "Tell a joke", "Be supportive", "Get vulnerable".
 **Right:** "Ask why she really came on the show", "Joke about his Cardiff accent", "Tell her you saw her at the kitchen", "Open up about your own ex".
 ```
 
-### Update for `islander_voice.md` (H9.3)
+### Update for `heartbreaker_voice.md` (H9.3)
 
 Insert after the existing "Honoring the outcome" block:
 
 ```markdown
 ## What to talk about
 
-Talk about specific things from the Islander's life and the villa, not about the conversation itself.
+Talk about specific things from the Heartbreaker's life and Sunset Bay, not about the conversation itself.
 
 **Pull from:**
-- The Islander's backstory (provided in context).
-- Other islanders by name — relationships, drama, alliances, opinions.
-- Villa events that just happened — the recoupling, the bombshell, the challenge.
+- The Heartbreaker's backstory (provided in context).
+- Other heartbreakers by name — relationships, drama, alliances, opinions.
+- Resort events that just happened — the Pairing Ceremony, the Heart Throb, the challenge.
 - Plans, doubts, hopes, opinions.
 - Body language and reactions to specific moments.
 
@@ -524,31 +524,31 @@ Talk about specific things from the Islander's life and the villa, not about the
 - "I'm enjoying our chat", "It's nice talking to you", "I really like our conversations" — meta-conversational dialogue.
 - "What are you thinking?", "How do you feel about us?" — vague check-ins. If you ask, ask about something concrete.
 
-Reference one specific backstory detail per Islander reply when it fits naturally. The player's character should feel like they're learning who this person is.
+Reference one specific backstory detail per Heartbreaker reply when it fits naturally. The player's character should feel like they're learning who this person is.
 ```
 
-### Update for `villa_orchestrator.md` (H9.7)
+### Update for `resort_orchestrator.md` (H9.7)
 
 Replace the "Movement" bullet under "How to decide" with:
 
 ```markdown
-- **Movement.** A living villa drifts. On most turns, 1-2 islanders move based on chemistry pull, drama, restlessness, or seeking quiet. Extraverts (Big 5 extraversion ≥ 7, archetypes joker and alpha) drift roughly every other turn. Introverts (extraversion ≤ 5, archetypes friend and sweetheart) drift less. Islanders in active conversations rarely move unless summoned. If the player has been alone in a location for two consecutive turns, gently pull an islander toward them based on chemistry.
+- **Movement.** A living resort drifts. On most turns, 1-2 heartbreakers move based on chemistry pull, drama, restlessness, or seeking quiet. Extraverts (Big 5 extraversion ≥ 7, archetypes joker and alpha) drift roughly every other turn. Introverts (extraversion ≤ 5, archetypes friend and sweetheart) drift less. Heartbreakers in active conversations rarely move unless summoned. If the player has been alone in a location for two consecutive turns, gently pull a heartbreaker toward them based on chemistry.
 ```
 
-### Update for `islander_voice.md` (H9.1) — gender pair voice
+### Update for `heartbreaker_voice.md` (H9.1) — gender pair voice
 
 Insert before "## Context":
 
 ```markdown
 ## Gender pair voice
 
-The user message tells you the Islander's gender and the player's gender. Adjust the voice:
+The user message tells you the Heartbreaker's gender and the player's gender. Adjust the voice:
 
 - **Opposite-sex pair (man↔woman).** Romantic possibility is on the table. Flirty intents carry weight. Tone shifts noticeably between Friendly (warm, neutral), Flirty (charged), Deep (vulnerable, intimate), Banter (playful).
-- **Same-sex men.** Bromance dynamic — banter-heavy, mutually supportive, occasional ribbing, sometimes scheming about the women in the villa. Avoid romantic subtext. Lines like "I got you" and "she's into you, mate" feel right.
-- **Same-sex women.** Gossip-y, emotionally direct, alliance-building, conversations about the men in the villa, the bombshells, who's playing who. Vulnerability without romantic weight. Lines like "I have to tell you what Marcus said" feel right.
+- **Same-sex men.** Bromance dynamic — banter-heavy, mutually supportive, occasional ribbing, sometimes scheming about the women in Sunset Bay. Avoid romantic subtext. Lines like "I got you" and "she's into you, mate" feel right.
+- **Same-sex women.** Gossip-y, emotionally direct, alliance-building, conversations about the men in Sunset Bay, the Heart Throbs, who's playing who. Vulnerability without romantic weight. Lines like "I have to tell you what Marcus said" feel right.
 
-Stay in the Islander's archetype voice within these patterns — Chloe gossips warmly, Maya gossips with edge, Sophie gossips strategically.
+Stay in the Heartbreaker's archetype voice within these patterns — Chloe gossips warmly, Maya gossips with edge, Sophie gossips strategically.
 ```
 
 ---
@@ -556,9 +556,9 @@ Stay in the Islander's archetype voice within these patterns — Chloe gossips w
 ## Done checklist for Codex
 
 ### H9.1 — Gender + Same-Sex Dynamics
-- [ ] Wait for Claude's prompt update for islander_voice (gender pair voice section)
+- [ ] Wait for Claude's prompt update for heartbreaker_voice (gender pair voice section)
 - [ ] Install verbatim per R17
-- [ ] Add `Gender` enum, `gender` field to PlayerState and IslanderState
+- [ ] Add `Gender` enum, `gender` field to PlayerState and HeartbreakerState
 - [ ] Bump `SCHEMA_VERSION`
 - [ ] Add 8 new intents to `content/intents.yaml`
 - [ ] Extend `IntentCategory` with BROMANCE and GOSSIP_RING
@@ -571,24 +571,24 @@ Stay in the Islander's archetype voice within these patterns — Chloe gossips w
 - [ ] Commit: `Phase H9.1: gender and same-sex dynamics`
 
 ### H9.2 — Cast Expansion
-- [ ] Author 4 new islanders (Sophie, Nia, Marcus, Blake)
+- [ ] Author 4 new heartbreakers (Sophie, Nia, Marcus, Blake)
 - [ ] Add `alpha` archetype content file
 - [ ] Update `new_game()` cast
 - [ ] Add Day 1 initial coupling ceremony
 - [ ] Adjust audience ranking for 4 couples
-- [ ] Update Casa Amor cast accordingly (still 6 split 3/3)
+- [ ] Update Flush of Hearts cast accordingly (still 6 split 3/3)
 - [ ] Regenerate scenario fixtures
 - [ ] Tests
 - [ ] Run `make qa`, `make test-llm`
 - [ ] Commit: `Phase H9.2: cast expansion to 8 starters`
 
 ### H9.3 — Dialogue Specificity
-- [ ] Wait for Claude's updated contextual_options and islander_voice prompts (specificity sections)
+- [ ] Wait for Claude's updated contextual_options and heartbreaker_voice prompts (specificity sections)
 - [ ] Install verbatim per R17
-- [ ] Add `backstory: str` to IslanderState
+- [ ] Add `backstory: str` to HeartbreakerState
 - [ ] Author `content/backstories.yaml` with 9 backstories (8 starters + Aisha)
 - [ ] Extend content loader and lint
-- [ ] Extend IslanderVoiceContext with `npc_backstory`
+- [ ] Extend HeartbreakerVoiceContext with `npc_backstory`
 - [ ] Tests including LLM-marked meta-talk assertions
 - [ ] Run `make qa`, `make test-llm`
 - [ ] Commit: `Phase H9.3: dialogue specificity and NPC backstory`
@@ -604,7 +604,7 @@ Stay in the Islander's archetype voice within these patterns — Chloe gossips w
 - [ ] Commit: `Phase H9.4: pull cooldown and interruption walkaway`
 
 ### H9.5 — Gather Events
-- [ ] Add FIREPIT location
+- [ ] Add FLAME_DECK location
 - [ ] Add PendingGather model
 - [ ] Add JOIN_GATHER action kind
 - [ ] Wire producer texts and ceremonies through pending_gather
@@ -624,7 +624,7 @@ Stay in the Islander's archetype voice within these patterns — Chloe gossips w
 - [ ] Commit: `Phase H9.6: background visibility`
 
 ### H9.7 — Movement Liveliness
-- [ ] Wait for Claude's villa_orchestrator prompt update (movement section)
+- [ ] Wait for Claude's resort_orchestrator prompt update (movement section)
 - [ ] Install verbatim per R17
 - [ ] LLM tests for movement frequency
 - [ ] Run `make qa`, `make test-llm`
@@ -655,11 +655,11 @@ Stay in the Islander's archetype voice within these patterns — Chloe gossips w
 
 After H9 commits:
 
-1. The villa feels populated (8 islanders, drift every turn, multiple ongoing background convos visible).
+1. The resort feels populated (8 heartbreakers, drift every turn, multiple ongoing background convos visible).
 2. Same-sex dynamics work — flirting with the wrong gender is impossible by design, bromance/gossip-ring categories give same-sex pairs their own voice.
-3. Dialogue references specific things (backstories, prior moments, other islanders, villa events). Meta-talk is suppressed by prompt.
-4. Pull-for-chat doesn't reward spam. Interruptions actually walk away when ignored.
-5. Events break the loop — when a producer text or ceremony fires, conversations close and everyone gathers at the firepit. Player must engage.
-6. Background visibility lets the player see the rest of the villa's life through HTML, slash commands, and daily recaps.
+3. Dialogue references specific things (backstories, prior moments, other heartbreakers, resort events). Meta-talk is suppressed by prompt.
+4. Private Chat doesn't reward spam. Interruptions actually walk away when ignored.
+5. Events break the loop — when a producer text or ceremony fires, conversations close and everyone gathers at the flame_deck. Player must engage.
+6. Background visibility lets the player see the rest of Sunset Bay's life through HTML, slash commands, and daily recaps.
 
 This is the phase where the game stops being a tech demo and becomes a thing you'd play through twice.

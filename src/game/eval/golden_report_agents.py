@@ -10,7 +10,7 @@ from src.game.reporting.html_base import escape
 def expected_agent_tools(action: dict[str, Any], expected: list[str] | None = None) -> str:
     """Render the expected agent tools for a turn's action.
 
-    The runner is the source of truth — it knows whether ``live_villa_life``
+    The runner is the source of truth — it knows whether ``live_resort_life``
     is on. The report only renders what it is handed.
     """
     tools = expected if expected else ["Engine-only turn"]
