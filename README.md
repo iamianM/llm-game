@@ -81,26 +81,17 @@ The browser, CLI, and eval harness are different interfaces over one turn path:
 
 ```mermaid
 flowchart TB
-    subgraph Interfaces
-        Browser[Next.js browser]
-        CLI[Python CLI]
-        Scenarios[Scenario and eval runner]
-    end
-
+    Browser[Next.js browser]
+    CLI[Python CLI]
+    Scenarios[Scenario and eval runner]
     Browser --> API[FastAPI adapter]
     API --> Turn[Canonical run_turn pipeline]
     CLI --> Turn
     Scenarios --> Turn
-
-    subgraph Resolution[One canonical turn]
-        Turn --> Engine[Seeded engine validates and resolves]
-        Engine --> Result[Typed MechanicalResult]
-        Result --> Agents[Typed narration and dialogue agents]
-        Agents --> Output[Typed TurnResult]
-    end
-
-    Output --> State[Canonical state and snapshot]
-    Output --> Trace[Trace, agent commits, and state hashes]
+    Turn --> Resolve[Seeded rules validate and resolve<br/>MechanicalResult]
+    Resolve --> Agents[Typed agents write dialogue,<br/>narration, and options]
+    Agents --> Output[TurnResult and canonical state]
+    Output --> Trace[Trace, recorded agent commits,<br/>and input/output state hashes]
 ```
 
 The evidence loop is deliberately separate from the runtime diagram:
