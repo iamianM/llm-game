@@ -4,7 +4,8 @@
 **Player-facing name:** Final Couples Challenge
 **Scheduled day:** 6
 **Rollout step:** 6
-**Status:** Spec authored; implementation pending shared harness.
+**Status:** Shipped through the shared round-based challenge harness, with
+deterministic engine coverage and a golden narration scenario.
 
 The closing minigame of the season. Validates that the shared harness can
 host a minigame whose scoring **aggregates the season's prior minigame

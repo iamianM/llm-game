@@ -41,7 +41,7 @@ class AudienceSnapshot(BaseModel):
 class MinigameChoice(BaseModel):
     """One legal player choice in a minigame round.
 
-    See ``docs/minigame-system.md`` §3.1.
+    See ``docs/systems/minigames.md`` §3.1.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -56,7 +56,7 @@ class MinigameChoice(BaseModel):
 class MinigameReveal(BaseModel):
     """A visible side effect surfaced after a minigame round.
 
-    See ``docs/minigame-system.md`` §3.1.
+    See ``docs/systems/minigames.md`` §3.1.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -69,7 +69,7 @@ class MinigameReveal(BaseModel):
 class MinigameRound(BaseModel):
     """One scored unit inside a minigame.
 
-    See ``docs/minigame-system.md`` §3.1.
+    See ``docs/systems/minigames.md`` §3.1.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -95,7 +95,7 @@ class Challenge(BaseModel):
     ``engine/challenges.py:resolve_challenge`` path. Round-based fields
     (``rounds``, ``classification``, ``total_points``, ``audience_delta``)
     are populated by minigames migrated to the shared harness defined in
-    ``docs/minigame-system.md``.
+    ``docs/systems/minigames.md``.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -143,7 +143,7 @@ class GroupDate(BaseModel):
 class QuestionBankPrompt(BaseModel):
     """One pre-generated prompt cached in the Question Bank.
 
-    See ``docs/minigame-system.md`` §3.4.
+    See ``docs/systems/minigames.md`` §3.4.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -163,7 +163,7 @@ class QuestionBankPrompt(BaseModel):
 class QuestionBank(BaseModel):
     """Per-season cache of pre-generated minigame prompts.
 
-    See ``docs/minigame-system.md`` §3.4.
+    See ``docs/systems/minigames.md`` §3.4.
     """
 
     model_config = ConfigDict(extra="forbid")

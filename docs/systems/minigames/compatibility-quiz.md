@@ -4,15 +4,14 @@
 **Player-facing name:** Compatibility Quiz
 **Scheduled day:** 1
 **Rollout step:** 1 (vertical slice — proves the shared harness)
-**Status:** Shipped (engine + API + CLI). Browser stem rendering is the
-follow-up item under "Browser Loop Polish" in
-[../current-plan.md](../current-plan.md). 25 unit tests live at
+**Status:** Shipped through the shared engine, API, CLI, and browser challenge
+surface. 25 unit tests live at
 `tests/engine/test_compatibility_quiz.py`; scenario fixture at
 `tests/scenarios/fixtures/compatibility-quiz-vertical.yaml`; golden eval at
 `evals/llm/scenarios/challenge-result-narration.yaml`. SCHEMA_VERSION 26.
 
 This is the first minigame and the proving ground for everything in
-[../minigame-system.md](../minigame-system.md). When it works, the other five
+[../minigames.md](../minigames.md). The other five
 specs reuse the same engine + agent + UI scaffolding.
 
 ## 1. Player experience
@@ -242,7 +241,7 @@ Following the system doc §8:
   item.
 - `12-Challenges-And-Events.md` — cross-reference this spec.
 - `docs/contract-map.yaml` — already covered if
-  `balance_boundary` group includes `docs/minigames/**`.
+  `balance_boundary` group includes `docs/systems/minigames/**`.
 
 ## 8. Acceptance
 

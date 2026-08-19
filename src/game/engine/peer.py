@@ -14,8 +14,8 @@ personality data (Big5 + attachment) plus who is standing where, advanced by a
 seeded RNG. The same seed and intent sequence reproduces the same love stories.
 
 Design sources:
-- 09-Social-Dynamics.md: autonomous NPC behavior, off-screen relationships
-- 07-Gossip-And-Information.md: gossip-generating memories
+- docs/design/09-Social-Dynamics.md: autonomous NPC behavior, off-screen relationships
+- docs/design/07-Gossip-And-Information.md: gossip-generating memories
 """
 
 from __future__ import annotations

@@ -14,7 +14,7 @@ The goal is for the CLI, browser, and tests to exercise the same engine with the
 
 | Layer | Where | What it proves | Default? | LLM? |
 |---|---|---|---|---|
-| L1 Static | ruff, mypy, content lint | Code parses, types align, content refs resolve | yes | no |
+| L1 Static | ruff, mypy, content lint, doc links | Code parses, types align, and current content/docs references resolve | yes | no |
 | L2 Unit | `tests/engine/` | Pure functions match design contracts | yes | no |
 | L3 Property | `tests/engine/*_props.py` | Invariants hold over generated cases | yes | no |
 | L4 Scenario | `tests/scenarios/fixtures/` | Seed + snapshot + actions yields expected hash | yes | no |
@@ -32,12 +32,13 @@ L1-L5 and L8 (mock) are the current non-LLM gate. L6 is marked `llm` and opt-in.
 1. `make lint`
 2. `make type-check`
 3. `make content-lint`
-4. `make test` (parallel non-LLM pytest via `pytest-xdist`)
-5. `make smoke`
-6. `make determinism`
-7. `make llm-eval-mock` (golden scenarios through `run_turn` in mock mode; see [docs/llm-eval-system.md](llm-eval-system.md))
-8. `make web-check` (Next.js ESLint rules and TypeScript)
-9. `make web-contracts`
+4. `make docs-links`
+5. `make test` (parallel non-LLM pytest via `pytest-xdist`)
+6. `make smoke`
+7. `make determinism`
+8. `make llm-eval-mock` (golden scenarios through `run_turn` in mock mode; see [LLM evals](llm-evals.md))
+9. `make web-check` (Next.js ESLint rules and TypeScript)
+10. `make web-contracts`
 
 Opt-in:
 

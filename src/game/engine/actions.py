@@ -1,8 +1,8 @@
 """Available action generation and action validation.
 
 Design sources:
-- 05-Interaction-System.md: Hybrid Menu System, Interaction Flow
-- 06-Location-System.md: Location-specific actions
+- docs/design/05-Interaction-System.md: Hybrid Menu System, Interaction Flow
+- docs/design/06-Location-System.md: Location-specific actions
 
 Implementation rule:
 Action mechanics live in Python. Optional markdown content may provide

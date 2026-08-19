@@ -1,8 +1,8 @@
 """Day and phase progression.
 
 Design sources:
-- 08-Daily-Loop.md: Four Phases, Run Length and Pacing
-- 10-Elimination-System.md: weekly flow and ceremonies
+- docs/design/08-Daily-Loop.md: Four Phases, Run Length and Pacing
+- docs/design/10-Elimination-System.md: weekly flow and ceremonies
 """
 
 from src.game.state.models import GameState, Phase

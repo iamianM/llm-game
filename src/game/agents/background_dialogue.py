@@ -1,8 +1,8 @@
 """Background Dialogue agent for NPC-NPC conversations.
 
 Design sources:
-- 09-Social-Dynamics.md: Off-screen conversations
-- 07-Gossip-And-Information.md: Gossip-generating memories
+- docs/design/09-Social-Dynamics.md: Off-screen conversations
+- docs/design/07-Gossip-And-Information.md: Gossip-generating memories
 
 Implementation rule:
 This agent writes NPC-NPC dialogue only. Resort structure comes from the

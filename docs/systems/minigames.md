@@ -1,21 +1,18 @@
 # Minigame System
 
-This document defines the shared contract that every Paradise Hearts daily
-challenge ("minigame") implements. It exists because `src/game/engine/challenges.py`
-currently resolves every challenge with a single dice roll, and
-[engine-issues-from-h11-review.md §8](engine-issues-from-h11-review.md) flagged
-that as the biggest unfinished gameplay surface. The Knowledge Foundation
-(`docs/phase5-0-knowledge-foundation.md`) was built specifically to unlock real
-minigames; this doc turns that foundation into a sustained gameplay loop.
+This document defines the shared contract implemented by all six Paradise
+Hearts daily challenges. The original dice-roll placeholder has been replaced
+by typed, round-based minigames that reuse one deterministic engine harness,
+one action vocabulary, and one narration boundary.
 
-**Read alongside:** [12-Challenges-And-Events.md](../12-Challenges-And-Events.md)
-(design canon for individual challenges), [paradise-hearts-glossary.md](paradise-hearts-glossary.md)
-(player-facing terminology), [phase5-0-knowledge-foundation.md](phase5-0-knowledge-foundation.md)
-(trait cards / known facts), [03-LLM-Architecture.md](../03-LLM-Architecture.md)
-(agent boundaries), [qa-strategy.md](qa-strategy.md) (test layering),
-[llm-eval-system.md](llm-eval-system.md) (golden scenario format).
+**Read alongside:** [12-Challenges-And-Events.md](../design/12-Challenges-And-Events.md)
+(design canon for individual challenges), [paradise-hearts-glossary.md](../reference/paradise-hearts-glossary.md)
+(player-facing terminology), [knowledge.md](knowledge.md)
+(trait cards / known facts), [03-LLM-Architecture.md](../design/03-LLM-Architecture.md)
+(agent boundaries), [qa.md](qa.md) (test layering),
+[llm-evals.md](llm-evals.md) (golden scenario format).
 
-Per-minigame specs live under [docs/minigames/](minigames/).
+Per-minigame specs live under [docs/systems/minigames/](minigames/).
 
 ---
 
@@ -50,7 +47,7 @@ A minigame **never**:
   may *consume* a minigame's deltas, but the minigame does not branch them.)
 - Persists state outside the seasonal run. Question banks and per-run
   knowledge stay in the run; cross-run carryover is parked
-  (`docs/current-plan.md`, "Persistent Knowledge Across Runs").
+  ([current-plan.md](../current-plan.md), "Later").
 - Adds a parallel fact model. All facts a minigame reads or reveals are
   `TraitFact`s already defined in `src/game/state/traits.py`.
 
@@ -72,7 +69,7 @@ The terms below appear in code, content, and the per-minigame specs.
 | **Result payload** | The typed `MinigameResult` (extending `Challenge`) handed to narration agents. Carries the per-round breakdown, totals, deltas, and reveals. |
 | **Surface checklist** | The list of code, content, and docs files a minigame must touch before merging. Same shape for every minigame. |
 
-Player-facing names follow [paradise-hearts-glossary.md](paradise-hearts-glossary.md):
+Player-facing names follow [paradise-hearts-glossary.md](../reference/paradise-hearts-glossary.md):
 Compatibility Quiz, Pulse Race (Heart Rate), The Couples Quiz (Mr & Mrs),
 Lie Detector, Kiss Wed Pass, Final Couples Challenge. Engine
 identifiers keep the underscored forms.
@@ -352,12 +349,12 @@ Rules:
 5. **Classification thresholds are explicit.** Each minigame defines
    integer thresholds for `success` / `partial` / `failure`. They live in
    `data/balance/minigames.yaml` (Pydantic-validated, per
-   [decisions/0013-balance-data-boundary.md](decisions/0013-balance-data-boundary.md)).
+   [decisions/0013-balance-data-boundary.md](../decisions/0013-balance-data-boundary.md)).
 6. **Reveals are appended, never overwritten.** Once a `MinigameReveal` is
    on a round, scoring may not remove it.
 
 Per-minigame scoring formulas live in the individual specs under
-`docs/minigames/`.
+`docs/systems/minigames/`.
 
 ### 5.1 Balance data
 
@@ -546,13 +543,13 @@ needed" reason in the PR description.
   minigame run.
 
 **Docs**
-- `docs/minigames/<kind>.md` — per-minigame spec (already present once the
+- `docs/systems/minigames/<kind>.md` — per-minigame spec (already present once the
   spec lands; PRs update it).
 - `docs/current-plan.md` — remove the minigame from "Now/Next" once shipped;
   the system doc owns the present-tense behavior.
 - `docs/contract-map.yaml` — extend the `balance_boundary` group to cover
-  `docs/minigames/**`.
-- `12-Challenges-And-Events.md` — cross-reference the per-minigame spec for
+  `docs/systems/minigames/**`.
+- `docs/design/12-Challenges-And-Events.md` — cross-reference the per-minigame spec for
   the matching challenge (canon stays; spec is authoritative for current
   implementation).
 
@@ -570,7 +567,7 @@ needed" reason in the PR description.
   outputs.
 
 The existing checkpoint/branch-compare contract
-([decisions/0008-snapshot-and-trace-architecture.md](decisions/0008-snapshot-and-trace-architecture.md))
+([decisions/0008-snapshot-and-trace-architecture.md](../decisions/0008-snapshot-and-trace-architecture.md))
 extends across minigames because the new fields all live on `Challenge`,
 which is already snapshotted.
 
@@ -579,7 +576,7 @@ which is already snapshotted.
 ## 10. Eval policy
 
 Every minigame ships with **three** eval surfaces, matching the layering in
-[qa-strategy.md](qa-strategy.md) and [llm-eval-system.md](llm-eval-system.md):
+[qa.md](qa.md) and [llm-evals.md](llm-evals.md):
 
 1. **Engine unit tests** (`tests/engine/test_<minigame>.py`)
    - Scoring at threshold edges.
@@ -594,7 +591,7 @@ Every minigame ships with **three** eval surfaces, matching the layering in
 3. **Golden LLM eval scenario** (`evals/llm/scenarios/<minigame>-narration.yaml`)
    - Authored intent: the question, the player's pick, the deterministic
      classification, and the required reveals.
-   - Checks under [evals/llm/scenarios/FORMAT.md](../evals/llm/scenarios/FORMAT.md):
+   - Checks under [evals/llm/scenarios/FORMAT.md](../../evals/llm/scenarios/FORMAT.md):
      `minigame_reveal_present`, `narration_mentions_choice_label`,
      `no_invented_facts`, `classification_consistent`.
    - Runs under `make llm-eval-mock` in CI; opt-in under
@@ -604,30 +601,21 @@ A minigame is not ready to merge until all three layers exist and pass.
 
 ---
 
-## 11. Rollout sequence
+## 11. Implemented schedule
 
-Per [current-plan.md](current-plan.md), Compatibility Quiz is the vertical
-slice. The other five follow only after it proves the shared harness. The
-order is:
+All six scheduled minigames use the shared harness:
 
-1. **Compatibility Quiz** (Day 1) — easiest knowledge bridge, lowest stakes,
-   exercises every part of the shared system. Failure here means the harness
-   needs to change before the next minigame.
-2. **The Couples Quiz** (Mr & Mrs, Day 3) — same quiz pattern, but with
-   two-sided answers: the player guesses Chloe and Chloe guesses the player.
-   Validates the two-target round shape.
-3. **Lie Detector** (Day 4) — adds the lie/truth axis. Reuses the quiz round
-   shape but consults event history (kisses, Paradise Suite visits) instead of
-   Trait Cards.
-4. **Pulse Race** (Heart Rate, Day 2) — non-interactive reveal. Validates that
-   the system supports a minigame with zero rounds, only reveals.
-5. **Kiss Wed Pass** (Day 5) — three-pick allocation, one
-   per NPC. Validates the constrained-allocation choice pattern.
-6. **Final Couples Challenge** (Day 6) — couple-level scoring that consumes
-   the season's aggregate of relationships. Validates the cross-minigame
-   aggregation pattern.
+| Day | Minigame | Distinct contract exercised |
+| --- | --- | --- |
+| 1 | Compatibility Quiz | Trait-card questions and deterministic distractors |
+| 2 | Pulse Race | Reveal-driven rounds and reactions |
+| 3 | The Couples Quiz | Two-sided partner answers |
+| 4 | Lie Detector | Truth/lie choices grounded in known facts and event history |
+| 5 | Kiss Wed Pass | Constrained allocation across multiple targets |
+| 6 | Final Couples Challenge | Couple-level scoring and season aggregation |
 
-Each minigame is one PR. Each PR closes its own item in `current-plan.md`
+Future work improves presentation and coverage; it does not maintain a second
+legacy challenge path.
 and updates the matching per-minigame spec to present tense.
 
 ---

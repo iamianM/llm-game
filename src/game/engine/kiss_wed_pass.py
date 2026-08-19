@@ -4,7 +4,7 @@ Three rounds: kiss, wed, pass. Each round narrows the pool by one. Targets
 are chosen from current relationship state: partner, top-chemistry non-partner,
 lowest-affection non-partner. Passing the partner is the self-destruct choice.
 
-See ``docs/minigames/kiss-wed-pass.md``.
+See ``docs/systems/minigames/kiss-wed-pass.md``.
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 # Minigame balance data.
 # Schema: src/game/content/minigame_balance.py
-# Contract: docs/minigame-system.md §5.1, §5.2
+# Contract: docs/systems/minigames.md §5.1, §5.2
 
 recovery_floor:
   audience_threshold: 35

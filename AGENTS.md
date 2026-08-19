@@ -127,7 +127,7 @@ Current active planning lives in [docs/current-plan.md](docs/current-plan.md). F
 
 Read [ENGINEERING.md](ENGINEERING.md) before making code changes. Those rules are non-negotiable and adapt the useful discipline from the steno runtime: no dead code, no legacy shims, no silent fallbacks, no workaround suppressions, no over-engineering, seeded RNG only, and strict engine/content/agent boundaries.
 
-Read [docs/qa-strategy.md](docs/qa-strategy.md) before adding tests or declaring implementation work done.
+Read [docs/systems/qa.md](docs/systems/qa.md) before adding tests or declaring implementation work done.
 
 ### Self-QA Before Marking Done
 
@@ -142,12 +142,13 @@ make qa
 1. `make lint`
 2. `make type-check`
 3. `make content-lint`
-4. `make test`
-5. `make smoke`
-6. `make determinism`
-7. `make llm-eval-mock` — golden scenarios through `run_turn` in mock mode (see [docs/llm-eval-system.md](docs/llm-eval-system.md))
-8. `make web-check`
-9. `make web-contracts`
+4. `make docs-links`
+5. `make test`
+6. `make smoke`
+7. `make determinism`
+8. `make llm-eval-mock` — golden scenarios through `run_turn` in mock mode (see [docs/systems/llm-evals.md](docs/systems/llm-evals.md))
+9. `make web-check`
+10. `make web-contracts`
 
 If the gate cannot run, report the exact blocker. Do not replace the gate with "looks right."
 
@@ -158,7 +159,7 @@ Opt-in live agent checks (slow and billed) live behind:
 - `make llm-eval-real` — golden scenarios with live OpenAI agents.
 - `make llm-eval-real-judge` — adds the LLM judge for voice-fit / continuity / faithfulness.
 
-Every feature that touches an agent boundary or a player-facing beat should ship with a scenario under `evals/llm/scenarios/` — see [docs/llm-eval-system.md](docs/llm-eval-system.md) and [evals/llm/scenarios/FORMAT.md](evals/llm/scenarios/FORMAT.md).
+Every feature that touches an agent boundary or a player-facing beat should ship with a scenario under `evals/llm/scenarios/` — see [docs/systems/llm-evals.md](docs/systems/llm-evals.md) and [evals/llm/scenarios/FORMAT.md](evals/llm/scenarios/FORMAT.md).
 
 ### CLI And Makefile Split
 
@@ -462,7 +463,7 @@ The active roadmap lives in [docs/current-plan.md](docs/current-plan.md). Keep `
 3. Build new gameplay only when it can be protected by deterministic tests, scenario fixtures, and, when agent behavior matters, golden LLM evals.
 4. When a feature lands, update the owning system doc so it describes present behavior. Do not leave completed phase checklists as the main source of truth.
 
-Historical build plans under `docs/build-plan-*.md` are useful implementation archaeology, but they are not the current roadmap. Use them for context, then check `docs/current-plan.md`, `ENGINEERING.md`, `docs/qa-strategy.md`, and the relevant system docs before changing code.
+Historical build plans under `docs/archive/build-plans/` are useful implementation archaeology, but they are not the current roadmap. Use them for context, then check `docs/current-plan.md`, `ENGINEERING.md`, `docs/systems/qa.md`, and the relevant system docs before changing code.
 
 ### Documentation Rules Going Forward
 
@@ -627,12 +628,15 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 | Entry point and engineering posture | `AGENTS.md` |
 | Non-negotiable rules | `ENGINEERING.md` |
 | Active priorities and planning cycle | `docs/current-plan.md` |
-| QA gates and trace strategy | `docs/qa-strategy.md` |
-| LLM eval system | `docs/llm-eval-system.md` and `evals/llm/scenarios/FORMAT.md` |
-| Design canon | `00-Game-Start-And-Setup.md` through `12-Challenges-And-Events.md`, plus `Love-Island-Reference.md` |
+| Documentation map | `docs/INDEX.md` |
+| QA gates and trace strategy | `docs/systems/qa.md` |
+| Replay, checkpoints, and review | `docs/systems/replay-and-review.md` |
+| LLM eval system | `docs/systems/llm-evals.md` and `evals/llm/scenarios/FORMAT.md` |
+| Design canon | `docs/design/00-Game-Start-And-Setup.md` through `docs/design/12-Challenges-And-Events.md` |
 | Implementation decisions | `docs/decisions/` |
-| Browser/API contract | `docs/phase3-fastapi-contract.md`, `docs/phase3-ui-spec.md`, `docs/phase3-acceptance-and-testing.md` |
-| Historical build context | `docs/build-plan-*.md`, `docs/build-log.md`, and `docs/engine-issues-from-h11-review.md` |
+| Browser/API contract | `docs/systems/browser-and-api.md` and `docs/systems/scene-dialogue.md` |
+| Current-run knowledge | `docs/systems/knowledge.md` |
+| Historical build context | `docs/archive/` |
 
 ---
 
@@ -641,64 +645,65 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 **High-level questions:**
 - "What is this game?" - `AGENTS.md` (this file)
 - "What are we working on now?" - `docs/current-plan.md`
-- "How does Paradise Hearts actually work?" - `Love-Island-Reference.md`
-- "Why the reality-dating-show format?" - `01-Game-Vision.md`
+- "How does Paradise Hearts actually work?" - `docs/research/love-island-reference.md`
+- "Why the reality-dating-show format?" - `docs/design/01-Game-Vision.md`
 - "What's the tech stack?" - `AGENTS.md` ## Tech Stack
 - "What engineering rules apply?" - `ENGINEERING.md`
-- "What checks and tests matter?" - `docs/qa-strategy.md`
-- "How do LLM evals work?" - `docs/llm-eval-system.md`
+- "What checks and tests matter?" - `docs/systems/qa.md`
+- "How do replay and checkpoints work?" - `docs/systems/replay-and-review.md`
+- "How do LLM evals work?" - `docs/systems/llm-evals.md`
 - "Why Python/Next.js/agent split?" - `docs/decisions/`
 
 **System-specific questions:**
 
 | Question | Read This | Key Section |
 |----------|-----------|-------------|
-| "How does the show work?" | Love-Island-Reference.md | ## The Rules of the Game |
-| "What do fans love/hate?" | Love-Island-Reference.md | ## What Fans Love/Hate |
-| "How does character creation work?" | 00-Game-Start-And-Setup.md | ## The Setup Flow |
-| "What are the archetypes?" | 00-Game-Start-And-Setup.md | ## Archetype Selection |
-| "How do I allocate stats?" | 00-Game-Start-And-Setup.md | ## Stat Allocation |
-| "How do rerolls work?" | 00-Game-Start-And-Setup.md | ## The Reroll System |
-| "What is meta-progression?" | 00-Game-Start-And-Setup.md | ## Meta-Progression |
-| "How do stats work?" | 02-Core-Mechanics.md | ## Player Stats, ## Relationship Stats |
-| "How does success calculation work?" | 02-Core-Mechanics.md | ## Interaction Success Formula |
-| "How does the LLM work?" | 03-LLM-Architecture.md | ## The Multi-AI System |
-| "When to use code vs LLM?" | 03-LLM-Architecture.md | ## Algorithm vs LLM Boundaries |
-| "What are the data structures?" | 04-State-Management.md | ## Heartbreaker State, ## Resort State |
-| "How do conversations work?" | 05-Interaction-System.md | ## The Interaction Flow |
-| "What's the menu system?" | 05-Interaction-System.md | ## Hybrid Menu System |
-| "How do contextual follow-ups work?" | 05-Interaction-System.md | ## Conversation Structure & Continuity |
-| "When do conversations end?" | 05-Interaction-System.md | ## Organic Conversation Endings |
-| "Does the LLM generate player dialogue?" | 05-Interaction-System.md | ## Single Exchange Generation |
-| "How do locations work?" | 06-Location-System.md | ## Sunset Bay Locations |
-| "What actions are available?" | 06-Location-System.md | ## Location-Specific Actions |
-| "How does gossip work?" | 07-Gossip-And-Information.md | ## The Gossip System |
-| "What can the player see?" | 07-Gossip-And-Information.md | ## Information Architecture |
-| "What's the daily structure?" | 08-Daily-Loop.md | ## The Four Phases |
-| "How long is a run?" | 08-Daily-Loop.md | ## Run Length and Pacing |
-| "What are social events?" | 08-Daily-Loop.md | ## Social Events |
-| "How do interruptions work?" | 09-Social-Dynamics.md | ## Conversation Interruptions |
-| "What are group conversations?" | 09-Social-Dynamics.md | ## Group Conversations |
-| "How does private chat work?" | 09-Social-Dynamics.md | ## The Private Chat System |
-| "How does the Producer AI work?" | 10-Elimination-System.md | ## The Producer AI System |
-| "What are the Pairing Ceremony rules?" | 10-Elimination-System.md | ## Pairing Ceremonies |
-| "How do challenges work?" | 12-Challenges-And-Events.md | ## Challenge System |
-| "What social events exist?" | 12-Challenges-And-Events.md | ## Social Events (Round-Table Sharing) |
-| "When do Heart Throbs arrive?" | 10-Elimination-System.md | ## Heart Throb System |
-| "How does Flush of Hearts work?" | 12-Challenges-And-Events.md | ## Flush of Hearts |
-| "How do votes and eliminations work?" | 10-Elimination-System.md | ## Voting and Eliminations |
-| "How does audience ranking work?" | 10-Elimination-System.md | ## Audience/Pulse System |
+| "How does the show work?" | docs/research/love-island-reference.md | ## The Rules of the Game |
+| "What do fans love/hate?" | docs/research/love-island-reference.md | ## What Fans Love/Hate |
+| "How does character creation work?" | docs/design/00-Game-Start-And-Setup.md | ## The Setup Flow |
+| "What are the archetypes?" | docs/design/00-Game-Start-And-Setup.md | ## Archetype Selection |
+| "How do I allocate stats?" | docs/design/00-Game-Start-And-Setup.md | ## Stat Allocation |
+| "How do rerolls work?" | docs/design/00-Game-Start-And-Setup.md | ## The Reroll System |
+| "What is meta-progression?" | docs/design/00-Game-Start-And-Setup.md | ## Meta-Progression |
+| "How do stats work?" | docs/design/02-Core-Mechanics.md | ## Player Stats, ## Relationship Stats |
+| "How does success calculation work?" | docs/design/02-Core-Mechanics.md | ## Interaction Success Formula |
+| "How does the LLM work?" | docs/design/03-LLM-Architecture.md | ## The Multi-AI System |
+| "When to use code vs LLM?" | docs/design/03-LLM-Architecture.md | ## Algorithm vs LLM Boundaries |
+| "What are the data structures?" | docs/design/04-State-Management.md | ## Heartbreaker State, ## Resort State |
+| "How do conversations work?" | docs/design/05-Interaction-System.md | ## The Interaction Flow |
+| "What's the menu system?" | docs/design/05-Interaction-System.md | ## Hybrid Menu System |
+| "How do contextual follow-ups work?" | docs/design/05-Interaction-System.md | ## Conversation Structure & Continuity |
+| "When do conversations end?" | docs/design/05-Interaction-System.md | ## Organic Conversation Endings |
+| "Does the LLM generate player dialogue?" | docs/design/05-Interaction-System.md | ## Single Exchange Generation |
+| "How do locations work?" | docs/design/06-Location-System.md | ## Sunset Bay Locations |
+| "What actions are available?" | docs/design/06-Location-System.md | ## Location-Specific Actions |
+| "How does gossip work?" | docs/design/07-Gossip-And-Information.md | ## The Gossip System |
+| "What can the player see?" | docs/design/07-Gossip-And-Information.md | ## Information Architecture |
+| "What's the daily structure?" | docs/design/08-Daily-Loop.md | ## The Four Phases |
+| "How long is a run?" | docs/design/08-Daily-Loop.md | ## Run Length and Pacing |
+| "What are social events?" | docs/design/08-Daily-Loop.md | ## Social Events |
+| "How do interruptions work?" | docs/design/09-Social-Dynamics.md | ## Conversation Interruptions |
+| "What are group conversations?" | docs/design/09-Social-Dynamics.md | ## Group Conversations |
+| "How does private chat work?" | docs/design/09-Social-Dynamics.md | ## The Private Chat System |
+| "How does the Producer AI work?" | docs/design/10-Elimination-System.md | ## The Producer AI System |
+| "What are the Pairing Ceremony rules?" | docs/design/10-Elimination-System.md | ## Pairing Ceremonies |
+| "How do challenges work?" | docs/design/12-Challenges-And-Events.md | ## Challenge System |
+| "What social events exist?" | docs/design/12-Challenges-And-Events.md | ## Social Events (Round-Table Sharing) |
+| "When do Heart Throbs arrive?" | docs/design/10-Elimination-System.md | ## Heart Throb System |
+| "How does Flush of Hearts work?" | docs/design/12-Challenges-And-Events.md | ## Flush of Hearts |
+| "How do votes and eliminations work?" | docs/design/10-Elimination-System.md | ## Voting and Eliminations |
+| "How does audience ranking work?" | docs/design/10-Elimination-System.md | ## Audience/Pulse System |
 
 **Use `rg` to find specific topics:**
 ```bash
 # Find all mentions of chemistry
-rg -n "chemistry" *.md
+rg -n "chemistry" docs/design/*.md
 
 # Find where relationship thresholds are defined
-rg -n "threshold" 05-Interaction-System.md
+rg -n "threshold" docs/design/05-Interaction-System.md
 
 # Find personality system details
-rg -n "Big 5" 03-LLM-Architecture.md
+rg -n "Big 5" docs/design/03-LLM-Architecture.md
 ```
 
 ---

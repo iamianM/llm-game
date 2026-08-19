@@ -4,7 +4,8 @@
 **Player-facing name:** The Couples Quiz
 **Scheduled day:** 3
 **Rollout step:** 2
-**Status:** Spec authored; implementation pending Compatibility Quiz harness.
+**Status:** Shipped through the shared round-based challenge harness, with
+deterministic engine coverage and a golden narration scenario.
 
 Reuses the round shape and harness proven by Compatibility Quiz. Adds a
 two-sided round: the player guesses the partner, *and* the partner guesses

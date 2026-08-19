@@ -337,7 +337,7 @@ def _npc_conversation(state: GameState, conversation_id: str) -> NPCNPCConversat
 def _print_minigame_round(state: GameState) -> None:
     """Render a round-based minigame's current question above the action menu.
 
-    See docs/minigame-system.md §3. The CLI shows the round number, the
+    See docs/systems/minigames.md §3. The CLI shows the round number, the
     question stem, and whether the current trait is mechanical or flavor.
     Wrap state surfaces the classification, total points, and audience
     delta so the player can read the result before the next phase begins.

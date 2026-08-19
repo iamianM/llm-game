@@ -1,8 +1,8 @@
 """Deterministic conversation lifecycle helpers.
 
 Design sources:
-- 11-Conversation-Flow.md: Organic Conversation Endings
-- 05-Interaction-System.md: Conversation Structure & Continuity
+- docs/design/11-Conversation-Flow.md: Organic Conversation Endings
+- docs/design/05-Interaction-System.md: Conversation Structure & Continuity
 """
 
 from __future__ import annotations

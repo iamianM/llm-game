@@ -1,77 +1,142 @@
 <div align="center">
-  <img src="web/public/images/features/title-sunset-bay.webp" alt="Sunset over Paradise Hearts' island resort" width="100%" />
+  <img src="web/public/images/features/title-sunset-bay.webp" alt="Sunset over the Paradise Hearts resort" width="100%" />
 
   # Paradise Hearts
 
-  **A deterministic social simulation with an LLM-powered reality-show narrator.**
+  **A deterministic social simulation with an LLM-powered reality-show cast.**
 
   [Play the browser demo](https://paradise-hearts.vercel.app) ·
-  [Read the architecture guide](AGENTS.md#architecture) ·
+  [Explore the systems](docs/INDEX.md) ·
   [See the current plan](docs/current-plan.md)
 </div>
 
 [![QA](https://github.com/iamianM/llm-game/actions/workflows/qa.yml/badge.svg)](https://github.com/iamianM/llm-game/actions/workflows/qa.yml)
 
 Paradise Hearts is a playable visual-novel social sandbox set inside a fictional
-reality dating show. The player builds relationships, navigates shifting
-alliances, survives ceremonies, and tries to reach the final vote with a strong
-couple and public support.
+reality dating show. You build relationships, navigate rivalries and shifting
+alliances, survive pairing ceremonies, and try to reach the final vote with a
+strong couple and public support.
 
-The project is also an experiment in reliable AI game architecture. A typed,
-seeded Python engine owns every rule and state change. Specialized LLM agents
-write dialogue, narration, contextual choices, gossip, and background resort
-life only after the engine has resolved what happened.
+The game is also a working answer to a harder engineering question: **how can
+an LLM make a game feel authored without letting nondeterministic text generation
+control game truth?** Here, typed Python code owns the simulation. Specialized
+agents express its results as dialogue, narration, contextual choices, gossip,
+and background resort life.
 
-## Why It Is Different
+<table>
+  <tr>
+    <td width="50%"><img src="web/tests/snapshots/golden/13-conversation.png" alt="Paradise Hearts browser conversation scene" /></td>
+    <td width="50%"><img src="docs/assets/portfolio/llm-eval-report.png" alt="Golden LLM evaluation review dashboard" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>The browser renders the canonical Python state.</sub></td>
+    <td align="center"><sub>The eval harness turns agent behavior into inspectable evidence.</sub></td>
+  </tr>
+</table>
 
-- **Deterministic mechanics, generative storytelling.** The model never decides
-  scores, relationship deltas, legal actions, votes, eliminations, or phase
-  progression.
-- **One engine across every interface.** The CLI, FastAPI service, browser,
-  scenarios, replay tooling, and tests all call the same Python turn pipeline.
-- **Replayable AI interactions.** Seeded RNG, snapshots, action scripts, state
-  hashes, and traces make social-simulation failures reproducible.
-- **Evaluation is part of the product loop.** Golden scenarios exercise the
-  production `run_turn` path in deterministic mock mode, with opt-in live-agent
-  and judge-assisted review packets.
-- **The social world keeps moving.** NPCs form couples, pursue their own needs,
-  interrupt conversations, trade gossip, compete in challenges, and influence
-  the audience while the player chooses where to spend limited time.
+## What Makes It Interesting
+
+### Deterministic mechanics, generative expression
+
+The LLM never calculates success, relationship deltas, action legality,
+challenge scores, votes, eliminations, or phase movement. The engine resolves a
+typed `MechanicalResult` first; agents then write within that result. This keeps
+creative output flexible without making the rules unverifiable.
+
+### AI interactions that can actually be replayed
+
+A trace records the action, input and output state hashes, mechanical result,
+visible state, narration, dialogue, contextual options, agent commits, and
+review bookmarks for every turn. Replay reconstructs the original seeded game,
+feeds the recorded agent commits back through the production turn pipeline, and
+checks both hashes on every step. It makes an AI-assisted playthrough
+reproducible **without making another model call**.
+
+### Checkpoint branches, not save-file guesswork
+
+Checkpoints preserve canonical state and seeded RNG state. A tester can resume
+the same moment twice, choose different actions, and generate a side-by-side
+HTML comparison of the consequences. That turns narrative iteration into an
+evidence-driven workflow instead of a memory exercise.
+
+### Golden evals through the real game path
+
+Human-authored YAML scenarios run through the same `run_turn` function used by
+the browser and CLI. Fast deterministic and schema checks run first. Optional
+live-agent and judge passes add voice, continuity, and faithfulness review. Each
+run produces a searchable static packet containing the scenario's intent, raw
+outputs, checks, agent traces, and reasoning summaries.
+
+### A CLI that is a playtest control plane
+
+The CLI is not a demo wrapper. It supports interactive and persisted sessions,
+named checkpoints, trace replay, deterministic scripts, state inspection,
+review notes, report packets, branch comparison, and golden LLM evals. Those
+surfaces make difficult social-simulation bugs reproducible before the browser
+presentation is involved.
 
 ## Architecture
 
+The browser, CLI, and eval harness are different interfaces over one turn path:
+
 ```mermaid
-flowchart LR
-    CLI[CLI] --> API[Shared Python application layer]
-    WEB[Next.js browser] --> HTTP[FastAPI + SSE]
-    HTTP --> API
-    API --> ENGINE[Deterministic game engine]
-    ENGINE --> RULES[Seeded rules and social simulation]
-    ENGINE --> AGENTS[Typed agent boundary]
-    RULES --> RESULT[Mechanical result]
-    RESULT --> AGENTS
-    AGENTS --> STORY[Dialogue, narration, and options]
-    STORY --> TRACE[Snapshot, trace, and state hash]
-    TRACE --> CLI
-    TRACE --> WEB
+flowchart TB
+    subgraph Interfaces
+        Browser[Next.js browser]
+        CLI[Python CLI]
+        Scenarios[Scenario and eval runner]
+    end
+
+    Browser --> API[FastAPI adapter]
+    API --> Turn[Canonical run_turn pipeline]
+    CLI --> Turn
+    Scenarios --> Turn
+
+    subgraph Resolution[One canonical turn]
+        Turn --> Engine[Seeded engine validates and resolves]
+        Engine --> Result[Typed MechanicalResult]
+        Result --> Agents[Typed narration and dialogue agents]
+        Agents --> Output[Typed TurnResult]
+    end
+
+    Output --> State[Canonical state and snapshot]
+    Output --> Trace[Trace, agent commits, and state hashes]
 ```
 
-| Surface | Responsibility |
+The evidence loop is deliberately separate from the runtime diagram:
+
+```mermaid
+flowchart TB
+    Scenario[Authored YAML scenario] --> Production[Production run_turn path]
+    Production --> Checks[Deterministic and schema checks]
+    Checks --> Live{Optional live review?}
+    Live -->|No| Packet[Static HTML review packet]
+    Live -->|Yes| Agents[Live agents and optional judge]
+    Agents --> Packet
+    Packet --> Finding[Inspect a concrete failure]
+    Finding --> Regression[Turn it into a scenario or test]
+```
+
+| Area | Owns |
 | --- | --- |
-| `src/game/engine/` | Legal actions, seeded RNG, state transitions, relationships, ceremonies, challenges, votes, and eliminations |
-| `src/game/agents/` | Typed wrappers for dialogue, narration, options, orchestration, gossip, and trait generation |
-| `src/api/` | Thin FastAPI adapter over the canonical engine |
-| `web/` | Next.js visual-novel client; browser state is presentation-only |
-| `src/game/cli/` | Interactive play, deterministic verification, replay, checkpoints, and review tooling |
-| `tests/` and `evals/` | Unit/property tests, seeded scenarios, API/browser contracts, and golden LLM evaluations |
+| `src/game/engine/` | Legal actions, seeded RNG, social simulation, relationships, ceremonies, challenges, votes, and eliminations |
+| `src/game/agents/` | Typed dialogue, narration, contextual options, orchestration, gossip, curation, and trait generation |
+| `src/api/` | Thin HTTP and SSE adapter over the canonical engine |
+| `web/` | Next.js visual-novel presentation; canonical game state stays in Python |
+| `src/game/cli/` | Play, persistence, checkpoints, replay, deterministic verification, and reports |
+| `tests/` and `evals/` | Unit/property checks, seeded scenarios, browser/API contracts, and golden LLM evaluations |
+
+For the deeper contracts, see [Replay and review](docs/systems/replay-and-review.md),
+[LLM evals](docs/systems/llm-evals.md), and
+[Browser and API](docs/systems/browser-and-api.md).
 
 ## Try It
 
-The [hosted demo](https://paradise-hearts.vercel.app) starts in deterministic
-demo mode, so it does not require an API key. Choose an islander and play
-through the same engine path used by the CLI and automated scenarios.
+The [hosted demo](https://paradise-hearts.vercel.app) runs in deterministic demo
+mode and does not require an API key. Create a Heartbreaker, meet the cast, and
+play through the same Python engine path used by automated scenarios.
 
-For a local run, install [uv](https://docs.astral.sh/uv/) and Node.js 22+, then:
+For local development, install [uv](https://docs.astral.sh/uv/) and Node.js 22+:
 
 ```bash
 git clone https://github.com/iamianM/llm-game.git
@@ -92,30 +157,88 @@ npm run dev
 ```
 
 Open `http://127.0.0.1:3000`. The browser uses deterministic mock agents by
-default. To explore the engine without the browser:
+default. Live-agent play is opt-in and requires `OPENAI_API_KEY`.
+
+## Explore the CLI
+
+Start an interactive deterministic session:
 
 ```bash
-uv run python -m src.game.cli play --mock-llm
+uv run python -m src.game.cli play --mock-llm --record .game_traces/demo.json
 ```
 
-Live-agent play is optional and requires `OPENAI_API_KEY`; deterministic demo
-mode covers the complete mechanical path without a paid model call.
+Inside a session, `/checkpoint first-choice` captures state plus RNG, `/hash`
+prints the deterministic state hash, and `/background` exposes recent off-screen
+resort activity.
 
-## Quality And Reproducibility
+Replay the recording with no new LLM calls:
 
-The non-LLM completion gate is one command:
+```bash
+uv run python -m src.game.cli play --replay .game_traces/demo.json
+```
+
+Branch from the same checkpoint and compare the outcomes:
+
+```bash
+uv run python -m src.game.cli play --from-checkpoint .game_saves/first-choice.json --branch-name bold
+uv run python -m src.game.cli play --from-checkpoint .game_saves/first-choice.json --branch-name loyal
+uv run python -m src.game.cli report compare \
+  --checkpoint .game_saves/first-choice.json \
+  --trace-a .game_traces/bold.json \
+  --trace-b .game_traces/loyal.json \
+  --out review-packet/choice-comparison.html
+```
+
+Generate a full review packet from any recorded playthrough:
+
+```bash
+uv run python -m src.game.cli report packet \
+  --trace .game_traces/demo.json \
+  --out review-packet/demo
+```
+
+See [CLI playtesting](docs/workflows/cli-playtesting.md) for the complete
+session-and-review workflow.
+
+## Run the Evals
+
+The default golden pack uses deterministic mock agents, runs scenarios in
+parallel, and writes a browser-readable report:
+
+```bash
+uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
+```
+
+The current pack contains **24 authored scenarios covering 86 turns**. A mock
+run validates the harness, schemas, invariants, and expected story beats without
+spending model tokens. With an API key, the same scenarios can exercise live
+agents and an optional LLM judge:
+
+```bash
+uv run python -m src.game.cli llm-eval \
+  --out review-packet/llm-eval-real \
+  --real-llm \
+  --judge
+```
+
+Read [the LLM eval system](docs/systems/llm-evals.md) for scenario anatomy,
+judge policy, artifacts, and the failure-to-regression workflow.
+
+## Quality and Reproducibility
+
+The non-billed completion gate is one command:
 
 ```bash
 make qa
 ```
 
 It runs Python linting and strict type checks, content validation, the non-LLM
-pytest suite, a scripted smoke playthrough, deterministic scenario verification,
-mock golden LLM evaluations, TypeScript checks, and focused Playwright browser
-contracts. Live model and judge runs are intentionally separate because they
-are slower, billed, and nondeterministic.
+test suite, a scripted smoke playthrough, deterministic scenario verification,
+the mock golden eval pack, TypeScript checks, and focused Playwright action
+contracts. Live model checks stay opt-in because they are slower, billed, and
+nondeterministic.
 
-Useful debugging surfaces include:
+Useful focused checks:
 
 ```bash
 uv run python -m src.game.cli verify --all
@@ -127,24 +250,23 @@ uv run python -m src.game.cli trace inspect .game_traces/<trace>.json
 ## Project Status
 
 Paradise Hearts is a playable proof of concept being hardened into a stronger
-vertical slice. The deterministic season loop, CLI, API, browser, replay
-infrastructure, and evaluation system exist today. Current work focuses on
-making the first three in-game days more legible and emotionally engaging in
-the browser, then using real evaluation failures to improve agent behavior.
+vertical slice. The deterministic season loop, all six minigames, scene-based
+browser presentation, CLI, API, replay infrastructure, current-run knowledge,
+and evaluation system exist today. Current work focuses on the first three
+in-game days, clearer audience feedback, and failure-driven live-agent tuning.
 
-Production hosting, authentication, telemetry, durable cloud persistence,
-cross-run progression, and realtime voice are deliberately outside the current
-POC boundary. See [docs/current-plan.md](docs/current-plan.md) for the active
-scope rather than historical build checklists.
+Production authentication, telemetry, durable cloud persistence, cross-run
+progression, and realtime voice are intentionally outside the POC boundary.
+The [current plan](docs/current-plan.md) is the source of truth for active scope.
 
 ## Documentation
 
-- [AGENTS.md](AGENTS.md) is the engineering and architecture entry point.
+- [Documentation index](docs/INDEX.md) separates current system contracts from design, research, decisions, and implementation history.
+- [AGENTS.md](AGENTS.md) is the AI-assistant and engineering entry point.
 - [ENGINEERING.md](ENGINEERING.md) defines the non-negotiable implementation rules.
-- [docs/qa-strategy.md](docs/qa-strategy.md) explains the confidence layers and completion gate.
-- [docs/llm-eval-system.md](docs/llm-eval-system.md) documents golden scenario review.
-- [docs/decisions/](docs/decisions/) records the major architecture choices.
+- [QA](docs/systems/qa.md) explains the confidence layers and completion gate.
+- [Architecture decisions](docs/decisions/) record why major boundaries exist.
 
-The project is AI-assisted, but its core contract is intentionally model-proof:
-human-authored schemas and deterministic code own game truth, while models are
-limited to creative expression behind typed, inspectable boundaries.
+Historical build plans and superseded phase specifications remain available
+under [`docs/archive/`](docs/archive/) for implementation archaeology, but they
+are not current instructions.

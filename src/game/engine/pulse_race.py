@@ -4,7 +4,7 @@ Reveal-only minigame: builds an N x N chemistry matrix, exposes hidden
 chemistry scores via ``chemistry_rank`` reveals, then offers one reaction
 round where the player chooses how to respond to the surprise target.
 
-See ``docs/minigames/heart-rate.md`` and ``docs/minigame-system.md``.
+See ``docs/systems/minigames/heart-rate.md`` and ``docs/systems/minigames.md``.
 """
 
 from __future__ import annotations
