@@ -1,5 +1,10 @@
 import { GameStage } from "../../../components/stage/GameStage";
 
-export default function PlayPage({ params }: { params: { sessionId: string } }) {
-  return <GameStage sessionId={params.sessionId} />;
+export default async function PlayPage({
+  params
+}: {
+  params: Promise<{ sessionId: string }>;
+}) {
+  const { sessionId } = await params;
+  return <GameStage sessionId={sessionId} />;
 }

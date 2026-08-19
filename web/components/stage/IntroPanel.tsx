@@ -9,7 +9,6 @@ import {
   introActionsForTarget,
   nextIntroTarget,
   responseFor,
-  type IntroDynamic,
 } from "../../lib/intros";
 import { NpcPortrait } from "./NpcPortrait";
 

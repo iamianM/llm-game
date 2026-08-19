@@ -36,7 +36,7 @@ L1-L5 and L8 (mock) are the current non-LLM gate. L6 is marked `llm` and opt-in.
 5. `make smoke`
 6. `make determinism`
 7. `make llm-eval-mock` (golden scenarios through `run_turn` in mock mode; see [docs/llm-eval-system.md](llm-eval-system.md))
-8. `make web-check`
+8. `make web-check` (Next.js ESLint rules and TypeScript)
 9. `make web-contracts`
 
 Opt-in:
