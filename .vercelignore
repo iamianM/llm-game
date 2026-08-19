@@ -20,6 +20,7 @@ tests
 # and content markdown (content/**/*.md) from the lambda bundle — which
 # crashes /api/session/new with a FileNotFoundError.
 /*.md
+!/README.md
 !/AGENTS.md
 !/ENGINEERING.md
 .scratch

@@ -370,46 +370,6 @@ wheels = [
 ]
 
 [[package]]
-name = "llm-game"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "fastapi" },
-    { name = "openai" },
-    { name = "pydantic" },
-    { name = "pyyaml" },
-    { name = "uvicorn" },
-]
-
-[package.optional-dependencies]
-dev = [
-    { name = "hypothesis" },
-    { name = "mypy" },
-    { name = "pytest" },
-    { name = "pytest-asyncio" },
-    { name = "pytest-xdist" },
-    { name = "ruff" },
-    { name = "types-pyyaml" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "fastapi", specifier = ">=0.115.0" },
-    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
-    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
-    { name = "openai", specifier = ">=1.0.0" },
-    { name = "pydantic", specifier = ">=2.11.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.0" },
-    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6.0" },
-    { name = "pyyaml", specifier = ">=6.0.2" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
-    { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.12.20250516" },
-    { name = "uvicorn", specifier = ">=0.30.0" },
-]
-provides-extras = ["dev"]
-
-[[package]]
 name = "mypy"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -496,6 +456,46 @@ sdist = { url = "https://files.pythonhosted.org/packages/d7/f1/e7a6dd94a8d4a5626
 wheels = [
     { url = "https://files.pythonhosted.org/packages/df/b2/87e62e8c3e2f4b32e5fe99e0b86d576da1312593b39f47d8ceef365e95ed/packaging-26.2-py3-none-any.whl", hash = "sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e", size = 100195, upload-time = "2026-04-24T20:15:22.081Z" },
 ]
+
+[[package]]
+name = "paradise-hearts"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "fastapi" },
+    { name = "openai" },
+    { name = "pydantic" },
+    { name = "pyyaml" },
+    { name = "uvicorn" },
+]
+
+[package.optional-dependencies]
+dev = [
+    { name = "hypothesis" },
+    { name = "mypy" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+    { name = "pytest-xdist" },
+    { name = "ruff" },
+    { name = "types-pyyaml" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.115.0" },
+    { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
+    { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10.0" },
+    { name = "openai", specifier = ">=1.0.0" },
+    { name = "pydantic", specifier = ">=2.11.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.23.0" },
+    { name = "pytest-xdist", marker = "extra == 'dev'", specifier = ">=3.6.0" },
+    { name = "pyyaml", specifier = ">=6.0.2" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
+    { name = "types-pyyaml", marker = "extra == 'dev'", specifier = ">=6.0.12.20250516" },
+    { name = "uvicorn", specifier = ">=0.30.0" },
+]
+provides-extras = ["dev"]
 
 [[package]]
 name = "pathspec"

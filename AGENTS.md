@@ -1,8 +1,10 @@
 # Paradise Hearts — AI Assistant Guide
 
-*Documentation entry point for a visual novel roguelite dating game powered by AI*
+*Engineering entry point for a visual novel roguelite dating game powered by AI*
 
-**IMPORTANT**: This is the ONLY entry point file. Never create a README.md file.
+**IMPORTANT**: This is the authoritative implementation entry point. The root
+`README.md` is a concise public product overview and must not duplicate or
+override engineering canon.
 
 ---
 
@@ -230,7 +232,7 @@ This repo follows a **high-context-efficiency** approach optimized for AI-assist
 ### The Rules
 
 **File Structure:**
-- **AGENTS.md is the ONLY entry point** - Never create README.md
+- **README.md is the public front door; AGENTS.md is implementation canon**
 - **One file = one complete system** - No fragmentation across multiple files
 - **Design docs are canon; implementation rules live in ENGINEERING.md**
 - **Runtime content is structured markdown; mechanics live in Python**
@@ -464,7 +466,8 @@ Historical build plans under `docs/build-plan-*.md` are useful implementation ar
 
 ### Documentation Rules Going Forward
 
-- `AGENTS.md` is the only entry point.
+- `README.md` is the concise public product and portfolio landing page.
+- `AGENTS.md` is the authoritative implementation entry point.
 - `CLAUDE.md` is a pointer for compatibility only.
 - Existing numbered design docs remain design canon unless a newer ADR, build log entry, or phase doc explicitly supersedes them.
 - Implementation decisions live in `docs/decisions/`.

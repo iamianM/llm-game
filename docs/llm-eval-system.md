@@ -1,9 +1,9 @@
 # LLM Eval System
 
-This doc describes the current golden LLM eval system for the game. The system
-adapts the working eval pattern from
-`C:\Users\Mcian\projects\steno-livekit-agent` branch `feat/prompt-overlays-sdk`.
-The important LiveKit findings are:
+This doc describes the current golden LLM eval system for the game. It adapts
+production-agent principles: deterministic scenario setup, typed outputs,
+inspectable failures, regression reruns, and human review. The important
+findings are:
 
 - Run eval turns through production code, not a mock prompt harness.
 - Seed earlier turns from authored goldens so every evaluated turn is isolated and replayable.
@@ -345,7 +345,7 @@ This is reliable for this repo because the LLM is downstream of deterministic me
 
 The system does not ask a judge to determine whether the game is correct. The engine and validators do that. The judge only checks whether authored narrative expectations match the actual text after raw evidence is already stored.
 
-The LiveKit branch proved two key implementation details:
+Prior production use proved two key implementation details:
 
 - independent golden-seeded turn replay avoids multi-turn flakiness while still exercising production code
 - reasoning summaries make model mistakes inspectable without relying on vibes
