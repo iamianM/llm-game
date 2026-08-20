@@ -70,6 +70,7 @@ def private_suite_event(state: GameState) -> CeremonyEvent:
         kind="private_suite",
         message=f"{player_display_name(state)} and {partner.name} leave for a private Paradise Suite night.",
         heartbreaker_id=partner.id,
+        participant_ids=[state.player.id, partner.id],
     )
 
 

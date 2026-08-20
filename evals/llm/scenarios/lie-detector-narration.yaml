@@ -1,6 +1,15 @@
 id: lie-detector-narration
 title: Lie Detector Truth Vs Lie
 goal: Prove the narrator dramatises detection outcomes while staying faithful to engine truth-vs-lie decisions.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: lie_detector_arc_faithful
+      criteria: >
+        Across the full sequence, belief outcomes match the recorded reveals and the wrap
+        dramatises at least one believed, suspected, or caught moment without inventing kisses,
+        suite visits, pair regrets, or other evidence absent from the engine record.
 seed: 909
 initial_day: 4
 initial_phase: morning
@@ -29,8 +38,14 @@ initial_relationships:
     friendship: 15
     chemistry: 65  # triggers the "still feel something for Maya?" prompt
 judge_context:
-  - Lie Detector compares the player's pick to event history and a detection roll. Caught lies write lie_caught reveals; truths write truth_told reveals.
-  - The narrator may dramatise the moment but cannot change which lies were caught or which truths were verified.
+  - >
+    Lie Detector compares the player's pick to event history and a detection roll. The
+    reveal kind `lie_caught` identifies a lie attempt, not necessarily a detected lie;
+    its payload is canonical. `belief: believed` or `caught: 0` means the lie was not
+    caught, while `belief: caught` means it was detected.
+  - >
+    Truth reveals work the same way: `belief: suspected` or `detected: 0` is not a
+    verified truth. The narrator may dramatise the moment but cannot change the payload outcomes.
 turns:
   - id: morning-to-lie-detector
     action:
@@ -62,21 +77,10 @@ turns:
     golden: >
       Player shades the final answer. Quiz resolves; classification
       depends on the detection rolls captured in the reveals. The
-      narrator names which lie was caught (if any) and which truth was
-      verified, in the partner's voice.
+      narrator dramatises at least one explicit payload belief outcome and
+      never invents a caught lie or verified truth when the payload records none.
     checks:
       - ceremony_events_present
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: belief_state_named
-        criteria: >
-          For at least one round the narrator names the partner's
-          belief outcome — believed, suspected, or caught — and
-          matches the engine's reveal.
-      - id: no_invented_evidence
-        criteria: >
-          The narrator does not invent a kiss, private_suite visit, or
-          pair regret that isn't on the engine record. Lies are
-          dramatised against the reveal payloads only.

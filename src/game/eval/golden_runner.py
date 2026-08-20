@@ -17,7 +17,7 @@ from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
 from src.game.engine.turn import run_turn
 from src.game.eval.golden_checks import run_deterministic_check
-from src.game.eval.golden_judge import run_judge_checks
+from src.game.eval.golden_judge import run_thread_check
 from src.game.eval.golden_models import (
     CheckResultValue,
     GoldenCheckResult,
@@ -26,6 +26,7 @@ from src.game.eval.golden_models import (
     GoldenScenarioResult,
     GoldenTurnResult,
     GoldenTurnSpec,
+    JudgeTrace,
 )
 from src.game.eval.golden_report import render_golden_eval_html
 from src.game.state.models import GameState, new_game
@@ -72,6 +73,7 @@ def run_golden_eval(
     if not scenarios:
         results: list[GoldenScenarioResult] = []
     else:
+
         def _run_isolated(scenario: GoldenEvalScenario) -> GoldenScenarioResult:
             return contextvars.copy_context().run(
                 _run_scenario, scenario, out=out, real_llm=real_llm, judge=judge
@@ -145,18 +147,6 @@ def _run_scenario(
             record = cast(dict[str, object], record_from_turn(input_hash, turn_spec.action, turn))
             records.append(record)
             checks = _run_turn_checks(turn_spec, turn, "real" if real_llm else "mock", pre_state)
-            if judge:
-                checks.extend(
-                    run_judge_checks(
-                        scenario_title=scenario.title,
-                        scenario_goal=scenario.goal,
-                        scenario_context=scenario.judge_context,
-                        turn_spec=turn_spec,
-                        record=record,
-                        prior_records=records[:-1],
-                        prompt_out=out / "judge-prompts" / f"{scenario.id}-{turn_spec.id}.txt",
-                    )
-                )
             turn_results.append(
                 GoldenTurnResult(
                     id=turn_spec.id,
@@ -164,7 +154,6 @@ def _run_scenario(
                     arrangements=_turn_arrangements_payload(turn_spec),
                     expected_tools=_expected_tools(turn_spec, scenario),
                     golden=turn_spec.golden,
-                    judge_checks=turn_spec.judge_checks,
                     input_hash=input_hash,
                     output_hash=turn.state_hash,
                     record=record,
@@ -172,12 +161,11 @@ def _run_scenario(
                 )
             )
         except Exception as exc:
-            error_record = {
+            error_record: dict[str, object] = {
                 "action": turn_spec.action.model_dump(mode="json"),
                 "error": str(exc),
                 "agent_traces": [
-                    trace.model_dump(mode="json")
-                    for trace in recover_agent_traces_after_error()
+                    trace.model_dump(mode="json") for trace in recover_agent_traces_after_error()
                 ],
             }
             turn_results.append(
@@ -187,7 +175,6 @@ def _run_scenario(
                     arrangements=_turn_arrangements_payload(turn_spec),
                     expected_tools=_expected_tools(turn_spec, scenario),
                     golden=turn_spec.golden,
-                    judge_checks=turn_spec.judge_checks,
                     input_hash=input_hash,
                     record=error_record,
                     checks=[
@@ -202,16 +189,38 @@ def _run_scenario(
                     error=str(exc),
                 )
             )
+            records.append(error_record)
             break
     (out / "artifacts" / f"{scenario.id}-trace.json").write_text(
         json.dumps(records, indent=2),
         encoding="utf-8",
     )
+    thread_check: GoldenCheckResult | None = None
+    judge_trace: JudgeTrace | None = None
+    if judge:
+        try:
+            thread_check, judge_trace = run_thread_check(
+                scenario=scenario,
+                records=records,
+                deterministic_checks=[turn.checks for turn in turn_results],
+                prompt_out=out / "judge-prompts" / f"{scenario.id}.json",
+            )
+        except Exception as exc:
+            thread_check = GoldenCheckResult(
+                id=scenario.thread_check.id,
+                kind="judge",
+                result="cannot_determine",
+                reason=f"thread judge failed: {exc}",
+                severity=scenario.thread_check.severity,
+            )
     return GoldenScenarioResult(
         id=scenario.id,
         title=scenario.title,
         goal=scenario.goal,
-        status=_scenario_status(turn_results),
+        status=_scenario_status(turn_results, thread_check),
+        thread_expectation=scenario.thread_check,
+        thread_check=thread_check,
+        judge_trace=judge_trace,
         turns=turn_results,
     )
 
@@ -260,6 +269,7 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
         from src.game.engine.phases import PHASE_BUDGETS as _PHASE_BUDGETS
         from src.game.state.models import Phase as _Phase
         from src.game.state.phase_clock import PhaseClock as _PhaseClock
+
         first_turn = scenario.turns[0] if scenario.turns else None
         opens_with_intro = (
             first_turn is not None
@@ -276,7 +286,9 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
             state.phase = target_phase
             state.phase_clock = _PhaseClock(phase=target_phase.value, budget_minutes=budget)
             state.intro_completed_ids = [
-                heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
+                heartbreaker.id
+                for heartbreaker in state.heartbreakers
+                if not heartbreaker.eliminated
             ]
             state.intro_memory_created = True
     return state
@@ -306,7 +318,9 @@ def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
         conversation = turn_spec.arrange_active_conversation
         active: dict[str, object] = {"target_id": conversation.target_id}
         if conversation.pending_interruption is not None:
-            active["pending_interruption"] = conversation.pending_interruption.model_dump(mode="json")
+            active["pending_interruption"] = conversation.pending_interruption.model_dump(
+                mode="json"
+            )
         if conversation.pending_options is not None:
             active["pending_options"] = [
                 {
@@ -330,12 +344,16 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
     if kind in {"start_conversation", "respond_with"}:
         tools = ["Heartbreaker Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     if kind == "end_conversation":
         tools = ["Conversation Curator -> MemoryBatch"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     if kind in {
         "ambient",
@@ -348,7 +366,9 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
     }:
         tools = ["Event Narrator -> EventNarration"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     return ["Engine-only turn"]
 
@@ -382,8 +402,14 @@ def _run_turn_checks(
     ]
 
 
-def _scenario_status(turns: list[GoldenTurnResult]) -> CheckResultValue:
-    results = [check.result for turn in turns for check in turn.checks]
+def _scenario_status(
+    turns: list[GoldenTurnResult],
+    thread_check: GoldenCheckResult | None,
+) -> CheckResultValue:
+    checks = [check for turn in turns for check in turn.checks]
+    if thread_check is not None and thread_check.severity == "blocking":
+        checks.append(thread_check)
+    results = [check.result for check in checks]
     if any(result == "fail" for result in results):
         return "fail"
     if any(result == "cannot_determine" for result in results):

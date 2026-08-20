@@ -310,7 +310,7 @@ Added to the scenario check vocabulary:
 
 ### Scenario refresh
 
-- `day1-intro-round`: keep the 8 intros + First Spark Pairing. Each intro turn's `judge_checks` add `player_voice_grounded` + `npc_voice_grounded`.
+- `day1-intro-round`: keep the 8 intros + First Spark Pairing. Its single thread-check rubric protects cast voice separation and the engine-owned opening choice.
 - `interruption-accept`, `interruption-defer`, `interruption-ignore`: add `npc_voice_grounded` to assert NPC reply references the player line.
 - `pull-success`, `pull-rejection`: same.
 

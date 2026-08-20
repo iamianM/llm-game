@@ -21,20 +21,23 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    CREATIVE_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.state.models import GameState, Gender, Phase
 
-EVENT_NARRATOR_MODEL = GAME_AGENT_MODEL
+EVENT_NARRATOR_MODEL = CREATIVE_PROFILE.model
+EVENT_NARRATOR_REASONING_EFFORT = CREATIVE_PROFILE.reasoning_effort
 EVENT_NARRATOR_PROMPT = "src/game/agents/prompts/event_narrator.md"
 _EVENT_NARRATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "event_narrator.md"
 
@@ -88,7 +91,7 @@ class OpenAIEventNarrator:
                 try:
                     narration = self._generate_narration(retry_context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("event_narrator", attempt_number, exc)
+                    mark_agent_trace_generation_error("event_narrator", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
                         raise AgentGenerationError(str(exc)) from exc
@@ -96,7 +99,7 @@ class OpenAIEventNarrator:
             finally:
                 end_agent_attempt(attempt_token)
             try:
-                validate_event_narration(narration, events)
+                validate_event_narration(narration, events, state)
                 return narration
             except (ValueError, ValidationError) as exc:
                 mark_agent_trace_validation_error("event_narrator", attempt_number, exc)
@@ -107,12 +110,14 @@ class OpenAIEventNarrator:
 
     def _generate_narration(self, rendered_context: str) -> EventNarration:
         """Request one parsed EventNarration from the model."""
+        instructions = _EVENT_NARRATOR_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_EVENT_NARRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=EventNarration,
-            **reasoning_request_kwargs(),
+            **reasoning_request_kwargs(effort=EVENT_NARRATOR_REASONING_EFFORT),
         )
         narration = response.output_parsed
         record_agent_trace(
@@ -121,6 +126,10 @@ class OpenAIEventNarrator:
             prompt_path=EVENT_NARRATOR_PROMPT,
             response=response,
             output=narration,
+            reasoning_effort=EVENT_NARRATOR_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if narration is None:
             raise ValueError("Event Narrator returned no parsed EventNarration")
@@ -135,7 +144,11 @@ def mock_event_narration(state: GameState, events: list[CeremonyEvent]) -> Event
     return EventNarration(prose=" ".join(sentences))
 
 
-def validate_event_narration(narration: EventNarration, events: list[CeremonyEvent]) -> None:
+def validate_event_narration(
+    narration: EventNarration,
+    events: list[CeremonyEvent],
+    state: GameState | None = None,
+) -> None:
     """Fail loud if event prose violates the agent boundary.
 
     Enforces two contracts:
@@ -152,11 +165,37 @@ def validate_event_narration(narration: EventNarration, events: list[CeremonyEve
         raise ValueError(
             f"event narration leaked engine token(s) {leaked}: {prose!r}"
         )
-    required = [event.heartbreaker_id for event in events if event.heartbreaker_id is not None]
+    required = list(
+        dict.fromkeys(
+            participant_id
+            for event in events
+            for participant_id in (
+                [*event.participant_ids, event.heartbreaker_id]
+                if event.heartbreaker_id is not None
+                else event.participant_ids
+            )
+        )
+    )
     lower_prose = prose.lower()
-    missing = [name for name in required if not _mentions_participant(lower_prose, name)]
+    missing = [
+        _name_for(state, participant_id) if state is not None else participant_id
+        for participant_id in required
+        if not _mentions_participant(lower_prose, participant_id, state)
+    ]
     if missing:
         raise ValueError(f"event narration omitted participant(s) {missing}: {prose!r}")
+    if state is not None:
+        allowed = _allowed_heartbreaker_ids(state, events)
+        off_scene = [
+            heartbreaker.name
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.id not in allowed
+            and _mentions_name(lower_prose, heartbreaker.name)
+        ]
+        if off_scene:
+            raise ValueError(
+                f"event narration mentioned off-scene participant(s) {off_scene}: {prose!r}"
+            )
 
 
 # A snake_case token: two or more lowercase/digit runs joined by underscores
@@ -180,19 +219,53 @@ def _leaked_tokens(prose: str) -> list[str]:
     return found
 
 
-def _mentions_participant(lower_prose: str, heartbreaker_id: str) -> bool:
+def _mentions_participant(
+    lower_prose: str,
+    heartbreaker_id: str,
+    state: GameState | None = None,
+) -> bool:
     base = heartbreaker_id.lower()
     aliases = {base, base.replace("_", " ")}
     # Starting-cast ids are bare first names; Flush arrivals keep an
     # "_ht" suffix (e.g. "sam_ht"). Strip any suffix segment so the first-name
     # display form the narrator actually writes is matched either way.
     aliases.add(base.split("_", 1)[0])
+    if heartbreaker_id == "player":
+        aliases.update({"you", "your", "the contestant"})
+        if state is not None and _player_has_name(state):
+            aliases.add(_player_name(state).lower())
+    elif state is not None:
+        aliases.add(_name_for(state, heartbreaker_id).lower())
     return any(re.search(rf"\b{re.escape(alias)}\b", lower_prose) for alias in aliases)
+
+
+def _mentions_name(lower_prose: str, name: str) -> bool:
+    return bool(re.search(rf"\b{re.escape(name.lower())}\b", lower_prose))
+
+
+def _allowed_heartbreaker_ids(
+    state: GameState,
+    events: list[CeremonyEvent],
+) -> set[str]:
+    allowed = {
+        heartbreaker.id
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.location_id == state.location_id and not heartbreaker.eliminated
+    }
+    for event in events:
+        allowed.update(event.participant_ids)
+        if event.heartbreaker_id is not None:
+            allowed.add(event.heartbreaker_id)
+    challenge = state.pending_challenge
+    if challenge is not None:
+        allowed.update(challenge.participants)
+    return allowed
 
 
 def _mock_event_sentence(state: GameState, event: CeremonyEvent) -> str:
     if event.kind == "pairing":
-        return "At the Flame Deck, the Pairing Ceremony locks in the next couples."
+        label = "" if "Pairing Ceremony" in event.message else "the Pairing Ceremony resolves: "
+        return f"At the Flame Deck, {label}{event.message}"
     if event.kind == "elimination":
         return f"{_name_for(state, event.heartbreaker_id)} is Heart Out, and Sunset Bay feels the shift."
     if event.kind == "challenge":
@@ -301,6 +374,13 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_lines = "\n".join(
         f"- {event.kind}: {event.message}"
         + (f" (about {_name_for(state, event.heartbreaker_id)})" if event.heartbreaker_id else " (no named heartbreaker)")
+        + (
+            " (participants: "
+            + ", ".join(_name_for(state, participant_id) for participant_id in event.participant_ids)
+            + ")"
+            if event.participant_ids
+            else ""
+        )
         for event in events
     )
     named = _player_has_name(state)
@@ -325,6 +405,7 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         )
         possessive = "your"
         subject = "you"
+    event_kinds = {event.kind for event in events}
     semantics = [
         contestant_rule,
         f"- pair_proposal rejected means the target did not accept {possessive} proposal.",
@@ -332,7 +413,17 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         f"- pairing narration should name {possessive} partner when the current couple is known.",
         f"- private_suite means {subject} and the named partner leave for a private suite beat.",
     ]
-    event_kinds = {event.kind for event in events}
+    if "flush_of_hearts_arrival" in event_kinds and state.flush_of_hearts_state is not None:
+        original_partner_id = state.flush_of_hearts_state.original_partner_id
+        if original_partner_id is not None:
+            original_partner = _name_for(state, original_partner_id)
+            semantics.append(
+                "- Flush of Hearts arrival separation: "
+                f"{subject} is now at the second resort while {original_partner} remains "
+                f"at Sunset Bay. Frame {possessive} connection with {original_partner} as "
+                f"the distant stake. Never place {original_partner} physically beside "
+                f"{subject} in the second resort."
+            )
     if "private_suite" in event_kinds and "gather_scheduled" in event_kinds:
         semantics.append(
             "- If private_suite appears with gather_scheduled, narrate only the Private Suite. "
@@ -344,6 +435,12 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         f"Phase: {narration_phase}",
         f"Location: {state.location_id.value}",
         f"Current player couple: {_player_couple(state)}",
+        "Allowed named people in this scene: "
+        + ", ".join(
+            _name_for(state, heartbreaker_id)
+            for heartbreaker_id in sorted(_allowed_heartbreaker_ids(state, events))
+        )
+        + ". Do not mention other cast members.",
         "Cast pronouns (use exactly these — never guess gender from a name):",
         _cast_pronoun_lines(state),
         "Event semantics:",
@@ -351,6 +448,12 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         "Events:",
         event_lines,
     ]
+    if state.day == 1 and any(event.kind == "pairing" for event in events):
+        sections.append(
+            "Opening ceremony scene requirement: the full active cast is present. "
+            "Include one concrete reaction from someone beyond the newly formed player couple "
+            "so the choice visibly lands across the resort."
+        )
     # If a round-based minigame just resolved, surface its per-round details so
     # the narrator can name actual picks, reveals, and facets rather than
     # writing generic "ended in success" prose. See docs/systems/minigames.md
@@ -415,6 +518,16 @@ def _render_minigame_details(state: GameState) -> str:
         "a snake_case key, an underscore, or bracketed metadata in your prose.",
         "  rounds:",
     ]
+    if challenge.kind == "lie_detector":
+        lines.extend(
+            [
+                "  REQUIRED LIE DETECTOR OUTCOME:",
+                "  - State at least one resolved belief outcome explicitly in the prose.",
+                "  - 'believed' means a lie was not caught; do not imply detection.",
+                "  - 'suspected' means a truth was not verified; do not imply confirmation.",
+                "  - 'caught' means a lie was detected.",
+            ]
+        )
     for round_ in challenge.rounds:
         chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
         correct = next((c for c in round_.choices if c.is_correct), None)
@@ -463,6 +576,28 @@ def _render_minigame_details(state: GameState) -> str:
             lines.append(
                 f"        reveal[{reveal.kind}] about {_person(reveal.subject_id)} — {payload_summary}"
             )
+            if challenge.kind == "lie_detector":
+                belief = payload.get("belief")
+                if reveal.kind == "lie_caught" and belief == "believed":
+                    lines.append(
+                        f"        REQUIRED resolved outcome: {_person(reveal.subject_id)} "
+                        f"believed {chosen_label}; this lie was not caught."
+                    )
+                elif reveal.kind == "lie_caught" and belief == "caught":
+                    lines.append(
+                        f"        REQUIRED resolved outcome: {_person(reveal.subject_id)} "
+                        f"caught {chosen_label} as a lie."
+                    )
+                elif reveal.kind == "truth_told" and belief == "suspected":
+                    lines.append(
+                        f"        REQUIRED resolved outcome: {_person(reveal.subject_id)} "
+                        f"only suspected {chosen_label}; this truth was not verified."
+                    )
+                elif reveal.kind == "truth_told" and belief == "believed":
+                    lines.append(
+                        f"        REQUIRED resolved outcome: {_person(reveal.subject_id)} "
+                        f"believed {chosen_label} as truthful."
+                    )
     return "\n".join(lines)
 
 

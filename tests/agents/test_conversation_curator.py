@@ -131,7 +131,7 @@ def test_curator_request_uses_shared_reasoning_kwargs_without_token_cap() -> Non
 
     assert "max_output_tokens" not in fake_client.responses.kwargs
     assert "temperature" not in fake_client.responses.kwargs
-    assert fake_client.responses.kwargs["reasoning"] == {"effort": "high", "summary": "detailed"}
+    assert fake_client.responses.kwargs["reasoning"] == {"effort": "low", "summary": "detailed"}
 
 
 @pytest.mark.llm

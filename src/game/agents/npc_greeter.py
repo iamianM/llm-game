@@ -20,18 +20,20 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    VOICE_PROFILE,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.state.models import GameState, HeartbreakerState
 
-NPC_GREETER_MODEL = GAME_AGENT_MODEL
-NPC_GREETER_REASONING_EFFORT = os.environ.get("LLM_NPC_GREETER_REASONING_EFFORT", "low")
+NPC_GREETER_MODEL = VOICE_PROFILE.model
+NPC_GREETER_REASONING_EFFORT = VOICE_PROFILE.reasoning_effort
 NPC_GREETER_MAX_CONCURRENCY = int(os.environ.get("LLM_NPC_GREETER_MAX_CONCURRENCY", "8"))
 
 NPC_GREETER_PROMPT = "src/game/agents/prompts/npc_greeter.md"
@@ -111,6 +113,7 @@ class OpenAINpcGreeter:
             attempt_token = begin_agent_attempt(attempt_number)
             try:
                 try:
+                    started_at = start_agent_call()
                     response = self._client.responses.parse(
                         model=self._model,
                         instructions=instructions,
@@ -120,7 +123,7 @@ class OpenAINpcGreeter:
                     )
                 except Exception as exc:
                     last_error = ValueError(str(exc))
-                    mark_agent_trace_validation_error("npc_greeter", attempt_number, exc)
+                    mark_agent_trace_generation_error("npc_greeter", attempt_number, exc)
                     if attempt == 1:
                         raise
                     continue
@@ -133,10 +136,14 @@ class OpenAINpcGreeter:
                 prompt_path=NPC_GREETER_PROMPT,
                 response=response,
                 output=line,
+                reasoning_effort=NPC_GREETER_REASONING_EFFORT,
+                prompt_text=instructions,
+                input_payload=input_text,
+                started_at=started_at,
             )
             if line is None:
                 last_error = ValueError("Greeter returned no parsed GreetingLine")
-                mark_agent_trace_validation_error("npc_greeter", attempt_number, last_error)
+                mark_agent_trace_generation_error("npc_greeter", attempt_number, last_error)
                 continue
             try:
                 validate_greeting(line.greeting, target_name=target.name)

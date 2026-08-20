@@ -52,6 +52,16 @@ def test_resort_orchestrator_context_marks_isolated_player() -> None:
     assert "Player isolation: player is alone at pool" in rendered
 
 
+def test_resort_orchestrator_context_makes_movement_and_starts_atomic() -> None:
+    state = new_game(1)
+
+    rendered = _render_context(state)
+
+    assert "Atomic movement-and-conversation contract" in rendered
+    assert "both participants' final locations" in rendered
+    assert "target_location must be identical" in rendered
+
+
 @pytest.mark.llm
 def test_resort_orchestrator_contract() -> None:
     """Real Orchestrator returns an update the engine can validate."""

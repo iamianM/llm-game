@@ -9,7 +9,7 @@ from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.couples import partner_for, player_couple
 from src.game.engine.heart_throb_brief import pick_heart_throb_brief
 from src.game.engine.memory import add_memory, create_memory, remember_ceremony_events
-from src.game.engine.state_access import find_heartbreaker
+from src.game.engine.state_access import display_name, find_heartbreaker
 from src.game.state.flush import FlushDecision, ResortName
 from src.game.state.models import (
     AttachmentStyle,
@@ -68,9 +68,25 @@ def enter_flush_of_hearts(state: GameState) -> CeremonyEvent:
         sunset_bay_partner_ids=[heartbreaker.id for heartbreaker in state.heartbreakers if heartbreaker.id not in {i.id for i in flush_cast}],
         player_perception_before=state.player.public_perception,
     )
+    participant_ids = ["player"]
+    if original_partner_id is None:
+        message = (
+            "Flush of Hearts begins: "
+            f"{display_name(state, 'player')} is sent to the Flush resort."
+        )
+    else:
+        participant_ids.append(original_partner_id)
+        original_partner = display_name(state, original_partner_id)
+        message = (
+            "Flush of Hearts begins: "
+            f"{display_name(state, 'player')} is sent to the Flush resort while "
+            f"{original_partner} remains at Sunset Bay; their connection is now "
+            "tested at a distance."
+        )
     return CeremonyEvent(
         kind="flush_of_hearts_arrival",
-        message="Flush of Hearts begins: you are sent to the Flush resort.",
+        message=message,
+        participant_ids=participant_ids,
     )
 
 

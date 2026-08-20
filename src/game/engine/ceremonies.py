@@ -48,6 +48,7 @@ class CeremonyEvent(BaseModel):
     kind: str
     message: str
     heartbreaker_id: str | None = None
+    participant_ids: list[str] = Field(default_factory=list)
     sub_kind: str | None = None
 
 

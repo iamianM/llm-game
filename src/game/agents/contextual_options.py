@@ -22,20 +22,23 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.contextual_gossip import with_gossip_options as with_gossip_options
 from src.game.agents.heartbreaker_voice import Exchange, load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    UTILITY_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
 
-CONTEXTUAL_OPTIONS_MODEL = GAME_AGENT_MODEL
+CONTEXTUAL_OPTIONS_MODEL = UTILITY_PROFILE.model
+CONTEXTUAL_OPTIONS_REASONING_EFFORT = UTILITY_PROFILE.reasoning_effort
 CONTEXTUAL_OPTIONS_PROMPT = "src/game/agents/prompts/contextual_options.md"
 _CONTEXTUAL_OPTIONS_PROMPT_FILE = Path(__file__).parent / "prompts" / "contextual_options.md"
 EXIT_INTENT_KINDS = {"end_softly", "walk_away", "change_subject_and_drift"}
@@ -146,7 +149,7 @@ class ContextualOptionsAgent:
                 try:
                     bespoke = self._generate_bespoke(retry_context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
+                    mark_agent_trace_generation_error("contextual_options", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
                         raise AgentGenerationError(str(exc)) from exc
@@ -165,12 +168,14 @@ class ContextualOptionsAgent:
 
     def _generate_bespoke(self, rendered_context: str) -> ContextualBespoke:
         """Request one parsed bespoke option set from the model."""
+        instructions = _CONTEXTUAL_OPTIONS_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_CONTEXTUAL_OPTIONS_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=ContextualBespoke,
-            **reasoning_request_kwargs(),
+            **reasoning_request_kwargs(effort=CONTEXTUAL_OPTIONS_REASONING_EFFORT),
         )
         bespoke = response.output_parsed
         record_agent_trace(
@@ -179,6 +184,10 @@ class ContextualOptionsAgent:
             prompt_path=CONTEXTUAL_OPTIONS_PROMPT,
             response=response,
             output=bespoke,
+            reasoning_effort=CONTEXTUAL_OPTIONS_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if bespoke is None:
             raise ValueError("Contextual Options returned no parsed ContextualBespoke")

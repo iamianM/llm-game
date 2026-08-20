@@ -19,10 +19,11 @@ from src.game.state.models import (
 )
 
 CheckResultValue = Literal["pass", "fail", "cannot_determine"]
+CheckSeverity = Literal["blocking", "advisory"]
 
 
-class JudgeCheckSpec(BaseModel):
-    """One semantic check evaluated by an optional LLM judge."""
+class ThreadCriterion(BaseModel):
+    """One authored dimension inside the scenario's holistic thread check."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -30,6 +31,16 @@ class JudgeCheckSpec(BaseModel):
     criteria: str
     pass_examples: list[str] = Field(default_factory=list)
     fail_examples: list[str] = Field(default_factory=list)
+
+
+class ThreadCheckSpec(BaseModel):
+    """The single holistic semantic check for a complete scenario thread."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    id: str = "thread_acceptance"
+    severity: CheckSeverity = "blocking"
+    criteria: list[ThreadCriterion] = Field(min_length=1)
 
 
 class GoldenTurnSpec(BaseModel):
@@ -44,7 +55,6 @@ class GoldenTurnSpec(BaseModel):
     arrange_active_conversation: Conversation | None = None
     golden: str | None = None
     checks: list[str] = Field(default_factory=list)
-    judge_checks: list[JudgeCheckSpec] = Field(default_factory=list)
 
 
 class GoldenEvalScenario(BaseModel):
@@ -67,6 +77,7 @@ class GoldenEvalScenario(BaseModel):
     initial_npc_conversations: list[NPCNPCConversation] | None = None
     live_resort_life: bool = False
     judge_context: list[str] = Field(default_factory=list)
+    thread_check: ThreadCheckSpec
     turns: list[GoldenTurnSpec] = Field(min_length=1)
 
 
@@ -81,6 +92,25 @@ class GoldenCheckResult(BaseModel):
     reason: str
     evidence: str | None = None
     turn_id: str | None = None
+    severity: CheckSeverity = "blocking"
+
+
+class JudgeTrace(BaseModel):
+    """Reviewable metadata for the single thread-level judge call."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    model: str
+    reasoning_effort: str
+    prompt_path: str
+    latency_ms: int
+    response_id: str | None = None
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    total_tokens: int | None = None
+    attempts: int = 1
+    retry_errors: list[str] = Field(default_factory=list)
+    reasoning_summaries: list[str] = Field(default_factory=list)
 
 
 class GoldenTurnResult(BaseModel):
@@ -93,7 +123,6 @@ class GoldenTurnResult(BaseModel):
     arrangements: dict[str, Any] = Field(default_factory=dict)
     expected_tools: list[str] = Field(default_factory=list)
     golden: str | None = None
-    judge_checks: list[JudgeCheckSpec] = Field(default_factory=list)
     input_hash: str
     output_hash: str | None = None
     record: dict[str, Any] | None = None
@@ -110,6 +139,9 @@ class GoldenScenarioResult(BaseModel):
     title: str
     goal: str
     status: CheckResultValue
+    thread_expectation: ThreadCheckSpec
+    thread_check: GoldenCheckResult | None = None
+    judge_trace: JudgeTrace | None = None
     turns: list[GoldenTurnResult] = Field(default_factory=list)
 
 

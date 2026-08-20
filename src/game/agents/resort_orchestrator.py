@@ -11,7 +11,6 @@ not mutate GameState; engine/resort.py validates and applies the commit.
 
 from __future__ import annotations
 
-import os
 from collections.abc import Callable
 from functools import cached_property
 from pathlib import Path
@@ -21,27 +20,24 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    ORCHESTRATOR_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.engine.flush_of_hearts import location_resort
 from src.game.state.autonomy import SummonReason
 from src.game.state.models import GameState, Location, NPCInterruption
 
-RESORT_ORCHESTRATOR_MODEL = GAME_AGENT_MODEL
-# Background resort life — movement / interruption decisions — doesn't need
-# the deep chain-of-thought the player-facing dialogue agents do. Default to
-# low effort so each turn doesn't carry 15-30s of orchestrator latency.
-RESORT_ORCHESTRATOR_REASONING_EFFORT = os.environ.get(
-    "LLM_RESORT_ORCHESTRATOR_REASONING_EFFORT", "low"
-)
+RESORT_ORCHESTRATOR_MODEL = ORCHESTRATOR_PROFILE.model
+RESORT_ORCHESTRATOR_REASONING_EFFORT = ORCHESTRATOR_PROFILE.reasoning_effort
 RESORT_ORCHESTRATOR_PROMPT = "src/game/agents/prompts/resort_orchestrator.md"
 _RESORT_ORCHESTRATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "resort_orchestrator.md"
 
@@ -51,8 +47,13 @@ class NPCMovement(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    npc_id: str
-    target_location: Location
+    npc_id: str = Field(description="Existing NPC id to move this turn.")
+    target_location: Location = Field(
+        description=(
+            "The NPC's final location after movements apply. If this NPC is also "
+            "in conversation_starts, that conversation must use this exact location."
+        )
+    )
     reason: str
 
 
@@ -61,8 +62,20 @@ class NewConversation(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    participants: list[str] = Field(min_length=2, max_length=2)
-    location: Location
+    participants: list[str] = Field(
+        min_length=2,
+        max_length=2,
+        description=(
+            "Exactly two existing NPC ids. After all npc_movements apply, both "
+            "participants must occupy the conversation location."
+        ),
+    )
+    location: Location = Field(
+        description=(
+            "The shared final location of both participants. This must equal any "
+            "listed participant's npc_movements target_location."
+        )
+    )
     topic: str
 
 
@@ -145,7 +158,7 @@ class OpenAIResortOrchestrator:
                 try:
                     update = self._generate_update(retry_context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("resort_orchestrator", attempt_number, exc)
+                    mark_agent_trace_generation_error("resort_orchestrator", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
                         raise AgentGenerationError(str(exc)) from exc
@@ -170,9 +183,11 @@ class OpenAIResortOrchestrator:
 
     def _generate_update(self, rendered_context: str) -> ResortUpdate:
         """Request one parsed update from the model."""
+        instructions = _RESORT_ORCHESTRATOR_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_RESORT_ORCHESTRATOR_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=ResortUpdate,
             **reasoning_request_kwargs(effort=RESORT_ORCHESTRATOR_REASONING_EFFORT),
@@ -184,6 +199,10 @@ class OpenAIResortOrchestrator:
             prompt_path=RESORT_ORCHESTRATOR_PROMPT,
             response=response,
             output=update,
+            reasoning_effort=RESORT_ORCHESTRATOR_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if update is None:
             raise ValueError("Resort Orchestrator returned no parsed ResortUpdate")
@@ -245,6 +264,13 @@ def _render_context(state: GameState) -> str:
             conversations or "none",
             "Engine movement constraints:",
             locked_participants,
+            "Atomic movement-and-conversation contract:",
+            "- Apply your proposed npc_movements mentally before writing conversation_starts.",
+            "- For every new conversation, both participants' final locations must equal "
+            "the conversation location.",
+            "- If a participant appears in npc_movements, its target_location must be "
+            "identical to its new conversation location. Never move an NPC elsewhere in "
+            "the same update.",
             "Write the ResortUpdate now.",
         ]
     )

@@ -1,6 +1,15 @@
 id: pairing-heart_out
 title: Pairing Ceremony With A Heart Out
 goal: Prove a deterministic Pairing Ceremony (pairing) and a Heart Out (heart_out) narrate as one dramatic beat — the right names, the right couples, the right elimination — without the LLM picking any of it.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: pairing_ceremony_story_faithful
+      criteria: >
+        The narration treats pairing and Heart Out as one ceremony, preserves every recorded
+        couple and the exact eliminated Heartbreaker, and includes a human reaction beat rather
+        than reading like a log. It must never save, swap, or invent an elimination.
 seed: 707
 initial_day: 3
 initial_phase: evening
@@ -74,20 +83,3 @@ turns:
       - ceremony_events_present
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: heart_out_faithful
-        criteria: >
-          If the ceremony events contain a Heart Out, the narration names
-          that same Heartbreaker as leaving. The narrator must not save
-          them, swap them for someone else, or invent a different
-          elimination. If no Heart Out happened, the narration must not
-          invent one.
-      - id: couples_faithful
-        criteria: >
-          Every couple named in the narration matches a recorded couple in
-          the ceremony events. The narrator cannot reassign partners.
-      - id: ceremony_tone
-        criteria: >
-          The prose carries flame_deck-ceremony texture — a specific reaction
-          beat for at least one named couple. Fail if it reads like a
-          summary log with no human beats.

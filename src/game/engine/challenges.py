@@ -128,8 +128,9 @@ def challenge_event_message(challenge: Challenge) -> str:
             f"{_challenge_label(challenge.kind)} ended in {challenge.classification} "
             f"({challenge.total_points} pts)."
         )
-    result = "is still pending" if challenge.result is None else f"ended in {challenge.result}"
-    return f"{_challenge_label(challenge.kind)} tested {_stat_label(challenge.stat_tested)} and {result}."
+    if challenge.result is None:
+        return f"{_challenge_label(challenge.kind)} is still pending."
+    return f"{_challenge_label(challenge.kind)} ended in {challenge.result}."
 
 
 def _challenge_label(kind: str) -> str:
@@ -142,12 +143,6 @@ def _challenge_label(kind: str) -> str:
         "kiss_wed_pass": "Kiss Wed Pass",
     }
     return labels.get(kind, kind.replace("_", " ").title())
-
-
-def _stat_label(stat: str) -> str:
-    if stat == "combined":
-        return "combined couple energy"
-    return stat.replace("_", " ").title()
 
 
 def _challenge_success_chance(state: GameState, challenge: Challenge) -> int:

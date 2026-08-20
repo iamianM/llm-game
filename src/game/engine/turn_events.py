@@ -160,7 +160,34 @@ def resolve_pending_gather(
 
 def pairing_events(state: GameState, ceremony: PairingResult) -> list[CeremonyEvent]:
     """Create pairing and optional Heart Out events."""
-    events = [CeremonyEvent(kind="pairing", message="The Pairing Ceremony locks in the next couples.")]
+    opening = bool(ceremony.couples) and all(
+        couple.formed_via == "opening" for couple in ceremony.couples
+    )
+    narrated_couples = (
+        [
+            couple
+            for couple in ceremony.couples
+            if state.player.id in {couple.partner_a_id, couple.partner_b_id}
+        ]
+        if opening
+        else ceremony.couples
+    )
+    couple_labels = [
+        f"{display_name(state, couple.partner_a_id)} and {display_name(state, couple.partner_b_id)}"
+        for couple in narrated_couples
+    ]
+    participant_ids = [
+        participant_id
+        for couple in narrated_couples
+        for participant_id in (couple.partner_a_id, couple.partner_b_id)
+    ]
+    events = [
+        CeremonyEvent(
+            kind="pairing",
+            message=f"The Pairing Ceremony locks in: {'; '.join(couple_labels)}.",
+            participant_ids=participant_ids,
+        )
+    ]
     for attempt in ceremony.steal_attempts:
         outcome = "succeeds" if attempt.success else "fails"
         events.append(
@@ -172,6 +199,11 @@ def pairing_events(state: GameState, ceremony: PairingResult) -> list[CeremonyEv
                     f"{display_name(state, attempt.abandoned_id)} and {outcome}."
                 ),
                 heartbreaker_id=attempt.heart_throb_id,
+                participant_ids=[
+                    attempt.heart_throb_id,
+                    attempt.target_id,
+                    attempt.abandoned_id,
+                ],
             )
         )
         if attempt.success:
@@ -183,6 +215,7 @@ def pairing_events(state: GameState, ceremony: PairingResult) -> list[CeremonyEv
                         f"pairs with {display_name(state, attempt.heart_throb_id)}."
                     ),
                     heartbreaker_id=attempt.target_id,
+                    participant_ids=[attempt.target_id, attempt.heart_throb_id],
                 )
             )
     if ceremony.eliminated_id is not None:
@@ -191,6 +224,7 @@ def pairing_events(state: GameState, ceremony: PairingResult) -> list[CeremonyEv
                 kind="elimination",
                 message=f"Heart Out: {display_name(state, ceremony.eliminated_id)} leaves Sunset Bay.",
                 heartbreaker_id=ceremony.eliminated_id,
+                participant_ids=[ceremony.eliminated_id],
             )
         )
     return events

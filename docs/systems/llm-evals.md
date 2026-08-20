@@ -13,9 +13,10 @@ The system separates three kinds of confidence:
    required commits, menus, memories, resolved participants, and state effects.
 2. **Live-agent runs** show how the configured production agents behave against
    the same authored scenarios.
-3. **Judge-assisted review** evaluates qualities code cannot establish, such as
-   voice fit, continuity, specificity, emotional readability, and faithfulness
-   to a resolved event.
+3. **Thread-assisted review** asks one judge to read the complete scenario and
+   evaluate qualities code cannot establish, such as voice consistency,
+   continuity, specificity, emotional readability, and faithfulness across the
+   full sequence.
 
 The judge is a review assistant, never the authority on mechanics. Its outcomes
 are `pass`, `fail`, or `cannot_determine`, and they appear next to the raw
@@ -25,7 +26,7 @@ evidence that a human needs to agree or disagree.
 
 Scenarios live in `evals/llm/scenarios/` as typed YAML. A scenario defines
 canonical setup, a fixed seed, one or more legal player actions, authored golden
-intent, deterministic checks, and optional judge criteria.
+intent, deterministic turn checks, and one holistic thread-check rubric.
 
 For each turn the runner:
 
@@ -33,8 +34,9 @@ For each turn the runner:
 2. arranges only the explicit fixture state;
 3. executes the action through `run_turn`;
 4. validates structured engine and agent output;
-5. writes the trace artifact before any judge is called; and
-6. optionally asks the judge to compare authored intent with actual evidence.
+5. writes the complete trace artifact; and
+6. optionally makes one judge call over every authored turn, golden, engine
+   record, and agent trace in the scenario.
 
 Scenarios run independently and in parallel, up to eight workers by default.
 Use `--max-workers 1` for sequential diagnosis.
@@ -83,17 +85,36 @@ uv run python -m src.game.cli llm-eval \
   --judge
 ```
 
-Live calls use the shared runtime configuration in
-`src/game/agents/runtime.py`. The default model is `gpt-5.4-mini` with high
-reasoning effort and detailed reasoning summaries; `LLM_GAME_MODEL` can
-override the model for an intentional experiment.
+Live calls use role profiles in `src/game/agents/runtime.py`. Shipped defaults
+use `gpt-5.6-luna`: voice and multi-object resort orchestration at `medium`,
+creative narration and other structured utility work at `low`, and the thread
+judge at `medium` reasoning. The medium voice
+profile is an intentional adherence tradeoff: the launch-cast eval was stronger
+at the cost of roughly 1.5 seconds average latency per voice call. `LLM_GAME_MODEL`
+overrides the whole pack; `LLM_GAME_<ROLE>_MODEL` and
+`LLM_GAME_<ROLE>_REASONING_EFFORT` isolate a voice, creative, utility,
+orchestrator, or judge experiment without changing prompts or game context.
+
+### Hosted showcase
+
+The Vercel app exposes `/evals` as a portfolio-facing view of one curated real
+run. The embedded report is the self-contained
+`web/public/evals/report.html`; it contains synthetic game scenarios and model
+outputs, but no credentials or local artifact paths. General `review-packet*`
+directories remain excluded from deployment so arbitrary local playtests are
+never published by accident.
+
+Refresh the showcase only from a reviewed real-and-judged run. Verify the HTML
+contains no credentials or local paths before replacing the public file.
 
 ## Recorded Evidence
 
-Each live agent call records its agent name, model, reasoning effort, retry
-attempt, prompt path, parsed output, validation failure when applicable, and
+Each live agent call records its agent name, role-selected model, reasoning
+effort, retry attempt, latency, token usage, prompt path and SHA-256, serialized
+agent input, parsed output, validation failure when applicable, and
 model-provided reasoning summary. The trace stores summaries, not hidden chain
-of thought.
+of thought. The single thread judge call records the same review-critical model,
+effort, latency, token, response, and summary provenance.
 
 Each scenario also writes its production trace as soon as it finishes. A later
 report-rendering or judge failure therefore cannot erase the game evidence.
@@ -103,20 +124,25 @@ report-rendering or judge failure therefore cannot erase the game evidence.
 The generated `index.html` is the primary artifact. It shows:
 
 - scenario goal and authored golden intent;
-- mode, judge status, workers, turns, and pass/fail totals;
+- mode, judge status, workers, turns, pass/fail totals, agent calls, latency
+  percentiles, and tokens;
+- one whole-thread verdict, its rubric, and judge provenance before turn detail;
 - deterministic check results;
 - actual dialogue, narration, menus, memories, and engine results;
 - agent traces and reasoning summaries; and
 - judge criteria, findings, and prompts when enabled.
 
-Reviewers can filter by status, search across scenarios and turns, sort results,
-jump between scenario chips, and expand failing turns. Review in this order:
+Reviewers can filter by status, search and sort the scenario rail, select one
+complete thread at a time, and expand individual turns. Review in this order:
 
 1. Confirm the mock pack is clean; this establishes fixture and harness health.
 2. Filter the live packet to failures and `cannot_determine` results.
-3. Read deterministic checks and actual output before the judge conclusion.
-4. Read the reasoning summary to locate a prompt or context misunderstanding.
-5. Inspect the stored judge prompt only when the judgment itself looks wrong.
+3. Read the complete thread and deterministic evidence before accepting a judge
+   conclusion.
+4. Use per-call inputs, prompt hashes, latency/tokens, and reasoning summaries to
+   locate the responsible model, prompt, or runtime boundary.
+5. Inspect the stored whole-thread judge payload when the judgment itself looks
+   wrong.
 
 ## Failure-to-Regression Workflow
 
@@ -126,7 +152,7 @@ Classify a failure at the boundary that owns it:
 - missing or malformed data: schema or agent commit;
 - misleading context: context builder;
 - valid but weak prose: the responsible agent prompt;
-- weak or vague expectation: scenario golden or judge criterion;
+- weak or vague expectation: scenario golden or thread criterion;
 - hard-to-review evidence: report renderer.
 
 Fix the smallest responsible boundary, then convert the failure into a
@@ -138,10 +164,13 @@ a packet green.
 
 - Every player-facing beat that crosses an agent boundary ships with a scenario.
 - Mechanical behavior must have deterministic tests before narrative evals.
-- Prefer structural checks to judge checks whenever the claim is machine-testable.
+- Prefer structural turn checks to rubric criteria whenever the claim is
+  machine-testable.
 - Goldens describe specific intent and an example of success; they do not demand
   exact wording.
 - Update or delete a stale scenario in the same change that alters the game
   contract. Do not support old scenario shapes with compatibility code.
 - A passing mock pack proves harness and contract health, not live prose quality.
+- Every scenario has exactly one scenario-level thread check. Add dimensions to
+  its rubric instead of adding more verdicts or per-turn semantic judge checks.
 - A passing judge is evidence for review, not proof that the game is fun.

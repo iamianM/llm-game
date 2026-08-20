@@ -368,6 +368,14 @@ def _player_shareable_memory(state: GameState, target_id: str) -> Memory | None:
             continue
         if "gossip" not in memory.tags:
             continue
+        if memory.source == "direct":
+            scoped_targets = {
+                tag.removeprefix("share_with:")
+                for tag in memory.tags
+                if tag.startswith("share_with:")
+            }
+            if target_id not in scoped_targets:
+                continue
         if memory.id in already_shared:
             # Don't re-offer gossip the player has already told this person.
             # Otherwise the same memory loops in the menu forever and the NPC

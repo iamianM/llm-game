@@ -7,8 +7,11 @@ export function MemoriesList({ memories }: { memories: ApiMemory[] }) {
       <h3 className="rail-section-title">Memories</h3>
       <div className="memories">
         {visibleMemories.length ? (
-          visibleMemories.map((memory) => (
-            <p key={memory.id} className="memory">
+          visibleMemories.map((memory, index) => (
+            <p
+              key={`${memory.id}-${memory.holder_id}-${memory.subject_id}-${memory.formed_on_turn}-${index}`}
+              className="memory"
+            >
               {memory.content}
             </p>
           ))

@@ -1,6 +1,19 @@
 id: day1-intro-round
 title: Day One Intro Round
 goal: Prove first impressions land seven distinct voices in seven actions. Each Heartbreaker should sound recognisably themselves on the first hello.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: intro_cast_voice_separation
+      criteria: >
+        Across the full greeting circle, the eight Heartbreakers establish distinct voices and
+        respond to their specific introduction intents rather than converging on stock welcomes
+        or interchangeable flirting.
+    - id: opening_choice_faithful
+      criteria: >
+        The final ceremony follows naturally from the introductions and preserves the engine's
+        player/Chloe opening couple without inventing a vote, elimination, or later-game twist.
 seed: 404
 character_creation:
   archetype_id: class_clown
@@ -29,11 +42,6 @@ turns:
     checks: &intro_checks
       - exchange_valid
       - agent_traces_present
-    judge_checks:
-      - id: chloe_intro_specific
-        criteria: >
-          Chloe sounds warm, specific, and a touch shy; fail if she reads as
-          flirty alpha or generic sweetheart filler.
   - id: intro-maya
     action:
       kind: introduce_to
@@ -45,11 +53,6 @@ turns:
       "Right, who told you I'd be the funny one? Was it me?" Player line
       should set up the joke; Maya's reply should crack it.
     checks: *intro_checks
-    judge_checks:
-      - id: maya_intro_specific
-        criteria: >
-          Maya treats this as banter, not a flirt or a friendship baseline,
-          and sounds bright and quick rather than soft or shy.
   - id: intro-liam
     action:
       kind: introduce_to
@@ -61,11 +64,6 @@ turns:
       Imagine: "Heavy opener. I respect it. Honestly? I'm just trying not
       to be the version of me that overthinks every chat in here."
     checks: *intro_checks
-    judge_checks:
-      - id: liam_intro_specific
-        criteria: >
-          Liam sounds grounded and thoughtful with a real beat of his own;
-          fail if he tilts romantic-female or shallow banter.
   - id: intro-sophie
     action:
       kind: introduce_to
@@ -77,11 +75,6 @@ turns:
       naive. Imagine: "Brave choice for a first hello. Try landing it next
       time."
     checks: *intro_checks
-    judge_checks:
-      - id: sophie_intro_specific
-        criteria: >
-          Sophie sounds confident, dry, and high-agency, treating the flirt
-          as a serve to return. Fail if she becomes timid or saccharine.
   - id: intro-nia
     action:
       kind: introduce_to
@@ -92,11 +85,6 @@ turns:
       something specific, not a generic compliment. Imagine: "You weren't
       panicking earlier when everyone was. I noticed. ...I'm Nia."
     checks: *intro_checks
-    judge_checks:
-      - id: nia_intro_specific
-        criteria: >
-          Nia returns a specific observation about the player; fail if she
-          gives a stock greeting or turns flirty.
   - id: intro-marcus
     action:
       kind: introduce_to
@@ -108,11 +96,6 @@ turns:
       energy without going cruel. Imagine: "Bold. ...Alright, I'll give you
       that one. Try it again with a better setup."
     checks: *intro_checks
-    judge_checks:
-      - id: marcus_intro_specific
-        criteria: >
-          Marcus reads as confident and direct; fail if he sounds insecure,
-          cruel, or indistinguishable from Liam or Blake.
   - id: intro-blake
     action:
       kind: introduce_to
@@ -124,11 +107,6 @@ turns:
       Imagine: "Heavy first line. I'll match it. ...You're playing this
       slower than the rest of them. Good."
     checks: *intro_checks
-    judge_checks:
-      - id: blake_intro_specific
-        criteria: >
-          Blake sounds thoughtful and restrained with a specific read; fail
-          if he becomes romantic, generic, or sounds like Liam or Marcus.
   - id: intro-jordan
     action:
       kind: introduce_to
@@ -140,11 +118,6 @@ turns:
       me too long, you'll figure out I planned that line in the mirror."
       Should be distinct from Maya — Jordan is needier and more male-coded.
     checks: *intro_checks
-    judge_checks:
-      - id: jordan_intro_specific
-        criteria: >
-          Jordan sounds eager and self-deprecating under the banter; fail if
-          he sounds identical to Maya or like a generic flirt.
   - id: opening-couple-chloe
     action:
       kind: pair
@@ -157,8 +130,3 @@ turns:
     checks:
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: opening_choice_preserved
-        criteria: >
-          The narration names the player choosing Chloe and never invents a
-          different partner, a vote, a heart_out, or a Flush of Hearts twist.

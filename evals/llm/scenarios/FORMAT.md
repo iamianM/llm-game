@@ -47,6 +47,14 @@ live_resort_life: false           # set false unless the scenario is testing
                                  # Resort Orchestrator + Background Dialogue
 judge_context:                   # short bullets the judge sees as fixed facts
   - This is a Day 3 flame_deck beat; pairing is decided in-engine.
+thread_check:                    # required single holistic scenario verdict
+  id: thread_acceptance
+  severity: blocking
+  criteria:                     # rubric dimensions, not separate verdicts
+    - id: conversation_arc
+      criteria: >
+        Across the complete thread, each exchange builds on the prior beat and
+        the ending resolves the conversation without changing engine outcomes.
 ```
 
 ## Turn list
@@ -73,11 +81,6 @@ turns:
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:                         # optional LLM judge checks
-      - id: voice_fit
-        criteria: >
-          Chloe sounds warm, sincere, gently vulnerable. Fail if she is
-          chaotic or sounds like a different archetype.
 ```
 
 ## Deterministic checks
@@ -92,6 +95,7 @@ vocabulary (per ENGINEERING.md R7 and R18).
     under an action that legitimately changes couples.
 
 - **Conversation contract:**
+  - `mechanical_success` — the authored beat is explicitly a successful interaction.
   - `exchange_valid` — Heartbreaker Voice output validates (hidden-cast guard,
     tone enum, gossip-subject allowance).
   - `follow_up_menu_valid` — menu schema + exit invariant + enum values.
@@ -142,7 +146,7 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `npc_conversation_still_active` — after a rejected private chat, the original
     NPC-NPC conversation persists.
   - `npc_conversation_closed` — after a successful private chat, the original NPC-NPC
-    conversation was removed.
+    conversation was removed and an engine-owned `private_chat_success` closure was recorded.
   - `private_chat_rejection_witness_memory` — rejected private chats leave a witnessed memory
     tagged to the target.
 
@@ -155,16 +159,22 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `agent_traces_present` — at least one trace captured.
   - `no_agent_validation_retries` — no agent had to retry its commit.
 
-## Judge checks
+## Thread check
 
-`judge_checks:` is a list of `{id, criteria}` items. The judge sees the
-scenario goal, judge context, golden, prior-turn records, this turn's
-record (engine result + agent outputs + traces), and the criteria. It
-returns one of `pass`, `fail`, `cannot_determine` per check.
+Every scenario defines exactly one `thread_check:` at scenario scope. After the
+complete trace artifact is written, one judge call receives the scenario goal,
+judge context, every action and authored golden, every engine record, all agent
+traces, and the complete acceptance rubric. It returns one holistic `pass`,
+`fail`, or `cannot_determine` verdict for the scenario.
 
-Only use judge checks for qualities schemas cannot prove: voice fit,
-emotional continuity, faithfulness to the golden, beat specificity. Use
-deterministic checks for shape, contract, and engine state.
+Rubric criteria describe qualities schemas cannot prove across a sequence:
+voice consistency, emotional continuity, narrative arc, specificity, and
+faithfulness to the goldens and engine-owned outcomes. Use deterministic turn
+checks for shape, contracts, and game state. Never add per-turn semantic judge
+checks or multiple thread verdicts.
+
+The single thread check is blocking. A `fail` or `cannot_determine` affects
+scenario status.
 
 ## Running
 
@@ -172,7 +182,7 @@ deterministic checks for shape, contract, and engine state.
 # fast, free, deterministic mock mode
 make llm-eval-mock
 
-# live agents (gpt-5.4-mini, high reasoning) — slow and billed
+# live agents (GPT-5.6 Luna role profiles) — slow and billed
 make llm-eval-real
 
 # add the judge for voice / continuity / faithfulness
@@ -187,9 +197,10 @@ uv run python -m src.game.cli llm-eval \
 ```
 
 The output is `review-packet/.../index.html`. The report has a scenario
-filter, search, sort, an LLM-mode badge per scenario, and per-turn details
-including the golden, the actual agent output, model reasoning summaries,
-and judge findings. The CLI and report show the worker count; default is
+filter, search, sort, an LLM-mode badge, whole-thread findings and judge
+provenance, and per-turn detail including goldens, actual agent output, model
+profiles, prompt/input provenance, latency, tokens, and reasoning summaries.
+The CLI and report show the worker count; default is
 `min(number_of_scenarios, 8)`, and `--max-workers 1` gives a sequential run.
 
 ## When to add a scenario
@@ -198,7 +209,7 @@ and judge findings. The CLI and report show the worker count; default is
 - New action kind reachable from the player menu.
 - New ceremony type or new format twist.
 - A real playtest surfaced a beat that broke — lock the fix in here.
-- A judge check would catch a regression that pure schema cannot.
+- A whole-thread check would catch a visible regression that pure schema cannot.
 
 Do not add a scenario just to bump coverage. Each scenario costs real LLM
 spend in `--real-llm` mode; the bar is "would a regression here be visible

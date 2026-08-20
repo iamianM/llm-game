@@ -38,6 +38,13 @@ the affected action path, and visual inspection at representative desktop and
 mobile sizes. Golden screenshots are evidence for stable checkpoints, not a
 substitute for checking motion and interaction.
 
+`npm run golden` captures the current opening-loop portfolio gallery: casting,
+cinematic introductions, legal response choices, First Spark, the first
+challenge, the field report, and a knowledge profile. The generator clears its
+previous PNGs before each run so removed or renamed beats cannot survive as
+apparently current evidence. Later-run events remain the responsibility of the
+full-playthrough and focused contract suites.
+
 Related contracts:
 
 - [`intent-tree-dialogue.md`](intent-tree-dialogue.md) defines the conversational choice hierarchy.

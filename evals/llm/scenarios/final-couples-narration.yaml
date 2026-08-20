@@ -1,6 +1,15 @@
 id: final-couples-narration
 title: Final Couples Finale
 goal: Prove the narrator delivers a finale-length wrap that ties together knowledge, chemistry, honesty, banter, and audacity facets without re-scoring.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: finale_challenge_register
+      criteria: >
+        The narration feels like a season-closing challenge beat, connects at least three of the
+        recorded knowledge, chemistry, honesty, banter, and audacity facets to the player's pick,
+        and never changes the engine's classification or consequences.
 seed: 808
 initial_day: 6
 initial_phase: morning
@@ -73,23 +82,6 @@ turns:
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: finale_register
-        criteria: >
-          The narration reads like a closing scene — longer, slower
-          beats, season-spanning callback to one specific earlier
-          moment (a day name, a partner reveal, an earlier choice).
-          Status-print prose fails.
-      - id: facets_named
-        criteria: >
-          At least three of the five facets — knowledge, chemistry,
-          honesty, banter, audacity — are named (by word or clear
-          synonym) and tied to the player's specific pick.
-      - id: no_invented_outcome
-        criteria: >
-          The narrator does not invent a different classification,
-          different audience delta, or a relationship outcome not in
-          the engine record.
   - id: post-final-wrap-breath
     action: { kind: ambient, target_id: ambient_wait }
     golden: >
