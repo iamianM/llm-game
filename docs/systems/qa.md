@@ -42,8 +42,8 @@ L1-L5 and L8 (mock) are the current non-LLM gate. L6 is marked `llm` and opt-in.
 
 Opt-in:
 
-- `make llm-eval-real` — same scenarios with live OpenAI agents (`gpt-5.4-mini`, high reasoning, detailed summaries). Slow and billed.
-- `make llm-eval-real-judge` — adds the LLM judge for voice-fit / continuity / faithfulness checks. Even slower and more billed.
+- `make llm-eval-real` — same scenarios with the configured GPT-5.6 Luna role profiles (medium reasoning for voice; low for creative and utility work) and detailed reasoning summaries. Slow and billed.
+- `make llm-eval-real-judge` — adds one GPT-5.6 Luna judge call per complete scenario for voice-fit / continuity / faithfulness checks. Even slower and more billed.
 
 `make docs-health` is a fast structural guard for contract-sensitive changes. It is intentionally outside the default gate until the map is tuned enough to stay low-friction.
 
@@ -95,6 +95,7 @@ Every turn trace records:
 - mechanical result
 - narration or mock narration
 - LLM metadata when present
+- model role, reasoning effort, latency, token usage, prompt hash, and agent input when present
 - output state hash
 
 Trace artifacts are the common debugging currency for users and AI assistants.

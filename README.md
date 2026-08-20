@@ -6,6 +6,7 @@
   **A deterministic social simulation with an LLM-powered reality-show cast.**
 
   [Play the browser demo](https://paradise-hearts.vercel.app) ·
+  [Inspect a real Luna eval run](https://paradise-hearts.vercel.app/evals) ·
   [Explore the systems](docs/INDEX.md) ·
   [See the current plan](docs/current-plan.md)
 </div>
@@ -25,12 +26,12 @@ and background resort life.
 
 <table>
   <tr>
-    <td width="50%"><img src="web/tests/snapshots/golden/13-conversation.png" alt="Paradise Hearts browser conversation scene" /></td>
+    <td width="50%"><img src="docs/assets/portfolio/gameplay-intro-choices.png" alt="Paradise Hearts cinematic introduction choices" /></td>
     <td width="50%"><img src="docs/assets/portfolio/llm-eval-report.png" alt="Golden LLM evaluation review dashboard" /></td>
   </tr>
   <tr>
-    <td align="center"><sub>The browser renders the canonical Python state.</sub></td>
-    <td align="center"><sub>The eval harness turns agent behavior into inspectable evidence.</sub></td>
+    <td align="center"><sub>Current cinematic introductions rendered from canonical Python state.</sub></td>
+    <td align="center"><sub>Current mock pack: 24 scenarios, 86 turns, fully inspectable evidence.</sub></td>
   </tr>
 </table>
 
@@ -63,9 +64,11 @@ evidence-driven workflow instead of a memory exercise.
 
 Human-authored YAML scenarios run through the same `run_turn` function used by
 the browser and CLI. Fast deterministic and schema checks run first. Optional
-live-agent and judge passes add voice, continuity, and faithfulness review. Each
-run produces a searchable static packet containing the scenario's intent, raw
-outputs, checks, agent traces, and reasoning summaries.
+live-agent runs add one whole-thread judge pass per scenario for voice,
+continuity, and faithfulness review. Each run produces a searchable static
+dashboard containing the scenario's intent, raw outputs, checks, model and
+reasoning profiles, latency/token provenance, prompt hashes, inputs, and
+reasoning summaries.
 
 ### A CLI that is a playtest control plane
 
@@ -200,7 +203,8 @@ parallel, and writes a browser-readable report:
 uv run python -m src.game.cli llm-eval --out review-packet/llm-eval-mock
 ```
 
-The current pack contains **24 authored scenarios covering 86 turns**. A mock
+The current pack contains **24 authored scenarios covering 86 turns and 26
+whole-thread semantic checks**. A mock
 run validates the harness, schemas, invariants, and expected story beats without
 spending model tokens. With an API key, the same scenarios can exercise live
 agents and an optional LLM judge:

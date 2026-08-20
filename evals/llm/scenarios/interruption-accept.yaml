@@ -1,6 +1,15 @@
 id: interruption-accept
 title: Conversation Interruption (Accept)
 goal: Prove accepting an interruption closes the current chat, applies both relationship consequences, starts a new conversation with the interrupter, and voices the new exchange.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: interruption_handoff_grounded
+      criteria: >
+        The complete beat reads as an accepted interruption: Chloe's conversation ends, Liam
+        becomes the active speaker, and the new dialogue/menu acknowledge the social handoff
+        rather than treating it as a cold open, rejection, or continuation with Chloe.
 seed: 1920
 initial_location: pool
 live_resort_life: false
@@ -60,10 +69,3 @@ turns:
       - relationship_delta:liam:affection:3
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: accept_swap_grounded
-        criteria: >
-          The dialogue and menu should read like the player accepted Liam's
-          interruption and moved into Liam's conversation. Fail if Chloe
-          remains the active speaker or if Liam's arrival is treated as a
-          rejected or ignored interruption.

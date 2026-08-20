@@ -4,18 +4,69 @@ from __future__ import annotations
 
 import os
 from contextvars import ContextVar, Token
+from dataclasses import dataclass
+from hashlib import sha256
+from time import perf_counter
 from typing import Any
 
 from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
-# Allow overrides via env var for eval / perf comparisons without touching
-# the source tree. Default to gpt-5.4-mini at high reasoning + detailed
-# summaries (the values we tuned the prompts against).
-GAME_AGENT_MODEL = os.environ.get("LLM_GAME_MODEL", "gpt-5.4-mini")
-GAME_AGENT_REASONING_EFFORT = os.environ.get("LLM_GAME_REASONING_EFFORT", "high")
+# Role profiles make latency/quality experiments explicit without changing the
+# game context or maintaining a second agent path. A single base override still
+# provides a convenient whole-pack experiment.
+GAME_AGENT_MODEL = os.environ.get("LLM_GAME_MODEL", "gpt-5.6-luna")
+GAME_AGENT_REASONING_EFFORT = os.environ.get("LLM_GAME_REASONING_EFFORT", "low")
 GAME_AGENT_REASONING_SUMMARY = os.environ.get("LLM_GAME_REASONING_SUMMARY", "detailed")
 GAME_AGENT_RESPONSE_INCLUDE = ["reasoning.encrypted_content"]
+
+
+@dataclass(frozen=True)
+class AgentModelProfile:
+    """Model and reasoning defaults for one class of agent work."""
+
+    role: str
+    model: str
+    reasoning_effort: str
+
+
+def _profile(role: str, default_effort: str) -> AgentModelProfile:
+    env_role = role.upper()
+    return AgentModelProfile(
+        role=role,
+        model=os.environ.get(f"LLM_GAME_{env_role}_MODEL", GAME_AGENT_MODEL),
+        reasoning_effort=os.environ.get(
+            f"LLM_GAME_{env_role}_REASONING_EFFORT",
+            default_effort,
+        ),
+    )
+
+
+VOICE_PROFILE = _profile("voice", "medium")
+CREATIVE_PROFILE = _profile("creative", "low")
+UTILITY_PROFILE = _profile("utility", "low")
+ORCHESTRATOR_PROFILE = _profile("orchestrator", "medium")
+JUDGE_PROFILE = _profile("judge", "medium")
+
+_PROFILE_BY_AGENT = {
+    "heartbreaker_voice": VOICE_PROFILE,
+    "npc_greeter": VOICE_PROFILE,
+    "event_narrator": CREATIVE_PROFILE,
+    "background_dialogue": CREATIVE_PROFILE,
+    "contextual_options": UTILITY_PROFILE,
+    "conversation_curator": UTILITY_PROFILE,
+    "resort_orchestrator": ORCHESTRATOR_PROFILE,
+    "trait_generator": UTILITY_PROFILE,
+}
+
+
+def profile_for_agent(agent_name: str) -> AgentModelProfile:
+    """Return the shipped profile for a named game agent."""
+    return _PROFILE_BY_AGENT.get(
+        agent_name,
+        AgentModelProfile("default", GAME_AGENT_MODEL, GAME_AGENT_REASONING_EFFORT),
+    )
+
 
 # Bound per-request latency so one slow/hung model call can't freeze a whole
 # turn. The OpenAI SDK defaults to a 600s timeout and two automatic retries, so
@@ -47,6 +98,18 @@ class ReasoningSummary(BaseModel):
     texts: list[str] = Field(default_factory=list)
 
 
+class AgentUsage(BaseModel):
+    """Responses API token accounting captured without provider internals."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    total_tokens: int | None = None
+    cached_input_tokens: int | None = None
+    reasoning_tokens: int | None = None
+
+
 class AgentTrace(BaseModel):
     """One live agent call captured during a turn."""
 
@@ -57,11 +120,16 @@ class AgentTrace(BaseModel):
     reasoning_effort: str
     attempt: int
     prompt_path: str
+    prompt_sha256: str | None = None
+    input: Any = None
+    latency_ms: int | None = None
+    usage: AgentUsage | None = None
     response_id: str | None = None
     response_status: str | None = None
     response_details: str | None = None
     output_type: str | None = None
     output: Any = None
+    generation_error: str | None = None
     validation_error: str | None = None
     degraded: bool = False
     reasoning_summaries: list[ReasoningSummary] = Field(default_factory=list)
@@ -86,7 +154,9 @@ class AgentValidationError(AgentError):
     """Model output violated the agent's structural contract after all retries."""
 
 
-_active_traces: ContextVar[list[AgentTrace] | None] = ContextVar("active_agent_traces", default=None)
+_active_traces: ContextVar[list[AgentTrace] | None] = ContextVar(
+    "active_agent_traces", default=None
+)
 _active_attempt: ContextVar[int] = ContextVar("active_agent_attempt", default=1)
 
 
@@ -104,6 +174,11 @@ def reasoning_request_kwargs(effort: str | None = None) -> dict[str, Any]:
         },
         "include": GAME_AGENT_RESPONSE_INCLUDE,
     }
+
+
+def start_agent_call() -> float:
+    """Return a monotonic timestamp for trace latency accounting."""
+    return perf_counter()
 
 
 def begin_agent_trace_capture() -> Token[list[AgentTrace] | None]:
@@ -142,6 +217,10 @@ def record_agent_trace(
     prompt_path: str,
     response: object,
     output: object,
+    reasoning_effort: str = GAME_AGENT_REASONING_EFFORT,
+    prompt_text: str | None = None,
+    input_payload: object = None,
+    started_at: float | None = None,
 ) -> None:
     """Append one trace entry when turn-level capture is active."""
     traces = _active_traces.get()
@@ -152,13 +231,21 @@ def record_agent_trace(
         AgentTrace(
             agent_name=agent_name,
             model=model,
-            reasoning_effort=GAME_AGENT_REASONING_EFFORT,
+            reasoning_effort=reasoning_effort,
             attempt=_active_attempt.get(),
             prompt_path=prompt_path,
+            prompt_sha256=_prompt_hash(prompt_text),
+            input=_dump_output(input_payload),
+            latency_ms=(
+                round((perf_counter() - started_at) * 1000) if started_at is not None else None
+            ),
+            usage=_response_usage(response),
             response_id=_response_id(response),
             response_status=_response_status(response),
             response_details=_response_details(response),
-            output_type=type(output).__name__ if output is not None else _fallback_output_type(trace_output),
+            output_type=type(output).__name__
+            if output is not None
+            else _fallback_output_type(trace_output),
             output=_dump_output(trace_output),
             reasoning_summaries=extract_reasoning_summaries(response),
         )
@@ -181,6 +268,7 @@ def mark_agent_trace_validation_error(
     traces = _active_traces.get()
     if traces is None:
         return
+    profile = profile_for_agent(agent_name)
     for trace in reversed(traces):
         if trace.agent_name == agent_name and trace.attempt == attempt:
             trace.validation_error = str(error)
@@ -188,11 +276,45 @@ def mark_agent_trace_validation_error(
     traces.append(
         AgentTrace(
             agent_name=agent_name,
-            model=GAME_AGENT_MODEL,
-            reasoning_effort=GAME_AGENT_REASONING_EFFORT,
+            model=profile.model,
+            reasoning_effort=profile.reasoning_effort,
             attempt=attempt,
             prompt_path=prompt_path or "",
             validation_error=str(error),
+        )
+    )
+
+
+def mark_agent_trace_generation_error(
+    agent_name: str,
+    attempt: int,
+    error: Exception,
+    *,
+    prompt_path: str | None = None,
+) -> None:
+    """Attach a provider/generation failure without calling it validation.
+
+    Timeouts, connection failures, and incomplete responses are operational
+    generation failures. They remain visible in review packets, but they do not
+    fail the separate ``no_agent_validation_retries`` contract when a later
+    attempt succeeds with structurally valid output.
+    """
+    traces = _active_traces.get()
+    if traces is None:
+        return
+    profile = profile_for_agent(agent_name)
+    for trace in reversed(traces):
+        if trace.agent_name == agent_name and trace.attempt == attempt:
+            trace.generation_error = str(error)
+            return
+    traces.append(
+        AgentTrace(
+            agent_name=agent_name,
+            model=profile.model,
+            reasoning_effort=profile.reasoning_effort,
+            attempt=attempt,
+            prompt_path=prompt_path or "",
+            generation_error=str(error),
         )
     )
 
@@ -215,11 +337,12 @@ def record_agent_degradation(
     traces = _active_traces.get()
     if traces is None:
         return
+    profile = profile_for_agent(agent_name)
     traces.append(
         AgentTrace(
             agent_name=agent_name,
-            model=GAME_AGENT_MODEL,
-            reasoning_effort=GAME_AGENT_REASONING_EFFORT,
+            model=profile.model,
+            reasoning_effort=profile.reasoning_effort,
             attempt=0,
             prompt_path=prompt_path,
             output_type="degraded_to_mock",
@@ -325,6 +448,31 @@ def _fallback_output_type(output: object) -> str | None:
     if isinstance(output, str):
         return "raw_response_text"
     return "raw_response_output"
+
+
+def _prompt_hash(prompt_text: str | None) -> str | None:
+    if prompt_text is None:
+        return None
+    return sha256(prompt_text.encode("utf-8")).hexdigest()
+
+
+def _response_usage(response: object) -> AgentUsage | None:
+    usage = _get(response, "usage")
+    if usage is None:
+        return None
+    input_details = _get(usage, "input_tokens_details")
+    output_details = _get(usage, "output_tokens_details")
+    return AgentUsage(
+        input_tokens=_int_value(_get(usage, "input_tokens")),
+        output_tokens=_int_value(_get(usage, "output_tokens")),
+        total_tokens=_int_value(_get(usage, "total_tokens")),
+        cached_input_tokens=_int_value(_get(input_details, "cached_tokens")),
+        reasoning_tokens=_int_value(_get(output_details, "reasoning_tokens")),
+    )
+
+
+def _int_value(value: object) -> int | None:
+    return value if isinstance(value, int) else None
 
 
 def _get(value: object, key: str) -> object:

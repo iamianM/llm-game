@@ -18,8 +18,8 @@ from src.game.state.rng import SeededRng
 
 
 def test_h10_model_routing_constants() -> None:
-    assert GAME_AGENT_MODEL == "gpt-5.4-mini"
-    assert GAME_AGENT_REASONING_EFFORT == "high"
+    assert GAME_AGENT_MODEL == "gpt-5.6-luna"
+    assert GAME_AGENT_REASONING_EFFORT == "low"
     assert CONVERSATION_CURATOR_MODEL == GAME_AGENT_MODEL
     assert BACKGROUND_DIALOGUE_MODEL == GAME_AGENT_MODEL
     assert CONTEXTUAL_OPTIONS_MODEL == GAME_AGENT_MODEL
@@ -34,7 +34,9 @@ def test_apply_resort_update_async_accepts_parallel_background_callables() -> No
     update = ResortUpdate(
         conversation_starts=[
             NewConversation(participants=first_pair, location=Location.POOL, topic="pool gossip"),
-            NewConversation(participants=second_pair, location=Location.POOL, topic="resort strategy"),
+            NewConversation(
+                participants=second_pair, location=Location.POOL, topic="resort strategy"
+            ),
         ]
     )
 

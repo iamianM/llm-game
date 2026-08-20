@@ -14,13 +14,14 @@ from src.game.agents.event_narrator import (
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.ceremonies import CeremonyEvent
+from src.game.engine.flush_of_hearts import enter_flush_of_hearts
 from src.game.state.event_models import (
     Challenge,
     MinigameChoice,
     MinigameReveal,
     MinigameRound,
 )
-from src.game.state.models import Couple, Phase, new_game
+from src.game.state.models import Couple, Location, Phase, new_game
 
 
 @pytest.mark.llm
@@ -56,6 +57,47 @@ def test_event_narrator_validation_accepts_starting_cast_display_name() -> None:
             )
         ],
     )
+
+
+def test_event_narrator_validation_requires_every_structured_participant() -> None:
+    state = new_game(1)
+    with pytest.raises(ValueError, match="omitted participant"):
+        validate_event_narration(
+            EventNarration(prose="You and Chloe lock in at the Flame Deck."),
+            [
+                CeremonyEvent(
+                    kind="pairing",
+                    message="You and Chloe; Maya and Liam.",
+                    participant_ids=["player", "chloe", "maya", "liam"],
+                )
+            ],
+            state,
+        )
+
+
+def test_event_narrator_validation_rejects_off_scene_cast_name() -> None:
+    state = new_game(1)
+    state.location_id = state.heartbreakers[0].location_id = Location.KITCHEN
+    maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
+    maya.location_id = Location.KITCHEN
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    chloe.location_id = Location.POOL
+
+    with pytest.raises(ValueError, match="off-scene participant.*Chloe"):
+        validate_event_narration(
+            EventNarration(
+                prose="Maya turns down your proposal while Chloe catches your eye."
+            ),
+            [
+                CeremonyEvent(
+                    kind="pair_proposal",
+                    message="You asked Maya.",
+                    heartbreaker_id="maya",
+                    participant_ids=["player", "maya"],
+                )
+            ],
+            state,
+        )
 
 
 def test_event_narrator_validation_requires_word_bounded_participant_mentions() -> None:
@@ -150,6 +192,65 @@ def test_minigame_block_never_leaks_engine_tokens() -> None:
     assert "blake" not in block
     assert "Chloe (Chloe)" not in block
     assert "the player" not in block
+
+
+def test_lie_detector_block_translates_belief_into_dramatic_outcomes() -> None:
+    state = new_game(1)
+    state.pending_challenge = Challenge(
+        id="lie-detector-1",
+        day=4,
+        kind="lie_detector",
+        stat_tested="loyalty",
+        participants=["player", "chloe"],
+        rounds=[
+            MinigameRound(
+                index=0,
+                prompt_id="truth-round",
+                target_id="chloe",
+                stem="Do you still feel something for Maya?",
+                chosen_id="truth",
+                points=1,
+                choices=[
+                    MinigameChoice(id="truth", label="Truth", is_correct=True),
+                ],
+                reveals=[
+                    MinigameReveal(
+                        kind="truth_told",
+                        subject_id="chloe",
+                        payload={"belief": "suspected", "detected": 0},
+                    )
+                ],
+            ),
+            MinigameRound(
+                index=1,
+                prompt_id="lie-round",
+                target_id="chloe",
+                stem="Have you been authentic with the cast?",
+                chosen_id="lie",
+                points=2,
+                choices=[
+                    MinigameChoice(id="lie", label="Bald-faced: 'No.'"),
+                ],
+                reveals=[
+                    MinigameReveal(
+                        kind="lie_caught",
+                        subject_id="chloe",
+                        payload={"belief": "believed", "caught": 0},
+                    )
+                ],
+            ),
+        ],
+        current_round_index=2,
+        total_points=3,
+        classification="partial",
+        audience_delta=1,
+    )
+
+    block = _render_minigame_details(state)
+
+    assert "REQUIRED LIE DETECTOR OUTCOME" in block
+    assert "Chloe only suspected 'Truth'; this truth was not verified" in block
+    assert "Chloe believed \"Bald-faced: 'No.'\"; this lie was not caught" in block
 
 
 def _couples_quiz_partner_round() -> Challenge:
@@ -321,6 +422,35 @@ def test_event_narrator_context_names_player_couple() -> None:
 
     assert "Current player couple: Demo is coupled with Chloe" in rendered
     assert "(Chloe)" not in rendered
+
+
+def test_opening_pairing_context_requires_wider_cast_reaction() -> None:
+    state = new_game(1)
+
+    rendered = _render_context(
+        state,
+        [
+            CeremonyEvent(
+                kind="pairing",
+                message="You and Chloe form the opening couple.",
+                participant_ids=["player", "chloe"],
+            )
+        ],
+    )
+
+    assert "full active cast is present" in rendered
+    assert "reaction from someone beyond the newly formed player couple" in rendered
+
+
+def test_flush_arrival_context_keeps_original_partner_at_sunset_bay() -> None:
+    state = new_game(1)
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+    event = enter_flush_of_hearts(state)
+    rendered = _render_context(state, [event])
+
+    assert "Chloe remains at Sunset Bay" in rendered
+    assert "connection with Chloe as the distant stake" in rendered
+    assert "Never place Chloe physically beside you" in rendered
 
 
 def test_pairing_narrated_as_evening_after_clock_rolls_to_morning() -> None:

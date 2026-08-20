@@ -59,7 +59,7 @@ The previous Vercel AI SDK plan has been superseded. The current browser impleme
 - Pure engine tests with no LLM calls
 - Scenario/golden-run tests using fixed seeds and action scripts
 - Mock-LLM mode for most agent-adjacent tests
-- Golden LLM evals through the production `run_turn` path, with optional live-agent and judge-assisted review packets
+- Golden LLM evals through the production `run_turn` path, with optional live-agent runs and one whole-thread judge pass per scenario
 
 ### Architecture
 
@@ -157,7 +157,7 @@ Use `make test-llm` only for opt-in agent quality tests. LLM tests are excluded 
 Opt-in live agent checks (slow and billed) live behind:
 
 - `make llm-eval-real` — golden scenarios with live OpenAI agents.
-- `make llm-eval-real-judge` — adds the LLM judge for voice-fit / continuity / faithfulness.
+- `make llm-eval-real-judge` — adds one whole-thread LLM judge pass per scenario for voice-fit / continuity / faithfulness.
 
 Every feature that touches an agent boundary or a player-facing beat should ship with a scenario under `evals/llm/scenarios/` — see [docs/systems/llm-evals.md](docs/systems/llm-evals.md) and [evals/llm/scenarios/FORMAT.md](evals/llm/scenarios/FORMAT.md).
 

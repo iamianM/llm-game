@@ -7,13 +7,14 @@ from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import AgentValidationError
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
-from src.game.engine.memory import add_memory, create_memory
+from src.game.engine.memory import add_memory, add_memory_batch, create_memory
 from src.game.engine.option_defaults import (
     assemble_follow_up_menu,
     default_options,
     tone_reaction_options,
 )
 from src.game.engine.rules import MechanicalResult
+from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft
 from src.game.state.models import (
     Conversation,
     FollowUpOption,
@@ -155,6 +156,54 @@ def test_witnessed_memory_offered_when_flagged_gossip() -> None:
     options = default_options(state, result, exchange)
 
     assert any(option.intent_kind.startswith("share_gossip:") for option in options)
+
+
+def test_direct_gossip_respects_curator_spreadable_targets() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.player.memories.clear()
+    add_memory_batch(
+        state,
+        MemoryBatch(
+            memories=[
+                MemoryDraft(
+                    holder_id="player",
+                    subject_id="maya",
+                    source="direct",
+                    emotional_weight=6,
+                    tags=["gossip"],
+                    content="Maya admitted the pressure was getting to her.",
+                ),
+                MemoryDraft(
+                    holder_id="chloe",
+                    subject_id="player",
+                    source="direct",
+                    emotional_weight=4,
+                    tags=["supportive"],
+                    content="The player listened carefully.",
+                ),
+            ],
+            gossip_seeds=[
+                GossipSeed(
+                    holder_id="player",
+                    subject_id="maya",
+                    gist="Maya admitted the pressure was getting to her.",
+                    spreadable_to=["jordan"],
+                    emotional_weight=6,
+                )
+            ],
+        ),
+        day=1,
+        turn=1,
+    )
+
+    chloe_options = default_options(state, result, exchange)
+    assert all(not option.intent_kind.startswith("share_gossip:") for option in chloe_options)
+
+    jordan_result = result.model_copy(
+        update={"action": result.action.model_copy(update={"target_id": "jordan"})}
+    )
+    jordan_options = default_options(state, jordan_result, exchange)
+    assert any(option.intent_kind.startswith("share_gossip:") for option in jordan_options)
 
 
 def test_share_gossip_suppressed_after_already_shared_with_target() -> None:

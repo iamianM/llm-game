@@ -1,6 +1,15 @@
 id: npc-proposal-decline
 title: NPC Proposal Harsh Decline
 goal: Prove an NPC-initiated Heart Swap proposal can be declined without changing couples, while preserving the exact relationship and audience consequences.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: proposal_decline_arc_faithful
+      criteria: >
+        Maya's first beat remains a pending ask and the response beat clearly declines it without
+        forming a new couple. The narration must preserve the engine-owned consequences and not
+        pre-resolve, accept, or leave the proposal pending.
 seed: 4
 initial_location: pool
 live_resort_life: false
@@ -49,12 +58,6 @@ turns:
       - ceremony_event_present:npc_proposal_incoming
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: pending_not_resolved
-        criteria: >
-          The narration treats Maya's proposal as a pending ask awaiting the
-          player's response. Fail if it says the proposal was accepted,
-          declined, or already changed the couples.
   - id: decline-maya-harshly
     action:
       kind: npc_proposal_response
@@ -77,9 +80,3 @@ turns:
       - audience_delta:-1
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: harsh_decline_faithful
-        criteria: >
-          The narration says the player declined Maya and does not form a new
-          couple. Fail if it treats the proposal as accepted, leaves it
-          pending, or swaps any partners.

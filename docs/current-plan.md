@@ -48,6 +48,25 @@ responsible boundary.
 and a clean mock pack. If a live key is unavailable, harness changes can ship
 only with clearly stated mock-only evidence.
 
+### GPT-5.6 Prompt Simplification (Claude-Owned)
+
+**Problem:** The shipped model profiles now use GPT-5.6 Luna, but several
+prompts still reflect older-model scaffolding: repeated constraints, large
+positive/negative example sets, and two contradictory in-world vocabulary
+lines that identify "Flush of Hearts" and then prohibit the same phrase.
+
+**Smallest slice:** Claude simplifies one prompt family at a time, beginning
+with Heartbreaker Voice, Event Narrator, Contextual Options, Conversation
+Curator, and NPC Greeter. Keep schemas, engine boundaries, and the context
+builders unchanged. State each instruction once, remove repeated examples only
+after the corresponding thread scenario exists, and correct the vocabulary
+rule to require "Flush of Hearts" while prohibiting the external franchise term.
+
+**Evidence:** Run the focused whole-thread scenario at the shipped reasoning
+effort and one adjacent effort, compare pass/fail findings, validation retries,
+latency, and tokens in the dashboard, then run the full mock pack. Prompt files
+remain Claude-owned under `ENGINEERING.md` R17.
+
 ### Day 1 Through Day 3 Browser Polish
 
 **Problem:** The engine exposes more social context than a first-time browser

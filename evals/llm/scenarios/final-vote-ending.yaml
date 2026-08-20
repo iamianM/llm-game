@@ -1,6 +1,15 @@
 id: final-vote-ending
 title: Final Vote Finale
 goal: Prove the finale narration names the deterministic winning couple and the player's actual outcome — no rewrites, no consolation prizes, no invented twists.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: final_vote_story_faithful
+      criteria: >
+        The finale carries emotional and visual weight while preserving the recorded winner,
+        runner-up order, and player outcome exactly. Fail if it invents a tie, consolation prize,
+        alternate placement, or different winning couple.
 seed: 909
 initial_day: 6
 initial_phase: evening
@@ -66,17 +75,3 @@ turns:
       - event_narration_valid
       - run_outcome_present
       - agent_traces_present
-    judge_checks:
-      - id: final_outcome_faithful
-        criteria: >
-          The narration matches the recorded final_vote event exactly —
-          same winning couple, same runner-up positions, same player
-          outcome. Fail if the prose names a different winner, awards the
-          player a placement they did not earn, or invents a tie / twist
-          ending.
-      - id: finale_tone
-        criteria: >
-          The prose carries finale weight — at least one specific moment
-          (a kiss, a hand, a held look, a camera move) for the player and
-          Chloe and for the winning couple if they aren't the same.
-          Fail if the narration reads like a vote-tally summary.

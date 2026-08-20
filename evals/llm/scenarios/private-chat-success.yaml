@@ -1,6 +1,15 @@
 id: private-chat-success
 title: Private Chat (Success)
 goal: Prove a successful private chat cleanly closes the NPC-NPC conversation and hands the player a normal first exchange with the Heartbreaker — without the LLM choosing the outcome.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: private_chat_success_grounded
+      criteria: >
+        Maya acknowledges leaving another conversation, remains bright and quick with nerves
+        under her bravado, and offers concrete continuations of the new private moment plus a
+        graceful exit. The beat must not read as a context-free greeting.
 seed: 2
 initial_location: pool
 live_resort_life: false
@@ -57,17 +66,3 @@ turns:
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: private_chat_acknowledged
-        criteria: >
-          Maya's reply acknowledges (directly or indirectly) that the player
-          just invited her away from another chat. Fail if she behaves as if
-          this is a cold open with no prior context.
-      - id: maya_voice_fit
-        criteria: >
-          Maya sounds bright, quick, and a little nervy under the bravado.
-          Fail if she becomes a soft sweetheart or a cold strategist.
-      - id: followups_playable
-        criteria: >
-          The follow-up menu offers concrete continuations of this private
-          moment (escalate, banter back, ease off gracefully) and one exit.

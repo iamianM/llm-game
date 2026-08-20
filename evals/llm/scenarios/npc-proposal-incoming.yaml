@@ -1,6 +1,15 @@
 id: npc-proposal-incoming
 title: Incoming NPC Proposal And Accept
 goal: Prove the engine can surface an NPC-initiated Heart Swap proposal as a pending ask, then accept it with the exact engine-owned couple change and relationship deltas.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: proposal_accept_arc_faithful
+      criteria: >
+        Maya's first beat remains an unresolved ask and the response beat clearly accepts it,
+        landing on the recorded player/Maya couple and relationship consequences without
+        inventing another partner or leaving the proposal pending.
 seed: 4
 initial_location: pool
 live_resort_life: false
@@ -49,12 +58,6 @@ turns:
       - ceremony_event_present:npc_proposal_incoming
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: pending_not_resolved
-        criteria: >
-          The narration treats Maya's proposal as a pending ask awaiting the
-          player's response. Fail if it says the proposal was accepted,
-          declined, or already changed the couples.
   - id: accept-maya
     action:
       kind: npc_proposal_response
@@ -77,9 +80,3 @@ turns:
       - audience_delta:0
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: accepted_response_faithful
-        criteria: >
-          The narration says the player accepted Maya's proposal and treats
-          player/Maya as the resulting couple. Fail if it leaves the ask
-          pending, says the player declined, or invents a different partner.

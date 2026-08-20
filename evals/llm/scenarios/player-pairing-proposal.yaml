@@ -1,6 +1,15 @@
 id: player-pair-proposal
 title: Player Heart Swap Proposal
 goal: Prove a player-initiated Heart Swap proposal closes the conversation cleanly, records memories, and narrates only the deterministic answer — without the LLM choosing acceptance or invented couples.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: player_proposal_arc_faithful
+      criteria: >
+        The flirtation develops into a proposal without pre-deciding the outcome; narration and
+        memories then preserve the exact engine result, Maya's visible reaction, and any couple
+        change. Follow-ups and memories stay specific to this thread rather than generic.
 seed: 808
 initial_location: kitchen
 live_resort_life: false
@@ -51,16 +60,6 @@ turns:
       - exactly_one_exit
       - conversation_active
       - agent_traces_present
-    judge_checks:
-      - id: maya_charge_specific
-        criteria: >
-          Maya treats the moment as real flirtation, not friendship or
-          gossip. Fail if her line ignores the eye contact, becomes
-          sisterly, or pre-decides any proposal outcome.
-      - id: followups_playable
-        criteria: >
-          Follow-up menu offers concrete escalate / ease off / exit
-          choices for this exact beat.
   - id: propose-to-maya
     action:
       kind: propose_pair
@@ -77,15 +76,3 @@ turns:
       - conversation_closed
       - curator_memories
       - agent_traces_present
-    judge_checks:
-      - id: proposal_result_faithful
-        criteria: >
-          The narration and memories match the recorded proposal outcome
-          exactly. The narrator does not flip the answer, invent a
-          completed couple change, or treat an npc_proposal_incoming as
-          anything other than a pending ask.
-      - id: memory_specific
-        criteria: >
-          Memories name the proposal action and Maya's reaction in
-          specifics, not as a generic "I asked Maya". Fail if either side's
-          memory is a vague placeholder.

@@ -12,7 +12,6 @@ Orchestrator; memory extraction comes from the Curator.
 from __future__ import annotations
 
 import asyncio
-import os
 import re
 from collections.abc import Callable
 from functools import cached_property
@@ -24,25 +23,22 @@ from pydantic import BaseModel, ConfigDict
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    CREATIVE_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.state.models import GameState, Gender, NPCNPCConversation
 
-BACKGROUND_DIALOGUE_MODEL = GAME_AGENT_MODEL
-# Background NPC-NPC chitchat is texture, not a player-facing scene. Default
-# to low reasoning effort so multiple parallel bg calls per turn don't add
-# 30s of latency.
-BACKGROUND_DIALOGUE_REASONING_EFFORT = os.environ.get(
-    "LLM_BACKGROUND_DIALOGUE_REASONING_EFFORT", "low"
-)
+BACKGROUND_DIALOGUE_MODEL = CREATIVE_PROFILE.model
+BACKGROUND_DIALOGUE_REASONING_EFFORT = CREATIVE_PROFILE.reasoning_effort
 BACKGROUND_DIALOGUE_PROMPT = "src/game/agents/prompts/background_dialogue.md"
 _BACKGROUND_DIALOGUE_PROMPT_FILE = Path(__file__).parent / "prompts" / "background_dialogue.md"
 
@@ -103,7 +99,7 @@ class OpenAIBackgroundDialogue:
                 try:
                     exchange = self._generate_exchange(context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
+                    mark_agent_trace_generation_error("background_dialogue", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 1:
                         raise AgentGenerationError(str(exc)) from exc
@@ -122,9 +118,11 @@ class OpenAIBackgroundDialogue:
 
     def _generate_exchange(self, rendered_context: str) -> BackgroundExchange:
         """Request one parsed BackgroundExchange from the model."""
+        instructions = _BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_BACKGROUND_DIALOGUE_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=BackgroundExchange,
             **reasoning_request_kwargs(effort=BACKGROUND_DIALOGUE_REASONING_EFFORT),
@@ -136,6 +134,10 @@ class OpenAIBackgroundDialogue:
             prompt_path=BACKGROUND_DIALOGUE_PROMPT,
             response=response,
             output=exchange,
+            reasoning_effort=BACKGROUND_DIALOGUE_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if exchange is None:
             raise ValueError("Background Dialogue returned no parsed BackgroundExchange")

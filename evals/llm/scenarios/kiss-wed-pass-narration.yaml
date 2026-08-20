@@ -1,6 +1,14 @@
 id: kiss-wed-pass-narration
 title: Kiss Wed Pass Allocation
 goal: Prove the narrator names each of the three allocations specifically and dramatises the pass pick.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: allocation_story_faithful
+      criteria: >
+        The wrap names the recorded kiss, wed, and pass choices, makes the rival pass a dramatic
+        but not cruel power move, and does not replace any pick or invent a different outcome.
 seed: 511
 initial_day: 5
 initial_phase: morning
@@ -65,15 +73,3 @@ turns:
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: all_three_picks_named
-        criteria: >
-          The prose names Maya as the kiss, Chloe as the wed, and
-          Blake as the pass by name. Generic "you made your picks"
-          fails.
-      - id: callout_dramatised
-        criteria: >
-          The pass on Blake (a rival) is dramatised as a power move with
-          a cast reaction or audience read. The narrator does not
-          paint it as cruel; the engine treats this as a positive
-          play.

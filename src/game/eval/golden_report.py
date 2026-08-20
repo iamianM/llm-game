@@ -14,12 +14,15 @@ def render_golden_eval_html(run: GoldenEvalRun) -> str:
     """Render a self-contained, reviewer-focused golden eval report."""
     body = (
         _hero(run)
+        + "<div class='dashboard-shell'><aside class='scenario-rail'>"
         + _toolbar()
         + _scenario_nav(run)
+        + "</aside><div class='scenario-workspace'>"
         + "".join(
             _scenario_block(index + 1, scenario, llm_mode=run.llm_mode)
             for index, scenario in enumerate(run.scenarios)
         )
+        + "</div></div>"
         + report_script()
     )
     return _page("Golden LLM Eval", body)
@@ -30,12 +33,27 @@ def _page(title: str, body: str) -> str:
         "<!doctype html><html><head><meta charset='utf-8'>"
         "<meta name='viewport' content='width=device-width, initial-scale=1'>"
         f"<title>{escape(title)}</title><style>{report_css()}</style></head>"
-        f"<body><main><h1>{escape(title)}</h1>{body}</main></body></html>"
+        f"<body><main>{body}</main></body></html>"
     )
 
 
 def _hero(run: GoldenEvalRun) -> str:
     total_turns = sum(len(scenario.turns) for scenario in run.scenarios)
+    traces = [
+        trace
+        for scenario in run.scenarios
+        for turn in scenario.turns
+        for trace in (turn.record or {}).get("agent_traces", [])
+        if isinstance(trace, dict)
+    ]
+    latencies = sorted(
+        int(trace["latency_ms"]) for trace in traces if isinstance(trace.get("latency_ms"), int)
+    )
+    total_tokens = sum(
+        int(usage.get("total_tokens", 0))
+        for trace in traces
+        if isinstance((usage := trace.get("usage")), dict)
+    )
     failed_turns = sum(
         1
         for scenario in run.scenarios
@@ -45,10 +63,15 @@ def _hero(run: GoldenEvalRun) -> str:
     return (
         "<section class='hero'>"
         "<div>"
-        "<p class='eyebrow'>Review packet</p>"
+        "<p class='eyebrow'>Paradise Hearts / evaluation run</p>"
         "<h2>Golden LLM Eval</h2>"
-        "<p class='lede'>Human-readable scenario results, goldens, checks, dialogue, memories, "
-        "event narration, judge findings, and model reasoning summaries.</p>"
+        "<p class='lede'>Thread-level narrative review through the same deterministic engine path used by the game.</p>"
+        "<div class='run-summary'>"
+        f"{_status_summary('pass', run.passed, 'passed')}"
+        f"{_status_summary('fail', run.failed, 'failed')}"
+        f"{_status_summary('cannot_determine', run.cannot_determine, 'needs review')}"
+        f"<span class='summary-total'>{run.scenario_count} scenarios · {total_turns} turns</span>"
+        "</div>"
         "</div>"
         "<div class='metrics'>"
         f"{_metric('Mode', run.llm_mode)}"
@@ -56,9 +79,11 @@ def _hero(run: GoldenEvalRun) -> str:
         f"{_metric('Scenarios', run.scenario_count)}"
         f"{_metric('Workers', run.worker_count)}"
         f"{_metric('Turns', total_turns)}"
-        f"{_metric('Passed', run.passed, 'pass')}"
-        f"{_metric('Failed', run.failed, 'fail')}"
-        f"{_metric('Failed turns', failed_turns, 'fail' if failed_turns else 'pass')}"
+        f"{_metric('Agent calls', len(traces))}"
+        f"{_metric('P50 latency', _percentile_label(latencies, 0.50))}"
+        f"{_metric('P95 latency', _percentile_label(latencies, 0.95))}"
+        f"{_metric('Tokens', f'{total_tokens:,}')}"
+        f"{_metric('Failed turns', failed_turns)}"
         "</div></section>"
     )
 
@@ -66,22 +91,21 @@ def _hero(run: GoldenEvalRun) -> str:
 def _toolbar() -> str:
     return (
         "<section class='toolbar'>"
+        "<div class='rail-heading'><b>Scenarios</b><span>Select a thread to inspect</span></div>"
+        "<input id='search' type='search' placeholder='Search scenarios'>"
         "<div class='filters' aria-label='Status filters'>"
         "<button data-filter='all' class='active'>All</button>"
         "<button data-filter='fail'>Fail</button>"
-        "<button data-filter='cannot_determine'>Cannot determine</button>"
+        "<button data-filter='cannot_determine'>Review</button>"
         "<button data-filter='pass'>Pass</button>"
         "</div>"
-        "<input id='search' type='search' placeholder='Search scenario, turn, check, NPC, intent...'>"
-        "<div class='filters'>"
+        "<div class='rail-tools'>"
         "<select id='sortMode' aria-label='Sort scenarios'>"
         "<option value='default'>Original order</option>"
         "<option value='status'>Failures first</option>"
         "<option value='title'>Title</option>"
         "<option value='turns'>Most turns</option>"
         "</select>"
-        "<button id='expandFailures'>Open failures</button>"
-        "<button id='collapseAll'>Collapse all</button>"
         "</div>"
         "</section>"
     )
@@ -94,7 +118,9 @@ def _scenario_nav(run: GoldenEvalRun) -> str:
         f"data-index='{index}' data-title='{escape(scenario.title.lower())}' "
         f"data-turns='{len(scenario.turns)}' data-failures='{len(_failed_checks(scenario))}' "
         f"href='#{escape(scenario.id)}'>"
-        f"<span>{escape(scenario.title)}</span>{_badge(scenario.status)}</a>"
+        f"<span class='status-dot {escape(scenario.status)}'></span>"
+        f"<span class='nav-copy'><b>{escape(scenario.title)}</b>"
+        f"<small>{len(scenario.turns)} turns · {len(_failed_checks(scenario))} failures</small></span></a>"
         for index, scenario in enumerate(run.scenarios, start=1)
     )
     return f"<nav class='scenario-nav'>{links}</nav>"
@@ -102,7 +128,9 @@ def _scenario_nav(run: GoldenEvalRun) -> str:
 
 def _scenario_block(index: int, scenario: GoldenScenarioResult, *, llm_mode: str) -> str:
     failed = _failed_checks(scenario)
-    checks = sorted({check.id for turn in scenario.turns for check in turn.checks})
+    checks = {check.id for turn in scenario.turns for check in turn.checks}
+    checks.add(scenario.thread_expectation.id)
+    checks = sorted(checks)
     checked = ", ".join(checks)
     turns = "".join(_turn_block(turn) for turn in scenario.turns)
     return (
@@ -110,16 +138,17 @@ def _scenario_block(index: int, scenario: GoldenScenarioResult, *, llm_mode: str
         f"data-index='{index}' data-title='{escape(scenario.title.lower())}' "
         f"data-turns='{len(scenario.turns)}' data-failures='{len(failed)}'>"
         "<div class='scenario-head'>"
-        f"<div><p class='eyebrow'>Scenario {index}</p><h2>{escape(scenario.title)}</h2>"
+        f"<div><p class='eyebrow'>Scenario {index} / {escape(scenario.id)}</p><h2>{escape(scenario.title)}</h2>"
         f"<p>{escape(scenario.goal)}</p></div>"
         f"<div class='scenario-head-tags'>{_mode_badge(llm_mode)}{_badge(scenario.status)}</div>"
         "</div>"
         "<div class='scenario-meta'>"
-        f"<span>{len(scenario.turns)} turns</span>"
-        f"<span>{len(failed)} failing checks</span>"
-        f"<span title='{escape(checked)}'>Checks: {escape(checked or 'none')}</span>"
+        f"<span><b>{len(scenario.turns)}</b> turns</span>"
+        f"<span><b>{len(failed)}</b> failing checks</span>"
+        f"<span title='{escape(checked)}'><b>Checks</b> {escape(checked or 'none')}</span>"
         "</div>"
         f"{_failure_summary(failed)}"
+        f"{_thread_review(scenario)}"
         f"<div class='turn-list'>{turns}</div>"
         "</section>"
     )
@@ -133,7 +162,7 @@ def _mode_badge(llm_mode: str) -> str:
         else "Mock mode: deterministic stand-in output; live-only checks auto-pass and are clearly labeled."
     )
     return (
-        f"<span class='badge mode-{escape(llm_mode)}' title='{escape(tooltip)}'>"
+        f"<span class='mode-label mode-{escape(llm_mode)}' title='{escape(tooltip)}'>"
         f"{escape(label)}</span>"
     )
 
@@ -158,15 +187,6 @@ def _turn_block(turn: GoldenTurnResult) -> str:
 
 
 def _golden_contract(turn: GoldenTurnResult) -> str:
-    judge_items = "".join(
-        f"<li><b>{escape(check.id)}</b>: {escape(check.criteria)}</li>"
-        for check in turn.judge_checks
-    )
-    judges = (
-        f"<div class='contract-card'><b>Judge checks</b><ul class='compact'>{judge_items}</ul></div>"
-        if judge_items
-        else ""
-    )
     return (
         "<section><h3>Golden Tools / Expected Response</h3>"
         "<div class='golden-grid'>"
@@ -174,8 +194,54 @@ def _golden_contract(turn: GoldenTurnResult) -> str:
         f"{expected_agent_tools(turn.action, turn.expected_tools)}</div>"
         f"{_arrangements(turn.arrangements)}"
         f"<div class='contract-card'><b>Expected response</b><p class='golden'>{escape((turn.golden or '').strip())}</p></div>"
-        f"{judges}"
         "</div></section>"
+    )
+
+
+def _thread_review(scenario: GoldenScenarioResult) -> str:
+    expectation = scenario.thread_expectation
+    if scenario.thread_check is None:
+        verdict = (
+            "<article class='thread-check pending'>"
+            f"<div><span>pending</span><b>{escape(expectation.id)}</b>"
+            f"<small>{escape(expectation.severity)}</small></div>"
+            "<p>Judge not run.</p></article>"
+        )
+    else:
+        verdict = _check_row(
+            scenario.thread_check.model_dump(mode="json"),
+            css_class="thread-check",
+        )
+    rubric = "".join(
+        f"<li><b>{escape(criterion.id)}</b><span>{escape(criterion.criteria)}</span></li>"
+        for criterion in expectation.criteria
+    )
+    trace = scenario.judge_trace
+    metadata = ""
+    if trace is not None:
+        usage = " / ".join(
+            item
+            for item in (
+                f"{trace.total_tokens:,} tokens" if trace.total_tokens is not None else "",
+                f"{trace.latency_ms:,} ms",
+                trace.response_id or "",
+            )
+            if item
+        )
+        reasoning = "".join(f"<p>{escape(item)}</p>" for item in trace.reasoning_summaries)
+        metadata = (
+            "<div class='judge-meta'>"
+            f"<b>{escape(trace.model)}</b><span>{escape(trace.reasoning_effort)} reasoning</span>"
+            f"<span>{escape(usage)}</span>"
+            f"<details><summary>Judge reasoning</summary>{reasoning or '<p>No summary returned.</p>'}</details>"
+            "</div>"
+        )
+    return (
+        "<section class='thread-review'><div class='section-heading'>"
+        "<div><p class='eyebrow'>Whole scenario</p><h3>Thread evaluation</h3></div>"
+        f"{metadata}</div><div class='thread-check-grid'>{verdict}</div>"
+        "<details class='thread-rubric'><summary>Acceptance rubric · "
+        f"{len(expectation.criteria)} criteria</summary><ol>{rubric}</ol></details></section>"
     )
 
 
@@ -194,7 +260,9 @@ def _arrangements(raw: dict[str, Any]) -> str:
         )
     active = raw.get("active_conversation")
     if isinstance(active, dict):
-        rows.append(f"<li><b>active conversation</b>: {escape(active.get('target_id', 'unknown'))}</li>")
+        rows.append(
+            f"<li><b>active conversation</b>: {escape(active.get('target_id', 'unknown'))}</li>"
+        )
         pending = active.get("pending_interruption")
         if isinstance(pending, dict):
             rows.append(
@@ -257,7 +325,9 @@ def _relationship_deltas(raw: object) -> str:
     for target, delta in raw.items():
         if not isinstance(delta, dict):
             continue
-        changed = [f"{key} {value:+d}" for key, value in delta.items() if isinstance(value, int) and value]
+        changed = [
+            f"{key} {value:+d}" for key, value in delta.items() if isinstance(value, int) and value
+        ]
         if changed:
             rows.append(f"<li><b>{escape(target)}</b>: {escape(', '.join(changed))}</li>")
     return f"<ul class='compact'>{''.join(rows)}</ul>" if rows else ""
@@ -336,7 +406,9 @@ def _memories(raw: object) -> str:
                 holder = memory.get("holder_id", "holder")
                 subject = memory.get("subject_id", "subject")
                 content = memory.get("content", "")
-                items.append(f"<li><b>{escape(holder)} -> {escape(subject)}</b>: {escape(content)}</li>")
+                items.append(
+                    f"<li><b>{escape(holder)} -> {escape(subject)}</b>: {escape(content)}</li>"
+                )
     return f"<div class='fact-card'><b>Memories</b><ul class='compact'>{''.join(items)}</ul></div>"
 
 
@@ -359,13 +431,14 @@ def _resort_changes(raw: object) -> str:
     return f"<p class='muted resort-summary'>Sunset Bay life: {escape('; '.join(parts))}</p>"
 
 
-def _check_row(check: dict[str, Any]) -> str:
+def _check_row(check: dict[str, Any], *, css_class: str = "check") -> str:
     result = str(check.get("result") or "unknown")
     evidence = check.get("evidence")
     evidence_html = f"<p class='evidence'>{escape(evidence)}</p>" if evidence else ""
     return (
-        f"<article class='check {escape(result)}'>"
-        f"<span>{escape(result)}</span><b>{escape(check.get('id', 'check'))}</b>"
+        f"<article class='{escape(css_class)} {escape(result)}'>"
+        f"<div><span>{escape(result)}</span><b>{escape(check.get('id', 'check'))}</b>"
+        f"<small>{escape(check.get('severity', 'blocking'))}</small></div>"
         f"<p>{escape(check.get('reason', ''))}</p>"
         f"{evidence_html}"
         "</article>"
@@ -388,11 +461,23 @@ def _failed_checks(scenario: GoldenScenarioResult) -> list[dict[str, str]]:
         for check in turn.checks:
             if check.result == "fail":
                 failed.append({"turn": turn.id, "check": check.id, "reason": check.reason})
+    if scenario.thread_check is not None and scenario.thread_check.result == "fail":
+        failed.append(
+            {
+                "turn": "thread",
+                "check": scenario.thread_check.id,
+                "reason": scenario.thread_check.reason,
+            }
+        )
     return failed
 
 
 def _error(value: str | None) -> str:
-    return f"<div class='failure-box'><b>Runtime error</b><p>{escape(value)}</p></div>" if value else ""
+    return (
+        f"<div class='failure-box'><b>Runtime error</b><p>{escape(value)}</p></div>"
+        if value
+        else ""
+    )
 
 
 def _action_label(action: dict[str, Any]) -> str:
@@ -420,7 +505,17 @@ def _metric(label: str, value: object, status: str = "") -> str:
 
 
 def _badge(status: str) -> str:
-    return f"<span class='badge {escape(status)}'>{escape(status.replace('_', ' '))}</span>"
+    return (
+        f"<span class='status-label {escape(status)}'><span class='status-dot {escape(status)}'></span>"
+        f"{escape(status.replace('_', ' '))}</span>"
+    )
+
+
+def _status_summary(status: str, value: int, label: str) -> str:
+    return (
+        f"<span class='summary-item'><span class='status-dot {escape(status)}'></span>"
+        f"<b>{value}</b> {escape(label)}</span>"
+    )
 
 
 def _yes_no(value: object) -> str:
@@ -429,3 +524,10 @@ def _yes_no(value: object) -> str:
     if value is False:
         return "no"
     return "n/a"
+
+
+def _percentile_label(values: list[int], percentile: float) -> str:
+    if not values:
+        return "—"
+    index = min(round((len(values) - 1) * percentile), len(values) - 1)
+    return f"{values[index]:,} ms"

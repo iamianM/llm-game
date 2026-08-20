@@ -1,6 +1,15 @@
 id: challenge-result-narration
 title: Challenge Result Narration
 goal: Prove the Event Narrator makes a deterministic Compatibility Quiz result feel like a moment, without changing who scored what.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: challenge_story_faithful
+      criteria: >
+        The complete Compatibility Quiz sequence culminates in narration faithful to the
+        recorded classification and relationship/audience direction, names a real question or
+        answer from the rounds, and includes a specific cast reaction without inventing rules.
 seed: 505
 initial_phase: intros
 live_resort_life: false
@@ -93,19 +102,3 @@ turns:
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: challenge_outcome_faithful
-        criteria: >
-          The prose matches the resolved Compatibility Quiz classification
-          (success, partial, or failure) and the recorded audience_delta /
-          relationship deltas direction. No invented scoring rule, prize,
-          or different relationship result.
-      - id: minigame_reveal_named
-        criteria: >
-          The prose names at least one specific question or answer that
-          actually appeared in the rounds (trait_key or correct_value).
-          Generic "the quiz ended" prose fails this check.
-      - id: resort_reaction_specific
-        criteria: >
-          The prose includes a specific cast reaction beat — laughter,
-          side-eye, a one-line comment — not a flat status print.

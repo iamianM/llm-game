@@ -29,6 +29,7 @@ def proposal_event(state: GameState, result: MechanicalResult) -> CeremonyEvent 
             f"asked {display_name(state, proposal.target_id)}."
         ),
         heartbreaker_id=heartbreaker_id,
+        participant_ids=[proposal.proposer_id, proposal.target_id],
     )
 
 

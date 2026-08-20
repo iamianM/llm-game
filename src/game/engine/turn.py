@@ -82,8 +82,10 @@ from src.game.state.flush import FlushDecision
 from src.game.state.models import (
     AudienceSnapshot,
     Conversation,
+    ConversationClosure,
     FollowUpMenu,
     GameState,
+    Location,
     MemoryBatch,
     Phase,
     RunOutcome,
@@ -112,6 +114,7 @@ class TurnResult(BaseModel):
     auto_advance: bool = False
     arrival_rolls: list[ArrivalRoll] = Field(default_factory=list)
     agent_traces: list[AgentTrace] = Field(default_factory=list)
+    conversation_closures: list[ConversationClosure] = Field(default_factory=list)
 
 
 def _voiced_exchange(
@@ -208,6 +211,7 @@ def run_turn(
     if action.kind is not ActionKind.CHALLENGE_RESPONSE:
         _clear_resolved_challenge_after_wrap(state)
     pre_curator_batches: list[MemoryBatch] = []
+    conversation_closures: list[ConversationClosure] = []
     private_chat_attempt: PrivateChatAttempt | None = None
     exchange: Exchange | None = None
     audience_snapshot: AudienceSnapshot | None = None
@@ -216,6 +220,13 @@ def run_turn(
         if blocked is not None:
             private_chat_attempt = attempt_private_chat(state, action.target_id, rng)
             if private_chat_attempt.success:
+                conversation_closures.append(
+                    ConversationClosure(
+                        conversation_id=blocked.id,
+                        participant_ids=list(blocked.participants),
+                        reason="private_chat_success",
+                    )
+                )
                 batch = curate_npc_conversation(state, blocked, conversation_curator)
                 pre_curator_batches.append(batch)
                 state.npc_conversations = [
@@ -277,6 +288,10 @@ def run_turn(
             and state.pending_gather.kind == "ceremony"
             and state.pending_gather.event_id.startswith("pairing")
         )
+        state.location_id = Location.FLAME_DECK
+        for heartbreaker in state.heartbreakers:
+            if not heartbreaker.eliminated:
+                heartbreaker.location_id = Location.FLAME_DECK
         ceremony = (
             initial_coupling(state, action.target_id)
             if state.day == 1 and not state.couples and action.target_id is not None
@@ -488,6 +503,7 @@ def run_turn(
                             f"{player_display_name(state)} to pair."
                         ),
                         heartbreaker_id=incoming.proposer_id,
+                        participant_ids=[state.player.id, incoming.proposer_id],
                     )
                 )
     # Being "sought after": when the player chooses to idle (an AMBIENT turn),
@@ -544,6 +560,7 @@ def run_turn(
             time_cost=time_cost,
             auto_advance=auto_advance,
             arrival_rolls=arrival_rolls,
+            conversation_closures=conversation_closures,
         )
     )
 

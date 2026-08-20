@@ -1,6 +1,15 @@
 id: opening-ceremony
 title: First Spark Narration
 goal: Prove the Event Narrator turns a deterministic First Spark into a moment the player remembers — without rewriting who they chose.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: first_spark_story_faithful
+      criteria: >
+        The ceremony preserves the recorded player/Chloe choice and gives it reality-show
+        texture through a held beat, cast awareness, and a specific Chloe reaction. It must not
+        invent an alternate partner, elimination, vote, or later-game twist.
 seed: 101
 character_creation:
   archetype_id: heartthrob
@@ -32,19 +41,3 @@ turns:
     checks:
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: event_faithful
-        criteria: >
-          The prose preserves that the player chose Chloe and is now coupled
-          with Chloe. No alternate partner, no invented heart_out, vote, or
-          heart_throb, no claim that anyone is leaving Sunset Bay.
-      - id: reality_tv_tone
-        criteria: >
-          The prose carries resort ceremony energy — sensory detail, a held
-          beat, the cast as audience. Fail if it reads like a debug log,
-          generic fantasy narration, or a stat printout.
-      - id: chloe_reaction_specific
-        criteria: >
-          Chloe's reaction is a specific small beat (a smile, a breath, eye
-          contact), not a generic "she was happy". Fail if Chloe disappears
-          from the prose entirely.
