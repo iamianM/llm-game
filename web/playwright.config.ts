@@ -123,7 +123,13 @@ export default defineConfig({
       command: `npm run dev -- --hostname 127.0.0.1 --port ${uiPort}`,
       url: uiURL,
       reuseExistingServer: false,
-      env: { NEXT_DIST_DIR: nextDistDir, NEXT_PUBLIC_API_BASE: apiURL },
+      env: {
+        NEXT_DIST_DIR: nextDistDir,
+        NEXT_PUBLIC_API_BASE: apiURL,
+        // Browser contracts stay deterministic and free even though the
+        // shipped product now defaults new visitors to Live LLM.
+        NEXT_PUBLIC_DEFAULT_LIVE_LLM: "0",
+      },
       timeout: 120_000
     }
   ],

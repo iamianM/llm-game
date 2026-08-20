@@ -31,8 +31,12 @@ type UiStore = {
 const LLM_KEY = "paradise.settings.useLiveLlm";
 export const MUSIC_MUTE_KEY = "ph-title-muted";
 export const MUSIC_VOLUME_KEY = "ph-title-volume";
-export const DEFAULT_MUSIC_VOLUME = 0.32;
-export const DEFAULT_USE_LIVE_LLM = process.env.NEXT_PUBLIC_DEFAULT_LIVE_LLM === "1";
+// The slider represents the player's preferred level inside a deliberately
+// quiet output range. Even 100% is capped at half of the browser's available
+// volume so the score cannot jump to the old ear-fatiguing maximum.
+export const MUSIC_OUTPUT_CEILING = 0.5;
+export const DEFAULT_MUSIC_VOLUME = 0.2;
+export const DEFAULT_USE_LIVE_LLM = process.env.NEXT_PUBLIC_DEFAULT_LIVE_LLM !== "0";
 
 // NOTE: the initial value MUST be the same on server and client to avoid
 // hydration mismatches; React 18 silently keeps the server HTML when it
