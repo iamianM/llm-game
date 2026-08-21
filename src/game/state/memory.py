@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class RecapDisposition(StrEnum):
+    """Whether and where a memory may appear in the Daily Recap."""
+
+    NONE = "none"
+    YOUR_DAY = "your_day"
+    WHILE_BUSY = "while_busy"
 
 
 class Memory(BaseModel):
