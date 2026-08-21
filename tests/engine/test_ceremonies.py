@@ -109,6 +109,7 @@ def test_pairing_pick_surfaces_eligible_partners() -> None:
 
 def test_pairing_pick_applies_player_choice() -> None:
     """Applying a PAIR during a pending pairing gather resolves it."""
+    from src.game.agents.turn_agents import mock_turn_agents
     from src.game.engine.turn import run_turn
     from src.game.state.models import Location, PendingGather
 
@@ -117,6 +118,7 @@ def test_pairing_pick_applies_player_choice() -> None:
     state.player.gender = Gender.MAN
     state.phase_clock.elapsed_minutes = state.phase_clock.budget_minutes
     from src.game.state.models import Phase
+
     state.phase = Phase.EVENING
     state.pending_gather = PendingGather(
         kind="ceremony",
@@ -131,6 +133,7 @@ def test_pairing_pick_applies_player_choice() -> None:
         state,
         PlayerAction(kind=ActionKind.PAIR, target_id="maya"),
         SeededRng(99),
+        mock_turn_agents(),
     )
 
     assert turn.state.pending_gather is None

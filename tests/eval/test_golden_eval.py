@@ -1,8 +1,15 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
+from src.game.agents.runtime import (
+    AgentValidationError,
+    record_agent_trace,
+)
+from src.game.agents.turn_agents import mock_turn_agents
+from src.game.eval import golden_runner
 from src.game.eval.golden_runner import load_golden_scenarios, run_golden_eval
 
 
@@ -28,3 +35,51 @@ def test_golden_eval_pack_writes_mock_report(tmp_path: Path) -> None:
     assert payload["passed"] == result.scenario_count
     assert payload["worker_count"] == result.worker_count
     assert "First Chat With Every Starting NPC" in report.read_text(encoding="utf-8")
+
+
+def test_golden_eval_records_failed_turn_and_attempt_traces(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    scenario = load_golden_scenarios(Path("evals/llm/scenarios"))[0]
+
+    def boom(*_args, **_kwargs):
+        record_agent_trace(
+            agent_name="scripted_failure",
+            model="test-model",
+            prompt_path="test",
+            response=object(),
+            output=None,
+        )
+        raise AgentValidationError("scripted story failure")
+
+    base = mock_turn_agents()
+    failed = replace(
+        base,
+        heartbreaker_voice=boom,
+        contextual_options=boom,
+        event_narrator=boom,
+        conversation_curator=boom,
+        resort_orchestrator=boom,
+        background_dialogue=boom,
+    )
+    monkeypatch.setattr(golden_runner, "mock_turn_agents", lambda: failed)
+    out = tmp_path / "failed-eval"
+
+    result = run_golden_eval(
+        [scenario],
+        out=out,
+        real_llm=False,
+        judge=False,
+        max_workers=1,
+    )
+
+    assert result.failed == 1
+    failed_turn = result.scenarios[0].turns[0]
+    assert failed_turn.error == "scripted story failure"
+    assert failed_turn.record["agent_traces"][0]["agent_name"] == "scripted_failure"
+    trace = json.loads(
+        (out / "artifacts" / f"{scenario.id}-trace.json").read_text(encoding="utf-8")
+    )
+    assert trace[0]["error"] == "scripted story failure"
+    assert trace[0]["agent_traces"][0]["agent_name"] == "scripted_failure"

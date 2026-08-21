@@ -2,10 +2,17 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from src.game.agents.contextual_options import (
     mock_contextual_bespoke,
     mock_follow_up_menu,
     with_gossip_options,
+)
+from src.game.agents.turn_agents import (
+    TurnAgentSet,
+    TurnContextualOptionsFn,
+    mock_turn_agents,
 )
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory, create_memory
@@ -43,7 +50,7 @@ def test_gossip_pick_transfers_memory_to_player() -> None:
             intent_id="friendly_chat_resort",
         ),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        _agents(lambda *_args: mock_follow_up_menu()),
     )
     assert first_turn.follow_up_menu is not None
     gossip_option = next(
@@ -54,7 +61,7 @@ def test_gossip_pick_transfers_memory_to_player() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id=gossip_option.intent_kind),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        _agents(lambda *_args: mock_follow_up_menu()),
     )
 
     heard = [
@@ -93,24 +100,25 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_contextual_bespoke(npc_will_leave=False),
+        _agents(lambda *_args: mock_contextual_bespoke(npc_will_leave=False)),
     )
     assert first_turn.follow_up_menu is not None
     share_option = next(
-        option for option in first_turn.follow_up_menu.options if option.intent_kind.startswith("share_gossip:")
+        option
+        for option in first_turn.follow_up_menu.options
+        if option.intent_kind.startswith("share_gossip:")
     )
 
     run_turn(
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id=share_option.intent_kind),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        _agents(lambda *_args: mock_follow_up_menu()),
     )
 
     chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
     assert any(
-        memory.subject_id == "maya" and memory.source_id == "player"
-        for memory in chloe.memories
+        memory.subject_id == "maya" and memory.source_id == "player" for memory in chloe.memories
     )
 
 
@@ -158,9 +166,7 @@ def test_stale_share_gossip_is_observable_noop() -> None:
     from src.game.engine.gossip import apply_share_gossip_follow_up
 
     state = new_game(1)
-    state.active_conversation = Conversation(
-        target_id="chloe", started_on_turn=1, started_on_day=1
-    )
+    state.active_conversation = Conversation(target_id="chloe", started_on_turn=1, started_on_day=1)
 
     # The memory id never existed in the player's memory list.
     result = apply_share_gossip_follow_up(
@@ -291,5 +297,9 @@ def _start_chloe_conversation(state):
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        _agents(lambda *_args: mock_follow_up_menu()),
     )
+
+
+def _agents(contextual_options: TurnContextualOptionsFn) -> TurnAgentSet:
+    return replace(mock_turn_agents(), contextual_options=contextual_options)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from src.game.agents.contextual_options import mock_follow_up_menu
@@ -12,6 +14,7 @@ from src.game.agents.conversation_curator import (
     validate_memory_batch,
 )
 from src.game.agents.runtime import AgentValidationError
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.turn import run_turn
 from src.game.state.models import Location, MemoryBatch, MemoryDraft, NPCNPCConversation, new_game
@@ -31,10 +34,8 @@ def test_mock_curator_returns_participant_memories() -> None:
     assert {memory.holder_id for memory in batch.memories} == {"player", "chloe"}
 
 
-def test_curate_player_conversation_survives_curator_raise() -> None:
-    """A curator that exhausts its retries and raises must not dead-screen the turn
-    on conversation close — curation degrades to the deterministic mock so the
-    player and target still record a memory instead of the turn crashing."""
+def test_curate_player_conversation_propagates_curator_raise() -> None:
+    """A configured curator failure is visible to the atomic turn boundary."""
     from src.game.engine.turn_curator import curate_player_conversation
 
     state = new_game(1)
@@ -45,12 +46,8 @@ def test_curate_player_conversation_survives_curator_raise() -> None:
     def boom(*_args, **_kwargs) -> MemoryBatch:
         raise AgentValidationError("curator exhausted retries")
 
-    batch = curate_player_conversation(state, conversation, boom)
-
-    assert batch.kind == "player"
-    holders = {memory.holder_id for memory in batch.memories}
-    assert "player" in holders
-    assert conversation.target_id in holders
+    with pytest.raises(AgentValidationError, match="curator exhausted retries"):
+        curate_player_conversation(state, conversation, boom)
 
 
 def test_curator_context_lists_required_memory_holders() -> None:
@@ -157,5 +154,8 @@ def _start_conversation(state) -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        replace(
+            mock_turn_agents(),
+            contextual_options=lambda *_args: mock_follow_up_menu(),
+        ),
     )

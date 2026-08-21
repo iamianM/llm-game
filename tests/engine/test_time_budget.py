@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.phases import PHASE_BUDGETS, advance_phase
 from src.game.engine.time_budget import action_time_cost, check_auto_advance, deduct_time
@@ -44,6 +45,7 @@ def test_advance_phase_resets_phase_clock_budget() -> None:
 def test_run_turn_auto_advances_when_budget_expires() -> None:
     state = new_game(1)
     rng = SeededRng(1)
+    agents = mock_turn_agents()
 
     # Five start/end pairs accumulate 100 minutes against the 120-minute MORNING
     # budget. END_CONVERSATION costs 0; START_CONVERSATION costs 20.
@@ -56,8 +58,9 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
                 intent_id="friendly_chat_resort",
             ),
             rng,
+            agents,
         )
-        run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng)
+        run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng, agents)
 
     # The sixth START pushes elapsed to 120 (= budget). The end-of-turn
     # phase_end branch closes the still-active conversation and advances the
@@ -71,6 +74,7 @@ def test_run_turn_auto_advances_when_budget_expires() -> None:
             intent_id="friendly_chat_resort",
         ),
         rng,
+        agents,
     )
 
     assert result.auto_advance is True

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.challenges import (
     challenge_event_message,
@@ -165,6 +166,7 @@ def test_resolved_challenge_clears_after_wrap_turn() -> None:
         state,
         PlayerAction(kind=ActionKind.AMBIENT, target_id="pool_lounge"),
         SeededRng(1),
+        mock_turn_agents(),
     )
 
     assert result.state.pending_challenge is None

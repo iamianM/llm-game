@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.character_creation import create_character
 from src.game.engine.turn import run_turn
@@ -32,6 +33,7 @@ def test_initial_coupling_pairs_player_without_eliminating_leftover_single() -> 
         state,
         PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
         SeededRng(1),
+        mock_turn_agents(),
     )
 
     assert len(result.state.couples) == 4

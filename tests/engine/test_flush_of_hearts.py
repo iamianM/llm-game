@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.resort_orchestrator import NPCMovement, ResortUpdate, _render_context
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.flush_of_hearts import (
     apply_flush_decision,
@@ -49,7 +50,8 @@ def test_flush_of_hearts_display_names_do_not_duplicate_starting_cast() -> None:
     flush_names = [
         heartbreaker.name
         for heartbreaker in state.heartbreakers
-        if state.flush_of_hearts_state is not None and heartbreaker.id in state.flush_of_hearts_state.flush_heartbreaker_ids
+        if state.flush_of_hearts_state is not None
+        and heartbreaker.id in state.flush_of_hearts_state.flush_heartbreaker_ids
     ]
     assert starting_names.isdisjoint(flush_names)
     assert len(flush_names) == len(set(flush_names))
@@ -65,7 +67,9 @@ def test_flush_of_hearts_locations_only_visible_at_flush() -> None:
         if spec.action.kind is ActionKind.MOVE
     }
 
-    assert move_targets <= {location.value for location in locations_for_resort(ResortName.FLUSH_OF_HEARTS)}
+    assert move_targets <= {
+        location.value for location in locations_for_resort(ResortName.FLUSH_OF_HEARTS)
+    }
 
 
 def test_resort_main_locations_hidden_at_flush() -> None:
@@ -101,7 +105,9 @@ def test_return_with_flush_of_hearts_drops_perception_when_original_loyal() -> N
     assert state.flush_of_hearts_state is not None
     assert state.flush_of_hearts_state.partners_swapped is True
     assert state.couples == [
-        Couple(partner_a_id="player", partner_b_id="beau", formed_on_day=6, formed_via="flush_return")
+        Couple(
+            partner_a_id="player", partner_b_id="beau", formed_on_day=6, formed_via="flush_return"
+        )
     ]
     assert event is not None
     assert event.kind == "flush_of_hearts_return_reveal"
@@ -133,7 +139,9 @@ def test_npc_flush_choices_deterministic_from_rng() -> None:
     enter_flush_of_hearts(first)
     enter_flush_of_hearts(second)
 
-    assert compute_npc_flush_choices(first, SeededRng(7)) == compute_npc_flush_choices(second, SeededRng(7))
+    assert compute_npc_flush_choices(first, SeededRng(7)) == compute_npc_flush_choices(
+        second, SeededRng(7)
+    )
 
 
 def test_eliminated_heartbreakers_dont_return_to_main() -> None:
@@ -164,7 +172,9 @@ def test_resort_update_rejects_cross_resort_movement() -> None:
     state = new_game(1)
     enter_flush_of_hearts(state)
     update = ResortUpdate(
-        npc_movements=[NPCMovement(npc_id="beau", target_location=Location.POOL, reason="wrong resort")]
+        npc_movements=[
+            NPCMovement(npc_id="beau", target_location=Location.POOL, reason="wrong resort")
+        ]
     )
 
     with pytest.raises(ValueError, match="crosses out"):
@@ -176,9 +186,16 @@ def test_day_four_text_gather_enters_flush_of_hearts() -> None:
     state.day = 4
     state.phase = Phase.AFTERNOON
 
-    scheduled = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    scheduled = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        mock_turn_agents(),
+    )
     assert scheduled.state.pending_gather is not None
-    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
+    result = run_turn(
+        state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1), mock_turn_agents()
+    )
 
     assert result.state.resort is ResortName.FLUSH_OF_HEARTS
     assert any(event.kind == "flush_of_hearts_arrival" for event in result.ceremony_events)

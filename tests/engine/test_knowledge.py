@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
 from src.game.engine.gossip import share_gossip
@@ -28,11 +29,18 @@ def _skip_intros(state) -> None:
 
 def test_starting_cast_has_distinct_trait_cards() -> None:
     state = new_game(1)
-    engines = [heartbreaker.trait_card.persona.secret_engine for heartbreaker in state.heartbreakers]
+    engines = [
+        heartbreaker.trait_card.persona.secret_engine for heartbreaker in state.heartbreakers
+    ]
     assert len(engines) == 8
     assert len(set(engines)) == 8
-    assert all("hidden_secret" in heartbreaker.trait_card.core_traits for heartbreaker in state.heartbreakers)
-    assert all(len(heartbreaker.trait_card.flavor_traits) >= 6 for heartbreaker in state.heartbreakers)
+    assert all(
+        "hidden_secret" in heartbreaker.trait_card.core_traits
+        for heartbreaker in state.heartbreakers
+    )
+    assert all(
+        len(heartbreaker.trait_card.flavor_traits) >= 6 for heartbreaker in state.heartbreakers
+    )
 
 
 def test_opening_coupling_reveals_partner_surface_facts() -> None:
@@ -48,6 +56,7 @@ def test_opening_coupling_reveals_partner_surface_facts() -> None:
         state,
         PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
         SeededRng(1),
+        mock_turn_agents(),
     )
     assert {"chloe.occupation", "chloe.hometown", "chloe.age"} <= set(state.player.known_facts)
 
@@ -61,11 +70,18 @@ def test_successful_proposal_reveals_new_partner_surface_facts() -> None:
         stats=PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
     )
     _skip_intros(state)
-    run_turn(state, PlayerAction(kind=ActionKind.PAIR, target_id="chloe"), SeededRng(1))
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
+        SeededRng(1),
+        mock_turn_agents(),
+    )
     maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
     maya.relationship.affection = 100
     maya.relationship.chemistry = 100
-    state.active_conversation = Conversation(target_id="maya", started_on_turn=state.turn_index, started_on_day=state.day)
+    state.active_conversation = Conversation(
+        target_id="maya", started_on_turn=state.turn_index, started_on_day=state.day
+    )
 
     apply_action(state, PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id="maya"), SeededRng(1))
 
@@ -86,7 +102,9 @@ def test_intro_reveals_tier_one_known_facts() -> None:
 
 def test_deep_intent_reveals_tier_three_fact_at_familiarity() -> None:
     state = new_game(1)
-    target = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    target = next(
+        heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe"
+    )
     target.familiarity_with_player = 50
     fact = emit_fact_reveal(state, target, get_intent("deep_ask_life"))
     assert fact is not None
@@ -96,7 +114,9 @@ def test_deep_intent_reveals_tier_three_fact_at_familiarity() -> None:
 
 def test_gossip_distortion_never_shares_hidden_secret() -> None:
     state = new_game(1)
-    speaker = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
+    speaker = next(
+        heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya"
+    )
     speaker.known_facts.clear()
     speaker.known_facts["chloe.hidden_secret"] = KnownFact(
         fact_key="chloe.hidden_secret",
@@ -112,7 +132,9 @@ def test_gossip_distortion_never_shares_hidden_secret() -> None:
 
 def test_gossip_shares_non_secret_known_fact() -> None:
     state = new_game(2)
-    speaker = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
+    speaker = next(
+        heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya"
+    )
     speaker.known_facts.clear()
     speaker.known_facts["chloe.occupation"] = KnownFact(
         fact_key="chloe.occupation",
@@ -140,17 +162,22 @@ def test_follow_up_templates_continue_fact_reveals() -> None:
 
 def test_conversation_close_emits_known_fact() -> None:
     state = new_game(1)
-    target = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    target = next(
+        heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe"
+    )
     target.relationship.affection = 50
     target.familiarity_with_player = 50
     rng = SeededRng(1)
     run_turn(
         state,
-        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="deep_ask_life"),
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="deep_ask_life"
+        ),
         rng,
+        mock_turn_agents(),
     )
     # Facts are curated when the conversation closes; in mock mode the player
     # has to walk away explicitly because no LLM is deciding when the NPC bows
     # out.
-    run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng)
+    run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng, mock_turn_agents())
     assert any(key.startswith("chloe.") for key in state.player.known_facts)

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from src.game.agents.contextual_options import mock_follow_up_menu
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory_batch, create_memory
 from src.game.engine.turn import run_turn
@@ -23,10 +26,13 @@ def test_conversation_close_creates_memories() -> None:
             intent_id="friendly_chat_resort",
         ),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        replace(
+            mock_turn_agents(),
+            contextual_options=lambda *_args: mock_follow_up_menu(),
+        ),
     )
 
-    run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng)
+    run_turn(state, PlayerAction(kind=ActionKind.END_CONVERSATION), rng, mock_turn_agents())
 
     assert state.player.memories
     assert state.player.memories[0].holder_id == "player"
@@ -70,7 +76,12 @@ def test_ceremony_memory_is_witnessed() -> None:
     state.day = 3
     state.phase = Phase.EVENING
 
-    run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        mock_turn_agents(),
+    )
 
     assert any(memory.source == "witnessed" for memory in state.player.memories)
 

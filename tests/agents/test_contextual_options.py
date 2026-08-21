@@ -21,7 +21,9 @@ from src.game.engine.rules import MechanicalResult
 from src.game.state.memory import RecapDisposition
 from src.game.state.models import FollowUpOption, Memory, Mood, RelationshipDelta, new_game
 
-Tone = Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
+Tone = Literal[
+    "warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"
+]
 
 
 @pytest.mark.llm
@@ -98,25 +100,25 @@ def test_assembled_menu_adds_exit_to_bespoke_output() -> None:
 
     def contextual_options(*_args, **_kwargs) -> ContextualBespoke:
         return ContextualBespoke(
-                options=[
-                    FollowUpOption(
-                        label="Ask why Liverpool matters",
-                        category="deep",
-                        intent_kind="go_deeper",
-                        stat_used="eq",
-                        risk="medium",
-                        tone="curious",
-                    ),
-                    FollowUpOption(
-                        label="Tease the Sunset Bay tension",
-                        category="banter",
-                        intent_kind="joke_back",
-                        stat_used="banter",
-                        risk="low",
-                        tone="playful",
-                    ),
-                ],
-                npc_will_leave=False,
+            options=[
+                FollowUpOption(
+                    label="Ask why Liverpool matters",
+                    category="deep",
+                    intent_kind="go_deeper",
+                    stat_used="eq",
+                    risk="medium",
+                    tone="curious",
+                ),
+                FollowUpOption(
+                    label="Tease the Sunset Bay tension",
+                    category="banter",
+                    intent_kind="joke_back",
+                    stat_used="banter",
+                    risk="low",
+                    tone="playful",
+                ),
+            ],
+            npc_will_leave=False,
         )
 
     menu = generate_follow_up_menu(state, result, exchange, 0, contextual_options)
@@ -220,7 +222,7 @@ def test_explored_threads_only_includes_memories_about_the_target() -> None:
         npc_mood_after=Mood.CONTENT,
     )
 
-    ctx = contextual_options_context(state, result, exchange, 10)
+    ctx = contextual_options_context(state, result, exchange, 10, already_present=[])
 
     assert "wants kids before she turns thirty" in ctx.explored_threads
     assert "Maya teased" not in ctx.explored_threads
@@ -246,7 +248,7 @@ def test_explored_threads_defaults_when_no_prior_memories() -> None:
         npc_mood_after=Mood.CONTENT,
     )
 
-    ctx = contextual_options_context(state, result, exchange, 10)
+    ctx = contextual_options_context(state, result, exchange, 10, already_present=[])
 
     assert "fresh ground" in ctx.explored_threads
 
@@ -274,7 +276,7 @@ def test_contextual_options_labels_are_specific() -> None:
         npc_mood_after=Mood.CONTENT,
     )
 
-    bespoke = ContextualOptionsAgent().generate(state, result, exchange, 20)
+    bespoke = ContextualOptionsAgent().generate(state, result, exchange, 20, [])
     generic = {
         "ask something deeper",
         "tell a joke",

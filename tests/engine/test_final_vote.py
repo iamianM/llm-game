@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.ceremonies import final_vote_ceremony
 from src.game.engine.final_vote import final_vote, final_vote_message
@@ -66,9 +67,16 @@ def test_final_vote_fires_only_on_day_six_evening() -> None:
     state.phase = Phase.EVENING
     state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5)]
 
-    scheduled = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    scheduled = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        mock_turn_agents(),
+    )
     assert scheduled.state.pending_gather is not None
-    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1))
+    result = run_turn(
+        state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(1), mock_turn_agents()
+    )
 
     assert any(event.kind == "final_vote" for event in result.ceremony_events)
     assert result.state.outcome is not None

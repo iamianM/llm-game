@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from src.game.agents.resort_orchestrator import NPCSummon, ResortUpdate
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.conversation import departure_probability, start_conversation
 from src.game.engine.resort import apply_resort_update, validate_resort_update
 from src.game.state.models import (
@@ -18,6 +19,8 @@ from src.game.state.models import (
 )
 from src.game.state.personality import AttachmentStyle
 from src.game.state.rng import SeededRng
+
+MOCK_AGENTS = mock_turn_agents()
 
 
 def test_validate_summon_requires_named_conversation_participant() -> None:
@@ -56,6 +59,8 @@ def test_apply_summon_closes_player_conversation_and_runs_curator() -> None:
             ]
         ),
         SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
     )
 
     assert state.active_conversation is None
@@ -100,6 +105,8 @@ def test_apply_summon_closes_npc_npc_conversation() -> None:
             ]
         ),
         SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
     )
 
     assert state.npc_conversations == []

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.agents.background_dialogue import BackgroundExchange
 from src.game.agents.resort_orchestrator import EndConversation, ResortUpdate
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.proposals import apply_player_proposal, maybe_trigger_npc_player_proposal
 from src.game.engine.resort import apply_resort_update
@@ -19,6 +20,8 @@ from src.game.state.models import (
     new_game,
 )
 from src.game.state.rng import SeededRng
+
+MOCK_AGENTS = mock_turn_agents()
 
 
 def test_player_proposal_action_surfaces_only_for_eligible_non_partner() -> None:
@@ -38,9 +41,9 @@ def test_successful_player_proposal_breaks_old_couples_and_leaves_singles() -> N
     assert result.success is True
     assert outcome.old_player_partner_id == "chloe"
     assert outcome.old_target_partner_id == "liam"
-    assert [(couple.partner_a_id, couple.partner_b_id, couple.formed_via) for couple in state.couples] == [
-        ("player", "maya", "proposal")
-    ]
+    assert [
+        (couple.partner_a_id, couple.partner_b_id, couple.formed_via) for couple in state.couples
+    ] == [("player", "maya", "proposal")]
     assert _partner_id(state, "chloe") is None
     assert _partner_id(state, "liam") is None
 
@@ -65,7 +68,12 @@ def test_proposal_turn_closes_conversation_and_records_event_and_memories() -> N
     state = _proposal_state()
     state.active_conversation = Conversation(target_id="maya", started_on_turn=1, started_on_day=1)
 
-    turn = run_turn(state, PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id="maya"), SeededRng(1))
+    turn = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.PROPOSE_PAIR, target_id="maya"),
+        SeededRng(1),
+        MOCK_AGENTS,
+    )
 
     assert turn.state.active_conversation is None
     assert turn.ceremony_events[0].kind == "pair_proposal"
@@ -102,6 +110,7 @@ def test_accepting_npc_proposal_forms_new_couple_and_leaves_singles() -> None:
         state,
         PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="maya", intent_id="accept"),
         SeededRng(2),
+        MOCK_AGENTS,
     )
 
     assert turn.state.pending_pair_proposal is None
@@ -125,8 +134,11 @@ def test_npc_proposal_response_does_not_reopen_same_turn() -> None:
 
     turn = run_turn(
         state,
-        PlayerAction(kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="maya", intent_id="decline_harshly"),
+        PlayerAction(
+            kind=ActionKind.NPC_PROPOSAL_RESPONSE, target_id="maya", intent_id="decline_harshly"
+        ),
         SeededRng(4),
+        MOCK_AGENTS,
     )
 
     assert turn.state.pending_pair_proposal is None
@@ -165,13 +177,16 @@ def test_single_npc_background_flirt_can_form_rebound_couple() -> None:
 
     changes = apply_resort_update(
         state,
-        ResortUpdate(conversation_ends=[EndConversation(conversation_id="npcconv_test", reason="spark")]),
+        ResortUpdate(
+            conversation_ends=[EndConversation(conversation_id="npcconv_test", reason="spark")]
+        ),
         SeededRng(1),
         background_dialogue=lambda _state, _conversation, _nudge: BackgroundExchange(
             speaker_a_line="",
             speaker_b_line="",
             tone="neutral",
         ),
+        conversation_curator=MOCK_AGENTS.conversation_curator,
     )
 
     assert _partner_id(state, "maya") == "liam"
