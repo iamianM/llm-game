@@ -1,55 +1,68 @@
 "use client";
 
-import type { SessionState } from "../../lib/types";
 import type { HeartbreakerLook } from "../../lib/look";
-import { PLAYER_ANCHOR, PLAYER_ANCHOR_COMPACT, npcPositions } from "../../lib/scene/positions";
-import type { CharacterPose, Position } from "../../lib/scene/types";
+import type { SceneFrame } from "../../lib/scene/presentation";
+import type { SessionState } from "../../lib/types";
 import { CharacterSprite } from "./CharacterSprite";
 
 type Props = {
   state: SessionState;
+  frame: SceneFrame;
   look?: HeartbreakerLook | null;
-  focusedId: string | null;
-  speakerPose: CharacterPose;
-  // The bottom choice fan is open — the player tucks up + shrinks (mobile) so
-  // the option bars never sit on top of the standee.
-  choicesActive?: boolean;
-  tappableIds?: Set<string>;
+  tappableIds?: ReadonlySet<string>;
   onCharacterTap?: (id: string) => void;
 };
 
-export function CharacterLayer({ state, look = null, focusedId, speakerPose, choicesActive = false, tappableIds, onCharacterTap }: Props) {
-  const npcs = visibleNpcs(state, focusedId);
-  const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
-  const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
+export function CharacterLayer({
+  state,
+  frame,
+  look = null,
+  tappableIds,
+  onCharacterTap,
+}: Props) {
+  const groupNames = frame.groupPanelIds.map((id) => heartbreakerById(state, id).name);
   return (
     <div className="character-layer" aria-label="Sunset Bay scene characters">
-      {npcs.map((npc, index) => (
-        <CharacterSprite
-          key={npc.id}
-          id={npc.id}
-          name={npc.name}
-          role="npc"
-          gender={npc.gender}
-          position={positions[index] ?? fallbackNpcPosition(index)}
-          pose={focusedId === npc.id ? speakerPose : "listening"}
-          active={focusedId === npc.id}
-          tappable={tappableIds?.has(npc.id) ?? false}
-          onTap={onCharacterTap ? () => onCharacterTap(npc.id) : undefined}
-        />
-      ))}
-      <CharacterSprite
-        id={state.player.id}
-        name={look?.name?.trim() || state.player.name || "You"}
-        role="player"
-        gender={look?.gender ?? state.player.gender}
-        archetypeId={look?.archetype ?? state.player.archetype_id}
-        look={look}
-        position={choicesActive ? PLAYER_ANCHOR_COMPACT : PLAYER_ANCHOR}
-        pose={focusedId === state.player.id ? "talking" : "listening"}
-        active={focusedId === state.player.id}
-        compact={choicesActive}
-      />
+      {frame.cast.map((member) => {
+        if (member.id === state.player.id) {
+          return (
+            <CharacterSprite
+              key={member.id}
+              id={state.player.id}
+              name={look?.name?.trim() || state.player.name || "You"}
+              role="player"
+              gender={look?.gender ?? state.player.gender}
+              archetypeId={look?.archetype ?? state.player.archetype_id}
+              look={look}
+              position={member.position}
+              pose={member.pose}
+              active={member.focused}
+              compact={member.position.scale < 1.1}
+            />
+          );
+        }
+        const npc = heartbreakerById(state, member.id);
+        return (
+          <CharacterSprite
+            key={npc.id}
+            id={npc.id}
+            name={npc.name}
+            role="npc"
+            gender={npc.gender}
+            position={member.position}
+            pose={member.pose}
+            active={member.focused}
+            tappable={tappableIds?.has(npc.id) ?? false}
+            onTap={onCharacterTap ? () => onCharacterTap(npc.id) : undefined}
+          />
+        );
+      })}
+      {groupNames.length > 0 ? (
+        <aside className="group-panel" data-testid="scene-group-panel" aria-label="Other Heartbreakers here">
+          <span>Also here</span>
+          <strong>{groupNames.join(" · ")}</strong>
+        </aside>
+      ) : null}
       <style jsx>{`
         .character-layer {
           position: absolute;
@@ -57,25 +70,39 @@ export function CharacterLayer({ state, look = null, focusedId, speakerPose, cho
           z-index: 3;
           pointer-events: none;
         }
+        .group-panel {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          z-index: 5;
+          display: grid;
+          max-width: min(280px, 58vw);
+          gap: 2px;
+          padding: 7px 10px;
+          border: 1px solid rgba(217,167,58,.3);
+          border-radius: var(--r-md);
+          background: rgba(8,6,4,.66);
+          color: var(--ink-on-dark);
+          text-align: right;
+        }
+        .group-panel span {
+          color: var(--gold-soft);
+          font-size: 9px;
+          letter-spacing: .12em;
+          text-transform: uppercase;
+        }
+        .group-panel strong {
+          font-family: var(--font-display);
+          font-size: 12px;
+          font-weight: 500;
+        }
       `}</style>
     </div>
   );
 }
 
-function fallbackNpcPosition(index: number): Position {
-  return { x: 22 + index * 7, y: 58, scale: 0.62, dimmed: true };
-}
-
-// Only show heartbreakers in the player's current location. The focused NPC (if
-// any) is always included so quiz scenes work even when the target's room
-// differs (e.g. a Producer-text gather). During Day-1 intros the entire
-// cast appears at the flame_deck visually regardless of their canonical room.
-export function visibleNpcs(state: Props["state"], focusedId: string | null) {
-  const allHere = state.phase === "intros";
-  return state.heartbreakers.filter((heartbreaker) => {
-    if (heartbreaker.eliminated) return false;
-    if (allHere) return true;
-    if (focusedId && heartbreaker.id === focusedId) return true;
-    return heartbreaker.location_id === state.location_id;
-  });
+function heartbreakerById(state: SessionState, id: string) {
+  const heartbreaker = state.heartbreakers.find((candidate) => candidate.id === id);
+  if (!heartbreaker) throw new Error(`Scene frame references unknown Heartbreaker: ${id}.`);
+  return heartbreaker;
 }

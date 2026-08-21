@@ -2,9 +2,14 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { getSession, submitTurnStream } from "../../lib/api";
-import type { AvailableAction, SessionResponse, TurnResponse } from "../../lib/types";
+import type { AvailableAction, SessionResponse, SessionState, TurnResponse } from "../../lib/types";
+import type {
+  MinigamePresentationPort,
+  PresentationTransition,
+  SceneFeature,
+} from "../../lib/scene/presentation";
 import { playSfx } from "../../lib/sfx";
 import { loadLook } from "../../lib/look";
 import type { ArchetypeId, HeartbreakerLook } from "../../lib/look";
@@ -14,21 +19,31 @@ import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
 import { WardrobeModal } from "../chrome/WardrobeModal";
 import { RightRail } from "../rail/RightRail";
+import { NO_MINIGAME_PRESENTATION, planScene } from "../scene/SceneDirector";
 import { SceneDialogueStage } from "../scene/SceneDialogueStage";
 import { TopBar } from "./TopBar";
 
-export function GameStage({ sessionId }: { sessionId: string }) {
+type Props = {
+  sessionId: string;
+  minigamePresentation?: MinigamePresentationPort<unknown>;
+  renderMinigameSlot?: (slot: unknown) => ReactNode;
+};
+
+export function GameStage({
+  sessionId,
+  minigamePresentation = NO_MINIGAME_PRESENTATION,
+  renderMinigameSlot,
+}: Props) {
   const router = useRouter();
   const [lastTurn, setLastTurn] = useState<TurnResponse | null>(null);
-  const [showCeremony, setShowCeremony] = useState(false);
-  const [showRecap, setShowRecap] = useState(false);
-  const [seenRecaps, setSeenRecaps] = useState(0);
+  const [previousState, setPreviousState] = useState<SessionState | null>(null);
+  const [pendingAction, setPendingAction] = useState<AvailableAction | null>(null);
   const [streamText, setStreamText] = useState("");
-  const [streamSpeaker, setStreamSpeaker] = useState("Producer");
-  const [pendingActionLabel, setPendingActionLabel] = useState<string | null>(null);
-  const [pendingTargetId, setPendingTargetId] = useState<string | null>(null);
-  const [deferredCeremony, setDeferredCeremony] = useState(false);
+  const [streamSpeakerName, setStreamSpeakerName] = useState<string | null>(null);
+  const [featureQueue, setFeatureQueue] = useState<SceneFeature[]>([]);
   const [look, setLook] = useState<HeartbreakerLook | null>(null);
+  const confirmedState = useRef<SessionState | null>(null);
+  const seenFeatureIds = useRef(new Set<string>());
   const railOpen = useUiStore((s) => s.rightRailOpen);
   const setRail = useUiStore((s) => s.setRail);
   const setSettings = useUiStore((s) => s.setSettings);
@@ -38,30 +53,28 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const query = useQuery<SessionResponse>({ queryKey: ["session", sessionId], queryFn: () => getSession(sessionId), retry: false });
   const mutation = useMutation({
     mutationFn: (action: AvailableAction) => {
+      if (!confirmedState.current) throw new Error("Cannot submit a turn before session state is loaded.");
+      setPreviousState(confirmedState.current);
+      setPendingAction(action);
       setStreamText("");
-      setStreamSpeaker("Producer");
-      setPendingActionLabel(action.label);
-      setPendingTargetId(action.target_id ?? null);
-      setDeferredCeremony(false);
+      setStreamSpeakerName(null);
       return submitTurnStream(sessionId, action, {
-        onDialogueStart: (speaker) => setStreamSpeaker(speaker),
+        onDialogueStart: (speaker) => setStreamSpeakerName(speaker),
         onDialogueChunk: (chunk) => setStreamText((current) => current + chunk),
       });
     },
     onSuccess: (data) => {
       setLastTurn(data);
+      confirmedState.current = data.state;
       setStreamText("");
-      setPendingActionLabel(null);
-      setPendingTargetId(null);
-      const hasCeremony = data.ceremony_events.length > 0;
-      const hasDialogue = data.exchange !== null;
-      setDeferredCeremony(hasCeremony && hasDialogue);
-      setShowCeremony(hasCeremony && !hasDialogue);
-      if (data.state.daily_recaps.length > seenRecaps) {
-        setShowRecap(true);
-        setSeenRecaps(data.state.daily_recaps.length);
-      }
-      if (data.state.outcome) router.push(`/play/${sessionId}/finale`);
+      setStreamSpeakerName(null);
+      setPendingAction(null);
+    },
+    onError: () => {
+      setPendingAction(null);
+      setPreviousState(null);
+      setStreamText("");
+      setStreamSpeakerName(null);
     },
   });
 
@@ -74,7 +87,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
     setLook(loadLook(sessionId));
   }, [sessionId]);
   useEffect(() => {
-    if (query.data && lastTurn === null) setSeenRecaps(query.data.state.daily_recaps.length);
+    if (query.data && lastTurn === null) confirmedState.current = query.data.state;
   }, [query.data, lastTurn]);
 
   // Drive the background score from the live game phase: ceremonies and the
@@ -84,7 +97,7 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   const liveState = lastTurn?.state ?? query.data?.state;
   const livePhase = liveState?.phase;
   const liveTension = Boolean(
-    showCeremony || liveState?.pending_challenge || liveState?.pending_pair_proposal,
+    featureQueue[0]?.kind === "ceremony" || liveState?.pending_challenge || liveState?.pending_pair_proposal,
   );
   useEffect(() => {
     if (!livePhase) return;
@@ -94,10 +107,9 @@ export function GameStage({ sessionId }: { sessionId: string }) {
   }, [livePhase, liveTension, setMusicScene]);
   useEffect(() => () => setMusicScene("title"), [setMusicScene]);
 
-  // A flame_deck reveal lands: punctuate the overlay with the ceremony sting.
   useEffect(() => {
-    if (showCeremony) playSfx("ceremony-reveal");
-  }, [showCeremony]);
+    if (featureQueue[0]?.kind === "ceremony") playSfx("ceremony-reveal");
+  }, [featureQueue]);
   // Paradise Calls — chime when Sunset Bay drops into the daily notice
   // phase, the moment a producer message or gather is announced.
   const prevPhaseRef = useRef<string | undefined>(undefined);
@@ -113,12 +125,34 @@ export function GameStage({ sessionId }: { sessionId: string }) {
 
   const state = lastTurn?.state ?? query.data.state;
   const actions = lastTurn?.available_actions ?? query.data.available_actions;
-  const event = lastTurn?.ceremony_events[0];
-  const narration = ceremonyNarration(lastTurn, state);
-  const latestRecap = state.daily_recaps[state.daily_recaps.length - 1];
+  const transition: PresentationTransition = mutation.isPending && pendingAction && previousState
+    ? {
+        kind: "pending",
+        previous: previousState,
+        state: previousState,
+        actions,
+        selectedAction: pendingAction,
+        stream: {
+          speakerId: null,
+          speakerName: streamSpeakerName,
+          text: streamText,
+        },
+      }
+    : lastTurn && previousState
+      ? { kind: "resolved", previous: previousState, response: lastTurn }
+      : { kind: "baseline", state, actions };
+  const scenePlan = planScene(transition, minigamePresentation);
+  const activeFeature = featureQueue[0];
+  const event = activeFeature?.kind === "ceremony" ? activeFeature.event : undefined;
+  const narration = ceremonyNarration(lastTurn, state, event);
   // Attribute each recap whisper to its holder so the reader can tell whose
   // first-person "I" each card is (heartbreaker name, or "You" for the player).
   const recapSpeakers = Object.fromEntries(state.heartbreakers.map((heartbreaker) => [heartbreaker.id, heartbreaker.name]));
+  const closeActiveFeature = () => {
+    const hasMore = featureQueue.length > 1;
+    setFeatureQueue((current) => current.slice(1));
+    if (!hasMore && state.outcome) router.push(`/play/${sessionId}/finale`);
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-bg text-[var(--card)]">
@@ -127,24 +161,26 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         <div className="flex-1 min-h-0">
           <SceneDialogueStage
             state={state}
+            plan={scenePlan}
             look={look}
-            actions={actions}
-            lastTurn={lastTurn}
             locked={mutation.isPending}
-            pendingActionLabel={pendingActionLabel}
-            pendingTargetId={pendingTargetId}
-            streamText={streamText}
-            streamSpeaker={streamSpeaker}
             onChoose={(action) => {
               playSfx("ui-click");
               mutation.mutate(action);
             }}
-            onAdvance={() => {
-              if (deferredCeremony) {
-                setDeferredCeremony(false);
-                setShowCeremony(true);
+            onSettled={(features) => {
+              const fresh = features.filter((feature) => {
+                if (seenFeatureIds.current.has(feature.id)) return false;
+                seenFeatureIds.current.add(feature.id);
+                return true;
+              });
+              if (fresh.length > 0) {
+                setFeatureQueue((current) => [...current, ...fresh]);
+              } else if (state.outcome) {
+                router.push(`/play/${sessionId}/finale`);
               }
             }}
+            renderSlot={renderMinigameSlot}
           />
           {mutation.error ? (
             <p role="alert" className="turn-error">
@@ -165,20 +201,26 @@ export function GameStage({ sessionId }: { sessionId: string }) {
         }}
         onApply={(next) => setLook(next)}
       />
-      {showCeremony ? (
+      {activeFeature?.kind === "ceremony" ? (
         <CeremonyOverlay
           title={ceremonyTitle(event, state)}
           eyebrow={ceremonyEyebrow(event)}
           narration={narration}
           couples={state.couples}
           showCouples={ceremonyShowsCouples(event, state)}
-          onContinue={() => setShowCeremony(false)}
+          onContinue={closeActiveFeature}
           playerId={state.player.id}
           playerLook={look}
         />
       ) : null}
-      {showRecap && latestRecap && !showCeremony ? (
-        <DayRecap recap={latestRecap} resortLabel={state.resort_label} speakers={recapSpeakers} playerId={state.player.id} onClose={() => setShowRecap(false)} />
+      {activeFeature?.kind === "recap" ? (
+        <DayRecap
+          recap={activeFeature.recap}
+          resortLabel={state.resort_label}
+          speakers={recapSpeakers}
+          playerId={state.player.id}
+          onClose={closeActiveFeature}
+        />
       ) : null}
       <style jsx>{`
         /* The stage must fill the space below the 56px TopBar WITHOUT spilling
@@ -223,12 +265,10 @@ const COUPLE_REVEAL_KINDS = new Set([
 
 function ceremonyTitle(event: Record<string, unknown> | undefined, state: SessionResponse["state"]) {
   const kind = String(event?.kind ?? "");
-  const subKind = String(event?.sub_kind ?? "");
-  if (kind === "challenge") return displayEventName(subKind || kind);
-  if (kind === "pair_proposal") return "Heart Swap Proposal";
+  if (kind === "pair_proposal" || kind.startsWith("npc_proposal")) return "Heart Swap Proposal";
+  if (kind === "private_suite") return "Paradise Suite";
   if (kind === "flush_of_hearts_return_reveal") return "Sunset Bay Return";
   if (FLUSH_KINDS.has(kind)) return "Flush of Hearts";
-  if (kind === "producer_text" || kind === "gather_scheduled") return "Paradise Calls";
   if (kind === "elimination") return "Heart Out";
   if (kind === "final_vote") return "Final Vote";
   if (state.day === 1 && state.couples.some((couple) => couple.formed_via_label === "First Spark")) return "First Spark";
@@ -237,9 +277,8 @@ function ceremonyTitle(event: Record<string, unknown> | undefined, state: Sessio
 
 function ceremonyEyebrow(event: Record<string, unknown> | undefined) {
   const kind = String(event?.kind ?? "");
-  if (kind === "challenge") return "Challenge Result";
-  if (kind === "producer_text") return "A Text Lands";
-  if (kind === "gather_scheduled") return "At the Flame Deck";
+  if (kind === "private_suite") return "A Night Away";
+  if (kind === "pair_proposal" || kind.startsWith("npc_proposal")) return "A Choice Lands";
   if (kind === "flush_of_hearts_return_reveal") return "Flush of Hearts";
   if (FLUSH_KINDS.has(kind)) return "Flush of Hearts";
   if (kind === "final_vote") return "The Last Text";
@@ -253,15 +292,18 @@ function ceremonyShowsCouples(event: Record<string, unknown> | undefined, state:
   return false;
 }
 
-function ceremonyNarration(turn: TurnResponse | null, state: SessionResponse["state"]) {
+function ceremonyNarration(
+  turn: TurnResponse | null,
+  state: SessionResponse["state"],
+  event: Record<string, unknown> | undefined,
+) {
+  const message = typeof event?.message === "string" ? event.message : "";
+  if (message) return message;
   const prose = turn?.event_narration?.prose;
   if (typeof prose === "string" && prose.trim()) return prose;
-  const event = turn?.ceremony_events[0];
-  const message = typeof event?.message === "string" ? event.message : "";
   if (state.day === 1 && state.couples.some((couple) => couple.formed_via_label === "First Spark")) {
     return `At Sunset Bay, the First Spark locks in the first couples. ${coupleSentence(state)}`;
   }
-  if (message) return message;
   return `Everyone gathers at Sunset Bay as the night changes the field. ${coupleSentence(state)}`;
 }
 
@@ -269,17 +311,4 @@ function coupleSentence(state: SessionResponse["state"]) {
   const names = state.couples.map((couple) => `${couple.partner_a_name} and ${couple.partner_b_name}`);
   if (!names.length) return "All eyes are on what happens next.";
   return `Tonight's couples: ${names.join("; ")}.`;
-}
-
-function displayEventName(value: string) {
-  const names: Record<string, string> = {
-    challenge: "Challenge",
-    compatibility_quiz: "Compatibility Quiz",
-    final_couples: "Final Couples Challenge",
-    heart_rate: "Pulse Race",
-    lie_detector: "Lie Detector",
-    couples_quiz: "The Couples Quiz",
-    kiss_wed_pass: "Kiss Wed Pass",
-  };
-  return names[value] ?? value.replaceAll("_", " ").replace(/\b\w/g, (match) => match.toUpperCase());
 }
