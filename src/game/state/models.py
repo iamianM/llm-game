@@ -5,7 +5,7 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.game.state.autonomy import PendingNPCApproach as PendingNPCApproach
 from src.game.state.autonomy import PendingNPCSummon as PendingNPCSummon
@@ -51,6 +51,7 @@ from src.game.state.flush import ResortName as ResortName
 from src.game.state.memory import Memory as Memory
 from src.game.state.memory import MemoryBatch as MemoryBatch
 from src.game.state.memory import MemoryDraft as MemoryDraft
+from src.game.state.memory import RecapDisposition as RecapDisposition
 from src.game.state.personality import AttachmentStyle as AttachmentStyle
 from src.game.state.personality import Big5 as Big5
 from src.game.state.personality import IdealMatch as IdealMatch
@@ -59,7 +60,7 @@ from src.game.state.traits import KnownFacts as KnownFacts
 from src.game.state.traits import TraitCard as TraitCard
 from src.game.state.traits import empty_trait_card
 
-SCHEMA_VERSION = 29
+SCHEMA_VERSION = 30
 
 
 class Phase(StrEnum):
@@ -232,8 +233,17 @@ class DailyRecapItem(BaseModel):
     holder_id: str
     subject_id: str
     content: str
+    formed_on_turn: int
     emotional_weight: int
     tags: list[str] = Field(default_factory=list)
+    recap_disposition: RecapDisposition
+
+    @field_validator("recap_disposition")
+    @classmethod
+    def require_visible_disposition(cls, value: RecapDisposition) -> RecapDisposition:
+        if value is RecapDisposition.NONE:
+            raise ValueError("Daily Recap items require a visible disposition")
+        return value
 
 
 class DailyRecap(BaseModel):
@@ -242,6 +252,7 @@ class DailyRecap(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     day: int
+    resort_id: ResortName
     items: list[DailyRecapItem] = Field(default_factory=list)
 
 

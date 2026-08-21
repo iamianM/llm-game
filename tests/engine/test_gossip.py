@@ -10,6 +10,7 @@ from src.game.agents.contextual_options import (
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.turn import run_turn
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import Conversation, RelationshipState, new_game
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
@@ -81,6 +82,7 @@ def test_share_gossip_pick_transfers_player_memory_to_target() -> None:
             weight=7,
             tags=["gossip"],
             content="Maya looked rattled after Liam stepped back.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
     first_turn = run_turn(
@@ -128,6 +130,7 @@ def test_share_gossip_miss_still_suppresses_reoffer() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya turned the pool flirting into a kiss challenge with Jordan.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, memory)
     state.active_conversation = Conversation(target_id="chloe", started_on_turn=1, started_on_day=1)
@@ -273,6 +276,7 @@ def _state_with_chloe_gossip(*, affection: int):
             weight=6,
             tags=["background", "gossip"],
             content="Maya was flirting with Liam by the kitchen.",
+            recap_disposition=RecapDisposition.NONE,
         )
     )
     return state

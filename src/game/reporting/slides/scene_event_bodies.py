@@ -259,21 +259,31 @@ def _movement_body(scene: Scene) -> str:
 
 
 def _day_boundary_body(scene: Scene) -> str:
-    recap_items: list[str] = []
+    recap_sections: dict[str, list[str]] = {
+        "your_day": [],
+        "while_busy": [],
+    }
     for record in scene.records:
         recaps = record.get("daily_recaps")
         if isinstance(recaps, list):
             for r in recaps:
                 if isinstance(r, dict):
-                    line = str(r.get("body") or r.get("text") or "").strip()
-                    day = r.get("day")
-                    if line:
-                        prefix = (
-                            f"<span class='muted'>Day {escape(day)}</span> · "
-                            if day is not None
-                            else ""
-                        )
-                        recap_items.append(f"<div class='recap-item'>{prefix}{escape(line)}</div>")
+                    items = r.get("items")
+                    if not isinstance(items, list):
+                        continue
+                    for item in items:
+                        if not isinstance(item, dict):
+                            continue
+                        section = item.get("section")
+                        if section not in recap_sections:
+                            continue
+                        speaker = str(item.get("speaker_label") or "Someone")
+                        content = str(item.get("content") or "").strip()
+                        if content:
+                            recap_sections[section].append(
+                                f"<div class='recap-item'><b>{escape(speaker)}:</b> "
+                                f"{escape(content)}</div>"
+                            )
     audience: list[str] = []
     for record in scene.records:
         snap = record.get("audience_snapshot")
@@ -290,10 +300,15 @@ def _day_boundary_body(scene: Scene) -> str:
                                 f"{escape(label)} <span class='muted'>· {escape(score)}</span></div>"
                             )
     blocks: list[str] = []
-    if recap_items:
-        blocks.append(
-            f"<div class='recap-feature'><h3>While you were busy</h3>{''.join(recap_items)}</div>"
-        )
+    for section, label in (
+        ("your_day", "Your day"),
+        ("while_busy", "While you were busy"),
+    ):
+        if recap_sections[section]:
+            blocks.append(
+                f"<div class='recap-feature'><h3>{label}</h3>"
+                f"{''.join(recap_sections[section])}</div>"
+            )
     if audience:
         blocks.append(
             f"<div class='recap-feature' style='border-left-color:var(--gold)'>"

@@ -5,6 +5,7 @@ from __future__ import annotations
 from src.game.engine.arrival_rolls import interruption_chance, private_chat_chance, roll_arrival
 from src.game.engine.conversation import start_conversation
 from src.game.engine.memory import add_memory, create_memory
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import Couple, Location, RelationshipState, new_game
 from src.game.state.rng import SeededRng
 
@@ -24,6 +25,7 @@ def test_interruption_chance_includes_chemistry_and_gossip() -> None:
             weight=7,
             tags=["gossip"],
             content="I saw Liam looking rattled.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 

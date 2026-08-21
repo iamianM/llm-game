@@ -9,6 +9,7 @@ from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, partner_for, player_couple
 from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.turn import TurnResult
+from src.game.presentation.daily_recap import project_daily_recap
 from src.game.state.models import GameState, NPCNPCConversation
 
 
@@ -281,12 +282,21 @@ def _print_latest_daily_recap(turn: TurnResult) -> None:
     recap = turn.state.daily_recaps[-1]
     if recap.day != turn.state.day - 1:
         return
-    if not recap.items:
-        print("While you were busy yesterday: no major Sunset Bay memories surfaced.")
+    view = project_daily_recap(turn.state, recap)
+    if not view.items:
+        print(f"Daily Recap: no major {view.resort_label} memories surfaced.")
         return
-    print("While you were busy yesterday:")
-    for item in recap.items:
-        print(f"  - {name_for(turn.state, item.holder_id)} remembered {item.subject_id}: {item.content}")
+    print(f"Daily Recap: Day {view.day} at {view.resort_label}")
+    for section, label in (
+        ("your_day", "Your day"),
+        ("while_busy", "While you were busy"),
+    ):
+        items = [item for item in view.items if item.section == section]
+        if not items:
+            continue
+        print(f"{label}:")
+        for item in items:
+            print(f"  - {item.speaker_label}: {item.content}")
 
 
 def names_for(state: GameState, heartbreaker_ids: list[str]) -> str:

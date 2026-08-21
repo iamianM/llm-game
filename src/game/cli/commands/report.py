@@ -230,6 +230,7 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
 
 def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> dict[str, Any]:
     from src.game.engine.turn import TurnResult
+    from src.game.presentation.daily_recap import project_daily_recap
 
     if not isinstance(turn, TurnResult):
         raise TypeError("turn must be TurnResult")
@@ -270,7 +271,10 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
         "pending_gather": None if state.pending_gather is None else state.pending_gather.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
-        "daily_recaps": [recap.model_dump(mode="json") for recap in state.daily_recaps],
+        "daily_recaps": [
+            project_daily_recap(state, recap).model_dump(mode="json")
+            for recap in state.daily_recaps
+        ],
         "revealed_preferences": {
             heartbreaker.id: revealed
             for heartbreaker in state.heartbreakers

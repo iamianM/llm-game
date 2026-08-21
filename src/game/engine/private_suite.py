@@ -10,6 +10,7 @@ from src.game.engine.state_access import (
     find_heartbreaker,
     player_display_name,
 )
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import GameState, Location, Phase, RelationshipDelta
 
 PRIVATE_SUITE_THRESHOLD = 70
@@ -86,6 +87,7 @@ def _remember_private_suite(state: GameState, partner_id: str) -> None:
             weight=9,
             tags=PRIVATE_SUITE_TAGS,
             content=f"The Private Suite with {partner.name} felt private, committed, and hard to fake.",
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
     add_memory(
@@ -99,5 +101,6 @@ def _remember_private_suite(state: GameState, partner_id: str) -> None:
             weight=9,
             tags=PRIVATE_SUITE_TAGS,
             content="The Private Suite made the player's commitment feel much more real.",
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )

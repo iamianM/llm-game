@@ -10,6 +10,7 @@ from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Location,
     MemoryBatch,
@@ -257,6 +258,7 @@ def test_daily_recap_generated_at_day_rollover() -> None:
             weight=9,
             tags=["background"],
             content="Maya and Liam had a sharp terrace moment.",
+            recap_disposition=RecapDisposition.WHILE_BUSY,
         ),
     )
 

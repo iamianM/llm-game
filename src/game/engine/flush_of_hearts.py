@@ -11,6 +11,7 @@ from src.game.engine.heart_throb_brief import pick_heart_throb_brief
 from src.game.engine.memory import add_memory, create_memory, remember_ceremony_events
 from src.game.engine.state_access import find_heartbreaker
 from src.game.state.flush import FlushDecision, ResortName
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     AttachmentStyle,
     Big5,
@@ -270,5 +271,6 @@ def _remember_return(state: GameState, event: CeremonyEvent) -> None:
                     weight=9,
                     tags=["flush_of_hearts", "return_reveal"],
                     content=event.message,
+                    recap_disposition=RecapDisposition.NONE,
                 ),
             )

@@ -18,6 +18,7 @@ from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
 from src.game.engine.rules import MechanicalResult
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import FollowUpOption, Memory, Mood, RelationshipDelta, new_game
 
 Tone = Literal["warm", "flirty", "suspicious", "amused", "cold", "vulnerable", "playful", "defensive"]
@@ -186,6 +187,7 @@ def test_explored_threads_only_includes_memories_about_the_target() -> None:
                 formed_on_turn=2,
                 emotional_weight=6,
                 tags=["deep", "talked_about_future"],
+                recap_disposition=RecapDisposition.YOUR_DAY,
             ),
             Memory(
                 id="m2",
@@ -197,6 +199,7 @@ def test_explored_threads_only_includes_memories_about_the_target() -> None:
                 formed_on_turn=3,
                 emotional_weight=4,
                 tags=["banter"],
+                recap_disposition=RecapDisposition.YOUR_DAY,
             ),
         ]
     )

@@ -9,6 +9,7 @@ from src.api.display import display
 from src.api.serializers import action_label, available_actions_api, hide_redundant_hint, memory_api
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction
 from src.game.engine.memory import create_memory
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Conversation,
     FollowUpMenu,
@@ -159,6 +160,7 @@ def test_memory_api_exposes_stable_identity() -> None:
         weight=5,
         tags=["supportive"],
         content="Chloe trusted the player after a careful chat.",
+        recap_disposition=RecapDisposition.NONE,
     )
 
     assert memory_api(memory).id == memory.id

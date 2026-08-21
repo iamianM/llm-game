@@ -13,6 +13,7 @@ from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.couples import couple_strength, player_couple
 from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.turn import TurnResult
+from src.game.presentation.daily_recap import project_daily_recap
 from src.game.state.models import GameState
 from src.game.state.snapshot import state_hash, state_hash_payload
 from src.game.state.trace import TraceMode
@@ -49,7 +50,10 @@ def record_from_turn(input_hash: str, action: PlayerAction, turn: TurnResult) ->
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
         "pending_gather": None if state.pending_gather is None else state.pending_gather.model_dump(mode="json"),
         "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
-        "daily_recaps": [recap.model_dump(mode="json") for recap in state.daily_recaps],
+        "daily_recaps": [
+            project_daily_recap(state, recap).model_dump(mode="json")
+            for recap in state.daily_recaps
+        ],
         "revealed_preferences": {
             heartbreaker.id: revealed
             for heartbreaker in state.heartbreakers

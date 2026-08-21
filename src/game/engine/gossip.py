@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from src.game.engine.memory import add_memory, create_memory
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import GameState, HeartbreakerState, RelationshipDelta
 from src.game.state.rng import SeededRng
 from src.game.state.traits import KnownFact
@@ -63,6 +64,7 @@ def apply_gossip_follow_up(
             weight=source_memory.emotional_weight,
             tags=["gossip", f"source_memory:{source_memory.id}", *source_memory.tags],
             content=source_memory.content,
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
     return GossipFollowUpResult(delta=RelationshipDelta(trust=2))
@@ -105,6 +107,7 @@ def apply_share_gossip_follow_up(
                 weight=max(2, source_memory.emotional_weight - 3),
                 tags=["gossip", "gossip_unconvinced", f"source_memory:{source_memory.id}"],
                 content=source_memory.content,
+                recap_disposition=RecapDisposition.YOUR_DAY,
             ),
         )
         return GossipFollowUpResult(delta=RelationshipDelta(trust=-1))
@@ -120,6 +123,7 @@ def apply_share_gossip_follow_up(
             weight=source_memory.emotional_weight,
             tags=["gossip", f"source_memory:{source_memory.id}", *source_memory.tags],
             content=source_memory.content,
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
     return GossipFollowUpResult(delta=RelationshipDelta(trust=1, friendship=1))

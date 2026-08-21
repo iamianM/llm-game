@@ -157,12 +157,14 @@ async def apply_resort_update_async(
         ]
     )
     for batch in closed_batches:
+        batch.kind = "background"
         curator_batches.append(batch)
         memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
     for conversation, _bystanders in conversations_to_curate:
         proposal_batch = maybe_form_single_npc_couple_from_conversation(state, conversation)
         if proposal_batch is None:
             continue
+        proposal_batch.kind = "background"
         curator_batches.append(proposal_batch)
         memories.extend(add_memory_batch(state, proposal_batch, day=state.day, turn=state.turn_index))
 
@@ -263,6 +265,7 @@ async def _apply_summon_async(
             conversation,
             _player_conversation_bystanders(state, conversation),
         )
+        batch.kind = "player"
         state.active_conversation = None
     else:
         npc_conversation = _active_conversation(state, summon.from_conversation_id)
@@ -273,6 +276,7 @@ async def _apply_summon_async(
             npc_conversation,
             _bystander_ids(state, npc_conversation),
         )
+        batch.kind = "background"
         state.npc_conversations = [
             existing for existing in state.npc_conversations if existing.id != npc_conversation.id
         ]

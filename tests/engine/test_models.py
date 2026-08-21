@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     AttachmentStyle,
     BackgroundExchangeRecord,
@@ -145,6 +146,7 @@ def test_memory_content_does_not_affect_hash() -> None:
             formed_on_turn=1,
             emotional_weight=4,
             tags=["friendly"],
+            recap_disposition=RecapDisposition.NONE,
         )
     )
     first = state_hash(state_hash_payload(state))
@@ -190,13 +192,16 @@ def test_daily_recap_content_does_not_affect_hash() -> None:
     state.daily_recaps.append(
         DailyRecap(
             day=1,
+            resort_id="main",
             items=[
                 DailyRecapItem(
                     holder_id="chloe",
                     subject_id="maya",
                     content="Original recap.",
+                    formed_on_turn=3,
                     emotional_weight=8,
                     tags=["background"],
+                    recap_disposition=RecapDisposition.WHILE_BUSY,
                 )
             ],
         )
@@ -205,6 +210,30 @@ def test_daily_recap_content_does_not_affect_hash() -> None:
     state.daily_recaps[0].items[0].content = "Changed recap."
 
     assert state_hash(state_hash_payload(state)) == first
+
+
+def test_daily_recap_structure_affects_hash() -> None:
+    state = new_game(1)
+    state.daily_recaps.append(
+        DailyRecap(
+            day=1,
+            resort_id="main",
+            items=[
+                DailyRecapItem(
+                    holder_id="player",
+                    subject_id="chloe",
+                    content="The player made a choice.",
+                    formed_on_turn=2,
+                    emotional_weight=7,
+                    recap_disposition=RecapDisposition.YOUR_DAY,
+                )
+            ],
+        )
+    )
+    first = state_hash(state_hash_payload(state))
+    state.daily_recaps[0].items[0].recap_disposition = RecapDisposition.WHILE_BUSY
+
+    assert state_hash(state_hash_payload(state)) != first
 
 
 def test_save_load_roundtrip_preserves_hash(tmp_path: Path) -> None:

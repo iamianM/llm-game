@@ -72,6 +72,37 @@ def test_memory_batch_kind_drives_player_filter() -> None:
     assert not _is_player_batch(background_batch)
 
 
+def test_slide_day_boundary_renders_projected_recap_sections() -> None:
+    record = _record(1, "advance_phase")
+    record["daily_recaps"] = [
+        {
+            "day": 1,
+            "resort_id": "main",
+            "resort_label": "Sunset Bay",
+            "items": [
+                {
+                    "section": "your_day",
+                    "speaker_label": "You",
+                    "content": "You took a risk.",
+                    "emphasis": "strong",
+                },
+                {
+                    "section": "while_busy",
+                    "speaker_label": "Maya",
+                    "content": "Maya made a quiet pact.",
+                    "emphasis": "standard",
+                },
+            ],
+        }
+    ]
+
+    html = slide_session_page("Session", [record])
+
+    assert "Your day" in html
+    assert "While you were busy" in html
+    assert "You took a risk" in html
+
+
 def _record(turn: int, action_kind: str) -> dict[str, object]:
     return {
         "turn": turn,

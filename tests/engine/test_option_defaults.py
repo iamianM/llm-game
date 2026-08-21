@@ -14,6 +14,7 @@ from src.game.engine.option_defaults import (
     tone_reaction_options,
 )
 from src.game.engine.rules import MechanicalResult
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Conversation,
     FollowUpOption,
@@ -72,6 +73,7 @@ def test_default_options_include_share_gossip_when_player_holds_memory() -> None
             weight=7,
             tags=["gossip"],
             content="Maya looked rattled after Liam stepped back.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -97,6 +99,7 @@ def test_ceremony_memory_not_offered_as_share_gossip() -> None:
             weight=5,
             tags=["ceremony", "gather_scheduled"],
             content="Everyone is called to the flame_deck for group_date_invite.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -125,6 +128,7 @@ def test_real_subject_ceremony_memory_not_offered_without_gossip_flag() -> None:
             # A brand-new ceremony kind the blacklist never heard of.
             tags=["surprise_heart_out", "ceremony"],
             content="Maya was sent home in a shock heart_out.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -149,6 +153,7 @@ def test_witnessed_memory_offered_when_flagged_gossip() -> None:
             weight=5,
             tags=["background", "witnessed", "gossip"],
             content="I noticed Maya and Liam looked wrapped up in each other.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -169,6 +174,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya looked rattled after Liam stepped back.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, first)
 
@@ -189,6 +195,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
             weight=7,
             tags=["gossip", f"source_memory:{first.id}"],
             content="Maya looked rattled after Liam stepped back.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -208,6 +215,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya looked rattled after Liam stepped back.",
+        recap_disposition=RecapDisposition.NONE,
     )
     newer = create_memory(
         holder_id="player",
@@ -218,6 +226,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
         weight=7,
         tags=["gossip"],
         content="Liam went quiet after the challenge.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, older)
     add_memory(state, newer)
@@ -240,6 +249,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
             weight=7,
             tags=["gossip", f"source_memory:{newer.id}"],
             content="Liam went quiet after the challenge.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 

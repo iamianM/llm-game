@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from src.game.engine.memory import add_memory, create_memory, propagate_gossip_seeds
-from src.game.state.memory import GossipSeed
+from src.game.state.memory import GossipSeed, RecapDisposition
 from src.game.state.models import new_game
 
 
@@ -73,6 +73,7 @@ def test_propagation_dedupes_against_existing_memories() -> None:
             weight=5,
             tags=["gossip"],
             content="Chloe looked rattled after Jordan stepped back at the flame_deck.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
     seed = GossipSeed(

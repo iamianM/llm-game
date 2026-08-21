@@ -6,6 +6,7 @@ import pytest
 
 from src.game.agents.resort_orchestrator import OpenAIResortOrchestrator
 from src.game.engine.resort import validate_resort_update
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import Conversation, Location, Memory, NPCInterruption, new_game
 
 
@@ -67,6 +68,7 @@ def _state_for_case(state_name: str):
                 formed_on_turn=2,
                 emotional_weight=8,
                 tags=["jealous", "player_flirted", "witnessed"],
+                recap_disposition=RecapDisposition.YOUR_DAY,
             )
         )
         return state
@@ -83,6 +85,7 @@ def _state_for_case(state_name: str):
                 formed_on_turn=2,
                 emotional_weight=7,
                 tags=["gossip", "chloe", "relationship_doubt"],
+                recap_disposition=RecapDisposition.WHILE_BUSY,
             )
         )
         return state

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from src.game.reporting.memory_web import memory_web_svg
 from src.game.reporting.stylish.avatars import avatar_svg
+from src.game.reporting.stylish.background import daily_recap_block
 from src.game.reporting.stylish.couple_status import couple_status_panel
 from src.game.reporting.stylish.perception_graph import perception_graph_svg
 from src.game.reporting.stylish.session import stylish_session_page
@@ -103,3 +104,35 @@ def test_math_breakdown_collapsed_by_default() -> None:
 
     assert "Why this outcome?" in html
     assert "inline-detail" in html
+
+
+def test_daily_recap_block_renders_both_projected_sections() -> None:
+    record = _record() | {
+        "daily_recaps": [
+            {
+                "day": 1,
+                "resort_id": "main",
+                "resort_label": "Sunset Bay",
+                "items": [
+                    {
+                        "section": "your_day",
+                        "speaker_label": "You",
+                        "content": "You chose honesty.",
+                        "emphasis": "strong",
+                    },
+                    {
+                        "section": "while_busy",
+                        "speaker_label": "Chloe",
+                        "content": "Chloe heard a rumor.",
+                        "emphasis": "standard",
+                    },
+                ],
+            }
+        ]
+    }
+
+    html = daily_recap_block(2, [record])
+
+    assert "Your day" in html
+    assert "While you were busy" in html
+    assert "holder_id" not in html

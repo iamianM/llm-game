@@ -7,6 +7,7 @@ from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.results import ChanceBreakdown, ForcedMovement, MechanicalResult
 from src.game.engine.state_access import apply_relationship_delta, find_heartbreaker
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import GameState, Location, RelationshipDelta
 from src.game.state.rng import SeededRng
 
@@ -131,6 +132,7 @@ def remember_interruption_snub(
             weight=weight,
             tags=["interruption", tag],
             content=f"I remember the player leaving me feeling {tag.replace('_', ' ')}.",
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
     for heartbreaker in state.heartbreakers:
@@ -153,6 +155,7 @@ def remember_interruption_snub(
                         "I saw the player handle an interruption and leave someone "
                         f"{tag.replace('_', ' ')}."
                     ),
+                    recap_disposition=RecapDisposition.YOUR_DAY,
                 ),
             )
 

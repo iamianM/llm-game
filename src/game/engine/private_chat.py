@@ -14,6 +14,7 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.memory import add_memory, create_memory
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import GameState, HeartbreakerState, Location, NPCNPCConversation
 from src.game.state.rng import SeededRng
 
@@ -118,5 +119,6 @@ def _remember_repeated_private_chat_attempt(state: GameState, target_id: str) ->
             weight=6,
             tags=["player_kept_requesting_private_chats", "private_chat"],
             content="Player kept asking me for private chats today - felt a bit much.",
+            recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
