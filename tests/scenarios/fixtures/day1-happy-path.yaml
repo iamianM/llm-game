@@ -1,7 +1,7 @@
 name: day1-happy-path
 seed: 1
 initial_phase: morning
-expected_hash: cdc9821874231e984b73fa09d64f532d04f8791febe40a566f9f3ef7e75dd9ff
+expected_hash: 3b2068439ee848c3bcb2c7fe9a84936888e789ce0348676d6239a9256f52baa4
 actions:
 - kind: start_conversation
   target_id: chloe

@@ -32,7 +32,7 @@ initial_couples:
   has_used_private_suite: false
   last_steal_attempt_chance: null
 initial_phase: morning
-expected_hash: 118d19fefb91700439189ae09d437c09669a54eec16a1f09468ad79893aa4d60
+expected_hash: 0f1a77b9fd236e45c2f3e1c1e24c6c52df2863572584032398856d8963dfb382
 actions:
 - kind: ambient
   target_id: ambient_wait

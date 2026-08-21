@@ -1,9 +1,9 @@
 {
   "name": "day6-pre-final-couples",
   "seed": 7,
-  "state_hash": "81c1acbe4fe0e3eedc0fdcdc9724e41033263f70ec279f70db5e6728570a9c33",
+  "state_hash": "6854054652bae7ea322745056e84a69283aa7c1407cb1f920014ef47db4a8824",
   "state": {
-    "schema_version": 29,
+    "schema_version": 30,
     "seed": 7,
     "turn_index": 264,
     "day": 6,
@@ -47,7 +47,8 @@
             "pairing"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_f6248b78d5efe016",
@@ -64,7 +65,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_4d4ad059ee5d0f48",
@@ -81,7 +83,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_6c4b9162b1f66149",
@@ -100,7 +103,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "jordan"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_9268d7453c64626f",
@@ -117,7 +121,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_ed28071b13211056",
@@ -134,7 +139,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_06e03f754becd8d5",
@@ -153,7 +159,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "jordan"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_caad55761a6a14d5",
@@ -172,7 +179,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "jordan"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_602170c088d4c073",
@@ -189,7 +197,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_7c1fb3ca9fe1f112",
@@ -206,7 +215,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_150d401dc2d6a877",
@@ -225,7 +235,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "marcus"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_ed74f1c34f2c698d",
@@ -242,7 +253,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_9b429bdbb46d2e6f",
@@ -259,7 +271,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_1a3ccf07dfeed325",
@@ -278,7 +291,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "jordan"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_4de7a146a7dc9b44",
@@ -297,7 +311,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "jordan"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_e9493b5ac3a93059",
@@ -314,7 +329,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_1106e84e21607396",
@@ -331,7 +347,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_0df4be17296fe305",
@@ -350,7 +367,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "marcus"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_d2d2694226ad7b22",
@@ -367,7 +385,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_d99d8b5113142e95",
@@ -384,7 +403,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_45b4e3dc61f10806",
@@ -403,7 +423,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "chloe"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_479a3c632bbdc903",
@@ -420,7 +441,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_b0b7c37a76d48e4e",
@@ -437,7 +459,8 @@
             "pairing"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_87ff7514fc2c5fa4",
@@ -456,7 +479,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "blake"
-          ]
+          ],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_3f89d85fa357e4c2",
@@ -475,7 +499,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "sophie"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_47c0866fa6c0b08b",
@@ -492,7 +517,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_081ef58ab1510bc8",
@@ -509,7 +535,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_8e671274717eba97",
@@ -528,7 +555,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "maya"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_b757592965f5d937",
@@ -545,7 +573,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_fe0a9aca549ad766",
@@ -562,7 +591,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_899956e66a7f63ef",
@@ -579,7 +609,8 @@
             "ceremony"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_775c7047c1e3f60b",
@@ -596,7 +627,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_cfadca39e48464ec",
@@ -613,7 +645,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_11992882e706a8c7",
@@ -630,7 +663,8 @@
             "ceremony"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_8fc02e208c4d8a8b",
@@ -647,7 +681,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_73f28cdf9438e985",
@@ -664,7 +699,8 @@
             "ceremony"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_34b77011f85e6038",
@@ -681,7 +717,8 @@
             "ceremony"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_2507a889d4047bee",
@@ -700,7 +737,8 @@
           "durable": true,
           "mentioned_subject_ids": [
             "mateo"
-          ]
+          ],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_3c59dcc1a0254dc2",
@@ -717,7 +755,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         }
       ],
       "known_facts": {
@@ -1250,7 +1289,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_7fd2f5f46fa966e2",
@@ -1267,7 +1307,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2cb942d2bf6474f1",
@@ -1284,7 +1325,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_22ab7a0443e86655",
@@ -1301,7 +1343,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3c5dbc96f4d016c3",
@@ -1320,7 +1363,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_6346daa8bf3b161d",
@@ -1337,7 +1381,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4e43a280e7f864f9",
@@ -1354,7 +1399,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_db8fc771c5cb9ca9",
@@ -1373,7 +1419,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_638cf693736da08f",
@@ -1392,7 +1439,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_f9dbdeaa9c9943da",
@@ -1409,7 +1457,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c94640ad84ea1eb6",
@@ -1426,7 +1475,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_01b227498ad5c740",
@@ -1445,7 +1495,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_c64b952021f2c581",
@@ -1462,7 +1513,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9a770f8bda49f377",
@@ -1479,7 +1531,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_043fcd953aa513f8",
@@ -1498,7 +1551,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_4857fa0ef16bfa14",
@@ -1517,7 +1571,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_c967569e47f274b1",
@@ -1534,7 +1589,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_873e5cd327e47efb",
@@ -1551,7 +1607,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_38f57165d6246651",
@@ -1570,7 +1627,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_ee751ca8581e2757",
@@ -1587,7 +1645,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3dc9f1aa1d93e7ad",
@@ -1604,7 +1663,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5569fc8b0fc240cf",
@@ -1621,7 +1681,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_c3f21e74d30cefd1",
@@ -1638,7 +1699,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7dd9792e95f18cd6",
@@ -1655,7 +1717,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f59cbaf072dbfd0f",
@@ -1674,7 +1737,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5e578af8aa110a6c",
@@ -1693,7 +1757,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_6d607d635d023940",
@@ -1710,7 +1775,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dd0d0da1413b2205",
@@ -1727,7 +1793,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_05cd026bd482ca9b",
@@ -1746,7 +1813,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "maya"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_0fbc1b2ba149ff58",
@@ -1763,7 +1831,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_924035165c17469b",
@@ -1780,7 +1849,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9d31bca31589aede",
@@ -1797,7 +1867,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_71aa0751c5fd029f",
@@ -1814,7 +1885,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_439a39347f584add",
@@ -1831,7 +1903,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8124b4d838dcb007",
@@ -1848,7 +1921,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1c43faab730785b6",
@@ -1865,7 +1939,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_de06e0cf7bac757b",
@@ -1882,7 +1957,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_45a3639e1172e727",
@@ -1899,7 +1975,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4ac02531c393dc04",
@@ -1916,7 +1993,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fe9b820fdb5b5d60",
@@ -1935,7 +2013,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_48c10fc219be0152",
@@ -1952,7 +2031,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -2444,7 +2524,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_b2829f17ddd1e1ca",
@@ -2461,7 +2542,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d78452a8494a430b",
@@ -2478,7 +2560,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_abd4a98a41ee10b2",
@@ -2495,7 +2578,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_868320429348dcb9",
@@ -2512,7 +2596,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58f6f3e0e512428e",
@@ -2529,7 +2614,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_efddb85977901cea",
@@ -2548,7 +2634,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_f6aa898ca4fc647f",
@@ -2567,7 +2654,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_50976e54b08c9a0f",
@@ -2584,7 +2672,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1b645d1036539038",
@@ -2601,7 +2690,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5e7774a259f80e08",
@@ -2620,7 +2710,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_cdea7cd1967af281",
@@ -2637,7 +2728,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9dadb509c4ef2bf4",
@@ -2654,7 +2746,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ee9f153c5b1d9004",
@@ -2673,7 +2766,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_e15b8dc0ebb84879",
@@ -2692,7 +2786,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_738a4470a554acbe",
@@ -2709,7 +2804,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a9afc8f815b5f3ae",
@@ -2726,7 +2822,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_86f8cdafd578d5a1",
@@ -2745,7 +2842,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_5af517b82cf50c04",
@@ -2762,7 +2860,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8cbcd43599c09e29",
@@ -2779,7 +2878,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_92843b5f2ca437f9",
@@ -2798,7 +2898,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_31f9f53702c9086e",
@@ -2815,7 +2916,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ccc28a78f0180d1e",
@@ -2832,7 +2934,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9371fd0a567e1e0f",
@@ -2851,7 +2954,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2d824c7f24081d66",
@@ -2870,7 +2974,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_53b03bd178afa764",
@@ -2887,7 +2992,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2432f147f1854ff4",
@@ -2904,7 +3010,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d059a327714b47d5",
@@ -2921,7 +3028,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_14487f6d25965aef",
@@ -2938,7 +3046,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_16d5378427c3bdf2",
@@ -2955,7 +3064,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0c8a9606011d8e56",
@@ -2972,7 +3082,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b0dd8ca3a435128c",
@@ -2989,7 +3100,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4b0672018fb851c8",
@@ -3006,7 +3118,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_787817332771ca6c",
@@ -3023,7 +3136,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ed9eb3b3928fcd74",
@@ -3040,7 +3154,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_45d22ed451a05507",
@@ -3057,7 +3172,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5d1c8fdfa9fc89fc",
@@ -3074,7 +3190,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b5e9b11b2cd41007",
@@ -3091,7 +3208,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7e4503607574c89e",
@@ -3110,7 +3228,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_5c9d79a92dacb48c",
@@ -3127,7 +3246,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -3619,7 +3739,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_34037131594dd190",
@@ -3636,7 +3757,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bdad7c39aafaf717",
@@ -3653,7 +3775,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_934befd6d3a3ae52",
@@ -3670,7 +3793,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5ee7750120a1a484",
@@ -3687,7 +3811,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_24df3cf7d07cba5e",
@@ -3704,7 +3829,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_84da9313ff97619c",
@@ -3723,7 +3849,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_967084b14f90fc2b",
@@ -3742,7 +3869,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_2aebe2b24e44cb52",
@@ -3759,7 +3887,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08defa20094575d4",
@@ -3776,7 +3905,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_75a575e4813dd511",
@@ -3795,7 +3925,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_0c077d4905ac894a",
@@ -3812,7 +3943,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_53291830cbd414ae",
@@ -3829,7 +3961,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_df6a16416e4df782",
@@ -3848,7 +3981,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_fd7bf3e00047be09",
@@ -3867,7 +4001,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_349c69b02e188ae9",
@@ -3884,7 +4019,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7d24b16d2c315b83",
@@ -3901,7 +4037,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_115dd0dc047ed608",
@@ -3920,7 +4057,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_97338e1aad597071",
@@ -3937,7 +4075,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b90f63cf4f092fba",
@@ -3954,7 +4093,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_20dff6f994e5379c",
@@ -3973,7 +4113,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_63bd58d4a7d5a4ae",
@@ -3990,7 +4131,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ab71bd53439d9468",
@@ -4007,7 +4149,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d5666e5de45ceaff",
@@ -4026,7 +4169,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0eb26fe46b73a5f4",
@@ -4045,7 +4189,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_38f682cfb9a0a7fa",
@@ -4062,7 +4207,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7a7ec24cb6370ebd",
@@ -4079,7 +4225,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b142b2d4051b8230",
@@ -4098,7 +4245,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "maya"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_37253219ab4fa39d",
@@ -4115,7 +4263,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a23863aba980e289",
@@ -4132,7 +4281,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1a51a081460175ac",
@@ -4149,7 +4299,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d9f8fae08d8fdd09",
@@ -4166,7 +4317,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b791692288871d40",
@@ -4183,7 +4335,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7ce1d77f3e5f3f16",
@@ -4200,7 +4353,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_404507bb29a990a5",
@@ -4217,7 +4371,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_befad0450a49490c",
@@ -4234,7 +4389,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_78e85fa7af7743ce",
@@ -4251,7 +4407,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b66f1e34649120c5",
@@ -4268,7 +4425,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0c1abe1956a07710",
@@ -4287,7 +4445,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_16da41d69d8d398f",
@@ -4304,7 +4463,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -4796,7 +4956,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_ee4564f5fb6835e0",
@@ -4813,7 +4974,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b42ff57e4fe037e7",
@@ -4830,7 +4992,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::sophie::favorite_food::1::13",
@@ -4848,7 +5011,8 @@
               "favorite_food"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::sophie::age::1::13",
@@ -4866,7 +5030,8 @@
               "age"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::sophie::hometown::1::13",
@@ -4884,7 +5049,8 @@
               "hometown"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_41438c47a5ca8cd8",
@@ -4901,7 +5067,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6ae95f4cc678f682",
@@ -4920,7 +5087,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_718387bf17f17ce8",
@@ -4937,7 +5105,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7cd6143ec8d8dec1",
@@ -4954,7 +5123,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b5860071d29cbb68",
@@ -4973,7 +5143,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_b0cc8963a60fb5d9",
@@ -4990,7 +5161,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e0dcf172e8900681",
@@ -5007,7 +5179,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2b917d0aa7b99e64",
@@ -5024,7 +5197,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1e9038a2d6322e42",
@@ -5041,7 +5215,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8c1078c1905ac91a",
@@ -5060,7 +5235,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_5b36c06cc7c161f2",
@@ -5079,7 +5255,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_f4e040f15700f059",
@@ -5096,7 +5273,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a7ab9969f26b7a19",
@@ -5113,7 +5291,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6afbaf782fa70ccc",
@@ -5130,7 +5309,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c35c9adfcf1592ba",
@@ -5147,7 +5327,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bb7ae908b2e7466c",
@@ -5166,7 +5347,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_026fd5e460f7e53d",
@@ -5183,7 +5365,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_81e91097e5c4b3eb",
@@ -5200,7 +5383,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a8661f6359e76418",
@@ -5219,7 +5403,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_49be36e7cc4d6dd6",
@@ -5236,7 +5421,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_3b19051beb8e236f",
@@ -5253,7 +5439,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5bafb0915cced86a",
@@ -5270,7 +5457,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e0bb3f7008d19c20",
@@ -5287,7 +5475,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3837577890af4749",
@@ -5304,7 +5493,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1b21e8104b76a1c2",
@@ -5321,7 +5511,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_66b2bd5ce9eeda5c",
@@ -5338,7 +5529,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8c60e91bef80eb80",
@@ -5355,7 +5547,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e65f862d49a99e29",
@@ -5372,7 +5565,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4aa9788634e69ac0",
@@ -5389,7 +5583,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_380b55286d5e8c73",
@@ -5406,7 +5601,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ea864a6e1bde7c9f",
@@ -5423,7 +5619,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6b0190d8af86d2b3",
@@ -5440,7 +5637,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6933446833934267",
@@ -5459,7 +5657,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_112868b3f1bb228f",
@@ -5476,7 +5675,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -5968,7 +6168,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_ca2ee3bec5fc31ea",
@@ -5985,7 +6186,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3b3b316a8e06333f",
@@ -6002,7 +6204,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_153d69854737172a",
@@ -6019,7 +6222,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_537c151ec125b4ba",
@@ -6036,7 +6240,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0d60faaffbd5e856",
@@ -6053,7 +6258,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_091ebd32aeb21ff3",
@@ -6072,7 +6278,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_ad29d83aff4fb36b",
@@ -6091,7 +6298,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_54bed663470c1eb5",
@@ -6108,7 +6316,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_21c6334649e664b5",
@@ -6125,7 +6334,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e93a2170d682246a",
@@ -6144,7 +6354,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_2e9a2f4e4851382a",
@@ -6161,7 +6372,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_be6fdca88585f463",
@@ -6178,7 +6390,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a92865b6a2418e40",
@@ -6197,7 +6410,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_4d873d1676e85b6a",
@@ -6216,7 +6430,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_3f9b4d37f69371f6",
@@ -6233,7 +6448,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0f386ef8116a8c21",
@@ -6250,7 +6466,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_17c6fb9030b010a2",
@@ -6269,7 +6486,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_03f7d2f0100a3d5a",
@@ -6286,7 +6504,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b1b9f2b341aefb38",
@@ -6303,7 +6522,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6b4f99946e17d728",
@@ -6322,7 +6542,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_40b0814bfd7f6aec",
@@ -6339,7 +6560,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d82c33ac41901040",
@@ -6356,7 +6578,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_74d5160cdf2cf548",
@@ -6375,7 +6598,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b944dab8e5f03ae1",
@@ -6394,7 +6618,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_3ec802b2402d4926",
@@ -6411,7 +6636,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3978773dc10b2a6c",
@@ -6428,7 +6654,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4ad19db553a776ea",
@@ -6447,7 +6674,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "maya"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_61d039e522fde81a",
@@ -6464,7 +6692,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_604aebb4d5cfbcb2",
@@ -6481,7 +6710,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_62d5ec3beb349aa8",
@@ -6498,7 +6728,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a4b8901438d425a0",
@@ -6515,7 +6746,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0a944e28c1e50057",
@@ -6532,7 +6764,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f71171b76d1955c0",
@@ -6549,7 +6782,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1a790622e9f8bbf3",
@@ -6566,7 +6800,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_abc004d3e12ae347",
@@ -6583,7 +6818,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_85e5c7f3675377df",
@@ -6600,7 +6836,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4f54011b9338d66b",
@@ -6617,7 +6854,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8ba9a3ce87a100f8",
@@ -6636,7 +6874,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_2fbb663d7876ec29",
@@ -6653,7 +6892,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -7145,7 +7385,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_4545bab355749521",
@@ -7162,7 +7403,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ee639616e2bf3f89",
@@ -7179,7 +7421,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_de0af5485267146d",
@@ -7196,7 +7439,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_05e021691bcd2a4f",
@@ -7215,7 +7459,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_c14357e7b935ee6e",
@@ -7232,7 +7477,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_469eccbed79e5940",
@@ -7249,7 +7495,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_cb63a9ec1e7ab4ab",
@@ -7268,7 +7515,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_a70115c2a36b1762",
@@ -7287,7 +7535,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_fff13c744680dfc1",
@@ -7304,7 +7553,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1641766ca5d5c2f8",
@@ -7321,7 +7571,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08018e72648b7826",
@@ -7338,7 +7589,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_df879bfb3fa09cd4",
@@ -7355,7 +7607,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_37379c532df798cb",
@@ -7372,7 +7625,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_82cb4466fa2cd60b",
@@ -7391,7 +7645,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_a22cea3148b5b00a",
@@ -7410,7 +7665,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_70a879583a691740",
@@ -7427,7 +7683,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f4f82158dce639a9",
@@ -7444,7 +7701,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8f7b840a7f1fe007",
@@ -7461,7 +7719,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_8157e62924454b2f",
@@ -7478,7 +7737,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_672f451b2345a532",
@@ -7495,7 +7755,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_373ab3d0192743ea",
@@ -7514,7 +7775,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_9d175001f13262ef",
@@ -7531,7 +7793,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a478bd58f51b66d2",
@@ -7548,7 +7811,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4adaba323a8dc51a",
@@ -7567,7 +7831,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bc06a79e5cf8cf78",
@@ -7586,7 +7851,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_094b86ee9a3299ed",
@@ -7603,7 +7869,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f44de6d3cc4f670f",
@@ -7620,7 +7887,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d65cb9c72f43c71f",
@@ -7639,7 +7907,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "maya"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_fa707e71e030f05d",
@@ -7656,7 +7925,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_17727d6c13df5042",
@@ -7673,7 +7943,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4e5e708e65a66540",
@@ -7690,7 +7961,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_49ffc61be5bdf1d1",
@@ -7707,7 +7979,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8c80e232ffb39c50",
@@ -7724,7 +7997,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2cf93a452ca5a552",
@@ -7741,7 +8015,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d92457ea7709a3d5",
@@ -7758,7 +8033,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b639a3c410532d6f",
@@ -7775,7 +8051,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5b2912925b8dc3cd",
@@ -7792,7 +8069,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_437dc7285989661d",
@@ -7809,7 +8087,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_177ee0a4e12509ea",
@@ -7828,7 +8107,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_68bf0e280542d32b",
@@ -7845,7 +8125,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -8337,7 +8618,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_bab50abf6d37ed2e",
@@ -8354,7 +8636,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6fe351372a96178d",
@@ -8371,7 +8654,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_216b5b7d964dd4f0",
@@ -8388,7 +8672,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_da16ca30ee20d31a",
@@ -8405,7 +8690,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_06c9a2fe5c84addd",
@@ -8422,7 +8708,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6342fbe975e3219d",
@@ -8441,7 +8728,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_e3015845cb743637",
@@ -8460,7 +8748,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_b10ff685c6f4949f",
@@ -8477,7 +8766,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_60a6b8baf344519e",
@@ -8494,7 +8784,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dc1ac79f4cb563f3",
@@ -8513,7 +8804,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_3ccb1c061d3b2a8b",
@@ -8530,7 +8822,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7ed9d6549c5fc32c",
@@ -8547,7 +8840,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7fb623b54084074a",
@@ -8566,7 +8860,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_bd9e37a11ab1d7b0",
@@ -8585,7 +8880,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "jordan"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_1beb77d3ca88297a",
@@ -8602,7 +8898,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c1e968b54566f36d",
@@ -8619,7 +8916,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_749ca7ef1dc4dd20",
@@ -8638,7 +8936,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "marcus"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_a4f1ba56253c7a35",
@@ -8655,7 +8954,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_89ef3831465d9cb7",
@@ -8672,7 +8972,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ad11986808d4132c",
@@ -8691,7 +8992,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_f76942de0f6c2b94",
@@ -8708,7 +9010,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -9200,7 +9503,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_f93290099885d269",
@@ -9217,7 +9521,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_63df830941fb5e7a",
@@ -9234,7 +9539,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d81988176bc692f5",
@@ -9251,7 +9557,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_93d7b41993ae9b14",
@@ -9268,7 +9575,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_55632cbda873f26c",
@@ -9285,7 +9593,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e37ac5dce9c04ffc",
@@ -9302,7 +9611,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5c1b8535d91f8bf8",
@@ -9319,7 +9629,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_a2d8c3c1bd21acbd",
@@ -9336,7 +9647,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_8f644ac1210f07ec",
@@ -9353,7 +9665,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58fce4dbea975248",
@@ -9370,7 +9683,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dfa2eb559b2269d0",
@@ -9387,7 +9701,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_83eda866a40a7a37",
@@ -9404,7 +9719,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1cda011fc6da4591",
@@ -9421,7 +9737,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_8430cbd9adf4222c",
@@ -9438,7 +9755,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_9833792b54778748",
@@ -9455,7 +9773,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a72d7737f714dba4",
@@ -9472,7 +9791,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9b541189f8e324c8",
@@ -9489,7 +9809,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3385e377d58235ea",
@@ -9506,7 +9827,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_cfad79100ba397e9",
@@ -9525,7 +9847,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "chloe"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_72ab39b02148b5ab",
@@ -9542,7 +9865,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_40e66cd747f108a4",
@@ -9559,7 +9883,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7245c9613b8e8f4b",
@@ -9578,7 +9903,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "blake"
-            ]
+            ],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_743beb0bcef26698",
@@ -9597,7 +9923,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "sophie"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_6c0d8b5a42e71cdf",
@@ -9614,7 +9941,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b5bd5be2d0af9806",
@@ -9631,7 +9959,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4410a96b5bc8d1f8",
@@ -9650,7 +9979,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "maya"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_090a7d70c89b90e5",
@@ -9667,7 +9997,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fd02fbe0b2f41c59",
@@ -9684,7 +10015,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_69dbd16f16c79a8e",
@@ -9701,7 +10033,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b55791bdae252c5a",
@@ -9718,7 +10051,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5a7ef5c203a942d2",
@@ -9735,7 +10069,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e5dd555306e007b8",
@@ -9752,7 +10087,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08cf6879ac927b6d",
@@ -9769,7 +10105,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_934e9a56ef4fed6b",
@@ -9786,7 +10123,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0304621226a3968a",
@@ -9803,7 +10141,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fdfa58a8327d6f3c",
@@ -9820,7 +10159,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fb8cd96fab46663e",
@@ -9839,7 +10179,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_98f517b4f67d054f",
@@ -9856,7 +10197,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -10356,7 +10698,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ed63e53a33d92bc4",
@@ -10373,7 +10716,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_00350a5782446e85",
@@ -10390,7 +10734,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8104cc08adb9d995",
@@ -10407,7 +10752,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_075aa3e72f99bb96",
@@ -10424,7 +10770,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_051bdf55ca8babe1",
@@ -10441,7 +10788,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6e35b29d3ca0924b",
@@ -10458,7 +10806,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9616e279d84eac65",
@@ -10475,7 +10824,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_257a0d4499871188",
@@ -10492,7 +10842,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ea8a48b5beb3a018",
@@ -10511,7 +10862,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_e5be194f7593dc69",
@@ -10528,7 +10880,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -10816,7 +11169,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1b8fb7ebda2140d4",
@@ -10833,7 +11187,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6086c18176b7c0bd",
@@ -10850,7 +11205,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9c73387a4600247b",
@@ -10867,7 +11223,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c28705ba4b1df3c2",
@@ -10884,7 +11241,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_33d6aff5a1119a3d",
@@ -10901,7 +11259,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_349bafd054ee7f67",
@@ -10918,7 +11277,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4b3faa1fc51d87ac",
@@ -10935,7 +11295,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_873e8c5362a192b0",
@@ -10952,7 +11313,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_94630de790c5586c",
@@ -10971,7 +11333,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_5e7b6962dbb1a645",
@@ -10988,7 +11351,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -11276,7 +11640,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_567b921d99dac825",
@@ -11293,7 +11658,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7c8f35c06ab767b9",
@@ -11310,7 +11676,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_04473b2a99a49646",
@@ -11327,7 +11694,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_620ad77b5d23dc51",
@@ -11344,7 +11712,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0002cb924f139f62",
@@ -11361,7 +11730,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dcee5fcaff01c163",
@@ -11378,7 +11748,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_94eea44995e5a8b0",
@@ -11395,7 +11766,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_eb3e06d4a6438c52",
@@ -11412,7 +11784,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_93deee5365f47306",
@@ -11429,7 +11802,8 @@
               "player_conversation"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_eda4cf6a7a1dffd0",
@@ -11446,7 +11820,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -11734,7 +12109,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d89003c4d9e3b1b5",
@@ -11751,7 +12127,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_959965bed1a9a74a",
@@ -11768,7 +12145,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bef2d53601c276d8",
@@ -11785,7 +12163,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_132e60c357939700",
@@ -11802,7 +12181,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_29edc02b44901f71",
@@ -11819,7 +12199,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c2349912d371bab8",
@@ -11836,7 +12217,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_008d793ed819b2f6",
@@ -11853,7 +12235,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_69ccfad023ae5c28",
@@ -11870,7 +12253,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5dbd8b1523003441",
@@ -11889,7 +12273,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_67176c0b0058b6e8",
@@ -11906,7 +12291,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -12194,7 +12580,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d36fce2f9b5726b1",
@@ -12211,7 +12598,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f4803d2f384b4bba",
@@ -12228,7 +12616,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3680f82d26908e0e",
@@ -12245,7 +12634,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_74bc28f95543771f",
@@ -12262,7 +12652,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2ce6a9360cc7065b",
@@ -12279,7 +12670,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_932c3549f6f81184",
@@ -12296,7 +12688,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c007b633425f425a",
@@ -12313,7 +12706,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8a628365077dfba8",
@@ -12330,7 +12724,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6951ad3ab5608fd0",
@@ -12349,7 +12744,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_d96f616db17de9a7",
@@ -12366,7 +12762,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -12654,7 +13051,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e96f2aadad77a2ba",
@@ -12671,7 +13069,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f177750dd8ff53cc",
@@ -12688,7 +13087,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9cefb2eea139a8c7",
@@ -12705,7 +13105,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_13106b02f1fbd25a",
@@ -12722,7 +13123,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9ba0aa1593e1212e",
@@ -12739,7 +13141,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_809e72a8e03917be",
@@ -12756,7 +13159,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8df23b8e635e9be0",
@@ -12773,7 +13177,8 @@
               "return_reveal"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_53cde4ee9224bd4e",
@@ -12790,7 +13195,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fb90303d7dc9c7ad",
@@ -12809,7 +13215,8 @@
             "durable": true,
             "mentioned_subject_ids": [
               "mateo"
-            ]
+            ],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_21850e1d0c695593",
@@ -12826,7 +13233,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -15812,39 +16220,48 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 38,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "jordan",
             "subject_id": "player",
-            "content": "I remember you making our approach chat feel personal.",
+            "content": "I remember the player making our approach chat feel personal.",
             "emotional_weight": 5,
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 38,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "chloe",
             "subject_id": "player",
-            "content": "I properly met you during Day One intros and got a real first read.",
+            "content": "I properly met the player during Day One intros and got a real first read.",
             "emotional_weight": 4,
             "tags": [
               "day_one",
               "intro"
-            ]
+            ],
+            "formed_on_turn": 8,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "marcus",
             "subject_id": "jordan",
-            "content": "I noticed Jordan looked different after talking with you.",
+            "content": "I noticed Jordan looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 38,
+            "recap_disposition": "while_busy"
           }
-        ]
+        ],
+        "resort_id": "main"
       },
       {
         "day": 2,
@@ -15852,12 +16269,14 @@
           {
             "holder_id": "jordan",
             "subject_id": "player",
-            "content": "I remember you making our approach chat feel personal.",
+            "content": "I remember the player making our approach chat feel personal.",
             "emotional_weight": 5,
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 75,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -15867,7 +16286,9 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 75,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -15877,29 +16298,36 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 102,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "chloe",
             "subject_id": "jordan",
-            "content": "I noticed Jordan looked different after talking with you.",
+            "content": "I noticed Jordan looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 75,
+            "recap_disposition": "while_busy"
           },
           {
             "holder_id": "chloe",
             "subject_id": "marcus",
-            "content": "I noticed Marcus looked different after talking with you.",
+            "content": "I noticed Marcus looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 102,
+            "recap_disposition": "while_busy"
           }
-        ]
+        ],
+        "resort_id": "main"
       },
       {
         "day": 3,
@@ -15912,17 +16340,21 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 139,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "jordan",
             "subject_id": "player",
-            "content": "I remember you making our approach chat feel personal.",
+            "content": "I remember the player making our approach chat feel personal.",
             "emotional_weight": 5,
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 139,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -15932,7 +16364,9 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 169,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -15942,19 +16376,24 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 182,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "chloe",
             "subject_id": "jordan",
-            "content": "I noticed Jordan looked different after talking with you.",
+            "content": "I noticed Jordan looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 139,
+            "recap_disposition": "while_busy"
           }
-        ]
+        ],
+        "resort_id": "main"
       },
       {
         "day": 4,
@@ -15967,17 +16406,21 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 207,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "sophie",
             "subject_id": "player",
-            "content": "I remember you making our approach chat feel personal.",
+            "content": "I remember the player making our approach chat feel personal.",
             "emotional_weight": 5,
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 207,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -15987,33 +16430,41 @@
             "tags": [
               "approach",
               "player_conversation"
-            ]
+            ],
+            "formed_on_turn": 236,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "liam",
             "subject_id": "sophie",
-            "content": "I noticed Sophie looked different after talking with you.",
+            "content": "I noticed Sophie looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 207,
+            "recap_disposition": "while_busy"
           },
           {
             "holder_id": "chloe",
             "subject_id": "maya",
-            "content": "I noticed Maya looked different after talking with you.",
+            "content": "I noticed Maya looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "approach",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 236,
+            "recap_disposition": "while_busy"
           }
-        ]
+        ],
+        "resort_id": "flush_of_hearts"
       },
       {
         "day": 5,
-        "items": []
+        "items": [],
+        "resort_id": "flush_of_hearts"
       }
     ],
     "private_suite": {

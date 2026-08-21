@@ -1,7 +1,7 @@
 name: challenge-day1
 seed: 21
 initial_phase: morning
-expected_hash: 80aa0e457916ab503e4c1f6dd54887c2dd0caf1ff285f8a8648c1462d989b2d7
+expected_hash: 720f58b40423dba1522ad5bd424bf7d19a67ed713fbe3d740d08942256a445cc
 actions:
 - kind: ambient
   target_id: ambient_wait

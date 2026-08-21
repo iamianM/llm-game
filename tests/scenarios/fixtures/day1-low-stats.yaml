@@ -7,7 +7,7 @@ player_stats:
   spark: 3
   loyalty: 6
 initial_phase: morning
-expected_hash: 23a91d0e4891c1802b2eb377779c0b5912f01095ae03ed6471f8d67837706c58
+expected_hash: 5c654fd004f5e2f605a728dc5be31f8e37c7100770ff54411c5b39e05770a850
 actions:
 - kind: start_conversation
   target_id: chloe

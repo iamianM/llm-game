@@ -1,9 +1,9 @@
 {
   "name": "day1-post-greetings",
   "seed": 7,
-  "state_hash": "361baca89c4214d6a94b5f9f7fe8a18676b1c145b578a19c0d92925f43ed1245",
+  "state_hash": "f68d06eff65e43b92ff5f7794ba2ebf6e4e39de9417e62db9615427e530f896c",
   "state": {
-    "schema_version": 29,
+    "schema_version": 30,
     "seed": 7,
     "turn_index": 8,
     "day": 1,
@@ -332,7 +332,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -824,7 +825,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -1316,7 +1318,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -1808,7 +1811,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -2300,7 +2304,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -2792,7 +2797,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -3284,7 +3290,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
@@ -3776,7 +3783,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           }
         ],
         "trait_card": {
