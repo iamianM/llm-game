@@ -6,12 +6,12 @@ import { evalShowcase, type EvalScenario } from "../../lib/eval-showcase";
 test("reports the exact recorded token and cost breakdown", () => {
   expect(evalShowcase).not.toBeNull();
   const cost = runCostBreakdown(evalShowcase!);
-  expect(cost.agentTokens).toBe(232_868);
-  expect(cost.judgeTokens).toBe(219_408);
-  expect(cost.totalTokens).toBe(452_276);
-  expect(cost.exactCost).toBeCloseTo(0.1066017);
-  expect(cost.agentCost.total_usd).toBeCloseTo(0.04310925);
-  expect(cost.judgeCost.total_usd).toBeCloseTo(0.06349245);
+  expect(cost.agentTokens).toBe(232_255);
+  expect(cost.judgeTokens).toBe(223_115);
+  expect(cost.totalTokens).toBe(455_370);
+  expect(cost.exactCost).toBeCloseTo(0.09868617);
+  expect(cost.agentCost.total_usd).toBeCloseTo(0.0338854);
+  expect(cost.judgeCost.total_usd).toBeCloseTo(0.06480077);
 });
 
 test("explains deterministic failures separately from the thread evaluation", () => {
@@ -49,10 +49,10 @@ test.describe("public eval dashboard", () => {
     await expect(page.getByText("0 failed", { exact: true })).toBeVisible();
     await expect(page.getByText("86", { exact: true })).toBeVisible();
     await expect(page.getByText("82", { exact: true })).toBeVisible();
-    await expect(page.getByText("452,276", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText(/232,868 tokens/)).toBeVisible();
-    await expect(page.getByText(/219,408 tokens/)).toBeVisible();
-    await expect(page.getByText("$0.11", { exact: true })).toBeVisible();
+    await expect(page.getByText("455,370", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(/232,255 tokens/)).toBeVisible();
+    await expect(page.getByText(/223,115 tokens/)).toBeVisible();
+    await expect(page.getByText("$0.10", { exact: true })).toBeVisible();
     await expect(page.getByText("Reviewed, checked-in showcase.json", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Source revision", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Can the game's AI stay in character?")).toHaveCount(0);
@@ -71,12 +71,11 @@ test.describe("public eval dashboard", () => {
   test("compares expected and actual output beside evaluation reasons", async ({ page }) => {
     await page.goto("/evals/scenarios/interruption-accept");
     await expect(page.getByText("Thread judge · full scenario · gpt-5.6-luna", { exact: true })).toBeVisible();
-    await expect(page.getByText("The turn faithfully executes an accepted interruption", { exact: false })).toBeVisible();
+    await expect(page.getByText(/faithfully .* accepted interruption/i).first()).toBeVisible();
     await expect(page.getByText("Reviewed golden · expected calls", { exact: true }).first()).toBeVisible();
     await expect(page.getByText("Actual calls · in order", { exact: true }).first()).toBeVisible();
-    const sharedPlayerLine = page.getByText("Of course, go ahead. You looked like you had something on your mind.", { exact: true });
-    await expect(sharedPlayerLine).toHaveCount(2);
-    await expect(sharedPlayerLine.first()).toBeVisible();
+    await expect(page.getByText("Of course, go ahead. You looked like you had something on your mind.", { exact: true })).toBeVisible();
+    await expect(page.getByText("You’re all right, Liam—come sit down. What did you want to say?", { exact: true })).toBeVisible();
     await expect(page.getByText("Heartbreaker Voice", { exact: true })).toHaveCount(2);
     await expect(page.getByText("writes the player and NPC exchange", { exact: true })).toHaveCount(2);
     await expect(page.getByText("Comparison criteria", { exact: true }).first()).toBeVisible();

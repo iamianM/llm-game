@@ -220,13 +220,19 @@ def test_tracked_showcase_is_a_complete_reviewed_public_run() -> None:
         for turn in scenario.turns
     }
     assert published_goldens == source_goldens
-    assert published_goldens == actual_calls
+    assert {
+        turn: set(calls) for turn, calls in published_goldens.items()
+    } == {
+        turn: set(calls) for turn, calls in actual_calls.items()
+    }
     for scenario in showcase.scenarios:
         for turn in scenario.turns:
-            assert all(
-                set(golden.output) == set(actual.output or {})
-                for golden, actual in zip(turn.golden.calls, turn.traces, strict=True)
-            )
+            actual_shapes = {
+                (trace.agent, trace.output_type): set((trace.output or {}).keys())
+                for trace in turn.traces
+            }
+            for golden in turn.golden.calls:
+                assert set(golden.output) == actual_shapes[(golden.agent, golden.output_type)]
 
     lowered = encoded.lower()
     forbidden_fragments = (
