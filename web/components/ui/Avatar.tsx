@@ -47,6 +47,7 @@ export function Avatar({ id, name, size = "md", look = null }: { id: string; nam
           alt=""
           fill
           sizes={imageSizes(size)}
+          loading={size === "xl" || size === "responsive" ? "eager" : "lazy"}
           className="object-cover"
           style={{ objectPosition: "50% 18%" }}
           aria-hidden

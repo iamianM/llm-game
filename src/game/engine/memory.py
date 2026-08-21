@@ -1,7 +1,7 @@
 """Deterministic memory creation and storage helpers.
 
 Design source:
-- 07-Gossip-And-Information.md: The Gossip System
+- docs/design/07-Gossip-And-Information.md: The Gossip System
 
 Memory text is flavor and excluded from state hashes. Memory identity and
 metadata are deterministic so traces and replays remain stable.
@@ -15,7 +15,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.memory import GossipSeed, RecapDisposition
+from src.game.state.memory import GossipSeed, MemoryDraft, RecapDisposition
 from src.game.state.models import GameState, Memory, MemoryBatch
 
 
@@ -99,7 +99,7 @@ def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: in
             day=day,
             turn=turn,
             weight=draft.emotional_weight,
-            tags=draft.tags,
+            tags=_scoped_memory_tags(batch, draft),
             content=draft.content,
             durable=draft.durable,
             recap_disposition=recap_disposition,
@@ -107,6 +107,25 @@ def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: in
         add_memory(state, memory)
         created.append(memory)
     return created
+
+
+def _scoped_memory_tags(batch: MemoryBatch, draft: MemoryDraft) -> list[str]:
+    """Persist curator gossip eligibility on the matching holder memory."""
+    tags = list(draft.tags)
+    if draft.holder_id != "player" or "gossip" not in tags:
+        return tags
+    scoped_targets = {
+        target_id
+        for seed in batch.gossip_seeds
+        if seed.holder_id == draft.holder_id and seed.subject_id == draft.subject_id
+        for target_id in seed.spreadable_to
+    }
+    tags.extend(
+        f"share_with:{target_id}"
+        for target_id in sorted(scoped_targets)
+        if f"share_with:{target_id}" not in tags
+    )
+    return tags
 
 
 def propagate_gossip_seeds(

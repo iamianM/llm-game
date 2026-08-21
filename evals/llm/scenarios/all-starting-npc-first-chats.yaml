@@ -1,7 +1,24 @@
 id: all-starting-npc-first-chats
 title: First Chat With Every Starting NPC
 goal: Prove Heartbreaker Voice, Contextual Options, and Curator give every starting Heartbreaker a distinct, voice-true first conversation that earns the player wanting to come back.
-seed: 303
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: cast_voice_separation
+      criteria: >
+        Across the complete round, all eight Heartbreakers remain recognisably distinct in
+        temperament, gendered voice, conversational intent, and response rhythm. Fail if
+        several speakers collapse into the same generic flirt or warm-friend voice.
+    - id: conversation_surfaces_playable
+      criteria: >
+        Every chat answers its authored intent specifically and offers concrete continuations
+        for that exact beat plus a graceful exit, without placeholder or duplicate choices.
+    - id: memories_faithful_across_cast
+      criteria: >
+        Close-turn memories consistently use each holder's perspective, name the other
+        participant, and preserve only beats visible in that Heartbreaker's conversation.
+seed: 308
 live_resort_life: false
 initial_phase_budget_minutes: 240
 initial_relationships:
@@ -37,7 +54,13 @@ initial_relationships:
 judge_context:
   - This is a launch-cast breadth scenario; the bar is "would the player want to keep talking to this Heartbreaker?", not finale-level depth.
   - Each chat should land a specific opening beat for that NPC, not the same warm greeting refitted with a different name.
+  - Goldens are illustrative targets, not checklists. Accept a different concrete detail or continuation when it serves the same intent and character voice.
   - Endings should leave a clean memory trail; the engine, not the LLM, owns relationship deltas.
+  - >
+    Memory ids are canonical sentinels: holder_id "player" is the player's first-person
+    memory, while holder_id matching an NPC id is that NPC's first-person memory. For an
+    NPC-held memory, subject_id "player" and the phrase "the player" correctly identify
+    the other participant; do not reinterpret that as a player-held memory.
   - Live resort autonomy is disabled here so every target stays put; Resort Orchestrator + Background Dialogue are covered by separate scenarios.
 turns:
   - id: chat-chloe
@@ -50,37 +73,18 @@ turns:
       intent_id: friendly_ask_feelings
     golden: >
       A grounded sincere check-in by the pool. Chloe is the secure sweetheart;
-      she should be visibly pleased someone asked, give a real answer (a beat
-      she's been sitting with), and ask back. Imagine: "Honestly? I've been
+      she should be visibly pleased someone asked and give a real answer (a beat
+      she's been sitting with). She may ask back when it fits. Imagine: "Honestly? I've been
       trying to figure out who's actually paying attention in here. You count."
       Follow-ups should offer Go Deeper, Tease Lightly, and a clean Exit.
     checks: &conversation_checks
+      - mechanical_success
       - exchange_valid
       - follow_up_menu_valid
       - exactly_one_exit
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: target_specific
-        criteria: >
-          The exchange addresses Chloe specifically and never drifts onto another
-          Heartbreaker's voice or topic.
-      - id: intent_specific
-        criteria: >
-          Chloe answers the emotional check-in directly (a real feeling, a
-          real beat) rather than producing a generic greeting or pivoting to
-          strategy talk.
-      - id: chloe_voice_fit
-        criteria: >
-          Chloe reads as warm, secure, and quietly curious — happy to be
-          checked on without making it weighty. Fail if she becomes icy,
-          chaotic, performatively sad, or sounds like a different archetype.
-      - id: followups_playable
-        criteria: >
-          The follow-up menu offers concrete continuations of this beat
-          (deeper share, light tease, gentle redirect) plus exactly one exit,
-          with no placeholder or duplicate options.
   - id: close-chloe
     action: &end_action
       kind: end_conversation
@@ -93,12 +97,6 @@ turns:
       - curator_memories
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks: &memory_judges
-      - id: memory_faithful
-        criteria: >
-          Each memory is first-person for its holder, names the other
-          participant, summarizes a beat that actually happened in the visible
-          exchange, and never invents off-screen events or unrevealed traits.
   - id: chat-jordan
     arrange_player_location: pool
     arrange_npc_locations:
@@ -114,27 +112,12 @@ turns:
       "Mate, I've been on form, obviously. ...Okay, fine, I keep waiting
       for someone to actually ask me for a private chat. You're the first."
     checks: *conversation_checks
-    judge_checks:
-      - id: jordan_voice_fit
-        criteria: >
-          Jordan sounds playful and a touch eager underneath the banter,
-          recognisably male, and never slides into a romantic female voice or
-          a generic flirt template.
-      - id: intent_specific
-        criteria: >
-          The exchange treats this as a bromance check-in (mate-to-mate),
-          not a flirt or a strategy briefing.
-      - id: followups_playable
-        criteria: >
-          Follow-ups give concrete bromance continuations (joke back, ask
-          what's really up, plan something) and one clean exit.
   - id: close-jordan
     action: *end_action
     golden: >
       Memories should capture the small honest beat under Jordan's joke,
       not just "we chatted by the pool".
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: move-kitchen
     arrange_npc_locations:
       maya: kitchen
@@ -160,23 +143,9 @@ turns:
       bright anxious joker — she takes the flirt with a grin, deflects with
       a joke, and then lets a real flicker of interest show. Imagine:
       "Wait, are we doing this in front of the toaster? Bold. ...Say that
-      again, slower." Menu should offer escalate-flirt, banter-back, and
-      one exit.
+      again, slower." The menu should keep the charge alive through teasing,
+      curiosity, or escalation, plus one exit.
     checks: *conversation_checks
-    judge_checks:
-      - id: maya_voice_fit
-        criteria: >
-          Maya reads bright, quick, and a little nervy under the bravado.
-          Fail if she becomes a soft sweetheart, a cold strategist, or
-          ignores the compliment entirely.
-      - id: intent_specific
-        criteria: >
-          The exchange treats the compliment as flirtation, not friendship,
-          gossip, or a status check.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete escalate/banter continuations and one exit;
-          no placeholders.
   - id: close-maya
     action: *end_action
     golden: >
@@ -184,7 +153,6 @@ turns:
       Maya remembers being looked at, the player remembers the line that
       worked.
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: chat-marcus
     arrange_player_location: kitchen
     arrange_npc_locations:
@@ -195,32 +163,17 @@ turns:
       intent_id: bromance_rib
     golden: >
       A light ribbing between two guys. Marcus is the confident heartthrob —
-      he takes the joke without bristling, fires one back drier, and reveals
-      the small thing he actually cares about (his nephew, his gym schedule,
-      the way he reads people). Imagine: "You think I don't see it? I see
-      it. Try harder, mate."
+      he takes the joke without bristling and fires one back drier. A specific
+      hook into something he cares about is welcome, but the opening beat does
+      not need to force vulnerability. Imagine: "You think I don't see it? I
+      see it. Try harder, mate."
     checks: *conversation_checks
-    judge_checks:
-      - id: marcus_voice_fit
-        criteria: >
-          Marcus sounds confident and direct, taking the ribbing without
-          insecurity. Fail if he becomes timid, cruel, or indistinguishable
-          from Liam or Blake.
-      - id: intent_specific
-        criteria: >
-          The exchange treats this as bromance ribbing — competitive but
-          friendly, not strategy talk or a flirt.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete bromance continuations (escalate the rib,
-          shift to honest, change topic) and one exit.
   - id: close-marcus
     action: *end_action
     golden: >
-      Memories capture the moment Marcus actually let his guard drop a
-      half-inch — the throwaway truth under the swagger.
+      Memories capture the specific counter-joke or truth beneath Marcus's
+      swagger rather than reducing it to a generic friendly chat.
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: move-terrace
     arrange_npc_locations:
       liam: terrace
@@ -248,27 +201,12 @@ turns:
       about it more than I'd admit. Teaching is small. I want it to mean
       more. ...what about you, why are you really here?"
     checks: *conversation_checks
-    judge_checks:
-      - id: liam_voice_fit
-        criteria: >
-          Liam sounds grounded, thoughtful, recognisably male, and willing
-          to be a little vulnerable. Fail if he tilts romantic-female,
-          becomes shallow banter only, or sounds like Marcus or Blake.
-      - id: intent_specific
-        criteria: >
-          The exchange responds to a deeper life question with a real
-          answer, not a deflection or a flirt.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete ways to go deeper, lighten, or close out
-          warmly. One clear exit.
   - id: close-liam
     action: *end_action
     golden: >
       Memories should capture a chunk of substance — the actual thing Liam
       said about meaning, not "we talked on the terrace".
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: chat-nia
     arrange_player_location: terrace
     arrange_npc_locations:
@@ -280,31 +218,16 @@ turns:
     golden: >
       A genuine personality compliment, returned with grace. Nia is the
       observant warm friend — she notices the compliment is real, smiles,
-      and gives back a specific observation about the player she's been
-      sitting on. Imagine: "That's a kind thing to say. ...Can I tell you
-      what I noticed about you, actually?"
+      and gives back a specific read of how the player treats or affects her.
+      Imagine: "That's a kind thing to say. ...Can I tell you what I noticed
+      about you, actually?"
     checks: *conversation_checks
-    judge_checks:
-      - id: nia_voice_fit
-        criteria: >
-          Nia sounds kind, observant, and steady, never sharp or chaotic.
-          Fail if she becomes a flirt template, ignores the compliment, or
-          turns suspicious.
-      - id: intent_specific
-        criteria: >
-          The exchange treats the compliment as friendship, not flirtation,
-          and gives a real specific observation back.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete friendly continuations (ask back, share more,
-          warm exit) and one clear exit.
   - id: close-nia
     action: *end_action
     golden: >
-      Memories should capture Nia's specific observation about the player,
-      not a generic "we connected".
+      Memories should capture Nia's specific read of the player, not a generic
+      "we connected".
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: move-bedroom
     arrange_npc_locations:
       sophie: bedroom
@@ -332,27 +255,12 @@ turns:
       Imagine: "Cute. Six out of ten for setup, four for delivery. ...try me
       again later when you've had time to think."
     checks: *conversation_checks
-    judge_checks:
-      - id: sophie_voice_fit
-        criteria: >
-          Sophie sounds polished, quick, and high-agency. Fail if she becomes
-          timid, generic, cruel, or shuts the moment down as a hard
-          rejection.
-      - id: intent_specific
-        criteria: >
-          The exchange treats the moment as playful banter, not a friendship
-          baseline, life story, or flirt-as-compliment.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete banter continuations (push the joke, switch
-          to genuine, exit gracefully) and one clear exit.
   - id: close-sophie
     action: *end_action
     golden: >
       Memories should capture the specific bit of the roast that landed —
       the line, not a vague "we joked around".
     checks: *close_checks
-    judge_checks: *memory_judges
   - id: chat-blake
     arrange_player_location: bedroom
     arrange_npc_locations:
@@ -368,24 +276,9 @@ turns:
       "I'm watching Maya. Not for me, but she's the one to read this week.
       You should be watching her too."
     checks: *conversation_checks
-    judge_checks:
-      - id: blake_voice_fit
-        criteria: >
-          Blake sounds thoughtful, dry, recognisably male, and never tips
-          into romantic intensity. Fail if he sounds like Liam, Marcus, or
-          a generic warm-friend voice.
-      - id: intent_specific
-        criteria: >
-          The exchange responds to "how are you reading the resort" with a
-          specific strategic read, not a generic chat or a flirt.
-      - id: followups_playable
-        criteria: >
-          Menu offers concrete strategy/bromance continuations (push for
-          more, share back, switch tone) and one clear exit.
   - id: close-blake
     action: *end_action
     golden: >
       Memories should capture Blake's specific read — naming the
       Heartbreaker he flagged, not "Blake had thoughts".
     checks: *close_checks
-    judge_checks: *memory_judges

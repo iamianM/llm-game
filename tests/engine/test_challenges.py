@@ -145,7 +145,7 @@ def test_challenge_event_message_uses_player_facing_labels() -> None:
 
     message = challenge_event_message(challenge)
 
-    assert message == "Kiss Wed Pass tested Banter and is still pending."
+    assert message == "Kiss Wed Pass is still pending."
 
 
 def test_resolved_challenge_clears_after_wrap_turn() -> None:

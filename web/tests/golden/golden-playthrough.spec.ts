@@ -3,10 +3,9 @@
  *
  * Unlike `e2e/full-playthrough.spec.ts` (which proves the engine survives a
  * randomized 6-day run), this spec is a deterministic, hand-choreographed tour
- * of every distinct UI surface in Paradise Hearts. It captures wide-format
- * screenshots at every dramatic beat and assembles them into a slideshow
- * gallery at the end. Re-run this any time the UI changes — the gallery is
- * the canonical sizzle reel.
+ * of the primary opening-loop UI in Paradise Hearts. It captures wide-format
+ * portfolio screenshots and assembles them into a slideshow gallery. Later-run
+ * event coverage belongs to the full playthrough and focused contract specs.
  *
  * Output: `web/tests/snapshots/golden/<NN>-<beat>.png` + `index.html` gallery.
  */
@@ -49,9 +48,22 @@ test.afterEach(() => {
 });
 
 test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) => {
-  test.setTimeout(360_000);
+  test.setTimeout(180_000);
+  const consoleErrors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
   await page.setViewportSize({ width: 1600, height: 900 });
   fs.mkdirSync(SHOTS_DIR, { recursive: true });
+  // The gallery is a generated artifact. Remove images from the previous
+  // choreography so renamed or deleted beats cannot masquerade as current UI.
+  for (const file of fs.readdirSync(SHOTS_DIR)) {
+    if (file.endsWith(".png") || file === "index.html") {
+      fs.rmSync(path.join(SHOTS_DIR, file));
+    }
+  }
+  beats.length = 0;
+  beatIndex = 0;
 
   // ─── 1. TITLE ──────────────────────────────────────────────
   await page.goto("/");
@@ -78,73 +90,45 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   await page.getByRole("button", { name: "Demo" }).click();
   await page.getByRole("button", { name: /^Play as / }).click();
   await page.waitForURL(/\/play\/.+/);
-  // Wait for the stage HUD + initial action menu to be visible.
-  await expect(page.getByTestId("choice-fan")).toBeVisible({ timeout: 15_000 });
+  // The current game opens with the Day-1 round-robin introductions inside
+  // the cinematic scene system. Dialogue beats precede each choice fan.
+  await expect(page.getByTestId("scene-stage")).toBeVisible({ timeout: 30_000 });
+  await expect(page.locator('[data-testid="speech-bubble"], [data-testid="narrator-bubble"]').first()).toBeVisible();
   // Speed up animations + typewriter for the rest of the showcase.
   await page.getByLabel("Open settings").click();
-  await page.getByLabel("Typewriter speed").selectOption("fast");
+  await page.getByLabel("Typewriter speed").selectOption("instant");
+  await page.getByLabel("Reduce motion").check();
   await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   await page.waitForTimeout(200);
-  await shot(
-    page,
-    "First Spark choices",
-    "Day 1, morning. The four opening pair options. The game's first decision. Pulse meter is anchored at 50, no audience reaction yet."
-  );
 
-  // ─── 4. FIRST SPARK CEREMONY ───────────────────────────────
-  await page.getByRole("button", { name: "Pair with Chloe" }).click();
-  await expect(page.locator('[data-screen="ceremony"]')).toBeVisible({ timeout: 15_000 });
-  await page.waitForTimeout(900); // Let the couple rows animate in.
-  await shot(
-    page,
-    "First Spark ceremony",
-    "Paradise Calls · First Spark. The opening couples lock in with a staggered reveal. Gold-bordered pair rows beneath the gold-shimmer title."
-  );
-
-  // ─── 5. INTROS: FIRST NPC GREETS ───────────────────────────
-  await page.getByRole("button", { name: "Continue" }).click();
-  await page.waitForTimeout(400);
-  // We should now be on the IntroPanel. Capture the first greeting.
-  await expect(page.locator('[data-screen="intros"]')).toBeVisible();
+  // ─── 4. INTROS: FIRST NPC GREETS ───────────────────────────
   await shot(
     page,
     "Intros · first greeting",
-    "Day-1 introductions. The first Heartbreaker walks up and greets the player. Four real-dialogue response cards beneath — Friendly, Flirty, Deep, Banter — each a line the player can actually say."
+    "Day-1 introductions play through the same cinematic scene system used by ordinary conversations and event narration."
+  );
+
+  // ─── 5. INTROS: RESPONSE OPTIONS ───────────────────────────
+  await advanceToChoiceFan(page);
+  await expect(page.getByRole("button", { name: /Get deep with/ })).toBeVisible();
+  await shot(
+    page,
+    "Intros · response options",
+    "The player gets four fully written responses — Friendly, Flirty, Deep, and Banter — from the engine's shared legal-action surface."
   );
 
   // ─── 6. INTROS: RESPONSE LANDS ─────────────────────────────
-  await page.locator('[data-intent="intro_deep"]').click();
-  await expect(page.locator('[data-screen="intros"][data-state="dialogue-complete"]')).toBeVisible({ timeout: 10_000 });
-  await page.waitForTimeout(250);
+  await page.getByRole("button", { name: /Get deep with/ }).click();
+  await expect(page.locator('[data-testid="player-bubble"], [data-testid="speech-bubble"]').first()).toBeVisible({ timeout: 15_000 });
+  await page.getByTestId("scene-stage").click({ force: true });
+  await page.waitForTimeout(180);
   await shot(
     page,
     "Intros · deep response lands",
-    "Player picked the Deep response. NPC mirrors back. Each bubble carries a name-tag chip above a rounded card with a tail — the player's reads warm cream, the NPC's clean white."
+    "The chosen Deep response and NPC reply are replayable scene beats backed by the recorded turn result."
   );
 
-  // ─── 7. INTROS: SECOND ARCHETYPE ───────────────────────────
-  // After the response, IntroPanel will auto-advance to the next NPC on the
-  // next click. We click intro_friendly to wrap that intro and reveal NPC #2.
-  await page.locator('[data-intent="intro_friendly"]').click();
-  await page.waitForTimeout(700);
-  await expect(page.locator('[data-screen="intros"]')).toBeVisible();
-  await shot(
-    page,
-    "Intros · second NPC",
-    "Different archetype, different greeting. The IntroPanel rotates through every non-partner Heartbreaker in stable order, sets baseline familiarity 25."
-  );
-
-  // ─── 8. INTROS: BANTER PICK ────────────────────────────────
-  await page.locator('[data-intent="intro_banter"]').click();
-  await expect(page.locator('[data-screen="intros"][data-state="dialogue-complete"]')).toBeVisible({ timeout: 10_000 });
-  await page.waitForTimeout(220);
-  await shot(
-    page,
-    "Intros · banter pick",
-    "The Banter response. Self-roast, charming. Each chosen dynamic biases the relationship's baseline — the foundation for later interactions."
-  );
-
-  // ─── 9. SETTINGS DIALOG ────────────────────────────────────
+  // ─── 7. SETTINGS DIALOG ────────────────────────────────────
   await page.getByLabel("Open settings").click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.waitForTimeout(220);
@@ -156,176 +140,88 @@ test("Golden Playthrough · the Paradise Hearts sizzle reel", async ({ page }) =
   await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
   await page.waitForTimeout(200);
 
-  // ─── 10. RIGHT RAIL: FIELD REPORT ──────────────────────────
-  // Walk through enough intros that the right rail shows variety. Burn 3 more.
-  for (let i = 0; i < 3; i += 1) {
-    const choice = page.locator('[data-intent="intro_friendly"]:not([disabled])');
-    if ((await choice.count()) === 0) break;
-    await choice.click();
-    await page.waitForTimeout(600);
+  // ─── 8. FINISH INTROS, REACH FIRST SPARK ───────────────────
+  for (let step = 0; step < 120; step += 1) {
+    const pairChoice = page.getByRole("button", { name: /^Pair with / });
+    if (await pairChoice.count()) break;
+    const intro = page.locator('button[aria-label^="Be friendly with"]:not([disabled])');
+    if (await intro.count()) {
+      await intro.first().click({ force: true });
+    } else if (await page.locator('[data-testid="player-bubble"], [data-testid="speech-bubble"], [data-testid="narrator-bubble"]').count()) {
+      await page.getByTestId("scene-stage").click({ force: true });
+    }
+    await page.waitForTimeout(140);
   }
-  await page.getByLabel("Open right rail").click();
+  const openingPairChoice = page.getByRole("button", { name: /^Pair with / }).first();
+  await expect(openingPairChoice).toBeVisible({ timeout: 15_000 });
+  await shot(
+    page,
+    "First Spark choices",
+    "The first coupling decision appears only after the player has met the cast. The engine exposes the legal partners; the browser renders the shared action vocabulary."
+  );
+
+  // ─── 9. FIRST SPARK CEREMONY ───────────────────────────────
+  await openingPairChoice.click();
+  await expect(page.locator('[data-screen="ceremony"]')).toBeVisible({ timeout: 15_000 });
   await page.waitForTimeout(300);
   await shot(
     page,
+    "First Spark ceremony",
+    "Paradise Calls · First Spark. The deterministic coupling resolves before the narrator presents the ceremony beat."
+  );
+  await page.getByRole("button", { name: "Continue" }).click();
+  await expect(page.locator('[data-testid="narrator-bubble"], [data-testid="speech-bubble"]').first()).toBeVisible({ timeout: 15_000 });
+  await shot(
+    page,
+    "Challenge reveal",
+    "The post-coupling Compatibility Quiz arrives as a narrated scene beat, while scoring remains deterministic engine state."
+  );
+  await advanceToChoiceFan(page);
+  await shot(
+    page,
+    "Compatibility Quiz choices",
+    "A round-based minigame uses the same typed action and scene pipeline as conversations, ceremonies, replay, and eval scenarios."
+  );
+
+  // ─── 10. RIGHT RAIL: FIELD REPORT ──────────────────────────
+  if (await page.getByLabel("Open right rail").count()) await page.getByLabel("Open right rail").click();
+  await page.waitForTimeout(220);
+  await shot(
+    page,
     "Field Report rail",
-    "Right rail open. Where everyone is, current couples (player-couple highlighted gold), the cast grid, and a memories scroll — the field report between scenes."
+    "The live field report combines resort locations, current couples, cast profiles, and remembered facts without moving canonical state into the browser."
   );
 
   // ─── 11. CAST POPOUT: WHAT YOU KNOW ────────────────────────
   await page.getByRole("button", { name: /Open .* profile/ }).first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(250);
   await shot(
     page,
     "Cast popout · discovery",
-    "Heartbreaker profile. Backstory, relationship bars, Ideal-Match (gated by familiarity), and 'What you know' — the structured trait knowledge revealed through conversation."
+    "A Heartbreaker profile combines relationship signals with gated, structured knowledge learned through play."
   );
   await page.getByRole("dialog").getByRole("button", { name: "Close" }).first().click();
-  await page.waitForTimeout(180);
-
-  // ─── 12. FINISH INTROS, REACH MAIN STAGE ───────────────────
-  // Click through any remaining intros + ceremonies until we're back to normal turns.
-  for (let step = 0; step < 25; step += 1) {
-    if (await page.locator('[data-screen="ceremony"]').count()) {
-      await page.getByRole("button", { name: "Continue" }).click({ force: true });
-      await page.waitForTimeout(220);
-      continue;
-    }
-    if (await page.locator('[data-screen="day-recap"]').count()) {
-      await page.locator('[data-screen="day-recap"]').getByRole("button", { name: "Continue" }).click();
-      await page.waitForTimeout(220);
-      continue;
-    }
-    const intro = page.locator('[data-intent="intro_friendly"]:not([disabled])');
-    if ((await intro.count()) > 0) {
-      await intro.click();
-      await page.waitForTimeout(400);
-      continue;
-    }
-    break;
-  }
-  // We should now be on the main scene-dialogue stage.
-  await expect(page.getByTestId("choice-fan")).toBeVisible();
-  await page.waitForTimeout(220);
-  await shot(
-    page,
-    "Main stage",
-    "Sunset Bay, afternoon. The player remains visible while response bubbles fan out from the bottom of the scene."
-  );
-
-  // ─── 13. CONVERSATION IN PROGRESS ──────────────────────────
-  // Click first available choice (likely a Spark with the partner).
-  const firstChoice = page.locator('[data-testid="choice"]:not([disabled])').first();
-  await firstChoice.click();
-  await page.waitForSelector('[data-testid="choice-fan"], [data-screen="ceremony"]', { timeout: 15_000 });
-  await page.waitForTimeout(280);
-  if (await page.locator('[data-screen="ceremony"]').count() === 0) {
-    await shot(
-      page,
-      "Conversation",
-      "A real chat. Player bubble (accent orange, right-aligned), NPC bubble (cream, gold-gradient outline), audience delta + intent chip on the outcome row."
-    );
-  }
-
-  // ─── 14. ADVANCE THROUGH MULTIPLE TURNS HUNTING FOR EVENTS ─
-  let recapCaptured = false;
-  let throbCaptured = false;
-  let flushCaptured = false;
-  let pairingCaptured = false;
-
-  const loopStart = Date.now();
-  for (let turn = 0; turn < 220; turn += 1) {
-    if (page.url().includes("/finale")) break;
-    if (Date.now() - loopStart > 200_000) break; // hard wall after ~3.3 minutes
-
-    if (await page.locator('[data-screen="day-recap"]').count()) {
-      if (!recapCaptured) {
-        await page.waitForTimeout(300);
-        await shot(
-          page,
-          "Day boundary recap",
-          "End-of-day modal. Recap of what happened while you were busy, plus the Pulse Board (audience standings). Gold ampersands between couples."
-        );
-        recapCaptured = true;
-      }
-      await page.locator('[data-screen="day-recap"]').getByRole("button", { name: "Continue" }).click({ force: true });
-      await page.waitForTimeout(180);
-      continue;
-    }
-    if (await page.locator('[data-screen="ceremony"]').count()) {
-      const text = (await page.locator('[data-screen="ceremony"]').textContent({ timeout: 4_000 })) ?? "";
-      if (/Heart Throb/i.test(text) && !throbCaptured) {
-        await page.waitForTimeout(400);
-        await shot(
-          page,
-          "Heart Throb arrives",
-          "A new Heart Throb walks into Sunset Bay. Cinematic overlay, gold lighting, larger portrait fade-in — state-conditioned by the Producer to disrupt a specific connection."
-        );
-        throbCaptured = true;
-      } else if (/Flush of Hearts/i.test(text) && !flushCaptured) {
-        await page.waitForTimeout(400);
-        await shot(
-          page,
-          "Flush of Hearts",
-          "The mid-show twist. Multiple new arrivals at once, testing the existing couples. Pairs ceremony reveal with staggered animation."
-        );
-        flushCaptured = true;
-      } else if (/Pairing Ceremony/i.test(text) && !pairingCaptured) {
-        await page.waitForTimeout(400);
-        await shot(
-          page,
-          "Pairing Ceremony",
-          "A regular re-coupling. The cast lines up; couples are locked. Notice the gold-bordered pair rows animate in one by one."
-        );
-        pairingCaptured = true;
-      }
-      await page.getByRole("button", { name: "Continue" }).click({ force: true, timeout: 5_000 }).catch(() => undefined);
-      await page.waitForTimeout(220);
-      continue;
-    }
-    const buttons = page.locator('[data-testid="choice"]:not([disabled])');
-    const count = await buttons.count();
-    if (count === 0) break;
-    let pick = 0;
-    for (let i = 0; i < count; i += 1) {
-      const text = (await buttons.nth(i).innerText()).toLowerCase();
-      if (/chat|deep|share|listen|comfort|pair|propose|private_suite/.test(text)) { pick = i; break; }
-    }
-    await buttons.nth(pick).click({ force: true, timeout: 5_000 }).catch(() => undefined);
-    try {
-      await page.waitForSelector('[data-testid="choice-fan"], [data-screen="ceremony"], [data-screen="day-recap"], [data-screen="finale"]', { timeout: 8_000 });
-    } catch { /* loop will handle */ }
-    if (turn > 0 && turn % 40 === 0) {
-      // Defensive break if the loop is spinning without progress (e.g. stuck dialog).
-      const stuck = await page.locator('[data-state="dialogue-streaming"]').count();
-      if (stuck > 0) {
-        await page.waitForTimeout(500);
-      }
-    }
-  }
-
-  // ─── 15. FINALE ────────────────────────────────────────────
-  const finaleHeading = page.getByRole("heading", { name: /crowns its couple/i });
-  try {
-    await expect(finaleHeading).toBeVisible({ timeout: 20_000 });
-    await page.waitForTimeout(450);
-    await shot(
-      page,
-      "Finale",
-      "Sunset Bay crowns its couple. Gold palette, the winning couple front and center, couple-strength, outcome, Heart Beats earned. The end of the run."
-    );
-  } catch {
-    // Even without reaching finale, the gallery is still valuable.
-    // The afterEach hook writes it. Test still passes if we've got the core beats.
+  if (await page.getByLabel("Close right rail").count()) {
+    await page.getByLabel("Close right rail").evaluate((button: HTMLButtonElement) => button.click());
   }
 
   // Beat coverage check — must reach a meaningful slice of the showcase.
-  expect(beats.length).toBeGreaterThanOrEqual(13);
-  for (const required of ["Title", "First Spark", "Intros"]) {
+  expect(beats.length).toBeGreaterThanOrEqual(11);
+  for (const required of ["Title", "First Spark", "Intros", "Challenge"]) {
     expect(beats.some((b) => b.title.toLowerCase().includes(required.toLowerCase()))).toBeTruthy();
   }
+  expect(consoleErrors).toEqual([]);
 });
+
+async function advanceToChoiceFan(page: import("@playwright/test").Page) {
+  for (let step = 0; step < 20; step += 1) {
+    if (await page.getByTestId("choice-fan").count()) return;
+    await page.getByTestId("scene-stage").click({ force: true });
+    await page.waitForTimeout(120);
+  }
+  await expect(page.getByTestId("choice-fan")).toBeVisible();
+}
 
 function renderGallery(items: Beat[]): string {
   const slides = items

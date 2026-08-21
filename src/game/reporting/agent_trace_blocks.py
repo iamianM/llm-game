@@ -42,8 +42,14 @@ def _trace_item(trace: dict[str, Any]) -> str:
     status = str(trace.get("response_status") or "")
     attempt = trace.get("attempt")
     output_type = str(trace.get("output_type") or "")
+    generation_error = trace.get("generation_error")
     validation_error = trace.get("validation_error")
-    error_html = (
+    generation_error_html = (
+        f"<div class='miss'>Generation error: {escape(generation_error)}</div>"
+        if isinstance(generation_error, str) and generation_error
+        else ""
+    )
+    validation_error_html = (
         f"<div class='miss'>Validation error: {escape(validation_error)}</div>"
         if isinstance(validation_error, str) and validation_error
         else ""
@@ -55,7 +61,7 @@ def _trace_item(trace: dict[str, Any]) -> str:
         f"{' / ' + escape(status) if status else ''}"
         f"{' / attempt ' + escape(attempt) if attempt is not None else ''}"
         f"{' / ' + escape(output_type) if output_type else ''}</span></div>"
-        f"{error_html}"
+        f"{generation_error_html}{validation_error_html}"
         f"{_reasoning_summaries(trace)}"
         f"{_trace_output(trace)}"
         "</div>"

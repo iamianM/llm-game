@@ -1,6 +1,19 @@
 id: conversation-continuity-exit
 title: Conversation Continuity And Exit
 goal: Prove a multi-turn Chloe chat actually remembers itself — every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: conversation_arc_continuity
+      criteria: >
+        Read as one conversation: Chloe answers the opening emotional intent, the next exchange
+        clearly follows the selected prior option and deepens or redirects that exact beat, and
+        the ending closes it socially rather than resetting or stopping mid-thought.
+    - id: chloe_voice_and_memory
+      criteria: >
+        Chloe remains warm, sincere, and gently vulnerable throughout, while the final memories
+        accurately preserve the visible exchange from each participant's perspective.
 seed: 202
 initial_location: pool
 live_resort_life: false
@@ -43,21 +56,6 @@ turns:
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: responds_to_deep_intent
-        criteria: >
-          Chloe answers a deeper personal question with a real beat, not a
-          generic greeting, gossip pivot, or flirt-redirect.
-      - id: chloe_voice_fit
-        criteria: >
-          Chloe reads warm, sincere, gently vulnerable. Fail if she sounds
-          chaotic, icy, or like a different archetype.
-      - id: followups_playable
-        criteria: >
-          Follow-ups offer concrete next actions on this deeper beat — go
-          deeper, lighten, gossip pivot if it's a legal social move — plus
-          exactly one exit. No placeholders, no duplicate exits, no choices
-          that contradict the visible state.
   - id: first-follow-up
     action:
       kind: respond_with
@@ -77,18 +75,6 @@ turns:
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: immediate_continuity
-        criteria: >
-          The player line clearly comes from the selected prior menu option,
-          and Chloe's reply continues the exact topic or emotional direction
-          from the previous exchange. Fail if either restarts the chat,
-          ignores the prior beat, or switches to an unrelated topic.
-      - id: deepens_not_resets
-        criteria: >
-          The second exchange should feel like it could only come after the
-          first — a callback, a deeper turn, or a small consequence. Fail if
-          it reads as a fresh greeting.
   - id: close-conversation
     # Soft exit via the "End on a good note" option, not the bail-out
     # end_conversation action — that one is the deliberately-rude ghost-out.
@@ -106,14 +92,3 @@ turns:
       - curator_memories
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: memory_faithful
-        criteria: >
-          Each memory is first-person, names the other participant, captures
-          a beat that actually appeared in the visible exchanges, and never
-          invents private facts not revealed in the dialogue.
-      - id: close_feels_social
-        criteria: >
-          The close reads as a social ending (a thank-you, a soft callback,
-          a beat) rather than an abrupt system action. Fail if either side
-          just walks off mid-thought.

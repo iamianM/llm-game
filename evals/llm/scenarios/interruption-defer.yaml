@@ -1,6 +1,15 @@
 id: interruption-defer
 title: Conversation Interruption (Defer)
 goal: 'Prove an NPC interruption mid-conversation routes through the engine cleanly: the player picks "defer", the engine resolves the chance, the pending interruption clears, and the original conversation stays active.'
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: defer_preserves_original_conversation
+      criteria: >
+        Across the complete scenario, the player defers Liam without inventing a voiced exchange,
+        the pending interruption clears, and the original Chloe conversation remains active while
+        the deterministic outcome and relationship consequences stay faithful to the trace.
 seed: 1919
 initial_location: pool
 live_resort_life: false
@@ -55,10 +64,3 @@ turns:
       - active_conversation_target_is:chloe
       - relationship_delta:liam:affection:-1
       - no_exchange
-    judge_checks:
-      - id: defer_grounded
-        criteria: >
-          The recorded relationship deltas and chance breakdown reflect a
-          deferral attempt by the player: a small affection cost to Liam and
-          no swap to the new conversation. Fail if the engine result reads
-          like an acceptance or an outright ignore.

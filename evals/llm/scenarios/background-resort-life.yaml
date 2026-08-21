@@ -1,6 +1,15 @@
 id: background-resort-life
 title: Background Resort Life
 goal: Prove the Resort Orchestrator, Background Dialogue, and Background Curator can move the resort forward without polluting the player's first-person memory rail or rewriting deterministic state.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: background_life_grounded
+      criteria: >
+        The resort update and any resulting background dialogue form one plausible off-screen
+        beat grounded in the current locations, cast, mood, and existing conversations. The
+        background pair should sound distinct and must not narrate as if the player were present.
 seed: 1818
 initial_location: pool
 live_resort_life: true
@@ -48,17 +57,3 @@ turns:
       - background_kind_isolated
       - agent_traces_present
       - no_agent_validation_retries
-    judge_checks:
-      - id: background_voice_distinct
-        criteria: >
-          Any background dialogue captured for this turn reads in the two
-          named NPCs' voices (not as narrator exposition, not as if the
-          player were present). Skip with cannot_determine if no background
-          dialogue was produced.
-      - id: orchestrator_grounded
-        criteria: >
-          The resort update reflects the current resort state (locations,
-          existing NPC conversations, mood); it should not propose
-          impossible movements (e.g., starting a conversation with an
-          eliminated Heartbreaker) or contradict the deterministic facts
-          already on the board.

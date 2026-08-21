@@ -4,7 +4,7 @@ Date: 2026-05-11
 
 ## Context
 
-The original technical plan centered on Next.js API routes and the Vercel AI SDK. After reviewing the reusable infrastructure in `C:\Users\Mcian\projects\steno-livekit-agent`, the stronger path is to reuse its architectural patterns: a deterministic runtime, Pydantic contracts, tool-gated LLM calls, traces, CLI-first development, and scenario testing.
+The original technical plan centered on Next.js API routes and the Vercel AI SDK. After reviewing reusable production-agent patterns, the stronger path was a deterministic runtime, Pydantic contracts, tool-gated LLM calls, traces, CLI-first development, and scenario testing.
 
 This game also needs seeded replay, simulation runs, and engine tests that run without spending LLM tokens.
 

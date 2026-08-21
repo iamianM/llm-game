@@ -1,6 +1,8 @@
 [project]
-name = "llm-game"
+name = "paradise-hearts"
 version = "0.1.0"
+description = "A deterministic social simulation with LLM-authored dialogue and narration."
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115.0",

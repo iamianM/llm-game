@@ -6,7 +6,7 @@ Six rounds, alternating direction:
                          the answer they BELIEVE the partner gave.
 
 Pure-Python partner guess is computed deterministically from partner's
-known_facts about the player. See ``docs/minigames/couples-quiz.md``.
+known_facts about the player. See ``docs/systems/minigames/couples-quiz.md``.
 """
 
 from __future__ import annotations

@@ -2,6 +2,6 @@
 
 Design sources:
 - AGENTS.md: Tech Stack, Current Status
-- 01-Game-Vision.md: Core experience and implementation philosophy
+- docs/design/01-Game-Vision.md: Core experience and implementation philosophy
 - docs/decisions/: Implementation architecture decisions
 """

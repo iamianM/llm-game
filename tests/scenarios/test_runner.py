@@ -1,7 +1,7 @@
 """YAML scenario runner.
 
 Design sources:
-- docs/qa-strategy.md: L4 Scenario
+- docs/systems/qa.md: L4 Scenario
 - docs/decisions/0008-snapshot-and-trace-architecture.md
 """
 

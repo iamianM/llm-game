@@ -1,6 +1,15 @@
 id: interruption-ignore
 title: Conversation Interruption (Ignore)
 goal: 'Prove ignoring an interruption is engine-only: the original conversation stays active, the pending interruption clears, the interrupter takes the larger relationship hit, and the engine moves them away.'
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: ignore_preserves_original_conversation
+      criteria: >
+        Across the complete scenario, ignoring Liam remains engine-owned, clears the pending
+        interruption, keeps the original Chloe conversation active, applies the harsher recorded
+        relationship consequence, and moves Liam away without inventing narrative output.
 seed: 1921
 initial_location: pool
 live_resort_life: false
@@ -55,10 +64,3 @@ turns:
       - relationship_delta:liam:affection:-4
       - forced_movement_present:liam:walks_away_after_snub
       - no_exchange
-    judge_checks:
-      - id: ignore_grounded
-        criteria: >
-          The recorded mechanical result should read as an ignore path:
-          Chloe remains active, Liam takes the larger affection hit, and
-          Liam is moved away. Fail if it reads like an accepted interruption
-          or a polite defer.

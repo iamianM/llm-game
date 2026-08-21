@@ -1,6 +1,15 @@
 id: couples-quiz-narration
 title: Couples Quiz Two-Sided Round
 goal: Prove the Event Narrator handles alternating player/partner rounds and names actual mismatches without inventing scoring.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: couples_quiz_arc_faithful
+      criteria: >
+        The full quiz reads as an alternating player/partner exercise and the wrap names the
+        actual recorded mismatch rather than reducing the sequence to a generic score summary
+        or inventing a different answer.
 seed: 313
 initial_day: 3
 initial_phase: morning
@@ -70,13 +79,3 @@ turns:
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: alternation_named
-        criteria: >
-          The prose acknowledges the two-sided structure — at least once
-          referring to the partner's pre-recorded guess about the player.
-      - id: mismatch_named
-        criteria: >
-          The single round-3 mismatch is named specifically (the question
-          subject or the wrong answer). Generic "you got most right"
-          without naming the miss fails.

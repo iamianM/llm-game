@@ -1,8 +1,8 @@
 """Conversation Curator agent for durable memory commits.
 
 Design sources:
-- 07-Gossip-And-Information.md: The Gossip System
-- 03-LLM-Architecture.md: Curator-style memory extraction
+- docs/design/07-Gossip-And-Information.md: The Gossip System
+- docs/design/03-LLM-Architecture.md: Curator-style memory extraction
 
 Implementation rule:
 The Curator writes memory content and tags only. The engine assigns ids,
@@ -20,15 +20,17 @@ from openai import OpenAI
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    UTILITY_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.state.models import (
     Conversation,
@@ -39,7 +41,8 @@ from src.game.state.models import (
     NPCNPCConversation,
 )
 
-CONVERSATION_CURATOR_MODEL = GAME_AGENT_MODEL
+CONVERSATION_CURATOR_MODEL = UTILITY_PROFILE.model
+CONVERSATION_CURATOR_REASONING_EFFORT = UTILITY_PROFILE.reasoning_effort
 CONVERSATION_CURATOR_PROMPT = "src/game/agents/prompts/conversation_curator.md"
 _CONVERSATION_CURATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "conversation_curator.md"
 
@@ -87,7 +90,7 @@ class OpenAIConversationCurator:
                 try:
                     batch = self._generate_batch(retry_context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("conversation_curator", attempt_number, exc)
+                    mark_agent_trace_generation_error("conversation_curator", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
                         raise AgentGenerationError(str(exc)) from exc
@@ -115,12 +118,14 @@ class OpenAIConversationCurator:
 
     def _generate_batch(self, rendered_context: str) -> MemoryBatch:
         """Request one parsed memory batch from the model."""
+        instructions = _CONVERSATION_CURATOR_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_CONVERSATION_CURATOR_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=MemoryBatch,
-            **reasoning_request_kwargs(),
+            **reasoning_request_kwargs(effort=CONVERSATION_CURATOR_REASONING_EFFORT),
         )
         batch = response.output_parsed
         record_agent_trace(
@@ -129,6 +134,10 @@ class OpenAIConversationCurator:
             prompt_path=CONVERSATION_CURATOR_PROMPT,
             response=response,
             output=batch,
+            reasoning_effort=CONVERSATION_CURATOR_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if batch is None:
             raise ValueError("Conversation Curator returned no parsed MemoryBatch")
@@ -329,6 +338,7 @@ def _render_npc_context(
             _pronoun_line(state, first_id),
             _pronoun_line(state, second_id),
             f"Topic: {conversation.topic}",
+            f"Conversation status: {conversation.status}",
             f"Bystanders: {_list_ids(bystander_ids)}",
             f"Required direct memory holders: {first_id}, {second_id}",
             "Memory holder checklist:",

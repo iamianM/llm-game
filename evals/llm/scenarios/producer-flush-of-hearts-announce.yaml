@@ -1,6 +1,15 @@
 id: producer-flush-announce
 title: Producer Text And Flush Of Hearts Announce
 goal: Prove the Flush of Hearts twist lands with the right tension — the gather is called, the second-resort entry is described, and the narrator does not pre-decide whether anyone has stuck or twisted yet.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: flush_transition_arc
+      criteria: >
+        The announcement creates specific tension between the player and Chloe, then the entry
+        clearly moves the player into the second resort and frames the original connection as
+        the stake. No turn may pre-decide stick/twist, name an unseen arrival, or narrate a return.
 seed: 606
 initial_day: 4
 initial_phase: afternoon
@@ -46,18 +55,6 @@ turns:
       - event_narration_valid
       - pending_gather_waiting
       - agent_traces_present
-    judge_checks:
-      - id: tension_specific
-        criteria: >
-          The prose lands a specific tension beat between the player and
-          Chloe (a look, a silence, a half-line) rather than narrating
-          generic resort-wide reactions only. Fail if Chloe disappears from
-          the prose.
-      - id: no_pre_resolution
-        criteria: >
-          The narration treats Flush of Hearts as just announced. It must
-          not claim the player has already decided to stick, twist, or stay
-          loyal, and must not name any Flush arrival by character.
   - id: enter-flush-of-hearts
     action:
       kind: join_gather
@@ -73,10 +70,3 @@ turns:
       - event_narration_present
       - flush_active
       - agent_traces_present
-    judge_checks:
-      - id: flush_transition_clear
-        criteria: >
-          The narration makes clear Flush of Hearts begins now — the player
-          has moved resorts, the test of the original connection is the
-          stake. Fail if it claims the player has already chosen, or treats
-          this as a return / reveal rather than the entry.

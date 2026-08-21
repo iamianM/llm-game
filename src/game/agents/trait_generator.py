@@ -16,26 +16,22 @@ from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    UTILITY_PROFILE,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.content.archetype_templates import ARCHETYPE_TEMPLATES, ArchetypeTemplate
 from src.game.content.trait_library import opening_trait_cards
 from src.game.state.models import Gender, HeartbreakerState
 from src.game.state.traits import CORE_TRAIT_KEYS, PersonaSummary, TraitCard, TraitFact
 
-TRAIT_GENERATOR_MODEL = GAME_AGENT_MODEL
-# Trait generation is creative-structured output, not deep reasoning. Default
-# to a lower reasoning effort than the other agents (which default to "high")
-# so the boot path runs in seconds, not minutes. Overridable via env var.
-TRAIT_GENERATOR_REASONING_EFFORT = os.environ.get(
-    "LLM_TRAIT_GENERATOR_REASONING_EFFORT", "low"
-)
+TRAIT_GENERATOR_MODEL = UTILITY_PROFILE.model
+TRAIT_GENERATOR_REASONING_EFFORT = UTILITY_PROFILE.reasoning_effort
 # Max parallel single-heartbreaker LLM calls during opening cast generation.
 TRAIT_GENERATOR_MAX_CONCURRENCY = int(
     os.environ.get("LLM_TRAIT_GENERATOR_MAX_CONCURRENCY", "8")
@@ -177,6 +173,7 @@ class OpenAITraitGenerator:
         if instructions is None:
             instructions = _TRAIT_GENERATOR_PROMPT_FILE.read_text(encoding="utf-8")
         try:
+            started_at = start_agent_call()
             response = self._client.responses.create(
                 model=self._model,
                 instructions=instructions,
@@ -192,6 +189,10 @@ class OpenAITraitGenerator:
             prompt_path=TRAIT_GENERATOR_PROMPT,
             response=response,
             output=response.output_text,
+            reasoning_effort=TRAIT_GENERATOR_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=input_text,
+            started_at=started_at,
         )
         return _parse_trait_batch(response.output_text)
 

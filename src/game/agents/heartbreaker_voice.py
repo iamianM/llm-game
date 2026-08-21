@@ -23,22 +23,25 @@ from src.game.agents.heartbreaker_voice_context import (
 )
 from src.game.agents.mock_dialogue import mock_exchange_fields
 from src.game.agents.runtime import (
-    GAME_AGENT_MODEL,
+    VOICE_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
     build_game_client,
     end_agent_attempt,
+    mark_agent_trace_generation_error,
     mark_agent_trace_validation_error,
     reasoning_request_kwargs,
     record_agent_trace,
+    start_agent_call,
 )
 from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import GameState
 
-HEARTBREAKER_VOICE_MODEL = GAME_AGENT_MODEL
+HEARTBREAKER_VOICE_MODEL = VOICE_PROFILE.model
+HEARTBREAKER_VOICE_REASONING_EFFORT = VOICE_PROFILE.reasoning_effort
 HEARTBREAKER_VOICE_PROMPT = "src/game/agents/prompts/heartbreaker_voice.md"
 _HEARTBREAKER_VOICE_PROMPT_FILE = Path(__file__).parent / "prompts" / "heartbreaker_voice.md"
 VALID_TONES = {
@@ -111,7 +114,7 @@ class OpenAIHeartbreakerVoice:
                 try:
                     exchange = self._generate_exchange(retry_context)
                 except Exception as exc:
-                    mark_agent_trace_validation_error("heartbreaker_voice", attempt_number, exc)
+                    mark_agent_trace_generation_error("heartbreaker_voice", attempt_number, exc)
                     last_error = ValueError(str(exc))
                     if attempt == 2:
                         raise AgentGenerationError(str(exc)) from exc
@@ -140,12 +143,14 @@ class OpenAIHeartbreakerVoice:
 
     def _generate_exchange(self, rendered_context: Any) -> Exchange:
         """Request one parsed Exchange from the model."""
+        instructions = _HEARTBREAKER_VOICE_PROMPT_FILE.read_text(encoding="utf-8")
+        started_at = start_agent_call()
         response = self._client.responses.parse(
             model=self._model,
-            instructions=_HEARTBREAKER_VOICE_PROMPT_FILE.read_text(encoding="utf-8"),
+            instructions=instructions,
             input=rendered_context,
             text_format=Exchange,
-            **reasoning_request_kwargs(),
+            **reasoning_request_kwargs(effort=HEARTBREAKER_VOICE_REASONING_EFFORT),
         )
         exchange = response.output_parsed
         record_agent_trace(
@@ -154,6 +159,10 @@ class OpenAIHeartbreakerVoice:
             prompt_path=HEARTBREAKER_VOICE_PROMPT,
             response=response,
             output=exchange,
+            reasoning_effort=HEARTBREAKER_VOICE_REASONING_EFFORT,
+            prompt_text=instructions,
+            input_payload=rendered_context,
+            started_at=started_at,
         )
         if exchange is None:
             raise ValueError("Heartbreaker Voice returned no parsed Exchange")

@@ -1,6 +1,7 @@
 # Engineering Rules
 
-These rules are non-negotiable for implementation work. They adapt the discipline from `C:\Users\Mcian\projects\steno-livekit-agent` to this game.
+These rules are non-negotiable for implementation work. They adapt proven
+production-agent discipline to this game's deterministic simulation boundary.
 
 ## R1. Engine Owns State
 
@@ -52,9 +53,15 @@ Do not declare an implementation task done without running the current non-LLM Q
 
 This is not a shipped product yet. Move forward, regenerate fixtures if needed, and delete obsolete paths.
 
-## R13. No README.md
+## R13. Keep Public Orientation Separate From Implementation Canon
 
-`AGENTS.md` is the entry point. Use `ENGINEERING.md`, `FORMAT.md`, `INDEX.md`, ADRs, or numbered design docs for other documentation.
+`README.md` is the public product and portfolio landing page for people who are
+new to the repository. It may explain the architecture, CLI, replay, and eval
+story well enough to evaluate the project, but it must link to current system
+docs for the complete contract. `AGENTS.md` remains the authoritative
+engineering entry point for implementation work. Put maintainable system detail
+in `ENGINEERING.md`, `FORMAT.md`, `INDEX.md`, ADRs, or current system docs so the
+README does not become a second source of truth.
 
 ## R14. Git Is User-Owned
 

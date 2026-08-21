@@ -1,8 +1,8 @@
 """Deterministic pairing, Heart Throb, and elimination ceremonies.
 
 Design sources:
-- 10-Elimination-System.md: pairings, Heart Throbs, Heart Out beats
-- 12-Challenges-And-Events.md: dramatic event timing
+- docs/design/10-Elimination-System.md: pairings, Heart Throbs, Heart Out beats
+- docs/design/12-Challenges-And-Events.md: dramatic event timing
 """
 
 from __future__ import annotations
@@ -48,6 +48,7 @@ class CeremonyEvent(BaseModel):
     kind: str
     message: str
     heartbreaker_id: str | None = None
+    participant_ids: list[str] = Field(default_factory=list)
     sub_kind: str | None = None
 
 

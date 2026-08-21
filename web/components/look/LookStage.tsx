@@ -37,7 +37,7 @@ export function LookStage({ look, compact = false }: { look: HeartbreakerLook; c
       <span className="stage-glow" aria-hidden />
       <span className="stage-arch" aria-hidden />
       <div className="sprite-wrap">
-        <Image src={src} alt="" fill sizes={compact ? "120px" : "(max-width: 760px) 70vw, 460px"} priority={!compact} style={{ objectFit: "contain", objectPosition: "50% 100%" }} />
+        <Image src={src} alt="" fill sizes={compact ? "120px" : "(max-width: 760px) 70vw, 460px"} priority={!compact} loading={compact ? "lazy" : "eager"} style={{ objectFit: "contain", objectPosition: "50% 100%" }} />
         <span className="sprite-tint" aria-hidden />
       </div>
       <span className="floor-shadow" aria-hidden />

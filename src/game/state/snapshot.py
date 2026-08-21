@@ -1,7 +1,7 @@
 """Snapshot save/load and state hashing.
 
 Design sources:
-- docs/qa-strategy.md: Snapshot Contract
+- docs/systems/qa.md: Snapshot Contract
 - docs/decisions/0008-snapshot-and-trace-architecture.md
 
 Snapshots are the shared restart point for CLI, browser, and tests.

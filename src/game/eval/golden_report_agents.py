@@ -38,11 +38,44 @@ def _trace_card(trace: dict[str, Any]) -> str:
         f"{escape(trace.get('reasoning_effort', 'unknown'))} / "
         f"{escape(trace.get('response_status', 'no status'))} / "
         f"attempt {escape(trace.get('attempt', '?'))}</p>"
+        f"{_trace_metrics(trace)}"
+        f"{_metadata_line('Prompt SHA-256', trace.get('prompt_sha256'))}"
         f"{_metadata_line('Response details', details)}"
         f"{_inline_error(error)}"
         f"{_trace_response(trace.get('output'))}"
-        f"{_reasoning_summary(trace.get('reasoning_summaries'))}"
+        f"{_trace_input(trace.get('input'))}"
+        f"<details class='reasoning'><summary>Model reasoning summary</summary>"
+        f"{_reasoning_summary(trace.get('reasoning_summaries'))}</details>"
         "</article>"
+    )
+
+
+def _trace_metrics(trace: dict[str, Any]) -> str:
+    usage = trace.get("usage")
+    tokens = usage.get("total_tokens") if isinstance(usage, dict) else None
+    items = []
+    latency = trace.get("latency_ms")
+    if isinstance(latency, int):
+        items.append(f"{latency:,} ms")
+    if isinstance(tokens, int):
+        items.append(f"{tokens:,} tokens")
+    if trace.get("degraded"):
+        items.append("degraded to mock")
+    if not items:
+        return ""
+    return (
+        "<div class='trace-metrics'>"
+        + "".join(f"<span>{escape(item)}</span>" for item in items)
+        + "</div>"
+    )
+
+
+def _trace_input(value: object) -> str:
+    if value is None:
+        return ""
+    return (
+        "<details class='trace-input'><summary>Agent input</summary>"
+        f"<div class='response-block'>{_render_output(value)}</div></details>"
     )
 
 
@@ -129,7 +162,9 @@ def _memory_list(output: dict[str, Any]) -> str:
         if isinstance(memory, dict):
             holder = memory.get("holder_id", "holder")
             subject = memory.get("subject_id", "subject")
-            items.append(f"<li><b>{escape(holder)} -> {escape(subject)}</b>: {escape(memory.get('content', ''))}</li>")
+            items.append(
+                f"<li><b>{escape(holder)} -> {escape(subject)}</b>: {escape(memory.get('content', ''))}</li>"
+            )
     return f"<ul class='compact'>{''.join(items)}</ul>"
 
 
@@ -145,7 +180,10 @@ def _reasoning_summary(raw: object) -> str:
             for text in texts:
                 if isinstance(text, str) and text.strip():
                     chunks.append(f"<p>{escape(text)}</p>")
-    return "".join(chunks) or "<p class='muted'>No reasoning summary item returned by the API for this call.</p>"
+    return (
+        "".join(chunks)
+        or "<p class='muted'>No reasoning summary item returned by the API for this call.</p>"
+    )
 
 
 def _metadata_line(label: str, value: object) -> str:

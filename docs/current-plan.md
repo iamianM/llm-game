@@ -1,201 +1,150 @@
 # Current Plan
 
-This is the live planning surface for the game. It is not a completion ledger.
-When a feature finishes, remove it from this plan and update the owning system
-doc so the repo describes the game as it is.
-
-Use this file to answer:
-
-- What are we trying to improve next?
-- What is intentionally deferred?
-- What evidence makes a feature ready to merge?
-- Which docs need to change with the implementation?
-
-Historical build plans under `docs/build-plan-*.md` and the chronological
-`docs/build-log.md` are useful context, but they are not the active roadmap.
+This is the live planning surface for Paradise Hearts. It describes what should
+improve next, not everything already built. Shipped behavior belongs in the
+owning document under [`docs/systems/`](systems/); completed implementation
+plans belong in [`docs/archive/`](archive/).
 
 ## Current Product Shape
 
-The game is a playable POC hardening toward a stronger first vertical slice.
-The Python engine is canonical. The CLI, FastAPI adapter, browser client,
-scenario fixtures, traces, review packets, and LLM evals must all exercise the
-same engine path.
+The playable POC has one canonical Python engine shared by the CLI, FastAPI,
+browser, deterministic scenarios, replay, and golden LLM evals. It includes the
+season loop, scene-based browser dialogue, current-run knowledge, autonomous
+resort life, ceremonies, special events, and all six minigames.
 
-Current pillars:
-
-- Deterministic social-sim engine with seeded RNG and typed state.
-- Typed agent layer for dialogue, narration, options, summaries, background
-  resort life, gossip context, and trait generation.
-- Thin browser client over FastAPI.
-- CLI for interactive play, persisted sessions, checkpoints, branch comparison,
-  replay, review notes, deterministic verification, and golden LLM evals.
-- Static review packets for human inspection.
-- Mock golden evals in `make qa`; live-agent and judge evals are opt-in.
-
-The game should feel like a reality dating show first. Systems should create
-legible romantic tension, social consequences, and player-readable choices.
-The LLM should make resolved moments feel alive; it should not decide math,
-eligibility, votes, phase movement, or rewards.
+The next milestone is not another broad subsystem. It is a stronger, more
+legible Day 1 through Day 3 vertical slice, improved through real play and eval
+evidence.
 
 ## Planning Cycle
 
-Use a short cycle for every meaningful feature:
+For each meaningful change:
 
-1. Start from a real play problem, eval failure, or missing player-facing loop.
-2. Write the smallest feature slice that would make the experience better.
-3. Identify the owning engine, agent, browser, CLI, content, and docs surfaces.
-4. Add deterministic tests for mechanics and a golden scenario when agent
-   behavior or reviewability matters.
-5. Update system docs in present tense as part of the PR.
-6. Generate or inspect the relevant review packet when the feature is
-   player-facing.
-7. Remove the item from this plan after the owning docs describe the shipped
-   behavior.
+1. Start with a concrete play problem, eval failure, or missing review signal.
+2. Implement the smallest complete slice across every affected surface.
+3. Protect deterministic behavior with tests or a scripted scenario.
+4. Add or update a golden scenario when an agent affects a player-facing beat.
+5. Inspect the relevant browser state or static review packet.
+6. Update the owning system doc in present tense.
+7. Remove the item from this plan after it ships.
 
-Do not keep completed checklists here. Git history and the build log preserve
-how something landed; the system docs should preserve what is true now.
-
-## Work Item Shape
-
-Each active item should be small enough to review and should name its evidence.
-
-Recommended fields:
-
-- **Problem:** the player/developer pain being fixed.
-- **Player value:** why the game gets better.
-- **Smallest slice:** the narrow implementation that proves the direction.
-- **Surfaces:** engine, agents, CLI, browser, content, docs.
-- **Eval:** deterministic tests, scenario fixture, golden LLM eval, real review
-  packet, or manual browser play.
-- **Acceptance:** what a reviewer should be able to see without trusting vibes.
-
-If an item cannot name its eval evidence, it is probably still design work.
+An active item should identify its player value, affected surfaces, evidence,
+and acceptance signal. If it cannot name its evidence, it is still design work.
 
 ## Now
 
-### Real Eval Review And Failure-Driven Fixes
+### Real Eval Review and Failure-Driven Fixes
 
-**Problem:** The golden LLM eval system exists, but its value comes from using it
-to find model and prompt failures in real runs.
+**Problem:** The eval harness is established; its product value now depends on
+using live results to find specific failures in voice, continuity, option
+quality, narration, and faithfulness.
 
-**Player value:** Dialogue, options, ceremonies, interruptions, and endings get
-better based on inspectable failures rather than taste-only discussion.
+**Smallest slice:** Run the full live judged pack, inspect the HTML packet, and
+fix only the highest-signal failures. Convert each repeatable failure into a
+scenario check, schema constraint, or deterministic test before changing the
+responsible boundary.
 
-**Smallest slice:** Run the full real judged scenario pack, review failures in
-the HTML packet, and convert the highest-signal failures into direct prompt,
-schema, engine, or scenario fixes.
+**Evidence:** `make llm-eval-real-judge`, the generated packet, focused tests,
+and a clean mock pack. If a live key is unavailable, harness changes can ship
+only with clearly stated mock-only evidence.
 
-**Surfaces:** `evals/llm/scenarios/`, `src/game/eval/`,
-`src/game/agents/`, `src/game/agents/prompts/`, and review packet rendering.
+### GPT-5.6 Prompt Simplification (Claude-Owned)
 
-**Eval:** `make llm-eval-real-judge` when an OpenAI key is available; otherwise
-mock eval plus report inspection for harness changes.
+**Problem:** The shipped model profiles now use GPT-5.6 Luna, but several
+prompts still reflect older-model scaffolding: repeated constraints, large
+positive/negative example sets, and two contradictory in-world vocabulary
+lines that identify "Flush of Hearts" and then prohibit the same phrase.
 
-**Acceptance:** The reviewer can open `review-packet/llm-eval-real-judge/index.html`,
-filter to failing scenarios, compare authored golden intent to actual output,
-read reasoning summaries, and understand why each fix was made.
+**Smallest slice:** Claude simplifies one prompt family at a time, beginning
+with Heartbreaker Voice, Event Narrator, Contextual Options, Conversation
+Curator, and NPC Greeter. Keep schemas, engine boundaries, and the context
+builders unchanged. State each instruction once, remove repeated examples only
+after the corresponding thread scenario exists, and correct the vocabulary
+rule to require "Flush of Hearts" while prohibiting the external franchise term.
 
-### Browser Loop Polish For Day 1 Through Day 3
+**Evidence:** Run the focused whole-thread scenario at the shipped reasoning
+effort and one adjacent effort, compare pass/fail findings, validation retries,
+latency, and tokens in the dashboard, then run the full mock pack. Prompt files
+remain Claude-owned under `ENGINEERING.md` R17.
 
-**Problem:** The browser is the player-facing surface, but the engine has added
-many systems faster than the UI can make them legible.
+### Day 1 Through Day 3 Browser Polish
 
-**Player value:** The first three days should be playable without needing the
-CLI or raw traces to understand what happened.
+**Problem:** The engine exposes more social context than a first-time browser
+player can always interpret.
 
-**Smallest slice:** Review the browser through character creation, opening
-coupling, first chats, interruption/pull moments, challenge, Pairing Ceremony warning,
-and Day-3 Pairing Ceremony. Fix only the confusing or unreachable surfaces.
-Exercise the typed `pending_challenge` `round | wrap` projection for every
-minigame and confirm the compact insert, scene sequencing, and legal
-`available_actions` remain aligned on mobile and desktop.
+**Smallest slice:** Play from character creation through opening coupling,
+first chats, interruptions and pulls, the first challenge, ceremony warning,
+and the Day 3 pairing ceremony. Fix confusing, unreachable, or poorly staged
+moments without expanding the season design.
 
-**Surfaces:** `web/`, `src/api/`, CLI/browser shared action vocabulary, and
-`docs/phase3-ui-spec.md`.
-
-**Eval:** `make web-check`, `make web-contracts`, targeted Playwright coverage,
-and a review packet for the same action path when useful.
-
-**Acceptance:** Every legal engine action in the covered path is reachable in
-the browser, the player can tell why the resort state changed, and no important
-result is visible only in raw JSON.
-
-### Social Event Broadcasts
-
-Use known facts, memories, gossip seeds, and audience pressure to make group
-events feel like reality TV scenes. The engine should choose participants and
-stakes; agents should write the social texture after the deterministic result.
+**Evidence:** focused Playwright contracts, desktop and mobile visual review,
+the matching deterministic action path, and a review packet where state
+consequences need explanation.
 
 ### Audience Feedback Clarity
 
-Audience ranking exists, but the player needs better feedback about why public
-perception moved. Add concise post-action chips, trend language, and report
-visibility without exposing hidden math.
+**Problem:** Audience ranking affects the run, but a player can miss why public
+perception changed.
 
-### Eval Coverage For New Gameplay
+**Smallest slice:** Add concise post-action signals and trend language derived
+from engine results. Keep hidden scoring and private NPC state hidden.
 
-Every mini-game, major ceremony, ending path, and new agent behavior should get
-a scenario that shows authored golden intent, actual tools/output, deterministic
-checks, judge results when useful, and model reasoning summaries.
+**Evidence:** deterministic audience tests, API/browser contract coverage, and
+visual review showing that the consequence is legible without raw JSON.
 
-### Review Packet Comparison
+### Review Packet Signal
 
-Branch comparison exists for checkpoints. Improve it only where real play shows
-reviewers cannot quickly compare consequences across two choices.
+**Problem:** Replay and branch comparison exist, but packet density can slow
+down review of the decision that actually caused a divergence.
+
+**Smallest slice:** Improve filtering or consequence summaries only where a
+real playtest shows that two checkpoint branches are hard to compare.
+
+**Evidence:** one before/after branch comparison from the same checkpoint and a
+focused rendering test.
+
+### Social Event Broadcasts
+
+**Problem:** Group events can use more of the existing knowledge, memory,
+gossip, and audience substrate to feel like reality television rather than
+isolated encounters.
+
+**Smallest slice:** Choose one recurring event and let the deterministic engine
+select its participants and stakes; agents write only the resulting social
+texture.
+
+**Evidence:** deterministic participant/stake tests, one authored golden
+scenario, and a browser or review-packet walkthrough.
 
 ## Later
 
-### Meta-Progression
+- Meta-progression, reunion flow, permanent perks, and cross-run unlocks.
+- Persistent knowledge across runs.
+- Custom player and cast authoring.
+- Production hosting concerns: authentication, telemetry, durable storage, and
+  model cost controls.
+- Additional animation, sound, mobile polish, and venue art after the first
+  three days are consistently readable.
 
-Audience Appeal, reunion flow, permanent perks, unlocks, and cross-run strategy
-belong after the core single-season loop is fun and legible.
-
-### Persistent Knowledge Across Runs
-
-Keep current-run knowledge deterministic for now. Cross-run memory should wait
-until meta-progression has a clear player value and storage contract.
-
-### Custom Player And Cast Authoring
-
-Player customization UI, custom cast JSON, and broader procedural cast controls
-are valuable, but they should not distract from making the default cast loop
-excellent.
-
-### Deployment And Production Operations
-
-Hosting, auth, telemetry, production persistence, and cost controls matter after
-the browser loop and eval discipline are stable.
-
-### Presentation Polish
-
-Animation, sound, mobile polish, richer avatars, and venue art should support a
-working loop. They are not substitutes for readable social consequences.
-
-## Parked For The POC
+## Parked for the POC
 
 - LiveKit or realtime voice.
 - LLM-driven mechanics.
-- Next.js API routes for gameplay logic.
+- Next.js gameplay API routes.
 - Heavy database architecture.
 - Save-scumming as a supported player loop.
 - Alternate reality-show formats.
-- A general game engine.
+- A general-purpose game engine.
 
 ## Documentation Rules
 
-Use present tense for shipped behavior. Avoid "done" sections, completion
-tables, and old acceptance checklists as the main source of truth.
-
-When implementation changes behavior:
-
-- Update the owning system doc.
-- Update `AGENTS.md` only if navigation, stack, commands, or project posture
-  changed.
-- Update `docs/qa-strategy.md` only if the gate, trace contract, or test layer
-  changed.
-- Update `docs/llm-eval-system.md` or `evals/llm/scenarios/FORMAT.md` when
-  scenario authoring, report review, judge policy, or eval coverage changes.
-- Update `docs/contract-map.yaml` when a new source area needs a doc owner.
-
-When a historical build-plan detail conflicts with present docs, present docs
-win. Do not add compatibility shims to preserve old plans.
+- Use current system docs for shipped behavior.
+- Use this file only for active and intentionally deferred work.
+- Update [`systems/qa.md`](systems/qa.md) when the completion gate, trace
+  contract, or test layering changes.
+- Update [`systems/llm-evals.md`](systems/llm-evals.md) or the
+  [scenario format](../evals/llm/scenarios/FORMAT.md) when eval authoring,
+  reporting, or judge policy changes.
+- Update [`contract-map.yaml`](contract-map.yaml) when source ownership changes.
+- Treat archived plans as history. Do not add compatibility code to preserve
+  superseded instructions.

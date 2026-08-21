@@ -2,7 +2,7 @@
 
 Legacy challenges resolve via :func:`resolve_challenge` (single dice roll). New
 round-based minigames (currently only ``compatibility_quiz``) bypass that path
-and use the shared harness in ``docs/minigame-system.md``.
+and use the shared harness in ``docs/systems/minigames.md``.
 """
 
 from __future__ import annotations
@@ -63,7 +63,7 @@ CHOICE_REQUIRED_CHALLENGES = ROUND_BASED_MINIGAMES
 
 
 def apply_recovery_floor(state: GameState, audience_delta: int, classification: str) -> int:
-    """Shared minigame audience floor; see docs/minigame-system.md §5.2."""
+    """Shared minigame audience floor; see docs/systems/minigames.md §5.2."""
     from src.game.content.minigame_balance import load_minigame_balance
     floor = load_minigame_balance().recovery_floor
     if state.player.public_perception >= floor.audience_threshold:
@@ -128,8 +128,9 @@ def challenge_event_message(challenge: Challenge) -> str:
             f"{_challenge_label(challenge.kind)} ended in {challenge.classification} "
             f"({challenge.total_points} pts)."
         )
-    result = "is still pending" if challenge.result is None else f"ended in {challenge.result}"
-    return f"{_challenge_label(challenge.kind)} tested {_stat_label(challenge.stat_tested)} and {result}."
+    if challenge.result is None:
+        return f"{_challenge_label(challenge.kind)} is still pending."
+    return f"{_challenge_label(challenge.kind)} ended in {challenge.result}."
 
 
 def _challenge_label(kind: str) -> str:
@@ -142,12 +143,6 @@ def _challenge_label(kind: str) -> str:
         "kiss_wed_pass": "Kiss Wed Pass",
     }
     return labels.get(kind, kind.replace("_", " ").title())
-
-
-def _stat_label(stat: str) -> str:
-    if stat == "combined":
-        return "combined couple energy"
-    return stat.replace("_", " ").title()
 
 
 def _challenge_success_chance(state: GameState, challenge: Challenge) -> int:

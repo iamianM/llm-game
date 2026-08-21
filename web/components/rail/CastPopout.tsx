@@ -63,8 +63,13 @@ export function CastPopout({ sessionId, npcId, onClose }: { sessionId: string; n
 
                 <div className="section">
                   <h3 className="section-title">Recent memories</h3>
-                  {data.memories.length ? data.memories.map((m) => (
-                    <p key={`${m.subject_id}-${m.formed_on_turn}`} className="memory">{m.content}</p>
+                  {data.memories.length ? data.memories.map((m, index) => (
+                    <p
+                      key={`${m.id}-${m.holder_id}-${m.subject_id}-${m.formed_on_turn}-${index}`}
+                      className="memory"
+                    >
+                      {m.content}
+                    </p>
                   )) : <p className="empty">No memories yet.</p>}
                 </div>
               </>

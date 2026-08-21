@@ -8,23 +8,13 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.turn_agents import live_turn_agents
 from src.game.cli.commands.report_compare import compare_cmd
 from src.game.cli.commands.review import review_notes_for_trace
-from src.game.engine.actions import ActionKind, PlayerAction
-from src.game.engine.bookmarks import bookmarks_for_turn
-from src.game.engine.compatibility import revealed_preferences
-from src.game.engine.couples import couple_strength, player_couple
-from src.game.engine.flush_of_hearts import locations_for_resort
-from src.game.engine.turn import run_turn
 from src.game.eval.playthrough import evaluate_trace
 from src.game.reporting.balance import run_balance
 from src.game.reporting.eval_dashboard import playthrough_eval_page
 from src.game.reporting.html import index_page, session_page, session_page_minimal, table_page
 from src.game.reporting.packet_text import infer_llm_mode, llm_mode_note, notes, repro
-from src.game.state.models import GameState, Location, PlayerStats, new_game
-from src.game.state.rng import SeededRng
-from src.game.state.snapshot import state_hash, state_hash_payload
 
 
 def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) -> None:
@@ -55,7 +45,9 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     packet.add_argument("--minimal", action="store_true")
     packet.set_defaults(func=packet_cmd)
 
-    eval_dashboard = nested.add_parser("eval-dashboard", help="render playthrough eval dashboard")
+    eval_dashboard = nested.add_parser(
+        "eval-dashboard", help="render playthrough eval dashboard"
+    )
     eval_dashboard.add_argument("trace_path")
     eval_dashboard.add_argument("--out", required=True)
     eval_dashboard.set_defaults(func=eval_dashboard_cmd)
@@ -66,10 +58,6 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     compare.add_argument("--trace-b", required=True)
     compare.add_argument("--out", required=True)
     compare.set_defaults(func=compare_cmd)
-
-    preview_f2 = nested.add_parser("preview-f2", help="build the Phase F2 voice preview")
-    preview_f2.add_argument("--out", default="review-packet-preview/session-phaseF2.html")
-    preview_f2.set_defaults(func=preview_f2_cmd)
 
 
 def session_cmd(args: argparse.Namespace) -> int:
@@ -100,7 +88,9 @@ def balance_cmd(args: argparse.Namespace) -> int:
     """Render balance reports."""
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    outcomes, actions = run_balance(args.seeds, Path("tests/scenarios/fixtures/day6-full-run.yaml"))
+    outcomes, actions = run_balance(
+        args.seeds, Path("tests/scenarios/fixtures/day6-full-run.yaml")
+    )
     _write_balance_pages(out, outcomes, actions)
     return 0
 
@@ -179,152 +169,6 @@ def eval_dashboard_cmd(args: argparse.Namespace) -> int:
     return 0
 
 
-def preview_f2_cmd(args: argparse.Namespace) -> int:
-    """Build the mandatory Phase F2 single-exchange voice preview."""
-    out = Path(args.out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    state = new_game(42, player_stats=PlayerStats(charm=3, banter=3, eq=3, spark=3, loyalty=3))
-    for heartbreaker in state.heartbreakers:
-        heartbreaker.location_id = Location.POOL
-    rng = SeededRng(42)
-    agents = live_turn_agents("no_resort_life")
-    actions = [
-        ("chloe", "friendly_ask_feelings", 10),
-        ("chloe", "friendly_chat_resort", 10),
-        ("chloe", "friendly_compliment_personality", 10),
-        ("maya", "flirty_compliment_looks", 20),
-        ("maya", "flirty_playful_teasing", 20),
-        ("maya", "flirty_intimate_eye_contact", 30),
-        ("liam", "deep_ask_life", 40),
-        ("liam", "deep_share_feelings", 40),
-        ("chloe", "banter_tell_joke", 10),
-        ("chloe", "banter_playful_roast", 10),
-    ]
-    records: list[dict[str, Any]] = []
-    for target_id, intent_id, affection in actions:
-        _set_preview_target(state, target_id, affection)
-        action = PlayerAction(
-            kind=ActionKind.START_CONVERSATION,
-            target_id=target_id,
-            intent_id=intent_id,
-        )
-        input_hash = state_hash(state_hash_payload(state))
-        turn = run_turn(state, action, rng, agents)
-        state = turn.state
-        records.append(_record_from_turn(input_hash, action, turn))
-
-    preface = (
-        "<p><b>About this preview.</b> This page demonstrates the Heartbreaker Voice agent across "
-        "all four conversation categories. Affection is pre-warmed before each turn to the intent's "
-        "unlock threshold so every tier is visible — a real session evolves these values gradually. "
-        "Player stats are deliberately set to the minimum (3 across all five stats) so misses are "
-        "plausible. Read each turn as a voice-quality sample, not as a continuous narrative.</p>"
-    )
-    out.write_text(
-        session_page("Phase F2 Voice Preview", records, preface=preface),
-        encoding="utf-8",
-    )
-    print(out)
-    return 0
-
-
-def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> dict[str, Any]:
-    from src.game.engine.turn import TurnResult
-    from src.game.presentation.daily_recap import project_daily_recap
-
-    if not isinstance(turn, TurnResult):
-        raise TypeError("turn must be TurnResult")
-    state = turn.state
-    return {
-        "turn": state.turn_index,
-        "day": state.day,
-        "phase": state.phase.value,
-        "resort": state.resort.value,
-        "location": state.location_id.value,
-        "player_public_perception": state.player.public_perception,
-        "visible_state": _visible_state(state),
-        "resort_snapshot": _resort_snapshot(state),
-        "couple_strength": _player_couple_strength(state),
-        "private_suite": state.private_suite.model_dump(mode="json"),
-        "flush_of_hearts": (
-            None
-            if state.flush_of_hearts_state is None
-            else state.flush_of_hearts_state.model_dump(mode="json")
-        ),
-        "input_hash": input_hash,
-        "action": action.model_dump(mode="json"),
-        "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
-        "exchange": None if turn.exchange is None else turn.exchange.model_dump(mode="json"),
-        "event_narration": (
-            None if turn.event_narration is None else turn.event_narration.model_dump(mode="json")
-        ),
-        "follow_up_menu": (
-            None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
-        ),
-        "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
-        "audience_snapshot": (
-            None
-            if turn.audience_snapshot is None
-            else turn.audience_snapshot.model_dump(mode="json")
-        ),
-        "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
-        "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
-        "pending_gather": None if state.pending_gather is None else state.pending_gather.model_dump(mode="json"),
-        "group_date": None if state.pending_group_date is None else state.pending_group_date.model_dump(mode="json"),
-        "daily_recaps": [
-            project_daily_recap(state, recap).model_dump(mode="json")
-            for recap in state.daily_recaps
-        ],
-        "revealed_preferences": {
-            heartbreaker.id: revealed
-            for heartbreaker in state.heartbreakers
-            if (revealed := revealed_preferences(heartbreaker))
-        },
-        "agent_commits": turn.agent_commits.model_dump(mode="json"),
-        "agent_traces": [trace.model_dump(mode="json") for trace in turn.agent_traces],
-        "bookmarks": [bookmark.model_dump(mode="json") for bookmark in bookmarks_for_turn(turn)],
-        "output_hash": turn.state_hash,
-    }
-
-
-def _set_preview_target(state: GameState, target_id: str, affection: int) -> None:
-    for heartbreaker in state.heartbreakers:
-        if heartbreaker.id == target_id:
-            heartbreaker.location_id = state.location_id
-            heartbreaker.relationship.affection = affection
-            return
-    raise ValueError(f"preview target not found: {target_id}")
-
-
-def _visible_state(state: GameState) -> str:
-    parts = []
-    for heartbreaker in state.heartbreakers:
-        if heartbreaker.location_id == state.location_id and not heartbreaker.eliminated:
-            rel = heartbreaker.relationship
-            parts.append(
-                f"{heartbreaker.name}: affection {rel.affection}, chemistry {rel.chemistry}, trust {rel.trust}"
-            )
-    return "; ".join(parts) if parts else "No visible heartbreakers."
-
-
-def _player_couple_strength(state: GameState) -> int | None:
-    couple = player_couple(state)
-    return None if couple is None else couple_strength(state, couple)
-
-
-def _resort_snapshot(state: GameState) -> dict[str, list[str]]:
-    snapshot: dict[str, list[str]] = {}
-    for location in locations_for_resort(state.resort):
-        occupants = ["you"] if location is state.location_id else []
-        occupants.extend(
-            heartbreaker.name
-            for heartbreaker in state.heartbreakers
-            if heartbreaker.location_id is location and not heartbreaker.eliminated
-        )
-        snapshot[location.value] = occupants
-    return snapshot
-
-
 def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     out.mkdir(parents=True, exist_ok=True)
     outcome_rows = [[str(key), str(value)] for key, value in sorted(outcomes.items())]
@@ -382,7 +226,10 @@ def _clean_packet_output(out: Path) -> None:
 
 
 def _final_state_summary(
-    final_state: dict[str, Any], llm_mode: str, mode: str, persona: str | None
+    final_state: dict[str, Any],
+    llm_mode: str,
+    mode: str,
+    persona: str | None,
 ) -> str:
     player = final_state.get("player")
     heartbreakers = final_state.get("heartbreakers")
@@ -405,8 +252,7 @@ def _final_state_summary(
     return (
         "<p><b>Recorded playthrough.</b> This report is rendered from a trace package; "
         "agent commits are replayable and no new LLM calls are needed to inspect it.</p>"
-        f"<p><b>LLM mode:</b> {llm_mode}. "
-        f"{llm_mode_note(llm_mode)}</p>"
+        f"<p><b>LLM mode:</b> {llm_mode}. {llm_mode_note(llm_mode)}</p>"
         f"<p><b>Trace mode:</b> {mode}{f' - persona: {persona}' if persona else ''}.</p>"
         f"<ul>{''.join(memory_lines)}</ul>"
     )

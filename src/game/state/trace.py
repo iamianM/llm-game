@@ -1,7 +1,7 @@
 """Turn trace writing.
 
 Design sources:
-- docs/qa-strategy.md: Trace Contract
+- docs/systems/qa.md: Trace Contract
 - docs/decisions/0008-snapshot-and-trace-architecture.md
 
 Traces are the common debugging artifact for users, CLI runs, browser sessions,

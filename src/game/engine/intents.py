@@ -1,8 +1,8 @@
 """Tiered conversation intents.
 
 Design sources:
-- 05-Interaction-System.md: Hybrid Menu System
-- 02-Core-Mechanics.md: Interaction Success Formula
+- docs/design/05-Interaction-System.md: Hybrid Menu System
+- docs/design/02-Core-Mechanics.md: Interaction Success Formula
 """
 
 from __future__ import annotations

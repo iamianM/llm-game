@@ -1,7 +1,7 @@
 """Deterministic action-script replay.
 
 Design sources:
-- docs/qa-strategy.md: L4 Scenario
+- docs/systems/qa.md: L4 Scenario
 - docs/decisions/0008-snapshot-and-trace-architecture.md
 
 Scenario replay is shared by CLI commands and pytest so smoke tests, fixture

@@ -14,7 +14,7 @@ const AMBIENCE: Record<MusicScene, string> = {
   tension: "/audio/ambience/resort-night.mp3",
 };
 
-const AMBIENCE_VOLUME = 0.16;
+const AMBIENCE_VOLUME = 0.08;
 const CROSSFADE_MS = 1400;
 const FADE_STEP_MS = 60;
 

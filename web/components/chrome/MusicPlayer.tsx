@@ -3,6 +3,7 @@
 import { type MutableRefObject, useEffect, useRef } from "react";
 import {
   MUSIC_MUTE_KEY,
+  MUSIC_OUTPUT_CEILING,
   MUSIC_VOLUME_KEY,
   type MusicScene,
   useUiStore,
@@ -44,7 +45,7 @@ export function MusicPlayer() {
   const fadeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Latest target volume, read by the fade loop so a mid-fade volume change
   // (slider drag) lands on the right ceiling.
-  const targetVolumeRef = useRef(musicVolume);
+  const targetVolumeRef = useRef(outputVolume(musicVolume));
 
   const elFor = (which: "a" | "b") => (which === "a" ? aRef.current : bRef.current);
 
@@ -66,10 +67,10 @@ export function MusicPlayer() {
   // Keep the live (non-fading) volume in sync with the slider. While a fade is
   // running, only update the target — the fade loop owns the element volumes.
   useEffect(() => {
-    targetVolumeRef.current = musicVolume;
+    targetVolumeRef.current = outputVolume(musicVolume);
     if (fadeTimerRef.current === null && musicOn) {
       const active = elFor(activeRef.current);
-      if (active) active.volume = musicVolume;
+      if (active) active.volume = targetVolumeRef.current;
     }
   }, [musicVolume, musicOn]);
 
@@ -208,4 +209,8 @@ function crossfade(
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function outputVolume(preference: number) {
+  return clamp01(preference) * MUSIC_OUTPUT_CEILING;
 }

@@ -15,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -36,17 +36,10 @@
     "tests/**/*.ts",
     "playwright.config.ts",
     "tailwind.config.ts",
-    ".next-playwright-0/types/**/*.ts",
-    ".next-playwright-1/types/**/*.ts",
-    ".next-playwright-2/types/**/*.ts",
-    ".next-playwright-3/types/**/*.ts",
-    ".next-playwright-4/types/**/*.ts",
-    ".next-playwright-5/types/**/*.ts",
-    ".next-playwright-6/types/**/*.ts",
-    ".next-playwright-7/types/**/*.ts",
-    ".next-playwright-8/types/**/*.ts",
-    ".next-playwright-9/types/**/*.ts",
-    ".next/types/**/*.ts"
+    ".next-playwright-*/types/**/*.ts",
+    ".next-playwright-*/dev/types/**/*.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

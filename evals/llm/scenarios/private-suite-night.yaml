@@ -1,6 +1,15 @@
 id: private-suite-night
 title: Paradise Suite (Private Suite)
 goal: Prove a Day 5 evening Private Suite moves the player and partner into the suite, applies the deterministic relationship reward exactly once, marks the couple as committed, and gives the Event Narrator the Private Suite beat to narrate.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: private_suite_foregrounded
+      criteria: >
+        The Private Suite remains the dominant, genuinely private beat between only the player
+        and Chloe. A later gather or ceremony must not crowd it out, appear first, or place a
+        third Heartbreaker inside the suite.
 seed: 2020
 initial_day: 5
 initial_phase: evening
@@ -51,14 +60,3 @@ turns:
       - ceremony_event_present:private_suite
       - event_narration_valid
       - agent_traces_present
-    judge_checks:
-      - id: private_suite_privacy
-        criteria: >
-          The narration treats the suite as private: only the player and
-          Chloe appear by name inside the suite. Fail if a third
-          Heartbreaker is placed inside the private Private Suite beat.
-      - id: private_suite_foregrounded
-        criteria: >
-          The Private Suite beat is the dominant moment. Fail if a later scheduled
-          gather or ceremony crowds it out, appears first, or makes the suite
-          feel like an afterthought.

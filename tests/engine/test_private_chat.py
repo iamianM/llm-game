@@ -158,6 +158,13 @@ def test_start_conversation_with_private_chat_success_opens_new_convo() -> None:
     assert state.active_conversation.target_id == "chloe"
     assert state.npc_conversations == []
     assert turn.curator_batches
+    assert [closure.model_dump(mode="json") for closure in turn.conversation_closures] == [
+        {
+            "conversation_id": "npcconv_busy",
+            "participant_ids": ["chloe", "maya"],
+            "reason": "private_chat_success",
+        }
+    ]
 
 
 def test_start_conversation_with_private_chat_failure_does_not_open() -> None:

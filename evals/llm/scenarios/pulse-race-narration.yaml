@@ -1,6 +1,15 @@
 id: pulse-race-narration
 title: Pulse Race Reveal
 goal: Prove the Event Narrator dramatises a Pulse Race result using the recorded chemistry matrix and the player's read-the-room guesses.
+thread_check:
+  id: thread_acceptance
+  severity: blocking
+  criteria:
+    - id: pulse_race_story_faithful
+      criteria: >
+        The wrap ties the player's actual guesses to named chemistry pairs and recorded BPM or
+        chemistry values, foregrounds at least the strongest reveal, and never invents a pair
+        outside the matrix or exposes raw internal ids.
 seed: 707
 initial_day: 2
 initial_phase: morning
@@ -34,8 +43,7 @@ judge_context:
     asks the player to guess whose pulse climbed for whom.
   - The chemistry matrix is engine-computed; the narrator may NOT invent
     chemistry values beyond what's surfaced in the reveal payloads.
-  - Use bracketed Names (the (Name) form in the participants line),
-    never the raw underscore ids.
+  - Use ordinary display names in prose and never expose raw underscore ids.
 turns:
   - id: morning-to-pulse-race
     action:
@@ -88,24 +96,3 @@ turns:
       - event_narration_valid
       - challenge_resolved
       - agent_traces_present
-    judge_checks:
-      - id: chemistry_named
-        criteria: >
-          The prose names a specific chemistry pair from the recorded
-          reveals — at minimum the strongest matrix entry — and references
-          the BPM or chemistry value spelled out. Generic "the room got
-          hot" without naming the pair fails.
-      - id: guesses_named
-        criteria: >
-          The prose references at least one of the player's actual
-          guesses (a Name from a chosen choice). A wrap that doesn't tie
-          back to what the player did fails.
-      - id: no_invented_pairs
-        criteria: >
-          No invented chemistry pairs beyond the matrix entries actually
-          recorded on the round's reveals.
-      - id: no_raw_ids
-        criteria: >
-          The prose uses Names ("Maya", "Chloe", "Blake") and never raw
-          underscore ids ("blake", "nia"). Fails on any
-          underscore-suffixed id in the output.

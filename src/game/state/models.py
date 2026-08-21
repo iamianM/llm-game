@@ -369,6 +369,16 @@ class NPCNPCConversation(BaseModel):
     status: Literal["active", "ending", "closed"] = "active"
 
 
+class ConversationClosure(BaseModel):
+    """One engine-owned record that a conversation ended this turn."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    conversation_id: str
+    participant_ids: list[str] = Field(min_length=2)
+    reason: str
+
+
 class PendingPairProposal(BaseModel):
     """An NPC proposal awaiting the player's response."""
 

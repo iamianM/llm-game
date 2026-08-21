@@ -32,6 +32,17 @@ def test_flush_of_hearts_enter_separates_cast_by_gender() -> None:
     assert len(state.flush_of_hearts_state.flush_heartbreaker_ids) == 6
 
 
+def test_flush_arrival_event_carries_distant_original_partner() -> None:
+    state = new_game(1)
+    state.couples = [Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=1)]
+
+    event = enter_flush_of_hearts(state)
+
+    assert event.participant_ids == ["player", "chloe"]
+    assert "Chloe remains at Sunset Bay" in event.message
+    assert "tested at a distance" in event.message
+
+
 def test_flush_of_hearts_enter_adds_new_heartbreakers() -> None:
     state = new_game(1)
 

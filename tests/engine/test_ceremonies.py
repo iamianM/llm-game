@@ -150,6 +150,38 @@ def test_pairing_pick_applies_player_choice() -> None:
     assert other == "maya"
 
 
+def test_opening_pair_moves_everyone_to_flame_deck() -> None:
+    """The First Spark resolves in its canonical ceremony location."""
+    from src.game.engine.character_creation import create_character
+    from src.game.engine.turn import run_turn
+    from src.game.state.models import Gender, Location, Phase, PlayerStats
+
+    state = new_game(101)
+    create_character(
+        state,
+        archetype_id="heartthrob",
+        gender=Gender.MAN,
+        stats=PlayerStats(charm=9, banter=6, eq=5, spark=5, loyalty=5),
+    )
+    state.phase = Phase.MORNING
+    state.intro_completed_ids = [heartbreaker.id for heartbreaker in state.heartbreakers]
+    state.intro_memory_created = True
+    turn = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
+        SeededRng(101),
+    )
+
+    assert turn.state.location_id is Location.FLAME_DECK
+    assert all(
+        heartbreaker.location_id is Location.FLAME_DECK
+        for heartbreaker in turn.state.heartbreakers
+        if not heartbreaker.eliminated
+    )
+    pairing_event = next(event for event in turn.ceremony_events if event.kind == "pairing")
+    assert pairing_event.participant_ids == ["player", "chloe"]
+
+
 def test_pairing_events_emit_display_safe_messages() -> None:
     """Ceremony event producers resolve ids to display names at the source.
 
@@ -182,6 +214,7 @@ def test_pairing_events_emit_display_safe_messages() -> None:
     )
 
     messages = " || ".join(event.message for event in pairing_events(state, ceremony))
+    pairing_event = next(event for event in pairing_events(state, ceremony) if event.kind == "pairing")
 
     for raw_id in ("blake", "sophie", "jordan", "nia"):
         assert raw_id not in messages
@@ -192,6 +225,7 @@ def test_pairing_events_emit_display_safe_messages() -> None:
     assert "Sophie" in messages
     assert "Jordan" in messages
     assert "Nia" in messages
+    assert pairing_event.participant_ids == ["blake", "sophie"]
 
 
 def test_public_perception_bounds() -> None:

@@ -22,7 +22,8 @@ process.env.NEXT_PUBLIC_API_BASE = apiURL;
 function loadRuntimeConfig(): RuntimeConfig {
   const runtimeDir = resolve(".playwright-runtime");
   mkdirSync(runtimeDir, { recursive: true });
-  const runId = process.env.PLAYWRIGHT_RUN_ID || playwrightRootPid();
+  const runId = process.env.PLAYWRIGHT_RUN_ID || String(process.pid);
+  process.env.PLAYWRIGHT_RUN_ID = runId;
   const runtimePath = resolve(runtimeDir, `${runId}.json`);
   if (existsSync(runtimePath)) {
     return JSON.parse(readFileSync(runtimePath, "utf8")) as RuntimeConfig;
@@ -69,11 +70,12 @@ function slotIsStale(lockDir: string) {
 }
 
 function processIsAlive(pid: number) {
-  const script = `if (Get-Process -Id ${pid} -ErrorAction SilentlyContinue) { Write-Output 1 }`;
-  const output = execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script], {
-    encoding: "utf8",
-  }).trim();
-  return output === "1";
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function envPort(name: string) {
@@ -85,41 +87,19 @@ function envPort(name: string) {
 
 function pickAvailablePort() {
   const script = [
-    "$listener = [System.Net.Sockets.TcpListener]::new([Net.IPAddress]::Parse('127.0.0.1'), 0)",
-    "$listener.Start()",
-    "$port = $listener.LocalEndpoint.Port",
-    "$listener.Stop()",
-    "Write-Output $port",
-  ].join("; ");
-  const output = execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script], {
-    encoding: "utf8",
-  }).trim();
-  const port = Number(output);
+    "const net = require('node:net');",
+    "const server = net.createServer();",
+    "server.listen(0, '127.0.0.1', () => {",
+    "  console.log(server.address().port);",
+    "  server.close();",
+    "});",
+  ].join("\n");
+  const output = execFileSync(process.execPath, ["-e", script], { encoding: "utf8" }).trim();
+  const port = Number(output.match(/\d+/)?.[0]);
   if (!Number.isInteger(port) || port <= 0 || port >= 65_536) {
     throw new Error(`Playwright could not allocate a valid local port: ${output || String(port)}`);
   }
   return port;
-}
-
-function playwrightRootPid() {
-  const script = `
-$pidValue = ${process.pid}
-$root = $pidValue
-while ($pidValue -and $pidValue -gt 0) {
-  $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$pidValue"
-  if (-not $proc) { break }
-  if ($proc.CommandLine -match '@playwright\\\\test\\\\cli\\.js' -or $proc.CommandLine -match '@playwright/test/cli\\.js') {
-    $root = $proc.ProcessId
-    break
-  }
-  $pidValue = $proc.ParentProcessId
-}
-Write-Output $root
-`;
-  const output = execFileSync("powershell", ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script], {
-    encoding: "utf8",
-  }).trim();
-  return output || String(process.pid);
 }
 
 export default defineConfig({
@@ -140,9 +120,16 @@ export default defineConfig({
       timeout: 120_000
     },
     {
-      command: `powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:NEXT_DIST_DIR='${nextDistDir}'; $env:NEXT_PUBLIC_API_BASE='${apiURL}'; npm run dev -- --hostname 127.0.0.1 --port ${uiPort}"`,
+      command: `npm run dev -- --hostname 127.0.0.1 --port ${uiPort}`,
       url: uiURL,
       reuseExistingServer: false,
+      env: {
+        NEXT_DIST_DIR: nextDistDir,
+        NEXT_PUBLIC_API_BASE: apiURL,
+        // Browser contracts stay deterministic and free even though the
+        // shipped product now defaults new visitors to Live LLM.
+        NEXT_PUBLIC_DEFAULT_LIVE_LLM: "0",
+      },
       timeout: 120_000
     }
   ],

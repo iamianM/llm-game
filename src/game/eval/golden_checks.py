@@ -43,6 +43,14 @@ def run_deterministic_check(
             validation_state = turn.state if pre_state is None else pre_state
             validate_exchange(turn.exchange, heartbreaker_voice_context(validation_state, turn.mechanical_result))
             return _pass(check_id, "exchange validates", turn_spec.id)
+        if check_id == "mechanical_success":
+            if turn.mechanical_result.success is not True:
+                return _fail(
+                    check_id,
+                    "authored success beat resolved as a mechanical miss",
+                    turn_spec.id,
+                )
+            return _pass(check_id, "mechanical outcome is success", turn_spec.id)
         if check_id == "follow_up_menu_valid":
             if turn.follow_up_menu is None:
                 return _fail(check_id, "turn has no follow-up menu", turn_spec.id)
@@ -286,7 +294,22 @@ def _check_npc_conversation_closed(
     still_present = any(conversation.id == blocked_id for conversation in turn.state.npc_conversations)
     if still_present:
         return _fail(check_id, f"NPC conversation {blocked_id} is still present", turn_spec.id)
-    return _pass(check_id, f"NPC conversation {blocked_id} was removed after the private chat", turn_spec.id)
+    matching_closures = [
+        closure
+        for closure in turn.conversation_closures
+        if closure.conversation_id == blocked_id and closure.reason == "private_chat_success"
+    ]
+    if not matching_closures:
+        return _fail(
+            check_id,
+            f"NPC conversation {blocked_id} was removed without a private-chat closure record",
+            turn_spec.id,
+        )
+    return _pass(
+        check_id,
+        f"NPC conversation {blocked_id} closed explicitly after the private chat",
+        turn_spec.id,
+    )
 
 
 def _check_private_chat_rejection_witness_memory(

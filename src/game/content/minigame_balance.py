@@ -1,7 +1,7 @@
 """Typed minigame balance data loaded from ``data/balance/minigames.yaml``.
 
-Per-minigame models. See ``docs/minigame-system.md`` §5 and each minigame
-spec under ``docs/minigames/`` for what the numbers mean.
+Per-minigame models. See ``docs/systems/minigames.md`` §5 and each minigame
+spec under ``docs/systems/minigames/`` for what the numbers mean.
 """
 
 from __future__ import annotations

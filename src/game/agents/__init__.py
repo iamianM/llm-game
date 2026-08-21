@@ -1,8 +1,8 @@
 """Typed story-agent layer.
 
 Design sources:
-- 03-LLM-Architecture.md: Multi-AI System
-- 11-Conversation-Flow.md: Single Exchange Generation
+- docs/design/03-LLM-Architecture.md: Multi-AI System, Dialogue AI, Event Narrator AI
+- docs/design/11-Conversation-Flow.md: Single Exchange Generation
 - docs/decisions/0016-game-owned-turn-agent-set.md
 
 ``TurnAgentSet`` is the canonical turn boundary. Live, mock, recorded, and

@@ -2,7 +2,7 @@
 
 Design sources:
 - docs/decisions/0004-seeded-rng-as-core-primitive.md
-- 03-LLM-Architecture.md: Algorithm vs LLM Boundaries
+- docs/design/03-LLM-Architecture.md: Algorithm vs LLM Boundaries
 
 Implementation rule:
 Gameplay code should not call ambient randomness directly. Every roll must flow
