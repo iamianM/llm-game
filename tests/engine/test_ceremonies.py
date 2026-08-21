@@ -152,6 +152,7 @@ def test_pairing_pick_applies_player_choice() -> None:
 
 def test_opening_pair_moves_everyone_to_flame_deck() -> None:
     """The First Spark resolves in its canonical ceremony location."""
+    from src.game.agents.turn_agents import mock_turn_agents
     from src.game.engine.character_creation import create_character
     from src.game.engine.turn import run_turn
     from src.game.state.models import Gender, Location, Phase, PlayerStats
@@ -170,6 +171,7 @@ def test_opening_pair_moves_everyone_to_flame_deck() -> None:
         state,
         PlayerAction(kind=ActionKind.PAIR, target_id="chloe"),
         SeededRng(101),
+        mock_turn_agents(),
     )
 
     assert turn.state.location_id is Location.FLAME_DECK
