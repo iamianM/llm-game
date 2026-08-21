@@ -10,13 +10,8 @@ from src.game.agents.resort_orchestrator import (
     NPCMovement,
     ResortOrchestratorFn,
     ResortUpdate,
-    mock_resort_orchestrator,
 )
-from src.game.agents.runtime import (
-    AgentError,
-    AgentValidationError,
-    record_agent_degradation,
-)
+from src.game.agents.runtime import AgentValidationError
 from src.game.engine.arrival_rolls import ArrivalRoll, roll_arrival
 from src.game.engine.peer import advance_peer_attractions, maybe_form_peer_couples
 from src.game.engine.phases import is_finale_evening
@@ -34,10 +29,10 @@ from src.game.state.rng import SeededRng
 def apply_resort_turn(
     state: GameState,
     rng: SeededRng,
-    resort_orchestrator: ResortOrchestratorFn | None,
+    resort_orchestrator: ResortOrchestratorFn,
     *,
-    background_dialogue: BackgroundDialogueFn | None,
-    conversation_curator: ConversationCuratorFn | None,
+    background_dialogue: BackgroundDialogueFn,
+    conversation_curator: ConversationCuratorFn,
 ) -> tuple[ResortUpdate, AppliedResortChanges, list[ArrivalRoll]]:
     return asyncio.run(
         apply_resort_turn_async(
@@ -53,10 +48,10 @@ def apply_resort_turn(
 async def apply_resort_turn_async(
     state: GameState,
     rng: SeededRng,
-    resort_orchestrator: ResortOrchestratorFn | None,
+    resort_orchestrator: ResortOrchestratorFn,
     *,
-    background_dialogue: BackgroundDialogueFn | None,
-    conversation_curator: ConversationCuratorFn | None,
+    background_dialogue: BackgroundDialogueFn,
+    conversation_curator: ConversationCuratorFn,
 ) -> tuple[ResortUpdate, AppliedResortChanges, list[ArrivalRoll]]:
     """Apply one orchestrator turn with parallel background agents."""
     if state.pending_gather is not None:
@@ -67,11 +62,11 @@ async def apply_resort_turn_async(
     # (background NPC movements / new NPC-NPC chats) per intro turn. Skip
     # it during INTROS to cut ~10-15s of LLM latency per intro.
     from src.game.state.models import Phase
+
     if state.phase is Phase.INTROS:
         resort_update = ResortUpdate()
         return resort_update, AppliedResortChanges(resort_update=resort_update), []
-    orchestrate = mock_resort_orchestrator if resort_orchestrator is None else resort_orchestrator
-    base_update = _safe_orchestrate(state, orchestrate)
+    base_update = _orchestrate(state, resort_orchestrator)
     resort_update = _merge_pending_summon(state, base_update)
     if resort_update is not base_update:
         # _merge_pending_summon spliced in a pending summon. The base update and
@@ -86,7 +81,9 @@ async def apply_resort_turn_async(
             validate_resort_update(state, resort_update)
         except ValueError:
             resort_update = base_update
-    pre_locations = {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers}
+    pre_locations = {
+        heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers
+    }
     resort_changes = await apply_resort_update_async(
         state,
         resort_update,
@@ -102,37 +99,20 @@ async def apply_resort_turn_async(
     peer_memories = advance_peer_attractions(state, rng.fork("peer-advance"))
     peer_memories.extend(maybe_form_peer_couples(state, rng.fork("peer-couple")))
     resort_changes.memories.extend(peer_memories)
-    arrival_rolls = _roll_arrivals_for_movements(state, resort_update.npc_movements, pre_locations, rng)
+    arrival_rolls = _roll_arrivals_for_movements(
+        state, resort_update.npc_movements, pre_locations, rng
+    )
     return resort_update, resort_changes, arrival_rolls
 
 
-def _safe_orchestrate(state: GameState, orchestrate: ResortOrchestratorFn) -> ResortUpdate:
-    """Run the resort orchestrator without ever dead-screening the player's turn.
-
-    The orchestrator only drives *ambient* flavor — background NPC movement and
-    NPC-NPC chatter. The live agent retries on validation failure and then
-    raises (every failed attempt is already recorded in the agent trace). A raise
-    propagating up here would crash the whole turn and discard the player's
-    actual exchange, so on any failure — the agent giving up, or an update that
-    still fails validation even after near-miss id repair — we degrade to an
-    empty update. The resort simply holds still for one turn instead of throwing a
-    dead screen. Validating here (before the summon is merged in) also keeps a
-    pending summon intact even when the LLM's own movement/chatter is unusable.
-    """
+def _orchestrate(state: GameState, orchestrate: ResortOrchestratorFn) -> ResortUpdate:
+    """Normalize and validate the configured orchestrator's proposal."""
+    update = normalize_resort_update(state, orchestrate(state))
     try:
-        update = orchestrate(state)
-        update = normalize_resort_update(state, update)
-        try:
-            validate_resort_update(state, update)
-        except ValueError as exc:
-            # The orchestrator's own update failed the engine contract even after
-            # near-miss id repair; treat it as an agent-validation degradation so
-            # the resort holds still for a turn instead of dead-screening.
-            raise AgentValidationError(str(exc)) from exc
-        return update
-    except AgentError as exc:
-        record_agent_degradation("resort_orchestrator", exc)
-        return ResortUpdate()
+        validate_resort_update(state, update)
+    except ValueError as exc:
+        raise AgentValidationError(str(exc)) from exc
+    return update
 
 
 def _merge_pending_summon(state: GameState, resort_update: ResortUpdate) -> ResortUpdate:
@@ -148,7 +128,10 @@ def _merge_pending_summon(state: GameState, resort_update: ResortUpdate) -> Reso
 
 def _pending_summon_still_valid(state: GameState, pending: PendingNPCSummon) -> bool:
     if pending.from_conversation_id == "player_active":
-        return state.active_conversation is not None and state.active_conversation.target_id == pending.npc_id
+        return (
+            state.active_conversation is not None
+            and state.active_conversation.target_id == pending.npc_id
+        )
     return any(
         conversation.id == pending.from_conversation_id
         and conversation.status == "active"
@@ -184,7 +167,11 @@ def _apply_arrival_roll(state: GameState, roll: ArrivalRoll, arriving: Heartbrea
     active = state.active_conversation
     if active is None:
         return
-    if roll.interruption_hit and active.pending_interruption is None and not is_finale_evening(state):
+    if (
+        roll.interruption_hit
+        and active.pending_interruption is None
+        and not is_finale_evening(state)
+    ):
         active.pending_interruption = NPCInterruption(
             interrupter_id=roll.arriving_npc_id,
             reason="has_gossip" if _recent_high_weight_memories(arriving) else "jealous",

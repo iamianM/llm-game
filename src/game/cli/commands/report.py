@@ -8,8 +8,7 @@ import shutil
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.contextual_options import ContextualOptionsAgent
-from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
+from src.game.agents.turn_agents import live_turn_agents
 from src.game.cli.commands.report_compare import compare_cmd
 from src.game.cli.commands.review import review_notes_for_trace
 from src.game.engine.actions import ActionKind, PlayerAction
@@ -75,8 +74,14 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
 
 def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
-    records, final_state, _final_hash, llm_mode, mode, persona = _load_recording(Path(args.trace_path))
-    preface = _final_state_summary(final_state, llm_mode, mode, persona) if final_state is not None else ""
+    records, final_state, _final_hash, llm_mode, mode, persona = _load_recording(
+        Path(args.trace_path)
+    )
+    preface = (
+        _final_state_summary(final_state, llm_mode, mode, persona)
+        if final_state is not None
+        else ""
+    )
     minimal = getattr(args, "minimal", False)
     if minimal:
         html = session_page_minimal(Path(args.trace_path).stem, records, preface=preface)
@@ -157,7 +162,9 @@ def packet_cmd(args: argparse.Namespace) -> int:
 
 def eval_dashboard_cmd(args: argparse.Namespace) -> int:
     """Render only the playthrough eval dashboard for one trace."""
-    records, final_state, final_hash, _llm_mode, mode, persona = _load_recording(Path(args.trace_path))
+    records, final_state, final_hash, _llm_mode, mode, persona = _load_recording(
+        Path(args.trace_path)
+    )
     report = evaluate_trace(
         {
             "records": records,
@@ -180,8 +187,7 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
     for heartbreaker in state.heartbreakers:
         heartbreaker.location_id = Location.POOL
     rng = SeededRng(42)
-    heartbreaker_voice = OpenAIHeartbreakerVoice().generate
-    contextual_options = ContextualOptionsAgent().generate
+    agents = live_turn_agents("no_resort_life")
     actions = [
         ("chloe", "friendly_ask_feelings", 10),
         ("chloe", "friendly_chat_resort", 10),
@@ -203,13 +209,7 @@ def preview_f2_cmd(args: argparse.Namespace) -> int:
             intent_id=intent_id,
         )
         input_hash = state_hash(state_hash_payload(state))
-        turn = run_turn(
-            state,
-            action,
-            rng,
-            heartbreaker_voice=heartbreaker_voice,
-            contextual_options=contextual_options,
-        )
+        turn = run_turn(state, action, rng, agents)
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
 
@@ -256,16 +256,16 @@ def _record_from_turn(input_hash: str, action: PlayerAction, turn: object) -> di
         "mechanical_result": turn.mechanical_result.model_dump(mode="json"),
         "exchange": None if turn.exchange is None else turn.exchange.model_dump(mode="json"),
         "event_narration": (
-            None
-            if turn.event_narration is None
-            else turn.event_narration.model_dump(mode="json")
+            None if turn.event_narration is None else turn.event_narration.model_dump(mode="json")
         ),
         "follow_up_menu": (
             None if turn.follow_up_menu is None else turn.follow_up_menu.model_dump(mode="json")
         ),
         "ceremony_events": [event.model_dump(mode="json") for event in turn.ceremony_events],
         "audience_snapshot": (
-            None if turn.audience_snapshot is None else turn.audience_snapshot.model_dump(mode="json")
+            None
+            if turn.audience_snapshot is None
+            else turn.audience_snapshot.model_dump(mode="json")
         ),
         "challenge": None if state.pending_challenge is None else state.pending_challenge.model_dump(mode="json"),
         "producer_text": None if state.pending_text is None else state.pending_text.model_dump(mode="json"),
@@ -339,7 +339,9 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     )
 
 
-def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str, str, str | None]:
+def _load_recording(
+    path: Path,
+) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str, str, str | None]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(raw, list):
         return raw, None, None, infer_llm_mode(raw), "manual", None
@@ -369,11 +371,19 @@ def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | 
 def _clean_packet_output(out: Path) -> None:
     for directory in ("artifacts", "sessions", "balance", "narration-quality"):
         shutil.rmtree(out / directory, ignore_errors=True)
-    for file_name in ("index.html", "session.html", "playthrough-eval.html", "notes.md", "how-to-reproduce.md"):
+    for file_name in (
+        "index.html",
+        "session.html",
+        "playthrough-eval.html",
+        "notes.md",
+        "how-to-reproduce.md",
+    ):
         (out / file_name).unlink(missing_ok=True)
 
 
-def _final_state_summary(final_state: dict[str, Any], llm_mode: str, mode: str, persona: str | None) -> str:
+def _final_state_summary(
+    final_state: dict[str, Any], llm_mode: str, mode: str, persona: str | None
+) -> str:
     player = final_state.get("player")
     heartbreakers = final_state.get("heartbreakers")
     memory_lines: list[str] = []

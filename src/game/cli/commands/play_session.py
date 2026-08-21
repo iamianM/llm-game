@@ -7,12 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.background_dialogue import OpenAIBackgroundDialogue
-from src.game.agents.contextual_options import ContextualOptionsAgent
-from src.game.agents.conversation_curator import OpenAIConversationCurator
-from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
-from src.game.agents.resort_orchestrator import OpenAIResortOrchestrator
+from src.game.agents.runtime import AgentError, recover_agent_traces_after_error
+from src.game.agents.turn_agents import live_turn_agents, mock_turn_agents
 from src.game.cli.commands.play_recording import record_from_turn, write_recording
 from src.game.cli.commands.play_render import print_actions, print_state, print_turn
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
@@ -163,17 +159,15 @@ def _choose(args: argparse.Namespace) -> int:
 
     rng = SeededRng.from_snapshot(int(package["seed"]), _rng_snapshot(package.get("rng_state")))
     input_hash = state_hash(state_hash_payload(state))
-    turn = run_turn(
-        state,
-        action,
-        rng,
-        heartbreaker_voice=None if package.get("mock_llm") else OpenAIHeartbreakerVoice().generate,
-        contextual_options=None if package.get("mock_llm") else ContextualOptionsAgent().generate,
-        event_narrator=None if package.get("mock_llm") else OpenAIEventNarrator().narrate,
-        conversation_curator=None if package.get("mock_llm") else OpenAIConversationCurator().curate,
-        resort_orchestrator=None if package.get("mock_llm") else OpenAIResortOrchestrator().decide,
-        background_dialogue=None if package.get("mock_llm") else OpenAIBackgroundDialogue().generate,
-    )
+    agents = mock_turn_agents() if package.get("mock_llm") else live_turn_agents()
+    try:
+        turn = run_turn(state, action, rng, agents)
+    except AgentError as exc:
+        traces = recover_agent_traces_after_error()
+        attempted = ", ".join(trace.agent_name for trace in traces) or "unknown agent"
+        print(f"story engine error ({attempted}): {exc}")
+        print("Session state was preserved. Run the choose command again to retry.")
+        return 1
     state = turn.state
     records.append(record_from_turn(input_hash, action, turn))
     package["state"] = state.model_dump(mode="json")
@@ -224,7 +218,9 @@ def _print_current(state: GameState) -> None:
     print_actions(available_actions(state))
 
 
-def _resolve_intent_action(state: GameState, target_id: str, index: int | None) -> PlayerAction | None:
+def _resolve_intent_action(
+    state: GameState, target_id: str, index: int | None
+) -> PlayerAction | None:
     intents = available_intents_for(state, target_id)
     numbered: list[tuple[int, str]] = []
     next_index = 1

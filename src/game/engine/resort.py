@@ -20,14 +20,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.background_dialogue import (
     BackgroundDialogueFn,
     BackgroundExchange,
-    mock_background_dialogue,
 )
-from src.game.agents.conversation_curator import (
-    ConversationCuratorFn,
-    mock_conversation_curator,
-)
+from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.resort_orchestrator import NPCSummon, ResortUpdate
-from src.game.agents.runtime import AgentError, record_agent_degradation
 from src.game.engine.memory import add_memory_batch
 from src.game.engine.proposals import maybe_form_single_npc_couple_from_conversation
 from src.game.engine.resort_validation import normalize_resort_update, validate_resort_update
@@ -67,8 +62,8 @@ def apply_resort_update(
     update: ResortUpdate,
     rng: SeededRng,
     *,
-    background_dialogue: BackgroundDialogueFn | None = None,
-    conversation_curator: ConversationCuratorFn | None = None,
+    background_dialogue: BackgroundDialogueFn,
+    conversation_curator: ConversationCuratorFn,
 ) -> AppliedResortChanges:
     return asyncio.run(
         apply_resort_update_async(
@@ -86,14 +81,12 @@ async def apply_resort_update_async(
     update: ResortUpdate,
     rng: SeededRng,
     *,
-    background_dialogue: BackgroundDialogueFn | None = None,
-    conversation_curator: ConversationCuratorFn | None = None,
+    background_dialogue: BackgroundDialogueFn,
+    conversation_curator: ConversationCuratorFn,
 ) -> AppliedResortChanges:
     """Apply a ResortUpdate while batching independent agent calls."""
     update = normalize_resort_update(state, update)
     validate_resort_update(state, update)
-    speak = mock_background_dialogue if background_dialogue is None else background_dialogue
-    curate = mock_conversation_curator if conversation_curator is None else conversation_curator
     background_dialogues: list[BackgroundExchange] = []
     curator_batches: list[MemoryBatch] = []
     memories: list[Memory] = []
@@ -102,7 +95,7 @@ async def apply_resort_update_async(
         _heartbreaker(state, movement.npc_id).location_id = movement.target_location
 
     for summon in update.npc_summoned_elsewhere:
-        batch = await _apply_summon_async(state, summon, curate)
+        batch = await _apply_summon_async(state, summon, conversation_curator)
         if batch is not None:
             curator_batches.append(batch)
             memories.extend(add_memory_batch(state, batch, day=state.day, turn=state.turn_index))
@@ -122,7 +115,7 @@ async def apply_resort_update_async(
         )
         state.npc_conversations.append(conversation)
         background_dialogues.append(
-            await _call_background_dialogue(speak, state, conversation, "")
+            await _call_background_dialogue(background_dialogue, state, conversation, "")
         )
         _append_background_exchange(state, conversation, background_dialogues[-1])
 
@@ -132,7 +125,7 @@ async def apply_resort_update_async(
     ]
     continuation_exchanges = await asyncio.gather(
         *[
-            _call_background_dialogue(speak, state, conversation, nudge)
+            _call_background_dialogue(background_dialogue, state, conversation, nudge)
             for conversation, nudge in continuations
         ]
     )
@@ -152,7 +145,7 @@ async def apply_resort_update_async(
     state.npc_conversations = retained
     closed_batches = await asyncio.gather(
         *[
-            _call_curator(curate, state, conversation, bystanders)
+            _call_curator(conversation_curator, state, conversation, bystanders)
             for conversation, bystanders in conversations_to_curate
         ]
     )
@@ -166,7 +159,9 @@ async def apply_resort_update_async(
             continue
         proposal_batch.kind = "background"
         curator_batches.append(proposal_batch)
-        memories.extend(add_memory_batch(state, proposal_batch, day=state.day, turn=state.turn_index))
+        memories.extend(
+            add_memory_batch(state, proposal_batch, day=state.day, turn=state.turn_index)
+        )
 
     return AppliedResortChanges(
         resort_update=update,
@@ -182,21 +177,13 @@ async def _call_background_dialogue(
     conversation: NPCNPCConversation,
     nudge: str,
 ) -> BackgroundExchange:
-    # NPC-NPC chatter is pure ambient flavor. The live agent retries then raises
-    # (each attempt is in the agent trace); letting that propagate out of the resort
-    # turn would dead-screen the player's own turn, so degrade to deterministic mock
-    # dialogue on any failure.
-    try:
-        if inspect.iscoroutinefunction(speak):
-            return cast(BackgroundExchange, await speak(state, conversation, nudge))
-        owner = getattr(speak, "__self__", None)
-        async_generate = getattr(owner, "generate_async", None)
-        if async_generate is not None:
-            return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
-        return await asyncio.to_thread(speak, state, conversation, nudge)
-    except AgentError as exc:
-        record_agent_degradation("background_dialogue", exc)
-        return mock_background_dialogue(state, conversation, nudge)
+    if inspect.iscoroutinefunction(speak):
+        return cast(BackgroundExchange, await speak(state, conversation, nudge))
+    owner = getattr(speak, "__self__", None)
+    async_generate = getattr(owner, "generate_async", None)
+    if async_generate is not None:
+        return cast(BackgroundExchange, await async_generate(state, conversation, nudge))
+    return await asyncio.to_thread(speak, state, conversation, nudge)
 
 
 async def _call_curator(
@@ -205,21 +192,13 @@ async def _call_curator(
     conversation: Conversation | NPCNPCConversation,
     bystanders: list[str],
 ) -> MemoryBatch:
-    # Curating a closed NPC-NPC conversation only records ambient memories. The
-    # live agent retries then raises (each attempt is in the agent trace); that
-    # raise fires inside the resort turn and would dead-screen the player's turn, so
-    # degrade to the deterministic mock curator (always contract-valid) on failure.
-    try:
-        if inspect.iscoroutinefunction(curate):
-            return cast(MemoryBatch, await curate(state, conversation, bystanders))
-        owner = getattr(curate, "__self__", None)
-        async_curate = getattr(owner, "curate_async", None)
-        if async_curate is not None:
-            return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
-        return await asyncio.to_thread(curate, state, conversation, bystanders)
-    except AgentError as exc:
-        record_agent_degradation("conversation_curator", exc)
-        return mock_conversation_curator(state, conversation, bystanders)
+    if inspect.iscoroutinefunction(curate):
+        return cast(MemoryBatch, await curate(state, conversation, bystanders))
+    owner = getattr(curate, "__self__", None)
+    async_curate = getattr(owner, "curate_async", None)
+    if async_curate is not None:
+        return cast(MemoryBatch, await async_curate(state, conversation, bystanders))
+    return await asyncio.to_thread(curate, state, conversation, bystanders)
 
 
 def pending_to_summon(pending: PendingNPCSummon) -> NPCSummon:
@@ -328,5 +307,7 @@ def _conversation_id(
     rng: SeededRng,
 ) -> str:
     salt = rng.randint(1, 1_000_000)
-    raw = "|".join([str(state.day), str(state.turn_index), ",".join(participants), topic, str(salt)])
+    raw = "|".join(
+        [str(state.day), str(state.turn_index), ",".join(participants), topic, str(salt)]
+    )
     return "npcconv_" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:12]

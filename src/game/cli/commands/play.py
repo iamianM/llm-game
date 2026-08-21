@@ -7,12 +7,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from src.game.agents.background_dialogue import OpenAIBackgroundDialogue
-from src.game.agents.contextual_options import ContextualOptionsAgent
-from src.game.agents.conversation_curator import OpenAIConversationCurator
-from src.game.agents.event_narrator import OpenAIEventNarrator
-from src.game.agents.heartbreaker_voice import OpenAIHeartbreakerVoice
-from src.game.agents.resort_orchestrator import OpenAIResortOrchestrator
+from src.game.agents.recorded import RecordedTurnAgents
+from src.game.agents.runtime import AgentError, recover_agent_traces_after_error
+from src.game.agents.turn_agents import (
+    live_turn_agents,
+    mock_turn_agents,
+    recorded_turn_agents,
+)
 from src.game.cli.commands.play_recording import (
     llm_mode as _llm_mode,
 )
@@ -50,7 +51,6 @@ from src.game.engine.character_creation import (
     create_character,
 )
 from src.game.engine.intents import IntentCategory, available_intents_for
-from src.game.engine.recorded_agents import RecordedAgents
 from src.game.engine.turn import run_turn
 from src.game.state.models import CharacterCreation, GameState, Gender, PlayerStats, new_game
 from src.game.state.rng import SeededRng
@@ -71,7 +71,9 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     parser.add_argument("--trace", action="store_true", help="write turn traces")
     parser.add_argument("--record", help="record this live session to a trace package")
     parser.add_argument("--replay", help="replay a recorded trace package without LLM calls")
-    parser.add_argument("--from-checkpoint", help="resume from a named checkpoint or checkpoint path")
+    parser.add_argument(
+        "--from-checkpoint", help="resume from a named checkpoint or checkpoint path"
+    )
     parser.add_argument("--branch-name", help="branch name for checkpoint resume trace output")
     parser.set_defaults(func=run)
 
@@ -87,7 +89,9 @@ def run(args: argparse.Namespace) -> int:
     records: list[dict[str, Any]]
     rng_state: list[object] | None = None
     if from_checkpoint:
-        state, loaded_records, checkpoint_seed, checkpoint_rng_state = load_checkpoint(from_checkpoint)
+        state, loaded_records, checkpoint_seed, checkpoint_rng_state = load_checkpoint(
+            from_checkpoint
+        )
         records = loaded_records
         seed = checkpoint_seed if args.seed is None else args.seed
         if args.seed is None:
@@ -97,12 +101,7 @@ def run(args: argparse.Namespace) -> int:
         state = new_game(seed)
         records = []
     rng = SeededRng.from_snapshot(seed, rng_state) if rng_state is not None else SeededRng(seed)
-    heartbreaker_voice = None if args.mock_llm else OpenAIHeartbreakerVoice().generate
-    contextual_options = None if args.mock_llm else ContextualOptionsAgent().generate
-    event_narrator = None if args.mock_llm else OpenAIEventNarrator().narrate
-    conversation_curator = None if args.mock_llm else OpenAIConversationCurator().curate
-    resort_orchestrator = None if args.mock_llm else OpenAIResortOrchestrator().decide
-    background_dialogue = None if args.mock_llm else OpenAIBackgroundDialogue().generate
+    agents = mock_turn_agents() if args.mock_llm else live_turn_agents()
     record_path = _record_path_from_args(args)
     if not from_checkpoint:
         _run_character_creation_flow(state)
@@ -114,7 +113,15 @@ def run(args: argparse.Namespace) -> int:
         _print_actions(actions)
         raw = input("> ").strip()
         if raw in {"/quit", "quit", "q"}:
-            _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
+            _write_recording(
+                record_path,
+                seed,
+                state,
+                records,
+                llm_mode=_llm_mode(args),
+                mode=_trace_mode(args),
+                persona="",
+            )
             return 0
         if raw == "/help":
             print(
@@ -147,27 +154,40 @@ def run(args: argparse.Namespace) -> int:
             action = _choose_intent(state, action.target_id)
 
         input_hash = state_hash(state_hash_payload(state))
-        turn = run_turn(
-            state,
-            action,
-            rng,
-            heartbreaker_voice=heartbreaker_voice,
-            contextual_options=contextual_options,
-            event_narrator=event_narrator,
-            conversation_curator=conversation_curator,
-            resort_orchestrator=resort_orchestrator,
-            background_dialogue=background_dialogue,
-        )
+        try:
+            turn = run_turn(state, action, rng, agents)
+        except AgentError as exc:
+            traces = recover_agent_traces_after_error()
+            attempted = ", ".join(trace.agent_name for trace in traces) or "unknown agent"
+            print(f"story engine error ({attempted}): {exc}")
+            print("The turn was not applied. Choose an action to try again.")
+            continue
         state = turn.state
         records.append(_record_from_turn(input_hash, action, turn))
         if _should_auto_checkpoint(turn):
             save_auto_checkpoint(state, seed, records, rng_state=rng.snapshot())
-        _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
+        _write_recording(
+            record_path,
+            seed,
+            state,
+            records,
+            llm_mode=_llm_mode(args),
+            mode=_trace_mode(args),
+            persona="",
+        )
         _print_turn(turn)
 
     print("Day complete.")
     print(f"final hash: {state_hash(state_hash_payload(state))}")
-    _write_recording(record_path, seed, state, records, llm_mode=_llm_mode(args), mode=_trace_mode(args), persona="")
+    _write_recording(
+        record_path,
+        seed,
+        state,
+        records,
+        llm_mode=_llm_mode(args),
+        mode=_trace_mode(args),
+        persona="",
+    )
     return 0
 
 
@@ -239,7 +259,9 @@ def _run_character_creation_flow(state: GameState) -> None:
                 print(exc)
                 continue
         gender = _choose_gender()
-        create_character(state, archetype_id=selected, gender=gender, stats=stats, rerolled=rerolled)
+        create_character(
+            state, archetype_id=selected, gender=gender, stats=stats, rerolled=rerolled
+        )
         _print_character_card(state)
         return
 
@@ -261,7 +283,9 @@ def _parse_stats(raw: str) -> PlayerStats:
     pieces = [int(piece) for piece in raw.replace(",", " ").split()]
     if len(pieces) != 5:
         raise ValueError("enter five stats: charm banter eq spark loyalty")
-    return PlayerStats(charm=pieces[0], banter=pieces[1], eq=pieces[2], spark=pieces[3], loyalty=pieces[4])
+    return PlayerStats(
+        charm=pieces[0], banter=pieces[1], eq=pieces[2], spark=pieces[3], loyalty=pieces[4]
+    )
 
 
 def _stats_text(stats: PlayerStats) -> str:
@@ -292,11 +316,12 @@ def _replay_recording(path: Path) -> int:
             rerolled=creation.rerolled,
         )
     rng = SeededRng(seed)
-    agents = RecordedAgents()
+    recorded = RecordedTurnAgents()
+    agents = recorded_turn_agents(recorded)
     for raw_record in records:
         if not isinstance(raw_record, dict):
             raise ValueError("each recorded turn must be an object")
-        agents.begin_turn(raw_record)
+        recorded.begin_turn(raw_record)
         action = PlayerAction.model_validate(raw_record.get("action"))
         input_hash = state_hash(state_hash_payload(state))
         if raw_record.get("input_hash") != input_hash:
@@ -304,21 +329,7 @@ def _replay_recording(path: Path) -> int:
                 f"input hash mismatch on recorded turn {raw_record.get('turn')}: "
                 f"expected {raw_record.get('input_hash')}, got {input_hash}"
             )
-        turn = run_turn(
-            state,
-            action,
-            rng,
-            heartbreaker_voice=agents.heartbreaker_voice if raw_record.get("exchange") is not None else None,
-            contextual_options=(
-                agents.contextual_options if raw_record.get("follow_up_menu") is not None else None
-            ),
-            event_narrator=(
-                agents.event_narrator if raw_record.get("event_narration") is not None else None
-            ),
-            conversation_curator=agents.conversation_curator,
-            resort_orchestrator=agents.resort_orchestrator,
-            background_dialogue=agents.background_dialogue,
-        )
+        turn = run_turn(state, action, rng, agents)
         state = turn.state
         if turn.state_hash != raw_record.get("output_hash"):
             raise ValueError(
@@ -358,5 +369,3 @@ def _should_auto_checkpoint(turn: object) -> bool:
         or turn.ceremony_events
         or action_kind in {"private_suite", "flush_decision", "join_gather"}
     )
-
-

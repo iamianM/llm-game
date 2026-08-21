@@ -10,8 +10,8 @@ from typing import cast
 
 import yaml
 
-from src.api.session import AgentBundle
 from src.game.agents.runtime import recover_agent_traces_after_error
+from src.game.agents.turn_agents import live_turn_agents, mock_turn_agents
 from src.game.cli.commands.play_recording import record_from_turn
 from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
@@ -72,6 +72,7 @@ def run_golden_eval(
     if not scenarios:
         results: list[GoldenScenarioResult] = []
     else:
+
         def _run_isolated(scenario: GoldenEvalScenario) -> GoldenScenarioResult:
             return contextvars.copy_context().run(
                 _run_scenario, scenario, out=out, real_llm=real_llm, judge=judge
@@ -119,10 +120,11 @@ def _run_scenario(
 ) -> GoldenScenarioResult:
     state = _new_scenario_state(scenario)
     rng = SeededRng(scenario.seed)
-    agents = AgentBundle.live() if real_llm else AgentBundle.mock()
-    if real_llm and not scenario.live_resort_life:
-        agents.resort_orchestrator = None
-        agents.background_dialogue = None
+    agents = (
+        live_turn_agents("full" if scenario.live_resort_life else "no_resort_life")
+        if real_llm
+        else mock_turn_agents()
+    )
     turn_results: list[GoldenTurnResult] = []
     records: list[dict[str, object]] = []
     for turn_spec in scenario.turns:
@@ -130,17 +132,7 @@ def _run_scenario(
         input_hash = state_hash(state_hash_payload(state))
         pre_state = state.model_copy(deep=True)
         try:
-            turn = run_turn(
-                state,
-                turn_spec.action,
-                rng,
-                heartbreaker_voice=agents.heartbreaker_voice,
-                contextual_options=agents.contextual_options,
-                event_narrator=agents.event_narrator,
-                conversation_curator=agents.conversation_curator,
-                resort_orchestrator=agents.resort_orchestrator,
-                background_dialogue=agents.background_dialogue,
-            )
+            turn = run_turn(state, turn_spec.action, rng, agents)
             state = turn.state
             record = cast(dict[str, object], record_from_turn(input_hash, turn_spec.action, turn))
             records.append(record)
@@ -172,14 +164,14 @@ def _run_scenario(
                 )
             )
         except Exception as exc:
-            error_record = {
+            error_record: dict[str, object] = {
                 "action": turn_spec.action.model_dump(mode="json"),
                 "error": str(exc),
                 "agent_traces": [
-                    trace.model_dump(mode="json")
-                    for trace in recover_agent_traces_after_error()
+                    trace.model_dump(mode="json") for trace in recover_agent_traces_after_error()
                 ],
             }
+            records.append(error_record)
             turn_results.append(
                 GoldenTurnResult(
                     id=turn_spec.id,
@@ -260,6 +252,7 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
         from src.game.engine.phases import PHASE_BUDGETS as _PHASE_BUDGETS
         from src.game.state.models import Phase as _Phase
         from src.game.state.phase_clock import PhaseClock as _PhaseClock
+
         first_turn = scenario.turns[0] if scenario.turns else None
         opens_with_intro = (
             first_turn is not None
@@ -276,7 +269,9 @@ def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
             state.phase = target_phase
             state.phase_clock = _PhaseClock(phase=target_phase.value, budget_minutes=budget)
             state.intro_completed_ids = [
-                heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
+                heartbreaker.id
+                for heartbreaker in state.heartbreakers
+                if not heartbreaker.eliminated
             ]
             state.intro_memory_created = True
     return state
@@ -306,7 +301,9 @@ def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
         conversation = turn_spec.arrange_active_conversation
         active: dict[str, object] = {"target_id": conversation.target_id}
         if conversation.pending_interruption is not None:
-            active["pending_interruption"] = conversation.pending_interruption.model_dump(mode="json")
+            active["pending_interruption"] = conversation.pending_interruption.model_dump(
+                mode="json"
+            )
         if conversation.pending_options is not None:
             active["pending_options"] = [
                 {
@@ -330,12 +327,16 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
     if kind in {"start_conversation", "respond_with"}:
         tools = ["Heartbreaker Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     if kind == "end_conversation":
         tools = ["Conversation Curator -> MemoryBatch"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     if kind in {
         "ambient",
@@ -348,7 +349,9 @@ def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> 
     }:
         tools = ["Event Narrator -> EventNarration"]
         if scenario.live_resort_life:
-            tools.extend(["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"])
+            tools.extend(
+                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
+            )
         return tools
     return ["Engine-only turn"]
 

@@ -7,6 +7,8 @@ from pathlib import Path
 
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.agents.heartbreaker_voice import Exchange
+from src.game.agents.resort_orchestrator import mock_resort_orchestrator
+from src.game.agents.turn_agents import TurnContextualOptionsFn, scripted_turn_agents
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.intents import available_intents_for
 from src.game.engine.rules import MechanicalResult
@@ -39,12 +41,13 @@ def run_balance(seeds: int, _script_path: Path) -> tuple[Counter[str], Counter[s
         rng = SeededRng(seed)
         chooser = rng.fork("balance-policy")
         contextual = _balance_contextual_options(seed)
+        agents = scripted_turn_agents(contextual, mock_resort_orchestrator)
         for turn_index in range(MAX_BALANCE_TURNS):
             specs = available_actions(state)
             if not specs:
                 break
             action = _choose_action(state, specs, chooser.fork(f"turn-{turn_index}"))
-            turn = run_turn(state, action, rng, contextual_options=contextual)
+            turn = run_turn(state, action, rng, agents)
             state = turn.state
             actions[_action_key(turn.mechanical_result.action)] += 1
             if state.is_terminal:
@@ -96,7 +99,7 @@ def _choose_action(state: GameState, specs: list[ActionSpec], rng: SeededRng) ->
     return rng.choice(specs).action
 
 
-def _balance_contextual_options(seed: int):
+def _balance_contextual_options(seed: int) -> TurnContextualOptionsFn:
     counter = 0
 
     def contextual_options(
@@ -104,6 +107,7 @@ def _balance_contextual_options(seed: int):
         _result: MechanicalResult,
         _exchange: Exchange,
         probability: int,
+        _already_present: list[str],
     ) -> FollowUpMenu:
         nonlocal counter
         intent_kind = FOLLOW_UP_INTENTS[(seed + counter) % len(FOLLOW_UP_INTENTS)]
