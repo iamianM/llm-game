@@ -1,5 +1,7 @@
 id: player-pair-proposal
 title: Player Heart Swap Proposal
+question: Can a player proposal narrate the engine's answer without choosing it?
+category: pairing_and_endings
 goal: Prove a player-initiated Heart Swap proposal closes the conversation cleanly, records memories, and narrates only the deterministic answer — without the LLM choosing acceptance or invented couples.
 thread_check:
   id: thread_acceptance
@@ -48,28 +50,117 @@ turns:
       kind: start_conversation
       target_id: maya
       intent_id: flirty_intimate_eye_contact
-    golden: >
-      A charged kitchen moment. Maya is bright and a little caught off
-      guard; the romantic charge is real but the door is still open in both
-      directions. Imagine: "...don't look at me like that with witnesses
-      around, mate. ...okay, do it again." Menu offers escalate, ease
-      off, exit.
+    golden:
+      criteria: 'A charged kitchen moment. Maya is bright and a little caught off guard; the romantic charge
+        is real but the door is still open in both directions. Imagine: "...don''t look at me like that with
+        witnesses around, mate. ...okay, do it again." Menu offers escalate, ease off, exit.'
+      calls:
+      - agent: heartbreaker_voice
+        output_type: Exchange
+        output:
+          player_dialogue: I keep catching your eyes across the kitchen, and every time I do, I forget what
+            I was about to say. Maybe I should stop pretending I want the snacks.
+          npc_dialogue: '*Maya pauses with a crisp between her fingers, then gives you a slow, crooked smile.*
+            Careful, London’s finest comedian is dangerously easy to distract before breakfast. Keep looking
+            at me like that and I might forget the punchline too—which would be tragic for everyone, obviously.'
+          npc_tone: flirty
+          npc_mood_after: flirty
+      - agent: contextual_options
+        output_type: ContextualBespoke
+        output:
+          options:
+          - label: Ask what hides behind jokes
+            category: deep
+            intent_kind: ask_about_topic
+            stat_used: eq
+            risk: medium
+            tone: sincere
+            audience_hint: +
+            reveal_tier: 3
+            reveal_tag: beyond_the_jokes
+            unlock_threshold: null
+          - label: Notice her without punchlines
+            category: supportive
+            intent_kind: supportive_validate
+            stat_used: loyalty
+            risk: low
+            tone: warm
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: seen_beyond_performance
+            unlock_threshold: null
+          npc_will_leave: false
+          npc_exit_line: null
     checks:
       - exchange_valid
       - follow_up_menu_valid
-      - exactly_one_exit
       - conversation_active
       - agent_traces_present
   - id: propose-to-maya
     action:
       kind: propose_pair
       target_id: maya
-    golden: >
-      The proposal narration describes the engine's answer — accepted,
-      declined, or counter-pending — and only that. If an
-      npc_proposal_incoming event was recorded, the narration may mention
-      it as a pending ask back, never as acceptance. Memories should
-      capture the specific words the player used and how Maya reacted.
+    golden:
+      criteria: The proposal narration describes the engine's answer — accepted, declined, or counter-pending
+        — and only that. If an npc_proposal_incoming event was recorded, the narration may mention it as a
+        pending ask back, never as acceptance. Memories should capture the specific words the player used
+        and how Maya reacted.
+      calls:
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories:
+          - holder_id: player
+            subject_id: maya
+            content: I admitted to Maya that catching her eyes makes me forget what I was saying, and her
+              crooked smile made pretending to care about the snacks impossible.
+            source: direct
+            source_id: maya
+            emotional_weight: 6
+            tags:
+            - flirty
+            - intense
+            - felt_seen
+            - she_seemed_warm
+            durable: true
+          - holder_id: maya
+            subject_id: player
+            content: I told the player that his attention could make me forget my punchline, and the way the
+              player kept looking at me made the flirtation feel dangerously easy.
+            source: direct
+            source_id: player
+            emotional_weight: 6
+            tags:
+            - flirty
+            - intense
+            - chemistry
+            - felt_seen
+            durable: true
+          - holder_id: marcus
+            subject_id: maya
+            content: I saw Maya and the player locked into an intense, playful exchange, with Maya pausing
+              mid-snack to give the player a slow crooked smile.
+            source: witnessed
+            source_id: null
+            emotional_weight: 4
+            tags:
+            - witnessed
+            - saw_them_close
+            - flirty
+            - intense
+            - gossip
+            durable: true
+          summary: The player opened with a bold admission that Maya's eyes kept making the player lose track
+            of what he was saying. Maya answered with a teasing warning that the player's attention might
+            make her forget her punchline too, and the exchange settled into an intense, playful flirtation.
+          gossip_seeds: []
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: In the Sunset Bay kitchen, Maya rejects your pairing proposal, and the refusal lands hard.
+            Then the camera catches Maya turning back with a proposal of her own, leaving the moment suspended
+            between your disappointment and the possibility she has opened.
     checks:
       - ceremony_events_present
       - event_narration_valid

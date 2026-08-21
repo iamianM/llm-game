@@ -15,6 +15,9 @@ agent boundary or a player-facing beat should ship with a scenario here.
 ```yaml
 id: short-kebab-case             # filename without .yaml
 title: Human Readable Title
+question: Can the AI do this behavior in plain language?
+category: conversation           # conversation / social_dynamics /
+                                 # pairing_and_endings / special_events / challenges
 goal: One-sentence "what this scenario locks in"
 seed: 1234                       # SeededRng root; pick one and stick with it
 
@@ -70,14 +73,27 @@ turns:
       target_id: chloe
       intent_id: friendly_ask_feelings
       option_index: null
-    golden: >
-      One or two sentences of what a great response looks like, in voice.
-      Include an imagined sample line. Goldens are guidance for the judge,
-      not exact wording the model must reproduce.
+    golden:
+      criteria: >
+        One or two sentences describing what matters in the result. The judge
+        applies this semantically; it does not require identical prose.
+      calls:                            # ordered reviewed agent results
+        - agent: heartbreaker_voice
+          output_type: Exchange
+          output:                      # same shape as the actual parsed result
+            player_dialogue: How are you actually feeling this morning?
+            npc_dialogue: Honestly, a little more wobbly than I am letting on.
+            npc_tone: vulnerable
+            npc_mood_after: content
+        - agent: contextual_options
+          output_type: ContextualBespoke
+          output:
+            options:
+              - {label: Go deeper, category: deep, risk: medium}
+              - {label: End on a good note, category: exit, risk: safe}
     checks:                               # deterministic checks (see below)
       - exchange_valid
       - follow_up_menu_valid
-      - exactly_one_exit
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries
@@ -89,6 +105,10 @@ Add any of these to a turn's `checks:` list. The check looks at structured
 fields the engine + agents produce; it never policies prose for length or
 vocabulary (per ENGINEERING.md R7 and R18).
 
+These checks protect exact contracts that the thread judge should not guess.
+The hosted dashboard collapses passing checks into one summary. It opens failed
+checks so a reviewer can read the reason and evidence.
+
 - **Universal (always runs, even if not listed):**
   - `engine_state_invariants_preserved` — schema/seed/player identity are
     unchanged, eliminated Heartbreakers stay eliminated, couples only move
@@ -99,7 +119,6 @@ vocabulary (per ENGINEERING.md R7 and R18).
   - `exchange_valid` — Heartbreaker Voice output validates (hidden-cast guard,
     tone enum, gossip-subject allowance).
   - `follow_up_menu_valid` — menu schema + exit invariant + enum values.
-  - `exactly_one_exit` — exactly one exit-category option.
   - `conversation_active` / `conversation_closed` — state matches the turn's
     action intent.
   - `active_conversation_target_is:<id>` — exact active-conversation target,
@@ -163,13 +182,15 @@ vocabulary (per ENGINEERING.md R7 and R18).
 
 Every scenario defines exactly one `thread_check:` at scenario scope. After the
 complete trace artifact is written, one judge call receives the scenario goal,
-judge context, every action and authored golden, every engine record, all agent
-traces, and the complete acceptance rubric. It returns one holistic `pass`,
+judge context, every action, each structured golden, every engine record, all
+ordered actual agent outputs, and the complete acceptance rubric. It returns one holistic `pass`,
 `fail`, or `cannot_determine` verdict for the scenario.
 
-Rubric criteria describe qualities schemas cannot prove across a sequence:
+Golden calls lock the expected agent order, output contract, and a reviewed
+example result. Natural-language fields are semantic references, not exact
+string snapshots. Rubric criteria describe qualities schemas cannot prove across a sequence:
 voice consistency, emotional continuity, narrative arc, specificity, and
-faithfulness to the goldens and engine-owned outcomes. Use deterministic turn
+faithfulness to the semantic targets and engine-owned outcomes. Use deterministic turn
 checks for shape, contracts, and game state. Never add per-turn semantic judge
 checks or multiple thread verdicts.
 
@@ -196,10 +217,15 @@ uv run python -m src.game.cli llm-eval \
   --max-workers 1
 ```
 
-The output is `review-packet/.../index.html`. The report has a scenario
-filter, search, sort, an LLM-mode badge, whole-thread findings and judge
-provenance, and per-turn detail including goldens, actual agent output, model
-profiles, prompt/input provenance, latency, tokens, and reasoning summaries.
+The command writes three outputs. `index.html` is the full local review packet.
+`artifacts/run.json` is the raw run. `showcase.json` is an allowlisted public
+projection without prompts, model inputs, response IDs, hashes, or local paths.
+The projection keeps structured goldens, safe structured output for each agent,
+evaluation reasons, model profiles, latency, model-provided reasoning summaries,
+token usage, and a dated price snapshot. It excludes prompts, model inputs,
+response IDs, hashes, and hidden reasoning. `showcase.json` stores game-agent,
+judge, per-call, and total cost estimates. The browser reads those estimates;
+it does not use a separate pricing table.
 The CLI and report show the worker count; default is
 `min(number_of_scenarios, 8)`, and `--max-workers 1` gives a sequential run.
 

@@ -1,5 +1,7 @@
 id: opening-ceremony
 title: First Spark Narration
+question: Can the opening feel memorable without changing the player's choice?
+category: pairing_and_endings
 goal: Prove the Event Narrator turns a deterministic First Spark into a moment the player remembers — without rewriting who they chose.
 thread_check:
   id: thread_acceptance
@@ -30,14 +32,20 @@ turns:
     action:
       kind: pair
       target_id: chloe
-    golden: >
-      The player crosses the flame_deck and stops in front of Chloe. The
-      narration should sell that exact moment — eyes met, choice landed,
-      Chloe's small reaction (a breath, a smile she tries to keep cool),
-      and the resort registering a new pair. Imagine: "He walks straight
-      past the noise and stops in front of Chloe. She tries not to smile
-      and fails. Around the flame_deck, everyone is already reading what this
-      means for the rest of the night."
+    golden:
+      criteria: 'The player crosses the flame_deck and stops in front of Chloe. The narration should sell
+        that exact moment — eyes met, choice landed, Chloe''s small reaction (a breath, a smile she tries
+        to keep cool), and the resort registering a new pair. Imagine: "He walks straight past the noise and
+        stops in front of Chloe. She tries not to smile and fails. Around the flame_deck, everyone is already
+        reading what this means for the rest of the night."'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'Under the flame-deck glow, the full active cast—Blake, Chloe, Jordan, Liam, Marcus, Maya,
+            Nia, Sophie, and you—watches the first lock-in land: you and Chloe are coupled. Chloe’s smile
+            breaks through as her hand finds yours, while Jordan’s expression tightens across the firelight,
+            making the choice ripple well beyond the new couple.'
     checks:
       - event_narration_valid
       - agent_traces_present

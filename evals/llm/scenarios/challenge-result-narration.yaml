@@ -1,5 +1,7 @@
 id: challenge-result-narration
 title: Challenge Result Narration
+question: Can a scored challenge feel dramatic without changing the result?
+category: challenges
 goal: Prove the Event Narrator makes a deterministic Compatibility Quiz result feel like a moment, without changing who scored what.
 thread_check:
   id: thread_acceptance
@@ -40,10 +42,17 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Morning ends and the producer announces the Compatibility Quiz.
-      pending_challenge.kind is compatibility_quiz and five rounds have
-      been built. No outcome yet — the rounds are waiting for the player.
+    golden:
+      criteria: Morning ends and the producer announces the Compatibility Quiz. pending_challenge.kind is
+        compatibility_quiz and five rounds have been built. No outcome yet — the rounds are waiting for the
+        player.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, the Compatibility Quiz remains pending, leaving the question hanging over you
+            and Chloe. She stays close, watching you across the bright water as the unresolved moment settles
+            between you.
     checks:
       - ceremony_events_present
   - id: round-1-correct
@@ -53,7 +62,9 @@ turns:
       payload:
         choice_id: correct
         round_index: 0
-    golden: First round, player picks correctly.
+    golden:
+      criteria: First round, player picks correctly.
+      calls: []
     checks: []
   - id: round-2-correct
     action:
@@ -62,7 +73,9 @@ turns:
       payload:
         choice_id: correct
         round_index: 1
-    golden: Second round, correct.
+    golden:
+      criteria: Second round, correct.
+      calls: []
     checks: []
   - id: round-3-correct
     action:
@@ -71,7 +84,9 @@ turns:
       payload:
         choice_id: correct
         round_index: 2
-    golden: Third round, correct.
+    golden:
+      criteria: Third round, correct.
+      calls: []
     checks: []
   - id: round-4-wrong
     action:
@@ -80,7 +95,9 @@ turns:
       payload:
         choice_id: distractor_0
         round_index: 3
-    golden: Fourth round, player guesses wrong.
+    golden:
+      criteria: Fourth round, player guesses wrong.
+      calls: []
     checks: []
   - id: round-5-wrong
     action:
@@ -89,14 +106,21 @@ turns:
       payload:
         choice_id: distractor_0
         round_index: 4
-    golden: >
-      Final round resolves; the Compatibility Quiz wraps. With 3 correct
-      and 2 wrong on a fresh Day-1 partner the classification is
-      `failure` or `partial` (engine math); the narrator lands it with a
-      resort-texture beat — laughter, wince, Chloe catching the player's
-      eye, the rest of the cast reacting — and names at least one
-      specific question/answer pair. No claim of a different score, prize,
-      or relationship outcome.
+    golden:
+      criteria: Final round resolves; the Compatibility Quiz wraps. With 3 correct and 2 wrong on a fresh
+        Day-1 partner the classification is `failure` or `partial` (engine math); the narrator lands it with
+        a resort-texture beat — laughter, wince, Chloe catching the player's eye, the rest of the cast reacting
+        — and names at least one specific question/answer pair. No claim of a different score, prize, or relationship
+        outcome.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The Compatibility Quiz ends in failure at the pool, and the sting lands hardest on Chloe.
+            You sweep through her age, Liverpool hometown, and work as a primary school teacher, but your
+            answer of “Taskmaster clips watched under a blanket” misses her comfort show, Gavin and Stacey;
+            her smile flickers as she looks across at you. The final miss on “Hot N Cold with full choreography”
+            instead of Stay by Rihanna leaves Chloe smiling, but the warmth between you cools.
     checks:
       - ceremony_events_present
       - event_narration_valid

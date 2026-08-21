@@ -199,7 +199,7 @@ def test_record_agent_trace_captures_prompt_input_latency_and_usage() -> None:
                     "input_tokens": 120,
                     "output_tokens": 30,
                     "total_tokens": 150,
-                    "input_tokens_details": {"cached_tokens": 80},
+                    "input_tokens_details": {"cached_tokens": 80, "cache_write_tokens": 5},
                     "output_tokens_details": {"reasoning_tokens": 12},
                 },
             },
@@ -224,4 +224,5 @@ def test_record_agent_trace_captures_prompt_input_latency_and_usage() -> None:
     assert trace.usage is not None
     assert trace.usage.total_tokens == 150
     assert trace.usage.cached_input_tokens == 80
+    assert trace.usage.cache_write_tokens == 5
     assert trace.usage.reasoning_tokens == 12

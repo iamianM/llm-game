@@ -1,5 +1,7 @@
 id: private-chat-rejection
 title: Private Chat (Rejection)
+question: Can a rejected private chat preserve the original conversation and deflection?
+category: social_dynamics
 goal: Prove a failed private chat keeps the original NPC-NPC conversation active, records a deflection memory, and the rejected exchange does not invent acceptance.
 thread_check:
   id: thread_acceptance
@@ -50,13 +52,23 @@ turns:
       kind: start_conversation
       target_id: maya
       intent_id: flirty_intimate_eye_contact
-    golden: >
-      The player asks Maya for a private chat during the flame_deck chat and gets brushed
-      off. Maya's deflection should feel in character — a quick "not now",
-      a glance back to Liam, maybe a soft "find me later" — and the
-      original conversation between Maya and Liam should still be running.
-      Imagine: "Babe, give me a minute — I'm in the middle of something.
-      ...Come back when this lot have gone to bed."
+    golden:
+      criteria: 'The player asks Maya for a private chat during the flame_deck chat and gets brushed off.
+        Maya''s deflection should feel in character — a quick "not now", a glance back to Liam, maybe a soft
+        "find me later" — and the original conversation between Maya and Liam should still be running. Imagine:
+        "Babe, give me a minute — I''m in the middle of something. ...Come back when this lot have gone to
+        bed."'
+      calls:
+      - agent: heartbreaker_voice
+        output_type: Exchange
+        output:
+          player_dialogue: Sorry to interrupt, Maya, but can I steal you for a private chat? I wanted to pick
+            up on what you were asking Liam.
+          npc_dialogue: Steal me? Bold, considering I’m in the middle of a highly important Liam investigation
+            and the suspect is refusing to crack. I can’t peel off right now—he’ll vanish into the crowd and
+            become mysterious by accident.
+          npc_tone: playful
+          npc_mood_after: content
     checks:
       - private_chat_recorded
       - private_chat_rejected

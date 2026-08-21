@@ -1,5 +1,7 @@
 id: npc-proposal-decline
 title: NPC Proposal Harsh Decline
+question: Can the player reject a proposal without silently changing couples?
+category: pairing_and_endings
 goal: Prove an NPC-initiated Heart Swap proposal can be declined without changing couples, while preserving the exact relationship and audience consequences.
 thread_check:
   id: thread_acceptance
@@ -49,10 +51,16 @@ turns:
     action:
       kind: ambient
       target_id: pool_people_watch
-    golden: >
-      Maya's proposal becomes a pending ask. The narration can frame the
-      charged moment, but it must not claim the player accepted, rejected,
-      or formed a new couple yet.
+    golden:
+      criteria: Maya's proposal becomes a pending ask. The narration can frame the charged moment, but it
+        must not claim the player accepted, rejected, or formed a new couple yet.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: By the pool, Maya makes it clear she wants to ask you to pair, and the possibility lands
+            like a spark across Sunset Bay. Chloe stays beside you, her eyes fixed on you as the moment presses
+            against the couple you already share.
     checks:
       - pending_npc_proposal_from:maya
       - ceremony_event_present:npc_proposal_incoming
@@ -63,11 +71,17 @@ turns:
       kind: npc_proposal_response
       target_id: maya
       intent_id: decline_harshly
-    golden: >
-      The response is a harsh decline. The narration can make the rejection
-      sting, but it must keep the existing couples intact, clear the pending
-      ask, and preserve the exact engine consequences for Maya and the
-      audience.
+    golden:
+      criteria: The response is a harsh decline. The narration can make the rejection sting, but it must keep
+        the existing couples intact, clear the pending ask, and preserve the exact engine consequences for
+        Maya and the audience.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, Maya’s proposal reaches you—and is rejected, leaving the moment hanging in a
+            clean, unmistakable sting. Chloe stays beside you as the camera catches the silence between you,
+            her eyes fixed on yours while Maya absorbs the refusal.
     checks:
       - proposal_outcome_is:rejected
       - pending_npc_proposal_cleared

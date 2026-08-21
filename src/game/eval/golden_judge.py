@@ -97,7 +97,7 @@ def build_thread_judge_prompt(
             {
                 "turn_id": turn_spec.id,
                 "action": turn_spec.action.model_dump(mode="json"),
-                "golden": turn_spec.golden,
+                "golden": turn_spec.golden.model_dump(mode="json"),
                 "actual": _actual_payload(record),
                 "deterministic_checks": [
                     check.model_dump(mode="json")
@@ -152,7 +152,9 @@ def _request_judge_report(client: Any, prompt: str) -> tuple[Any, int, list[str]
 JUDGE_INSTRUCTIONS = (
     "Review the complete dating-sim scenario as one thread. Judge continuity, voice, "
     "specificity, and outcome faithfulness across turns rather than grading isolated lines. "
-    "Goldens describe intent and tone, not exact scripts. Engine fields inside each actual "
+    "Each golden contains reviewed agent results in the same shape as the actual calls plus semantic "
+    "criteria. Compare natural language by meaning, voice, and continuity rather than exact wording. "
+    "Compare agent identity, output type, and structured contract fields exactly. Engine fields inside each actual "
     "record are deterministic ground truth for mechanics, participants, outcomes, and state. "
     "Return pass for a reasonable semantic match, fail for a material mismatch visible in "
     "the evidence, and cannot_determine only when the thread lacks the needed evidence. "
@@ -220,7 +222,14 @@ def _judge_trace(
         latency_ms=round((perf_counter() - started) * 1000),
         response_id=_string_attr(response, "id"),
         input_tokens=_int_attr(usage, "input_tokens"),
+        cached_input_tokens=_nested_int_attr(usage, "input_tokens_details", "cached_tokens"),
+        cache_write_tokens=_nested_int_attr(
+            usage, "input_tokens_details", "cache_write_tokens"
+        ),
         output_tokens=_int_attr(usage, "output_tokens"),
+        reasoning_tokens=_nested_int_attr(
+            usage, "output_tokens_details", "reasoning_tokens"
+        ),
         total_tokens=_int_attr(usage, "total_tokens"),
         attempts=attempts,
         retry_errors=retry_errors,
@@ -236,3 +245,7 @@ def _string_attr(value: object, key: str) -> str | None:
 def _int_attr(value: object, key: str) -> int | None:
     item = getattr(value, key, None)
     return int(item) if isinstance(item, int) else None
+
+
+def _nested_int_attr(value: object, parent: str, key: str) -> int | None:
+    return _int_attr(getattr(value, parent, None), key)

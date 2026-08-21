@@ -1,5 +1,7 @@
 id: pulse-race-narration
 title: Pulse Race Reveal
+question: Can the reveal use the recorded chemistry matrix and actual guesses?
+category: challenges
 goal: Prove the Event Narrator dramatises a Pulse Race result using the recorded chemistry matrix and the player's read-the-room guesses.
 thread_check:
   id: thread_acceptance
@@ -49,11 +51,16 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Morning burns out. Producer announces Pulse Race. The matrix is
-      computed and three guess rounds are queued. pending_challenge.kind
-      == "heart_rate"; round 1's correct answer is Maya (highest
-      non-partner chemistry at 72).
+    golden:
+      criteria: Morning burns out. Producer announces Pulse Race. The matrix is computed and three guess rounds
+        are queued. pending_challenge.kind == "heart_rate"; round 1's correct answer is Maya (highest non-partner
+        chemistry at 72).
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, no resolved ceremony beat lands yet. You and Chloe stay together in the frame,
+            her eyes meeting yours as the moment holds.
     checks:
       - ceremony_events_present
   - id: round1-pick-maya
@@ -63,9 +70,9 @@ turns:
       payload:
         choice_id: correct
         round_index: 0
-    golden: >
-      Player guesses right — Maya did spike for them. Engine advances
-      to round 2.
+    golden:
+      criteria: Player guesses right — Maya did spike for them. Engine advances to round 2.
+      calls: []
     checks: []
   - id: round2-pick-first-option
     action:
@@ -74,9 +81,9 @@ turns:
       payload:
         choice_id: correct
         round_index: 1
-    golden: >
-      Player guesses correctly on the partner round too. Advance to
-      round 3.
+    golden:
+      criteria: Player guesses correctly on the partner round too. Advance to round 3.
+      calls: []
     checks: []
   - id: round3-final-pick
     action:
@@ -85,12 +92,18 @@ turns:
       payload:
         choice_id: correct
         round_index: 2
-    golden: >
-      Final guess locks. Three correct = success classification. The
-      narrator writes the wrap: names the strongest matrix pair
-      (player+Maya at 88 BPM), references at least one of the player's
-      guesses by name, and treats the room's reveal as the dramatic
-      core.
+    golden:
+      criteria: 'Final guess locks. Three correct = success classification. The narrator writes the wrap:
+        names the strongest matrix pair (player+Maya at 88 BPM), references at least one of the player''s
+        guesses by name, and treats the room''s reveal as the dramatic core.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'The Pulse Race ends in success as you read the room cleanly, choosing Maya when her pulse
+            climbs highest watching you, then naming Blake for Chloe’s standout moment. But the camera catches
+            the sharper spark: Maya’s bit sends your pulse to eighty-eight while she watches, while Chloe
+            and you mirror each other at eighty-two—and Chloe’s eyes stay fixed on you through the reveal.'
     checks:
       - ceremony_events_present
       - event_narration_valid

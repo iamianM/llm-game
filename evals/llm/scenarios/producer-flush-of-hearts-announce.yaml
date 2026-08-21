@@ -1,5 +1,7 @@
 id: producer-flush-announce
 title: Producer Text And Flush Of Hearts Announce
+question: Can the twist land without deciding who sticks or twists?
+category: special_events
 goal: Prove the Flush of Hearts twist lands with the right tension — the gather is called, the second-resort entry is described, and the narrator does not pre-decide whether anyone has stuck or twisted yet.
 thread_check:
   id: thread_acceptance
@@ -42,14 +44,19 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      The producer text drops and the resort is called to the flame_deck for
-      Flush of Hearts. The narrator sets the tension: phones lighting up,
-      the cast clocking each other, the player and Chloe sharing a look
-      they can't read yet. Imagine: "Phones go off at exactly the same
-      second. The cast reads it twice. Chloe finds the player's eye across
-      the pool and neither of them speaks." The twist is announced; nothing
-      has resolved.
+    golden:
+      criteria: 'The producer text drops and the resort is called to the flame_deck for Flush of Hearts. The
+        narrator sets the tension: phones lighting up, the cast clocking each other, the player and Chloe
+        sharing a look they can''t read yet. Imagine: "Phones go off at exactly the same second. The cast
+        reads it twice. Chloe finds the player''s eye across the pool and neither of them speaks." The twist
+        is announced; nothing has resolved.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The call goes out across Sunset Bay, sending everyone toward the Flame Deck for the Flush
+            of Hearts. You move with Chloe, and her hand finds yours for one quiet beat before the resort
+            gathers around you.
     checks:
       - ceremony_events_present
       - event_narration_valid
@@ -58,13 +65,18 @@ turns:
   - id: enter-flush-of-hearts
     action:
       kind: join_gather
-    golden: >
-      The player walks into the second resort. The narrator establishes the
-      shift in scenery and stakes — the original couple separated, the new
-      cast in scope, the player's relationship with Chloe now the thing
-      being tested at a distance. Imagine: "Sunset Bay shrinks in the
-      rear-view. The second resort hums with strangers. Somewhere across
-      the water, Chloe is on her own version of this night."
+    golden:
+      criteria: 'The player walks into the second resort. The narrator establishes the shift in scenery and
+        stakes — the original couple separated, the new cast in scope, the player''s relationship with Chloe
+        now the thing being tested at a distance. Imagine: "Sunset Bay shrinks in the rear-view. The second
+        resort hums with strangers. Somewhere across the water, Chloe is on her own version of this night."'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The Flush of Hearts text lands, and the resort’s easy rhythm snaps into motion as bags are
+            packed for the second resort. You arrive at the Flush of Hearts pool while Chloe remains at Sunset
+            Bay, leaving the distance between you to carry the full weight of the moment.
     checks:
       - ceremony_events_present
       - event_narration_present

@@ -1,9 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { QueryProvider } from "../lib/query-provider";
-import { MusicPlayer } from "../components/chrome/MusicPlayer";
-import { AmbiencePlayer } from "../components/chrome/AmbiencePlayer";
-import { SfxBridge } from "../components/chrome/SfxBridge";
+import { AppAudio } from "../components/chrome/AppAudio";
 
 export const metadata: Metadata = {
   title: "Paradise Hearts",
@@ -20,9 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         <QueryProvider>{children}</QueryProvider>
-        <MusicPlayer />
-        <AmbiencePlayer />
-        <SfxBridge />
+        <AppAudio />
       </body>
     </html>
   );

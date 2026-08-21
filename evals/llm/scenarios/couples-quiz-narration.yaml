@@ -1,5 +1,7 @@
 id: couples-quiz-narration
 title: Couples Quiz Two-Sided Round
+question: Can alternating quiz rounds name real mismatches without inventing scores?
+category: challenges
 goal: Prove the Event Narrator handles alternating player/partner rounds and names actual mismatches without inventing scoring.
 thread_check:
   id: thread_acceptance
@@ -41,39 +43,62 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Morning ends, the Couples Quiz scene begins. pending_challenge.kind
-      == "couples_quiz". Six rounds queued, alternating between
-      player-about-partner and partner-about-player.
+    golden:
+      criteria: Morning ends, the Couples Quiz scene begins. pending_challenge.kind == "couples_quiz". Six
+        rounds queued, alternating between player-about-partner and partner-about-player.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, the Couples Quiz remains pending, leaving the waterline charged with anticipation.
+            Chloe stays beside you, her eyes fixed on you as the unresolved moment hangs between you both.
     checks:
       - ceremony_events_present
   - id: r1-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 0 } }
-    golden: Player correctly answers about partner. Round 0.
+    golden:
+      criteria: Player correctly answers about partner. Round 0.
+      calls: []
     checks: []
   - id: r2-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 1 } }
-    golden: Player correctly guesses partner's guess. Round 1.
+    golden:
+      criteria: Player correctly guesses partner's guess. Round 1.
+      calls: []
     checks: []
   - id: r3-wrong
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: distractor_0, round_index: 2 } }
-    golden: Player misreads partner trait. Round 2.
+    golden:
+      criteria: Player misreads partner trait. Round 2.
+      calls: []
     checks: []
   - id: r4-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 3 } }
-    golden: Player correctly guesses partner's guess. Round 3.
+    golden:
+      criteria: Player correctly guesses partner's guess. Round 3.
+      calls: []
     checks: []
   - id: r5-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 4 } }
-    golden: Player correctly answers about partner. Round 4.
+    golden:
+      criteria: Player correctly answers about partner. Round 4.
+      calls: []
     checks: []
   - id: r6-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 5 } }
-    golden: >
-      Final round resolves. With 5 of 6 matches, the couple lands in
-      success band; classification == success. Narrator dramatises the
-      flow — the one mismatch in round 3, the partner's reactions —
-      without inventing a different score.
+    golden:
+      criteria: Final round resolves. With 5 of 6 matches, the couple lands in success band; classification
+        == success. Narrator dramatises the flow — the one mismatch in round 3, the partner's reactions —
+        without inventing a different score.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'At the pool, the Couples Quiz ends in a partial result, and the warmth between you and Chloe
+            tightens under the afternoon sun. You and Chloe match on her age and hometown, while you pick
+            “Taskmaster clips watched under a blanket” instead of “Gavin and Stacey” for her comfort show.
+            Chloe’s booth answers also land cleanly: she has written “the Heartthrob,” “a man,” and “audience
+            favourite” about you, and the camera catches your held look across the divide as the quiz closes.'
     checks:
       - ceremony_events_present
       - event_narration_valid

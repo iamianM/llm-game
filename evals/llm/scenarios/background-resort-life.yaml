@@ -1,5 +1,7 @@
 id: background-resort-life
 title: Background Resort Life
+question: Can unseen resort activity continue without corrupting player memory or game state?
+category: social_dynamics
 goal: Prove the Resort Orchestrator, Background Dialogue, and Background Curator can move the resort forward without polluting the player's first-person memory rail or rewriting deterministic state.
 thread_check:
   id: thread_acceptance
@@ -45,13 +47,66 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      The player takes a minute by the pool. The resort orchestrator may
-      continue the Maya-Marcus chat in the kitchen, surface another beat
-      elsewhere, or leave things alone. Whatever it does must come back as
-      a typed ResortUpdate; any new dialogue must stay in the two NPCs'
-      voices; any memories it produces must be flagged background so the
-      player rail doesn't grow with stuff she didn't see.
+    golden:
+      criteria: The player takes a minute by the pool. The resort orchestrator may continue the Maya-Marcus
+        chat in the kitchen, surface another beat elsewhere, or leave things alone. Whatever it does must
+        come back as a typed ResortUpdate; any new dialogue must stay in the two NPCs' voices; any memories
+        it produces must be flagged background so the player rail doesn't grow with stuff she didn't see.
+      calls:
+      - agent: resort_orchestrator
+        output_type: ResortUpdate
+        output:
+          npc_movements: []
+          conversation_starts:
+          - participants:
+            - liam
+            - nia
+            location: terrace
+            topic: quiet first impressions of the villa
+          - participants:
+            - sophie
+            - blake
+            location: bedroom
+            topic: sizing up the challenge and early villa dynamics
+          conversation_continues:
+          - conversation_id: npcconv_maya_marcus_kitchen
+            nudge: Maya presses for a more revealing answer
+          conversation_ends: []
+          npc_interruptions: []
+          npc_summoned_elsewhere: []
+      - agent: background_dialogue
+        output_type: BackgroundExchange
+        output:
+          speaker_a_line: '*Liam rests his forearms on the terrace rail.* The villa looks designed to make
+            everyone forget there are cameras—too much white stone, too much ocean, and not a single comfortable
+            chair.'
+          speaker_b_line: Nia glances back through the glass doors. I noticed that too. It feels less like
+            a home than a beautiful dare, like the place is waiting to see who cracks first.
+          tone: vulnerable
+      - agent: background_dialogue
+        output_type: BackgroundExchange
+        output:
+          speaker_a_line: '*Sophie studies the room like it’s a puzzle.* “The challenge is only half the game.
+            The real question is who starts performing for everyone else before they’ve even settled in.”'
+          speaker_b_line: “Then watch who laughs too quickly and who keeps checking the door,” Blake says,
+            folding his arms. “I’ve got a feeling the quiet ones are already making their decisions.”
+          tone: competitive
+      - agent: background_dialogue
+        output_type: BackgroundExchange
+        output:
+          speaker_a_line: '*Maya folds her arms against the kitchen counter.* “Don’t give me the polished
+            answer, Marcus. Who are you actually watching this week—the person you keep looking for, or the
+            person you think you’re supposed to want?”'
+          speaker_b_line: '*Marcus glances toward the empty doorway, then back at her.* “You want the honest
+            version? I’m watching you. I just haven’t decided whether you’re interested in me, or interested
+            in catching me out.”'
+          tone: flirty
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, the Compatibility Quiz remains pending, leaving you and the resort suspended
+            before the first answers land. Chloe and Jordan watch the unfinished moment from the sidelines,
+            but no result is revealed yet.
     checks:
       - resort_update_committed
       - background_kind_isolated
