@@ -1,4 +1,11 @@
+import type { components } from "./openapi-types";
+
 export type Gender = "man" | "woman";
+
+export type DailyRecapView = components["schemas"]["DailyRecapView"];
+export type MinigameRoundView = components["schemas"]["MinigameRoundView"];
+export type MinigameWrapView = components["schemas"]["MinigameWrapView"];
+export type MinigameView = MinigameRoundView | MinigameWrapView;
 
 export type AvailableAction = {
   kind: string;
@@ -103,11 +110,11 @@ export type SessionState = {
   couples: CoupleSummary[];
   audience: { public_perception: number; recent_delta: number | null; trend: string };
   pending_pair_proposal: Record<string, unknown> | null;
-  pending_challenge: Record<string, unknown> | null;
+  pending_challenge: MinigameView | null;
   outcome: string | null;
   active_conversation_target_id: string | null;
   resort_snapshot: Record<string, string[]>;
-  daily_recaps: Array<Record<string, unknown>>;
+  daily_recaps: DailyRecapView[];
   intros_greetings: Record<string, string>;
 };
 

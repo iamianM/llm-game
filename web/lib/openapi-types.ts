@@ -72,25 +72,69 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/session/{session_id}": {
+    "/checkpoints": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Get State */
-        get: operations["get_state_session__session_id__get"];
+        /**
+         * Checkpoints
+         * @description Return loadable saved-state options for the main-menu picker.
+         */
+        get: operations["checkpoints_checkpoints_get"];
         put?: never;
         post?: never;
-        /** End Session */
-        delete: operations["end_session_session__session_id__delete"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/session/{session_id}/turn": {
+    "/session/from-checkpoint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Session From Checkpoint
+         * @description Open a new session preloaded from a saved checkpoint.
+         *
+         *     The on-the-wire shape matches `POST /session/new` so the client can route
+         *     to the same `/play/[sessionId]` page after either path. The new
+         *     ``session_id`` is freshly minted (the checkpoint's own session_id is
+         *     intentionally not reused — multiple branches can spring off one save).
+         */
+        post: operations["session_from_checkpoint_session_from_checkpoint_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/session/view": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** View Session */
+        post: operations["view_session_session_view_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/session/turn": {
         parameters: {
             query?: never;
             header?: never;
@@ -100,14 +144,14 @@ export interface paths {
         get?: never;
         put?: never;
         /** Submit Turn */
-        post: operations["submit_turn_session__session_id__turn_post"];
+        post: operations["submit_turn_session_turn_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/session/{session_id}/turn/stream": {
+    "/session/turn/stream": {
         parameters: {
             query?: never;
             header?: never;
@@ -117,58 +161,24 @@ export interface paths {
         get?: never;
         put?: never;
         /** Submit Turn Stream */
-        post: operations["submit_turn_stream_session__session_id__turn_stream_post"];
+        post: operations["submit_turn_stream_session_turn_stream_post"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/session/{session_id}/cast/{npc_id}": {
+    "/session/cast": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
+        get?: never;
+        put?: never;
         /** Get Cast */
-        get: operations["get_cast_session__session_id__cast__npc_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/session/{session_id}/couples": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Couples */
-        get: operations["get_couples_session__session_id__couples_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/session/{session_id}/timeline": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get Timeline */
-        get: operations["get_timeline_session__session_id__timeline_get"];
-        put?: never;
-        post?: never;
+        post: operations["get_cast_session_cast_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -179,6 +189,34 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AllocationView */
+        AllocationView: {
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "kiss" | "wed" | "pass";
+            /** Subject Id */
+            subject_id: string;
+        };
+        /**
+         * AnsweredMinigameRoundView
+         * @description Display-safe outcome of one completed minigame round.
+         */
+        AnsweredMinigameRoundView: {
+            /** Round Index */
+            round_index: number;
+            /** Chosen Label */
+            chosen_label: string | null;
+            /** Correct Label */
+            correct_label: string | null;
+            /** Is Correct */
+            is_correct: boolean;
+            /** Points */
+            points: number;
+            /** Reaction Line */
+            reaction_line: string | null;
+        };
         /** ApiExchange */
         ApiExchange: {
             /** Speaker Id */
@@ -218,6 +256,8 @@ export interface components {
         };
         /** ApiMemory */
         ApiMemory: {
+            /** Id */
+            id: string;
             /** Holder Id */
             holder_id: string;
             /** Subject Id */
@@ -292,6 +332,10 @@ export interface components {
             risk: string | null;
             /** Stat Used */
             stat_used: string | null;
+            /** Payload */
+            payload?: {
+                [key: string]: unknown;
+            } | null;
             /** Description */
             description?: string | null;
         };
@@ -314,7 +358,7 @@ export interface components {
             /** Familiarity */
             familiarity: number;
             relationship: components["schemas"]["ApiRelationship"];
-            /** Type On Paper */
+            /** Ideal Match */
             ideal_match: {
                 [key: string]: unknown | null;
             };
@@ -326,6 +370,55 @@ export interface components {
             coupled_with: string | null;
             /** Eliminated */
             eliminated: boolean;
+        };
+        /**
+         * CastRequest
+         * @description Stateless cast detail request.
+         */
+        CastRequest: {
+            persisted: components["schemas"]["PersistedSession"];
+            /** Npc Id */
+            npc_id: string;
+        };
+        /** CheckpointListResponse */
+        CheckpointListResponse: {
+            /** Checkpoints */
+            checkpoints: components["schemas"]["CheckpointSummaryResponse"][];
+        };
+        /** CheckpointStartRequest */
+        CheckpointStartRequest: {
+            /** Name */
+            name: string;
+            /** Mock Llm */
+            mock_llm?: boolean | null;
+        };
+        /**
+         * CheckpointSummaryResponse
+         * @description One main-menu entry for a loadable saved state.
+         */
+        CheckpointSummaryResponse: {
+            /** Name */
+            name: string;
+            /** Label */
+            label: string;
+            /** Day */
+            day: number;
+            /** Phase */
+            phase: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "bundled" | "local";
+        };
+        /** CompatibilityQuizBoardView */
+        CompatibilityQuizBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "compatibility_quiz";
+            latest_answer?: components["schemas"]["AnsweredMinigameRoundView"] | null;
         };
         /** CoupleSummary */
         CoupleSummary: {
@@ -350,12 +443,72 @@ export interface components {
             /** Is Player Couple */
             is_player_couple: boolean;
         };
-        /** CouplesResponse */
-        CouplesResponse: {
-            /** Couples */
-            couples: components["schemas"]["CoupleSummary"][];
-            /** Singles */
-            singles: string[];
+        /** CouplesQuizBoardView */
+        CouplesQuizBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "couples_quiz";
+            /** Player Answer */
+            player_answer?: string | null;
+            /** Partner Answer */
+            partner_answer?: string | null;
+            /** Aligned */
+            aligned?: boolean | null;
+        };
+        /**
+         * DailyRecapItemView
+         * @description One display-safe recap item.
+         */
+        DailyRecapItemView: {
+            /**
+             * Section
+             * @enum {string}
+             */
+            section: "your_day" | "while_busy";
+            /** Speaker Label */
+            speaker_label: string;
+            /** Content */
+            content: string;
+            /**
+             * Emphasis
+             * @enum {string}
+             */
+            emphasis: "standard" | "strong";
+        };
+        /**
+         * DailyRecapView
+         * @description One complete player-facing recap.
+         */
+        DailyRecapView: {
+            /** Day */
+            day: number;
+            /** Resort Id */
+            resort_id: string;
+            /** Resort Label */
+            resort_label: string;
+            /** Items */
+            items?: components["schemas"]["DailyRecapItemView"][];
+        };
+        /** FacetScoreView */
+        FacetScoreView: {
+            /** Facet */
+            facet: string;
+            /** Score */
+            score: number;
+        };
+        /** FinalCouplesBoardView */
+        FinalCouplesBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "final_couples";
+            /** Facets */
+            facets?: components["schemas"]["FacetScoreView"][];
+            /** Final Tally */
+            final_tally?: number | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -385,6 +538,93 @@ export interface components {
             /** Familiarity With Player */
             familiarity_with_player: number;
         };
+        /** KissWedPassBoardView */
+        KissWedPassBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "kiss_wed_pass";
+            /** Allocations */
+            allocations?: components["schemas"]["AllocationView"][];
+        };
+        /** LieDetectorBoardView */
+        LieDetectorBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "lie_detector";
+            /** Subject Id */
+            subject_id?: string | null;
+            /** Verdict */
+            verdict?: ("truth_told" | "truth_suspected" | "lie_caught" | "lie_believed") | null;
+            /** Needle Percent */
+            needle_percent?: number | null;
+        };
+        /**
+         * MinigameKind
+         * @description Canonical minigame discriminator.
+         * @enum {string}
+         */
+        MinigameKind: "compatibility_quiz" | "heart_rate" | "couples_quiz" | "lie_detector" | "kiss_wed_pass" | "final_couples";
+        /** MinigameRoundView */
+        MinigameRoundView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            status: "round";
+            kind: components["schemas"]["MinigameKind"];
+            /** Round Index */
+            round_index: number;
+            /** Round Count */
+            round_count: number;
+            /** Narration */
+            narration: string;
+            /** Question */
+            question: string;
+            /** Target Id */
+            target_id: string | null;
+            /** Answered Rounds */
+            answered_rounds?: components["schemas"]["AnsweredMinigameRoundView"][];
+            /** Board */
+            board: components["schemas"]["CompatibilityQuizBoardView"] | components["schemas"]["CouplesQuizBoardView"] | components["schemas"]["PulseRaceBoardView"] | components["schemas"]["LieDetectorBoardView"] | components["schemas"]["KissWedPassBoardView"] | components["schemas"]["FinalCouplesBoardView"];
+        };
+        /** MinigameWrapView */
+        MinigameWrapView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            status: "wrap";
+            kind: components["schemas"]["MinigameKind"];
+            /** Round Count */
+            round_count: number;
+            /** Narration */
+            narration: string;
+            /**
+             * Classification
+             * @enum {string}
+             */
+            classification: "success" | "partial" | "failure";
+            /** Total Points */
+            total_points: number;
+            /** Audience Delta */
+            audience_delta: number;
+            /** Answered Rounds */
+            answered_rounds?: components["schemas"]["AnsweredMinigameRoundView"][];
+            /** Board */
+            board: components["schemas"]["CompatibilityQuizBoardView"] | components["schemas"]["CouplesQuizBoardView"] | components["schemas"]["PulseRaceBoardView"] | components["schemas"]["LieDetectorBoardView"] | components["schemas"]["KissWedPassBoardView"] | components["schemas"]["FinalCouplesBoardView"];
+        };
+        /**
+         * NewSessionEnvelope
+         * @description Initial session payload: a renderable view plus the blob the client persists.
+         */
+        NewSessionEnvelope: {
+            view: components["schemas"]["SessionResponse"];
+            persisted: components["schemas"]["PersistedSession"];
+        };
         /** NewSessionRequest */
         NewSessionRequest: {
             /**
@@ -408,6 +648,35 @@ export interface components {
             /** Mock Llm */
             mock_llm?: boolean | null;
         };
+        /**
+         * PersistedSession
+         * @description Self-contained session payload exchanged with the client.
+         *
+         *     Versioned so future shape changes don't strand in-flight games. ``user_id`` is
+         *     reserved for when accounts land — always ``None`` for anonymous play.
+         */
+        PersistedSession: {
+            /**
+             * Schema Version
+             * @default 1
+             */
+            schema_version: number;
+            /** Session Id */
+            session_id?: string;
+            /** User Id */
+            user_id?: string | null;
+            /** Rng State */
+            rng_state: unknown[];
+            /** Game State */
+            game_state: {
+                [key: string]: unknown;
+            };
+            /**
+             * Mock Llm
+             * @default true
+             */
+            mock_llm: boolean;
+        };
         /** PlayerState */
         PlayerState: {
             /** Id */
@@ -426,6 +695,27 @@ export interface components {
             };
             /** Memories */
             memories: components["schemas"]["ApiMemory"][];
+        };
+        /** PulseRaceBoardView */
+        PulseRaceBoardView: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "heart_rate";
+            /** Readings */
+            readings?: components["schemas"]["PulseReadingView"][];
+        };
+        /** PulseReadingView */
+        PulseReadingView: {
+            /** Performer Id */
+            performer_id: string;
+            /** Observer Id */
+            observer_id: string;
+            /** Bpm */
+            bpm: number;
+            /** Chemistry */
+            chemistry: number;
         };
         /** SessionResponse */
         SessionResponse: {
@@ -473,6 +763,8 @@ export interface components {
             pending_pair_proposal: {
                 [key: string]: unknown;
             } | null;
+            /** Pending Challenge */
+            pending_challenge?: (components["schemas"]["MinigameRoundView"] | components["schemas"]["MinigameWrapView"]) | null;
             /** Outcome */
             outcome: string | null;
             /** Active Conversation Target Id */
@@ -482,9 +774,22 @@ export interface components {
                 [key: string]: string[];
             };
             /** Daily Recaps */
-            daily_recaps: {
-                [key: string]: unknown;
-            }[];
+            daily_recaps: components["schemas"]["DailyRecapView"][];
+            /**
+             * Intros Greetings
+             * @default {}
+             */
+            intros_greetings: {
+                [key: string]: string;
+            };
+        };
+        /**
+         * TurnEnvelope
+         * @description Stateless turn request: client sends the full persisted blob plus the action.
+         */
+        TurnEnvelope: {
+            persisted: components["schemas"]["PersistedSession"];
+            action: components["schemas"]["TurnRequest"];
         };
         /** TurnRequest */
         TurnRequest: {
@@ -531,6 +836,14 @@ export interface components {
             connection_shift?: string | null;
             /** State Hash */
             state_hash: string;
+        };
+        /**
+         * TurnResponseEnvelope
+         * @description Stateless turn response: the updated view plus the new persisted blob.
+         */
+        TurnResponseEnvelope: {
+            view: components["schemas"]["TurnResponse"];
+            persisted: components["schemas"]["PersistedSession"];
         };
         /** ValidationError */
         ValidationError: {
@@ -646,7 +959,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SessionResponse"];
+                    "application/json": components["schemas"]["NewSessionEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -660,16 +973,71 @@ export interface operations {
             };
         };
     };
-    get_state_session__session_id__get: {
+    checkpoints_checkpoints_get: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                session_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckpointListResponse"];
+                };
+            };
+        };
+    };
+    session_from_checkpoint_session_from_checkpoint_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckpointStartRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NewSessionEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    view_session_session_view_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PersistedSession"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -691,47 +1059,16 @@ export interface operations {
             };
         };
     };
-    end_session_session__session_id__delete: {
+    submit_turn_session_turn_post: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    submit_turn_session__session_id__turn_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TurnRequest"];
+                "application/json": components["schemas"]["TurnEnvelope"];
             };
         };
         responses: {
@@ -741,7 +1078,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TurnResponse"];
+                    "application/json": components["schemas"]["TurnResponseEnvelope"];
                 };
             };
             /** @description Validation Error */
@@ -755,18 +1092,16 @@ export interface operations {
             };
         };
     };
-    submit_turn_stream_session__session_id__turn_stream_post: {
+    submit_turn_stream_session_turn_stream_post: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                session_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["TurnRequest"];
+                "application/json": components["schemas"]["TurnEnvelope"];
             };
         };
         responses: {
@@ -790,17 +1125,18 @@ export interface operations {
             };
         };
     };
-    get_cast_session__session_id__cast__npc_id__get: {
+    get_cast_session_cast_post: {
         parameters: {
             query?: never;
             header?: never;
-            path: {
-                session_id: string;
-                npc_id: string;
-            };
+            path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CastRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
@@ -809,70 +1145,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CastDetail"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_couples_session__session_id__couples_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CouplesResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    get_timeline_session__session_id__timeline_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                session_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
                 };
             };
             /** @description Validation Error */

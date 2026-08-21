@@ -2,14 +2,11 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSession, submitTurnStream } from "../../lib/api";
 import type { AvailableAction, SessionResponse, SessionState, TurnResponse } from "../../lib/types";
-import type {
-  MinigamePresentationPort,
-  PresentationTransition,
-  SceneFeature,
-} from "../../lib/scene/presentation";
+import type { PresentationTransition, SceneFeature } from "../../lib/scene/presentation";
+import { MINIGAME_SCENE_PRESENTATION } from "../../lib/minigame/scene-port";
 import { playSfx } from "../../lib/sfx";
 import { loadLook } from "../../lib/look";
 import type { ArchetypeId, HeartbreakerLook } from "../../lib/look";
@@ -19,21 +16,16 @@ import { DayRecap } from "../chrome/DayRecap";
 import { SettingsMenu } from "../chrome/SettingsMenu";
 import { WardrobeModal } from "../chrome/WardrobeModal";
 import { RightRail } from "../rail/RightRail";
-import { NO_MINIGAME_PRESENTATION, planScene } from "../scene/SceneDirector";
+import { MinigameInsert } from "../minigame/MinigameInsert";
+import { planScene } from "../scene/SceneDirector";
 import { SceneDialogueStage } from "../scene/SceneDialogueStage";
 import { TopBar } from "./TopBar";
 
 type Props = {
   sessionId: string;
-  minigamePresentation?: MinigamePresentationPort<unknown>;
-  renderMinigameSlot?: (slot: unknown) => ReactNode;
 };
 
-export function GameStage({
-  sessionId,
-  minigamePresentation = NO_MINIGAME_PRESENTATION,
-  renderMinigameSlot,
-}: Props) {
+export function GameStage({ sessionId }: Props) {
   const router = useRouter();
   const [lastTurn, setLastTurn] = useState<TurnResponse | null>(null);
   const [previousState, setPreviousState] = useState<SessionState | null>(null);
@@ -141,13 +133,14 @@ export function GameStage({
     : lastTurn && previousState
       ? { kind: "resolved", previous: previousState, response: lastTurn }
       : { kind: "baseline", state, actions };
-  const scenePlan = planScene(transition, minigamePresentation);
+  const scenePlan = planScene(transition, MINIGAME_SCENE_PRESENTATION);
   const activeFeature = featureQueue[0];
   const event = activeFeature?.kind === "ceremony" ? activeFeature.event : undefined;
   const narration = ceremonyNarration(lastTurn, state, event);
-  // Attribute each recap whisper to its holder so the reader can tell whose
-  // first-person "I" each card is (heartbreaker name, or "You" for the player).
-  const recapSpeakers = Object.fromEntries(state.heartbreakers.map((heartbreaker) => [heartbreaker.id, heartbreaker.name]));
+  const subjectLabels = Object.fromEntries([
+    [state.player.id, state.player.name || "You"],
+    ...state.heartbreakers.map((heartbreaker) => [heartbreaker.id, heartbreaker.name]),
+  ]);
   const closeActiveFeature = () => {
     const hasMore = featureQueue.length > 1;
     setFeatureQueue((current) => current.slice(1));
@@ -180,7 +173,9 @@ export function GameStage({
                 router.push(`/play/${sessionId}/finale`);
               }
             }}
-            renderSlot={renderMinigameSlot}
+            renderSlot={(slot) => (
+              <MinigameInsert presentation={slot} subjectLabels={subjectLabels} />
+            )}
           />
           {mutation.error ? (
             <p role="alert" className="turn-error">
@@ -216,9 +211,6 @@ export function GameStage({
       {activeFeature?.kind === "recap" ? (
         <DayRecap
           recap={activeFeature.recap}
-          resortLabel={state.resort_label}
-          speakers={recapSpeakers}
-          playerId={state.player.id}
           onClose={closeActiveFeature}
         />
       ) : null}

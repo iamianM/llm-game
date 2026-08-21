@@ -7,6 +7,8 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.api.persisted import PersistedSession
+from src.game.presentation.daily_recap import DailyRecapView
+from src.game.presentation.minigame import MinigameView
 
 
 class ApiErrorBody(BaseModel):
@@ -186,11 +188,11 @@ class SessionState(BaseModel):
     couples: list[CoupleSummary]
     audience: AudienceState
     pending_pair_proposal: dict[str, object] | None
-    pending_challenge: dict[str, object] | None = None
+    pending_challenge: MinigameView | None = None
     outcome: str | None
     active_conversation_target_id: str | None
     resort_snapshot: dict[str, list[str]]
-    daily_recaps: list[dict[str, object]]
+    daily_recaps: list[DailyRecapView]
     # Dynamically-generated NPC greetings keyed by heartbreaker id. Empty in mock
     # mode; the UI falls back to templated greetings in web/lib/intros.ts.
     intros_greetings: dict[str, str] = {}

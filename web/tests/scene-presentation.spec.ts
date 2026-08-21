@@ -35,7 +35,7 @@ test("baseline establishes history without replaying old recaps", () => {
   const baseline = planScene(
     {
       kind: "baseline",
-      state: state({ daily_recaps: [{ day: 4, items: [] }] }),
+      state: state({ daily_recaps: [recap(4)] }),
       actions: [action("ambient", "Wait")],
     },
     NO_MINIGAME_PRESENTATION,
@@ -117,9 +117,9 @@ test("pending and resolved plans share consumed stream beat identities", () => {
 });
 
 test("resolved features keep event order and append only new recaps", () => {
-  const previous = state({ daily_recaps: [{ day: 4, items: [] }] });
+  const previous = state({ daily_recaps: [recap(4)] });
   const response = turn({
-    state: state({ turn_index: 89, daily_recaps: [...previous.daily_recaps, { day: 5, items: [] }] }),
+    state: state({ turn_index: 89, daily_recaps: [...previous.daily_recaps, recap(5)] }),
     ceremony_events: [
       { kind: "producer_text", message: "Meet at the Flame Deck." },
       { kind: "pairing", message: "The couples lock in." },
@@ -185,6 +185,15 @@ function action(kind: string, label: string, targetId: string | null = "ambient_
     audience_hint: "",
     risk: null,
     stat_used: null,
+  };
+}
+
+function recap(day: number): SessionState["daily_recaps"][number] {
+  return {
+    day,
+    resort_id: day <= 3 ? "main" : "flush_of_hearts",
+    resort_label: day <= 3 ? "Sunset Bay" : "Flush of Hearts",
+    items: [],
   };
 }
 

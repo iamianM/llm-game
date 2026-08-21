@@ -2,7 +2,7 @@ import type { CompatibilityQuizBoardView } from "../../../lib/minigame/types";
 
 export function CompatibilityQuizBoard({ board }: { board: CompatibilityQuizBoardView }) {
   const answer = board.latest_answer;
-  if (answer === null) {
+  if (!answer) {
     return <p className="minigame-empty">Your first answer will turn over here.</p>;
   }
   return (

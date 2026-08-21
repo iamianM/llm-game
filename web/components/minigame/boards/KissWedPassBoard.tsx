@@ -13,7 +13,7 @@ export function KissWedPassBoard({
   return (
     <div className="allocation-cards">
       {ROLES.map((role) => {
-        const allocation = board.allocations.find((item) => item.role === role);
+        const allocation = (board.allocations ?? []).find((item) => item.role === role);
         return (
           <div className={allocation ? "is-filled" : ""} key={role}>
             <span className="board-eyebrow">{role}</span>

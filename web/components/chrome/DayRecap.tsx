@@ -1,16 +1,5 @@
+import type { DailyRecapView } from "../../lib/types";
 import { Button } from "../ui/Button";
-
-export type DailyRecapView = {
-  day: number;
-  resort_id: string;
-  resort_label: string;
-  items: Array<{
-    section: "your_day" | "while_busy";
-    speaker_label: string;
-    content: string;
-    emphasis: "standard" | "strong";
-  }>;
-};
 
 const SECTIONS = [
   { id: "your_day", label: "Your day" },
@@ -24,6 +13,7 @@ export function DayRecap({
   recap: DailyRecapView;
   onClose: () => void;
 }) {
+  const recapItems = recap.items ?? [];
   return (
     <div
       data-screen="day-recap"
@@ -36,7 +26,7 @@ export function DayRecap({
         </h2>
         <div className="mt-6 space-y-6">
           {SECTIONS.map((section) => {
-            const items = recap.items.filter((item) => item.section === section.id);
+            const items = recapItems.filter((item) => item.section === section.id);
             if (!items.length) return null;
             return (
               <section key={section.id} data-recap-section={section.id}>
@@ -63,7 +53,7 @@ export function DayRecap({
               </section>
             );
           })}
-          {!recap.items.length ? (
+          {!recapItems.length ? (
             <p className="rounded-[var(--r-md)] border border-line bg-white/60 p-3 text-sm leading-6">
               No major memories surfaced today.
             </p>

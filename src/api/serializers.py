@@ -5,8 +5,6 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Literal
 
-from pydantic import BaseModel
-
 from src.api.display import display
 from src.api.models import (
     ApiExchange,
@@ -25,10 +23,11 @@ from src.game.agents.heartbreaker_voice_context import Exchange
 from src.game.engine.actions import ActionSpec, available_actions
 from src.game.engine.connection import connection_score, connection_tier, describe_shift
 from src.game.engine.couples import couple_strength, partner_for
-from src.game.engine.daily_recap import humanize_player_reference
 from src.game.engine.flush_of_hearts import locations_for_resort
 from src.game.engine.intents import get_intent
 from src.game.engine.results import MechanicalResult
+from src.game.presentation.daily_recap import project_daily_recap
+from src.game.presentation.minigame import MinigameView, project_minigame
 from src.game.state.memory import Memory
 from src.game.state.models import FollowUpOption, GameState, HeartbreakerState
 from src.game.state.traits import KnownFact
@@ -74,7 +73,7 @@ def session_state(session_id: str, state: GameState, recent_delta: int | None = 
             None if state.active_conversation is None else state.active_conversation.target_id
         ),
         resort_snapshot=resort_snapshot(state),
-        daily_recaps=[_recap_view(recap) for recap in state.daily_recaps],
+        daily_recaps=[project_daily_recap(state, recap) for recap in state.daily_recaps],
         intros_greetings=dict(state.intros.greetings) if state.intros is not None else {},
     )
 
@@ -415,91 +414,23 @@ def connection_shift_line(state: GameState, result: MechanicalResult) -> str | N
     return describe_shift(delta, find_name(state, target_id))
 
 
-def _model_dump(value: BaseModel) -> dict[str, object]:
-    return value.model_dump(mode="json")
-
-
-def _recap_view(recap: BaseModel) -> dict[str, object]:
-    """Serialize a daily recap, humanizing any "the player" label for the reader.
-
-    Recaps are surfaced verbatim from heartbreaker memories, which are written in a
-    name-agnostic voice ("the player"). The recap is read *by* the player, so we
-    rewrite that label to second person at the view boundary. This also cleans
-    recaps already baked into older checkpoints, where the substitution could
-    not have run at generation time.
-    """
-    data = _model_dump(recap)
-    items = data.get("items")
-    if isinstance(items, list):
-        for item in items:
-            content = item.get("content") if isinstance(item, dict) else None
-            if isinstance(content, str):
-                item["content"] = humanize_player_reference(content)
-    return data
-
-
 def partner_id_for_player(state: GameState) -> str | None:
     return partner_id(state, "player")
 
 
-def _pending_challenge_view(state: GameState) -> dict[str, object] | None:
-    """Browser-facing view of a round-based pending minigame.
-
-    Returns a compact dict (kind, current round + stem + tier + choices) for
-    round-based minigames so the browser can render the question text above
-    the choice list. Legacy single-roll challenges return ``None`` because
-    they have no per-round state.
-    """
+def _pending_challenge_view(state: GameState) -> MinigameView | None:
+    """Project a pending round-based challenge into its strict browser view."""
     from src.game.engine.challenges import ROUND_BASED_MINIGAMES
+
     challenge = state.pending_challenge
     if challenge is None:
         return None
     if challenge.kind not in ROUND_BASED_MINIGAMES:
         return None
-    cur_index = challenge.current_round_index
-
-    def _round_view(round_) -> dict[str, object]:
-        chosen = next((c for c in round_.choices if c.id == round_.chosen_id), None)
-        correct = next((c for c in round_.choices if c.is_correct), None)
-        reaction_line: str | None = None
-        for reveal in round_.reveals:
-            if reveal.kind == "reaction":
-                line = reveal.payload.get("line")
-                if isinstance(line, str):
-                    reaction_line = line
-                    break
-        return {
-            "round_index": round_.index,
-            "stem": round_.stem,
-            "chosen_label": chosen.label if chosen else None,
-            "correct_label": correct.label if correct else None,
-            "is_correct": bool(chosen and chosen.is_correct),
-            "points": round_.points,
-            "reaction_line": reaction_line,
-        }
-
-    answered = [_round_view(r) for r in challenge.rounds if r.chosen_id is not None]
-    if cur_index >= len(challenge.rounds):
-        return {
-            "kind": challenge.kind,
-            "finished": True,
-            "classification": challenge.classification,
-            "total_points": challenge.total_points,
-            "audience_delta": challenge.audience_delta,
-            "round_count": len(challenge.rounds),
-            "answered_rounds": answered,
-        }
-    current = challenge.rounds[cur_index]
-    return {
-        "kind": challenge.kind,
-        "finished": False,
-        "round_index": cur_index,
-        "round_count": len(challenge.rounds),
-        "stem": current.stem,
-        "trait_key": current.trait_key,
-        "tier": current.tier,
-        "mechanical": current.mechanical,
-        "target_id": current.target_id,
-        "answered_rounds": answered,
-    }
+    question = (
+        challenge.rounds[challenge.current_round_index].stem
+        if challenge.current_round_index < len(challenge.rounds)
+        else None
+    )
+    return project_minigame(challenge, narration="", question=question)
 

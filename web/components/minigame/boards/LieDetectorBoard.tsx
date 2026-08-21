@@ -15,7 +15,7 @@ export function LieDetectorBoard({
   board: LieDetectorBoardView;
   subjectLabels: SubjectLabels;
 }) {
-  if (board.subject_id === null || board.verdict === null || board.needle_percent === null) {
+  if (board.subject_id == null || board.verdict == null || board.needle_percent == null) {
     return <p className="minigame-empty">The needle is waiting for a recorded result.</p>;
   }
   return (
