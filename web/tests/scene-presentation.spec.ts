@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { NO_MINIGAME_PRESENTATION, planScene } from "../components/scene/SceneDirector";
 import { flattenPlan } from "../components/scene/useScenePlayback";
+import { MINIGAME_SCENE_PRESENTATION } from "../lib/minigame/scene-port";
 import type {
   MinigamePresentationPort,
   PresentationTransition,
@@ -172,6 +173,36 @@ test("minigame presentation is composed through the port without scene interpret
   expect(plan.segments.flatMap((candidate) => candidate.beats)).toContainEqual({
     kind: "narrator",
     text: "Board-owned beat.",
+  });
+});
+
+test("the concrete minigame port keeps board truth separate from legal choices", () => {
+  const challengeAction = action("challenge_response", "Rome", "chloe");
+  const current = state({
+    pending_challenge: {
+      status: "round",
+      kind: "compatibility_quiz",
+      round_index: 0,
+      round_count: 2,
+      narration: "",
+      question: "What is Chloe's dream trip?",
+      target_id: "chloe",
+      answered_rounds: [],
+      board: { kind: "compatibility_quiz", latest_answer: null },
+    },
+  });
+
+  const segment = MINIGAME_SCENE_PRESENTATION.plan({
+    kind: "baseline",
+    state: current,
+    actions: [challengeAction],
+  });
+
+  expect(segment?.slot?.question).toBe("What is Chloe's dream trip?");
+  expect(segment?.slot?.choices).toEqual([challengeAction]);
+  expect(segment?.beats.at(-1)).toEqual({
+    kind: "choice_fan",
+    spec: { actions: [challengeAction] },
   });
 });
 

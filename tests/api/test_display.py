@@ -6,12 +6,22 @@ import pytest
 
 from src.api.checkpoints import _humanize
 from src.api.display import display
-from src.api.serializers import action_label, available_actions_api, hide_redundant_hint, memory_api
+from src.api.serializers import (
+    action_label,
+    available_actions_api,
+    hide_redundant_hint,
+    memory_api,
+    session_state,
+)
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction
 from src.game.engine.memory import create_memory
+from src.game.presentation.minigame import MinigameRoundView
+from src.game.state.event_models import Challenge, MinigameChoice, MinigameRound
 from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Conversation,
+    DailyRecap,
+    DailyRecapItem,
     FollowUpMenu,
     FollowUpOption,
     Location,
@@ -164,3 +174,53 @@ def test_memory_api_exposes_stable_identity() -> None:
     )
 
     assert memory_api(memory).id == memory.id
+
+
+def test_session_state_uses_typed_minigame_and_recap_projections() -> None:
+    state = new_game(7)
+    state.pending_challenge = Challenge(
+        id="quiz-day-1",
+        day=1,
+        kind="compatibility_quiz",
+        stat_tested="eq",
+        rounds=[
+            MinigameRound(
+                index=0,
+                prompt_id="quiz-0",
+                target_id="chloe",
+                stem="What is Chloe's dream trip?",
+                choices=[MinigameChoice(id="rome", label="Rome", is_correct=True)],
+            )
+        ],
+    )
+    state.daily_recaps = [
+        DailyRecap(
+            day=1,
+            resort_id="main",
+            items=[
+                DailyRecapItem(
+                    holder_id="chloe",
+                    subject_id="player",
+                    content="Chloe appreciated the player listening.",
+                    formed_on_turn=4,
+                    emotional_weight=8,
+                    tags=["supportive"],
+                    recap_disposition=RecapDisposition.YOUR_DAY,
+                )
+            ],
+        )
+    ]
+
+    view = session_state("session-7", state)
+
+    assert isinstance(view.pending_challenge, MinigameRoundView)
+    assert view.pending_challenge.question == "What is Chloe's dream trip?"
+    assert "choices" not in view.pending_challenge.model_dump(mode="json")
+    recap = view.daily_recaps[0]
+    assert recap.resort_label == "Sunset Bay"
+    assert recap.items[0].model_dump(mode="json") == {
+        "section": "your_day",
+        "speaker_label": "Chloe",
+        "content": "Chloe appreciated you listening.",
+        "emphasis": "strong",
+    }
