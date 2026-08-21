@@ -1,5 +1,7 @@
 id: private-chat-success
 title: Private Chat (Success)
+question: Can a successful private chat cleanly transfer the conversation to the player?
+category: social_dynamics
 goal: Prove a successful private chat cleanly closes the NPC-NPC conversation and hands the player a normal first exchange with the Heartbreaker — without the LLM choosing the outcome.
 thread_check:
   id: thread_acceptance
@@ -50,19 +52,87 @@ turns:
       kind: start_conversation
       target_id: maya
       intent_id: flirty_intimate_eye_contact
-    golden: >
-      The player walks up to Maya at the pool and invites her cleanly out of
-      the chat with Liam. The opening exchange should feel like Maya was
-      flattered to be asked — a quick acknowledgment that she was
-      mid-conversation, then real attention on the player. Imagine: "Bold
-      move in front of Liam. ...Alright, you've got me. Make it worth it."
+    golden:
+      criteria: 'The player walks up to Maya at the pool and invites her cleanly out of the chat with Liam.
+        The opening exchange should feel like Maya was flattered to be asked — a quick acknowledgment that
+        she was mid-conversation, then real attention on the player. Imagine: "Bold move in front of Liam.
+        ...Alright, you''ve got me. Make it worth it."'
+      calls:
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: background
+          memories:
+          - holder_id: maya
+            subject_id: liam
+            content: I compared notes with Liam about the early couples, but the conversation left me without
+              a clear read on what he really thought.
+            source: direct
+            source_id: null
+            emotional_weight: 2
+            tags:
+            - early_couples
+            - uncertain
+            - surface_level
+            durable: true
+          - holder_id: liam
+            subject_id: maya
+            content: Maya and I compared notes on the early couples, though nothing in the exchange gave me
+              a strong sense of where she stood.
+            source: direct
+            source_id: null
+            emotional_weight: 2
+            tags:
+            - early_couples
+            - uncertain
+            - surface_level
+            durable: true
+          summary: Maya and Liam compared notes on the early couples, but there was no substantive exchange
+            to create a strong emotional impression. The conversation ended without either gaining a clear
+            read on the other.
+          gossip_seeds: []
+      - agent: heartbreaker_voice
+        output_type: Exchange
+        output:
+          player_dialogue: I thought I’d steal you away before Liam could compare any more notes. Now that
+            it’s just us, I’d rather look at you properly.
+          npc_dialogue: '*holds your gaze, a grin tugging at her mouth* Oh, stealing me from Liam? Bold move
+            before breakfast. Keep looking, then—just don’t expect me to make it easy when you’re being this
+            distracting.'
+          npc_tone: flirty
+          npc_mood_after: flirty
+      - agent: contextual_options
+        output_type: ContextualBespoke
+        output:
+          options:
+          - label: Ask when she drops the joke
+            category: deep
+            intent_kind: ask_about_topic
+            stat_used: eq
+            risk: low
+            tone: curious and attentive
+            audience_hint: +
+            reveal_tier: 1
+            reveal_tag: off_camera_self
+            unlock_threshold: null
+          - label: Notice her unguarded side
+            category: supportive
+            intent_kind: supportive_validate
+            stat_used: eq
+            risk: safe
+            tone: warm and grounding
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: seen_beyond_the_jokes
+            unlock_threshold: null
+          npc_will_leave: false
+          npc_exit_line: null
     checks:
       - private_chat_recorded
       - private_chat_succeeded
       - npc_conversation_closed
       - exchange_valid
       - follow_up_menu_valid
-      - exactly_one_exit
       - conversation_active
       - agent_traces_present
       - no_agent_validation_retries

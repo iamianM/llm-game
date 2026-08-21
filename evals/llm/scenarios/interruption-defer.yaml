@@ -1,5 +1,7 @@
 id: interruption-defer
 title: Conversation Interruption (Defer)
+question: Can deferring an interruption preserve the active conversation?
+category: social_dynamics
 goal: 'Prove an NPC interruption mid-conversation routes through the engine cleanly: the player picks "defer", the engine resolves the chance, the pending interruption clears, and the original conversation stays active.'
 thread_check:
   id: thread_acceptance
@@ -54,11 +56,11 @@ turns:
       kind: respond_with
       target_id: liam
       intent_id: defer_interruption
-    golden: >
-      Liam walks up polite, the player asks him for a beat, and the engine
-      keeps Chloe as the active conversation. The pending interruption clears
-      either way; whether Liam leaves easily is recorded by the chance roll
-      and relationship delta.
+    golden:
+      criteria: Liam walks up polite, the player asks him for a beat, and the engine keeps Chloe as the active
+        conversation. The pending interruption clears either way; whether Liam leaves easily is recorded by
+        the chance roll and relationship delta.
+      calls: []
     checks:
       - interruption_cleared
       - active_conversation_target_is:chloe

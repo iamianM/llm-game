@@ -1,5 +1,7 @@
 id: private-suite-night
 title: Paradise Suite (Private Suite)
+question: Can the suite reward apply once and narrate the correct romantic beat?
+category: special_events
 goal: Prove a Day 5 evening Private Suite moves the player and partner into the suite, applies the deterministic relationship reward exactly once, marks the couple as committed, and gives the Event Narrator the Private Suite beat to narrate.
 thread_check:
   id: thread_acceptance
@@ -44,13 +46,18 @@ turns:
       chloe: flame_deck
     action:
       kind: private_suite
-    golden: >
-      The player and Chloe leave the flame_deck and the suite door closes. The
-      narration should hold on the privacy of it: softer light, fewer
-      cameras, the cast pretending not to listen. Imagine: "He follows her
-      into the suite without saying a word. Outside, the rest of the cast
-      is loud on purpose to give them the room." No other Heartbreaker is
-      named inside the suite.
+    golden:
+      criteria: 'The player and Chloe leave the flame_deck and the suite door closes. The narration should
+        hold on the privacy of it: softer light, fewer cameras, the cast pretending not to listen. Imagine:
+        "He follows her into the suite without saying a word. Outside, the rest of the cast is loud on purpose
+        to give them the room." No other Heartbreaker is named inside the suite.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: You and Chloe slip away from Sunset Bay’s noise and into a private Paradise Suite night,
+            with the door closing on the rest of the resort. Chloe’s gaze stays on you as your hands find
+            each other, and for one quiet beat, the two of you hold the warmth of being alone together.
     checks:
       - private_suite_consumed:chloe
       - location_is:private_suite

@@ -7,17 +7,6 @@ from typing import Any
 from src.game.reporting.html_base import escape
 
 
-def expected_agent_tools(action: dict[str, Any], expected: list[str] | None = None) -> str:
-    """Render the expected agent tools for a turn's action.
-
-    The runner is the source of truth — it knows whether ``live_resort_life``
-    is on. The report only renders what it is handed.
-    """
-    tools = expected if expected else ["Engine-only turn"]
-    items = "".join(f"<span class='pill'>{escape(tool)}</span>" for tool in tools)
-    return f"<div class='pill-row'>{items}</div>"
-
-
 def actual_agent_tool_responses(record: dict[str, Any]) -> str:
     """Render actual live agent calls, schemas, responses, and reasoning summaries."""
     traces = record.get("agent_traces")

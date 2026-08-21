@@ -17,6 +17,7 @@ from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
 from src.game.engine.turn import run_turn
 from src.game.eval.golden_checks import run_deterministic_check
+from src.game.eval.golden_costs import CallCost, RunAccounting, summarize_call, summarize_calls
 from src.game.eval.golden_judge import run_thread_check
 from src.game.eval.golden_models import (
     CheckResultValue,
@@ -29,6 +30,7 @@ from src.game.eval.golden_models import (
     JudgeTrace,
 )
 from src.game.eval.golden_report import render_golden_eval_html
+from src.game.eval.golden_showcase import build_golden_eval_showcase
 from src.game.state.models import GameState, new_game
 from src.game.state.phase_clock import PhaseClock
 from src.game.state.rng import SeededRng
@@ -87,6 +89,7 @@ def run_golden_eval(
     passed = sum(1 for result in results if result.status == "pass")
     failed = sum(1 for result in results if result.status == "fail")
     cannot_determine = sum(1 for result in results if result.status == "cannot_determine")
+    accounting = _run_accounting(results)
     run = GoldenEvalRun(
         llm_mode="real" if real_llm else "mock",
         judge_enabled=judge,
@@ -95,10 +98,15 @@ def run_golden_eval(
         passed=passed,
         failed=failed,
         cannot_determine=cannot_determine,
+        accounting=accounting,
         scenarios=results,
     )
     (out / "artifacts" / "run.json").write_text(run.model_dump_json(indent=2), encoding="utf-8")
     (out / "index.html").write_text(render_golden_eval_html(run), encoding="utf-8")
+    (out / "showcase.json").write_text(
+        build_golden_eval_showcase(run).model_dump_json(indent=2),
+        encoding="utf-8",
+    )
     return run
 
 
@@ -110,6 +118,51 @@ def _resolved_worker_count(scenario_count: int, max_workers: int | None) -> int:
     if max_workers < 1:
         raise ValueError("--max-workers must be at least 1")
     return min(max_workers, scenario_count)
+
+
+def _run_accounting(results: list[GoldenScenarioResult]) -> RunAccounting:
+    agent_calls: list[CallCost] = []
+    judge_calls: list[CallCost] = []
+    for result in results:
+        for turn in result.turns:
+            record = turn.record if isinstance(turn.record, dict) else {}
+            traces = record.get("agent_traces")
+            if not isinstance(traces, list):
+                continue
+            for trace in traces:
+                if not isinstance(trace, dict):
+                    continue
+                usage = trace.get("usage")
+                agent_calls.append(
+                    summarize_call(
+                        str(trace.get("model", "")),
+                        usage if isinstance(usage, dict) else {},
+                    )
+                )
+        judge = result.judge_trace
+        if judge is not None:
+            judge_calls.append(
+                summarize_call(
+                    judge.model,
+                    {
+                        key: value
+                        for key in (
+                            "input_tokens",
+                            "cached_input_tokens",
+                            "cache_write_tokens",
+                            "output_tokens",
+                            "reasoning_tokens",
+                            "total_tokens",
+                        )
+                        if (value := getattr(judge, key)) is not None
+                    },
+                )
+            )
+    return RunAccounting(
+        game_agents=summarize_calls(agent_calls),
+        judges=summarize_calls(judge_calls),
+        total=summarize_calls([*agent_calls, *judge_calls]),
+    )
 
 
 def _run_scenario(
@@ -143,7 +196,6 @@ def _run_scenario(
                     id=turn_spec.id,
                     action=turn_spec.action.model_dump(mode="json"),
                     arrangements=_turn_arrangements_payload(turn_spec),
-                    expected_tools=_expected_tools(turn_spec, scenario),
                     golden=turn_spec.golden,
                     input_hash=input_hash,
                     output_hash=turn.state_hash,
@@ -165,7 +217,6 @@ def _run_scenario(
                     id=turn_spec.id,
                     action=turn_spec.action.model_dump(mode="json"),
                     arrangements=_turn_arrangements_payload(turn_spec),
-                    expected_tools=_expected_tools(turn_spec, scenario),
                     golden=turn_spec.golden,
                     input_hash=input_hash,
                     record=error_record,
@@ -181,7 +232,6 @@ def _run_scenario(
                     error=str(exc),
                 )
             )
-            records.append(error_record)
             break
     (out / "artifacts" / f"{scenario.id}-trace.json").write_text(
         json.dumps(records, indent=2),
@@ -208,6 +258,8 @@ def _run_scenario(
     return GoldenScenarioResult(
         id=scenario.id,
         title=scenario.title,
+        question=scenario.question,
+        category=scenario.category,
         goal=scenario.goal,
         status=_scenario_status(turn_results, thread_check),
         thread_expectation=scenario.thread_check,
@@ -324,45 +376,6 @@ def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
             ]
         payload["active_conversation"] = active
     return payload
-
-
-def _expected_tools(turn_spec: GoldenTurnSpec, scenario: GoldenEvalScenario) -> list[str]:
-    kind = turn_spec.action.kind.value
-    if kind == "respond_with" and turn_spec.action.intent_id in {
-        "defer_interruption",
-        "ignore_interruption",
-    }:
-        return ["Engine-only turn"]
-    if kind in {"start_conversation", "respond_with"}:
-        tools = ["Heartbreaker Voice -> Exchange", "Contextual Options -> ContextualBespoke"]
-        if scenario.live_resort_life:
-            tools.extend(
-                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
-            )
-        return tools
-    if kind == "end_conversation":
-        tools = ["Conversation Curator -> MemoryBatch"]
-        if scenario.live_resort_life:
-            tools.extend(
-                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
-            )
-        return tools
-    if kind in {
-        "ambient",
-        "join_gather",
-        "pair",
-        "propose_pair",
-        "challenge_response",
-        "private_suite",
-        "npc_proposal_response",
-    }:
-        tools = ["Event Narrator -> EventNarration"]
-        if scenario.live_resort_life:
-            tools.extend(
-                ["Resort Orchestrator -> ResortUpdate", "Background Dialogue -> BackgroundExchange"]
-            )
-        return tools
-    return ["Engine-only turn"]
 
 
 _UNIVERSAL_CHECKS: tuple[str, ...] = ("engine_state_invariants_preserved",)

@@ -1,5 +1,7 @@
 id: pairing-heart_out
 title: Pairing Ceremony With A Heart Out
+question: Can a pairing and elimination land as one accurate dramatic beat?
+category: pairing_and_endings
 goal: Prove a deterministic Pairing Ceremony (pairing) and a Heart Out (heart_out) narrate as one dramatic beat — the right names, the right couples, the right elimination — without the LLM picking any of it.
 thread_check:
   id: thread_acceptance
@@ -59,11 +61,17 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      The resort is called to the flame_deck. The producer text lands, the
-      Heartbreakers gather, and the narration sets the room — tension by
-      couple, who's looking confident, who's looking at their feet — while
-      the result still hangs in the air.
+    golden:
+      criteria: The resort is called to the flame_deck. The producer text lands, the Heartbreakers gather,
+        and the narration sets the room — tension by couple, who's looking confident, who's looking at their
+        feet — while the result still hangs in the air.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The call goes out across the pool, sending you and Chloe toward the Flame Deck for a Pairing
+            Ceremony. Chloe catches your eye before she turns, and the held look makes the next step feel
+            suddenly real.
     checks:
       - ceremony_events_present
       - pending_gather_waiting
@@ -71,14 +79,20 @@ turns:
   - id: resolve-pairing
     action:
       kind: join_gather
-    golden: >
-      The ceremony plays. The narrator names every couple that lands, in
-      order, with one quick beat each (the speech, the relief, the
-      side-eye). If the engine event data shows a Heart Out, that exact
-      Heartbreaker is named as leaving and treated as gone — not rescued,
-      not reassigned. Imagine: "Liam steps forward and chooses Maya — no
-      hesitation. ...Nia's name is not called. The flame_deck goes quiet as
-      she gathers her things."
+    golden:
+      criteria: 'The ceremony plays. The narrator names every couple that lands, in order, with one quick
+        beat each (the speech, the relief, the side-eye). If the engine event data shows a Heart Out, that
+        exact Heartbreaker is named as leaving and treated as gone — not rescued, not reassigned. Imagine:
+        "Liam steps forward and chooses Maya — no hesitation. ...Nia''s name is not called. The flame_deck
+        goes quiet as she gathers her things."'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'The Pairing Ceremony locks in four couples: you and Marcus, Liam and Chloe, Blake and Maya,
+            and Jordan and Sophie. Marcus’s hand finds yours as the new lineup settles around the flame deck,
+            a small flash of relief cutting through the tension. Then the night turns hard as Nia goes Heart
+            Out, leaving Sunset Bay behind.'
     checks:
       - ceremony_events_present
       - event_narration_valid

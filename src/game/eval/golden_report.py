@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
+import json
 from typing import Any
 
 from src.game.eval.golden_models import GoldenEvalRun, GoldenScenarioResult, GoldenTurnResult
-from src.game.eval.golden_report_agents import actual_agent_tool_responses, expected_agent_tools
+from src.game.eval.golden_report_agents import actual_agent_tool_responses
 from src.game.eval.golden_report_assets import report_css, report_script
 from src.game.reporting.html_base import escape
 
@@ -187,13 +188,21 @@ def _turn_block(turn: GoldenTurnResult) -> str:
 
 
 def _golden_contract(turn: GoldenTurnResult) -> str:
+    calls = "".join(
+        "<article class='trace-card'>"
+        f"<b>{escape(call.agent)}</b>"
+        f"<p class='muted'>Tool/schema: {escape(call.output_type)}</p>"
+        f"<pre>{escape(json.dumps(call.output, indent=2))}</pre>"
+        "</article>"
+        for call in turn.golden.calls
+    )
+    rendered_calls = calls or "<p class='muted'>No model call expected.</p>"
     return (
-        "<section><h3>Golden Tools / Expected Response</h3>"
+        "<section><h3>Reviewed Golden Results</h3>"
         "<div class='golden-grid'>"
-        "<div class='contract-card'><b>Expected tool calls</b>"
-        f"{expected_agent_tools(turn.action, turn.expected_tools)}</div>"
         f"{_arrangements(turn.arrangements)}"
-        f"<div class='contract-card'><b>Expected response</b><p class='golden'>{escape((turn.golden or '').strip())}</p></div>"
+        f"<div class='contract-card'><b>Comparison criteria</b><p class='golden'>{escape(turn.golden.criteria.strip())}</p></div>"
+        f"<div class='trace-grid'>{rendered_calls}</div>"
         "</div></section>"
     )
 

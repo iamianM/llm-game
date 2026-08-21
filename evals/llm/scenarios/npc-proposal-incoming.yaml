@@ -1,5 +1,7 @@
 id: npc-proposal-incoming
 title: Incoming NPC Proposal And Accept
+question: Can an NPC proposal apply the exact couple and relationship changes?
+category: pairing_and_endings
 goal: Prove the engine can surface an NPC-initiated Heart Swap proposal as a pending ask, then accept it with the exact engine-owned couple change and relationship deltas.
 thread_check:
   id: thread_acceptance
@@ -49,10 +51,16 @@ turns:
     action:
       kind: ambient
       target_id: pool_people_watch
-    golden: >
-      Maya's proposal becomes a pending ask. The narration can frame the
-      charged moment, but it must not claim the player accepted, rejected,
-      or formed a new couple yet.
+    golden:
+      criteria: Maya's proposal becomes a pending ask. The narration can frame the charged moment, but it
+        must not claim the player accepted, rejected, or formed a new couple yet.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: By the pool, Maya’s interest turns unmistakable as she prepares to ask you to pair with her.
+            Chloe remains beside you, and the camera catches the charged silence between you as Maya’s move
+            lands in the middle of your existing connection.
     checks:
       - pending_npc_proposal_from:maya
       - ceremony_event_present:npc_proposal_incoming
@@ -63,12 +71,16 @@ turns:
       kind: npc_proposal_response
       target_id: maya
       intent_id: accept
-    golden: >
-      The response accepts Maya's Heart Swap proposal. The narrator can show
-      Chloe or Liam reacting, but the deterministic result is specific:
-      pending ask cleared, player/Maya couple formed, Maya gets the accepted
-      response deltas, and the audience does not move for this loyal-player
-      setup.
+    golden:
+      criteria: 'The response accepts Maya''s Heart Swap proposal. The narrator can show Chloe or Liam reacting,
+        but the deterministic result is specific: pending ask cleared, player/Maya couple formed, Maya gets
+        the accepted response deltas, and the audience does not move for this loyal-player setup.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, Maya’s proposal lands—and you accept her. The camera catches the relief in her
+            smile as she steps closer, and you and Maya stand together as a confirmed couple.
     checks:
       - proposal_outcome_is:accepted
       - pending_npc_proposal_cleared

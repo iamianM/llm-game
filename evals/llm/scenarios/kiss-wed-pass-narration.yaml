@@ -1,5 +1,7 @@
 id: kiss-wed-pass-narration
 title: Kiss Wed Pass Allocation
+question: Can the narrator dramatise all three choices accurately?
+category: challenges
 goal: Prove the narrator names each of the three allocations specifically and dramatises the pass pick.
 thread_check:
   id: thread_acceptance
@@ -48,26 +50,42 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Morning ends. Producer announces Kiss Wed Pass. Three rounds queued
-      with three candidate targets: partner Chloe, top-chemistry Maya,
-      rival Blake.
+    golden:
+      criteria: 'Morning ends. Producer announces Kiss Wed Pass. Three rounds queued with three candidate
+        targets: partner Chloe, top-chemistry Maya, rival Blake.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, you and Chloe remain coupled, sharing a held silence as the moment stays unresolved.
+            No new outcome lands.
     checks:
       - ceremony_events_present
   - id: kiss-maya
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_maya, round_index: 0 } }
-    golden: Player kisss Maya (chemistry pick). Pool shrinks for round 2.
+    golden:
+      criteria: Player kisss Maya (chemistry pick). Pool shrinks for round 2.
+      calls: []
     checks: []
   - id: wed-chloe
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_chloe, round_index: 1 } }
-    golden: Player weds Chloe (partner pick). Only Blake remains.
+    golden:
+      criteria: Player weds Chloe (partner pick). Only Blake remains.
+      calls: []
     checks: []
   - id: pass-blake
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake, round_index: 2 } }
-    golden: >
-      Player passes Blake (rival). Classification success (kiss_chemistry
-      3 + wed_partner 3 + pass_rival 3 = 9 pts >= success threshold 6).
-      Audience +5. Narrator names all three picks specifically.
+    golden:
+      criteria: Player passes Blake (rival). Classification success (kiss_chemistry 3 + wed_partner 3 + pass_rival
+        3 = 9 pts >= success threshold 6). Audience +5. Narrator names all three picks specifically.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The Kiss Wed Pass lands cleanly at the pool, with every card played and the afternoon crowd
+            locked onto you. You choose Maya for the kiss, then give the Wed card to Chloe, and her reaction
+            breaks through as your eyes meet across the flame-deck benches. Blake receives the final Pass,
+            while Chloe remains the partner at the center of the moment.
     checks:
       - ceremony_events_present
       - event_narration_valid

@@ -106,6 +106,7 @@ class AgentUsage(BaseModel):
     output_tokens: int | None = None
     total_tokens: int | None = None
     cached_input_tokens: int | None = None
+    cache_write_tokens: int | None = None
     reasoning_tokens: int | None = None
 
 
@@ -435,6 +436,7 @@ def _response_usage(response: object) -> AgentUsage | None:
         output_tokens=_int_value(_get(usage, "output_tokens")),
         total_tokens=_int_value(_get(usage, "total_tokens")),
         cached_input_tokens=_int_value(_get(input_details, "cached_tokens")),
+        cache_write_tokens=_int_value(_get(input_details, "cache_write_tokens")),
         reasoning_tokens=_int_value(_get(output_details, "reasoning_tokens")),
     )
 
