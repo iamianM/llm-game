@@ -9,6 +9,28 @@ groups:
       - docs/phase3-fastapi-contract.md
       - docs/phase3-ui-spec.md
       - docs/decisions/0012-nextjs-thin-client-over-vite.md
+      - docs/decisions/0015-deep-scene-and-minigame-presentation.md
+
+  - id: scene_presentation
+    paths:
+      - web/components/scene/**
+      - web/components/stage/GameStage.tsx
+      - web/lib/scene/**
+    docs:
+      - docs/scene-dialogue/IMPLEMENTATION-HANDOFF.md
+      - docs/decisions/0015-deep-scene-and-minigame-presentation.md
+      - docs/phase3-ui-spec.md
+
+  - id: minigame_presentation
+    paths:
+      - src/game/presentation/minigame.py
+      - web/components/minigame/**
+      - web/lib/minigame/**
+      - web/tests/e2e/minigame-presentation.spec.ts
+    docs:
+      - docs/minigame-system.md
+      - docs/decisions/0015-deep-scene-and-minigame-presentation.md
+      - docs/phase3-fastapi-contract.md
 
   - id: balance_boundary
     paths:
@@ -47,6 +69,32 @@ groups:
     docs:
       - ENGINEERING.md
       - docs/decisions/0014-agent-split-after-narrator-v0.md
+      - docs/decisions/0016-game-owned-turn-agent-set.md
+
+  - id: turn_agent_set
+    paths:
+      - src/game/agents/turn_agents.py
+      - src/game/agents/runtime.py
+      - src/game/agents/recorded.py
+      - src/game/engine/turn.py
+      - src/api/app.py
+      - src/game/eval/golden_runner.py
+    docs:
+      - 03-LLM-Architecture.md
+      - ENGINEERING.md
+      - docs/decisions/0016-game-owned-turn-agent-set.md
+      - docs/phase3-fastapi-contract.md
+
+  - id: daily_recap
+    paths:
+      - src/game/engine/daily_recap.py
+      - src/game/presentation/daily_recap.py
+      - src/game/state/memory.py
+      - web/components/chrome/DayRecap.tsx
+    docs:
+      - CONTEXT.md
+      - docs/decisions/0017-daily-recap-facts-and-projection.md
+      - docs/phase3-fastapi-contract.md
 
   - id: qa_tooling
     paths:

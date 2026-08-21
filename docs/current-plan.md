@@ -73,42 +73,6 @@ If an item cannot name its eval evidence, it is probably still design work.
 
 ## Now
 
-### Scene-Dialogue Stage (Visual-Novel Browser Rewrite)
-
-**Problem:** The current browser stage is a dashboard: left-side dialogue box,
-right-side choice menu, idle CastRing. The player can't see themselves and the
-mobile layout fights between dialogue text and choice buttons for bottom-screen
-space. Conversation never feels staged.
-
-**Player value:** A staged scene where the player's character is always visible
-at the bottom-center, NPCs stand in the environment, dialogue floats as
-speech bubbles anchored to whoever is talking, the narrator gets a distinct
-top-anchored bubble, and player choices fan out near the player's tile. The
-same scene grammar carries minigames via embedded `ChallengeSpectacle` boards
-with character-driven camera cuts (NPCs strut on/off, focus moves between
-two-shots and group reactions).
-
-**Smallest slice:** Hard-replace `GameStage`'s dashboard branch with a new
-`SceneDialogueStage` (no feature flag). Keep the engine, API, and
-`ChallengeSpectacle` minigame board logic; refactor `ChallengeSpectacle` to
-mount inside the scene rather than full-screen. Add six new player cutouts
-(per archetype × gender) and replace existing NPC images with
-transparent-background cutouts. Delete `DialogueBox`, `ChoiceMenu`,
-`CastRing`, `NpcPortrait` in the final commit.
-
-**Surfaces:** `web/components/scene/` (new), `web/components/stage/GameStage.tsx`,
-`web/components/stage/ChallengeSpectacle.tsx`, `web/public/images/characters/`,
-`web/public/images/player/` (new), `web/lib/scene/` (new).
-
-**Eval:** `cd web && npx playwright test` including new
-`scene-dialogue.spec.ts`; `cd web && npx tsc --noEmit`; `uv run pytest tests/
---ignore=tests/agents`; `uv run python -m src.game.cli verify --all`; manual
-checkpoint walkthroughs.
-
-**Acceptance:** Implementation contract is
-[docs/scene-dialogue/IMPLEMENTATION-HANDOFF.md](scene-dialogue/IMPLEMENTATION-HANDOFF.md);
-codex implements, Claude reviews against the doc's success criteria (§10).
-
 ### Real Eval Review And Failure-Driven Fixes
 
 **Problem:** The golden LLM eval system exists, but its value comes from using it
@@ -141,10 +105,10 @@ CLI or raw traces to understand what happened.
 
 **Smallest slice:** Review the browser through character creation, opening
 coupling, first chats, interruption/pull moments, challenge, Pairing Ceremony warning,
-and Day-3 Pairing Ceremony. Fix only the confusing or unreachable surfaces. Includes
-wiring the round-based Compatibility Quiz view that the API now exposes
-(`pending_challenge.stem`, `round_index`, `round_count`, `choices[]` with
-`{choice_id, round_index}` payloads).
+and Day-3 Pairing Ceremony. Fix only the confusing or unreachable surfaces.
+Exercise the typed `pending_challenge` `round | wrap` projection for every
+minigame and confirm the compact insert, scene sequencing, and legal
+`available_actions` remain aligned on mobile and desktop.
 
 **Surfaces:** `web/`, `src/api/`, CLI/browser shared action vocabulary, and
 `docs/phase3-ui-spec.md`.
@@ -155,28 +119,6 @@ and a review packet for the same action path when useful.
 **Acceptance:** Every legal engine action in the covered path is reachable in
 the browser, the player can tell why the resort state changed, and no important
 result is visible only in raw JSON.
-
-### Remaining Five Minigames
-
-Build after the Compatibility Quiz proves the shared harness. Each reuses the
-same Question Bank, deterministic scoring contract, narration payload, surface
-checklist, and three-layer eval policy from
-[minigame-system.md](minigame-system.md). One PR per minigame. Order:
-
-1. The Couples Quiz — [minigames/couples-quiz.md](minigames/couples-quiz.md)
-   (validates two-sided rounds).
-2. Lie Detector — [minigames/lie-detector.md](minigames/lie-detector.md)
-   (adds the truth/lie axis and event-history lookups).
-3. Pulse Race — [minigames/heart-rate.md](minigames/heart-rate.md)
-   (validates reveal-only minigames with one reaction round).
-4. Kiss Wed Pass — [minigames/kiss-wed-pass.md](minigames/kiss-wed-pass.md)
-   (validates constrained-allocation choice sets).
-5. Final Couples Challenge — [minigames/final-couples.md](minigames/final-couples.md)
-   (validates cross-minigame aggregation feeding the final vote).
-
-If the Compatibility Quiz exposes a harness change, fix the harness first and
-update [minigame-system.md](minigame-system.md) before the next minigame
-starts.
 
 ### Social Event Broadcasts
 

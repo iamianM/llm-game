@@ -1,548 +1,275 @@
-# Phase 3 — FastAPI Contract
+# FastAPI Browser Contract
 
-The HTTP and SSE contract between the Next.js frontend and the Python engine.
-The FastAPI server is a *thin adapter*. It does no game logic — every request
-calls into existing `src/game/` modules and serializes their output.
+This document defines the current HTTP and SSE boundary between the Next.js
+browser and the canonical Python game. FastAPI is a stateless adapter. It
+hydrates the client-held persisted envelope, calls the same engine path as the
+CLI and evals, then returns a typed player-facing view and the next persisted
+envelope.
 
-**One of its key responsibilities** is translating structured engine identifiers
-(`heart_throb`, `flush_of_hearts`, `pair`, `opening`, etc.) into Paradise Hearts
-display strings (Heart Throb, Flush of Hearts, Heart Swap, First Spark, etc.)
-before sending to the frontend. It must not rewrite free-text prose with
-keyword or regex replacement. See `paradise-hearts-glossary.md` for the full
-vocabulary and the "Naming reconciliation" section below for the identifier
-display table.
+The adapter may translate structured identifiers into display labels. It does
+not own gameplay rules, parse meaning from prose, or keep an independent copy
+of game state.
 
-**Target:** ~200 lines for `src/api/app.py`, plus Pydantic models in
-`src/api/models.py`, plus ~80 lines in `src/api/display.py` for the
-translation helpers.
+## Runtime topology
 
-## Server lifecycle
+```text
+Next.js browser
+  -> PersistedSession from local storage
+  -> FastAPI request
+  -> hydrate GameState and SeededRng
+  -> run_turn(state, action, rng, TurnAgentSet)
+  -> typed presentation projections
+  -> view plus updated PersistedSession
+```
 
-- Dev: `uv run uvicorn src.api.app:app --reload --port 8000`
-- Prod: same uvicorn invocation, no `--reload`, behind a reverse proxy
-- CORS: allow `http://localhost:3000` in dev; tighten for prod via env
-- In-memory session storage: `SESSIONS: dict[str, GameSession]` keyed by UUID
-  - `GameSession` holds `GameState`, `Rng`, the agent instances, and a lock
-  - LRU eviction at 32 concurrent sessions (MVP — way over MVP capacity)
-- LLM mode: env var `PARADISE_MOCK_LLM=1` swaps real agents for mock voices
-  (fast/free dev iteration)
+The browser sends the complete `PersistedSession` on view, turn, and cast
+requests. The current anonymous POC stores that envelope in browser local
+storage. A future account store may replace local storage without changing the
+engine boundary.
+
+Development server:
+
+```bash
+uv run uvicorn src.api.app:app --reload --port 8000
+```
+
+The browser calls FastAPI directly on port 8000 in development. Production
+routes `/api/*` to the FastAPI service and removes the `/api` prefix.
+
+## Persisted session
+
+`src/api/persisted.py` owns the storage envelope:
+
+```python
+class PersistedSession(BaseModel):
+    schema_version: int
+    session_id: str
+    user_id: str | None
+    rng_state: list[Any]
+    game_state: dict[str, Any]
+    mock_llm: bool
+```
+
+`hydrate` validates `game_state` as `GameState` and restores `SeededRng` from
+its snapshot. `freeze` captures state and RNG together after a successful turn.
+The engine snapshot schema is checked independently inside `game_state`.
 
 ## Endpoints
 
-### `POST /session/new`
+### Health and version
 
-Creates a new game session.
+- `GET /healthz` reports process liveness.
+- `GET /readyz` reports adapter readiness.
+- `GET /version` returns engine schema, API version, and build identifier.
 
-**Request:**
+### Create a session
+
+`POST /session/new` accepts:
+
 ```json
 {
   "archetype": "heartthrob",
   "player_name": "You",
   "player_gender": "man",
-  "seed": null
+  "seed": 42,
+  "mock_llm": true
 }
 ```
 
-- `archetype`: one of `"heartthrob" | "class_clown" | "loyal_friend"`
-- `player_name`: optional display name; default "You"
-- `player_gender`: `"man" | "woman"` (extend later)
-- `seed`: optional int; null → server-generated
+It creates the deterministic state, applies character creation, runs live
+setup agents when real mode is selected, and returns `NewSessionEnvelope`:
 
-**Response (201):**
 ```json
 {
-  "session_id": "8c2a1d3f-...",
-  "state": { ... full SessionState ... },
-  "available_actions": [ ... ]
-}
-```
-
-**Errors:**
-- 400 invalid archetype
-- 500 engine init failure
-
-### `GET /session/{session_id}`
-
-Snapshot of current state. Used by the frontend on initial mount and on
-resume after refresh.
-
-**Response (200):**
-```json
-{
-  "session_id": "8c2a1d3f-...",
-  "state": { ... full SessionState ... },
-  "available_actions": [ ... ]
-}
-```
-
-**Errors:**
-- 404 session not found
-
-### `POST /session/{session_id}/turn`
-
-Submit a player action. Non-streaming version (used by the UI's
-optimistic-locking flow before SSE wiring lands).
-
-**Request:**
-```json
-{
-  "kind": "respond_with",
-  "target_id": "chloe",
-  "intent_id": "friendly_ask_feelings",
-  "option_index": 0,
-  "payload": {}
-}
-```
-
-**Response (200):**
-```json
-{
-  "state": { ... updated SessionState ... },
-  "exchange": { ... dialogue ... } | null,
-  "available_actions": [ ... ],
-  "ceremony_events": [ ... ] | [],
-  "audience_delta": -2 | 0 | 3 | null,
-  "audience_delta_reason": "they didn't love the gossip" | null,
-  "memories_formed": [ ... ] | [],
-  "background_activity": [ ... ] | []
-}
-```
-
-**Errors:**
-- 400 invalid action for state
-- 404 session not found
-
-### `POST /session/{session_id}/turn/stream`
-
-Submit a player action, get SSE stream back. This is the streamed-typewriter
-variant.
-
-**Request:** same as `/turn`.
-
-**Response (200, `text/event-stream`):**
-
-Events emitted in order:
-
-```
-event: turn_start
-data: {"turn": 8, "phase": "afternoon", "location": "pool"}
-
-event: dialogue_start
-data: {"speaker": "chloe", "speaker_name": "Chloe", "mood_before": "playful"}
-
-event: dialogue_chunk
-data: {"text": "*smiles* That actu"}
-
-event: dialogue_chunk
-data: {"text": "ally feels good "}
-
-event: dialogue_chunk
-data: {"text": "coming from you."}
-
-event: dialogue_end
-data: {
-  "mood_after": "warm",
-  "audience_delta": 2,
-  "audience_delta_reason": "you stayed loyal",
-  "relationship_deltas": {"chloe": {"affection": 3, "trust": 1}}
-}
-
-event: state
-data: { ... full updated SessionState ... }
-
-event: options
-data: { "actions": [ ... ] }
-
-event: ceremony
-data: { "kind": "pair_proposal", "narration": "...", "couples": [...] }
-// only when a ceremony fires this turn
-
-event: resort_update
-data: { "interruptions": [...], "background_starts": [...], ... }
-// only when there is background activity
-
-event: turn_end
-data: { "state_hash": "abc123" }
-```
-
-**SSE format:** each event is `event: <name>\n` + `data: <json>\n\n`. UTF-8.
-`id: <int>` for `Last-Event-ID` resume support (Phase 4).
-
-**Errors:** SSE channel emits an `event: error` then closes:
-```
-event: error
-data: {"status": 400, "message": "invalid action for state"}
-```
-
-### `GET /session/{session_id}/cast/{npc_id}`
-
-Full popout detail for one NPC. Lazy-loaded when the player opens a cast tile.
-
-**Response (200):**
-```json
-{
-  "id": "chloe",
-  "name": "Chloe",
-  "gender": "woman",
-  "archetype": "sweetheart",
-  "mood": "content",
-  "location": "flame_deck",
-  "backstory": "Twenty-six, primary school teacher from Liverpool. ...",
-  "familiarity": 41,
-  "relationship": {
-    "affection": 43,
-    "chemistry": 6,
-    "trust": 53,
-    "friendship": 7
+  "view": {
+    "session_id": "...",
+    "state": {},
+    "available_actions": []
   },
-  "type_on_paper": {
-    "physical_type": "warm smiles and kind eyes",
-    "personality_type": null,    // gated by familiarity threshold
-    "values": null,
-    "dealbreakers": null
-  },
-  "memories": [
-    {"subject_id": "marcus", "content": "...", "weight": 5, "source": "direct"},
-    ...
-  ],
-  "coupled_with": "player",
-  "eliminated": false
+  "persisted": {}
 }
 ```
 
-### `GET /session/{session_id}/couples`
+Setup-agent exhaustion returns `STORY_ENGINE_ERROR`; the adapter does not open
+a partially generated live session.
 
-Full couples list with strength scores. Used by the right-rail panel.
+### Load a checkpoint
 
-**Response (200):**
-```json
-{
-  "couples": [
-    {
-      "partner_a_id": "player",
-      "partner_b_id": "chloe",
-      "formed_on_day": 1,
-      "formed_via": "opening",
-      "strength": 67,
-      "rebound": false
-    },
-    ...
-  ],
-  "singles": ["jordan_start"]
-}
-```
+- `GET /checkpoints` lists bundled and local checkpoints compatible with the
+  current engine schema.
+- `POST /session/from-checkpoint` accepts a checkpoint name and optional
+  `mock_llm`, settles transient zero-action boundaries, assigns a fresh session
+  id, and returns the same envelope shape as session creation.
 
-### `GET /session/{session_id}/timeline`
+Old-schema or missing checkpoints are not migrated. They are absent from the
+loadable list or fail with a specific checkpoint error.
 
-Day-by-day timeline of significant events. Used to build the day-recap modals.
+### Rebuild a view
 
-**Response (200):**
-```json
-{
-  "days": [
-    {
-      "day": 1,
-      "events": [
-        {"kind": "ceremony", "name": "First Spark", "turn": 1, "summary": "..."},
-        {"kind": "intros", "summary": "You met 7 Heartbreakers"},
-        ...
-      ],
-      "pulse_board": [
-        {"rank": 1, "couple": ["player", "chloe"], "score": 71}
-      ],
-      "recap_lines": [
-        "Maya and Jordan spent the morning by the pool...",
-        ...
-      ]
-    },
-    ...
-  ]
-}
-```
+`POST /session/view` accepts `PersistedSession` and returns `SessionResponse`.
+It is the refresh and resume path. It does not mutate the envelope.
 
-### `DELETE /session/{session_id}`
+### Submit a turn
 
-Ends a session. UI calls this when player quits to title.
-
-**Response (204):** no content.
-
-### `GET /healthz` and `GET /readyz`
-
-Standard liveness/readiness probes. `/readyz` checks LLM connectivity if
-`PARADISE_MOCK_LLM` is unset.
-
-## Data shapes
-
-Defined as Pydantic models in `src/api/models.py`. The autogenerated
-TypeScript types in `web/lib/types.ts` come from FastAPI's `/openapi.json`.
-
-### `SessionState`
-
-```python
-class SessionState(BaseModel):
-    session_id: str
-    schema_version: int
-    seed: int
-    day: int
-    phase: str           # "morning" | "challenge" | "afternoon" | "text" | "evening" | "intros"
-    turn_index: int
-    location_id: str     # "pool" | "kitchen" | ... | "flush_pool" | ...
-    player: PlayerState
-    heartbreakers: list[HeartbreakerSummary]      # everyone at a glance
-    couples: list[CoupleSummary]
-    audience: AudienceState
-    pending_pair_proposal: ProposalState | None
-    resort: str           # "main" | "flush_of_hearts"  ← engine-side names
-    phase_clock: PhaseClock
-    outcome: str | None
-```
-
-### `HeartbreakerSummary`
-
-```python
-class HeartbreakerSummary(BaseModel):
-    id: str
-    name: str
-    gender: str
-    archetype: str
-    mood: str
-    location_id: str
-    eliminated: bool
-    coupled: bool
-    familiarity_with_player: int
-```
-
-### `CoupleSummary`
-
-```python
-class CoupleSummary(BaseModel):
-    partner_a_id: str
-    partner_b_id: str
-    strength: int
-    formed_on_day: int
-    formed_via: str
-    rebound: bool
-```
-
-### `AvailableAction`
-
-```python
-class AvailableAction(BaseModel):
-    kind: str
-    label: str
-    target_id: str | None
-    intent_id: str | None
-    option_index: int | None
-    audience_hint: str           # "+" | "-" | ""
-    risk: str | None             # "low" | "med" | "high"
-    stat_used: str | None
-    description: str | None      # optional flavor for popovers
-```
-
-### `Exchange`
-
-```python
-class Exchange(BaseModel):
-    speaker_id: str
-    speaker_name: str
-    player_dialogue: str
-    npc_dialogue: str
-    npc_tone: str
-    npc_mood_after: str
-```
-
-### `AudienceState`
-
-The wire field name stays `public_perception` (engine internal); the UI
-labels it **Pulse** in display strings.
-
-```python
-class AudienceState(BaseModel):
-    public_perception: int    # 0–100 (UI label: "Pulse")
-    recent_delta: int | None  # last turn's change, if any
-    trend: str                # "rising" | "falling" | "steady"
-```
-
-### `Memory`
-
-```python
-class Memory(BaseModel):
-    holder_id: str
-    subject_id: str
-    content: str
-    emotional_weight: int
-    source: str   # "direct" | "witnessed" | "rumor"
-    tags: list[str]
-    formed_on_turn: int
-```
-
-## Naming reconciliation: engine vs. UI
-
-The engine uses structured identifiers (`heart_throb`, `flush_of_hearts`,
-`pair`, `opening`, etc.). The UI displays Paradise Hearts terms. The FastAPI
-server is responsible for the **display translation**, so the frontend always
-sees the correct Paradise Hearts strings. See `src/api/display.py` for the
-authoritative implementation.
-
-```python
-DISPLAY_NAMES = {
-    # Locations and resort state
-    "main": "Sunset Bay",                          # resort == "main"
-    "flush_of_hearts": "Flush of Hearts",          # resort == "flush_of_hearts"
-
-    # Ceremony event kinds
-    "heart_throb": "Heart Throb",
-    "pair": "Heart Swap",                          # action kind
-    "pairing": "Pairing Ceremony",                 # event kind
-    "flush_of_hearts_announce": "Flush of Hearts Announcement",
-    "flush_of_hearts_arrival": "Flush of Hearts Arrival",
-    "flush_of_hearts_decision": "Flush of Hearts Decision",
-    "flush_of_hearts_return_reveal": "Sunset Bay Return",
-    "pair_proposal": "Heart Swap Proposal",
-    "final_vote": "Finale",
-
-    # Couple formed_via values
-    "opening": "First Spark",
-    "ceremony": "Pairing Ceremony",
-    "proposal": "Heart Swap Proposal",
-    "flush_return": "Sunset Bay Return",
-
-    # Status transitions
-    "private_suite": "Paradise Suite",
-    "elimination": "Heart Out",
-
-    # Phases
-    "intros": "Arrivals",
-    "morning": "Morning",
-    "challenge": "Challenge",
-    "afternoon": "Afternoon",
-    "text": "Paradise Calls",                  # the "text" phase IS the Paradise Calls beat
-    "evening": "Evening",
-
-    # Cast role
-    "heartbreaker": "Heartbreaker",
-
-    # Audience
-    "public_perception": "Pulse",
-    "audience_appeal": "Heart Beats",          # earned currency (Phase 4)
-    "audience": "The Audience",
-
-    # Challenges
-    "challenges": {
-        "compatibility_quiz": "Compatibility Quiz",
-        "heart_rate": "Pulse Race",
-        "couples_quiz": "The Couples Quiz",
-        "kiss_wed_pass": "Kiss Wed Pass",
-        "lie_detector": "Lie Detector",
-        "final_couples": "Final Couples Challenge",
-    },
-}
-```
-
-`src/api/display.py` (small module) holds the structured identifier display
-table and helpers. The frontend code uses the display strings directly; the
-engine code stays unchanged until the post-Phase-3 rename PR. Full vocabulary
-reference is in `docs/paradise-hearts-glossary.md`; display identifiers here
-MUST match it.
-
-## Session storage
-
-In-memory only for MVP:
-
-```python
-@dataclass
-class GameSession:
-    session_id: str
-    state: GameState
-    rng: SeededRng
-    agents: AgentBundle          # one set of agent instances per session
-    records: list[dict]          # trace records for the run
-    created_at: datetime
-    last_accessed: datetime
-    lock: asyncio.Lock           # per-session lock — prevent concurrent turns
-```
-
-Session lock prevents two browser tabs from racing on the same session.
-Eviction policy: 32 concurrent sessions max, LRU evict. Logged as a warning
-if eviction happens.
-
-## Mock LLM mode
-
-Set `PARADISE_MOCK_LLM=1` in the FastAPI env to swap real agents for the
-existing mock voices in `src/game/agents/mock_*.py`. Useful for:
-
-- Dev iteration without LLM cost
-- Playwright tests (deterministic dialogue)
-- Codex's screenshot smoke pass
-- Fast checkpoint resume validation
-
-Mock mode is the default for all automated tests. Real-LLM is only used in
-manual interactive verification (codex's playthroughs in step 14) and in
-the final milestone validation.
-
-## Streaming implementation notes
-
-For step 6 (SSE), use FastAPI's `StreamingResponse`:
-
-```python
-@app.post("/session/{session_id}/turn/stream")
-async def turn_stream(session_id: str, req: TurnRequest):
-    session = get_session(session_id)
-    async def event_stream():
-        async with session.lock:
-            async for event in run_turn_streaming(session, req):
-                yield format_sse(event)
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
-```
-
-`run_turn_streaming` wraps the existing `run_turn` but yields events as the
-LLM responds. The Heartbreaker Voice agent already supports streaming via the
-OpenAI streaming API; FastAPI just needs to forward chunks.
-
-For mock LLM, emit chunks with a small sleep between them so the typewriter
-still has something to animate during dev iteration.
-
-## Error model
-
-All non-2xx responses share a body shape:
+`POST /session/turn` accepts:
 
 ```json
 {
-  "error": {
-    "code": "INVALID_ACTION",
-    "message": "Action 'propose_pair' is not available in current state",
-    "details": {"state_phase": "intros"}
+  "persisted": {},
+  "action": {
+    "kind": "respond_with",
+    "target_id": "chloe",
+    "intent_id": "friendly_ask_feelings",
+    "option_index": 0,
+    "payload": {}
   }
 }
 ```
 
-Codes:
-- `SESSION_NOT_FOUND` (404)
-- `INVALID_ACTION` (400)
-- `VALIDATION_ERROR` (400) — Pydantic schema mismatch
-- `ENGINE_ERROR` (500) — caught engine exception
-- `LLM_ERROR` (502) — upstream LLM call failed
-- `SESSION_LOCKED` (409) — concurrent turn attempt
+The response is `TurnResponseEnvelope`: the complete typed turn view and the
+new persisted envelope. `available_actions` comes from the engine after the
+turn and is the only legal-action authority.
 
-## Versioning
+The endpoint creates an explicit mock or live `TurnAgentSet` from the envelope
+mode. `run_turn` commits state and RNG atomically. Invalid actions return 400.
+Exhausted live-agent contracts return 502 `STORY_ENGINE_ERROR`; state, RNG, and
+the caller's persisted envelope remain unchanged.
 
-`GET /version` returns:
+### Stream a turn
+
+`POST /session/turn/stream` accepts the same envelope and action. It emits SSE
+events in this order when present:
+
+1. `turn_start`
+2. `dialogue_start`
+3. one or more `dialogue_chunk` events
+4. `dialogue_end`
+5. `state`
+6. `options`
+7. `ceremony`
+8. `response`
+9. `turn_end`
+
+The `response` event contains the authoritative `TurnResponseEnvelope`. The
+browser saves its persisted value and returns its view to the stage. An error
+event ends the stream without a response envelope. Story failures include
+`code: "STORY_ENGINE_ERROR"`.
+
+### Cast detail
+
+`POST /session/cast` accepts `PersistedSession` and an NPC id. It returns the
+display-safe cast detail for the hydrated state.
+
+## Player-facing session state
+
+`src/api/models.py` owns the response models. `src/api/serializers.py` is the
+only engine-to-HTTP adapter. Important fields include:
+
+- structured and display labels for phase, location, and resort;
+- player, Heartbreaker, couple, audience, and resort snapshot views;
+- the pending pair proposal;
+- a typed pending minigame projection;
+- projected Daily Recaps;
+- the canonical list of legal actions.
+
+### Pending minigame
+
+`pending_challenge` is `MinigameRoundView | MinigameWrapView | null`. `status`
+is the discriminator. Each view has an exhaustive `kind` and a matching typed
+board payload.
+
+An active round contains round index, count, concise question, narration,
+target, answered-round reveals, and its board. A wrap contains classification,
+points, audience delta, answered rounds, and its board. Neither shape contains
+legal choices. The browser filters `available_actions` for
+`challenge_response` and fails closed if an active round has none.
+
+### Daily Recap
+
+`daily_recaps` contains `DailyRecapView` values from
+`src/game/presentation/daily_recap.py`. Each recap preserves its historical
+resort label. Its items expose only:
+
+- `section`: `your_day` or `while_busy`;
+- `speaker_label`;
+- second-person `content`;
+- `emphasis`: `standard` or `strong`.
+
+Raw memory tags, weights, and recap-disposition mechanics do not cross the
+browser boundary.
+
+## Generated TypeScript contract
+
+FastAPI OpenAPI generates `web/lib/openapi-types.ts`. Browser-facing aliases in
+`web/lib/types.ts` and `web/lib/minigame/types.ts` refer to those generated
+schemas. They do not duplicate the Pydantic minigame or recap shapes by hand.
+
+Regenerate after a response-model change:
+
+```bash
+cd web
+npm run gen:types
+```
+
+Run FastAPI on port 8000 while generating. `make web-contracts` verifies the
+checked-in boundary.
+
+## Display translation
+
+`src/api/display.py` translates structured identifiers such as `main`,
+`flush_of_hearts`, `heart_throb`, and `pair` into player-facing labels. Free
+prose is not rewritten by identifier maps or regex heuristics.
+
+Second-person Daily Recap conversion belongs to its presentation projection,
+not to the general display table.
+
+## Agent modes
+
+`PARADISE_MOCK_LLM=1` selects mock mode when a request does not provide an
+explicit override. Automated browser checks use mock mode. Live mode uses the
+complete live `TurnAgentSet`; it never degrades to mocks after a failed call.
+
+Mock, recorded, and scripted output are explicit development and verification
+modes. They are not runtime recovery paths.
+
+## Error model
+
+Non-streaming failures use the shared body:
 
 ```json
 {
-  "schema_version": 24,
-  "api_version": "0.1.0",
-  "build": "2026-05-14"
+  "detail": {
+    "error": {
+      "code": "INVALID_ACTION",
+      "message": "...",
+      "details": {}
+    }
+  }
 }
 ```
 
-UI checks `schema_version` on session resume; if mismatch, force restart.
+Current domain codes include:
 
-## Out of scope (Phase 4+)
+- `VALIDATION_ERROR`
+- `INVALID_ACTION`
+- `CHECKPOINT_NOT_FOUND`
+- `CHECKPOINT_CORRUPT`
+- `STORY_ENGINE_ERROR`
 
-- Authentication / API keys
-- Persistent storage (sessions live only in memory)
-- Multiplayer / multiple-session-per-user
-- Rate limiting
-- Webhook callbacks
-- WebSocket (SSE is enough)
+Unexpected adapter failures remain server errors and are logged with request
+context. The browser displays a recoverable turn error and keeps its last
+confirmed persisted envelope.
+
+## Contract verification
+
+The boundary is protected by:
+
+- API model and serializer tests;
+- atomic turn and story-error tests;
+- minigame and Daily Recap projection tests;
+- generated OpenAPI contract checks;
+- TypeScript type-check and lint;
+- Playwright scene and minigame tests;
+- deterministic scenario and checkpoint tests.
+
+The full non-billed repository gate is `make qa`.

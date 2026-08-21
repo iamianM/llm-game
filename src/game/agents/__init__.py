@@ -1,9 +1,11 @@
-"""LLM agent layer.
+"""Typed story-agent layer.
 
 Design sources:
-- 03-LLM-Architecture.md: Multi-AI System, Dialogue AI, Event Narrator AI
+- 03-LLM-Architecture.md: Multi-AI System
 - 11-Conversation-Flow.md: Single Exchange Generation
+- docs/decisions/0016-game-owned-turn-agent-set.md
 
-The active Phase F agents are Heartbreaker Voice for dialogue and Event Narrator
-for resolved ceremony beats. Producer and Curator remain deferred.
+``TurnAgentSet`` is the canonical turn boundary. Live, mock, recorded, and
+scripted modes each provide the complete six-port set; engine callers never
+substitute a missing capability or recover a failed live call with mock prose.
 """
