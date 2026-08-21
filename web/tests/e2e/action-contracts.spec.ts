@@ -72,6 +72,70 @@ test("long ceremony overlays keep Continue visible and clickable", async ({ page
   await expect(ceremony).toHaveCount(0);
 });
 
+test("feature queue shows ceremony before the new day recap", async ({ page }) => {
+  const initial = fakeState({ daily_recaps: [] });
+  const recap = {
+    day: 5,
+    items: [{ holder_id: "player", content: "You noticed the resort shift.", emotional_weight: 5 }],
+  };
+  const next = fakeState({ day: 6, turn_index: 89, daily_recaps: [recap] });
+  await installSession(page, initial, [action("ambient", "Close the day")]);
+  await page.route(`${API}/session/turn/stream`, async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "text/event-stream",
+      body: [
+        "event: response",
+        `data: ${JSON.stringify({
+          view: {
+            state: next,
+            exchange: null,
+            available_actions: [],
+            ceremony_events: [{ kind: "pairing", message: "The couples lock in." }],
+            event_narration: { prose: "The night settles around the new couples." },
+            audience_delta: null,
+            audience_delta_reason: null,
+            memories_formed: [],
+            background_activity: [],
+            state_hash: "feature-order-hash",
+          },
+          persisted: persistedEnvelope(),
+        })}`,
+        "",
+        "",
+      ].join("\n"),
+    });
+  });
+
+  await page.goto(`/play/${SESSION_ID}`);
+  await page.getByRole("button", { name: "Close the day" }).click();
+
+  const ceremony = page.locator('[data-screen="ceremony"]');
+  await expect(ceremony).toBeVisible();
+  await expect(page.locator('[data-screen="day-recap"]')).toHaveCount(0);
+  await ceremony.getByRole("button", { name: "Continue" }).click();
+  const dayRecap = page.locator('[data-screen="day-recap"]');
+  await expect(dayRecap).toBeVisible();
+  await expect(dayRecap).toContainText("You noticed the resort shift.");
+  await dayRecap.getByRole("button", { name: "Continue" }).click();
+  await expect(dayRecap).toHaveCount(0);
+});
+
+test("initial session view does not replay historical recaps", async ({ page }) => {
+  await installSession(
+    page,
+    fakeState({
+      daily_recaps: [{ day: 4, items: [{ holder_id: "player", content: "Old news." }] }],
+    }),
+    [action("ambient", "Stay present")],
+  );
+
+  await page.goto(`/play/${SESSION_ID}`);
+
+  await expect(page.getByRole("button", { name: "Stay present" })).toBeVisible();
+  await expect(page.locator('[data-screen="day-recap"]')).toHaveCount(0);
+});
+
 test("challenge overlays use challenge titles without showing stale pairings", async ({ page }) => {
   const state = fakeState({ couples: sixCouples() });
   await installSession(page, state, [action("ambient", "Resolve challenge")]);

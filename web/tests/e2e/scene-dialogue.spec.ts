@@ -50,6 +50,20 @@ test("conversation keeps every co-located heartbreaker on stage, not just the pa
   await expect(page.getByTestId("character-sprite")).toHaveCount(state.heartbreakers.length + 1);
 });
 
+test("large groups keep seven NPCs staged and name the overflow", async ({ page }) => {
+  const heartbreakers = Array.from({ length: 10 }, (_, index) =>
+    heartbreaker(`npc-${index}`, `Heartbreaker ${index}`, index % 2 === 0 ? "man" : "woman"),
+  );
+  await installSession(page, fakeState({ heartbreakers }), [action("ambient", "Let the group breathe")]);
+  await page.goto(`/play/${SESSION_ID}`);
+
+  await expect(page.getByTestId("character-sprite")).toHaveCount(8);
+  const group = page.getByTestId("scene-group-panel");
+  await expect(group).toBeVisible();
+  await expect(group).toContainText("Heartbreaker 7");
+  await expect(group).toContainText("Heartbreaker 9");
+});
+
 test("narrator beat uses a top narrator bubble", async ({ page }) => {
   await installSession(page, fakeState(), [action("ambient", "Trigger text")]);
   await routeTurn(page, fakeTurn({ event_narration: { prose: "A text lands and Sunset Bay freezes for the kind of silence producers dream about." } }));
