@@ -1,9 +1,9 @@
 {
   "name": "day5-pre-kiss-wed-pass",
   "seed": 7,
-  "state_hash": "38ce3d8970001abe237346dcd60530d1879b38bcf951ce3b2da17262d707f73f",
+  "state_hash": "a62f982864970599d38b6de41db17a9e7116b1d2e50f7b7b0032806ea86cc9c1",
   "state": {
-    "schema_version": 29,
+    "schema_version": 30,
     "seed": 7,
     "turn_index": 270,
     "day": 5,
@@ -47,7 +47,8 @@
             "pairing"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_f6248b78d5efe016",
@@ -64,7 +65,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_4d4ad059ee5d0f48",
@@ -81,7 +83,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_9268d7453c64626f",
@@ -98,7 +101,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_ed28071b13211056",
@@ -115,7 +119,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_602170c088d4c073",
@@ -132,7 +137,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_7c1fb3ca9fe1f112",
@@ -149,7 +155,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_ed74f1c34f2c698d",
@@ -166,7 +173,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_9b429bdbb46d2e6f",
@@ -183,7 +191,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_e9493b5ac3a93059",
@@ -200,7 +209,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_1106e84e21607396",
@@ -217,7 +227,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_d2d2694226ad7b22",
@@ -234,7 +245,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_d99d8b5113142e95",
@@ -251,7 +263,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_479a3c632bbdc903",
@@ -268,7 +281,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_b0b7c37a76d48e4e",
@@ -285,7 +299,8 @@
             "pairing"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_c393ce580083f48a",
@@ -302,7 +317,8 @@
             "elimination"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_47c0866fa6c0b08b",
@@ -319,7 +335,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_081ef58ab1510bc8",
@@ -336,7 +353,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_b757592965f5d937",
@@ -353,7 +371,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_fe0a9aca549ad766",
@@ -370,7 +389,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_899956e66a7f63ef",
@@ -387,7 +407,8 @@
             "ceremony"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_90d340f1a522a56b",
@@ -404,7 +425,8 @@
             "supportive"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "your_day"
         },
         {
           "id": "mem_e9d34f0fee3f49f1",
@@ -421,7 +443,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         }
       ],
       "known_facts": {
@@ -784,7 +807,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_7fd2f5f46fa966e2",
@@ -801,7 +825,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2cb942d2bf6474f1",
@@ -818,7 +843,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::favorite_food::1::13",
@@ -836,7 +862,8 @@
               "favorite_food"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::age::1::13",
@@ -854,7 +881,8 @@
               "age"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::hometown::1::13",
@@ -872,7 +900,8 @@
               "hometown"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_22ab7a0443e86655",
@@ -889,7 +918,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6346daa8bf3b161d",
@@ -906,7 +936,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4e43a280e7f864f9",
@@ -923,7 +954,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f9dbdeaa9c9943da",
@@ -940,7 +972,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c94640ad84ea1eb6",
@@ -957,7 +990,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c64b952021f2c581",
@@ -974,7 +1008,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9a770f8bda49f377",
@@ -991,7 +1026,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c967569e47f274b1",
@@ -1008,7 +1044,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_873e5cd327e47efb",
@@ -1025,7 +1062,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ee751ca8581e2757",
@@ -1042,7 +1080,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3dc9f1aa1d93e7ad",
@@ -1059,7 +1098,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c3f21e74d30cefd1",
@@ -1076,7 +1116,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7dd9792e95f18cd6",
@@ -1093,7 +1134,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e83e858f55a92f27",
@@ -1110,7 +1152,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6d607d635d023940",
@@ -1127,7 +1170,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dd0d0da1413b2205",
@@ -1144,7 +1188,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0fbc1b2ba149ff58",
@@ -1161,7 +1206,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_924035165c17469b",
@@ -1178,7 +1224,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9d31bca31589aede",
@@ -1195,7 +1242,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_eabb056c0595c81d",
@@ -1212,7 +1260,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -1704,7 +1753,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_b2829f17ddd1e1ca",
@@ -1721,7 +1771,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d78452a8494a430b",
@@ -1738,7 +1789,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_abd4a98a41ee10b2",
@@ -1755,7 +1807,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_868320429348dcb9",
@@ -1772,7 +1825,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58f6f3e0e512428e",
@@ -1789,7 +1843,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_50976e54b08c9a0f",
@@ -1806,7 +1861,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1b645d1036539038",
@@ -1823,7 +1879,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_cdea7cd1967af281",
@@ -1840,7 +1897,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9dadb509c4ef2bf4",
@@ -1857,7 +1915,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_738a4470a554acbe",
@@ -1874,7 +1933,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a9afc8f815b5f3ae",
@@ -1891,7 +1951,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5af517b82cf50c04",
@@ -1908,7 +1969,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8cbcd43599c09e29",
@@ -1925,7 +1987,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_31f9f53702c9086e",
@@ -1942,7 +2005,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ccc28a78f0180d1e",
@@ -1959,7 +2023,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_897e5c9784d1df21",
@@ -1976,7 +2041,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_53b03bd178afa764",
@@ -1993,7 +2059,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2432f147f1854ff4",
@@ -2010,7 +2077,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_14487f6d25965aef",
@@ -2027,7 +2095,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_16d5378427c3bdf2",
@@ -2044,7 +2113,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0c8a9606011d8e56",
@@ -2061,7 +2131,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ba99a239e31b32f8",
@@ -2078,7 +2149,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -2570,7 +2642,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_34037131594dd190",
@@ -2587,7 +2660,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bdad7c39aafaf717",
@@ -2604,7 +2678,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_934befd6d3a3ae52",
@@ -2621,7 +2696,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5ee7750120a1a484",
@@ -2638,7 +2714,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_24df3cf7d07cba5e",
@@ -2655,7 +2732,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2aebe2b24e44cb52",
@@ -2672,7 +2750,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08defa20094575d4",
@@ -2689,7 +2768,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0c077d4905ac894a",
@@ -2706,7 +2786,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_53291830cbd414ae",
@@ -2723,7 +2804,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_349c69b02e188ae9",
@@ -2740,7 +2822,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7d24b16d2c315b83",
@@ -2757,7 +2840,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_97338e1aad597071",
@@ -2774,7 +2858,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_b90f63cf4f092fba",
@@ -2791,7 +2876,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_63bd58d4a7d5a4ae",
@@ -2808,7 +2894,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ab71bd53439d9468",
@@ -2825,7 +2912,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_02ddff50d7ee1d6a",
@@ -2842,7 +2930,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_38f682cfb9a0a7fa",
@@ -2859,7 +2948,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7a7ec24cb6370ebd",
@@ -2876,7 +2966,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_37253219ab4fa39d",
@@ -2893,7 +2984,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a23863aba980e289",
@@ -2910,7 +3002,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1a51a081460175ac",
@@ -2927,7 +3020,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_49e3bb24a9f10814",
@@ -2944,7 +3038,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -3436,7 +3531,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_16a2ec52bc1845a0",
@@ -3453,7 +3549,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9f02e6dab40a6cfa",
@@ -3470,7 +3567,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_41d73d5d3d1d17eb",
@@ -3487,7 +3585,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bc825b3dddfc9320",
@@ -3504,7 +3603,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_999e7136f5d1dcd0",
@@ -3521,7 +3621,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5fb1de16b30d8370",
@@ -3538,7 +3639,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a8ed47bf91a7d78a",
@@ -3555,7 +3657,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4a9a699add7ae1ae",
@@ -3572,7 +3675,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58dfae4928065d9e",
@@ -3589,7 +3693,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fc85f250a7a0a1c2",
@@ -3606,7 +3711,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_aa94dc913f9bdfd7",
@@ -3623,7 +3729,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5f16d57818c81e43",
@@ -3640,7 +3747,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_eecd785016eb777a",
@@ -3657,7 +3765,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_20e705ae89f24b49",
@@ -3674,7 +3783,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0eb86ab7de0d15de",
@@ -3691,7 +3801,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ba5235aa19fb6ae3",
@@ -3708,7 +3819,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a8609348ddf16836",
@@ -3725,7 +3837,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_67f9278215ea1eef",
@@ -3742,7 +3855,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a537d388560727dc",
@@ -3759,7 +3873,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2aa5a108fbc19248",
@@ -3776,7 +3891,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a9c7100347236175",
@@ -3793,7 +3909,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_871c37b03ac64902",
@@ -3810,7 +3927,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -4302,7 +4420,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_7ecc909791f08b65",
@@ -4319,7 +4438,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a8989f68975cce98",
@@ -4336,7 +4456,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_524054a97292b4db",
@@ -4353,7 +4474,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fc51c303f41b440e",
@@ -4370,7 +4492,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_92cf4da2699046dc",
@@ -4387,7 +4510,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_93b6dd474187ca73",
@@ -4404,7 +4528,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8ee8c8dbc4ec7867",
@@ -4421,7 +4546,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0645c28386360830",
@@ -4438,7 +4564,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_334dc0fb63e8ac5f",
@@ -4455,7 +4582,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7911cfafe44fdcf4",
@@ -4472,7 +4600,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_db7ca6c2007bd3d0",
@@ -4489,7 +4618,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8f29834848ab83a6",
@@ -4506,7 +4636,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d28f8849d6ebda6f",
@@ -4523,7 +4654,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ff4864912823c05c",
@@ -4540,7 +4672,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_49c561a94ed61eb6",
@@ -4557,7 +4690,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f8510f5d3ff1d84e",
@@ -4574,7 +4708,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7525dffa4b3b5585",
@@ -4591,7 +4726,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5a9df2ed05ebe335",
@@ -4608,7 +4744,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_95dd9b53c30d54c3",
@@ -4625,7 +4762,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7fa9109b96d76f69",
@@ -4642,7 +4780,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_87377c3e19f935fc",
@@ -4659,7 +4798,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a93193e83b51e8c3",
@@ -4676,7 +4816,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -5168,7 +5309,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_bb8c89b8963184a5",
@@ -5185,7 +5327,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_457328f03cc5abe8",
@@ -5202,7 +5345,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4a97a7d6280d52ed",
@@ -5219,7 +5363,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fd942d4773fef1d8",
@@ -5236,7 +5381,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08c1d9f08f263fa2",
@@ -5253,7 +5399,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_992840511f600693",
@@ -5270,7 +5417,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1dc1289721f58526",
@@ -5287,7 +5435,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_abded58fdfa090b2",
@@ -5304,7 +5453,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d8861022a1188f1b",
@@ -5321,7 +5471,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_e94894fc58a5f28a",
@@ -5338,7 +5489,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9817dd101f0dec2e",
@@ -5355,7 +5507,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c947606953541319",
@@ -5372,7 +5525,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a4dac0d714c9e5ef",
@@ -5389,7 +5543,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4a5dec11539816c7",
@@ -5406,7 +5561,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0082bc96cee2449b",
@@ -5423,7 +5579,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3745235ddba6eb1f",
@@ -5440,7 +5597,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a9d7add62baad326",
@@ -5457,7 +5615,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2d8abf1175e17f76",
@@ -5474,7 +5633,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_36d65d58a9445dae",
@@ -5491,7 +5651,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_3de44a0fa198c6c9",
@@ -5508,7 +5669,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_848ce401fa47859d",
@@ -5525,7 +5687,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_564fb0ec8dfc23ab",
@@ -5542,7 +5705,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -6034,7 +6198,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_48ebb88b9d689f14",
@@ -6051,7 +6216,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1e04265ce0bd9ff9",
@@ -6068,7 +6234,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1306bd909e50368d",
@@ -6085,7 +6252,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dd30a3db250c6e73",
@@ -6102,7 +6270,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5326798b5c98156d",
@@ -6119,7 +6288,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ecfc4ecb8c6fca38",
@@ -6136,7 +6306,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9af48595ecd33d78",
@@ -6153,7 +6324,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1f87e0b13caa9708",
@@ -6170,7 +6342,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_85fd703d893f7d85",
@@ -6187,7 +6360,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_358e0a05cfdea476",
@@ -6204,7 +6378,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8806b6cfa314adbf",
@@ -6221,7 +6396,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fcfdf89c970b9421",
@@ -6238,7 +6414,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1381c67fd212d911",
@@ -6255,7 +6432,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bc39557f38af44e1",
@@ -6272,7 +6450,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_05b20e1392599ac6",
@@ -6289,7 +6468,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a686056bcb6891cc",
@@ -6306,7 +6486,8 @@
               "elimination"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_990db7da3a7f1740",
@@ -6323,7 +6504,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c2902cd277d49d64",
@@ -6340,7 +6522,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_daf49d86283a045c",
@@ -6357,7 +6540,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6b566f5d05a5b172",
@@ -6374,7 +6558,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58907de202d0d4a6",
@@ -6391,7 +6576,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_704444c20be2f82e",
@@ -6408,7 +6594,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -6900,7 +7087,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_34fb148fe58b47e3",
@@ -6917,7 +7105,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dcc8f69980514a74",
@@ -6934,7 +7123,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8210ecd5eef6232a",
@@ -6951,7 +7141,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0b864fb17bb96c9d",
@@ -6968,7 +7159,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c582895dd3ddf6d3",
@@ -6985,7 +7177,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f752f20ad02ac779",
@@ -7002,7 +7195,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_39e8cc125dc4f693",
@@ -7019,7 +7213,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_455067df2e777be7",
@@ -7036,7 +7231,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_835d88e78e5e8c60",
@@ -7053,7 +7249,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_afc20c31cb72c785",
@@ -7070,7 +7267,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c9ddae190c1ba0fd",
@@ -7087,7 +7285,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d99bfae61a09b787",
@@ -7104,7 +7303,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_52e0523f9433fccb",
@@ -7121,7 +7321,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4d07202c8c975cac",
@@ -7138,7 +7339,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -7638,7 +7840,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_50d63553c72aee01",
@@ -7655,7 +7858,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5fe25dc86ccac097",
@@ -7674,7 +7878,8 @@
               "source_memory:mem_899956e66a7f63ef"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_02d27452eb9d2463",
@@ -7691,7 +7896,8 @@
               "supportive"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_a518b784d766d406",
@@ -7708,7 +7914,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -7996,7 +8203,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_69dbd16f16c79a8e",
@@ -8013,7 +8221,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_67ec676ebc5b7f0d",
@@ -8030,7 +8239,8 @@
               "witnessed"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_77847dc18186e4f5",
@@ -8047,7 +8257,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -8335,7 +8546,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4e5e708e65a66540",
@@ -8352,7 +8564,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_7b4678590ef6ec0f",
@@ -8369,7 +8582,8 @@
               "witnessed"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_4eca0ec4b6a3ae26",
@@ -8386,7 +8600,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -8674,7 +8889,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1b21e8104b76a1c2",
@@ -8691,7 +8907,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c10dd6e4ab3606df",
@@ -8708,7 +8925,8 @@
               "witnessed"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_0ce5df3e31eb0c0f",
@@ -8725,7 +8943,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -9013,7 +9232,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d36fce2f9b5726b1",
@@ -9030,7 +9250,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8b143067f8260a77",
@@ -9047,7 +9268,8 @@
               "witnessed"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_83500582d820ccf5",
@@ -9064,7 +9286,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -9352,7 +9575,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_62d5ec3beb349aa8",
@@ -9369,7 +9593,8 @@
               "ceremony"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4f5e7176c3c04efb",
@@ -9386,7 +9611,8 @@
               "witnessed"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "while_busy"
           },
           {
             "id": "mem_a33f72bbaae67e10",
@@ -9403,7 +9629,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -12255,22 +12482,27 @@
           {
             "holder_id": "chloe",
             "subject_id": "player",
-            "content": "I properly met you during Day One intros and got a real first read.",
+            "content": "I properly met the player during Day One intros and got a real first read.",
             "emotional_weight": 4,
             "tags": [
               "day_one",
               "intro"
-            ]
+            ],
+            "formed_on_turn": 8,
+            "recap_disposition": "your_day"
           }
-        ]
+        ],
+        "resort_id": "main"
       },
       {
         "day": 2,
-        "items": []
+        "items": [],
+        "resort_id": "main"
       },
       {
         "day": 3,
-        "items": []
+        "items": [],
+        "resort_id": "main"
       },
       {
         "day": 4,
@@ -12278,12 +12510,14 @@
           {
             "holder_id": "beau",
             "subject_id": "player",
-            "content": "I remember you making our supportive chat feel personal.",
+            "content": "I remember the player making our supportive chat feel personal.",
             "emotional_weight": 5,
             "tags": [
               "player_conversation",
               "supportive"
-            ]
+            ],
+            "formed_on_turn": 246,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "player",
@@ -12293,19 +12527,24 @@
             "tags": [
               "player_conversation",
               "supportive"
-            ]
+            ],
+            "formed_on_turn": 246,
+            "recap_disposition": "your_day"
           },
           {
             "holder_id": "noor",
             "subject_id": "beau",
-            "content": "I noticed Beau looked different after talking with you.",
+            "content": "I noticed Beau looked different after talking with the player.",
             "emotional_weight": 4,
             "tags": [
               "supportive",
               "witnessed"
-            ]
+            ],
+            "formed_on_turn": 246,
+            "recap_disposition": "while_busy"
           }
-        ]
+        ],
+        "resort_id": "flush_of_hearts"
       }
     ],
     "private_suite": {

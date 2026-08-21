@@ -2,18 +2,19 @@
 
 import { ChevronLeft, Lock, MapPin, X } from "lucide-react";
 import {
-  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from "react";
-import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
+import type { AvailableAction, SessionState } from "../../lib/types";
 import type { HeartbreakerLook } from "../../lib/look";
-import type { CharacterPose, Position, SceneBeat } from "../../lib/scene/types";
-import { npcPositions, PLAYER_ANCHOR } from "../../lib/scene/positions";
+import type { SceneFeature, ScenePlan } from "../../lib/scene/presentation";
+import type { Position, SceneBeat } from "../../lib/scene/types";
+import { PLAYER_ANCHOR } from "../../lib/scene/positions";
 import { playSfx } from "../../lib/sfx";
 import {
   CATEGORY_LABEL,
@@ -23,132 +24,48 @@ import {
   categoryFor,
   type IntentCategory,
 } from "../../lib/scene/intents";
-import { type PendingChallengeView } from "../stage/ChallengeSpectacle";
-import { CharacterLayer, visibleNpcs } from "./CharacterLayer";
+import { CharacterLayer } from "./CharacterLayer";
 import { ChoiceFan } from "./ChoiceFan";
 import { NarratorBubble } from "./NarratorBubble";
-import { planScene } from "./SceneDirector";
 import { SceneLayer } from "./SceneLayer";
 import { SpeechBubble } from "./SpeechBubble";
+import { useScenePlayback } from "./useScenePlayback";
 
-// Action kinds that target a specific character via target_id — these are
-// reached by tapping the character, not from the bottom ChoiceFan.
-const PER_CHARACTER_KINDS = new Set(["start_conversation", "introduce_to"]);
-// Action kinds that move the player; surfaced through the location switcher.
-const MOVE_KINDS = new Set(["move"]);
-
-type Props = {
+type Props<TSlot> = {
   state: SessionState;
+  plan: ScenePlan<TSlot>;
   look?: HeartbreakerLook | null;
-  actions: AvailableAction[];
-  lastTurn: TurnResponse | null;
   locked: boolean;
-  pendingActionLabel: string | null;
-  pendingTargetId?: string | null;
-  streamText: string;
-  streamSpeaker: string;
   onChoose: (action: AvailableAction) => void;
-  onAdvance?: () => void;
+  onSettled?: (features: readonly SceneFeature[]) => void;
+  renderSlot?: (slot: TSlot) => ReactNode;
 };
 
-export function SceneDialogueStage({
+export function SceneDialogueStage<TSlot>({
   state,
+  plan,
   look = null,
-  actions,
-  lastTurn,
   locked,
-  pendingActionLabel,
-  pendingTargetId = null,
-  streamText,
-  streamSpeaker,
   onChoose,
-  onAdvance,
-}: Props) {
-  // Free-time choices get split into three lanes: per-character (revealed by
-  // tapping the character), location moves (revealed by the map button), and
-  // everything else (rendered in the bottom ChoiceFan). When a minigame or
-  // conversation is in flight, all actions stay in the ChoiceFan so the user
-  // doesn't have to hunt for them.
-  const inDialogue = state.active_conversation_target_id !== null;
-  // A *finished* round-based minigame lingers in `pending_challenge` for the
-  // wrap turn (so results can render), but the engine has already handed back
-  // free-time actions. Treat only an *unfinished* challenge as in-flight, so
-  // laning resumes immediately and free-roam openers reach the per-character
-  // CharacterMenu instead of flooding the flat ChoiceFan.
-  // Guard with a truthy check, not `!== null`: some session payloads omit the
-  // key entirely (it arrives `undefined`, not `null`), and `undefined !== null`
-  // is `true` — which would then read `.finished` off `undefined` and crash the
-  // whole scene. `!!` collapses both null and undefined to "no challenge".
-  const inChallenge =
-    !!state.pending_challenge
-    && (state.pending_challenge as { finished?: boolean }).finished !== true;
-  const inIntros = state.phase === "intros";
-  // The character-tap + location-switcher menus only make sense during
-  // free-time. During intros / conversations / minigames we keep every
-  // legal action in the bottom ChoiceFan / scripted beat queue.
-  const useLanedActions = !inDialogue && !inChallenge && !inIntros;
-  const characterActions = useMemo(
-    () => useLanedActions ? actions.filter((a) => PER_CHARACTER_KINDS.has(a.kind) && a.target_id) : [],
-    [actions, useLanedActions],
-  );
-  const moveActions = useMemo(
-    () => useLanedActions ? actions.filter((a) => MOVE_KINDS.has(a.kind)) : [],
-    [actions, useLanedActions],
-  );
-  const fanActions = useMemo(
-    () =>
-      useLanedActions
-        ? actions.filter((a) => !PER_CHARACTER_KINDS.has(a.kind) && !MOVE_KINDS.has(a.kind))
-        : actions,
-    [actions, useLanedActions],
-  );
+  onSettled,
+  renderSlot,
+}: Props<TSlot>) {
+  const characterActions = plan.actionLanes.character;
+  const moveActions = plan.actionLanes.move;
+  const fanActions = plan.actionLanes.fan;
   const [openCharacterId, setOpenCharacterId] = useState<string | null>(null);
   const [moveOpen, setMoveOpen] = useState(false);
-  const plannedBeats = useMemo(
-    () => locked
-      ? pendingBeats(state, pendingActionLabel, pendingTargetId, streamText, streamSpeaker)
-      : planScene(null, state, lastTurn, fanActions),
-    [fanActions, lastTurn, locked, pendingActionLabel, pendingTargetId, state, streamSpeaker, streamText],
-  );
-  const [beatIndex, setBeatIndex] = useState(0);
-  const sceneKey = `${state.turn_index}:${state.phase}:${lastTurn?.state_hash ?? "start"}:${locked ? "locked" : "ready"}:${actions.length}`;
-  // The beat list is rebuilt when `locked` toggles (optimistic pendingBeats vs.
-  // resolved planScene), so beatIndex must reset on the full key. The open menu,
-  // however, should survive a transient lock toggle: closing it whenever the UI
-  // briefly locks (e.g. a background turn resolving) yanks the menu out from
-  // under the player/harness mid-interaction. Reset menus only on a *real* scene
-  // change — a new turn, phase, or resolved state — never on lock alone.
-  const menuResetKey = `${state.turn_index}:${state.phase}:${lastTurn?.state_hash ?? "start"}`;
+  const playback = useScenePlayback(plan);
+  const activeBeat = playback.activeBeat;
+  const activeFrame = playback.activeFrame;
+  const settledPlanId = useRef<string | null>(null);
 
-  useEffect(() => setBeatIndex(0), [sceneKey]);
-  useEffect(() => { setOpenCharacterId(null); setMoveOpen(false); }, [menuResetKey]);
-
-  const activeBeat = plannedBeats[Math.min(beatIndex, Math.max(0, plannedBeats.length - 1))];
-  const currentCamera = cameraFor(plannedBeats, beatIndex);
-  const focusedId = focusFor(activeBeat, currentCamera, state);
-  const speakerPose = poseFor(activeBeat);
-  const positionById = useMemo(() => spritePositions(state, focusedId), [focusedId, state]);
-  const advance = useCallback(() => {
-    if (!activeBeat || activeBeat.kind === "choice_fan") return;
-    // First tap completes any mid-stream bubble (typewriter reveal-all);
-    // the user needs a second tap to actually move to the next beat.
-    if (typeof document !== "undefined") {
-      const streaming = document.querySelector(
-        '[data-testid="speech-bubble"][data-stream-complete="false"], ' +
-        '[data-testid="player-bubble"][data-stream-complete="false"], ' +
-        '[data-testid="narrator-bubble"][data-stream-complete="false"]',
-      );
-      if (streaming) {
-        window.dispatchEvent(new CustomEvent("paradise:reveal-all"));
-        return;
-      }
-    }
-    playSfx("ui-advance");
-    const remaining = plannedBeats.slice(beatIndex + 1);
-    const moreDialogue = remaining.some((beat) => beat.kind === "speech" || beat.kind === "narrator");
-    if (!moreDialogue) onAdvance?.();
-    setBeatIndex((index) => Math.min(index + 1, plannedBeats.length - 1));
-  }, [activeBeat, beatIndex, onAdvance, plannedBeats]);
+  useEffect(() => { setOpenCharacterId(null); setMoveOpen(false); }, [plan.id]);
+  useEffect(() => {
+    if (locked || !playback.settled || settledPlanId.current === plan.id) return;
+    settledPlanId.current = plan.id;
+    onSettled?.(plan.features);
+  }, [locked, onSettled, plan.features, plan.id, playback.settled]);
 
   useEffect(() => {
     if (!activeBeat) return;
@@ -158,29 +75,24 @@ export function SceneDialogueStage({
       activeBeat.kind !== "delta_pop" &&
       activeBeat.kind !== "connection_shift"
     ) return;
-    const timeout = window.setTimeout(advance, activeBeat.durationMs);
+    const timeout = window.setTimeout(playback.advance, activeBeat.durationMs);
     return () => window.clearTimeout(timeout);
-  }, [activeBeat, advance]);
+  }, [activeBeat, playback.advance]);
 
-  // Fire the matching cue the moment a stat/choice beat lands. Keyed on the
-  // beat position within the scene (not on plannedBeats identity, which churns
-  // every streamed chunk) so each beat sounds exactly once on arrival.
   useEffect(() => {
-    const beat = plannedBeats[Math.min(beatIndex, Math.max(0, plannedBeats.length - 1))];
-    if (!beat) return;
-    if (beat.kind === "choice_fan") {
+    if (!activeBeat) return;
+    if (activeBeat.kind === "choice_fan") {
       playSfx("choice-open");
-    } else if (beat.kind === "connection_shift") {
+    } else if (activeBeat.kind === "connection_shift") {
       playSfx("connection-up");
-    } else if (beat.kind === "delta_pop") {
-      if (beat.deltaKind === "audience") {
-        playSfx(beat.amount >= 0 ? "pulse-up" : "pulse-down");
+    } else if (activeBeat.kind === "delta_pop") {
+      if (activeBeat.deltaKind === "audience") {
+        playSfx(activeBeat.amount >= 0 ? "pulse-up" : "pulse-down");
       } else {
-        playSfx(beat.amount >= 0 ? "connection-up" : "connection-down");
+        playSfx(activeBeat.amount >= 0 ? "connection-up" : "connection-down");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [beatIndex, sceneKey]);
+  }, [activeBeat]);
 
   const charactersWithActions = useMemo(() => {
     const ids = new Set<string>();
@@ -197,26 +109,23 @@ export function SceneDialogueStage({
     [characterActions, openCharacterId],
   );
 
-  const sceneLocation = state.phase === "intros" ? "flame_deck" : state.location_id;
-  const bannerShown = showBanner(state.pending_challenge, actions);
+  if (!activeFrame) throw new Error(`Scene plan ${plan.id} has no active frame.`);
+  const positionById = new Map(activeFrame.cast.map((member) => [member.id, member.position]));
   return (
-    <SceneLayer location={sceneLocation} onTap={() => {
+    <SceneLayer location={plan.locationId} onTap={() => {
       if (openCharacterId) { setOpenCharacterId(null); return; }
       if (moveOpen) { setMoveOpen(false); return; }
-      advance();
+      playSfx("ui-advance");
+      playback.advance();
     }}>
       <CharacterLayer
         state={state}
+        frame={activeFrame}
         look={look}
-        focusedId={focusedId}
-        speakerPose={speakerPose}
-        choicesActive={activeBeat?.kind === "choice_fan"}
         tappableIds={charactersWithActions}
         onCharacterTap={(id) => { setMoveOpen(false); setOpenCharacterId((current) => current === id ? null : id); }}
       />
-      {bannerShown ? (
-        <ChallengeBanner pending={state.pending_challenge as PendingChallengeView} />
-      ) : null}
+      {playback.activeSlot !== null && renderSlot ? renderSlot(playback.activeSlot) : null}
       {moveActions.length > 0 ? (
         <MoveButton
           label={state.location_label}
@@ -238,7 +147,7 @@ export function SceneDialogueStage({
         />
       ) : null}
       {activeBeat?.kind === "narrator" ? (
-        <NarratorBubble text={activeBeat.text} canAdvance={hasLaterBeat(plannedBeats, beatIndex)} withBanner={bannerShown} />
+        <NarratorBubble text={activeBeat.text} canAdvance={playback.hasLaterBeat} />
       ) : null}
       {activeBeat?.kind === "speech" ? (
         <SpeechBubble
@@ -247,7 +156,7 @@ export function SceneDialogueStage({
           speaker={speakerName(state, activeBeat.speakerId)}
           text={activeBeat.text}
           position={positionById.get(activeBeat.speakerId) ?? PLAYER_ANCHOR}
-          canAdvance={hasLaterBeat(plannedBeats, beatIndex)}
+          canAdvance={playback.hasLaterBeat}
         />
       ) : null}
       {activeBeat?.kind === "delta_pop" ? (
@@ -262,7 +171,7 @@ export function SceneDialogueStage({
       {activeBeat?.kind === "choice_fan" ? (
         <ChoiceFan actions={activeBeat.spec.actions} locked={locked} onChoose={onChoose} />
       ) : null}
-      {useLanedActions && !openCharacterId && !moveOpen && characterActions.length > 0 && fanActions.length === 0 ? (
+      {!openCharacterId && !moveOpen && characterActions.length > 0 && fanActions.length === 0 ? (
         <p className="scene-hint">Tap a Heartbreaker to chat, or use the map button to move.</p>
       ) : null}
       <style jsx>{`
@@ -288,74 +197,11 @@ export function SceneDialogueStage({
   );
 }
 
-function pendingBeats(state: SessionState, playerLine: string | null, pendingTargetId: string | null, streamText: string, streamSpeaker: string): SceneBeat[] {
-  // Intros never set active_conversation_target_id, so fall back to the target
-  // of the action the player just picked — otherwise the camera drops to a wide
-  // group and the heartbreaker we're talking to recedes while the turn resolves.
-  const activeSpeaker = state.active_conversation_target_id ?? pendingTargetId;
-  const beats: SceneBeat[] = [
-    { kind: "camera", shot: activeSpeaker ? "two_shot" : "wide_group", focusIds: activeSpeaker ? [activeSpeaker] : [], durationMs: 80 },
-  ];
-  if (playerLine) beats.push({ kind: "speech", speakerId: state.player.id, text: playerLine, pose: "talking" });
-  beats.push({
-    kind: "speech",
-    speakerId: activeSpeaker ?? state.player.id,
-    text: streamText || "Sunset Bay is reacting...",
-    pose: "talking",
-  });
-  void streamSpeaker;
-  return beats;
-}
-
-function cameraFor(beats: SceneBeat[], activeIndex: number) {
-  for (let index = activeIndex; index >= 0; index -= 1) {
-    const beat = beats[index];
-    if (beat?.kind === "camera") return beat;
-  }
-  return null;
-}
-
-function focusFor(activeBeat: SceneBeat | undefined, camera: SceneBeat | null, state: SessionState): string | null {
-  if (activeBeat?.kind === "speech" && activeBeat.speakerId !== state.player.id) return activeBeat.speakerId;
-  if (activeBeat?.kind === "reaction") return activeBeat.reactorId;
-  if (camera?.kind === "camera" && camera.focusIds[0]) return camera.focusIds[0];
-  const pendingTarget = (state.pending_challenge as { target_id?: string | null } | null)?.target_id;
-  return state.active_conversation_target_id ?? pendingTarget ?? null;
-}
-
-function poseFor(activeBeat: SceneBeat | undefined): CharacterPose {
-  if (activeBeat?.kind === "speech") return activeBeat.pose ?? "talking";
-  if (activeBeat?.kind === "reaction") return activeBeat.pose;
-  return "listening";
-}
-
-function spritePositions(state: SessionState, focusedId: string | null): Map<string, Position> {
-  const map = new Map<string, Position>();
-  const npcs = visibleNpcs(state, focusedId);
-  const focusedIndex = focusedId ? npcs.findIndex((npc) => npc.id === focusedId) : null;
-  const positions = npcPositions(npcs.length, focusedIndex !== null && focusedIndex >= 0 ? focusedIndex : null);
-  npcs.forEach((npc, index) => map.set(npc.id, positions[index] ?? { x: 50, y: 56, scale: 0.7 }));
-  map.set(state.player.id, PLAYER_ANCHOR);
-  return map;
-}
-
 function speakerName(state: SessionState, speakerId: string) {
   if (speakerId === state.player.id) return state.player.name || "You";
   return state.heartbreakers.find((npc) => npc.id === speakerId)?.name ?? "The Producer";
 }
 
-function hasLaterBeat(beats: SceneBeat[], index: number) {
-  return index < beats.length - 1;
-}
-
-function showBanner(pending: SessionState["pending_challenge"], actions: AvailableAction[]) {
-  if (!pending) return false;
-  const finished = (pending as { finished?: boolean }).finished === true;
-  if (!finished) return true;
-  // Hide a wrapped challenge once the engine has moved on to a non-challenge
-  // action set (e.g. pairing picks) — the banner would otherwise mislead.
-  return actions.some((action) => action.kind === "challenge_response");
-}
 
 function DeltaPop({ beat, position }: { beat: Extract<SceneBeat, { kind: "delta_pop" }>; position: Position }) {
   return (
@@ -518,87 +364,6 @@ function QuizPrompt({ text }: { text: string }) {
   );
 }
 
-const CHALLENGE_TITLES: Record<string, string> = {
-  compatibility_quiz: "Compatibility Quiz",
-  heart_rate: "Pulse Race",
-  couples_quiz: "The Couples Quiz",
-  lie_detector: "Lie Detector",
-  kiss_wed_pass: "Kiss · Wed · Pass",
-  final_couples: "Final Couples",
-};
-
-function ChallengeBanner({ pending }: { pending: PendingChallengeView }) {
-  const title = CHALLENGE_TITLES[pending.kind] ?? "Challenge";
-  const total = pending.round_count ?? 1;
-  const current = Math.min(total, (pending.round_index ?? 0) + 1);
-  const pct = pending.finished ? 100 : Math.max(0, Math.min(100, ((pending.round_index ?? 0) / Math.max(1, total)) * 100));
-  return (
-    <div className="challenge-banner" data-testid="challenge-banner">
-      <span className="challenge-banner-kicker">{title}</span>
-      <span className="challenge-banner-round">
-        {pending.finished ? "Wrap" : `Round ${current} / ${total}`}
-      </span>
-      <span className="challenge-banner-bar"><span style={{ width: `${pct}%` }} /></span>
-      <style jsx>{`
-        .challenge-banner {
-          position: absolute;
-          z-index: 11;
-          top: 10px;
-          left: 14px;
-          display: grid;
-          grid-template-columns: auto auto;
-          column-gap: 12px;
-          row-gap: 3px;
-          align-items: baseline;
-          padding: 7px 13px 8px;
-          border-radius: var(--r-pill);
-          background: rgba(20,16,12,.78);
-          border: 1px solid rgba(217,167,58,.4);
-          color: var(--card);
-          box-shadow: var(--shadow-md), var(--inset-gold);
-          font-family: var(--font-display);
-          pointer-events: none;
-          backdrop-filter: blur(8px);
-        }
-        .challenge-banner-kicker {
-          font-size: 13px;
-          font-weight: 650;
-          letter-spacing: .04em;
-        }
-        .challenge-banner-round {
-          font-size: 11px;
-          letter-spacing: .14em;
-          text-transform: uppercase;
-          color: var(--gold-soft);
-        }
-        .challenge-banner-bar {
-          grid-column: 1 / -1;
-          width: 100%;
-          height: 3px;
-          border-radius: var(--r-pill);
-          background: rgba(217,167,58,.15);
-          overflow: hidden;
-        }
-        .challenge-banner-bar > span {
-          display: block;
-          height: 100%;
-          background: linear-gradient(90deg, var(--accent), var(--gold));
-          transition: width .35s ease;
-        }
-        @media (max-width: 520px) {
-          .challenge-banner {
-            top: 6px;
-            left: 8px;
-            padding: 5px 9px 6px;
-          }
-          .challenge-banner-kicker { font-size: 12px; }
-          .challenge-banner-round { font-size: 10px; }
-        }
-      `}</style>
-    </div>
-  );
-}
-
 function MoveButton({
   label,
   open,
@@ -610,7 +375,7 @@ function MoveButton({
   label: string;
   open: boolean;
   onToggle: () => void;
-  actions: AvailableAction[];
+  actions: readonly AvailableAction[];
   locked: boolean;
   onChoose: (action: AvailableAction) => void;
 }) {
@@ -728,7 +493,7 @@ function CharacterMenu({
 }: {
   name: string;
   position: Position | null;
-  actions: AvailableAction[];
+  actions: readonly AvailableAction[];
   locked: boolean;
   onClose: () => void;
   onChoose: (action: AvailableAction) => void;
@@ -1045,7 +810,7 @@ function CharacterMenu({
 }
 
 function groupActionsByCategory(
-  actions: AvailableAction[],
+  actions: readonly AvailableAction[],
 ): Record<IntentCategory, AvailableAction[]> {
   const grouped: Record<IntentCategory, AvailableAction[]> = {
     friendly: [],

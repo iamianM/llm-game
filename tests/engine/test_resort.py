@@ -12,6 +12,7 @@ from src.game.agents.resort_orchestrator import (
     ResortUpdate,
 )
 from src.game.agents.runtime import AgentGenerationError, AgentValidationError
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.resort import (
     apply_resort_update,
     normalize_resort_update,
@@ -26,6 +27,8 @@ from src.game.state.models import (
     new_game,
 )
 from src.game.state.rng import SeededRng
+
+MOCK_AGENTS = mock_turn_agents()
 
 
 def test_resort_update_rejects_eliminated_npc() -> None:
@@ -93,7 +96,9 @@ def test_resort_update_rejects_movement_during_pending_gather() -> None:
         fires_on_turn=1,
     )
     update = ResortUpdate(
-        npc_movements=[NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")]
+        npc_movements=[
+            NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")
+        ]
     )
 
     with pytest.raises(ValueError, match="gather is pending"):
@@ -107,7 +112,13 @@ def test_apply_movements_updates_locations() -> None:
         npc_movements=[NPCMovement(npc_id="maya", target_location=Location.POOL, reason="joining")]
     )
 
-    apply_resort_update(state, update, SeededRng(1))
+    apply_resort_update(
+        state,
+        update,
+        SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
+    )
 
     assert state.heartbreakers[1].location_id is Location.POOL
 
@@ -117,7 +128,9 @@ def test_moving_conversation_participant_implies_conversation_end() -> None:
     conversation = _npc_conversation()
     state.npc_conversations.append(conversation)
     update = ResortUpdate(
-        npc_movements=[NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")],
+        npc_movements=[
+            NPCMovement(npc_id="chloe", target_location=Location.KITCHEN, reason="drift")
+        ],
         conversation_continues=[ContinueConversation(conversation_id=conversation.id)],
     )
 
@@ -150,7 +163,13 @@ def test_npc_conversation_close_invokes_curator() -> None:
         conversation_ends=[EndConversation(conversation_id=conversation.id, reason="natural_end")]
     )
 
-    changes = apply_resort_update(state, update, SeededRng(1))
+    changes = apply_resort_update(
+        state,
+        update,
+        SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
+    )
 
     assert changes.curator_batches
     assert changes.curator_batches[0].kind == "background"
@@ -159,10 +178,8 @@ def test_npc_conversation_close_invokes_curator() -> None:
     assert state.heartbreakers[1].memories
 
 
-def test_npc_conversation_close_survives_curator_raise() -> None:
-    """The async curator exhausting its retries and raising during the resort turn
-    must not dead-screen the player — closing an NPC-NPC conversation degrades to the
-    deterministic mock curator and still records participant memories."""
+def test_npc_conversation_close_propagates_curator_raise() -> None:
+    """A configured curator failure propagates to the atomic turn boundary."""
     state = new_game(1)
     conversation = _npc_conversation()
     state.npc_conversations.append(conversation)
@@ -173,13 +190,14 @@ def test_npc_conversation_close_survives_curator_raise() -> None:
     def boom(*_args, **_kwargs):
         raise AgentValidationError("curator exhausted retries")
 
-    changes = apply_resort_update(state, update, SeededRng(1), conversation_curator=boom)
-
-    assert changes.curator_batches
-    assert changes.curator_batches[0].kind == "background"
-    assert state.npc_conversations == []
-    assert state.heartbreakers[0].memories
-    assert state.heartbreakers[1].memories
+    with pytest.raises(AgentValidationError, match="curator exhausted retries"):
+        apply_resort_update(
+            state,
+            update,
+            SeededRng(1),
+            background_dialogue=MOCK_AGENTS.background_dialogue,
+            conversation_curator=boom,
+        )
 
 
 def test_conversation_start_creates_background_exchange() -> None:
@@ -196,17 +214,21 @@ def test_conversation_start_creates_background_exchange() -> None:
         ]
     )
 
-    changes = apply_resort_update(state, update, SeededRng(1))
+    changes = apply_resort_update(
+        state,
+        update,
+        SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
+    )
 
     assert len(state.npc_conversations) == 1
     assert len(state.npc_conversations[0].exchanges) == 1
     assert len(changes.background_dialogues) == 1
 
 
-def test_conversation_start_survives_background_dialogue_raise() -> None:
-    """Background NPC-NPC chatter is pure ambient flavor; the dialogue agent giving
-    up and raising must not dead-screen the player's turn — starting the conversation
-    degrades to the deterministic mock exchange and still records it."""
+def test_conversation_start_propagates_background_dialogue_raise() -> None:
+    """A configured background dialogue failure propagates to the turn boundary."""
     state = new_game(1)
     state.heartbreakers[1].location_id = Location.POOL
     update = ResortUpdate(
@@ -222,11 +244,14 @@ def test_conversation_start_survives_background_dialogue_raise() -> None:
     def boom(*_args, **_kwargs):
         raise AgentGenerationError("background dialogue exhausted retries")
 
-    changes = apply_resort_update(state, update, SeededRng(1), background_dialogue=boom)
-
-    assert len(state.npc_conversations) == 1
-    assert len(state.npc_conversations[0].exchanges) == 1
-    assert len(changes.background_dialogues) == 1
+    with pytest.raises(AgentGenerationError, match="background dialogue exhausted retries"):
+        apply_resort_update(
+            state,
+            update,
+            SeededRng(1),
+            background_dialogue=boom,
+            conversation_curator=MOCK_AGENTS.conversation_curator,
+        )
 
 
 def test_normalize_resolves_wrong_case_movement() -> None:
@@ -234,7 +259,9 @@ def test_normalize_resolves_wrong_case_movement() -> None:
     before validation instead of dead-screening the turn."""
     state = new_game(1)
     update = ResortUpdate(
-        npc_movements=[NPCMovement(npc_id="Jordan", target_location=Location.KITCHEN, reason="drift")]
+        npc_movements=[
+            NPCMovement(npc_id="Jordan", target_location=Location.KITCHEN, reason="drift")
+        ]
     )
 
     normalized = normalize_resort_update(state, update)
@@ -270,7 +297,9 @@ def test_normalize_leaves_unknown_npc_untouched() -> None:
     """A genuinely unknown token is left alone so validation rejects it clearly."""
     state = new_game(1)
     update = ResortUpdate(
-        npc_movements=[NPCMovement(npc_id="ghost", target_location=Location.KITCHEN, reason="drift")]
+        npc_movements=[
+            NPCMovement(npc_id="ghost", target_location=Location.KITCHEN, reason="drift")
+        ]
     )
 
     normalized = normalize_resort_update(state, update)
@@ -280,29 +309,30 @@ def test_normalize_leaves_unknown_npc_untouched() -> None:
         validate_resort_update(state, normalized)
 
 
-def test_apply_resort_turn_survives_orchestrator_raise() -> None:
-    """The ambient orchestrator giving up (its live 3-retry exhaustion) must not
-    dead-screen the turn — the resort simply holds still for one turn."""
+def test_apply_resort_turn_propagates_orchestrator_raise() -> None:
+    """The resort port is fail-loud beneath the atomic turn boundary."""
     state = new_game(1)
     before = {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers}
 
     def boom(_state: GameState) -> ResortUpdate:
         raise AgentValidationError("unknown or eliminated NPC in ResortUpdate: jordan")
 
-    resort_update, changes, arrival_rolls = apply_resort_turn(
-        state, SeededRng(1), boom, background_dialogue=None, conversation_curator=None
-    )
+    with pytest.raises(AgentValidationError, match="unknown or eliminated"):
+        apply_resort_turn(
+            state,
+            SeededRng(1),
+            boom,
+            background_dialogue=MOCK_AGENTS.background_dialogue,
+            conversation_curator=MOCK_AGENTS.conversation_curator,
+        )
 
-    assert resort_update == ResortUpdate()
-    assert changes.resort_update == ResortUpdate()
-    assert arrival_rolls == []
-    # No ambient mutation leaked through on the failure path.
-    assert {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers} == before
+    assert {
+        heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers
+    } == before
 
 
-def test_apply_resort_turn_drops_unrepairable_update() -> None:
-    """An invalid update that near-miss id repair cannot fix is dropped to empty
-    rather than propagating the validation error up through the turn."""
+def test_apply_resort_turn_rejects_unrepairable_update() -> None:
+    """An invalid update that near-miss repair cannot fix fails loud."""
     state = new_game(1)
     before = {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers}
 
@@ -313,17 +343,22 @@ def test_apply_resort_turn_drops_unrepairable_update() -> None:
             ]
         )
 
-    resort_update, _changes, _rolls = apply_resort_turn(
-        state, SeededRng(1), ghost_mover, background_dialogue=None, conversation_curator=None
-    )
+    with pytest.raises(AgentValidationError, match="unknown or eliminated"):
+        apply_resort_turn(
+            state,
+            SeededRng(1),
+            ghost_mover,
+            background_dialogue=MOCK_AGENTS.background_dialogue,
+            conversation_curator=MOCK_AGENTS.conversation_curator,
+        )
 
-    assert resort_update == ResortUpdate()
-    assert {heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers} == before
+    assert {
+        heartbreaker.id: heartbreaker.location_id for heartbreaker in state.heartbreakers
+    } == before
 
 
-def test_apply_resort_turn_preserves_pending_summon_when_llm_update_invalid() -> None:
-    """A queued summon is internally derived and valid; it should still fire even
-    when the LLM's own movement/chatter for the turn is unusable and dropped."""
+def test_apply_resort_turn_keeps_pending_summon_when_agent_update_invalid() -> None:
+    """Fail-loud validation leaves the queued deterministic summon untouched."""
     from src.game.state.autonomy import PendingNPCSummon
 
     state = new_game(1)
@@ -347,14 +382,16 @@ def test_apply_resort_turn_preserves_pending_summon_when_llm_update_invalid() ->
             ]
         )
 
-    resort_update, _changes, _rolls = apply_resort_turn(
-        state, SeededRng(1), ghost_mover, background_dialogue=None, conversation_curator=None
-    )
+    with pytest.raises(AgentValidationError, match="unknown or eliminated"):
+        apply_resort_turn(
+            state,
+            SeededRng(1),
+            ghost_mover,
+            background_dialogue=MOCK_AGENTS.background_dialogue,
+            conversation_curator=MOCK_AGENTS.conversation_curator,
+        )
 
-    # The bad LLM movement was dropped, but the guarded summon survived the merge.
-    assert resort_update.npc_movements == []
-    assert [summon.npc_id for summon in resort_update.npc_summoned_elsewhere] == ["maya"]
-    assert state.pending_npc_summon is None
+    assert state.pending_npc_summon is not None
 
 
 def test_apply_resort_turn_drops_summon_that_conflicts_with_movement() -> None:
@@ -383,7 +420,11 @@ def test_apply_resort_turn_drops_summon_that_conflicts_with_movement() -> None:
         )
 
     resort_update, _changes, _rolls = apply_resort_turn(
-        state, SeededRng(1), move_maya, background_dialogue=None, conversation_curator=None
+        state,
+        SeededRng(1),
+        move_maya,
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
     )
 
     # The valid movement survived; the conflicting summon was dropped, not crashed.

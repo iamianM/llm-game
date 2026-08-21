@@ -10,8 +10,8 @@ from typing import cast
 
 import yaml
 
-from src.api.session import AgentBundle
 from src.game.agents.runtime import recover_agent_traces_after_error
+from src.game.agents.turn_agents import live_turn_agents, mock_turn_agents
 from src.game.cli.commands.play_recording import record_from_turn
 from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
@@ -121,10 +121,11 @@ def _run_scenario(
 ) -> GoldenScenarioResult:
     state = _new_scenario_state(scenario)
     rng = SeededRng(scenario.seed)
-    agents = AgentBundle.live() if real_llm else AgentBundle.mock()
-    if real_llm and not scenario.live_resort_life:
-        agents.resort_orchestrator = None
-        agents.background_dialogue = None
+    agents = (
+        live_turn_agents("full" if scenario.live_resort_life else "no_resort_life")
+        if real_llm
+        else mock_turn_agents()
+    )
     turn_results: list[GoldenTurnResult] = []
     records: list[dict[str, object]] = []
     for turn_spec in scenario.turns:
@@ -132,17 +133,7 @@ def _run_scenario(
         input_hash = state_hash(state_hash_payload(state))
         pre_state = state.model_copy(deep=True)
         try:
-            turn = run_turn(
-                state,
-                turn_spec.action,
-                rng,
-                heartbreaker_voice=agents.heartbreaker_voice,
-                contextual_options=agents.contextual_options,
-                event_narrator=agents.event_narrator,
-                conversation_curator=agents.conversation_curator,
-                resort_orchestrator=agents.resort_orchestrator,
-                background_dialogue=agents.background_dialogue,
-            )
+            turn = run_turn(state, turn_spec.action, rng, agents)
             state = turn.state
             record = cast(dict[str, object], record_from_turn(input_hash, turn_spec.action, turn))
             records.append(record)
@@ -168,6 +159,7 @@ def _run_scenario(
                     trace.model_dump(mode="json") for trace in recover_agent_traces_after_error()
                 ],
             }
+            records.append(error_record)
             turn_results.append(
                 GoldenTurnResult(
                     id=turn_spec.id,

@@ -1,9 +1,9 @@
 {
   "name": "day2-pre-pulse-race",
   "seed": 7,
-  "state_hash": "7e6e0e0e92590012b47f7b6b04741705f760f29217f7d33a3276594ad005f790",
+  "state_hash": "d5be756db94a80dd7305bb320c36a04f9dbd2664aac54e12f415389105042113",
   "state": {
-    "schema_version": 29,
+    "schema_version": 30,
     "seed": 7,
     "turn_index": 75,
     "day": 2,
@@ -47,7 +47,8 @@
             "pairing"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_f6248b78d5efe016",
@@ -64,7 +65,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_4d4ad059ee5d0f48",
@@ -81,7 +83,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_9268d7453c64626f",
@@ -98,7 +101,8 @@
             "gather_scheduled"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_ed28071b13211056",
@@ -115,7 +119,8 @@
             "producer_text"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         },
         {
           "id": "mem_602170c088d4c073",
@@ -132,7 +137,8 @@
             "challenge"
           ],
           "durable": true,
-          "mentioned_subject_ids": []
+          "mentioned_subject_ids": [],
+          "recap_disposition": "none"
         }
       ],
       "known_facts": {
@@ -465,7 +471,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_7fd2f5f46fa966e2",
@@ -482,7 +489,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2cb942d2bf6474f1",
@@ -499,7 +507,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::favorite_food::1::13",
@@ -517,7 +526,8 @@
               "favorite_food"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::age::1::13",
@@ -535,7 +545,8 @@
               "age"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "caught_unprepared::chloe::hometown::1::13",
@@ -553,7 +564,8 @@
               "hometown"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_22ab7a0443e86655",
@@ -570,7 +582,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_6346daa8bf3b161d",
@@ -587,7 +600,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4e43a280e7f864f9",
@@ -604,7 +618,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f9dbdeaa9c9943da",
@@ -621,7 +636,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -1113,7 +1129,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_b2829f17ddd1e1ca",
@@ -1130,7 +1147,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_d78452a8494a430b",
@@ -1147,7 +1165,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_abd4a98a41ee10b2",
@@ -1164,7 +1183,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_868320429348dcb9",
@@ -1181,7 +1201,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_58f6f3e0e512428e",
@@ -1198,7 +1219,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_50976e54b08c9a0f",
@@ -1215,7 +1237,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -1707,7 +1730,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_34037131594dd190",
@@ -1724,7 +1748,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bdad7c39aafaf717",
@@ -1741,7 +1766,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_934befd6d3a3ae52",
@@ -1758,7 +1784,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5ee7750120a1a484",
@@ -1775,7 +1802,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_24df3cf7d07cba5e",
@@ -1792,7 +1820,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_2aebe2b24e44cb52",
@@ -1809,7 +1838,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -2301,7 +2331,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_16a2ec52bc1845a0",
@@ -2318,7 +2349,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_9f02e6dab40a6cfa",
@@ -2335,7 +2367,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_41d73d5d3d1d17eb",
@@ -2352,7 +2385,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_bc825b3dddfc9320",
@@ -2369,7 +2403,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_999e7136f5d1dcd0",
@@ -2386,7 +2421,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5fb1de16b30d8370",
@@ -2403,7 +2439,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -2895,7 +2932,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_7ecc909791f08b65",
@@ -2912,7 +2950,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_a8989f68975cce98",
@@ -2929,7 +2968,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_524054a97292b4db",
@@ -2946,7 +2986,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fc51c303f41b440e",
@@ -2963,7 +3004,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_92cf4da2699046dc",
@@ -2980,7 +3022,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_93b6dd474187ca73",
@@ -2997,7 +3040,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -3489,7 +3533,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_bb8c89b8963184a5",
@@ -3506,7 +3551,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_457328f03cc5abe8",
@@ -3523,7 +3569,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_4a97a7d6280d52ed",
@@ -3540,7 +3587,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_fd942d4773fef1d8",
@@ -3557,7 +3605,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_08c1d9f08f263fa2",
@@ -3574,7 +3623,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_992840511f600693",
@@ -3591,7 +3641,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -4083,7 +4134,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_48ebb88b9d689f14",
@@ -4100,7 +4152,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1e04265ce0bd9ff9",
@@ -4117,7 +4170,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_1306bd909e50368d",
@@ -4134,7 +4188,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dd30a3db250c6e73",
@@ -4151,7 +4206,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_5326798b5c98156d",
@@ -4168,7 +4224,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_ecfc4ecb8c6fca38",
@@ -4185,7 +4242,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -4677,7 +4735,8 @@
               "intro"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "your_day"
           },
           {
             "id": "mem_34fb148fe58b47e3",
@@ -4694,7 +4753,8 @@
               "pairing"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_dcc8f69980514a74",
@@ -4711,7 +4771,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_8210ecd5eef6232a",
@@ -4728,7 +4789,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_0b864fb17bb96c9d",
@@ -4745,7 +4807,8 @@
               "gather_scheduled"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_c582895dd3ddf6d3",
@@ -4762,7 +4825,8 @@
               "producer_text"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           },
           {
             "id": "mem_f752f20ad02ac779",
@@ -4779,7 +4843,8 @@
               "challenge"
             ],
             "durable": true,
-            "mentioned_subject_ids": []
+            "mentioned_subject_ids": [],
+            "recap_disposition": "none"
           }
         ],
         "trait_card": {
@@ -7762,14 +7827,17 @@
           {
             "holder_id": "chloe",
             "subject_id": "player",
-            "content": "I properly met you during Day One intros and got a real first read.",
+            "content": "I properly met the player during Day One intros and got a real first read.",
             "emotional_weight": 4,
             "tags": [
               "day_one",
               "intro"
-            ]
+            ],
+            "formed_on_turn": 8,
+            "recap_disposition": "your_day"
           }
-        ]
+        ],
+        "resort_id": "main"
       }
     ],
     "private_suite": {

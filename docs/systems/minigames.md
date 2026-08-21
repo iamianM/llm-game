@@ -1,9 +1,10 @@
 # Minigame System
 
-This document defines the shared contract implemented by all six Paradise
-Hearts daily challenges. The original dice-roll placeholder has been replaced
-by typed, round-based minigames that reuse one deterministic engine harness,
-one action vocabulary, and one narration boundary.
+This document defines the shared contract implemented by every Paradise Hearts
+daily challenge ("minigame"). The deterministic engine owns rounds, choices,
+scoring, reveals, and results. A typed presentation adapter projects that state
+into compact browser boards without exposing hidden truth or inventing display
+values.
 
 **Read alongside:** [12-Challenges-And-Events.md](../design/12-Challenges-And-Events.md)
 (design canon for individual challenges), [paradise-hearts-glossary.md](../reference/paradise-hearts-glossary.md)
@@ -108,10 +109,10 @@ drives round-by-round decisions.
 - **announce**: Event Narrator writes the cold-open beat. Engine has already
   scheduled the `Challenge`, populated `state.pending_challenge`, and surfaced
   the announce event to traces.
-- **present round**: Engine reads the next prompt from the Question Bank,
-  emits the choice set as `available_actions()`, and renders it through the
-  existing `ChoiceMenu`/CLI surfaces. Player picks via `ActionKind.MINIGAME_RESPONSE`
-  (see §3).
+- **present round**: Engine reads the next prompt from the Question Bank and
+  emits the choice set through `available_actions()`. The CLI renders those
+  actions directly. The browser scene uses the same actions in its `ChoiceFan`
+  while the minigame module renders a compact typed board.
 - **score round**: Engine computes the round's points from the choice + state.
   No LLM call.
 - **reveal**: Engine appends any newly visible `KnownFact`s,
@@ -134,9 +135,9 @@ must render the same round count and the same surfacing order.
 
 ### 3.1 Extended `Challenge` model
 
-`src/game/state/event_models.py:Challenge` keeps its existing fields and gains
-a typed minigame payload. The new fields are optional so existing fixtures
-keep validating; new fixtures populate them.
+`src/game/state/event_models.py:Challenge` is the canonical round state. The
+checked-in schema and fixtures use one shape; old snapshot schemas are rejected
+and regenerated rather than adapted at runtime.
 
 ```python
 class MinigameRound(BaseModel):
@@ -184,30 +185,26 @@ class Challenge(BaseModel):
     audience_delta: int = 0
 ```
 
-`participants`, `player_choice`, `result`, and `deltas` remain on `Challenge`
-for backward compatibility. The `result` field becomes a coarse summary of
-`classification` (`success` if `classification in {"success", "partial"}` else
-`failure`) so existing scoring callers keep working.
+Single-roll fields remain meaningful only for challenge families that still use
+the single-roll resolution path. Round-based minigames use `rounds`,
+`current_round_index`, `total_points`, `classification`, and `audience_delta`.
+No adapter translates between two round formats.
 
-### 3.2 New `ActionKind`
+### 3.2 Canonical `ActionKind`
 
-`src/game/engine/actions.py` adds one action kind, replacing the bespoke
-`CHALLENGE_RESPONSE` flow for new minigame kinds:
+All round choices use the existing canonical action kind:
 
 ```python
 class ActionKind(StrEnum):
     # ... existing values ...
-    MINIGAME_RESPONSE = "minigame_response"
+    CHALLENGE_RESPONSE = "challenge_response"
 ```
 
-`MINIGAME_RESPONSE` carries `payload = {"choice_id": str}`. `target_id` is
-unused. Per round, `available_actions()` emits one `MINIGAME_RESPONSE` per
-legal `MinigameChoice`. Validation rejects any choice not present in the
-current round's `choices`.
-
-`CHALLENGE_RESPONSE` stays as a deprecated alias that forwards to
-`MINIGAME_RESPONSE` for one release. Once the six minigames are migrated, the
-alias is removed in one cleanup PR (`ENGINEERING.md` R-no-dead-code applies).
+`CHALLENGE_RESPONSE` carries the current round index and selected choice in its
+payload. Per round, `available_actions()` emits one action per legal
+`MinigameChoice`. Validation rejects a stale round or a choice not present in
+the current round. Browser code never rebuilds this choice set from the
+minigame projection.
 
 ### 3.3 `MinigameKind` enum
 
@@ -226,7 +223,28 @@ class MinigameKind(StrEnum):
 `DAILY_CHALLENGE_SCHEDULE` keys this enum. Scenario YAML may still use string
 literals; Pydantic coerces.
 
-### 3.4 Question Bank
+### 3.4 Player-facing projection
+
+`src/game/presentation/minigame.py` projects `Challenge` into a strict
+`MinigameRoundView | MinigameWrapView` union. `status` is the discriminator and
+`kind` selects one of six exhaustive board payloads. Narration and the concise
+question are separate fields; serializers do not parse questions from prose.
+
+The projection never carries legal choices. `available_actions` is the only
+choice authority. It exposes only display-safe engine reveals:
+
+- Compatibility Quiz: latest recorded answer and reaction.
+- Couples Quiz: player answer, partner answer, and alignment.
+- Pulse Race: recorded performer, observer, BPM, and chemistry readings.
+- Lie Detector: recorded subject, verdict, and engine roll.
+- Kiss Wed Pass: recorded allocations.
+- Final Couples: scored facets and final tally.
+
+The generated OpenAPI types feed the browser aliases. The renderer registry is
+exhaustive; an unknown kind fails validation or compilation instead of falling
+back to a generic card.
+
+### 3.5 Question Bank
 
 Cached in `GameState` as a top-level field so it survives snapshots and is
 deterministic from the seed:
@@ -497,61 +515,26 @@ The golden judge rubric in `src/game/eval/golden_judge.py` already grades
 
 ## 8. Surfacing checklist
 
-Every minigame PR must touch every line below, or explicitly call out a "not
-needed" reason in the PR description.
+The implemented system has one owner per concern:
 
-**Engine**
-- `src/game/engine/challenges.py` — minigame kind in `MinigameKind`, entry in
-  `DAILY_CHALLENGE_SCHEDULE`, scoring function, `apply_*` function.
-- `src/game/engine/actions.py` — round actions in `available_actions()`,
-  `MINIGAME_RESPONSE` validation.
-- `src/game/engine/turn.py` — wiring scheduled minigame → present round → score
-  → apply → narrate.
-- `src/game/state/event_models.py` — schema updates (shared across all
-  minigames; touched once).
+| Concern | Owner |
+|---|---|
+| Schedule, round construction, scoring, and reveals | `src/game/engine/challenges.py` and the per-kind engine modules |
+| Legal player choices | `src/game/engine/actions.py` and `available_actions()` |
+| Persisted round truth | `src/game/state/event_models.py` |
+| Display-safe HTTP projection | `src/game/presentation/minigame.py` |
+| API field and generated contract | `src/api/models.py`, `src/api/serializers.py`, `web/lib/openapi-types.ts` |
+| Browser interpretation and scene port | `web/lib/minigame/` |
+| Compact board renderers | `web/components/minigame/` |
+| Scene sequencing and action lanes | `web/lib/scene/` and `web/components/scene/` |
+| CLI and reports | `src/game/cli/` and `src/game/reporting/` |
+| Mechanical balance | `data/balance/minigames.yaml` |
+| Flavor | `content/challenges/` |
 
-**Agents**
-- `src/game/agents/question_bank.py` — bank generation for this minigame kind.
-- `src/game/agents/prompts/question_bank.md` — prompt update if needed.
-- `src/game/agents/event_narrator.py` and `prompts/event_narrator.md` — payload
-  contract update if the minigame surfaces new reveal kinds.
-
-**Content / balance**
-- `content/challenges/<kind>.md` — flavor copy and tone notes.
-- `data/balance/minigames.yaml` — round count, point table, thresholds,
-  audience deltas.
-
-**CLI**
-- `src/game/cli/commands/play.py` — interactive rendering of minigame rounds.
-- `src/game/reporting/slides/*` — report packet rendering of the minigame
-  scene.
-
-**Browser**
-- `web/components/stage/ChoiceMenu.tsx` — choice rendering for minigame rounds.
-- `web/components/stage/GameStage.tsx` — minigame scene composition.
-- `web/lib/types.ts` — TS mirror of new `MinigameResult` fields.
-- `web/lib/api.ts` — typed call shape.
-
-**Tests / evals**
-- `tests/engine/test_<minigame>.py` — deterministic scoring, eligibility,
-  threshold edges.
-- `tests/scenarios/fixtures/<minigame>-vertical.yaml` — fixture that drives the
-  minigame to all three classifications across separate seeds.
-- `evals/llm/scenarios/<minigame>-narration.yaml` — golden eval scenario with
-  authored intent for narration faithfulness.
-- `web/tests/e2e/<minigame>.spec.ts` — Playwright walk-through of one
-  minigame run.
-
-**Docs**
-- `docs/systems/minigames/<kind>.md` — per-minigame spec (already present once the
-  spec lands; PRs update it).
-- `docs/current-plan.md` — remove the minigame from "Now/Next" once shipped;
-  the system doc owns the present-tense behavior.
-- `docs/contract-map.yaml` — extend the `balance_boundary` group to cover
-  `docs/systems/minigames/**`.
-- `docs/design/12-Challenges-And-Events.md` — cross-reference the per-minigame spec for
-  the matching challenge (canon stays; spec is authoritative for current
-  implementation).
+A change to a minigame kind must update every owner whose contract changes. A
+new reveal kind starts in engine state and the Pydantic projection, then flows
+through OpenAPI generation and the exhaustive browser renderer. Browser-only
+mechanics and hand-written TypeScript mirrors are not valid shortcuts.
 
 ---
 
@@ -616,7 +599,10 @@ All six scheduled minigames use the shared harness:
 
 Future work improves presentation and coverage; it does not maintain a second
 legacy challenge path.
-and updates the matching per-minigame spec to present tense.
+
+Per-kind mechanics remain in the owning specs under `docs/systems/minigames/`.
+The shared presentation contract stays deliberately smaller than those
+mechanics: it carries only truthful display values and never legal choices.
 
 ---
 
@@ -643,25 +629,12 @@ specific moments to lean into for that kind.
 
 ---
 
-## 13. Open questions
+## 13. Deliberate POC limits
 
-These are not blockers for shipping the Compatibility Quiz vertical slice,
-but they should be answered before the second minigame lands.
-
-- **Question bank reroll under live mode.** Should the bank regenerate when
-  the player rewinds to a pre-session-start checkpoint and re-rolls the seed?
-  Current proposal: yes, with the same sub-seed derivation, so behavior
-  matches a fresh run. Confirm with a checkpoint-compare scenario.
-- **Multi-NPC parallel reveals.** Heart Rate reveals an N×N matrix. Do we
-  show all reveals at once, or animate them per NPC? UI design decision;
-  determinism is unaffected.
-- **Anti-grinding.** A player who saves and re-loads to retry a minigame
-  could in theory memorize answers. Current proposal: do nothing — the POC
-  doesn't support save-scumming as a player loop
-  (`current-plan.md`, "Parked For The POC").
-- **Trait facts the player has never surfaced.** Should the Compatibility
-  Quiz quiz the player on a fact that has never been revealed in any prior
-  chat? Current proposal: no. The eligibility gate in §6.1 means a Tier-3
-  fact only appears once familiarity passes the threshold, which by
-  construction means the player has had enough conversation depth that the
-  fact *could* have come up.
+- Rewinding to a pre-session checkpoint follows the existing seeded replay
+  contract; no special minigame reroll path exists.
+- Pulse Race reveals use compact rows. Presentation timing never feeds back
+  into engine state.
+- The game does not add anti-grinding mechanics for checkpoint reloads.
+- Knowledge-backed questions use the engine's eligibility rules. The browser
+  does not compensate for hidden or missing facts.

@@ -20,7 +20,9 @@ def proposal_event(state: GameState, result: MechanicalResult) -> CeremonyEvent 
     proposal = ProposalOutcome.model_validate(result.proposal_outcome)
     sub_kind = "accepted" if proposal.accepted else "rejected"
     kind = "npc_proposal_response" if "npc_proposal_response" in result.tags else "pair_proposal"
-    heartbreaker_id = proposal.proposer_id if proposal.proposer_id != "player" else proposal.target_id
+    heartbreaker_id = (
+        proposal.proposer_id if proposal.proposer_id != "player" else proposal.target_id
+    )
     return CeremonyEvent(
         kind=kind,
         sub_kind=sub_kind,
@@ -36,7 +38,7 @@ def proposal_event(state: GameState, result: MechanicalResult) -> CeremonyEvent 
 def close_proposal_conversation(
     state: GameState,
     result: MechanicalResult,
-    curator: ConversationCuratorFn | None,
+    curator: ConversationCuratorFn,
 ) -> list[MemoryBatch]:
     """Curate the proposal moment and close the active conversation if present."""
     if result.proposal_outcome is None:

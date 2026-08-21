@@ -15,6 +15,7 @@ from src.game.engine.intents import Intent, IntentCategory, load_intents
 from src.game.engine.private_chat import PrivateChatAttempt
 from src.game.engine.results import MechanicalResult
 from src.game.engine.rules import apply_action
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import Gender, Mood, new_game
 from src.game.state.rng import SeededRng
 
@@ -371,6 +372,7 @@ def test_heartbreaker_voice_allows_share_gossip_subject_mentions() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya looked rattled after Liam stepped back.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, memory)
     result = MechanicalResult(
@@ -416,6 +418,7 @@ def test_heartbreaker_voice_allows_share_gossip_mentioning_absent_second_cast() 
         weight=7,
         tags=["gossip"],
         content="I watched Maya and Blake trade cheeky lines in the kitchen.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, memory)
     result = MechanicalResult(

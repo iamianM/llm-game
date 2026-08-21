@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import pytest
+
 from src.game.agents.contextual_options import ContextualBespoke
 from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import AgentValidationError
@@ -14,7 +16,7 @@ from src.game.engine.option_defaults import (
     tone_reaction_options,
 )
 from src.game.engine.rules import MechanicalResult
-from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft
+from src.game.state.memory import GossipSeed, MemoryBatch, MemoryDraft, RecapDisposition
 from src.game.state.models import (
     Conversation,
     FollowUpOption,
@@ -73,6 +75,7 @@ def test_default_options_include_share_gossip_when_player_holds_memory() -> None
             weight=7,
             tags=["gossip"],
             content="Maya looked rattled after Liam stepped back.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -98,6 +101,7 @@ def test_ceremony_memory_not_offered_as_share_gossip() -> None:
             weight=5,
             tags=["ceremony", "gather_scheduled"],
             content="Everyone is called to the flame_deck for group_date_invite.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -126,6 +130,7 @@ def test_real_subject_ceremony_memory_not_offered_without_gossip_flag() -> None:
             # A brand-new ceremony kind the blacklist never heard of.
             tags=["surprise_heart_out", "ceremony"],
             content="Maya was sent home in a shock heart_out.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -150,6 +155,7 @@ def test_witnessed_memory_offered_when_flagged_gossip() -> None:
             weight=5,
             tags=["background", "witnessed", "gossip"],
             content="I noticed Maya and Liam looked wrapped up in each other.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -218,6 +224,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya looked rattled after Liam stepped back.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, first)
 
@@ -238,6 +245,7 @@ def test_share_gossip_suppressed_after_already_shared_with_target() -> None:
             weight=7,
             tags=["gossip", f"source_memory:{first.id}"],
             content="Maya looked rattled after Liam stepped back.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
@@ -257,6 +265,7 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
         weight=7,
         tags=["gossip"],
         content="Maya looked rattled after Liam stepped back.",
+        recap_disposition=RecapDisposition.NONE,
     )
     newer = create_memory(
         holder_id="player",
@@ -267,12 +276,14 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
         weight=7,
         tags=["gossip"],
         content="Liam went quiet after the challenge.",
+        recap_disposition=RecapDisposition.NONE,
     )
     add_memory(state, older)
     add_memory(state, newer)
 
     first_offer = next(
-        option for option in default_options(state, result, exchange)
+        option
+        for option in default_options(state, result, exchange)
         if option.intent_kind.startswith("share_gossip:")
     )
     assert first_offer.intent_kind == f"share_gossip:{newer.id}"
@@ -289,11 +300,13 @@ def test_share_gossip_surfaces_next_memory_after_one_shared() -> None:
             weight=7,
             tags=["gossip", f"source_memory:{newer.id}"],
             content="Liam went quiet after the challenge.",
+            recap_disposition=RecapDisposition.NONE,
         ),
     )
 
     second_offer = next(
-        option for option in default_options(state, result, exchange)
+        option
+        for option in default_options(state, result, exchange)
         if option.intent_kind.startswith("share_gossip:")
     )
     assert second_offer.intent_kind == f"share_gossip:{older.id}"
@@ -424,35 +437,26 @@ def test_generate_follow_up_menu_uses_bespoke_and_defaults() -> None:
     assert sum(option.category == "exit" for option in menu.options) == 1
 
 
-def test_generate_follow_up_menu_survives_agent_raise() -> None:
-    """The bespoke agent giving up (its live 3-retry exhaustion) must not dead-screen
-    the turn after the NPC has already spoken — the wheel falls back to engine
-    defaults so the player always keeps a usable, valid set of options."""
+def test_generate_follow_up_menu_propagates_agent_raise() -> None:
+    """The contextual-options seam is fail-loud for turn-level rollback."""
     state, result, exchange = _context(success=True, tone="warm")
 
     def boom(*_args, **_kwargs) -> ContextualBespoke:
         raise AgentValidationError("contextual options exhausted retries")
 
-    menu = generate_follow_up_menu(state, result, exchange, 20, boom)
-
-    assert sum(option.category == "exit" for option in menu.options) == 1
-    assert any(option.category != "exit" for option in menu.options)
-    # Default wheel keeps the NPC in the chat rather than silently ending it.
-    assert menu.npc_will_leave is False
+    with pytest.raises(AgentValidationError, match="contextual options exhausted retries"):
+        generate_follow_up_menu(state, result, exchange, 20, boom)
 
 
-def test_generate_follow_up_menu_survives_invalid_agent_return() -> None:
-    """An agent return the engine cannot assemble or validate (here: the wrong type)
-    degrades to the default wheel rather than propagating the error up the turn."""
+def test_generate_follow_up_menu_rejects_invalid_agent_return() -> None:
+    """An invalid adapter return fails the typed seam instead of being substituted."""
     state, result, exchange = _context(success=True, tone="warm")
 
     def garbage(*_args, **_kwargs):
         return "not a menu"
 
-    menu = generate_follow_up_menu(state, result, exchange, 20, garbage)
-
-    assert sum(option.category == "exit" for option in menu.options) == 1
-    assert any(option.category != "exit" for option in menu.options)
+    with pytest.raises(AgentValidationError, match="unknown contextual options result"):
+        generate_follow_up_menu(state, result, exchange, 20, garbage)
 
 
 def _context(*, success: bool, tone: str):

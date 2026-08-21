@@ -1,7 +1,7 @@
 name: npc-summoned-exit
 seed: 41
 initial_phase: morning
-expected_hash: bd4e05ea0127a05bc9818238a8c46b8a7b8b9ff4351facd0ff07b8f1169eb035
+expected_hash: 320cfbeafc03d28c6f383e9762136eba690d3a10b02a2a07df46c4665f6529b4
 actions:
 - kind: start_conversation
   target_id: chloe

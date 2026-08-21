@@ -15,7 +15,7 @@ from collections.abc import Sequence
 from typing import Literal
 
 from src.game.engine.ceremonies import CeremonyEvent
-from src.game.state.memory import GossipSeed, MemoryDraft
+from src.game.state.memory import GossipSeed, MemoryDraft, RecapDisposition
 from src.game.state.models import GameState, Memory, MemoryBatch
 
 
@@ -29,6 +29,7 @@ def create_memory(
     weight: int,
     tags: list[str],
     content: str,
+    recap_disposition: RecapDisposition,
     source_id: str | None = None,
     durable: bool = True,
 ) -> Memory:
@@ -45,6 +46,7 @@ def create_memory(
         emotional_weight=max(1, min(10, weight)),
         tags=sorted(set(tags)),
         durable=durable,
+        recap_disposition=recap_disposition,
     )
 
 
@@ -81,7 +83,12 @@ def _mentioned_subject_ids(state: GameState, content: str) -> list[str]:
 
 
 def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: int) -> list[Memory]:
-    """Create deterministic memories from one curator commit."""
+    """Create deterministic memories from one engine-classified curator commit."""
+    recap_disposition = (
+        RecapDisposition.YOUR_DAY
+        if batch.kind == "player"
+        else RecapDisposition.WHILE_BUSY
+    )
     created: list[Memory] = []
     for draft in batch.memories:
         memory = create_memory(
@@ -95,6 +102,7 @@ def add_memory_batch(state: GameState, batch: MemoryBatch, *, day: int, turn: in
             tags=_scoped_memory_tags(batch, draft),
             content=draft.content,
             durable=draft.durable,
+            recap_disposition=recap_disposition,
         )
         add_memory(state, memory)
         created.append(memory)
@@ -147,6 +155,7 @@ def propagate_gossip_seeds(
                 # relying on the curator to have set it on every seed.
                 tags=[*seed.tags, "told_by", "gossip_spread", "gossip"],
                 content=seed.gist,
+                recap_disposition=RecapDisposition.WHILE_BUSY,
             )
             add_memory(state, memory)
             created.append(memory)
@@ -172,6 +181,7 @@ def remember_ceremony_events(state: GameState, events: Sequence[CeremonyEvent]) 
                     weight=7 if kind in {"heart_throb", "elimination"} else 5,
                     tags=tags,
                     content=message,
+                    recap_disposition=RecapDisposition.NONE,
                 ),
             )
 

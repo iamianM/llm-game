@@ -2,14 +2,23 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from src.game.agents.contextual_options import mock_follow_up_menu
-from src.game.agents.runtime import AgentGenerationError, AgentValidationError
+from src.game.agents.runtime import (
+    AgentGenerationError,
+    AgentValidationError,
+    record_agent_trace,
+    recover_agent_traces_after_error,
+)
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.rules import apply_action
 from src.game.engine.turn import run_turn
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Location,
     MemoryBatch,
@@ -20,6 +29,10 @@ from src.game.state.models import (
     new_game,
 )
 from src.game.state.rng import SeededRng
+from src.game.state.snapshot import state_hash, state_hash_payload
+
+MOCK_AGENTS = mock_turn_agents()
+FOLLOW_UP_AGENTS = replace(MOCK_AGENTS, contextual_options=lambda *_args: mock_follow_up_menu())
 
 
 def test_run_turn_applies_action_and_returns_next_actions() -> None:
@@ -34,6 +47,7 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert result.state.turn_index == 1
@@ -44,65 +58,47 @@ def test_run_turn_applies_action_and_returns_next_actions() -> None:
     assert len(result.state_hash) == 64
 
 
-def test_run_turn_survives_heartbreaker_voice_raise() -> None:
-    """If Heartbreaker Voice exhausts its retries and raises, the conversation beat must
-    not dead-screen the player — the turn falls back to the deterministic mock voice
-    and still returns a usable exchange plus a follow-up wheel."""
+def test_run_turn_rolls_back_state_and_rng_on_agent_failure() -> None:
+    """A failed story port leaves both caller-owned deterministic inputs unchanged."""
     state = new_game(1)
+    rng = SeededRng(1)
+    state_before = state_hash(state_hash_payload(state))
+    rng_before = rng.snapshot()
 
     def boom(*_args, **_kwargs):
+        record_agent_trace(
+            agent_name="heartbreaker_voice",
+            model="test-model",
+            prompt_path="test",
+            response=object(),
+            output=None,
+        )
         raise AgentValidationError("heartbreaker voice exhausted retries")
 
-    result = run_turn(
-        state,
-        PlayerAction(
-            kind=ActionKind.START_CONVERSATION,
-            target_id="chloe",
-            intent_id="friendly_chat_resort",
-        ),
-        SeededRng(1),
-        heartbreaker_voice=boom,
-    )
+    with pytest.raises(AgentValidationError, match="exhausted retries"):
+        run_turn(
+            state,
+            PlayerAction(
+                kind=ActionKind.START_CONVERSATION,
+                target_id="chloe",
+                intent_id="friendly_chat_resort",
+            ),
+            rng,
+            replace(MOCK_AGENTS, heartbreaker_voice=boom),
+        )
 
-    assert result.exchange is not None
-    assert result.exchange.npc_dialogue
-    assert result.available_actions
-    # The conversation opened despite the agent failure (no propagated crash).
-    assert result.state.active_conversation is not None
+    assert state_hash(state_hash_payload(state)) == state_before
+    assert rng.snapshot() == rng_before
+    traces = recover_agent_traces_after_error()
+    assert [trace.agent_name for trace in traces] == ["heartbreaker_voice"]
 
 
-def test_run_turn_records_degraded_trace_on_heartbreaker_voice_failure() -> None:
-    """Degrading to the mock voice must leave an observable footprint: a distinct
-    degraded=True trace, so "we served a mock this turn" is a first-class countable
-    signal in the review packet rather than a silent swallow (ENGINEERING.md R16)."""
+def test_run_turn_rolls_back_non_agent_error_from_story_port() -> None:
+    """Atomic rollback also protects the caller from unexpected adapter bugs."""
     state = new_game(1)
-
-    def boom(*_args, **_kwargs):
-        raise AgentValidationError("heartbreaker voice exhausted retries")
-
-    result = run_turn(
-        state,
-        PlayerAction(
-            kind=ActionKind.START_CONVERSATION,
-            target_id="chloe",
-            intent_id="friendly_chat_resort",
-        ),
-        SeededRng(1),
-        heartbreaker_voice=boom,
-    )
-
-    degraded = [trace for trace in result.agent_traces if trace.degraded]
-    assert [trace.agent_name for trace in degraded] == ["heartbreaker_voice"]
-    assert degraded[0].output_type == "degraded_to_mock"
-    assert "exhausted retries" in (degraded[0].validation_error or "")
-
-
-def test_run_turn_propagates_non_agent_error_from_heartbreaker_voice() -> None:
-    """Only AgentError degrades to a mock. A genuine engine bug (here a KeyError)
-    must propagate loud instead of being silently swallowed into a fallback —
-    that boundary is exactly what the typed AgentError taxonomy protects
-    (ENGINEERING.md R2/R16)."""
-    state = new_game(1)
+    rng = SeededRng(1)
+    state_before = state_hash(state_hash_payload(state))
+    rng_before = rng.snapshot()
 
     def kaboom(*_args, **_kwargs):
         raise KeyError("genuine engine bug, not an agent failure")
@@ -115,15 +111,16 @@ def test_run_turn_propagates_non_agent_error_from_heartbreaker_voice() -> None:
                 target_id="chloe",
                 intent_id="friendly_chat_resort",
             ),
-            SeededRng(1),
-            heartbreaker_voice=kaboom,
+            rng,
+            replace(MOCK_AGENTS, heartbreaker_voice=kaboom),
         )
 
+    assert state_hash(state_hash_payload(state)) == state_before
+    assert rng.snapshot() == rng_before
 
-def test_narrated_events_survives_event_narrator_raise() -> None:
-    """A ceremony beat must not dead-screen if the Event Narrator exhausts its
-    retries and raises — narration degrades to deterministic mock prose that still
-    names the participant rather than throwing the player out of the reveal."""
+
+def test_narrated_events_propagates_event_narrator_raise() -> None:
+    """The event narrator port fails loud for the atomic boundary to handle."""
     from src.game.engine.ceremonies import CeremonyEvent
     from src.game.engine.turn import _narrated_events
 
@@ -133,9 +130,8 @@ def test_narrated_events_survives_event_narrator_raise() -> None:
     def boom(*_args, **_kwargs):
         raise AgentGenerationError("event narrator exhausted retries")
 
-    narration = _narrated_events(state, events, boom)
-
-    assert narration.prose.strip()
+    with pytest.raises(AgentGenerationError, match="event narrator exhausted retries"):
+        _narrated_events(state, events, boom)
 
 
 def test_run_turn_ambient_wait_advances_phase() -> None:
@@ -147,6 +143,7 @@ def test_run_turn_ambient_wait_advances_phase() -> None:
         state,
         PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert result.state.phase is Phase.CHALLENGE
@@ -162,7 +159,12 @@ def test_run_turn_schedules_flush_of_hearts_arrival_as_gather() -> None:
     state.day = 4
     state.phase = Phase.AFTERNOON
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    result = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        MOCK_AGENTS,
+    )
 
     assert result.state.phase is Phase.TEXT
     assert result.state.pending_gather is not None
@@ -183,7 +185,7 @@ def test_run_turn_skips_resort_autonomy_after_scheduling_gather() -> None:
         state,
         PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
         SeededRng(1),
-        resort_orchestrator=fail_orchestrator,
+        replace(MOCK_AGENTS, resort_orchestrator=fail_orchestrator),
     )
 
     assert result.state.pending_gather is not None
@@ -195,9 +197,14 @@ def test_join_gather_resolves_flush_of_hearts_arrival() -> None:
     state = new_game(1)
     state.day = 4
     state.phase = Phase.AFTERNOON
-    run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        MOCK_AGENTS,
+    )
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(2))
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), SeededRng(2), MOCK_AGENTS)
 
     assert any(event.kind == "flush_of_hearts_arrival" for event in result.ceremony_events)
     assert result.state.pending_gather is None
@@ -211,9 +218,11 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
     rng = SeededRng(1)
     run_turn(
         state,
-        PlayerAction(kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="friendly_chat_resort"),
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION, target_id="chloe", intent_id="friendly_chat_resort"
+        ),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
     state.npc_conversations.append(
         NPCNPCConversation(
@@ -233,11 +242,14 @@ def test_join_gather_closes_active_and_background_conversations() -> None:
     state.day = 3
     state.phase = Phase.EVENING
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), rng)
+    result = run_turn(state, PlayerAction(kind=ActionKind.JOIN_GATHER), rng, MOCK_AGENTS)
 
     assert result.state.active_conversation is None
     assert result.state.npc_conversations == []
-    assert all(heartbreaker.location_id is not Location.TERRACE for heartbreaker in result.state.heartbreakers)
+    assert all(
+        heartbreaker.location_id is not Location.TERRACE
+        for heartbreaker in result.state.heartbreakers
+    )
     assert result.curator_batches
 
 
@@ -257,14 +269,22 @@ def test_daily_recap_generated_at_day_rollover() -> None:
             weight=9,
             tags=["background"],
             content="Maya and Liam had a sharp terrace moment.",
+            recap_disposition=RecapDisposition.WHILE_BUSY,
         ),
     )
 
-    result = run_turn(state, PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"), SeededRng(1))
+    result = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.AMBIENT, target_id="ambient_wait"),
+        SeededRng(1),
+        MOCK_AGENTS,
+    )
 
     assert result.state.day == 2
     assert result.state.daily_recaps
-    assert result.state.daily_recaps[0].items[0].content == "Maya and Liam had a sharp terrace moment."
+    assert (
+        result.state.daily_recaps[0].items[0].content == "Maya and Liam had a sharp terrace moment."
+    )
 
 
 def test_apply_action_does_not_bump_turn_index() -> None:
@@ -296,7 +316,7 @@ def test_wheel_exit_closes_conversation_and_applies_trust_bonus() -> None:
             intent_id="friendly_chat_resort",
         ),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
     calls = 0
 
@@ -320,8 +340,7 @@ def test_wheel_exit_closes_conversation_and_applies_trust_bonus() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="end_softly"),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
-        conversation_curator=curator,
+        replace(FOLLOW_UP_AGENTS, conversation_curator=curator),
     )
 
     assert result.exchange is not None
@@ -344,7 +363,7 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
             intent_id="friendly_chat_resort",
         ),
         rng,
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
     affection_before = state.heartbreakers[0].relationship.affection
     calls = 0
@@ -369,7 +388,7 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
         state,
         PlayerAction(kind=ActionKind.END_CONVERSATION),
         rng,
-        conversation_curator=curator,
+        replace(MOCK_AGENTS, conversation_curator=curator),
     )
 
     assert result.exchange is None

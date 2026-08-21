@@ -187,93 +187,53 @@ return TurnResult(
 
 ## The Multi-AI System
 
-Long-term, we do not use one LLM for everything. We use **specialized AI calls** for different tasks.
+The POC uses specialized typed agents rather than one general narrator. The
+engine owns mechanics, call order, trace capture, and commits. Agents own only
+story texture and structured suggestions inside their contracts.
 
-**POC constraint:** v0 starts with one Narrator agent only. Producer AI, Curator, contextual option generation, and LLM-enhanced NPC behavior are future layers after the deterministic CLI loop is playable and replayable.
+### TurnAgentSet
 
-### 1. Producer AI
+Every call to `run_turn` receives one frozen `TurnAgentSet`. It contains six
+callable ports:
 
-**Job:** Decide what dramatic events happen
+1. Heartbreaker Voice writes the player and Heartbreaker exchange.
+2. Contextual Options writes the next finite response menu.
+3. Event Narrator narrates a resolved mechanical or ceremony beat.
+4. Conversation Curator extracts memories, summaries, and gossip seeds.
+5. Resort Orchestrator proposes typed background resort activity.
+6. Background Dialogue writes the lines for an engine-approved NPC exchange.
 
-**When it runs:** Future layer, likely once per day or at phase boundaries after deterministic scheduling works.
+The game supplies complete live, mock, recorded, and scripted adapters. `None`
+is not a mode. Named live profiles may reduce resort activity, but every profile
+still provides all six ports. Contextual Options always receives the same five
+arguments, including `already_present`; no caller inspects signatures at
+runtime.
 
-**Input shape:** A compact, code-derived resort summary: day, phase, couple stability, drama level, scheduled constraints, recent events, and valid event candidates.
+NPC greetings and trait generation run during session setup. They are typed
+agent boundaries, but they are not part of a turn's six-port set.
 
-**Output shape:** A typed event suggestion that code validates against allowed events. The Producer may recommend a Heart Throb, Pairing Ceremony, date, challenge, or twist, but Python still schedules the event and applies all mechanics.
+### Ownership and atomicity
 
-**POC status:** Deferred. Initial event selection is deterministic Python.
+Python resolves legal actions, RNG, scoring, relationship changes, phase
+movement, votes, and persistence before asking an agent to describe the result.
+Agents cannot mutate `GameState`.
 
----
+`run_turn` owns the full attempt trace. State and RNG commit together only after
+all required work succeeds. If a live agent exhausts validation retries, the
+turn raises and restores both caller-owned objects. The API returns
+`STORY_ENGINE_ERROR`, the CLI keeps the session playable, and evals retain the
+failed attempt and traces. No live surface substitutes mock prose.
 
-### 2. Heartbreaker Generator AI
+### Adapter lifetimes
 
-**Job:** Create complete Heartbreaker personalities
+- The CLI creates one set for an interactive run.
+- An eval scenario creates one set for that scenario.
+- The stateless HTTP adapter creates the selected set for each request.
+- Replay and scripted verification use recorded or scripted adapters.
 
-**When it runs:** When new Heartbreaker enters Sunset Bay (start + Heart Throbs)
-
-**Input shape:** Archetype id, gender/presentation constraints, existing cast summary, and any production role such as original Heartbreaker or Heart Throb.
-
-**Output shape:** A Pydantic-validated Heartbreaker profile: identity, appearance, Big 5 traits, attachment style, preferences, backstory, secret, entrance line, and strategy.
-
-**POC status:** Use deterministic seed characters or tiny content stubs first. LLM generation can be added after state models and replay are stable.
-
----
-
-### 3. Dialogue AI
-
-**Job:** Generate conversation exchanges
-
-**When it runs:** Every player interaction (~40-60 times per run)
-
-**This is the MOST FREQUENT and MOST EXPENSIVE call.**
-
-**v0 name:** Narrator agent.
-
-**Input shape:** `MechanicalResult`, visible scene context, target Heartbreaker personality summary, recent visible history, and relevant content snippets.
-
-**Output shape:** A validated narration commit. It may include prose, dialogue, tone tags, and display hints, but it must not invent mechanics or mutate state.
-
-**Cost:** ~800 tokens (~$0.0024 per conversation)
-
-**Frequency:** ~50 conversations per run = ~$0.12 per run
-
-**Optimization strategies:**
-- Cache character personality (don't resend each time)
-- Use cheaper model (Claude 3.5 Sonnet, not GPT-4)
-- Limit conversation history to last 3 interactions
-- Compress context to essential info only
-
----
-
-### 4. Event Narrator AI
-
-**Job:** Describe ceremonies, arrivals, challenges
-
-**When it runs:** Special events (5-8 times per run)
-
-**Input shape:** Resolved event result, participants, public/private visibility, emotional stakes, and ceremony beats.
-
-**Output shape:** A validated narration commit for the event.
-
-**Cost:** ~600 tokens (~$0.002 per event)
-
-**Frequency:** ~6 events per run = ~$0.012 per run
-
----
-
-### 5. NPC Behavior Simulator
-
-**Job:** Decide what NPCs do autonomously
-
-**When it runs:** Once per phase transition (4x per day = ~80 times per run)
-
-**This is OPTIONAL - can be purely algorithmic. Using LLM adds personality but costs more.**
-
-**Algorithmic approach (recommended for POC):** Code-driven decisions based on personality, relationship scores, goals, current phase, and location. NPCs use the same action validity and success formulas as the player.
-
-**LLM-enhanced approach (future enhancement):** A future agent may recommend one valid NPC action from a constrained list, but code still validates and executes that action using normal formulas.
-
-**Recommendation:** Start with algorithmic, add LLM enhancement post-POC if needed
+This boundary keeps callers unaware of the individual roster while preserving
+explicit mode selection and deterministic test seams. See
+`docs/decisions/0016-game-owned-turn-agent-set.md`.
 
 ---
 

@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from src.game.agents.contextual_options import mock_follow_up_menu
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.phases import advance_phase
 from src.game.engine.private_chat import (
@@ -13,6 +16,10 @@ from src.game.engine.private_chat import (
 from src.game.engine.turn import run_turn
 from src.game.state.models import Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
+
+FOLLOW_UP_AGENTS = replace(
+    mock_turn_agents(), contextual_options=lambda *_args: mock_follow_up_menu()
+)
 
 
 def test_private_chat_chance_higher_with_more_spark() -> None:
@@ -41,7 +48,11 @@ def test_private_chat_chance_privacy_modifier_applied() -> None:
     pool = _state_with_busy_chloe(location=Location.POOL)
     kitchen = _state_with_busy_chloe(location=Location.KITCHEN)
 
-    assert private_chat_chance(bedroom, "chloe") > private_chat_chance(pool, "chloe") > private_chat_chance(kitchen, "chloe")
+    assert (
+        private_chat_chance(bedroom, "chloe")
+        > private_chat_chance(pool, "chloe")
+        > private_chat_chance(kitchen, "chloe")
+    )
 
 
 def test_private_chat_chance_supports_flush_locations() -> None:
@@ -50,7 +61,11 @@ def test_private_chat_chance_supports_flush_locations() -> None:
     terrace = _state_with_busy_chloe(location=Location.FLUSH_TERRACE)
     kitchen = _state_with_busy_chloe(location=Location.FLUSH_KITCHEN)
 
-    assert private_chat_chance(terrace, "chloe") > private_chat_chance(pool, "chloe") > private_chat_chance(kitchen, "chloe")
+    assert (
+        private_chat_chance(terrace, "chloe")
+        > private_chat_chance(pool, "chloe")
+        > private_chat_chance(kitchen, "chloe")
+    )
 
 
 def test_private_chat_chance_supports_flame_deck() -> None:
@@ -113,7 +128,7 @@ def test_private_chat_skipped_when_target_alone_no_roll_needed() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
 
     assert turn.mechanical_result.private_chat_attempt is None
@@ -134,7 +149,7 @@ def test_start_conversation_with_private_chat_success_opens_new_convo() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
 
     assert turn.mechanical_result.private_chat_attempt is not None
@@ -167,7 +182,7 @@ def test_start_conversation_with_private_chat_failure_does_not_open() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(3),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
 
     assert turn.mechanical_result.private_chat_attempt is not None
@@ -214,7 +229,7 @@ def test_private_chat_failure_bystanders_get_witness_memory() -> None:
             intent_id="friendly_chat_resort",
         ),
         SeededRng(3),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
 
     maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")

@@ -12,6 +12,7 @@ from src.game.agents.contextual_options import CONTEXTUAL_OPTIONS_MODEL
 from src.game.agents.conversation_curator import CONVERSATION_CURATOR_MODEL
 from src.game.agents.resort_orchestrator import NewConversation, ResortUpdate
 from src.game.agents.runtime import GAME_AGENT_MODEL, GAME_AGENT_REASONING_EFFORT
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.resort import apply_resort_update_async
 from src.game.state.models import GameState, Location, NPCNPCConversation, new_game
 from src.game.state.rng import SeededRng
@@ -54,7 +55,7 @@ def test_apply_resort_update_async_accepts_parallel_background_callables() -> No
             update,
             SeededRng(1),
             background_dialogue=background,
-            conversation_curator=None,
+            conversation_curator=mock_turn_agents().conversation_curator,
         )
     )
 

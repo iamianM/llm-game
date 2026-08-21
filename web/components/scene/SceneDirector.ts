@@ -1,89 +1,213 @@
-import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
-import type { SceneBeat } from "../../lib/scene/types";
-import { paginate } from "../../lib/scene/pagination";
 import { greetingFor, nextIntroTarget } from "../../lib/intros";
+import { paginate } from "../../lib/scene/pagination";
+import {
+  PLAYER_ANCHOR,
+  PLAYER_ANCHOR_COMPACT,
+  npcPositions,
+} from "../../lib/scene/positions";
+import type {
+  ActionLanes,
+  MinigamePresentationPort,
+  PresentationTransition,
+  SceneCastMember,
+  SceneFeature,
+  SceneFrame,
+  ScenePlan,
+  SceneSegment,
+} from "../../lib/scene/presentation";
+import type { CharacterPose, SceneBeat } from "../../lib/scene/types";
+import type { AvailableAction, SessionState, TurnResponse } from "../../lib/types";
 
-type PendingChallenge = {
-  kind?: string;
-  finished?: boolean;
-  stem?: string;
-  round_index?: number;
-  round_count?: number;
-  target_id?: string | null;
-  answered_rounds?: Array<{
-    round_index: number;
-    chosen_label: string | null;
-    correct_label: string | null;
-    is_correct: boolean;
-    reaction_line: string | null;
-  }>;
+const PER_CHARACTER_KINDS = new Set(["start_conversation", "introduce_to"]);
+const MOVE_KINDS = new Set(["move"]);
+const MAX_STAGED_NPCS = 7;
+const FEATURE_EVENT_KINDS = new Set([
+  "pairing",
+  "partner_stolen",
+  "elimination",
+  "pair_proposal",
+  "npc_proposal_incoming",
+  "npc_proposal_response",
+  "private_suite",
+  "flush_of_hearts_arrival",
+  "flush_of_hearts_decision",
+  "flush_of_hearts_return_reveal",
+  "final_vote",
+]);
+
+export const NO_MINIGAME_PRESENTATION: MinigamePresentationPort<never> = {
+  plan: () => null,
 };
 
-export function planScene(
-  prev: SessionState | null,
-  next: SessionState,
-  lastTurn: TurnResponse | null,
-  availableActions: AvailableAction[],
-): SceneBeat[] {
-  void prev;
-  if (next.phase === "intros") {
-    return planIntroScene(next, lastTurn, availableActions);
-  }
-  const beats: SceneBeat[] = [];
-  const pending = next.pending_challenge as PendingChallenge | null;
-  const exchange = lastTurn?.exchange;
-  const exchangeSpeaker = exchange?.speaker_id ?? null;
-  const challengeFocus = pending?.target_id ?? null;
-  const focusSpeaker = exchangeSpeaker ?? challengeFocus ?? next.active_conversation_target_id;
+export function planScene<TSlot>(
+  transition: PresentationTransition,
+  minigamePresentation: MinigamePresentationPort<TSlot>,
+): ScenePlan<TSlot> {
+  const state = stateForTransition(transition);
+  const actions = transitionActions(transition);
+  const minigame = minigamePresentation.plan(transition);
+  const actionLanes = routeActions(state, actions, minigame !== null);
+  const features = planFeatures(transition);
+  const scene = planGeneralSegment<TSlot>(
+    transition,
+    actionLanes,
+    minigame !== null,
+    features.length > 0,
+  );
+  const segments = compactSegments(scene, minigame);
+  const beats = segments.flatMap((segment) => segment.beats);
 
-  if (pending) {
-    beats.push({
-      kind: "camera",
-      shot: "minigame_board",
-      focusIds: challengeFocus ? [challengeFocus] : [],
-      durationMs: 160,
-    });
-  } else if (focusSpeaker) {
-    beats.push({ kind: "camera", shot: "two_shot", focusIds: [focusSpeaker], durationMs: 160 });
-  } else if (lastTurn?.event_narration?.prose) {
-    beats.push({ kind: "camera", shot: "narrator_full", focusIds: [], durationMs: 160 });
+  return {
+    id: transitionId(transition),
+    locationId: state.phase === "intros" ? "flame_deck" : state.location_id,
+    segments,
+    frames: planFrames(state, beats, actionLanes),
+    actionLanes,
+    features,
+  };
+}
+
+export function stateForTransition(transition: PresentationTransition): SessionState {
+  return transition.kind === "resolved" ? transition.response.state : transition.state;
+}
+
+function transitionActions(transition: PresentationTransition): readonly AvailableAction[] {
+  return transition.kind === "resolved" ? transition.response.available_actions : transition.actions;
+}
+
+function transitionId(transition: PresentationTransition): string {
+  if (transition.kind === "baseline") {
+    return `${transition.state.session_id}:baseline:${transition.state.turn_index}`;
+  }
+  return `${transition.previous.session_id}:turn:${transition.previous.turn_index}`;
+}
+
+function compactSegments<TSlot>(
+  scene: SceneSegment<TSlot>,
+  minigame: SceneSegment<TSlot> | null,
+): SceneSegment<TSlot>[] {
+  if (!minigame) return [scene];
+  if (scene.beats.length === 0) return [minigame];
+  return [scene, minigame];
+}
+
+function routeActions(
+  state: SessionState,
+  actions: readonly AvailableAction[],
+  minigameActive: boolean,
+): ActionLanes {
+  const useLanes =
+    !minigameActive &&
+    state.phase !== "intros" &&
+    state.active_conversation_target_id === null;
+  const character: AvailableAction[] = [];
+  const move: AvailableAction[] = [];
+  const fan: AvailableAction[] = [];
+
+  for (const action of actions) {
+    if (useLanes && PER_CHARACTER_KINDS.has(action.kind) && action.target_id) {
+      character.push(action);
+    } else if (useLanes && MOVE_KINDS.has(action.kind)) {
+      move.push(action);
+    } else {
+      fan.push(action);
+    }
+  }
+
+  const lanes: ActionLanes = { character, move, fan };
+  assertExactActionPartition(actions, lanes);
+  return lanes;
+}
+
+function assertExactActionPartition(actions: readonly AvailableAction[], lanes: ActionLanes): void {
+  const routed = [...lanes.character, ...lanes.move, ...lanes.fan];
+  if (routed.length !== actions.length) {
+    throw new Error(`Scene action routing changed action count: ${actions.length} in, ${routed.length} out.`);
+  }
+  const remaining = [...routed];
+  for (const action of actions) {
+    const index = remaining.indexOf(action);
+    if (index === -1) throw new Error(`Scene action routing dropped action: ${action.kind}.`);
+    remaining.splice(index, 1);
+  }
+  if (remaining.length > 0) throw new Error("Scene action routing duplicated an action.");
+}
+
+function planGeneralSegment<TSlot>(
+  transition: PresentationTransition,
+  actionLanes: ActionLanes,
+  minigameActive: boolean,
+  hasFeatures: boolean,
+): SceneSegment<TSlot> {
+  const state = stateForTransition(transition);
+  let beats: SceneBeat[];
+
+  if (transition.kind === "pending") {
+    beats = planPendingBeats(transition);
+  } else if (state.phase === "intros") {
+    beats = planIntroBeats(
+      state,
+      transition.kind === "resolved" ? transition.response : null,
+      actionLanes.fan,
+    );
   } else {
-    beats.push({ kind: "camera", shot: "wide_group", focusIds: [], durationMs: 120 });
+    beats = planResolvedBeats(
+      state,
+      transition.kind === "resolved" ? transition.response : null,
+      actionLanes.fan,
+      minigameActive,
+      hasFeatures,
+    );
   }
 
-  const stillInChallengeForFeedback = availableActions.some((action) => action.kind === "challenge_response");
-  const lastAnswered = stillInChallengeForFeedback ? lastAnsweredRound(pending) : null;
-  if (lastAnswered) {
+  return {
+    id: `${transitionId(transition)}:scene`,
+    beats,
+    slot: null,
+  };
+}
+
+function planPendingBeats(transition: Extract<PresentationTransition, { kind: "pending" }>): SceneBeat[] {
+  const targetId = transition.stream.speakerId ?? transition.selectedAction.target_id;
+  const beats: SceneBeat[] = [
+    {
+      kind: "camera",
+      shot: targetId ? "two_shot" : "wide_group",
+      focusIds: targetId ? [targetId] : [],
+      durationMs: 80,
+    },
+  ];
+  if (transition.stream.text && targetId) {
     beats.push({
-      kind: "reaction",
-      reactorId: challengeFocus ?? next.player.id,
-      pose: lastAnswered.is_correct ? "reacting_good" : "reacting_bad",
-      durationMs: 380,
+      kind: "speech",
+      speakerId: targetId,
+      text: transition.stream.text,
+      pose: "talking",
     });
-    const truth =
-      !lastAnswered.is_correct && lastAnswered.correct_label
-        ? `Truth: ${lastAnswered.correct_label}.`
-        : null;
-    const reaction = lastAnswered.reaction_line ?? null;
-    const summary = [
-      lastAnswered.is_correct ? "Nailed it." : "Off the mark.",
-      lastAnswered.chosen_label ? `You said: ${lastAnswered.chosen_label}.` : null,
-      truth,
-      reaction,
-    ]
-      .filter(Boolean)
-      .join(" ");
-    if (summary) beats.push({ kind: "narrator", text: summary });
   }
+  return beats;
+}
 
-  const narration = prose(lastTurn?.event_narration);
-  if (narration) {
-    for (const page of paginate(narration)) beats.push({ kind: "narrator", text: page });
-  }
+function planResolvedBeats(
+  state: SessionState,
+  turn: TurnResponse | null,
+  fanActions: readonly AvailableAction[],
+  minigameActive: boolean,
+  hasFeatures: boolean,
+): SceneBeat[] {
+  const beats: SceneBeat[] = [];
+  const exchange = turn?.exchange;
+  const focusId = exchange?.speaker_id ?? state.active_conversation_target_id;
+  beats.push({
+    kind: "camera",
+    shot: focusId ? "two_shot" : turn && prose(turn.event_narration) ? "narrator_full" : "wide_group",
+    focusIds: focusId ? [focusId] : [],
+    durationMs: focusId ? 160 : 120,
+  });
 
   if (exchange?.player_dialogue) {
     for (const page of paginate(exchange.player_dialogue)) {
-      beats.push({ kind: "speech", speakerId: next.player.id, text: page, pose: "talking" });
+      beats.push({ kind: "speech", speakerId: state.player.id, text: page, pose: "talking" });
     }
   }
   if (exchange?.npc_dialogue) {
@@ -91,151 +215,47 @@ export function planScene(
       beats.push({ kind: "speech", speakerId: exchange.speaker_id, text: page, pose: "talking" });
     }
   }
-  // A felt "your bond just moved" cue, floated by the heartbreaker we just engaged.
-  // Anchored to the exchange speaker (the person we steered toward); auto-advances.
-  const shiftLine = lastTurn?.connection_shift?.trim();
+
+  const shiftLine = turn?.connection_shift?.trim();
   if (shiftLine) {
-    const anchor = exchangeSpeaker ?? focusSpeaker ?? next.player.id;
-    beats.push({ kind: "connection_shift", subjectId: anchor, text: shiftLine, durationMs: 1500 });
+    beats.push({
+      kind: "connection_shift",
+      subjectId: exchange?.speaker_id ?? focusId ?? state.player.id,
+      text: shiftLine,
+      durationMs: 1500,
+    });
   }
-  if (typeof lastTurn?.audience_delta === "number" && lastTurn.audience_delta !== 0) {
+  if (typeof turn?.audience_delta === "number" && turn.audience_delta !== 0) {
     beats.push({
       kind: "delta_pop",
-      subjectId: next.player.id,
+      subjectId: state.player.id,
       deltaKind: "audience",
-      amount: lastTurn.audience_delta,
+      amount: turn.audience_delta,
       durationMs: 900,
     });
   }
 
-  // The challenge stem is read aloud as a narrator beat (the dramatic reveal,
-  // keeping the host's scene-setting flavor) AND distilled to a concise question
-  // that rides on the choice_fan — otherwise the question vanishes the moment the
-  // answer options appear and the player is left choosing blind.
-  let challengePrompt: string | null = null;
-  if (pending && !pending.finished) {
-    const raw = typeof pending.stem === "string" ? pending.stem.trim() : "";
-    if (raw) {
-      challengePrompt = challengeQuestion(raw);
-      for (const page of paginate(cleanStem(raw))) beats.push({ kind: "narrator", text: page });
-    }
+  const narration = !minigameActive && !hasFeatures ? prose(turn?.event_narration) : null;
+  if (narration) {
+    for (const page of paginate(narration)) beats.push({ kind: "narrator", text: page });
   }
 
-  if (pending?.finished) {
-    const stillInChallenge = availableActions.some((action) => action.kind === "challenge_response");
-    if (stillInChallenge) {
-      const wrap = wrapNarration(pending);
-      if (wrap) beats.push({ kind: "narrator", text: wrap });
-    }
-  }
-
-  if (availableActions.length > 0) {
-    beats.push({
-      kind: "choice_fan",
-      spec: challengePrompt ? { actions: availableActions, prompt: challengePrompt } : { actions: availableActions },
-    });
+  if (!minigameActive && fanActions.length > 0) {
+    beats.push({ kind: "choice_fan", spec: { actions: [...fanActions] } });
   }
   return beats;
 }
 
-function prose(value: Record<string, unknown> | null | undefined): string | null {
-  return typeof value?.prose === "string" && value.prose.trim() ? value.prose : null;
-}
-
-type AnsweredRound = NonNullable<PendingChallenge["answered_rounds"]>[number];
-
-function lastAnsweredRound(pending: PendingChallenge | null): AnsweredRound | null {
-  if (!pending?.answered_rounds?.length) return null;
-  const sorted = [...pending.answered_rounds].sort((a, b) => a.round_index - b.round_index);
-  const last = sorted[sorted.length - 1];
-  const currentRound = pending.round_index ?? 0;
-  // Only surface the previous round's result while a *new* round is pending,
-  // or after the final round once the challenge is finished.
-  if (pending.finished) return last;
-  if (last.round_index >= currentRound) return null;
-  return last;
-}
-
-// Drop the leading round label ("Round 3:", "Q2 —", "Round 2 of 3:") since the
-// banner already shows "Round N / M", plus any redundant "about <name>:" lead-in
-// (the Couples Quiz repeats the subject the question already names). The scene +
-// question body is preserved — these stems are written as cohesive prompts.
-function cleanStem(raw: string): string {
-  const out = raw
-    .replace(/^(?:round\s*\d+(?:\s*of\s*\d+)?|q\s*\d+)\s*[:\-—]\s*/i, "")
-    .replace(/^about\s+[^:]+:\s*/i, "")
-    .trim();
-  const cleaned = out || raw.trim();
-  // Stripping a label can leave a lowercase fragment ("partner's turn. ...");
-  // re-capitalize so it reads as a proper sentence.
-  return cleaned.replace(/^([a-z])/, (m) => m.toUpperCase());
-}
-
-// The concise question for the persistent prompt card. Challenges open with
-// host flavor / mechanic explanation (the Lie Detector spends four sentences
-// wiring up the needle before it ever asks anything) that belongs in the
-// scrolling narrator beat, not pinned over the answer buttons. Distill the raw
-// stem down to the actual ask:
-//   1. Drop a "...Round one[ is about <name>]:" scene-setting intro (the compat
-//      / couples quizzes mark the split explicitly).
-//   2. Otherwise trim to the sentence that first poses a question, through the
-//      end — so a trailing answer instruction ("(Pick what Chloe actually
-//      said…)") survives while the preamble is dropped. A stem with no "?" is
-//      an imperative prompt, so keep the cleaned stem as-is.
-function challengeQuestion(raw: string): string {
-  const afterIntro = raw.replace(/^[\s\S]*?\bround\s+one\b(?:\s+is\s+about\s+[^:]+)?:\s*/i, "");
-  const base = afterIntro !== raw ? afterIntro : raw;
-  return cleanStem(trimToQuestion(base));
-}
-
-// Return the substring starting at the sentence that first contains a "?", so
-// scene-setting that precedes the ask is dropped but the question (and anything
-// after it, e.g. a parenthetical instruction) is kept. No "?" → return as-is.
-function trimToQuestion(text: string): string {
-  const qIdx = text.indexOf("?");
-  if (qIdx === -1) return text;
-  const before = text.slice(0, qIdx);
-  const boundary = Math.max(
-    before.lastIndexOf(". "),
-    before.lastIndexOf("! "),
-    before.lastIndexOf("? "),
-    before.lastIndexOf("\n"),
-  );
-  const start = boundary === -1 ? 0 : boundary + 1;
-  return text.slice(start).trim();
-}
-
-function wrapNarration(pending: PendingChallenge): string | null {
-  const answered = pending.answered_rounds ?? [];
-  if (!answered.length) return null;
-  const right = answered.filter((r) => r.is_correct).length;
-  return `Wrap: ${right} of ${answered.length} right. Tap to continue.`;
-}
-
-/**
- * Day-1 intros: NPCs greet the player one at a time, in the flame_deck.
- * After each pick, the engine response is surfaced as a narrator beat then
- * we auto-cycle to the next target. Once everyone is met, the engine
- * transitions phase and the next planScene call covers what comes after.
- */
-function planIntroScene(
+function planIntroBeats(
   state: SessionState,
-  lastTurn: TurnResponse | null,
-  availableActions: AvailableAction[],
+  turn: TurnResponse | null,
+  fanActions: readonly AvailableAction[],
 ): SceneBeat[] {
   const beats: SceneBeat[] = [];
-  const exchange = lastTurn?.exchange;
+  const exchange = turn?.exchange;
   const justFinished = exchange?.speaker_id ?? null;
-  const introTargets = availableActions
-    .filter((a) => a.kind === "introduce_to" && a.target_id)
-    .map((a) => a.target_id as string);
-  const nextTarget = nextIntroTarget(state.heartbreakers, availableActions, state.player.id);
+  const nextTarget = nextIntroTarget(state.heartbreakers, [...fanActions], state.player.id);
 
-  // Show the just-finished exchange first (player line then NPC reply) so the
-  // user can read the response before the camera swings to the next heartbreaker.
-  // Keep the heartbreaker we're replying to spotlighted for the whole exchange —
-  // including the player's own line — so they don't drop to the back row the
-  // instant the player speaks and then snap forward again for their reply.
   if (justFinished && (exchange?.player_dialogue || exchange?.npc_dialogue)) {
     beats.push({ kind: "camera", shot: "two_shot", focusIds: [justFinished], durationMs: 140 });
   }
@@ -251,35 +271,127 @@ function planIntroScene(
   }
 
   if (!nextTarget) {
-    if (introTargets.length === 0) {
-      // No more intros available — the engine has moved on; let normal
-      // planScene logic run by emitting a wide-group beat + choice fan.
-      beats.push({ kind: "camera", shot: "wide_group", focusIds: [], durationMs: 120 });
-      if (availableActions.length > 0) {
-        beats.push({ kind: "choice_fan", spec: { actions: availableActions } });
-      }
+    beats.push({ kind: "camera", shot: "wide_group", focusIds: [], durationMs: 120 });
+    if (fanActions.length > 0) {
+      beats.push({ kind: "choice_fan", spec: { actions: [...fanActions] } });
     }
     return beats;
   }
 
-  // Frame the next heartbreaker, NPC greets first, then the player picks an intent.
   beats.push({ kind: "camera", shot: "two_shot", focusIds: [nextTarget.id], durationMs: 160 });
-  // Prefer dynamically-generated greetings (live mode); fall back to per-archetype
-  // templates so demo mode and pre-feature checkpoints still read cleanly.
   const dynamicGreeting = state.intros_greetings?.[nextTarget.id];
-  const greeting = dynamicGreeting && dynamicGreeting.trim().length > 0
-    ? dynamicGreeting
-    : greetingFor(nextTarget);
-  beats.push({ kind: "speech", speakerId: nextTarget.id, text: greeting, pose: "talking" });
-
-  // Show the engine's intent-labeled choices ("Be friendly with X", etc.)
-  // unchanged — no preview-line rewriting. The bubble shows the *intent dial*,
-  // the engine's heartbreaker_voice writes the actual line on click.
-  const introChoices = availableActions.filter(
-    (a) => a.kind === "introduce_to" && a.target_id === nextTarget.id,
+  beats.push({
+    kind: "speech",
+    speakerId: nextTarget.id,
+    text: dynamicGreeting?.trim() || greetingFor(nextTarget),
+    pose: "talking",
+  });
+  const introChoices = fanActions.filter(
+    (action) => action.kind === "introduce_to" && action.target_id === nextTarget.id,
   );
   if (introChoices.length > 0) {
-    beats.push({ kind: "choice_fan", spec: { actions: introChoices } });
+    beats.push({ kind: "choice_fan", spec: { actions: [...introChoices] } });
   }
   return beats;
+}
+
+function planFeatures(transition: PresentationTransition): SceneFeature[] {
+  if (transition.kind !== "resolved") return [];
+  const features: SceneFeature[] = [];
+  transition.response.ceremony_events.forEach((event, index) => {
+    if (!FEATURE_EVENT_KINDS.has(String(event.kind ?? ""))) return;
+    features.push({
+      id: `${transition.response.state_hash}:ceremony:${index}`,
+      kind: "ceremony",
+      event,
+    });
+  });
+
+  const previousCount = transition.previous.daily_recaps.length;
+  transition.response.state.daily_recaps.slice(previousCount).forEach((recap, index) => {
+    features.push({
+      id: `${transition.response.state_hash}:recap:${previousCount + index}`,
+      kind: "recap",
+      recap,
+    });
+  });
+  return features;
+}
+
+function prose(value: Record<string, unknown> | null | undefined): string | null {
+  return typeof value?.prose === "string" && value.prose.trim() ? value.prose : null;
+}
+
+function planFrames(
+  state: SessionState,
+  beats: readonly SceneBeat[],
+  actionLanes: ActionLanes,
+): SceneFrame[] {
+  let cameraFocus: string | null = state.active_conversation_target_id;
+  return beats.map((beat) => {
+    if (beat.kind === "camera") cameraFocus = beat.focusIds[0] ?? null;
+    const focusedId = focusForBeat(beat, cameraFocus, state);
+    return frameFor(state, focusedId, poseForBeat(beat), beat.kind === "choice_fan");
+  });
+}
+
+function focusForBeat(beat: SceneBeat, cameraFocus: string | null, state: SessionState): string | null {
+  if (beat.kind === "speech" && beat.speakerId !== state.player.id) return beat.speakerId;
+  if (beat.kind === "reaction") return beat.reactorId;
+  if (beat.kind === "connection_shift" || beat.kind === "delta_pop") return beat.subjectId;
+  return cameraFocus;
+}
+
+function poseForBeat(beat: SceneBeat): CharacterPose {
+  if (beat.kind === "speech") return beat.pose ?? "talking";
+  if (beat.kind === "reaction") return beat.pose;
+  return "listening";
+}
+
+function frameFor(
+  state: SessionState,
+  focusedId: string | null,
+  focusedPose: CharacterPose,
+  choicesActive: boolean,
+): SceneFrame {
+  const visible = visibleNpcs(state, focusedId);
+  const staged = stagedNpcs(visible, focusedId);
+  const stagedIds = new Set(staged.map((npc) => npc.id));
+  const groupPanelIds = visible.filter((npc) => !stagedIds.has(npc.id)).map((npc) => npc.id);
+  const focusedIndex = focusedId ? staged.findIndex((npc) => npc.id === focusedId) : -1;
+  const positions = npcPositions(staged.length, focusedIndex >= 0 ? focusedIndex : null);
+  const cast: SceneCastMember[] = staged.map((npc, index) => ({
+    id: npc.id,
+    position: positions[index] ?? { x: 50, y: 56, scale: 0.7, dimmed: true },
+    pose: npc.id === focusedId ? focusedPose : "listening",
+    focused: npc.id === focusedId,
+  }));
+  cast.push({
+    id: state.player.id,
+    position: choicesActive ? PLAYER_ANCHOR_COMPACT : PLAYER_ANCHOR,
+    pose: state.player.id === focusedId ? focusedPose : "listening",
+    focused: state.player.id === focusedId,
+  });
+  return { cast, groupPanelIds };
+}
+
+function visibleNpcs(state: SessionState, focusedId: string | null) {
+  const allHere = state.phase === "intros";
+  return state.heartbreakers.filter((heartbreaker) => {
+    if (heartbreaker.eliminated) return false;
+    if (allHere || heartbreaker.id === focusedId) return true;
+    return heartbreaker.location_id === state.location_id;
+  });
+}
+
+function stagedNpcs<T extends { id: string }>(npcs: readonly T[], focusedId: string | null): T[] {
+  if (npcs.length <= MAX_STAGED_NPCS) return [...npcs];
+  const focused = focusedId ? npcs.find((npc) => npc.id === focusedId) : undefined;
+  const staged = focused ? [focused] : [];
+  for (const npc of npcs) {
+    if (npc.id === focused?.id) continue;
+    if (staged.length === MAX_STAGED_NPCS) break;
+    staged.push(npc);
+  }
+  return staged;
 }

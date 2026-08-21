@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 from fastapi.testclient import TestClient
 
-from src.api.app import app
+from src.api import app as api_app
+from src.game.agents.runtime import AgentValidationError
+from src.game.agents.turn_agents import mock_turn_agents
+
+app = api_app.app
 
 
 def test_submit_valid_turn_updates_state_and_returns_new_persisted() -> None:
@@ -65,6 +71,28 @@ def test_two_consecutive_turns_advance_state() -> None:
     payload = second.json()
     assert payload["view"]["state"]["turn_index"] == 2
     assert payload["persisted"]["game_state"]["turn_index"] == 2
+
+
+def test_story_engine_failure_returns_structured_502(monkeypatch) -> None:
+    client = TestClient(app)
+    created = _new_session(client)
+
+    def boom(*_args, **_kwargs):
+        raise AgentValidationError("voice contract failed")
+
+    agents = replace(mock_turn_agents(), heartbreaker_voice=boom)
+    monkeypatch.setattr(api_app, "_agents_for", lambda _mock_llm: agents)
+
+    response = client.post(
+        "/session/turn",
+        json={
+            "persisted": created["persisted"],
+            "action": created["view"]["available_actions"][0],
+        },
+    )
+
+    assert response.status_code == 502
+    assert response.json()["detail"]["error"]["code"] == "STORY_ENGINE_ERROR"
 
 
 def _new_session(client: TestClient) -> dict[str, object]:

@@ -448,7 +448,7 @@ def _record_caught_unprepared(
     later. Emotional weight is moderate (4) so it surfaces in mid-tier
     summaries but does not dominate the partner's long-term memory.
     """
-    from src.game.state.memory import Memory  # late import to avoid cycles
+    from src.game.state.memory import Memory, RecapDisposition  # late import to avoid cycles
 
     memory_id = f"caught_unprepared::{target.id}::{trait_key}::{day}::{turn_index}"
     target.memories.append(
@@ -463,5 +463,6 @@ def _record_caught_unprepared(
             emotional_weight=4,
             tags=["caught_unprepared", "compatibility_quiz", trait_key],
             durable=True,
+            recap_disposition=RecapDisposition.NONE,
         )
     )

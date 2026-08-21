@@ -70,10 +70,9 @@ def profile_for_agent(agent_name: str) -> AgentModelProfile:
 
 # Bound per-request latency so one slow/hung model call can't freeze a whole
 # turn. The OpenAI SDK defaults to a 600s timeout and two automatic retries, so
-# a single transient stall mid-ceremony would leave the player staring at a
-# frozen scene for minutes before any fallback could fire. With an explicit
-# timeout the call fails fast and each agent's own retry loop degrades to
-# deterministic prose instead. Retries are owned by the agent loops (not the
+# a single transient stall mid-ceremony would leave the player waiting for
+# minutes before the failure surfaced. With an explicit timeout the call fails
+# within a bounded period. Retries are owned by the agent loops (not the
 # SDK) so worst-case latency stays bounded at attempts x timeout rather than
 # compounding. Both knobs are env-overridable for eval/perf runs.
 GAME_AGENT_REQUEST_TIMEOUT = float(os.environ.get("LLM_GAME_REQUEST_TIMEOUT", "60"))
@@ -131,19 +130,11 @@ class AgentTrace(BaseModel):
     output: Any = None
     generation_error: str | None = None
     validation_error: str | None = None
-    degraded: bool = False
     reasoning_summaries: list[ReasoningSummary] = Field(default_factory=list)
 
 
 class AgentError(Exception):
-    """A live agent failed in a way the engine may safely degrade past.
-
-    Agents raise a subclass only after exhausting their retries. The turn
-    pipeline catches ``AgentError`` (never bare ``Exception``) at the narration
-    call sites and degrades to a deterministic mock, so the player never dead-
-    screens — while genuine engine bugs (``KeyError``, ``TypeError``, bad state
-    mutation) still propagate and surface loud per ENGINEERING.md R2.
-    """
+    """A live agent exhausted its retry or validation contract."""
 
 
 class AgentGenerationError(AgentError):
@@ -156,6 +147,9 @@ class AgentValidationError(AgentError):
 
 _active_traces: ContextVar[list[AgentTrace] | None] = ContextVar(
     "active_agent_traces", default=None
+)
+_failed_turn_traces: ContextVar[tuple[AgentTrace, ...]] = ContextVar(
+    "failed_turn_traces", default=()
 )
 _active_attempt: ContextVar[int] = ContextVar("active_agent_attempt", default=1)
 
@@ -193,10 +187,17 @@ def end_agent_trace_capture(token: Token[list[AgentTrace] | None]) -> list[Agent
     return traces
 
 
+def fail_agent_trace_capture(token: Token[list[AgentTrace] | None]) -> None:
+    """Close a failed turn capture while retaining traces for its caller."""
+    traces = list(_active_traces.get() or [])
+    _active_traces.reset(token)
+    _failed_turn_traces.set(tuple(traces))
+
+
 def recover_agent_traces_after_error() -> list[AgentTrace]:
     """Recover traces from a turn that failed before returning a TurnResult."""
-    traces = list(_active_traces.get() or [])
-    _active_traces.set(None)
+    traces = list(_failed_turn_traces.get())
+    _failed_turn_traces.set(())
     return traces
 
 
@@ -315,39 +316,6 @@ def mark_agent_trace_generation_error(
             attempt=attempt,
             prompt_path=prompt_path or "",
             generation_error=str(error),
-        )
-    )
-
-
-def record_agent_degradation(
-    agent_name: str,
-    error: Exception,
-    *,
-    prompt_path: str = "",
-) -> None:
-    """Record that the turn served a deterministic mock instead of the live agent.
-
-    The per-attempt validation errors are already captured (see
-    ``mark_agent_trace_validation_error``); this appends a distinct, countable
-    ``degraded=True`` trace so "we fell back to a mock this turn" is a first-class
-    observable signal in the review packet rather than something inferred from a
-    run of failed attempts. Keeps the no-dead-screen fallback from being a
-    *silent* swallow under ENGINEERING.md R2/R16.
-    """
-    traces = _active_traces.get()
-    if traces is None:
-        return
-    profile = profile_for_agent(agent_name)
-    traces.append(
-        AgentTrace(
-            agent_name=agent_name,
-            model=profile.model,
-            reasoning_effort=profile.reasoning_effort,
-            attempt=0,
-            prompt_path=prompt_path,
-            output_type="degraded_to_mock",
-            validation_error=str(error),
-            degraded=True,
         )
     )
 

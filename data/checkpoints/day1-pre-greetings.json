@@ -1,9 +1,9 @@
 {
   "name": "day1-pre-greetings",
   "seed": 7,
-  "state_hash": "4ebb8ff27595914dc5f65d4a6ba99d2b6a3964c4e25f87dc3d530806feb7016d",
+  "state_hash": "ad823fe1f8e9434da0b54e7a637675866fa51640b40bb4149e9982167838d99e",
   "state": {
-    "schema_version": 29,
+    "schema_version": 30,
     "seed": 7,
     "turn_index": 0,
     "day": 1,

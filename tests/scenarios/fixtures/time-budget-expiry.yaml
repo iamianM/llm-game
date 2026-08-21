@@ -1,7 +1,7 @@
 name: time-budget-expiry
 seed: 31
 initial_phase: morning
-expected_hash: ab539d6a96826bd5c261fb62ea9f024c1f426f221d0bc2c4c4270ff92a4cbd52
+expected_hash: c148f8c18ecb7bf15afb66423da8b1dc033efc88f311906a18100ddc5ccbad3a
 actions:
 - kind: start_conversation
   target_id: chloe

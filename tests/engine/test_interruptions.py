@@ -2,16 +2,22 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.agents.resort_orchestrator import ResortUpdate
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.resort import apply_resort_update, validate_resort_update
 from src.game.engine.rules import defer_chance
 from src.game.engine.turn import run_turn
 from src.game.state.models import Conversation, Location, NPCInterruption, new_game
 from src.game.state.rng import SeededRng
+
+MOCK_AGENTS = mock_turn_agents()
+FOLLOW_UP_AGENTS = replace(MOCK_AGENTS, contextual_options=lambda *_args: mock_follow_up_menu())
 
 
 def test_orchestrator_can_emit_interruption_in_resort_update() -> None:
@@ -94,7 +100,13 @@ def test_apply_resort_update_sets_pending_interruption() -> None:
         ]
     )
 
-    apply_resort_update(state, update, SeededRng(1))
+    apply_resort_update(
+        state,
+        update,
+        SeededRng(1),
+        background_dialogue=MOCK_AGENTS.background_dialogue,
+        conversation_curator=MOCK_AGENTS.conversation_curator,
+    )
 
     assert state.active_conversation is not None
     assert state.active_conversation.pending_interruption is not None
@@ -121,7 +133,7 @@ def test_accept_interruption_closes_current_starts_new() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="accept_interruption"),
         SeededRng(1),
-        contextual_options=lambda *_args: mock_follow_up_menu(),
+        FOLLOW_UP_AGENTS,
     )
 
     assert turn.state.active_conversation is not None
@@ -139,6 +151,7 @@ def test_defer_interruption_eq_roll_success_path() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="defer_interruption"),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert turn.mechanical_result.success is True
@@ -158,6 +171,7 @@ def test_defer_interruption_eq_roll_failure_path() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="defer_interruption"),
         SeededRng(5),
+        MOCK_AGENTS,
     )
 
     assert turn.mechanical_result.success is False
@@ -174,6 +188,7 @@ def test_ignore_interruption_keeps_current_drops_affection_4() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="ignore_interruption"),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert state.active_conversation is not None
@@ -193,6 +208,7 @@ def test_ignore_interruption_moves_interrupter_away() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="ignore_interruption"),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert maya.location_id != before
@@ -205,6 +221,7 @@ def test_ignore_interruption_trace_records_movement() -> None:
         state,
         PlayerAction(kind=ActionKind.RESPOND_WITH, intent_id="ignore_interruption"),
         SeededRng(1),
+        MOCK_AGENTS,
     )
 
     assert turn.mechanical_result.forced_movements

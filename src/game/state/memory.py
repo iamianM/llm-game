@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class RecapDisposition(StrEnum):
+    """Whether and where a memory may appear in the Daily Recap."""
+
+    NONE = "none"
+    YOUR_DAY = "your_day"
+    WHILE_BUSY = "while_busy"
 
 
 class Memory(BaseModel):
@@ -23,6 +32,7 @@ class Memory(BaseModel):
     emotional_weight: int = Field(ge=1, le=10)
     tags: list[str] = Field(default_factory=list)
     durable: bool = True
+    recap_disposition: RecapDisposition
     # Cast ids (besides ``subject_id``) named in ``content``, derived
     # deterministically at the memory-creation boundary. The voice context reads
     # this structurally to whitelist natural subject echoes for the exchange

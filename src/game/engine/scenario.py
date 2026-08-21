@@ -18,7 +18,12 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_options import ContextualOptionsFn, mock_follow_up_menu
 from src.game.agents.heartbreaker_voice import Exchange
-from src.game.agents.resort_orchestrator import ResortOrchestratorFn, ResortUpdate
+from src.game.agents.resort_orchestrator import (
+    ResortOrchestratorFn,
+    ResortUpdate,
+    mock_resort_orchestrator,
+)
+from src.game.agents.turn_agents import scripted_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.character_creation import create_character
 from src.game.engine.phases import PHASE_BUDGETS
@@ -80,7 +85,9 @@ def load_action_script(path: Path) -> ActionScript:
     return ActionScript.model_validate(cast(dict[str, object], raw))
 
 
-def run_action_script(script: ActionScript, *, seed_override: int | None = None) -> ScenarioRunResult:
+def run_action_script(
+    script: ActionScript, *, seed_override: int | None = None
+) -> ScenarioRunResult:
     """Replay ``script`` from a fresh deterministic game."""
     seed = script.seed if seed_override is None else seed_override
     state = new_game(seed, player_stats=script.player_stats)
@@ -100,25 +107,25 @@ def run_action_script(script: ActionScript, *, seed_override: int | None = None)
         opens_with_intro = first is not None and first.kind is ActionKind.INTRODUCE_TO
         if state.phase is Phase.INTROS and not opens_with_intro:
             from src.game.state.phase_clock import PhaseClock as _PhaseClock
+
             state.phase = Phase.MORNING
-            state.phase_clock = _PhaseClock(phase=Phase.MORNING.value, budget_minutes=PHASE_BUDGETS[Phase.MORNING])
+            state.phase_clock = _PhaseClock(
+                phase=Phase.MORNING.value, budget_minutes=PHASE_BUDGETS[Phase.MORNING]
+            )
             state.intro_completed_ids = [
-                heartbreaker.id for heartbreaker in state.heartbreakers if not heartbreaker.eliminated
+                heartbreaker.id
+                for heartbreaker in state.heartbreakers
+                if not heartbreaker.eliminated
             ]
             state.intro_memory_created = True
     rng = SeededRng(seed)
     turns: list[TurnResult] = []
     contextual_options = _scripted_contextual_options(script.actions, script.resort_updates)
     resort_orchestrator = _scripted_resort_updates(script.resort_updates)
+    agents = scripted_turn_agents(contextual_options, resort_orchestrator)
 
     for action in script.actions:
-        turn = run_turn(
-            state,
-            action,
-            rng,
-            contextual_options=contextual_options,
-            resort_orchestrator=resort_orchestrator,
-        )
+        turn = run_turn(state, action, rng, agents)
         turns.append(turn.model_copy(deep=True))
         state = turn.state
 
@@ -158,6 +165,7 @@ def _scripted_contextual_options(
         _result: MechanicalResult,
         _exchange: Exchange,
         _probability: int,
+        _already_present: list[str],
     ) -> FollowUpMenu:
         nonlocal index
         intent_kind = planned[index] if index < len(planned) else None
@@ -169,9 +177,9 @@ def _scripted_contextual_options(
     return contextual_options
 
 
-def _scripted_resort_updates(updates: list[ResortUpdate | None] | None) -> ResortOrchestratorFn | None:
+def _scripted_resort_updates(updates: list[ResortUpdate | None] | None) -> ResortOrchestratorFn:
     if updates is None:
-        return None
+        return mock_resort_orchestrator
     index = 0
 
     def resort_orchestrator(_state: GameState) -> ResortUpdate:
@@ -191,7 +199,11 @@ def _planned_follow_up_intents(
     for index, action in enumerate(actions):
         if action.kind not in {ActionKind.START_CONVERSATION, ActionKind.RESPOND_WITH}:
             continue
-        update = None if resort_updates is None or index >= len(resort_updates) else resort_updates[index]
+        update = (
+            None
+            if resort_updates is None or index >= len(resort_updates)
+            else resort_updates[index]
+        )
         if update is not None and update.npc_summoned_elsewhere:
             planned.append("joke_back")
             continue

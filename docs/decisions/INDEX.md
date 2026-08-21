@@ -20,3 +20,6 @@ Use `template.md` for new ADRs. ADRs are append-only: if a decision changes, add
 - `0012-nextjs-thin-client-over-vite.md` - Next.js is the browser shell; Python remains canonical.
 - `0013-balance-data-boundary.md` - Typed balance data lives outside flavor content.
 - `0014-agent-split-after-narrator-v0.md` - The current POC uses multiple typed agents behind engine-owned mechanics.
+- `0015-deep-scene-and-minigame-presentation.md` - One pure scene plan composes typed, compact minigame presentation.
+- `0016-game-owned-turn-agent-set.md` - Every turn receives one explicit game-owned agent set, and live failures propagate.
+- `0017-daily-recap-facts-and-projection.md` - Recaps persist canonical facts and project separate player and off-screen sections.

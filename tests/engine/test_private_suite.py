@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
 from src.game.engine.private_suite import apply_private_suite, private_suite_eligible
 from src.game.engine.rules import apply_action
@@ -75,8 +76,12 @@ def test_private_suite_creates_high_weight_memory_for_both_partners() -> None:
 
     apply_private_suite(state)
 
-    player_memory = [memory for memory in state.player.memories if "private_suite_night" in memory.tags]
-    partner_memory = [memory for memory in state.heartbreakers[0].memories if "private_suite_night" in memory.tags]
+    player_memory = [
+        memory for memory in state.player.memories if "private_suite_night" in memory.tags
+    ]
+    partner_memory = [
+        memory for memory in state.heartbreakers[0].memories if "private_suite_night" in memory.tags
+    ]
     assert player_memory[0].emotional_weight == 9
     assert partner_memory[0].emotional_weight == 9
 
@@ -93,9 +98,16 @@ def test_private_suite_intent_kinds_dispatch_correctly() -> None:
 def test_private_suite_turn_records_event_for_narration() -> None:
     state = _eligible_state()
 
-    turn = run_turn(state, PlayerAction(kind=ActionKind.PRIVATE_SUITE), SeededRng(1))
+    turn = run_turn(
+        state,
+        PlayerAction(kind=ActionKind.PRIVATE_SUITE),
+        SeededRng(1),
+        mock_turn_agents(),
+    )
 
-    private_suite_events = [event for event in turn.ceremony_events if event.kind == "private_suite"]
+    private_suite_events = [
+        event for event in turn.ceremony_events if event.kind == "private_suite"
+    ]
     assert private_suite_events
     assert private_suite_events[0].heartbreaker_id == "chloe"
     assert turn.event_narration is not None

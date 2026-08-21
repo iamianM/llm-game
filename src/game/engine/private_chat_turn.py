@@ -6,6 +6,7 @@ from src.game.engine.actions import PlayerAction
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.private_chat import PrivateChatAttempt
 from src.game.engine.results import MechanicalResult
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import GameState, RelationshipDelta, clamp_relationship
 
 
@@ -49,6 +50,7 @@ def remember_private_chat_rejection(state: GameState, private_chat_attempt: Priv
                     weight=6,
                     tags=["saw_private_chat_rejected", "private_chat", private_chat_attempt.target_id],
                     content=f"I saw the player ask {target_name} for a private chat and get brushed off.",
+                    recap_disposition=RecapDisposition.YOUR_DAY,
                 ),
             )
 

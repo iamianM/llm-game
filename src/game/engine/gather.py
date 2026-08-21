@@ -8,13 +8,15 @@ from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.engine.conversation import close_conversation
 from src.game.state.models import Conversation, GameState, MemoryBatch, NPCNPCConversation
 
-PlayerConversationCurator = Callable[[GameState, Conversation, ConversationCuratorFn | None], MemoryBatch]
-NPCConversationCurator = Callable[[GameState, NPCNPCConversation, ConversationCuratorFn | None], MemoryBatch]
+PlayerConversationCurator = Callable[[GameState, Conversation, ConversationCuratorFn], MemoryBatch]
+NPCConversationCurator = Callable[
+    [GameState, NPCNPCConversation, ConversationCuratorFn], MemoryBatch
+]
 
 
 def close_conversations_for_gather(
     state: GameState,
-    curator: ConversationCuratorFn | None,
+    curator: ConversationCuratorFn,
     curate_conversation: PlayerConversationCurator,
     curate_npc_conversation: NPCConversationCurator,
 ) -> list[MemoryBatch]:

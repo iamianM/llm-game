@@ -54,9 +54,19 @@ FOLLOW_UP_CATEGORIES = {
     "exit",
 }
 ALLOWED_BESPOKE_INTENTS = {
-    "honest_vulnerable", "escalate_flirt", "deflect_with_humor", "joke_back",
-    "go_deeper", "ask_about_topic", "apologize", "defend_self", "change_subject",
-    "supportive_listen", "supportive_comfort", "supportive_reassure", "supportive_validate",
+    "honest_vulnerable",
+    "escalate_flirt",
+    "deflect_with_humor",
+    "joke_back",
+    "go_deeper",
+    "ask_about_topic",
+    "apologize",
+    "defend_self",
+    "change_subject",
+    "supportive_listen",
+    "supportive_comfort",
+    "supportive_reassure",
+    "supportive_validate",
 }
 FollowUpCategory = Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
 
@@ -101,7 +111,10 @@ class ContextualBespoke(BaseModel):
 
 
 ContextualOptionsResult = ContextualBespoke | FollowUpMenu
-ContextualOptionsFn = Callable[[GameState, MechanicalResult, Exchange, int], ContextualOptionsResult]
+ContextualOptionsFn = Callable[
+    [GameState, MechanicalResult, Exchange, int, list[str]],
+    ContextualOptionsResult,
+]
 
 
 class ContextualOptionsAgent:
@@ -121,7 +134,7 @@ class ContextualOptionsAgent:
         result: MechanicalResult,
         exchange: Exchange,
         departure_probability: int,
-        already_present: list[str] | None = None,
+        already_present: list[str],
     ) -> ContextualBespoke:
         """Generate and validate bespoke contextual additions."""
         context = contextual_options_context(
@@ -129,7 +142,7 @@ class ContextualOptionsAgent:
             result,
             exchange,
             departure_probability,
-            already_present=already_present or [],
+            already_present=already_present,
         )
         rendered = _render_context(context)
         last_error: ValueError | None = None
@@ -193,17 +206,20 @@ class ContextualOptionsAgent:
             raise ValueError("Contextual Options returned no parsed ContextualBespoke")
         return bespoke
 
+
 def contextual_options_context(
     state: GameState,
     result: MechanicalResult,
     exchange: Exchange,
     departure_probability: int,
     *,
-    already_present: list[str] | None = None,
+    already_present: list[str],
 ) -> ContextualOptionsContext:
     """Build prompt context for one follow-up menu."""
     target_id = result.action.target_id
-    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == target_id), None)
+    target = next(
+        (heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == target_id), None
+    )
     if target is None:
         raise ValueError(f"contextual options target not found: {target_id}")
     stats = state.player.stats
@@ -234,8 +250,9 @@ def contextual_options_context(
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
         explored_threads=_explored_threads(state, target.id),
-        already_present=already_present or [],
+        already_present=already_present,
     )
+
 
 def mock_contextual_bespoke(
     intent_kind: str = "joke_back",
@@ -259,7 +276,10 @@ def mock_contextual_bespoke(
         npc_exit_line="I should go mingle for a bit." if npc_will_leave else None,
     )
 
-def mock_follow_up_menu(intent_kind: str = "joke_back", *, npc_will_leave: bool = False) -> FollowUpMenu:
+
+def mock_follow_up_menu(
+    intent_kind: str = "joke_back", *, npc_will_leave: bool = False
+) -> FollowUpMenu:
     """Return a deterministic menu that includes ``intent_kind`` for replay."""
     primary_intent = "joke_back" if intent_kind in EXIT_INTENT_KINDS else intent_kind
     options = [
@@ -364,6 +384,7 @@ def _render_context(context: ContextualOptionsContext) -> str:
         ]
     )
 
+
 def _explored_threads(state: GameState, target_id: str) -> str:
     """Summarize topics the player has already dug into with this NPC.
 
@@ -390,12 +411,14 @@ def _gossip_memory_context(state: GameState) -> str:
         return "None."
     return "\n".join(_memory_line(state, memory) for memory in conversation.gossip_offers)
 
+
 def _memory_line(state: GameState, memory: Memory) -> str:
     return (
         f"- id {memory.id}; subject {_subject_name(state, memory)}; "
         f"weight {memory.emotional_weight}; tags {', '.join(memory.tags)}; "
         f"content {memory.content}"
     )
+
 
 def _subject_name(state: GameState, memory: Memory) -> str:
     for heartbreaker in state.heartbreakers:
@@ -416,6 +439,7 @@ def _mock_label(intent_kind: str) -> str:
         "walk_away": "Walk away",
     }
     return labels.get(intent_kind, intent_kind.replace("_", " ").title())
+
 
 def _mock_category(intent_kind: str) -> FollowUpCategory:
     if intent_kind in EXIT_INTENT_KINDS:

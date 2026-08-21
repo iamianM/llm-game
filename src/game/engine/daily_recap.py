@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from src.game.state.memory import RecapDisposition
 from src.game.state.models import DailyRecap, DailyRecapItem, GameState, Memory
 
 # Accept an optional "the " so a bare subject label ("Player guessed wrong ...")
@@ -12,41 +13,22 @@ from src.game.state.models import DailyRecap, DailyRecapItem, GameState, Memory
 _PLAYER_POSSESSIVE_RE = re.compile(r"\b(?:the )?player's\b", re.IGNORECASE)
 _PLAYER_RE = re.compile(r"\b(?:the )?player\b", re.IGNORECASE)
 
-# "While you were busy" surfaces background *whispers* — relationship beats and
-# gossip that drifted back to the player. Two families of memory are NOT
-# whispers and must be kept out of the player-facing digest:
-#
-#   * Procedural resort announcements the whole cast witnessed together (flame_deck
-#     gathers, pairing/Pairing ceremonies, eliminations, challenges, Flush of
-#     Hearts/Flush announcements, producer text). Several carry internal labels
-#     ("Pairing Ceremony text: ..."), raw cast ids ("jordan_start leaves"), or
-#     mechanical scoring ("ended in failure (3 pts)") that read like leaked
-#     stage directions. ``remember_ceremony_events`` stamps *every* one of these
-#     with the ``"ceremony"`` tag, so matching that single tag drops them all —
-#     including any future event kind — without an event-by-event denylist.
-#   * Internal, tag-only mechanical markers the producer / Conversation Curator
-#     reference later but that were never written for display (e.g.
-#     ``caught_unprepared`` quiz reactions phrased in a bare first person —
-#     "...about my age..." — that read as orphaned without holder attribution).
-#
-# Dropping both lets the curator's genuine personal beats (or the honest "no
-# whispers" fallback) carry the recap instead.
-_NON_WHISPER_TAGS = frozenset({"ceremony", "caught_unprepared"})
-
-
 def append_daily_recap_if_needed(state: GameState, completed_day: int) -> DailyRecap | None:
     """Append one recap for ``completed_day`` if the clock has rolled forward."""
     if state.day <= completed_day or any(recap.day == completed_day for recap in state.daily_recaps):
         return None
     recap = DailyRecap(
         day=completed_day,
+        resort_id=state.resort,
         items=[
             DailyRecapItem(
                 holder_id=memory.holder_id,
                 subject_id=memory.subject_id,
-                content=humanize_player_reference(memory.content),
+                content=memory.content,
+                formed_on_turn=memory.formed_on_turn,
                 emotional_weight=memory.emotional_weight,
                 tags=list(memory.tags),
+                recap_disposition=memory.recap_disposition,
             )
             for memory in _notable_memories(state, completed_day)
         ],
@@ -80,12 +62,14 @@ def _notable_memories(state: GameState, day: int) -> list[Memory]:
         memory
         for heartbreaker in state.heartbreakers
         for memory in heartbreaker.memories
-        if memory.formed_on_day == day and not _is_non_whisper(memory)
+        if memory.formed_on_day == day
+        and memory.recap_disposition is not RecapDisposition.NONE
     ]
     memories.extend(
         memory
         for memory in state.player.memories
-        if memory.formed_on_day == day and not _is_non_whisper(memory)
+        if memory.formed_on_day == day
+        and memory.recap_disposition is not RecapDisposition.NONE
     )
     memories.sort(key=lambda memory: (-memory.emotional_weight, memory.formed_on_turn, memory.id))
     # Witnessed ceremony events (challenges, pairings) are stored once per
@@ -101,7 +85,7 @@ def _notable_memories(state: GameState, day: int) -> list[Memory]:
             continue
         seen_content.add(content_key)
         unique.append(memory)
-    return _diversify(unique)
+    return _select_sections(unique)
 
 
 def _pair_key(memory: Memory) -> frozenset[str]:
@@ -117,33 +101,47 @@ def _pair_key(memory: Memory) -> frozenset[str]:
     return frozenset({memory.holder_id, subject})
 
 
-def _diversify(memories: list[Memory], slots: int = 5) -> list[Memory]:
-    """Pick up to ``slots`` memories, favouring storyline variety over depth.
-
-    Pass one takes the strongest memory from each distinct storyline (already in
-    weight order), so the reader hears from several corners of the resort. If
-    slots remain, pass two backfills the next-strongest leftovers — so a quiet
-    day with only one storyline still fills the digest rather than going sparse.
-    """
+def _select_sections(memories: list[Memory], slots: int = 5) -> list[Memory]:
+    """Reserve both visible sections, then favour distinct strong storylines."""
     chosen: list[Memory] = []
-    leftovers: list[Memory] = []
-    seen_pairs: set[frozenset[str]] = set()
-    for memory in memories:
-        key = _pair_key(memory)
-        if key in seen_pairs:
-            leftovers.append(memory)
-            continue
-        seen_pairs.add(key)
-        chosen.append(memory)
+    for disposition in (
+        RecapDisposition.YOUR_DAY,
+        RecapDisposition.WHILE_BUSY,
+    ):
+        strongest = next(
+            (memory for memory in memories if memory.recap_disposition is disposition),
+            None,
+        )
+        if strongest is not None:
+            chosen.append(strongest)
+
+    remaining = [memory for memory in memories if memory not in chosen]
+    seen_pairs = {_pair_key(memory) for memory in chosen}
+    repeated_storylines: list[Memory] = []
+    for memory in remaining:
         if len(chosen) == slots:
-            return chosen
-    for memory in leftovers:
+            break
+        pair = _pair_key(memory)
+        if pair in seen_pairs:
+            repeated_storylines.append(memory)
+            continue
+        seen_pairs.add(pair)
+        chosen.append(memory)
+
+    for memory in repeated_storylines:
         if len(chosen) == slots:
             break
         chosen.append(memory)
-    return chosen
 
-
-def _is_non_whisper(memory: Memory) -> bool:
-    """True for procedural announcements / internal markers that aren't whispers."""
-    return bool(_NON_WHISPER_TAGS.intersection(memory.tags))
+    section_order = {
+        RecapDisposition.YOUR_DAY: 0,
+        RecapDisposition.WHILE_BUSY: 1,
+    }
+    return sorted(
+        chosen,
+        key=lambda memory: (
+            section_order[memory.recap_disposition],
+            memory.formed_on_turn,
+            memory.id,
+        ),
+    )

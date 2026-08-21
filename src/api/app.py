@@ -51,13 +51,14 @@ from src.api.serializers import (
     exchange_api,
     session_state,
 )
-from src.api.session import AgentBundle
 from src.api.streaming import chunk_text, sse
+from src.game.agents.runtime import AgentError, recover_agent_traces_after_error
 from src.game.agents.trait_generator import (
     OpenAITraitGenerator,
     assign_trait_cards,
     opening_generation_seeds,
 )
+from src.game.agents.turn_agents import TurnAgentSet, live_turn_agents, mock_turn_agents
 from src.game.engine.actions import PlayerAction
 from src.game.engine.character_creation import DEFAULT_ARCHETYPE_STATS, create_character
 from src.game.engine.intents import available_intents_for
@@ -116,7 +117,10 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
     if not mock:
         try:
             generator = OpenAITraitGenerator()
-            assign_trait_cards(state.heartbreakers, generator.generate_opening_cast(opening_generation_seeds(state.heartbreakers)))
+            assign_trait_cards(
+                state.heartbreakers,
+                generator.generate_opening_cast(opening_generation_seeds(state.heartbreakers)),
+            )
         except Exception as exc:
             logger.exception("real-mode trait generation failed")
             raise _http_error(
@@ -140,6 +144,7 @@ def new_session(req: NewSessionRequest) -> NewSessionEnvelope:
         try:
             from src.game.agents.npc_greeter import OpenAINpcGreeter
             from src.game.state.models import IntrosState
+
             greetings = OpenAINpcGreeter().generate(state)
             state.intros = IntrosState(greetings=greetings)
         except Exception as exc:
@@ -238,6 +243,8 @@ async def submit_turn(envelope: TurnEnvelope) -> TurnResponseEnvelope:
     agents = _agents_for(envelope.persisted.mock_llm)
     try:
         turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
+    except AgentError as exc:
+        raise _http_error(502, "STORY_ENGINE_ERROR", str(exc)) from exc
     except ValueError as exc:
         raise _http_error(400, "INVALID_ACTION", str(exc)) from exc
     new_persisted = freeze(
@@ -247,7 +254,9 @@ async def submit_turn(envelope: TurnEnvelope) -> TurnResponseEnvelope:
         user_id=envelope.persisted.user_id,
         mock_llm=envelope.persisted.mock_llm,
     )
-    return TurnResponseEnvelope(view=_turn_response(envelope.persisted.session_id, turn), persisted=new_persisted)
+    return TurnResponseEnvelope(
+        view=_turn_response(envelope.persisted.session_id, turn), persisted=new_persisted
+    )
 
 
 @app.post("/session/turn/stream")
@@ -259,6 +268,13 @@ async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
     async def events() -> AsyncIterator[str]:
         try:
             turn = await asyncio.to_thread(_run_turn, state, rng, envelope, agents)
+        except AgentError as exc:
+            yield sse(
+                "error",
+                {"status": 502, "code": "STORY_ENGINE_ERROR", "message": str(exc)},
+                event_id=0,
+            )
+            return
         except ValueError as exc:
             logger.exception(
                 "turn rejected: session=%s day=%s phase=%s resort=%s loc=%s action=%s",
@@ -280,16 +296,34 @@ async def submit_turn_stream(envelope: TurnEnvelope) -> StreamingResponse:
         )
         view = _turn_response(session_id, turn)
         exchange = view.exchange
-        yield sse("turn_start", {"turn": turn.state.turn_index, "phase": turn.state.phase.value}, event_id=1)
+        yield sse(
+            "turn_start",
+            {"turn": turn.state.turn_index, "phase": turn.state.phase.value},
+            event_id=1,
+        )
         if exchange is not None:
-            yield sse("dialogue_start", {"speaker": _exchange_speaker_id(turn), "speaker_name": exchange.speaker_name}, event_id=2)
+            yield sse(
+                "dialogue_start",
+                {"speaker": _exchange_speaker_id(turn), "speaker_name": exchange.speaker_name},
+                event_id=2,
+            )
             async for chunk in chunk_text(exchange.npc_dialogue):
                 yield sse("dialogue_chunk", {"text": chunk})
             yield sse("dialogue_end", {"mood_after": exchange.npc_mood_after}, event_id=3)
-        yield sse("state", session_state(session_id, turn.state).model_dump(mode="json"), event_id=4)
-        yield sse("options", {"actions": [a.model_dump(mode="json") for a in available_actions_api(turn.state)]}, event_id=5)
+        yield sse(
+            "state", session_state(session_id, turn.state).model_dump(mode="json"), event_id=4
+        )
+        yield sse(
+            "options",
+            {"actions": [a.model_dump(mode="json") for a in available_actions_api(turn.state)]},
+            event_id=5,
+        )
         if turn.ceremony_events:
-            yield sse("ceremony", {"events": [e.model_dump(mode="json") for e in turn.ceremony_events]}, event_id=6)
+            yield sse(
+                "ceremony",
+                {"events": [e.model_dump(mode="json") for e in turn.ceremony_events]},
+                event_id=6,
+            )
         envelope_out = TurnResponseEnvelope(view=view, persisted=new_persisted)
         yield sse("response", envelope_out.model_dump(mode="json"), event_id=7)
         yield sse("turn_end", {"state_hash": turn.state_hash}, event_id=8)
@@ -306,24 +340,29 @@ def get_cast(req: CastRequest) -> CastDetail:
         raise _http_error(404, "NOT_FOUND", f"unknown Heartbreaker: {req.npc_id}") from exc
 
 
-def _run_turn(state: GameState, rng: SeededRng, envelope: TurnEnvelope, agents: AgentBundle) -> TurnResult:
+def _run_turn(
+    state: GameState,
+    rng: SeededRng,
+    envelope: TurnEnvelope,
+    agents: TurnAgentSet,
+) -> TurnResult:
     action = PlayerAction.model_validate(envelope.action.model_dump(exclude_none=True))
     if action.kind.value == "start_conversation" and action.target_id and action.intent_id is None:
         intents = available_intents_for(state, action.target_id)
         if intents:
             action.intent_id = intents[0].id
     input_hash = state_hash(state_hash_payload(state))
-    turn = run_turn(
-        state,
-        action,
-        rng,
-        heartbreaker_voice=agents.heartbreaker_voice,
-        contextual_options=agents.contextual_options,
-        event_narrator=agents.event_narrator,
-        conversation_curator=agents.conversation_curator,
-        resort_orchestrator=agents.resort_orchestrator,
-        background_dialogue=agents.background_dialogue,
-    )
+    try:
+        turn = run_turn(state, action, rng, agents)
+    except AgentError:
+        traces = recover_agent_traces_after_error()
+        logger.exception(
+            "story engine failed session=%s agents=%s validation_errors=%s",
+            envelope.persisted.session_id,
+            [trace.agent_name for trace in traces],
+            [trace.validation_error for trace in traces if trace.validation_error],
+        )
+        raise
     logger.info(
         "turn session=%s turn=%s day=%s phase=%s action=%s target=%s intent=%s exchange=%s events=%s active=%s hash=%s input_hash=%s",
         envelope.persisted.session_id,
@@ -353,7 +392,9 @@ def _turn_response(session_id: str, turn: TurnResult) -> TurnResponse:
         audience_delta=audience_delta(result),
         audience_delta_reason=result.audience_reason,
         memories_formed=[_model_dump(batch) for batch in turn.curator_batches],
-        background_activity=[_model_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues],
+        background_activity=[
+            _model_dump(dialogue) for dialogue in turn.agent_commits.background_dialogues
+        ],
         connection_shift=connection_shift_line(turn.state, result),
         state_hash=turn.state_hash,
     )
@@ -366,11 +407,14 @@ def _exchange_speaker_id(turn: TurnResult) -> str | None:
 
 
 def _http_error(status: int, code: str, message: str) -> HTTPException:
-    return HTTPException(status_code=status, detail=ApiError(error=ApiErrorBody(code=code, message=message)).model_dump())
+    return HTTPException(
+        status_code=status,
+        detail=ApiError(error=ApiErrorBody(code=code, message=message)).model_dump(),
+    )
 
 
-def _agents_for(mock_llm: bool) -> AgentBundle:
-    return AgentBundle.mock() if _mock_mode(mock_llm) else AgentBundle.live()
+def _agents_for(mock_llm: bool) -> TurnAgentSet:
+    return mock_turn_agents() if _mock_mode(mock_llm) else live_turn_agents()
 
 
 def _mock_mode(override: bool | None = None) -> bool:

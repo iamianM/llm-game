@@ -53,10 +53,14 @@ class SeededRng:
         version, internalstate, gauss_next = self._random.getstate()
         return [version, list(internalstate), gauss_next]
 
+    def restore(self, snapshot: list[object]) -> None:
+        """Restore a snapshot on this RNG without changing object identity."""
+        version, internalstate, gauss_next = snapshot
+        self._random.setstate((version, tuple(internalstate), gauss_next))  # type: ignore[arg-type]
+
     @classmethod
     def from_snapshot(cls, seed: int | str, snapshot: list[object]) -> SeededRng:
         """Reconstruct an RNG and restore a previously captured snapshot."""
         rng = cls(seed)
-        version, internalstate, gauss_next = snapshot
-        rng._random.setstate((version, tuple(internalstate), gauss_next))  # type: ignore[arg-type]
+        rng.restore(snapshot)
         return rng

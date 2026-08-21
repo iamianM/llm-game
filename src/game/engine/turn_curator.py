@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from src.game.agents.conversation_curator import ConversationCuratorFn, mock_conversation_curator
-from src.game.agents.runtime import AgentError, record_agent_degradation
+from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.engine.compatibility import apply_familiarity
 from src.game.engine.intents import get_intent
 from src.game.engine.knowledge import emit_fact_reveal, emit_fact_reveal_by_tier
@@ -21,12 +20,12 @@ from src.game.state.models import (
 def curate_player_conversation(
     state: GameState,
     conversation: Conversation,
-    curator: ConversationCuratorFn | None,
+    curator: ConversationCuratorFn,
 ) -> MemoryBatch:
     """Curate a closed player conversation exactly once."""
     bump_target_familiarity(state, conversation.target_id, 2)
     bystander_ids = conversation_bystanders(state, conversation.target_id)
-    batch = _safe_curate(state, conversation, bystander_ids, curator)
+    batch = _curate(state, conversation, bystander_ids, curator)
     batch.kind = "player"
     conversation.summary = batch.summary or None
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
@@ -38,7 +37,7 @@ def curate_player_conversation(
 def curate_npc_conversation(
     state: GameState,
     conversation: NPCNPCConversation,
-    curator: ConversationCuratorFn | None,
+    curator: ConversationCuratorFn,
 ) -> MemoryBatch:
     """Curate a closed NPC-NPC conversation."""
     conversation.status = "closed"
@@ -51,36 +50,21 @@ def curate_npc_conversation(
     ]
     if state.location_id == conversation.location_id:
         bystander_ids.append("player")
-    batch = _safe_curate(state, conversation, bystander_ids, curator)
+    batch = _curate(state, conversation, bystander_ids, curator)
     batch.kind = "background"
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
     return batch
 
 
-def _safe_curate(
+def _curate(
     state: GameState,
     conversation: Conversation | NPCNPCConversation,
     bystander_ids: list[str],
-    curator: ConversationCuratorFn | None,
+    curator: ConversationCuratorFn,
 ) -> MemoryBatch:
-    """Curate a closed conversation without ever dead-screening the turn.
-
-    The curator only records *memories* of a conversation that has already closed;
-    the live agent retries on validation failure and then raises (every failed
-    attempt is recorded in the agent trace). That raise fires on conversation
-    close — after the player has already acted and seen the NPC's line — so letting
-    it propagate would crash the whole turn over flavor that degrades safely. On
-    any failure we fall back to the deterministic mock curator, which is
-    code-controlled, always contract-valid, and still records a generic memory for
-    each participant so memory continuity survives. Only the LLM's nuance is lost.
-    """
-    curate = mock_conversation_curator if curator is None else curator
-    try:
-        return curate(state, conversation, bystander_ids)
-    except AgentError as exc:
-        record_agent_degradation("conversation_curator", exc)
-        return mock_conversation_curator(state, conversation, bystander_ids)
+    """Curate one closed conversation through the selected turn-agent port."""
+    return curator(state, conversation, bystander_ids)
 
 
 def conversation_bystanders(state: GameState, target_id: str) -> list[str]:
@@ -102,7 +86,14 @@ def bump_target_familiarity(state: GameState, target_id: str, amount: int) -> No
 
 def emit_revealed_facts(state: GameState, conversation: Conversation) -> None:
     """Emit KnownFacts for successful tier-revealing conversation intents."""
-    target = next((heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == conversation.target_id), None)
+    target = next(
+        (
+            heartbreaker
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.id == conversation.target_id
+        ),
+        None,
+    )
     if target is None:
         return
     for exchange in conversation.exchanges:
@@ -127,7 +118,8 @@ def intro_segment_complete(state: GameState) -> bool:
         other_id
         for couple in state.couples
         for other_id in (couple.partner_a_id, couple.partner_b_id)
-        if state.player.id in {couple.partner_a_id, couple.partner_b_id} and other_id != state.player.id
+        if state.player.id in {couple.partner_a_id, couple.partner_b_id}
+        and other_id != state.player.id
     }
     required = {
         heartbreaker.id

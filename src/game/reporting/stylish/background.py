@@ -38,11 +38,18 @@ def daily_recap_block(day: int, records: list[dict[str, Any]]) -> str:
     items = recap.get("items")
     if not isinstance(items, list):
         return ""
+    resort_label = escape(recap.get("resort_label", "Sunset Bay"))
     if not items:
-        body = "<p>No major Sunset Bay memories surfaced.</p>"
+        body = f"<p>No major {resort_label} memories surfaced.</p>"
     else:
-        body = "<ul>" + "".join(_recap_item(item) for item in items if isinstance(item, dict)) + "</ul>"
-    return f"<div class='card background'><p><b>While you were busy yesterday</b></p>{body}</div>"
+        body = "".join(
+            _recap_section(items, section, label)
+            for section, label in (
+                ("your_day", "Your day"),
+                ("while_busy", "While you were busy"),
+            )
+        )
+    return f"<div class='card background'><p><b>Daily Recap</b></p>{body}</div>"
 
 
 def _recap_for_day(day: int, records: list[dict[str, Any]]) -> dict[str, object] | None:
@@ -59,7 +66,19 @@ def _recap_for_day(day: int, records: list[dict[str, Any]]) -> dict[str, object]
 def _recap_item(item: dict[str, object]) -> str:
     return (
         "<li>"
-        f"{escape(item.get('holder_id', 'holder'))} about {escape(item.get('subject_id', 'subject'))}: "
+        f"<b>{escape(item.get('speaker_label', 'Someone'))}:</b> "
         f"{escape(item.get('content', ''))}"
         "</li>"
     )
+
+
+def _recap_section(items: list[object], section: str, label: str) -> str:
+    matching = [
+        item
+        for item in items
+        if isinstance(item, dict) and item.get("section") == section
+    ]
+    if not matching:
+        return ""
+    rows = "".join(_recap_item(item) for item in matching)
+    return f"<p><b>{escape(label)}</b></p><ul>{rows}</ul>"

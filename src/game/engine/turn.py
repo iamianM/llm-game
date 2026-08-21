@@ -13,25 +13,16 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from src.game.agents.background_dialogue import BackgroundDialogueFn
-from src.game.agents.contextual_options import (
-    ContextualOptionsFn,
-)
-from src.game.agents.conversation_curator import ConversationCuratorFn
-from src.game.agents.event_narrator import EventNarration, EventNarratorFn, mock_event_narration
-from src.game.agents.heartbreaker_voice import (
-    Exchange,
-    HeartbreakerVoiceFn,
-    mock_heartbreaker_voice,
-)
-from src.game.agents.resort_orchestrator import ResortOrchestratorFn, ResortUpdate
+from src.game.agents.event_narrator import EventNarration, EventNarratorFn
+from src.game.agents.heartbreaker_voice import Exchange, HeartbreakerVoiceFn
+from src.game.agents.resort_orchestrator import ResortUpdate
 from src.game.agents.runtime import (
-    AgentError,
     AgentTrace,
     begin_agent_trace_capture,
     end_agent_trace_capture,
-    record_agent_degradation,
+    fail_agent_trace_capture,
 )
+from src.game.agents.turn_agents import TurnAgentSet
 from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, available_actions
 from src.game.engine.approach import APPROACH_INTENT_KINDS, roll_ambient_approach
 from src.game.engine.arrival_rolls import ArrivalRoll
@@ -120,27 +111,10 @@ class TurnResult(BaseModel):
 def _voiced_exchange(
     state: GameState,
     result: MechanicalResult,
-    heartbreaker_voice: HeartbreakerVoiceFn | None,
+    heartbreaker_voice: HeartbreakerVoiceFn,
 ) -> Exchange:
-    """Produce the turn's spoken exchange without ever dead-screening the player.
-
-    Heartbreaker Voice is the only turn agent whose output *is* the payload the player
-    came for, and it runs on every conversation beat. The live agent retries on
-    validation failure and then raises (each failed attempt is recorded in the
-    agent trace). A raise here would crash the conversation mid-beat, discarding
-    the player's action. On exhaustion we fall back to the deterministic mock voice
-    — contract-valid by construction, and it only ever names the present partner so
-    it cannot leak hidden cast — so the beat lands a little generically for one turn
-    instead of throwing a dead screen.
-    """
-    if heartbreaker_voice is None:
-        exchange = mock_heartbreaker_voice(state, result)
-    else:
-        try:
-            exchange = heartbreaker_voice(state, result)
-        except AgentError as exc:
-            record_agent_degradation("heartbreaker_voice", exc)
-            exchange = mock_heartbreaker_voice(state, result)
+    """Produce the turn's spoken exchange through the configured port."""
+    exchange = heartbreaker_voice(state, result)
     _remember_player_line(state, exchange.player_dialogue)
     return exchange
 
@@ -169,44 +143,45 @@ def _remember_player_line(state: GameState, line: str) -> None:
 def _narrated_events(
     state: GameState,
     events: list[CeremonyEvent],
-    event_narrator: EventNarratorFn | None,
+    event_narrator: EventNarratorFn,
 ) -> EventNarration:
-    """Narrate ceremony events without dead-screening the moment.
-
-    The Event Narrator retries on validation failure and then raises (each failed
-    attempt is recorded in the agent trace). Ceremonies are high-stakes beats, so a
-    raise here would crash the player out of a pairing or result reveal. On
-    exhaustion we fall back to the deterministic mock narration — built straight
-    from event data, so it always names every participant and never leaks engine
-    tokens — letting the ceremony resolve with plainer prose instead of throwing.
-    """
-    if event_narrator is None:
-        return mock_event_narration(state, events)
-    try:
-        return event_narrator(state, events)
-    except AgentError as exc:
-        record_agent_degradation("event_narrator", exc)
-        return mock_event_narration(state, events)
+    """Narrate ceremony events through the configured port."""
+    return event_narrator(state, events)
 
 
 def run_turn(
     state: GameState,
     action: PlayerAction,
     rng: SeededRng,
-    heartbreaker_voice: HeartbreakerVoiceFn | None = None,
-    contextual_options: ContextualOptionsFn | None = None,
-    event_narrator: EventNarratorFn | None = None,
-    conversation_curator: ConversationCuratorFn | None = None,
-    resort_orchestrator: ResortOrchestratorFn | None = None,
-    background_dialogue: BackgroundDialogueFn | None = None,
+    agents: TurnAgentSet,
 ) -> TurnResult:
-    """Run one deterministic game turn."""
+    """Run one turn atomically and attach its complete agent trace."""
+    state_before = state.model_copy(deep=True)
+    rng_before = rng.snapshot()
     trace_token = begin_agent_trace_capture()
+    try:
+        turn = _execute_turn(state, action, rng, agents)
+    except Exception:
+        _restore_state(state, state_before)
+        rng.restore(rng_before)
+        fail_agent_trace_capture(trace_token)
+        raise
+    turn.agent_traces = end_agent_trace_capture(trace_token)
+    return turn
 
-    def finalize_turn(turn: TurnResult) -> TurnResult:
-        turn.agent_traces = end_agent_trace_capture(trace_token)
-        return turn
 
+def _restore_state(state: GameState, snapshot: GameState) -> None:
+    """Restore a failed turn without replacing the caller-owned state object."""
+    for field_name in type(state).model_fields:
+        setattr(state, field_name, getattr(snapshot, field_name))
+
+
+def _execute_turn(
+    state: GameState,
+    action: PlayerAction,
+    rng: SeededRng,
+    agents: TurnAgentSet,
+) -> TurnResult:
     starting_day = state.day
     if action.kind is not ActionKind.CHALLENGE_RESPONSE:
         _clear_resolved_challenge_after_wrap(state)
@@ -227,7 +202,7 @@ def run_turn(
                         reason="private_chat_success",
                     )
                 )
-                batch = curate_npc_conversation(state, blocked, conversation_curator)
+                batch = curate_npc_conversation(state, blocked, agents.conversation_curator)
                 pre_curator_batches.append(batch)
                 state.npc_conversations = [
                     conversation
@@ -238,17 +213,20 @@ def run_turn(
                 result = private_chat_rejected_result(state, action, private_chat_attempt)
                 time_cost = deduct_time(state, action)
                 state.turn_index += 1
-                exchange = _voiced_exchange(state, result, heartbreaker_voice)
+                exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
                 private_chat_attempt.deflection_line = exchange.npc_dialogue
                 remember_private_chat_rejection(state, private_chat_attempt)
                 resort_update, resort_changes, arrival_rolls = apply_resort_turn(
                     state,
                     rng.fork(f"resort-turn-{state.turn_index}"),
-                    resort_orchestrator,
-                    background_dialogue=background_dialogue,
-                    conversation_curator=conversation_curator,
+                    agents.resort_orchestrator,
+                    background_dialogue=agents.background_dialogue,
+                    conversation_curator=agents.conversation_curator,
                 )
-                private_chat_curator_batches = [*pre_curator_batches, *resort_changes.curator_batches]
+                private_chat_curator_batches = [
+                    *pre_curator_batches,
+                    *resort_changes.curator_batches,
+                ]
                 agent_commits = AgentCommits(
                     resort_update=resort_update,
                     background_dialogues=resort_changes.background_dialogues,
@@ -259,19 +237,17 @@ def run_turn(
                     advance_phase_with_events(state, rng)
                     auto_advance = True
                 append_daily_recap_if_needed(state, starting_day)
-                return finalize_turn(
-                    TurnResult(
-                        state=state,
-                        mechanical_result=result,
-                        exchange=exchange,
-                        available_actions=available_actions(state),
-                        state_hash=state_hash(state_hash_payload(state)),
-                        curator_batches=private_chat_curator_batches,
-                        agent_commits=agent_commits,
-                        time_cost=time_cost,
-                        auto_advance=auto_advance,
-                        arrival_rolls=arrival_rolls,
-                    )
+                return TurnResult(
+                    state=state,
+                    mechanical_result=result,
+                    exchange=exchange,
+                    available_actions=available_actions(state),
+                    state_hash=state_hash(state_hash_payload(state)),
+                    curator_batches=private_chat_curator_batches,
+                    agent_commits=agent_commits,
+                    time_cost=time_cost,
+                    auto_advance=auto_advance,
+                    arrival_rolls=arrival_rolls,
                 )
     result = apply_action(state, action, rng)
     time_cost = deduct_time(state, action)
@@ -303,6 +279,7 @@ def run_turn(
         if is_ceremony_pick:
             state.pending_gather = None
             from src.game.engine.phases import advance_phase
+
             advance_phase(state)
     if action.kind is ActionKind.CHALLENGE_RESPONSE and state.pending_challenge is not None:
         event = challenge_response_event(state)
@@ -325,12 +302,12 @@ def run_turn(
     if action.kind is ActionKind.JOIN_GATHER:
         gather_curator_batches = [*pre_curator_batches]
         gather_curator_batches.extend(
-                close_conversations_for_gather(
-                    state,
-                    conversation_curator,
-                    curate_player_conversation,
-                    curate_npc_conversation,
-                )
+            close_conversations_for_gather(
+                state,
+                agents.conversation_curator,
+                curate_player_conversation,
+                curate_npc_conversation,
+            )
         )
         move_everyone_to_gather(state)
         phase_events, audience_snapshot = resolve_pending_gather(state, rng)
@@ -340,27 +317,25 @@ def run_turn(
         event_narration = None
         if ceremony_events:
             remember_ceremony_events(state, ceremony_events)
-            event_narration = _narrated_events(state, ceremony_events, event_narrator)
+            event_narration = _narrated_events(state, ceremony_events, agents.event_narrator)
         auto_advance = False
         if check_auto_advance(state):
             more_events, audience_after_auto = advance_phase_with_events(state, rng)
             ceremony_events.extend(more_events)
             audience_snapshot = audience_snapshot or audience_after_auto
             auto_advance = True
-        return finalize_turn(
-            TurnResult(
-                state=state,
-                mechanical_result=result,
-                event_narration=event_narration,
-                available_actions=available_actions(state),
-                state_hash=state_hash(state_hash_payload(state)),
-                ceremony_events=ceremony_events,
-                curator_batches=gather_curator_batches,
-                audience_snapshot=audience_snapshot,
-                agent_commits=AgentCommits(curator_batches=gather_curator_batches),
-                time_cost=time_cost,
-                auto_advance=auto_advance,
-            )
+        return TurnResult(
+            state=state,
+            mechanical_result=result,
+            event_narration=event_narration,
+            available_actions=available_actions(state),
+            state_hash=state_hash(state_hash_payload(state)),
+            ceremony_events=ceremony_events,
+            curator_batches=gather_curator_batches,
+            audience_snapshot=audience_snapshot,
+            agent_commits=AgentCommits(curator_batches=gather_curator_batches),
+            time_cost=time_cost,
+            auto_advance=auto_advance,
         )
     if action.kind is ActionKind.PAIR and state.day == 1 and state.phase is Phase.MORNING:
         # Intros already ran before First Spark, so the next legal beat is
@@ -375,11 +350,11 @@ def run_turn(
         active = state.active_conversation
         if active is None or result.action.target_id is None:
             raise ValueError("accept_interruption requires active conversation and target")
-        batch = curate_player_conversation(state, active, conversation_curator)
+        batch = curate_player_conversation(state, active, agents.conversation_curator)
         curator_batches.append(batch)
         close_conversation(state, "player_exit")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
-        exchange = _voiced_exchange(state, result, heartbreaker_voice)
+        exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
@@ -389,7 +364,7 @@ def run_turn(
             result,
             exchange,
             probability,
-            contextual_options,
+            agents.contextual_options,
         )
         new_conversation.pending_options = follow_up_menu
     elif result.action.intent_id in {"defer_interruption", "ignore_interruption"}:
@@ -403,7 +378,7 @@ def run_turn(
         if result.action.target_id is None:
             raise ValueError("engage_approach requires a target")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
-        exchange = _voiced_exchange(state, result, heartbreaker_voice)
+        exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
         append_exchange(new_conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, new_conversation.target_id, 1)
         probability = departure_probability(new_conversation, state)
@@ -413,7 +388,7 @@ def run_turn(
             result,
             exchange,
             probability,
-            contextual_options,
+            agents.contextual_options,
         )
         new_conversation.pending_options = follow_up_menu
     elif result.action.intent_id in APPROACH_INTENT_KINDS:
@@ -431,11 +406,11 @@ def run_turn(
                 raise ValueError("RESPOND_WITH requires active conversation")
             conversation = active
             conversation.pending_options = None
-        exchange = _voiced_exchange(state, result, heartbreaker_voice)
+        exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, conversation.target_id, 1)
         if _is_wheel_exit(result):
-            batch = curate_player_conversation(state, conversation, conversation_curator)
+            batch = curate_player_conversation(state, conversation, agents.conversation_curator)
             curator_batches.append(batch)
             close_conversation(state, "wheel_exit")
         else:
@@ -446,15 +421,15 @@ def run_turn(
                 result,
                 exchange,
                 probability,
-                contextual_options,
+                agents.contextual_options,
             )
             conversation.pending_options = follow_up_menu
             if follow_up_menu.npc_will_leave:
-                batch = curate_player_conversation(state, conversation, conversation_curator)
+                batch = curate_player_conversation(state, conversation, agents.conversation_curator)
                 curator_batches.append(batch)
                 close_conversation(state, "npc_left")
     elif action.kind is ActionKind.INTRODUCE_TO:
-        exchange = _voiced_exchange(state, result, heartbreaker_voice)
+        exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
         if action.target_id is not None:
             bump_target_familiarity(state, action.target_id, 0)
         if intro_segment_complete(state):
@@ -466,10 +441,12 @@ def run_turn(
             state.phase_clock.elapsed_minutes = state.phase_clock.budget_minutes
     if action.kind is ActionKind.END_CONVERSATION:
         if state.active_conversation is not None:
-            batch = curate_player_conversation(state, state.active_conversation, conversation_curator)
+            batch = curate_player_conversation(
+                state, state.active_conversation, agents.conversation_curator
+            )
             curator_batches.append(batch)
         close_conversation(state, "player_exit")
-    curator_batches.extend(close_proposal_conversation(state, result, conversation_curator))
+    curator_batches.extend(close_proposal_conversation(state, result, agents.conversation_curator))
     auto_advance = False
     if state.active_conversation is None and check_auto_advance(state):
         phase_events, audience_after_auto = advance_phase_with_events(state, rng)
@@ -485,14 +462,16 @@ def run_turn(
         resort_update_commit, resort_changes, arrival_rolls = apply_resort_turn(
             state,
             rng.fork(f"resort-turn-{state.turn_index}"),
-            resort_orchestrator,
-            background_dialogue=background_dialogue,
-            conversation_curator=conversation_curator,
+            agents.resort_orchestrator,
+            background_dialogue=agents.background_dialogue,
+            conversation_curator=agents.conversation_curator,
         )
         background_dialogues = resort_changes.background_dialogues
         curator_batches.extend(resort_changes.curator_batches)
         if action.kind is not ActionKind.NPC_PROPOSAL_RESPONSE:
-            incoming = maybe_trigger_npc_player_proposal(state, rng.fork(f"npc-proposal-{state.turn_index}"))
+            incoming = maybe_trigger_npc_player_proposal(
+                state, rng.fork(f"npc-proposal-{state.turn_index}")
+            )
             if incoming is not None:
                 ceremony_events.append(
                     CeremonyEvent(
@@ -532,7 +511,9 @@ def run_turn(
     )
     if not auto_advance and check_auto_advance(state):
         if state.active_conversation is not None:
-            batch = curate_player_conversation(state, state.active_conversation, conversation_curator)
+            batch = curate_player_conversation(
+                state, state.active_conversation, agents.conversation_curator
+            )
             curator_batches.append(batch)
             close_conversation(state, "phase_end")
         phase_events, audience_after_auto = advance_phase_with_events(state, rng)
@@ -543,25 +524,23 @@ def run_turn(
     event_narration = None
     if ceremony_events:
         remember_ceremony_events(state, ceremony_events)
-        event_narration = _narrated_events(state, ceremony_events, event_narrator)
-    return finalize_turn(
-        TurnResult(
-            state=state,
-            mechanical_result=result,
-            exchange=exchange,
-            event_narration=event_narration,
-            follow_up_menu=follow_up_menu,
-            available_actions=available_actions(state),
-            state_hash=state_hash(state_hash_payload(state)),
-            ceremony_events=ceremony_events,
-            curator_batches=curator_batches,
-            audience_snapshot=audience_snapshot,
-            agent_commits=agent_commits,
-            time_cost=time_cost,
-            auto_advance=auto_advance,
-            arrival_rolls=arrival_rolls,
-            conversation_closures=conversation_closures,
-        )
+        event_narration = _narrated_events(state, ceremony_events, agents.event_narrator)
+    return TurnResult(
+        state=state,
+        mechanical_result=result,
+        exchange=exchange,
+        event_narration=event_narration,
+        follow_up_menu=follow_up_menu,
+        available_actions=available_actions(state),
+        state_hash=state_hash(state_hash_payload(state)),
+        ceremony_events=ceremony_events,
+        curator_batches=curator_batches,
+        audience_snapshot=audience_snapshot,
+        agent_commits=agent_commits,
+        time_cost=time_cost,
+        auto_advance=auto_advance,
+        arrival_rolls=arrival_rolls,
+        conversation_closures=conversation_closures,
     )
 
 

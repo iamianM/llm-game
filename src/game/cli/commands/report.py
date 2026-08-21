@@ -45,7 +45,9 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     packet.add_argument("--minimal", action="store_true")
     packet.set_defaults(func=packet_cmd)
 
-    eval_dashboard = nested.add_parser("eval-dashboard", help="render playthrough eval dashboard")
+    eval_dashboard = nested.add_parser(
+        "eval-dashboard", help="render playthrough eval dashboard"
+    )
     eval_dashboard.add_argument("trace_path")
     eval_dashboard.add_argument("--out", required=True)
     eval_dashboard.set_defaults(func=eval_dashboard_cmd)
@@ -57,10 +59,17 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     compare.add_argument("--out", required=True)
     compare.set_defaults(func=compare_cmd)
 
+
 def session_cmd(args: argparse.Namespace) -> int:
     """Render one existing trace file."""
-    records, final_state, _final_hash, llm_mode, mode, persona = _load_recording(Path(args.trace_path))
-    preface = _final_state_summary(final_state, llm_mode, mode, persona) if final_state is not None else ""
+    records, final_state, _final_hash, llm_mode, mode, persona = _load_recording(
+        Path(args.trace_path)
+    )
+    preface = (
+        _final_state_summary(final_state, llm_mode, mode, persona)
+        if final_state is not None
+        else ""
+    )
     minimal = getattr(args, "minimal", False)
     if minimal:
         html = session_page_minimal(Path(args.trace_path).stem, records, preface=preface)
@@ -79,7 +88,9 @@ def balance_cmd(args: argparse.Namespace) -> int:
     """Render balance reports."""
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
-    outcomes, actions = run_balance(args.seeds, Path("tests/scenarios/fixtures/day6-full-run.yaml"))
+    outcomes, actions = run_balance(
+        args.seeds, Path("tests/scenarios/fixtures/day6-full-run.yaml")
+    )
     _write_balance_pages(out, outcomes, actions)
     return 0
 
@@ -141,7 +152,9 @@ def packet_cmd(args: argparse.Namespace) -> int:
 
 def eval_dashboard_cmd(args: argparse.Namespace) -> int:
     """Render only the playthrough eval dashboard for one trace."""
-    records, final_state, final_hash, _llm_mode, mode, persona = _load_recording(Path(args.trace_path))
+    records, final_state, final_hash, _llm_mode, mode, persona = _load_recording(
+        Path(args.trace_path)
+    )
     report = evaluate_trace(
         {
             "records": records,
@@ -170,7 +183,9 @@ def _write_balance_pages(out: Path, outcomes: object, actions: object) -> None:
     )
 
 
-def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str, str, str | None]:
+def _load_recording(
+    path: Path,
+) -> tuple[list[dict[str, Any]], dict[str, Any] | None, str | None, str, str, str | None]:
     raw = json.loads(path.read_text(encoding="utf-8"))
     if isinstance(raw, list):
         return raw, None, None, infer_llm_mode(raw), "manual", None
@@ -200,11 +215,22 @@ def _load_recording(path: Path) -> tuple[list[dict[str, Any]], dict[str, Any] | 
 def _clean_packet_output(out: Path) -> None:
     for directory in ("artifacts", "sessions", "balance", "narration-quality"):
         shutil.rmtree(out / directory, ignore_errors=True)
-    for file_name in ("index.html", "session.html", "playthrough-eval.html", "notes.md", "how-to-reproduce.md"):
+    for file_name in (
+        "index.html",
+        "session.html",
+        "playthrough-eval.html",
+        "notes.md",
+        "how-to-reproduce.md",
+    ):
         (out / file_name).unlink(missing_ok=True)
 
 
-def _final_state_summary(final_state: dict[str, Any], llm_mode: str, mode: str, persona: str | None) -> str:
+def _final_state_summary(
+    final_state: dict[str, Any],
+    llm_mode: str,
+    mode: str,
+    persona: str | None,
+) -> str:
     player = final_state.get("player")
     heartbreakers = final_state.get("heartbreakers")
     memory_lines: list[str] = []
@@ -226,8 +252,7 @@ def _final_state_summary(final_state: dict[str, Any], llm_mode: str, mode: str, 
     return (
         "<p><b>Recorded playthrough.</b> This report is rendered from a trace package; "
         "agent commits are replayable and no new LLM calls are needed to inspect it.</p>"
-        f"<p><b>LLM mode:</b> {llm_mode}. "
-        f"{llm_mode_note(llm_mode)}</p>"
+        f"<p><b>LLM mode:</b> {llm_mode}. {llm_mode_note(llm_mode)}</p>"
         f"<p><b>Trace mode:</b> {mode}{f' - persona: {persona}' if persona else ''}.</p>"
         f"<ul>{''.join(memory_lines)}</ul>"
     )
