@@ -1,5 +1,7 @@
 id: final-couples-narration
 title: Final Couples Finale
+question: Can the finale reflect the season without changing the score?
+category: challenges
 goal: Prove the narrator delivers a finale-length wrap that ties together knowledge, chemistry, honesty, banter, and audacity facets without re-scoring.
 thread_check:
   id: thread_acceptance
@@ -47,36 +49,58 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Day 6 morning ends. The finale stage is set; pending_challenge.kind
-      == "final_couples"; 5 rounds queued across knowledge / chemistry /
-      honesty / banter / audacity facets.
+    golden:
+      criteria: Day 6 morning ends. The finale stage is set; pending_challenge.kind == "final_couples"; 5
+        rounds queued across knowledge / chemistry / honesty / banter / audacity facets.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: The poolside challenge remains unresolved, with the Final Couples Challenge still pending.
+            Chloe stays beside you as the camera holds on the couple, the silence between you carrying the
+            entire moment.
     checks:
       - ceremony_events_present
   - id: knowledge-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 0 } }
-    golden: Player nails the knowledge facet. Tier-dependent.
+    golden:
+      criteria: Player nails the knowledge facet. Tier-dependent.
+      calls: []
     checks: []
   - id: chemistry-kiss
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: chemistry_kiss, round_index: 1 } }
-    golden: Player picks the kiss memory. Chemistry facet uses partner.relationship.chemistry — high band.
+    golden:
+      criteria: Player picks the kiss memory. Chemistry facet uses partner.relationship.chemistry — high band.
+      calls: []
     checks: []
   - id: honesty-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 2 } }
-    golden: Player tells the truth.
+    golden:
+      criteria: Player tells the truth.
+      calls: []
     checks: []
   - id: banter-match
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: callback_inside_joke, round_index: 3 } }
-    golden: Player picks the inside-joke callback.
+    golden:
+      criteria: Player picks the inside-joke callback.
+      calls: []
     checks: []
   - id: audacity-callout-rival
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: callout_blake, round_index: 4 } }
-    golden: >
-      Player pies the rival. Weighted sum lands in the success band.
-      Classification: success. Audience +8. Partner deltas affection+8
-      trust+4. The narrator delivers a finale wrap that names at least
-      three facets and calls back to a moment from earlier in the
-      season.
+    golden:
+      criteria: 'Player pies the rival. Weighted sum lands in the success band. Classification: success. Audience
+        +8. Partner deltas affection+8 trust+4. The narrator delivers a finale wrap that names at least three
+        facets and calls back to a moment from earlier in the season.'
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the finale, your knowledge of Chloe holds as you choose “twenty-six,” and the chemistry
+            round lands on “The kiss after the Pairing Ceremony,” drawing a smile from her as your eyes meet.
+            Honesty stays clear in your choice to tell Chloe the truth, while banter clicks with “The one
+            only you two get,” and her warmth answers yours across the room. For audacity, you call out Blake,
+            delivering the season’s sharpest read with Chloe watching beside you. The successful finish leaves
+            your season-spanning story glowing from that defining kiss to this final stand.
     checks:
       - ceremony_events_present
       - event_narration_valid
@@ -84,10 +108,16 @@ turns:
       - agent_traces_present
   - id: post-final-wrap-breath
     action: { kind: ambient, target_id: ambient_wait }
-    golden: >
-      The resolved finale challenge leaves the playable surface after
-      its wrap; the next turn should feel like forward resort pacing, not
-      a replay of the challenge result.
+    golden:
+      criteria: The resolved finale challenge leaves the playable surface after its wrap; the next turn should
+        feel like forward resort pacing, not a replay of the challenge result.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'The call goes out across the pool: everyone is summoned to the Flame Deck for the final
+            vote announcement. Chloe stays beside you, her attention fixed on you as the resort shifts from
+            sunlit ease to waiting silence.'
     checks:
       - challenge_cleared
       - no_exchange

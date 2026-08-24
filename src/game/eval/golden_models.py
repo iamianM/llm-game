@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.engine.actions import PlayerAction
+from src.game.eval.golden_costs import RunAccounting
 from src.game.state.models import (
     CharacterCreation,
     Conversation,
@@ -20,6 +21,13 @@ from src.game.state.models import (
 
 CheckResultValue = Literal["pass", "fail", "cannot_determine"]
 CheckSeverity = Literal["blocking", "advisory"]
+EvalCategory = Literal[
+    "conversation",
+    "social_dynamics",
+    "pairing_and_endings",
+    "special_events",
+    "challenges",
+]
 
 
 class ThreadCriterion(BaseModel):
@@ -43,6 +51,25 @@ class ThreadCheckSpec(BaseModel):
     criteria: list[ThreadCriterion] = Field(min_length=1)
 
 
+class GoldenAgentResult(BaseModel):
+    """One reviewed agent result used as a semantic comparison target."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    agent: str
+    output_type: str
+    output: dict[str, Any]
+
+
+class GoldenTurnTarget(BaseModel):
+    """Reviewed per-turn criteria plus expected agent results in actual-result shape."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    criteria: str
+    calls: list[GoldenAgentResult] = Field(default_factory=list)
+
+
 class GoldenTurnSpec(BaseModel):
     """One action plus authored expectations."""
 
@@ -53,7 +80,7 @@ class GoldenTurnSpec(BaseModel):
     arrange_player_location: Location | None = None
     arrange_npc_locations: dict[str, Location] = Field(default_factory=dict)
     arrange_active_conversation: Conversation | None = None
-    golden: str | None = None
+    golden: GoldenTurnTarget
     checks: list[str] = Field(default_factory=list)
 
 
@@ -64,6 +91,8 @@ class GoldenEvalScenario(BaseModel):
 
     id: str
     title: str
+    question: str
+    category: EvalCategory
     goal: str
     seed: int
     player_stats: PlayerStats | None = None
@@ -106,7 +135,10 @@ class JudgeTrace(BaseModel):
     latency_ms: int
     response_id: str | None = None
     input_tokens: int | None = None
+    cached_input_tokens: int | None = None
+    cache_write_tokens: int | None = None
     output_tokens: int | None = None
+    reasoning_tokens: int | None = None
     total_tokens: int | None = None
     attempts: int = 1
     retry_errors: list[str] = Field(default_factory=list)
@@ -121,8 +153,7 @@ class GoldenTurnResult(BaseModel):
     id: str
     action: dict[str, Any]
     arrangements: dict[str, Any] = Field(default_factory=dict)
-    expected_tools: list[str] = Field(default_factory=list)
-    golden: str | None = None
+    golden: GoldenTurnTarget
     input_hash: str
     output_hash: str | None = None
     record: dict[str, Any] | None = None
@@ -137,6 +168,8 @@ class GoldenScenarioResult(BaseModel):
 
     id: str
     title: str
+    question: str
+    category: EvalCategory
     goal: str
     status: CheckResultValue
     thread_expectation: ThreadCheckSpec
@@ -157,4 +190,5 @@ class GoldenEvalRun(BaseModel):
     passed: int
     failed: int
     cannot_determine: int
+    accounting: RunAccounting
     scenarios: list[GoldenScenarioResult]

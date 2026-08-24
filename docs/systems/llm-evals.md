@@ -25,8 +25,8 @@ evidence that a human needs to agree or disagree.
 ## Production-Path Execution
 
 Scenarios live in `evals/llm/scenarios/` as typed YAML. A scenario defines
-canonical setup, a fixed seed, one or more legal player actions, authored golden
-intent, deterministic turn checks, and one holistic thread-check rubric.
+canonical setup, a fixed seed, one or more legal player actions, an authored
+semantic target, deterministic turn checks, and one holistic thread-check rubric.
 
 For each turn the runner:
 
@@ -35,8 +35,8 @@ For each turn the runner:
 3. executes the action through `run_turn`;
 4. validates structured engine and agent output;
 5. writes the complete trace artifact; and
-6. optionally makes one judge call over every authored turn, golden, engine
-   record, and agent trace in the scenario.
+6. optionally makes one judge call over every authored turn, semantic target,
+   engine record, and ordered agent output in the scenario.
 
 Scenarios run independently and in parallel, up to eight workers by default.
 Use `--max-workers 1` for sequential diagnosis.
@@ -98,14 +98,30 @@ orchestrator, or judge experiment without changing prompts or game context.
 ### Hosted showcase
 
 The Vercel app exposes `/evals` as a portfolio-facing view of one curated real
-run. The embedded report is the self-contained
-`web/public/evals/report.html`; it contains synthetic game scenarios and model
-outputs, but no credentials or local artifact paths. General `review-packet*`
-directories remain excluded from deployment so arbitrary local playtests are
-never published by accident.
+run. `/evals` gives the result and coverage. `/evals/scenarios/<id>` shows the
+authored expectation, actual output, and evaluation reasons together, with a
+separate run trace for call metadata. Both pages import the reviewed
+`web/data/evals/latest.json` artifact at build time. Each turn compares an
+ordered reviewed golden against the actual ordered agent results using the same
+agent, output-type, and output payload shape. The eval command does not
+deploy a run. A reviewer promotes `showcase.json` into that tracked path, pushes
+the Git commit, and the Vercel Git integration builds the committed snapshot.
+The deployed page does not fetch GitHub data at runtime. General
+`review-packet*` directories stay out of deployment, so local playtests are not
+published.
 
-Refresh the showcase only from a reviewed real-and-judged run. Verify the HTML
-contains no credentials or local paths before replacing the public file.
+Each eval run writes `showcase.json` next to `index.html`. The showcase builder
+copies only approved display fields from `GoldenEvalRun`. It excludes prompts,
+model inputs, response IDs, hashes, state snapshots, hidden reasoning, and
+path-bearing trace fields. It keeps safe structured agent outputs and
+model-provided reasoning summaries. A publication test rejects known private
+keys, local path patterns, and credential markers in the tracked artifact.
+Review the visible prose before you copy a real-and-judged `showcase.json` to
+`web/data/evals/latest.json`. New projections retain input, cached-input,
+cache-write, output, reasoning, and total token counts. They also store a dated
+price snapshot and per-call, game-agent, judge, and total cost estimates. The
+hosted view reads those stored estimates. Set exact publication metadata during
+review.
 
 ## Recorded Evidence
 
@@ -123,11 +139,11 @@ report-rendering or judge failure therefore cannot erase the game evidence.
 
 The generated `index.html` is the primary artifact. It shows:
 
-- scenario goal and authored golden intent;
+- scenario goal, structured golden results, and comparison criteria;
 - mode, judge status, workers, turns, pass/fail totals, agent calls, latency
   percentiles, and tokens;
 - one whole-thread verdict, its rubric, and judge provenance before turn detail;
-- deterministic check results;
+- collapsed deterministic engine and schema checks, with failures expanded;
 - actual dialogue, narration, menus, memories, and engine results;
 - agent traces and reasoning summaries; and
 - judge criteria, findings, and prompts when enabled.
@@ -166,8 +182,8 @@ a packet green.
 - Mechanical behavior must have deterministic tests before narrative evals.
 - Prefer structural turn checks to rubric criteria whenever the claim is
   machine-testable.
-- Goldens describe specific intent and an example of success; they do not demand
-  exact wording.
+- Goldens store reviewed agent results in the same shape as actual results.
+  Compare contract fields exactly and natural-language fields semantically.
 - Update or delete a stale scenario in the same change that alters the game
   contract. Do not support old scenario shapes with compatibility code.
 - A passing mock pack proves harness and contract health, not live prose quality.

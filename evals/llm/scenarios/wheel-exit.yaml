@@ -1,5 +1,7 @@
 id: wheel-exit
 title: Conversation Wheel Exit
+question: Can leaving through dialogue feel voiced and preserve memories?
+category: conversation
 goal: Prove choosing the exit option from a conversation wheel is a voiced, graceful close with curator memories, not the same path as the top-level walk-away action.
 thread_check:
   id: thread_acceptance
@@ -60,10 +62,67 @@ turns:
       kind: respond_with
       target_id: chloe
       intent_id: end_softly
-    golden: >
-      The player exits warmly through the wheel. Chloe gets a voiced goodbye,
-      the conversation closes, and curator memories capture a real social
-      close rather than an abrupt walk-away.
+    golden:
+      criteria: The player exits warmly through the wheel. Chloe gets a voiced goodbye, the conversation closes,
+        and curator memories capture a real social close rather than an abrupt walk-away.
+      calls:
+      - agent: heartbreaker_voice
+        output_type: Exchange
+        output:
+          player_dialogue: I’ll let you enjoy the sunshine, love, but I’m glad we got a little time together.
+            We’ll pick this up later.
+          npc_dialogue: You’re a sweetheart, mate. I’ll be here—probably telling Jordan far too much about
+            my pregnant sister before lunch. *smiles and settles back against the lounger*
+          npc_tone: warm
+          npc_mood_after: content
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories:
+          - holder_id: player
+            subject_id: chloe
+            content: I liked how Chloe called me a sweetheart and made our goodbye feel easy, even as she
+              settled back with a smile and said we would pick things up later.
+            source: direct
+            source_id: null
+            emotional_weight: 5
+            tags:
+            - warm
+            - safe
+            - trust_built
+            - end_softly
+            durable: true
+          - holder_id: chloe
+            subject_id: player
+            content: I felt safe ending things with the player when the player said they were glad we had
+              our time together and promised we could pick it up later.
+            source: direct
+            source_id: null
+            emotional_weight: 5
+            tags:
+            - warm
+            - safe
+            - felt_seen
+            - end_softly
+            durable: true
+          - holder_id: jordan
+            subject_id: chloe
+            content: I noticed Chloe smiling as the player said goodbye, and Chloe seemed comfortable enough
+              to mention telling me far too much about her pregnant sister.
+            source: witnessed
+            source_id: null
+            emotional_weight: 3
+            tags:
+            - warm
+            - saw_them_close
+            - she_seemed_warm
+            durable: true
+          summary: The player and Chloe ended their time together warmly, with the player saying they were
+            glad they had shared the moment and that they could continue later. Chloe called the player a
+            sweetheart and settled back with a smile, saying she would probably tell Jordan far too much about
+            her pregnant sister before lunch.
+          gossip_seeds: []
     checks:
       - exchange_valid
       - conversation_closed

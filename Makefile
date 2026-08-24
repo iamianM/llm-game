@@ -38,6 +38,7 @@ web-check:
 
 web-contracts:
 	cd web && npm run test:e2e -- tests/e2e/action-contracts.spec.ts
+	cd web && npm run test:e2e -- tests/e2e/evals-dashboard-mobile.spec.ts
 
 qa: lint type-check content-lint docs-links test smoke determinism llm-eval-mock web-check web-contracts
 

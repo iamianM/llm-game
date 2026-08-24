@@ -1,5 +1,7 @@
 id: interruption-ignore
 title: Conversation Interruption (Ignore)
+question: Can ignoring an interruption stay engine-only and apply the correct fallout?
+category: social_dynamics
 goal: 'Prove ignoring an interruption is engine-only: the original conversation stays active, the pending interruption clears, the interrupter takes the larger relationship hit, and the engine moves them away.'
 thread_check:
   id: thread_acceptance
@@ -53,11 +55,11 @@ turns:
       kind: respond_with
       target_id: liam
       intent_id: ignore_interruption
-    golden: >
-      The engine keeps Chloe as the active conversation, clears Liam's
-      pending interruption, records the harsher relationship penalty, and
-      moves Liam away from the pool. No LLM response is expected on this
-      engine-only turn.
+    golden:
+      criteria: The engine keeps Chloe as the active conversation, clears Liam's pending interruption, records
+        the harsher relationship penalty, and moves Liam away from the pool. No LLM response is expected on
+        this engine-only turn.
+      calls: []
     checks:
       - interruption_cleared
       - active_conversation_target_is:chloe

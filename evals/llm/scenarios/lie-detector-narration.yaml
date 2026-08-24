@@ -1,5 +1,7 @@
 id: lie-detector-narration
 title: Lie Detector Truth Vs Lie
+question: Can truth and lie reveals stay faithful to the engine's decisions?
+category: challenges
 goal: Prove the narrator dramatises detection outcomes while staying faithful to engine truth-vs-lie decisions.
 thread_check:
   id: thread_acceptance
@@ -51,34 +53,57 @@ turns:
     action:
       kind: ambient
       target_id: ambient_wait
-    golden: >
-      Morning ends; the producer wires the player up. Five rounds
-      queued. pending_challenge.kind == "lie_detector".
+    golden:
+      criteria: Morning ends; the producer wires the player up. Five rounds queued. pending_challenge.kind
+        == "lie_detector".
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: At the pool, the Lie Detector remains pending, leaving the moment suspended rather than resolved.
+            Chloe stays beside you under the bright resort sun, and the camera catches the silence between
+            you before the scene moves on.
     checks:
       - ceremony_events_present
   - id: r1-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 0 } }
-    golden: Player tells the truth about lingering feelings for Maya.
+    golden:
+      criteria: Player tells the truth about lingering feelings for Maya.
+      calls: []
     checks: []
   - id: r2-lie-hard
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_hard, round_index: 1 } }
-    golden: Player tells a hard lie about partner satisfaction.
+    golden:
+      criteria: Player tells a hard lie about partner satisfaction.
+      calls: []
     checks: []
   - id: r3-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 2 } }
-    golden: Truth about authenticity with cast.
+    golden:
+      criteria: Truth about authenticity with cast.
+      calls: []
     checks: []
   - id: r4-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 3 } }
-    golden: Truth about strongest-connection self-assessment.
+    golden:
+      criteria: Truth about strongest-connection self-assessment.
+      calls: []
     checks: []
   - id: r5-lie-mild
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_mild, round_index: 4 } }
-    golden: >
-      Player shades the final answer. Quiz resolves; classification
-      depends on the detection rolls captured in the reveals. The
-      narrator dramatises at least one explicit payload belief outcome and
-      never invents a caught lie or verified truth when the payload records none.
+    golden:
+      criteria: Player shades the final answer. Quiz resolves; classification depends on the detection rolls
+        captured in the reveals. The narrator dramatises at least one explicit payload belief outcome and
+        never invents a caught lie or verified truth when the payload records none.
+      calls:
+      - agent: event_narrator
+        output_type: EventNarration
+        output:
+          prose: 'The Lie Detector leaves you and Chloe in a haze of half-answers, with the camera catching
+            every flicker across her face. When you choose “Bald-faced: ‘No.’” about being authentic with
+            the rest of the cast, Chloe believes the lie and it slips past the sensors; your truth about still
+            feeling something for Maya is only suspected, never verified. By the pool, Chloe watches you differently
+            now, the silence between you carrying the sting of questions that refuse to settle.'
     checks:
       - ceremony_events_present
       - event_narration_valid

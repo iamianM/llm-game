@@ -1,5 +1,7 @@
 id: interruption-accept
 title: Conversation Interruption (Accept)
+question: Can an accepted interruption apply both consequences and continue with the new speaker?
+category: social_dynamics
 goal: Prove accepting an interruption closes the current chat, applies both relationship consequences, starts a new conversation with the interrupter, and voices the new exchange.
 thread_check:
   id: thread_acceptance
@@ -55,10 +57,74 @@ turns:
       kind: respond_with
       target_id: liam
       intent_id: accept_interruption
-    golden: >
-      The player lets Liam in. Chloe should feel the social cost of being
-      dropped, while Liam gets the new voiced exchange. The active
-      conversation after the turn is with Liam, not Chloe.
+    golden:
+      criteria: The player lets Liam in. Chloe should feel the social cost of being dropped, while Liam gets
+        the new voiced exchange. The active conversation after the turn is with Liam, not Chloe.
+      calls:
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories:
+          - holder_id: player
+            subject_id: chloe
+            content: I came away from my time with Chloe without a clear moment or feeling that stayed with
+              me.
+            source: direct
+            source_id: null
+            emotional_weight: 1
+            tags:
+            - uncertain
+            - faded
+            durable: false
+          - holder_id: chloe
+            subject_id: player
+            content: I came away from my time with the player without a clear moment or feeling that stayed
+              with me.
+            source: direct
+            source_id: null
+            emotional_weight: 1
+            tags:
+            - uncertain
+            - faded
+            durable: false
+          summary: The player and Chloe had no recorded exchange to leave a distinct emotional impression.
+            Nothing specific from the conversation stood out as durable.
+          gossip_seeds: []
+      - agent: heartbreaker_voice
+        output_type: Exchange
+        output:
+          player_dialogue: Of course, go ahead. You looked like you had something on your mind.
+          npc_dialogue: Thanks. I didn’t want to bulldoze into your morning like a badly fitted door. I just
+            wanted to ask what brought you over to the pool today.
+          npc_tone: warm
+          npc_mood_after: content
+      - agent: contextual_options
+        output_type: ContextualBespoke
+        output:
+          options:
+          - label: Ask what old houses taught him
+            category: friendly
+            intent_kind: ask_about_topic
+            stat_used: eq
+            risk: low
+            tone: curious
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: null
+            unlock_threshold: null
+          - label: Share why you chose poolside
+            category: supportive
+            intent_kind: honest_vulnerable
+            stat_used: charm
+            risk: low
+            tone: open
+            audience_hint: +
+            reveal_tier: 1
+            reveal_tag: morning_motivation
+            unlock_threshold: null
+          npc_will_leave: false
+          npc_exit_line: null
     checks:
       - exchange_valid
       - follow_up_menu_valid

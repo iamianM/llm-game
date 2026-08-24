@@ -43,6 +43,7 @@ def test_thread_judge_prompt_contains_complete_scenario_once() -> None:
         "chloe_voice_and_memory",
     }
     assert all("actual" in turn and "golden" in turn for turn in payload["thread"])
+    assert payload["thread"][0]["golden"]["calls"][0]["output_type"] == "Exchange"
     assert all(
         turn["deterministic_checks"][0]["id"] == "conversation_active"
         for turn in payload["thread"]

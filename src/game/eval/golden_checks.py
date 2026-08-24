@@ -56,14 +56,6 @@ def run_deterministic_check(
                 return _fail(check_id, "turn has no follow-up menu", turn_spec.id)
             validate_follow_up_menu(turn.follow_up_menu)
             return _pass(check_id, "follow-up menu validates", turn_spec.id)
-        if check_id == "exactly_one_exit":
-            menu = turn.follow_up_menu
-            if menu is None:
-                return _fail(check_id, "turn has no follow-up menu", turn_spec.id)
-            count = sum(option.category == "exit" for option in menu.options)
-            if count != 1:
-                return _fail(check_id, f"expected one exit option, found {count}", turn_spec.id)
-            return _pass(check_id, "follow-up menu has exactly one exit", turn_spec.id)
         if check_id == "conversation_active":
             target_id = turn.mechanical_result.action.target_id
             active = turn.state.active_conversation
