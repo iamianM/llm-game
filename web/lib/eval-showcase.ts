@@ -37,11 +37,11 @@ export type EvalTrace = {
 export type EvalGoldenCall = {
   agent: string;
   output_type: string;
-  output: Record<string, unknown>;
+  output: Record<string, unknown> | null;
+  criteria: string[];
 };
 
 export type EvalGolden = {
-  criteria: string;
   calls: EvalGoldenCall[];
 };
 
@@ -79,6 +79,7 @@ export type EvalAccounting = {
 
 export type EvalStory = {
   engine_result: string | null;
+  engine_details?: { label: string; value: string }[];
   relationship_changes: string[];
   dialogue: { player: string; npc: string; tone: string | null; mood_after: string | null } | null;
   narration: string | null;
@@ -121,12 +122,13 @@ export type EvalScenario = {
     cost?: EvalCost | null;
     reasoning_summaries?: string[];
     criteria: string[];
+    criterion_findings: EvalCheck[];
   } | null;
   turns: EvalTurn[];
 };
 
 export type EvalShowcase = {
-  schema_version: 3;
+  schema_version: 6;
   llm_mode: "mock" | "real";
   judge_enabled: boolean;
   passed: number;
@@ -176,7 +178,7 @@ function parseShowcase(value: unknown): EvalShowcase | null {
   if (!value || typeof value !== "object") return null;
   const candidate = value as Partial<EvalShowcase>;
   if (
-    candidate.schema_version !== 3 ||
+    candidate.schema_version !== 6 ||
     !Array.isArray(candidate.scenarios) ||
     typeof candidate.passed !== "number" ||
     typeof candidate.turn_count !== "number" ||
