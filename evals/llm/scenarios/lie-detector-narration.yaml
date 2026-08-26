@@ -9,9 +9,11 @@ thread_check:
   criteria:
     - id: lie_detector_arc_faithful
       criteria: >
-        Across the full sequence, belief outcomes match the recorded reveals and the wrap
-        dramatises at least one believed, suspected, or caught moment without inventing kisses,
-        suite visits, pair regrets, or other evidence absent from the engine record.
+        Every truth or lie the narration chooses to mention must stay attached to its recorded question
+        and belief result. The wrap should name at least one concrete believed, suspected, or caught
+        result; it need not repeat all five rounds because the adjacent engine panel holds them. It
+        fails if it moves an answer to another round, treats suspicion as proof, treats a believed lie
+        as caught, or invents kisses, suite visits, regrets, or reactions.
 seed: 909
 initial_day: 4
 initial_phase: morning
@@ -54,56 +56,39 @@ turns:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: Morning ends; the producer wires the player up. Five rounds queued. pending_challenge.kind
-        == "lie_detector".
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: At the pool, the Lie Detector remains pending, leaving the moment suspended rather than resolved.
-            Chloe stays beside you under the bright resort sun, and the camera catches the silence between
-            you before the scene moves on.
+      calls: []
     checks:
       - ceremony_events_present
   - id: r1-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 0 } }
     golden:
-      criteria: Player tells the truth about lingering feelings for Maya.
       calls: []
     checks: []
   - id: r2-lie-hard
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_hard, round_index: 1 } }
     golden:
-      criteria: Player tells a hard lie about partner satisfaction.
       calls: []
     checks: []
   - id: r3-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 2 } }
     golden:
-      criteria: Truth about authenticity with cast.
       calls: []
     checks: []
   - id: r4-truth
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: truth, round_index: 3 } }
     golden:
-      criteria: Truth about strongest-connection self-assessment.
       calls: []
     checks: []
   - id: r5-lie-mild
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: lie_mild, round_index: 4 } }
     golden:
-      criteria: Player shades the final answer. Quiz resolves; classification depends on the detection rolls
-        captured in the reveals. The narrator dramatises at least one explicit payload belief outcome and
-        never invents a caught lie or verified truth when the payload records none.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: 'The Lie Detector leaves you and Chloe in a haze of half-answers, with the camera catching
-            every flicker across her face. When you choose “Bald-faced: ‘No.’” about being authentic with
-            the rest of the cast, Chloe believes the lie and it slips past the sensors; your truth about still
-            feeling something for Maya is only suspected, never verified. By the pool, Chloe watches you differently
-            now, the silence between you carrying the sting of questions that refuse to settle.'
+          prose: Your lie about being satisfied with Chloe is believed. Your truthful admission that you
+            still feel something for Maya is only suspected. One lie slips through while one truth fails
+            to convince.
     checks:
       - ceremony_events_present
       - event_narration_valid

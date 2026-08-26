@@ -42,11 +42,12 @@ def _profile(role: str, default_effort: str) -> AgentModelProfile:
     )
 
 
-VOICE_PROFILE = _profile("voice", "medium")
-CREATIVE_PROFILE = _profile("creative", "low")
+VOICE_PROFILE = _profile("voice", "low")
+CREATIVE_PROFILE = _profile("creative", "medium")
 UTILITY_PROFILE = _profile("utility", "low")
+MEMORY_PROFILE = _profile("memory", "medium")
 ORCHESTRATOR_PROFILE = _profile("orchestrator", "medium")
-JUDGE_PROFILE = _profile("judge", "medium")
+JUDGE_PROFILE = _profile("judge", "high")
 
 _PROFILE_BY_AGENT = {
     "heartbreaker_voice": VOICE_PROFILE,
@@ -54,7 +55,7 @@ _PROFILE_BY_AGENT = {
     "event_narrator": CREATIVE_PROFILE,
     "background_dialogue": CREATIVE_PROFILE,
     "contextual_options": UTILITY_PROFILE,
-    "conversation_curator": UTILITY_PROFILE,
+    "conversation_curator": MEMORY_PROFILE,
     "resort_orchestrator": ORCHESTRATOR_PROFILE,
     "trait_generator": UTILITY_PROFILE,
 }

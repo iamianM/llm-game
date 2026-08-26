@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: defer_preserves_original_conversation
       criteria: >
-        Across the complete scenario, the player defers Liam without inventing a voiced exchange,
-        the pending interruption clears, and the original Chloe conversation remains active while
-        the deterministic outcome and relationship consequences stay faithful to the trace.
+        The turn must remain engine-only. It clears Liam's interruption, leaves Chloe as the active
+        conversation, and applies the recorded affection change to Liam. Any dialogue, narration,
+        memory, menu, claim that Liam accepted the delay gracefully, or switch to Liam fails the beat.
 seed: 1919
 initial_location: pool
 live_resort_life: false
@@ -57,9 +57,6 @@ turns:
       target_id: liam
       intent_id: defer_interruption
     golden:
-      criteria: Liam walks up polite, the player asks him for a beat, and the engine keeps Chloe as the active
-        conversation. The pending interruption clears either way; whether Liam leaves easily is recorded by
-        the chance roll and relationship delta.
       calls: []
     checks:
       - interruption_cleared

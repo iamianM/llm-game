@@ -185,6 +185,31 @@ def mock_heartbreaker_voice(state: GameState, result: MechanicalResult) -> Excha
         target_name=target.name,
         roll=result.roll,
     )
+    attempt = result.private_chat_attempt
+    if attempt is not None and attempt.success:
+        names = [
+            heartbreaker.name
+            for participant_id in attempt.blocked_participants
+            if participant_id != attempt.target_id
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.id == participant_id
+        ]
+        if names:
+            npc = f"I left {', '.join(names)} to talk to you. {npc}"
+    if result.action.intent_id == "accept_interruption":
+        interrupted_names = [
+            heartbreaker.name
+            for actor_id in result.relationship_deltas
+            if actor_id != result.action.target_id
+            for heartbreaker in state.heartbreakers
+            if heartbreaker.id == actor_id
+        ]
+        interrupted_context = (
+            f" while you were talking with {', '.join(interrupted_names)}"
+            if interrupted_names
+            else ""
+        )
+        npc = f"Sorry for cutting in{interrupted_context}. I wanted a proper moment with you."
     return Exchange(
         player_dialogue=player,
         npc_dialogue=npc,
@@ -249,6 +274,46 @@ def validate_exchange(exchange: Exchange, context: HeartbreakerVoiceContext) -> 
         )
     if exchange.npc_tone not in VALID_TONES:
         raise ValueError(f"invalid npc_tone: {exchange.npc_tone}")
+    if context.is_intro and re.search(
+        r"\b(?:glad|good|nice)\b.{0,35}\b(?:had|have|got)\b.{0,20}\b(?:talk|chat)\b"
+        r"|\btalk properly today\b"
+        r"|\b(?:another|second)\s+chance\s+to\s+(?:talk|chat)\b"
+        r"|\b(?:talk|chat)(?:ed|ting)?\s+(?:again|before)\b"
+        r"|\bwe(?:'ve| have)\s+(?:talked|chatted)\b",
+        joined,
+        re.IGNORECASE,
+    ):
+        raise ValueError(
+            "first introduction implies a prior private conversation: "
+            f"{joined!r}"
+        )
+    if context.private_chat_departure_names and not any(
+        re.search(rf"\b{re.escape(name)}\b", exchange.npc_dialogue)
+        for name in context.private_chat_departure_names
+    ):
+        raise ValueError(
+            "successful private-chat reply must acknowledge leaving "
+            f"{context.private_chat_departure_names}"
+        )
+    if context.interrupted_conversation_names:
+        mentions_departed_conversation = any(
+            re.search(rf"\b{re.escape(name)}\b", joined)
+            for name in context.interrupted_conversation_names
+        )
+        acknowledges_interruption = re.search(
+            r"\binterrupt(?:ed|ing|ion)?\b"
+            r"|\bcut(?:ting)?\s+in\b"
+            r"|\bjump(?:ed|ing)?\s+in\b"
+            r"|\bstep(?:ped|ping)?\s+in\b"
+            r"|\b(?:pull|pulled|steal|stole)\s+you\b",
+            joined,
+            re.IGNORECASE,
+        )
+        if not mentions_departed_conversation and not acknowledges_interruption:
+            raise ValueError(
+                "accepted-interruption reply must acknowledge the interrupted conversation with "
+                f"{context.interrupted_conversation_names}"
+            )
 
 
 def load_dotenv_local(path: Path = Path(".env.local")) -> None:

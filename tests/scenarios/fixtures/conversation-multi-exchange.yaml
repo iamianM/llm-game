@@ -13,4 +13,4 @@ actions:
 - kind: respond_with
   intent_id: end_softly
 initial_phase: morning
-expected_hash: 27a364c2874e35e2dc5f5133252d03c2053d124f05af9fc2db3c2a305e352ae3
+expected_hash: 6207d78949f1602fe9fa7fcfb731e13d9800ea041cdbfa3ad4bb0253349d80ec

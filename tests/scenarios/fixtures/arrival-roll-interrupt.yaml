@@ -7,7 +7,7 @@ initial_relationships:
     trust: 0
     friendship: 0
 initial_phase: morning
-expected_hash: cfc6ad422d7db4077aa47bc03f27d07496146caf5eed19cb0397ba14156233e4
+expected_hash: ca54b433ad76bec377246a000fb50a4c809167664a31bfb1c1110c3d8f33e1ab
 actions:
 - kind: start_conversation
   target_id: chloe

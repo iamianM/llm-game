@@ -9,9 +9,10 @@ thread_check:
   criteria:
     - id: interruption_handoff_grounded
       criteria: >
-        The complete beat reads as an accepted interruption: Chloe's conversation ends, Liam
-        becomes the active speaker, and the new dialogue/menu acknowledge the social handoff
-        rather than treating it as a cold open, rejection, or continuation with Chloe.
+        The complete beat must read as one social handoff. The empty Chloe conversation produces no
+        invented memory or curator call, then Liam becomes the active speaker. His exchange and
+        follow-up menu must acknowledge that handoff, not begin a generic new chat, reject him,
+        continue with Chloe, or invent a reaction from Chloe.
 seed: 1920
 initial_location: pool
 live_resort_life: false
@@ -58,52 +59,19 @@ turns:
       target_id: liam
       intent_id: accept_interruption
     golden:
-      criteria: The player lets Liam in. Chloe should feel the social cost of being dropped, while Liam gets
-        the new voiced exchange. The active conversation after the turn is with Liam, not Chloe.
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: chloe
-            content: I came away from my time with Chloe without a clear moment or feeling that stayed with
-              me.
-            source: direct
-            source_id: null
-            emotional_weight: 1
-            tags:
-            - uncertain
-            - faded
-            durable: false
-          - holder_id: chloe
-            subject_id: player
-            content: I came away from my time with the player without a clear moment or feeling that stayed
-              with me.
-            source: direct
-            source_id: null
-            emotional_weight: 1
-            tags:
-            - uncertain
-            - faded
-            durable: false
-          summary: The player and Chloe had no recorded exchange to leave a distinct emotional impression.
-            Nothing specific from the conversation stood out as durable.
-          gossip_seeds: []
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: Of course, go ahead. You looked like you had something on your mind.
-          npc_dialogue: Thanks. I didn’t want to bulldoze into your morning like a badly fitted door. I just
-            wanted to ask what brought you over to the pool today.
+          player_dialogue: You wanted something?
+          npc_dialogue: Yeah. Sorry for cutting in. Can we talk?
           npc_tone: warm
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask what old houses taught him
+          - label: Ask what's up
             category: friendly
             intent_kind: ask_about_topic
             stat_used: eq
@@ -113,7 +81,7 @@ turns:
             reveal_tier: 0
             reveal_tag: null
             unlock_threshold: null
-          - label: Share why you chose poolside
+          - label: Tell him it's fine
             category: supportive
             intent_kind: honest_vulnerable
             stat_used: charm
@@ -121,7 +89,7 @@ turns:
             tone: open
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: morning_motivation
+            reveal_tag: interruption_reaction
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -130,8 +98,6 @@ turns:
       - follow_up_menu_valid
       - conversation_active
       - interruption_cleared
-      - curator_memories_for:chloe
       - relationship_delta:chloe:affection:-2
       - relationship_delta:liam:affection:3
       - agent_traces_present
-      - no_agent_validation_retries

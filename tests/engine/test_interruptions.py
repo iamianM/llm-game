@@ -140,6 +140,7 @@ def test_accept_interruption_closes_current_starts_new() -> None:
     assert turn.state.active_conversation.target_id == "maya"
     assert turn.mechanical_result.relationship_deltas["chloe"].affection == -2
     assert turn.mechanical_result.relationship_deltas["maya"].affection == 3
+    assert turn.curator_batches == []
 
 
 def test_defer_interruption_eq_roll_success_path() -> None:

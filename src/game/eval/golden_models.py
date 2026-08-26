@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from src.game.engine.actions import PlayerAction
+from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.eval.golden_costs import RunAccounting
 from src.game.state.models import (
     CharacterCreation,
@@ -52,21 +52,30 @@ class ThreadCheckSpec(BaseModel):
 
 
 class GoldenAgentResult(BaseModel):
-    """One reviewed agent result used as a semantic comparison target."""
+    """One reviewed output reference or contextual acceptance target."""
 
     model_config = ConfigDict(extra="forbid")
 
     agent: str
     output_type: str
-    output: dict[str, Any]
+    output: dict[str, Any] | None = None
+    criteria: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def require_one_target_kind(self) -> GoldenAgentResult:
+        """Require either a fixed reference output or criteria, never both."""
+        has_output = self.output is not None
+        has_criteria = bool(self.criteria)
+        if has_output == has_criteria:
+            raise ValueError("golden call requires exactly one of output or criteria")
+        return self
 
 
 class GoldenTurnTarget(BaseModel):
-    """Reviewed per-turn criteria plus expected agent results in actual-result shape."""
+    """Reviewed expected agent results in actual-result shape."""
 
     model_config = ConfigDict(extra="forbid")
 
-    criteria: str
     calls: list[GoldenAgentResult] = Field(default_factory=list)
 
 
@@ -82,6 +91,26 @@ class GoldenTurnSpec(BaseModel):
     arrange_active_conversation: Conversation | None = None
     golden: GoldenTurnTarget
     checks: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def require_stable_follow_up_selection(self) -> GoldenTurnSpec:
+        """Keep generated-menu evals stable by selecting a semantic intent."""
+        if self.action.kind is ActionKind.RESPOND_WITH and self.action.option_index is not None:
+            raise ValueError(
+                "golden eval RESPOND_WITH actions must select intent_id, not option_index"
+            )
+        return self
+
+
+class JudgeCriterionFinding(BaseModel):
+    """Judge verdict and cited evidence for one authored thread criterion."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    criterion_id: str
+    result: CheckResultValue
+    reason: str
+    evidence: str | None = None
 
 
 class GoldenEvalScenario(BaseModel):
@@ -122,6 +151,7 @@ class GoldenCheckResult(BaseModel):
     evidence: str | None = None
     turn_id: str | None = None
     severity: CheckSeverity = "blocking"
+    criterion_findings: list[JudgeCriterionFinding] = Field(default_factory=list)
 
 
 class JudgeTrace(BaseModel):

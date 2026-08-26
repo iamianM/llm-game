@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: private_chat_rejection_grounded
       criteria: >
-        Maya's response is an in-character not-now that acknowledges she was already talking
-        with Liam. The thread must not sound like a warm acceptance, invent private time, or act
-        as though the player began with her full attention.
+        Maya gives a clear not-now, names or visibly returns her attention to Liam, and leaves
+        their original conversation in progress. She may invite the player to try later, but she
+        must not walk away with the player or turn the rejection into a flirtatious acceptance.
 seed: 1515
 initial_location: flame_deck
 live_resort_life: false
@@ -53,21 +53,13 @@ turns:
       target_id: maya
       intent_id: flirty_intimate_eye_contact
     golden:
-      criteria: 'The player asks Maya for a private chat during the flame_deck chat and gets brushed off.
-        Maya''s deflection should feel in character — a quick "not now", a glance back to Liam, maybe a soft
-        "find me later" — and the original conversation between Maya and Liam should still be running. Imagine:
-        "Babe, give me a minute — I''m in the middle of something. ...Come back when this lot have gone to
-        bed."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: Sorry to interrupt, Maya, but can I steal you for a private chat? I wanted to pick
-            up on what you were asking Liam.
-          npc_dialogue: Steal me? Bold, considering I’m in the middle of a highly important Liam investigation
-            and the suspect is refusing to crack. I can’t peel off right now—he’ll vanish into the crowd and
-            become mysterious by accident.
-          npc_tone: playful
+          player_dialogue: Can I borrow you for a minute?
+          npc_dialogue: Not now. I'm in the middle of this with Liam.
+          npc_tone: defensive
           npc_mood_after: content
     checks:
       - private_chat_recorded

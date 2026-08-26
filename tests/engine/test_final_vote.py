@@ -24,6 +24,7 @@ def test_final_vote_assigns_winner_couple_outcome() -> None:
 
     assert result.outcome is RunOutcome.WON_AS_COUPLE
     assert state.outcome is RunOutcome.WON_AS_COUPLE
+    assert result.ranked_couples[0] == result.winner
 
 
 def test_final_vote_assigns_runner_up_outcome() -> None:
@@ -98,8 +99,8 @@ def test_final_vote_uses_audience_score_plus_couple_strength() -> None:
     assert "player" in {result.winner.partner_a_id, result.winner.partner_b_id}
 
 
-def test_final_vote_ties_break_deterministically_by_couple_key() -> None:
-    """Equal scores sort by a stable couple key."""
+def test_final_vote_uses_the_same_tie_break_as_audience_snapshot() -> None:
+    """The finale cannot reorder a tied audience snapshot."""
     state = new_game(1)
     state.couples = [
         Couple(partner_a_id="player", partner_b_id="chloe", formed_on_day=5),
@@ -109,7 +110,7 @@ def test_final_vote_ties_break_deterministically_by_couple_key() -> None:
     result = final_vote(state)
 
     assert result.winner is not None
-    assert result.winner.partner_a_id == "player"
+    assert result.winner.partner_a_id == "liam"
 
 
 def test_final_vote_message_names_player_partner() -> None:
@@ -138,12 +139,17 @@ def test_final_vote_message_uses_second_person_verbs_for_nameless_player() -> No
         Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5),
     ]
     runner_up_msg = final_vote_message(final_vote(runner_up), runner_up)
-    assert runner_up_msg == "Pulse vote: You finish as a runner-up couple."
+    assert runner_up_msg == (
+        "Pulse vote: Final ranking: first Maya and Liam; second You and Chloe. "
+        "You finish as a runner-up couple."
+    )
 
     single = new_game(1)
     single.couples = [Couple(partner_a_id="maya", partner_b_id="liam", formed_on_day=5)]
     single_msg = final_vote_message(final_vote(single), single)
-    assert single_msg == "Pulse vote: You reach the finale single."
+    assert single_msg == (
+        "Pulse vote: Final ranking: first Maya and Liam. You reach the finale single."
+    )
 
     sent_home_state = new_game(1)
     sent_home_state.outcome = RunOutcome.ELIMINATED
@@ -169,7 +175,10 @@ def test_final_vote_message_uses_third_person_verbs_for_named_player() -> None:
 
     message = final_vote_message(final_vote(state), state)
 
-    assert message == "Pulse vote: Alex finishes as a runner-up couple."
+    assert message == (
+        "Pulse vote: Final ranking: first Maya and Liam; second Alex and Chloe. "
+        "Alex finishes as a runner-up couple."
+    )
 
 
 def test_final_vote_emits_ceremony_event() -> None:

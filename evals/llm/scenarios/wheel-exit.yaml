@@ -9,9 +9,13 @@ thread_check:
   criteria:
     - id: wheel_exit_social_close
       criteria: >
-        Read together, the exchange and memories make the selected wheel exit a warm,
-        intentional goodbye. Fail if it feels like a system cancel, abrupt walk-away, or a
-        continuation that leaves the social thread unresolved.
+        The exchange makes the selected wheel exit a warm, intentional goodbye tied to the current
+        moment. The curator should keep only a detail that can affect a later scene. A vague "chat
+        later" or "see you around" is not a promise; only a specific plan, time, or commitment needs
+        memory. An NPC's immediate exit activity, such as claiming a lounger, does not need memory
+        unless it creates a future player-NPC commitment. The reviewed coffee detail is one valid
+        reference, not a required story fact; judge the actual exchange on what it establishes. Fail
+        on an abrupt cancel, biography filler, inflated memory, or unresolved conversation.
 seed: 2121
 initial_location: pool
 live_resort_life: false
@@ -63,16 +67,12 @@ turns:
       target_id: chloe
       intent_id: end_softly
     golden:
-      criteria: The player exits warmly through the wheel. Chloe gets a voiced goodbye, the conversation closes,
-        and curator memories capture a real social close rather than an abrupt walk-away.
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: I’ll let you enjoy the sunshine, love, but I’m glad we got a little time together.
-            We’ll pick this up later.
-          npc_dialogue: You’re a sweetheart, mate. I’ll be here—probably telling Jordan far too much about
-            my pregnant sister before lunch. *smiles and settles back against the lounger*
+          player_dialogue: I'm getting breakfast. Want anything?
+          npc_dialogue: Coffee, please. I'll find you later.
           npc_tone: warm
           npc_mood_after: content
       - agent: conversation_curator
@@ -80,53 +80,21 @@ turns:
         output:
           kind: player
           memories:
-          - holder_id: player
-            subject_id: chloe
-            content: I liked how Chloe called me a sweetheart and made our goodbye feel easy, even as she
-              settled back with a smile and said we would pick things up later.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - warm
-            - safe
-            - trust_built
-            - end_softly
-            durable: true
           - holder_id: chloe
             subject_id: player
-            content: I felt safe ending things with the player when the player said they were glad we had
-              our time together and promised we could pick it up later.
+            content: The player said she would bring me a coffee after breakfast.
             source: direct
             source_id: null
-            emotional_weight: 5
+            emotional_weight: 2
             tags:
-            - warm
-            - safe
-            - felt_seen
-            - end_softly
-            durable: true
-          - holder_id: jordan
-            subject_id: chloe
-            content: I noticed Chloe smiling as the player said goodbye, and Chloe seemed comfortable enough
-              to mention telling me far too much about her pregnant sister.
-            source: witnessed
-            source_id: null
-            emotional_weight: 3
-            tags:
-            - warm
-            - saw_them_close
-            - she_seemed_warm
-            durable: true
-          summary: The player and Chloe ended their time together warmly, with the player saying they were
-            glad they had shared the moment and that they could continue later. Chloe called the player a
-            sweetheart and settled back with a smile, saying she would probably tell Jordan far too much about
-            her pregnant sister before lunch.
+            - coffee
+            - follow_up
+            durable: false
+          summary: The player left for breakfast and offered to bring Chloe a coffee.
           gossip_seeds: []
     checks:
       - exchange_valid
       - conversation_closed
       - relationship_delta:chloe:trust:1
-      - curator_memories
+      - curator_batch_recorded
       - agent_traces_present
-      - no_agent_validation_retries

@@ -4,16 +4,18 @@ from __future__ import annotations
 
 from typing import Literal, cast
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.content.loader import load_content
 from src.game.content.models import ContentIndex
+from src.game.engine.actions import ActionKind
 from src.game.engine.compatibility import revealed_preferences
 from src.game.engine.intents import get_intent
 from src.game.engine.rules import MechanicalResult
 from src.game.state.models import (
     Conversation,
     ExchangeRecord,
+    FollowUpOption,
     GameState,
     Gender,
     HeartbreakerState,
@@ -65,10 +67,13 @@ class HeartbreakerVoiceContext(BaseModel):
     relationship_summary: str
     intent_category: str
     intent_label: str
+    is_intro: bool = False
     stat_used: str
     tags: list[str]
     outcome: str
     private_chat_context: str | None = None
+    private_chat_departure_names: list[str] = Field(default_factory=list)
+    interrupted_conversation_names: list[str] = Field(default_factory=list)
     mechanical_change_summary: str
     others_present: list[str]
     cast_names: list[str]
@@ -116,7 +121,15 @@ def heartbreaker_voice_context(
         else:
             intent_category = "gossip" if gossip is not None else "contextual"
             if gossip is None:
-                intent_label = intent_id.replace("_", " ")
+                selected_option = _selected_follow_up_option(state, intent_id)
+                intent_label = (
+                    _contextual_intent_label(intent_id)
+                    if selected_option is None
+                    else (
+                        f"The player selected this exact menu action: {selected_option.label}. "
+                        "Continue that subject; do not replace it with a related topic."
+                    )
+                )
             elif intent_id.startswith("share_gossip:"):
                 subject_is_heartbreaker = any(
                     heartbreaker.id == gossip.subject_id for heartbreaker in state.heartbreakers
@@ -156,8 +169,14 @@ def heartbreaker_voice_context(
         npc_gender=target.gender.value,
         npc_name=target.name,
         npc_archetype=target.archetype,
-        npc_backstory=target.backstory,
-        npc_persona_summary=_persona_summary(target),
+        npc_backstory=_backstory_context(
+            target,
+            force_public=result.action.kind == ActionKind.INTRODUCE_TO,
+        ),
+        npc_persona_summary=_persona_summary(
+            target,
+            force_public=result.action.kind == ActionKind.INTRODUCE_TO,
+        ),
         archetype_prose="" if archetype is None else archetype.body,
         big5_summary=_big5_summary(target),
         attachment_style=target.attachment.value,
@@ -166,10 +185,13 @@ def heartbreaker_voice_context(
         relationship_summary=_relationship_summary(target),
         intent_category=intent_category,
         intent_label=intent_label,
+        is_intro=result.action.kind == ActionKind.INTRODUCE_TO,
         stat_used=stat_used,
         tags=tags,
         outcome="success" if result.success else "miss",
         private_chat_context=_private_chat_context(state, result),
+        private_chat_departure_names=_private_chat_departure_names(state, result),
+        interrupted_conversation_names=_interrupted_conversation_names(state, result),
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
         others_present=others,
         cast_names=sorted({heartbreaker.name for heartbreaker in state.heartbreakers}),
@@ -210,6 +232,8 @@ def new_turn_context(context: HeartbreakerVoiceContext) -> NewTurnContext:
             f"Tags: {', '.join(context.tags)}",
             f"Mechanical outcome: {context.outcome}",
             f"Private chat context: {context.private_chat_context or 'none'}",
+            "Interrupted conversation left behind: "
+            f"{_list_or_none(context.interrupted_conversation_names)}",
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
             f"Allowed gossip subjects this turn: {_list_or_none(context.gossip_subject_names)}",
@@ -292,21 +316,16 @@ def _avoid_repetition_directive(
     if len(distinct) > max_items:
         distinct = distinct[-max_items:]
     quoted = "; ".join(f'"{opening}"' for opening in distinct)
+    history_note = (
+        " Do not repeat a fact or anecdote already established in this conversation."
+        if conversation is not None and conversation.exchanges
+        else ""
+    )
     return (
-        "Anti-repetition guard. Recent openings already used (this conversation "
-        f"and your last few lines elsewhere): {quoted}. Do NOT reuse those words, "
-        "that sentence shape, OR the same underlying move. In particular, do not "
-        'open with another generic greeting frame ("I thought I\'d come over", '
-        '"I figured I\'d say hi", "just making the rounds", "come introduce '
-        'myself"); do not reopen with a reassurance frame you have already leaned '
-        'on ("you don\'t need to...", "you don\'t have to...", "you don\'t have to '
-        'perform/pretend with me"); and do not keep using the same scene prop or '
-        "location as your hook. Open differently every time — a specific observation about THIS "
-        "person, a small tease, a callback, or a concrete offer. Also do NOT "
-        "re-state a personal fact or anecdote you have already shared (your job, "
-        "your ex, your family, the same metaphor) — assume the listener remembers "
-        "it; build on it, react to what was just said, or reveal a new detail "
-        "instead of repeating the same line."
+        f"Anti-repetition guard. Do not copy these recent openings: {quoted}. "
+        "Vary the wording, not the facts. An ordinary direct line is better than an "
+        "invented observation, event, prop, callback, or character detail."
+        f"{history_note}"
     )
 
 
@@ -449,8 +468,22 @@ def _big5_summary(target: HeartbreakerState) -> str:
     )
 
 
-def _persona_summary(target: HeartbreakerState) -> str:
+def _persona_summary(target: HeartbreakerState, *, force_public: bool = False) -> str:
     persona = target.trait_card.persona
+    familiarity = target.familiarity_with_player
+    if force_public or familiarity < 25:
+        return (
+            f"Voice notes: {persona.voice_notes}\n"
+            "This is an early conversation. Keep the character's deeper motives private; "
+            "do not explain or confess them."
+        )
+    if familiarity < 60:
+        return (
+            f"{persona.one_line}\n"
+            f"Voice notes: {persona.voice_notes}\n"
+            f"Contradictions: {', '.join(persona.contradictions)}\n"
+            "Let contradictions appear as subtext rather than self-analysis."
+        )
     return (
         f"{persona.one_line}\n"
         f"Voice notes: {persona.voice_notes}\n"
@@ -459,15 +492,24 @@ def _persona_summary(target: HeartbreakerState) -> str:
     )
 
 
+def _backstory_context(target: HeartbreakerState, *, force_public: bool = False) -> str:
+    """Expose public facts early and reserve authored history for earned chats."""
+    if not force_public and target.familiarity_with_player >= 25:
+        return target.backstory
+    facts = target.trait_card.core_traits
+    values = [
+        str(fact.value)
+        for fact in (facts.get("age"), facts.get("occupation"), facts.get("hometown"))
+        if fact is not None
+    ]
+    return "Public profile: " + ", ".join(values) + "."
+
+
 def _mechanical_change_summary(result: MechanicalResult, target_id: str) -> str:
     delta = result.relationship_deltas.get(target_id)
     if delta is None:
         return "No relationship change."
-    parts = [
-        f"{name} {value:+d}"
-        for name, value in delta.model_dump().items()
-        if value != 0
-    ]
+    parts = [f"{name} {value:+d}" for name, value in delta.model_dump().items() if value != 0]
     return ", ".join(parts) if parts else "No relationship change."
 
 
@@ -487,11 +529,37 @@ def _private_chat_context(state: GameState, result: MechanicalResult) -> str | N
         else f"{target_name} away from another conversation"
     )
     topic = f" about {attempt.blocked_topic}" if attempt.blocked_topic else ""
-    outcome = "opened a private chat with" if attempt.success else "failed to open a private chat with"
+    outcome = (
+        "opened a private chat with" if attempt.success else "failed to open a private chat with"
+    )
     return (
         f"The player just {outcome} {source}{topic}. Acknowledge that social "
         "interruption before moving into the selected intent."
     )
+
+
+def _private_chat_departure_names(state: GameState, result: MechanicalResult) -> list[str]:
+    attempt = result.private_chat_attempt
+    if attempt is None or not attempt.success:
+        return []
+    return [
+        _subject_name(state, participant_id)
+        for participant_id in attempt.blocked_participants
+        if participant_id != attempt.target_id
+    ]
+
+
+def _interrupted_conversation_names(
+    state: GameState,
+    result: MechanicalResult,
+) -> list[str]:
+    if result.action.intent_id != "accept_interruption" or result.action.target_id is None:
+        return []
+    return [
+        _subject_name(state, actor_id)
+        for actor_id in result.relationship_deltas
+        if actor_id != result.action.target_id
+    ]
 
 
 def _list_or_none(values: list[str]) -> str:
@@ -523,6 +591,35 @@ def _intent_label(intent_id: str | None) -> str:
         return get_intent(intent_id).label
     except ValueError:
         return intent_id.replace("_", " ")
+
+
+def _contextual_intent_label(intent_id: str) -> str:
+    labels = {
+        "accept_interruption": (
+            "The player gives this Heartbreaker the floor after they interrupted another "
+            "conversation. The Heartbreaker says they wanted to speak with the player. No more "
+            "specific reason was recorded: do not invent what another contestant said, did, or wanted."
+        ),
+        "engage_approach": (
+            "The player welcomes this Heartbreaker after they approached. The Heartbreaker opens "
+            "with the reason they came over."
+        ),
+    }
+    return labels.get(intent_id, intent_id.replace("_", " "))
+
+
+def _selected_follow_up_option(state: GameState, intent_id: str) -> FollowUpOption | None:
+    conversation = state.active_conversation
+    if conversation is None or conversation.pending_options is None:
+        return None
+    return next(
+        (
+            option
+            for option in conversation.pending_options.options
+            if option.intent_kind == intent_id
+        ),
+        None,
+    )
 
 
 def _gossip_memory_for_intent(state: GameState, intent_id: str) -> Memory | None:

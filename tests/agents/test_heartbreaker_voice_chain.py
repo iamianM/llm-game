@@ -13,7 +13,7 @@ from src.game.agents.heartbreaker_voice import (
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.conversation import append_exchange, start_conversation
 from src.game.engine.rules import apply_action
-from src.game.state.models import Mood, new_game
+from src.game.state.models import FollowUpMenu, FollowUpOption, Mood, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -113,11 +113,9 @@ def test_build_voice_messages_injects_anti_repetition_guard_after_prior_exchange
     assert "Anti-repetition guard." in final
     assert '"You don\'t have to carry all"' in final
     assert '"You\'re not as guarded as you"' in final  # leading *softens* is stripped
-    # The guard names banned opener shapes explicitly so the weak model can
-    # recognize them — including the reassurance frame, not just greetings.
-    assert "generic greeting frame" in final
-    assert "reassurance frame" in final
-    assert "you don't have to perform/pretend with me" in final
+    assert "Vary the wording, not the facts" in final
+    assert "ordinary direct line" in final
+    assert "Do not repeat a fact or anecdote" in final
     # The write cue stays last so the model still knows to act now.
     assert final.rstrip().endswith("Write the exchange now.")
 
@@ -193,3 +191,35 @@ def test_new_turn_message_includes_intent_and_outcome() -> None:
 
     assert "Friendly" in messages[-1]["content"] or "friendly" in messages[-1]["content"]
     assert "Mechanical outcome:" in messages[-1]["content"]
+
+
+def test_contextual_response_keeps_the_selected_menu_subject() -> None:
+    state = new_game(1)
+    conversation = start_conversation(state, "chloe", 0)
+    conversation.pending_options = FollowUpMenu(
+        options=[
+            FollowUpOption(
+                label="Ask about the jumper theft",
+                category="friendly",
+                intent_kind="ask_about_topic",
+                stat_used="eq",
+                risk="low",
+                tone="curious and light",
+            )
+        ],
+        npc_will_leave=False,
+    )
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="chloe",
+            intent_id="ask_about_topic",
+        ),
+        SeededRng(1),
+    )
+
+    context = heartbreaker_voice_context(state, result)
+
+    assert "Ask about the jumper theft" in context.intent_label
+    assert "do not replace it with a related topic" in context.intent_label

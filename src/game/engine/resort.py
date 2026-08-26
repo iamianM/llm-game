@@ -20,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from src.game.agents.background_dialogue import (
     BackgroundDialogueFn,
     BackgroundExchange,
+    validate_background_exchange,
 )
 from src.game.agents.conversation_curator import ConversationCuratorFn
 from src.game.agents.resort_orchestrator import NPCSummon, ResortUpdate
@@ -215,12 +216,12 @@ def _append_background_exchange(
     conversation: NPCNPCConversation,
     exchange: BackgroundExchange,
 ) -> None:
-    first_id, second_id = conversation.participants
+    validate_background_exchange(exchange, conversation)
     conversation.exchanges.append(
         BackgroundExchangeRecord(
             turn_index=state.turn_index,
-            speaker_a_id=first_id,
-            speaker_b_id=second_id,
+            speaker_a_id=exchange.speaker_a_id,
+            speaker_b_id=exchange.speaker_b_id,
             speaker_a_line=exchange.speaker_a_line,
             speaker_b_line=exchange.speaker_b_line,
             tone=exchange.tone,

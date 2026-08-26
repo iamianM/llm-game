@@ -13,7 +13,7 @@ from src.game.agents.heartbreaker_voice import Exchange, mock_heartbreaker_voice
 from src.game.agents.resort_orchestrator import ResortUpdate
 from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import GameState, MemoryBatch, NPCNPCConversation
+from src.game.state.models import FollowUpOption, GameState, MemoryBatch, NPCNPCConversation
 
 
 class RecordedTurnAgents:
@@ -43,7 +43,7 @@ class RecordedTurnAgents:
         _result: MechanicalResult,
         _exchange: Exchange,
         _departure_probability: int,
-        _already_present: list[str],
+        _already_present: list[FollowUpOption],
     ) -> ContextualOptionsResult:
         value = self._optional("follow_up_menu")
         if value is None:

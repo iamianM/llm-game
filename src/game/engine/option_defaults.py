@@ -131,7 +131,9 @@ OPTION_TEMPLATES: dict[str, FollowUpOption] = {
 }
 
 
-def default_options(state: GameState, result: MechanicalResult, exchange: Exchange) -> list[FollowUpOption]:
+def default_options(
+    state: GameState, result: MechanicalResult, exchange: Exchange
+) -> list[FollowUpOption]:
     """Return deterministic always-on options for the current beat."""
     target = _target(state, result)
     options = [_exit_option(exchange.npc_tone)]
@@ -203,12 +205,11 @@ def assemble_follow_up_menu(
     npc_exit_line: str | None,
 ) -> FollowUpMenu:
     """Combine defaults, tone reactions, and bespoke options into one wheel."""
-    # Defaults first guarantee an exit option exists; bespoke options come
-    # second so they survive the cap over generic tone reactions. Dedupe by
-    # intent_kind keeps the first occurrence, so a bespoke option that shares
-    # an intent_kind with a default keeps the default's label — which is fine
-    # because default labels are stable. The cap then preserves bespoke
-    # specifics that fill an otherwise-empty beat (ease-off, on-topic gossip).
+    # Bespoke options lead because they carry the specific subject of this
+    # exchange. The cap handles the engine-owned exit separately, so putting
+    # the exit-bearing defaults later cannot remove it. Defaults then supply
+    # stable recovery choices and tone reactions fill any remaining room.
+    # Dedupe keeps the bespoke label when an intent overlaps a generic option.
     base_defaults = default_options(state, result, exchange)
     tone_options = tone_reaction_options(state, exchange)
     # When the bespoke options already provide a specific on-topic deeper
@@ -220,14 +221,18 @@ def assemble_follow_up_menu(
     if bespoke_kinds & {"go_deeper", "ask_about_topic", "honest_vulnerable"}:
         base_defaults = [opt for opt in base_defaults if opt.intent_kind != "go_deeper"]
         tone_options = [opt for opt in tone_options if opt.intent_kind != "go_deeper"]
-    options = [
-        *base_defaults,
-        *bespoke_options,
-        *tone_options,
-    ]
+    # A bespoke option can reuse a broad intent kind while referring to a new,
+    # concrete subject. Recent-intent filtering is therefore safe only for the
+    # generic fallbacks. Applying it after the lists are combined can erase the
+    # model-authored choice that prompted this menu in the first place.
+    fallback_options = _avoid_recent_repeats(
+        state,
+        _dedupe([*base_defaults, *tone_options]),
+    )
+    options = [*bespoke_options, *fallback_options]
     assembled = [
         _with_audience_hint(_with_reveal_default(option))
-        for option in _cap_with_single_exit(_avoid_recent_repeats(state, _dedupe(options)), max_total=5)
+        for option in _cap_with_single_exit(_dedupe(options), max_total=5)
     ]
     menu = FollowUpMenu(
         options=assembled,
@@ -238,18 +243,15 @@ def assemble_follow_up_menu(
     return menu
 
 
-def already_present_intents(
+def already_present_options(
     state: GameState,
     result: MechanicalResult,
     exchange: Exchange,
-) -> list[str]:
-    """Return intent kinds already supplied by deterministic option builders."""
-    return [
-        option.intent_kind
-        for option in _dedupe(
-            [*default_options(state, result, exchange), *tone_reaction_options(state, exchange)]
-        )
-    ]
+) -> list[FollowUpOption]:
+    """Return the deterministic choices already supplied to the wheel."""
+    return _dedupe(
+        [*default_options(state, result, exchange), *tone_reaction_options(state, exchange)]
+    )
 
 
 def _template(intent_kind: str) -> FollowUpOption:

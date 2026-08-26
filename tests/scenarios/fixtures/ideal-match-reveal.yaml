@@ -1,7 +1,7 @@
 name: ideal-match-reveal
 seed: 31
 initial_phase: morning
-expected_hash: a8ca23bad2f8bb33e2c483adc4500afc58da66c85ef83287d6f6eef6ccdf9f26
+expected_hash: 8bce5a17955fff8a5bbda4cd659182dc991d8c9a9958e83810d2aa58c3ef1188
 actions:
 - kind: ambient
   target_id: ambient_wait

@@ -48,6 +48,8 @@ class BackgroundExchange(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    speaker_a_id: str
+    speaker_b_id: str
     speaker_a_line: str
     speaker_b_line: str
     tone: Literal[
@@ -107,7 +109,7 @@ class OpenAIBackgroundDialogue:
             finally:
                 end_agent_attempt(attempt_token)
             try:
-                validate_background_exchange(exchange)
+                validate_background_exchange(exchange, conversation, state)
                 return exchange
             except ValueError as exc:
                 mark_agent_trace_validation_error("background_dialogue", attempt_number, exc)
@@ -164,23 +166,49 @@ def mock_background_dialogue(
     second = _name_for(state, second_id)
     topic = nudge or conversation.topic
     return BackgroundExchange(
+        speaker_a_id=first_id,
+        speaker_b_id=second_id,
         speaker_a_line=f"*glances over* {second}, this {topic} thing is sticking with me.",
         speaker_b_line=f"*nods* I know, {first}. It feels like everyone can sense it.",
         tone="gossipy",
     )
 
 
-def validate_background_exchange(exchange: BackgroundExchange) -> None:
+def validate_background_exchange(
+    exchange: BackgroundExchange,
+    conversation: NPCNPCConversation,
+    state: GameState | None = None,
+) -> None:
     """Fail loud if generated background dialogue violates the agent boundary.
 
-    Only enforces the third-person body language contract — speakers describe
-    each other, not themselves. Length and digit-vs-spelled-number
-    preferences are conveyed via the prompt, not enforced here.
+    Participant identity and body-language perspective are structural contracts.
+    Length and prose preferences remain prompt-owned.
     """
+    expected_a, expected_b = conversation.participants
+    if exchange.speaker_a_id != expected_a or exchange.speaker_b_id != expected_b:
+        raise ValueError(
+            "background exchange participant ids do not match the conversation: "
+            f"expected {(expected_a, expected_b)!r}, got "
+            f"{(exchange.speaker_a_id, exchange.speaker_b_id)!r}"
+        )
     joined = f"{exchange.speaker_a_line} {exchange.speaker_b_line}"
     body_language = " ".join(re.findall(r"\*([^*]+)\*", joined))
     if re.search(r"\bmy (lips|eyes|hands|shoulder|arm|face)\b", body_language, re.IGNORECASE):
         raise ValueError(f"background exchange uses first-person body language: {exchange!r}")
+    if state is not None:
+        participant_ids = set(conversation.participants)
+        for heartbreaker in state.heartbreakers:
+            if heartbreaker.id in participant_ids or heartbreaker.eliminated:
+                continue
+            direct_address = re.compile(
+                rf"(?:^|[.!?]\s+)(?:\*[^*]+\*\s*)?{re.escape(heartbreaker.name)}\s*,",
+                re.IGNORECASE,
+            )
+            if direct_address.search(joined):
+                raise ValueError(
+                    "background exchange addresses a bystander instead of its partner: "
+                    f"{heartbreaker.name}"
+                )
 
 
 def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: str) -> str:
@@ -192,6 +220,12 @@ def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: s
         )
         for exchange in conversation.exchanges
     )
+    subject_rule = (
+        "Required third-party subject: the player. Both lines must remain about the player; "
+        "do not reinterpret the topic as the speakers' impressions of each other."
+        if "player" in conversation.topic.lower()
+        else ""
+    )
     return "\n".join(
         [
             f"Day: {state.day}",
@@ -199,6 +233,7 @@ def _render_context(state: GameState, conversation: NPCNPCConversation, nudge: s
             f"Location: {conversation.location_id.value}",
             f"Topic: {conversation.topic}",
             f"Nudge: {nudge or 'none'}",
+            subject_rule,
             f"Speaker A: {first_id} ({_name_for(state, first_id)})",
             f"Speaker B: {second_id} ({_name_for(state, second_id)})",
             f"Bystanders: {_bystanders(state, conversation)}",

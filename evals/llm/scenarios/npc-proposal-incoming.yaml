@@ -9,9 +9,11 @@ thread_check:
   criteria:
     - id: proposal_accept_arc_faithful
       criteria: >
-        Maya's first beat remains an unresolved ask and the response beat clearly accepts it,
-        landing on the recorded player/Maya couple and relationship consequences without
-        inventing another partner or leaving the proposal pending.
+        Maya must make a direct but unresolved pairing proposal in the first beat. The response beat
+        then accepts it, clears the proposal, and forms the recorded player/Maya couple. The narration
+        fails if it accepts early, leaves the ask pending, keeps the old couples, invents another partner,
+        or adds a motive or consequential action not present in the event record. One restrained,
+        observable shift in position is allowed.
 seed: 4
 initial_location: pool
 live_resort_life: false
@@ -52,15 +54,12 @@ turns:
       kind: ambient
       target_id: pool_people_watch
     golden:
-      criteria: Maya's proposal becomes a pending ask. The narration can frame the charged moment, but it
-        must not claim the player accepted, rejected, or formed a new couple yet.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: By the pool, Maya’s interest turns unmistakable as she prepares to ask you to pair with her.
-            Chloe remains beside you, and the camera catches the charged silence between you as Maya’s move
-            lands in the middle of your existing connection.
+          prose: By the pool, Maya asks you to leave Chloe and pair with her. The question is now in front
+            of you, but you have not answered and no couple has changed.
     checks:
       - pending_npc_proposal_from:maya
       - ceremony_event_present:npc_proposal_incoming
@@ -72,15 +71,12 @@ turns:
       target_id: maya
       intent_id: accept
     golden:
-      criteria: 'The response accepts Maya''s Heart Swap proposal. The narrator can show Chloe or Liam reacting,
-        but the deterministic result is specific: pending ask cleared, player/Maya couple formed, Maya gets
-        the accepted response deltas, and the audience does not move for this loyal-player setup.'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: At the pool, Maya’s proposal lands—and you accept her. The camera catches the relief in her
-            smile as she steps closer, and you and Maya stand together as a confirmed couple.
+          prose: You accept Maya's proposal at the pool. The pending offer clears, and you and Maya leave
+            the exchange as the new couple.
     checks:
       - proposal_outcome_is:accepted
       - pending_npc_proposal_cleared

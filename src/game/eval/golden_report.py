@@ -192,7 +192,7 @@ def _golden_contract(turn: GoldenTurnResult) -> str:
         "<article class='trace-card'>"
         f"<b>{escape(call.agent)}</b>"
         f"<p class='muted'>Tool/schema: {escape(call.output_type)}</p>"
-        f"<pre>{escape(json.dumps(call.output, indent=2))}</pre>"
+        f"{_golden_call_target(call.output, call.criteria)}"
         "</article>"
         for call in turn.golden.calls
     )
@@ -201,10 +201,16 @@ def _golden_contract(turn: GoldenTurnResult) -> str:
         "<section><h3>Reviewed Golden Results</h3>"
         "<div class='golden-grid'>"
         f"{_arrangements(turn.arrangements)}"
-        f"<div class='contract-card'><b>Comparison criteria</b><p class='golden'>{escape(turn.golden.criteria.strip())}</p></div>"
         f"<div class='trace-grid'>{rendered_calls}</div>"
         "</div></section>"
     )
+
+
+def _golden_call_target(output: dict[str, Any] | None, criteria: list[str]) -> str:
+    if output is not None:
+        return f"<pre>{escape(json.dumps(output, indent=2))}</pre>"
+    items = "".join(f"<li>{escape(criterion)}</li>" for criterion in criteria)
+    return f"<p class='muted'>Reviewed criteria for this live context:</p><ul>{items}</ul>"
 
 
 def _thread_review(scenario: GoldenScenarioResult) -> str:

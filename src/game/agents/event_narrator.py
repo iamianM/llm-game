@@ -83,7 +83,7 @@ class OpenAIEventNarrator:
                     "The previous narration failed validation. "
                     f"Validation error: {last_error}. "
                     "Rewrite the prose in natural language: refer to people only "
-                    "by name (the player is \"you\") and never include ids, "
+                    'by name (the player is "you") and never include ids, '
                     "snake_case keys, underscores, or key=value metadata."
                 )
             attempt_token = begin_agent_attempt(attempt_number)
@@ -162,9 +162,7 @@ def validate_event_narration(
     prose = narration.prose
     leaked = _leaked_tokens(prose)
     if leaked:
-        raise ValueError(
-            f"event narration leaked engine token(s) {leaked}: {prose!r}"
-        )
+        raise ValueError(f"event narration leaked engine token(s) {leaked}: {prose!r}")
     required = list(
         dict.fromkeys(
             participant_id
@@ -189,13 +187,41 @@ def validate_event_narration(
         off_scene = [
             heartbreaker.name
             for heartbreaker in state.heartbreakers
-            if heartbreaker.id not in allowed
-            and _mentions_name(lower_prose, heartbreaker.name)
+            if heartbreaker.id not in allowed and _mentions_name(lower_prose, heartbreaker.name)
         ]
         if off_scene:
             raise ValueError(
                 f"event narration mentioned off-scene participant(s) {off_scene}: {prose!r}"
             )
+        lower = prose.lower()
+        for event in events:
+            name = _name_for(state, event.heartbreaker_id) if event.heartbreaker_id else ""
+            escaped = re.escape(name.lower())
+            if event.kind == "pair_proposal" and "rejected" in event.message.lower():
+                if re.search(rf"\b{escaped}(?:'s|’s)\s+(?:pairing\s+)?proposal\s+(?:is\s+)?rejected", lower):
+                    raise ValueError(
+                        "event narration reversed the player's rejected proposal: "
+                        f"{prose!r}"
+                    )
+            if event.kind == "npc_proposal_response" and "accepted" in event.message.lower():
+                if re.search(rf"\b{escaped}\s+accept(?:s|ed|ing)\s+your\s+proposal", lower):
+                    raise ValueError(
+                        "event narration reversed who accepted the NPC proposal: "
+                        f"{prose!r}"
+                    )
+                player_accepts = re.search(
+                    r"\b(?:you accept|you say yes|your acceptance)\b", lower
+                )
+                proposal_to_player_accepted = re.search(
+                    rf"\b{escaped}(?:'s|’s)\s+(?:pairing\s+)?proposal\s+to\s+you\s+"
+                    r"(?:is\s+)?accepted\b",
+                    lower,
+                )
+                if not player_accepts and not proposal_to_player_accepted:
+                    raise ValueError(
+                        "accepted NPC proposal narration must say that you accepted: "
+                        f"{prose!r}"
+                    )
 
 
 # A snake_case token: two or more lowercase/digit runs joined by underscores
@@ -365,7 +391,10 @@ def _narration_when(state: GameState, events: list[CeremonyEvent]) -> tuple[int,
     the clock has already rolled into the next morning is pinned back to that
     ceremony's evening so the time-of-day never contradicts the scene.
     """
-    if state.phase is Phase.MORNING and {event.kind for event in events} & _FLAME_DECK_CEREMONY_KINDS:
+    if (
+        state.phase is Phase.MORNING
+        and {event.kind for event in events} & _FLAME_DECK_CEREMONY_KINDS
+    ):
         return max(1, state.day - 1), Phase.EVENING.value
     return state.day, state.phase.value
 
@@ -373,10 +402,16 @@ def _narration_when(state: GameState, events: list[CeremonyEvent]) -> tuple[int,
 def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_lines = "\n".join(
         f"- {event.kind}: {event.message}"
-        + (f" (about {_name_for(state, event.heartbreaker_id)})" if event.heartbreaker_id else " (no named heartbreaker)")
+        + (
+            f" (about {_name_for(state, event.heartbreaker_id)})"
+            if event.heartbreaker_id
+            else " (no named heartbreaker)"
+        )
         + (
             " (participants: "
-            + ", ".join(_name_for(state, participant_id) for participant_id in event.participant_ids)
+            + ", ".join(
+                _name_for(state, participant_id) for participant_id in event.participant_ids
+            )
             + ")"
             if event.participant_ids
             else ""
@@ -408,8 +443,9 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     event_kinds = {event.kind for event in events}
     semantics = [
         contestant_rule,
-        f"- pair_proposal rejected means the target did not accept {possessive} proposal.",
+        f"- pair_proposal is always {possessive} proposal to the named target. If rejected, the target rejected your ask; never call it the target's proposal.",
         "- npc_proposal_incoming means a pending ask, not an accepted pairing or couple change.",
+        f"- npc_proposal_response accepted means the named NPC asked {subject}, and {subject} accepted the NPC's ask. Never say the NPC accepted {possessive} proposal.",
         f"- pairing narration should name {possessive} partner when the current couple is known.",
         f"- private_suite means {subject} and the named partner leave for a private suite beat.",
     ]
@@ -451,8 +487,9 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
     if state.day == 1 and any(event.kind == "pairing" for event in events):
         sections.append(
             "Opening ceremony scene requirement: the full active cast is present. "
-            "Include one concrete reaction from someone beyond the newly formed player couple "
-            "so the choice visibly lands across the resort."
+            "Name the full cast. The selected partner must perform one restrained visible response "
+            "to being chosen; an action by the player does not satisfy this requirement. Do not "
+            "add a reaction from another cast member."
         )
     # If a round-based minigame just resolved, surface its per-round details so
     # the narrator can name actual picks, reveals, and facets rather than
@@ -468,20 +505,23 @@ def _render_context(state: GameState, events: list[CeremonyEvent]) -> str:
         )
     else:
         contestant_voice = (
-            "Refer to the human contestant in SECOND PERSON (\"you\"/\"your\") and "
+            'Refer to the human contestant in SECOND PERSON ("you"/"your") and '
             "to everyone else by the names given in the context above, in third "
             "person. Do not invent a name for the contestant. When an event line "
-            "is the contestant's own choice (it reads \"You ...\"), narrate it as "
-            "\"you\" — never \"they\", \"he\", \"she\", \"the contestant\", or "
-            "\"the player\"."
+            'is the contestant\'s own choice (it reads "You ..."), narrate it as '
+            '"you" — never "they", "he", "she", "the contestant", or '
+            '"the player".'
         )
-    sections.append("Narrate these resolved events now. If a Minigame block is "
-                    "present above, ground at least one sentence in a concrete "
-                    "round detail — a picked answer (quote the answer text), a "
-                    "named reveal, or a chemistry pair. " + contestant_voice +
-                    " Never copy an id, a snake_case key, an underscore, or "
-                    "bracketed metadata into your prose — translate them into "
-                    "natural language.")
+    sections.append(
+        "Narrate these resolved events now. If a Minigame block is "
+        "present above, ground at least one sentence in a concrete "
+        "round detail — a picked answer (quote the answer text), a "
+        "named reveal, or a chemistry pair. "
+        + contestant_voice
+        + " Never copy an id, a snake_case key, an underscore, or "
+        "bracketed metadata into your prose — translate them into "
+        "natural language."
+    )
     return "\n".join(sections)
 
 
@@ -494,6 +534,7 @@ def _render_minigame_details(state: GameState) -> str:
     challenge = state.pending_challenge
     if challenge is None or challenge.classification is None or not challenge.rounds:
         return ""
+
     # Only round-based minigames carry meaningful per-round structure
     # (legacy single-roll resolutions don\'t populate the `rounds` list).
     # Resolve every heartbreaker id to a human *name* (third person, including the
@@ -538,24 +579,40 @@ def _render_minigame_details(state: GameState) -> str:
         # Humanize the trait/flavor key so even if the model echoes it the prose
         # reads "their drink of choice", never "drink_of_choice".
         if round_.trait_key:
-            round_meta.append(f"topic \"{_humanize(round_.trait_key)}\"")
+            round_meta.append(f'topic "{_humanize(round_.trait_key)}"')
         if round_.target_id:
             round_meta.append(f"about {_person(round_.target_id)}")
         meta_str = (" (" + ", ".join(round_meta) + ")") if round_meta else ""
+        lines.append(f"    r{round_.index + 1} [{outcome}] {round_.stem!r}{meta_str}")
         lines.append(
-            f"    r{round_.index + 1} [{outcome}] {round_.stem!r}{meta_str}"
+            f"        chose {chosen_label}; correct was {correct_label}; points {round_.points}"
         )
-        lines.append(f"        chose {chosen_label}; correct was {correct_label}; points {round_.points}")
         for reveal in round_.reveals:
             payload_parts = []
             payload = reveal.payload
+            if payload.get("direction") == "partner_about_player":
+                guess = payload.get("partner_guess_label")
+                truth = payload.get("truth_label")
+                if isinstance(guess, str) and isinstance(truth, str):
+                    lines.append(
+                        f"        recorded answer: {_person(reveal.subject_id)} wrote {guess!r} "
+                        f"about you; your recorded truth is {truth!r}"
+                    )
+                    continue
+            if reveal.kind == "chemistry_rank":
+                observer_id = payload.get("observer_id")
+                bpm = payload.get("bpm")
+                if isinstance(observer_id, str) and bpm is not None:
+                    lines.append(
+                        "        reading: "
+                        f"{_person(observer_id)} watching {_person(reveal.subject_id)} = {bpm} BPM"
+                    )
+                    continue
             # When a key carries a raw engine code (partner_guess="low") the
             # engine also supplies a display companion (partner_guess_label=
             # "audience cool on them"). Quote only the label form and drop the
             # raw one so internal enum values never reach the recap prose.
-            has_label = {
-                k[: -len("_label")] for k in payload if k.endswith("_label")
-            }
+            has_label = {k[: -len("_label")] for k in payload if k.endswith("_label")}
             for k, v in payload.items():
                 # Pure routing/meta keys describe engine structure, not anything
                 # the narrator should surface.

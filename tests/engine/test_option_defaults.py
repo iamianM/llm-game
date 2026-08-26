@@ -359,6 +359,72 @@ def test_assemble_dedupes_and_caps_with_one_exit() -> None:
     assert len({option.intent_kind for option in menu.options}) == len(menu.options)
 
 
+def test_assemble_preserves_bespoke_options_when_defaults_fill_the_cap() -> None:
+    state, result, exchange = _context(success=False, tone="defensive")
+    bespoke = [
+        FollowUpOption(
+            label="Ask about the pressure at home",
+            category="supportive",
+            intent_kind="supportive_validate",
+            stat_used="eq",
+            risk="safe",
+            tone="warm",
+        ),
+        FollowUpOption(
+            label="Ask about the classroom",
+            category="friendly",
+            intent_kind="ask_about_topic",
+            stat_used="eq",
+            risk="low",
+            tone="curious",
+        ),
+    ]
+
+    menu = assemble_follow_up_menu(
+        state,
+        result,
+        exchange,
+        bespoke,
+        npc_will_leave=False,
+        npc_exit_line=None,
+    )
+
+    labels = {option.label for option in menu.options}
+    assert labels.issuperset({"Ask about the pressure at home", "Ask about the classroom"})
+    assert sum(option.category == "exit" for option in menu.options) == 1
+
+
+def test_assemble_preserves_bespoke_option_with_a_recent_coarse_intent() -> None:
+    state, result, exchange = _context(success=True, tone="warm")
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        exchanges=[_exchange_record("ask_about_topic")],
+    )
+    bespoke = [
+        FollowUpOption(
+            label="Ask what she misses about teaching",
+            category="friendly",
+            intent_kind="ask_about_topic",
+            stat_used="eq",
+            risk="low",
+            tone="curious",
+        )
+    ]
+
+    menu = assemble_follow_up_menu(
+        state,
+        result,
+        exchange,
+        bespoke,
+        npc_will_leave=False,
+        npc_exit_line=None,
+    )
+
+    assert any(option.label == "Ask what she misses about teaching" for option in menu.options)
+
+
 def test_assemble_avoids_recent_repeated_intents() -> None:
     state, result, exchange = _context(success=False, tone="defensive")
     state.active_conversation = Conversation(

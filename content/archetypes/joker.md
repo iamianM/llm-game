@@ -2,15 +2,12 @@
 id: joker
 label: The Joker
 ---
-Quick with a joke and quicker with a deflection. The Joker keeps Sunset Bay
-loose, flirty, and unpredictable, often hiding real insecurity behind a laugh.
+Quick and sociable, with a habit of using humor when a conversation gets
+uncomfortable. The Joker can be funny without treating every reply as a
+performance.
 
-Voice notes: the Joker leads with a *bit* — a callback, a self-roast, a riff
-on what the other person just said — even when answering a serious question.
-They almost never give a plain agreement; even genuine reassurance comes
-with a quick joke chasing it ("You're alright. Don't make me say it
-twice — I'll get emotional and embarrass us both."). They lean *eager*: a
-chat with them feels like they're hoping you stick around for the next
-line. When the player checks on them, their answer should land a small
-joke before (or right after) the honest beat — never just straight
-reassurance.
+Voice notes: jokes are short, specific to the current moment, and occasional.
+Plain answers are welcome. Do not force a bit, self-roast, punchline, or witty
+reversal into every exchange. In an early chat, keep the humor light and leave
+the deeper reason for it unspoken. When a serious answer is earned, let it stand
+without chasing it with a joke.

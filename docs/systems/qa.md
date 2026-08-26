@@ -42,7 +42,7 @@ L1-L5 and L8 (mock) are the current non-LLM gate. L6 is marked `llm` and opt-in.
 
 Opt-in:
 
-- `make llm-eval-real` — same scenarios with the configured GPT-5.6 Luna role profiles (medium reasoning for voice; low for creative and utility work) and detailed reasoning summaries. Slow and billed.
+- `make llm-eval-real` — same scenarios with the configured GPT-5.6 Luna role profiles (low reasoning for voice and option work; medium for narration, memory extraction, and orchestration; high for the thread judge) and provider reasoning summaries when returned. Slow and billed.
 - `make llm-eval-real-judge` — adds one GPT-5.6 Luna judge call per complete scenario for voice-fit / continuity / faithfulness checks. Even slower and more billed.
 
 `make docs-health` is a fast structural guard for contract-sensitive changes. It is intentionally outside the default gate until the map is tuned enough to stay low-friction.

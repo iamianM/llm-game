@@ -2,16 +2,17 @@ id: final-vote-ending
 title: Final Vote Finale
 question: Can the ending name the real winners and the player's actual outcome?
 category: pairing_and_endings
-goal: Prove the finale narration names the deterministic winning couple and the player's actual outcome — no rewrites, no consolation prizes, no invented twists.
+goal: Prove the finale narration names the deterministic winning couple and the player's actual outcome without rewrites, consolation prizes, or invented twists.
 thread_check:
   id: thread_acceptance
   severity: blocking
   criteria:
     - id: final_vote_story_faithful
       criteria: >
-        The finale carries emotional and visual weight while preserving the recorded winner,
-        runner-up order, and player outcome exactly. Fail if it invents a tie, consolation prize,
-        alternate placement, or different winning couple.
+        The finale names the player and Chloe as the winners with Maya and Liam second, Nia and
+        Blake third, and Sophie and Marcus fourth. The player's outcome is
+        won_as_couple. Fail a tie, consolation prize, omitted winning partner, alternate placement,
+        or a generic celebration that never states who won.
 seed: 909
 initial_day: 6
 initial_phase: evening
@@ -46,43 +47,28 @@ initial_relationships:
     friendship: 25
 judge_context:
   - The final vote outcome is deterministic; the narrator describes the engine's verdict.
-  - The narrator may carry finale weight — the flame_deck at night, the speeches, the camera holding on each couple — but cannot move the prize.
+  - The narrator may use the flame_deck at night, speeches, and shots of each couple, but cannot move the prize.
 turns:
   - id: schedule-final-vote
     action:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: The resort is called to the flame_deck one last time. The producer text lands, the four couples
-        assemble, and the narrator sets the finale stakes — months of moments hanging on the next reveal.
-        The outcome is still pending.
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: The call goes out across Sunset Bay, sending everyone toward the Flame Deck for the Final
-            Vote. Beside you, Chloe catches your eye for one held breath, and the two of you move together
-            into the approaching reckoning.
+      calls: []
     checks:
       - ceremony_events_present
       - pending_gather_waiting
-      - agent_traces_present
   - id: resolve-final-vote
     action:
       kind: join_gather
     golden:
-      criteria: 'The final vote lands. The narrator names the winning couple exactly as the engine recorded,
-        places the player and Chloe in their actual finishing position, and gives the moment finale weight
-        — a kiss, a held look, the cast and the cameras all at once. Imagine: "The host reads the result.
-        Maya and Liam win it. Chloe finds the player''s hand in the dark. Sunset Bay''s first season ends
-        with both couples still on the flame_deck and the cameras drifting away."'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: The Pulse vote lands, and you and Chloe win as the top couple at Sunset Bay. Chloe’s eyes
-            meet yours, her smile breaking through as the result settles in, and the flame deck erupts around
-            you.
+          prose: The final ranking places Sophie and Marcus fourth, Nia and Blake third, and Maya and
+            Liam second. The player and Chloe win Sunset Bay as the top couple, matching the final
+            vote and the player's winning outcome.
     checks:
       - ceremony_events_present
       - event_narration_valid

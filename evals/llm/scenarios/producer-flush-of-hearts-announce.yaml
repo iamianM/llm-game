@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: flush_transition_arc
       criteria: >
-        The announcement creates specific tension between the player and Chloe, then the entry
-        clearly moves the player into the second resort and frames the original connection as
-        the stake. No turn may pre-decide stick/twist, name an unseen arrival, or narrate a return.
+        The announcement changes how the player and Chloe behave before the entry clearly moves
+        the player to the second resort. Chloe remains at Sunset Bay, and neither turn decides
+        loyalty, names an unseen arrival, or narrates a return.
 seed: 606
 initial_day: 4
 initial_phase: afternoon
@@ -45,38 +45,20 @@ turns:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: 'The producer text drops and the resort is called to the flame_deck for Flush of Hearts. The
-        narrator sets the tension: phones lighting up, the cast clocking each other, the player and Chloe
-        sharing a look they can''t read yet. Imagine: "Phones go off at exactly the same second. The cast
-        reads it twice. Chloe finds the player''s eye across the pool and neither of them speaks." The twist
-        is announced; nothing has resolved.'
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: The call goes out across Sunset Bay, sending everyone toward the Flame Deck for the Flush
-            of Hearts. You move with Chloe, and her hand finds yours for one quiet beat before the resort
-            gathers around you.
+      calls: []
     checks:
       - ceremony_events_present
-      - event_narration_valid
       - pending_gather_waiting
-      - agent_traces_present
   - id: enter-flush-of-hearts
     action:
       kind: join_gather
     golden:
-      criteria: 'The player walks into the second resort. The narrator establishes the shift in scenery and
-        stakes — the original couple separated, the new cast in scope, the player''s relationship with Chloe
-        now the thing being tested at a distance. Imagine: "Sunset Bay shrinks in the rear-view. The second
-        resort hums with strangers. Somewhere across the water, Chloe is on her own version of this night."'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: The Flush of Hearts text lands, and the resort’s easy rhythm snaps into motion as bags are
-            packed for the second resort. You arrive at the Flush of Hearts pool while Chloe remains at Sunset
-            Bay, leaving the distance between you to carry the full weight of the moment.
+          prose: Minutes later, you step into the unfamiliar Flush of Hearts pool while Chloe remains at
+            Sunset Bay. Neither of you knows what the other will do with the distance.
     checks:
       - ceremony_events_present
       - event_narration_present

@@ -1,7 +1,7 @@
 name: pairing-day3
 seed: 8
 initial_phase: morning
-expected_hash: e0f1b7c014eb5b50927a3269c0218d8c1b9491f554ab42845d6965d869fc0083
+expected_hash: 8e0c5511a658f1269945bdde3a9ba8d2311c3d5e6ff6649d09640577f48bc51d
 actions:
 - kind: ambient
   target_id: ambient_wait

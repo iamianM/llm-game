@@ -6,7 +6,11 @@ from src.game.agents.background_dialogue import BackgroundExchange
 from src.game.agents.resort_orchestrator import EndConversation, ResortUpdate
 from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction, available_actions
-from src.game.engine.proposals import apply_player_proposal, maybe_trigger_npc_player_proposal
+from src.game.engine.proposals import (
+    apply_player_proposal,
+    maybe_trigger_npc_player_proposal,
+    proposal_memory_batch,
+)
 from src.game.engine.resort import apply_resort_update
 from src.game.engine.turn import run_turn
 from src.game.state.models import (
@@ -64,6 +68,20 @@ def test_rejected_player_proposal_keeps_couples_and_hits_audience() -> None:
     assert state.heartbreakers[1].relationship.chemistry == 65
 
 
+def test_proposal_memories_exclude_off_scene_former_partners() -> None:
+    state = _proposal_state()
+    state.location_id = Location.KITCHEN
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
+    chloe.location_id = Location.POOL
+    maya.location_id = Location.KITCHEN
+    _result, outcome = apply_player_proposal(state, "maya", SeededRng(5))
+
+    batch = proposal_memory_batch(state, outcome)
+
+    assert "chloe" not in {memory.holder_id for memory in batch.memories}
+
+
 def test_proposal_turn_closes_conversation_and_records_event_and_memories() -> None:
     state = _proposal_state()
     state.active_conversation = Conversation(target_id="maya", started_on_turn=1, started_on_day=1)
@@ -78,7 +96,10 @@ def test_proposal_turn_closes_conversation_and_records_event_and_memories() -> N
     assert turn.state.active_conversation is None
     assert turn.ceremony_events[0].kind == "pair_proposal"
     assert turn.ceremony_events[0].sub_kind == "accepted"
-    assert any(batch.summary.startswith("Player proposed") for batch in turn.curator_batches)
+    assert len(turn.curator_batches) == 1
+    assert turn.curator_batches[0].summary.startswith("The player asked Maya")
+    assert turn.curator_batches[0].memories[0].content.startswith("I asked Maya")
+    assert turn.curator_batches[0].memories[1].content.startswith("The player asked me")
 
 
 def test_npc_proposal_incoming_creates_forced_response_actions() -> None:
@@ -182,9 +203,11 @@ def test_single_npc_background_flirt_can_form_rebound_couple() -> None:
         ),
         SeededRng(1),
         background_dialogue=lambda _state, _conversation, _nudge: BackgroundExchange(
+            speaker_a_id="maya",
+            speaker_b_id="liam",
             speaker_a_line="",
             speaker_b_line="",
-            tone="neutral",
+            tone="warm",
         ),
         conversation_curator=MOCK_AGENTS.conversation_curator,
     )

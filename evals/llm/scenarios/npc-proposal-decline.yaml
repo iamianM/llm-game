@@ -9,9 +9,11 @@ thread_check:
   criteria:
     - id: proposal_decline_arc_faithful
       criteria: >
-        Maya's first beat remains a pending ask and the response beat clearly declines it without
-        forming a new couple. The narration must preserve the engine-owned consequences and not
-        pre-resolve, accept, or leave the proposal pending.
+        Maya must make a direct but unresolved pairing proposal in the first beat. The response beat
+        then rejects it harshly, clears the proposal, and leaves player/Chloe and Maya/Liam coupled.
+        The narration fails if it accepts early, leaves the ask pending, changes either couple, softens
+        the response into uncertainty, or invents a motive or consequential action. One restrained,
+        observable shift in position is allowed.
 seed: 4
 initial_location: pool
 live_resort_life: false
@@ -52,15 +54,12 @@ turns:
       kind: ambient
       target_id: pool_people_watch
     golden:
-      criteria: Maya's proposal becomes a pending ask. The narration can frame the charged moment, but it
-        must not claim the player accepted, rejected, or formed a new couple yet.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: By the pool, Maya makes it clear she wants to ask you to pair, and the possibility lands
-            like a spark across Sunset Bay. Chloe stays beside you, her eyes fixed on you as the moment presses
-            against the couple you already share.
+          prose: By the pool, Maya asks you to leave Chloe and pair with her. The question is now in front
+            of you, but you have not answered and no couple has changed.
     checks:
       - pending_npc_proposal_from:maya
       - ceremony_event_present:npc_proposal_incoming
@@ -72,16 +71,12 @@ turns:
       target_id: maya
       intent_id: decline_harshly
     golden:
-      criteria: The response is a harsh decline. The narration can make the rejection sting, but it must keep
-        the existing couples intact, clear the pending ask, and preserve the exact engine consequences for
-        Maya and the audience.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: At the pool, Maya’s proposal reaches you—and is rejected, leaving the moment hanging in a
-            clean, unmistakable sting. Chloe stays beside you as the camera catches the silence between you,
-            her eyes fixed on yours while Maya absorbs the refusal.
+          prose: You reject Maya's proposal at the pool without leaving room for a second reading. You
+            remain coupled with Chloe, Maya remains with Liam, and the pending offer is over.
     checks:
       - proposal_outcome_is:rejected
       - pending_npc_proposal_cleared

@@ -69,7 +69,10 @@ def private_suite_event(state: GameState) -> CeremonyEvent:
     partner = find_heartbreaker(state, partner_id)
     return CeremonyEvent(
         kind="private_suite",
-        message=f"{player_display_name(state)} and {partner.name} leave for a private Paradise Suite night.",
+        message=(
+            f"{player_display_name(state)} and {partner.name} leave the group and spend the night "
+            "talking together in the Paradise Suite."
+        ),
         heartbreaker_id=partner.id,
         participant_ids=[state.player.id, partner.id],
     )
@@ -87,7 +90,7 @@ def _remember_private_suite(state: GameState, partner_id: str) -> None:
             turn=state.turn_index,
             weight=9,
             tags=PRIVATE_SUITE_TAGS,
-            content=f"The Private Suite with {partner.name} felt private, committed, and hard to fake.",
+            content=f"{partner.name} and I spent the night talking together in the Paradise Suite.",
             recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )
@@ -101,7 +104,7 @@ def _remember_private_suite(state: GameState, partner_id: str) -> None:
             turn=state.turn_index,
             weight=9,
             tags=PRIVATE_SUITE_TAGS,
-            content="The Private Suite made the player's commitment feel much more real.",
+            content="The player and I spent the night talking together in the Paradise Suite.",
             recap_disposition=RecapDisposition.YOUR_DAY,
         ),
     )

@@ -352,7 +352,6 @@ class Conversation(BaseModel):
     pending_options: FollowUpMenu | None = None
     pending_interruption: NPCInterruption | None = None
     gossip_offers: list[Memory] = Field(default_factory=list)
-    summary: str | None = None
 
 
 class NPCNPCConversation(BaseModel):

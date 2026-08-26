@@ -9,17 +9,24 @@ thread_check:
   criteria:
     - id: cast_voice_separation
       criteria: >
-        Across the complete round, all eight Heartbreakers remain recognisably distinct in
-        temperament, gendered voice, conversational intent, and response rhythm. Fail if
-        several speakers collapse into the same generic flirt or warm-friend voice.
+        Across the complete round, the Heartbreakers retain distinct social instincts and ways of
+        handling the player's intent without becoming caricatures. Shared ordinary words are not a
+        failure. Fail when three or more replies reuse the same full template, several characters
+        lose their supplied voice direction, or a first chat turns into a résumé or family-history dump.
     - id: conversation_surfaces_playable
       criteria: >
-        Every chat answers its authored intent specifically and offers concrete continuations
-        for that exact beat plus a graceful exit, without placeholder or duplicate choices.
-    - id: memories_faithful_across_cast
+        Every reply answers the exact opening line. Each model-authored follow-up responds to a visible
+        subject or stance and differs meaningfully from the other choice; a natural implication is
+        acceptable. The engine-provided exit remains available. A separate engine-added gossip choice
+        is valid when its intent_kind names a stored memory; do not attribute that choice to Contextual
+        Options. Fail model-authored choices that introduce an unseen person, event, or private biography,
+        repeat one choice in two tones, or disconnect from the exchange.
+    - id: curator_restraint
       criteria: >
-        Close-turn memories consistently use each holder's perspective, name the other
-        participant, and preserve only beats visible in that Heartbreaker's conversation.
+        Routine first-chat banter should not become durable memory. Empty batches are correct for
+        thin exchanges. Any memory that is returned must preserve a concrete useful fact from the
+        correct holder's perspective. Fail mirrored memories, generic connection summaries, or
+        inflated emotional weight.
 seed: 308
 live_resort_life: false
 initial_phase_budget_minutes: 240
@@ -57,7 +64,8 @@ judge_context:
   - This is a launch-cast breadth scenario; the bar is "would the player want to keep talking to this Heartbreaker?", not finale-level depth.
   - Each chat should land a specific opening beat for that NPC, not the same warm greeting refitted with a different name.
   - Goldens are illustrative targets, not checklists. Accept a different concrete detail or continuation when it serves the same intent and character voice.
-  - Endings should leave a clean memory trail; the engine, not the LLM, owns relationship deltas.
+  - The curator may return no memories when the chat contains nothing useful for later play.
+  - Contextual Options returns only its bespoke additions. The engine may add an exit, generic reactions, and a memory-backed gossip choice to the final menu.
   - >
     Memory ids are canonical sentinels: holder_id "player" is the player's first-person
     memory, while holder_id matching an NPC id is that NPC's first-person memory. For an
@@ -74,38 +82,31 @@ turns:
       target_id: chloe
       intent_id: friendly_ask_feelings
     golden:
-      criteria: 'A grounded sincere check-in by the pool. Chloe is the secure sweetheart; she should be visibly
-        pleased someone asked and give a real answer (a beat she''s been sitting with). She may ask back when
-        it fits. Imagine: "Honestly? I''ve been trying to figure out who''s actually paying attention in here.
-        You count." Follow-ups should offer Go Deeper, Tease Lightly, and a clean Exit.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: How are you feeling this morning, Chloe? You seem cheerful, but I get the sense
-            there’s something you’re keeping tucked away beneath the smiles.
-          npc_dialogue: That’s a very kind thing to notice, love. I’m happy to be here, honestly, but my sister’s
-            pregnancy has me wondering whether I want children before thirty—and that thought feels rather
-            loud today. *smiles, then goes briefly still*
-          npc_tone: vulnerable
+          player_dialogue: Bit much, this, isn't it?
+          npc_dialogue: A little. I'm hiding by the tea until I learn everyone's names.
+          npc_tone: warm
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Separate desire from deadline
-            category: deep
-            intent_kind: honest_vulnerable
+          - label: Ask about the tea
+            category: friendly
+            intent_kind: ask_about_topic
             stat_used: eq
-            risk: medium
-            tone: gentle and candid
+            risk: low
+            tone: curious
             audience_hint: +
             reveal_tier: 0
             reveal_tag: null
             unlock_threshold: null
-          - label: Validate the sister pressure
+          - label: Stay out of the crowd
             category: supportive
-            intent_kind: supportive_validate
+            intent_kind: supportive_reassure
             stat_used: loyalty
             risk: safe
             tone: warm and reassuring
@@ -121,67 +122,22 @@ turns:
       - follow_up_menu_valid
       - conversation_active
       - agent_traces_present
-      - no_agent_validation_retries
   - id: close-chloe
     action: &end_action
       kind: end_conversation
     golden:
-      criteria: A warm soft close. Each memory should be first-person — the player remembering "I asked Chloe
-        how she was, she let me in a little," and Chloe remembering being seen.
       calls:
-      - agent: conversation_curator
+      - &first_chat_curator_target
+        agent: conversation_curator
         output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: chloe
-            content: I noticed Chloe's cheerful smile go briefly still when she admitted that her sister's
-              pregnancy had made the question of wanting children before thirty feel suddenly loud for her.
-            source: direct
-            source_id: null
-            emotional_weight: 7
-            tags:
-            - vulnerable
-            - supportive
-            - sincere
-            - felt_seen
-            durable: true
-          - holder_id: chloe
-            subject_id: player
-            content: I felt gently seen when the player noticed that my smiles were hiding something and asked
-              how I was really feeling.
-            source: direct
-            source_id: null
-            emotional_weight: 6
-            tags:
-            - supportive
-            - sincere
-            - trust_built
-            - felt_seen
-            durable: true
-          - holder_id: jordan
-            subject_id: chloe
-            content: I saw Chloe's cheerful expression falter into a brief stillness during her serious conversation
-              with the player.
-            source: witnessed
-            source_id: null
-            emotional_weight: 4
-            tags:
-            - saw_them_close
-            - vulnerable
-            - witnessed
-            durable: true
-          summary: The player gently asked Chloe how she was feeling beneath her cheerful appearance. Chloe
-            responded warmly but revealed that her sister's pregnancy had made her question whether she wants
-            children before thirty, and the thought felt especially loud that morning. The conversation took
-            on a sincere, vulnerable tone.
-          gossip_seeds: []
+        criteria:
+          - Summarize only the actual chat that immediately precedes this close turn.
+          - Return no memory for routine first-chat banter. Store a memory only for a concrete fact that would matter in a later conversation.
+          - Do not copy a person, subject, or detail from the reviewed opening example unless it also appears in the actual output.
     checks: &close_checks
       - conversation_closed
-      - curator_memories
+      - curator_batch_recorded
       - agent_traces_present
-      - no_agent_validation_retries
   - id: chat-jordan
     arrange_player_location: pool
     arrange_npc_locations:
@@ -191,26 +147,19 @@ turns:
       target_id: jordan
       intent_id: bromance_check_in
     golden:
-      criteria: 'A bro-energy pool check-in. Jordan is the anxious joker — under the grin he wants to feel
-        chosen. The exchange should land a quick laugh and then a tiny crack of honesty he''d never lead with.
-        Imagine: "Mate, I''ve been on form, obviously. ...Okay, fine, I keep waiting for someone to actually
-        ask me for a private chat. You''re the first."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You’ve been keeping everyone laughing, but I wanted to check in—are you actually
-            holding up alright, mate?
-          npc_dialogue: Ah, you’ve spotted the emergency grin. *Jordan nudges his sunglasses up, then lets
-            out a laugh.* I’m alright—just get a bit twitchy when the room moves on without me. Still, that
-            was properly decent of you to ask.
-          npc_tone: warm
+          player_dialogue: You always this loud before breakfast?
+          npc_dialogue: Only when I'm nervous, mate. So yes, probably.
+          npc_tone: amused
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Name the emergency grin
+          - label: Ask what's got him nervous
             category: supportive
             intent_kind: supportive_validate
             stat_used: eq
@@ -218,17 +167,17 @@ turns:
             tone: warm
             audience_hint: +
             reveal_tier: 0
-            reveal_tag: emergency_grin
+            reveal_tag: attention_worry
             unlock_threshold: null
-          - label: Ask when rooms move on
-            category: deep
-            intent_kind: ask_about_topic
-            stat_used: eq
+          - label: Give him a hard time
+            category: banter
+            intent_kind: joke_back
+            stat_used: banter
             risk: low
-            tone: curious
+            tone: playful
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: attention_panic
+            reveal_tag: null
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -236,59 +185,8 @@ turns:
   - id: close-jordan
     action: *end_action
     golden:
-      criteria: Memories should capture the small honest beat under Jordan's joke, not just "we chatted by
-        the pool".
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: jordan
-            content: I checked in on Jordan beneath his emergency grin, and his honest admission that he gets
-              twitchy when the room moves on made my concern feel worthwhile.
-            source: direct
-            source_id: null
-            emotional_weight: 6
-            tags:
-            - bromance
-            - supportive
-            - sincere
-            - trust_built
-            - felt_seen
-            durable: true
-          - holder_id: jordan
-            subject_id: player
-            content: I’ll remember that the player noticed my emergency grin and asked whether I was really
-              holding up, which felt properly decent and reassuring.
-            source: direct
-            source_id: null
-            emotional_weight: 6
-            tags:
-            - bromance
-            - supportive
-            - sincere
-            - felt_seen
-            durable: true
-          - holder_id: chloe
-            subject_id: jordan
-            content: I saw Jordan’s laugh soften after the player checked in, and the two of them seemed genuinely
-              comfortable in that supportive moment.
-            source: witnessed
-            source_id: null
-            emotional_weight: 4
-            tags:
-            - witnessed
-            - saw_them_close
-            - bromance
-            - supportive
-            durable: true
-          summary: The player checked in with Jordan beneath Jordan’s usual joking exterior, asking whether
-            he was actually holding up. Jordan admitted that he gets twitchy when the room moves on without
-            him, but appreciated that the player had noticed and asked. The exchange stayed warm and sincere,
-            strengthening their easy bromance.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: move-kitchen
     arrange_npc_locations:
@@ -298,7 +196,6 @@ turns:
       kind: move
       target_id: kitchen
     golden:
-      criteria: The player walks into the kitchen; Maya and Marcus are now in earshot.
       calls: []
     checks:
       - location_is:kitchen
@@ -312,44 +209,37 @@ turns:
       target_id: maya
       intent_id: flirty_compliment_looks
     golden:
-      criteria: 'An unsubtle compliment lands in a kitchen full of light. Maya is the bright anxious joker
-        — she takes the flirt with a grin, deflects with a joke, and then lets a real flicker of interest
-        show. Imagine: "Wait, are we doing this in front of the toaster? Bold. ...Say that again, slower."
-        The menu should keep the charge alive through teasing, curiosity, or escalation, plus one exit.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You look dangerously good for someone surrounded by late-night snacks. I’m starting
-            to think the kitchen is only here to make you look even better.
-          npc_dialogue: '*Maya glances down at herself, then gives you an approving little smirk.* Careful,
-            mate—keep talking like that and I’ll assume you’ve got excellent taste. Still, you’re looking
-            pretty sharp yourself, which is deeply inconvenient for my breakfast plans.'
+          player_dialogue: You look annoyingly good for this early.
+          npc_dialogue: I know. Nice of you to catch up.
           npc_tone: flirty
           npc_mood_after: flirty
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask when she drops the joke
-            category: deep
-            intent_kind: ask_about_topic
-            stat_used: eq
-            risk: low
-            tone: curious
+          - label: Ask for her secret
+            category: flirty
+            intent_kind: honest_vulnerable
+            stat_used: charm
+            risk: medium
+            tone: direct
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: off_camera_maya
+            reveal_tag: null
             unlock_threshold: null
-          - label: Notice her beyond comedy
-            category: supportive
-            intent_kind: supportive_validate
-            stat_used: eq
+          - label: Blame the early hour
+            category: banter
+            intent_kind: joke_back
+            stat_used: banter
             risk: safe
-            tone: warm
+            tone: playful
             audience_hint: +
             reveal_tier: 0
-            reveal_tag: seen_beyond_the_jokes
+            reveal_tag: null
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -357,45 +247,8 @@ turns:
   - id: close-maya
     action: *end_action
     golden:
-      criteria: Memories should reflect a flirty kitchen beat, not a generic chat — Maya remembers being looked
-        at, the player remembers the line that worked.
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: maya
-            content: I told Maya she looked dangerously good among the late-night snacks, and her approving
-              smirk plus compliment about me looking sharp made the flirting feel wonderfully inconvenient.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - flirty
-            - joke_that_landed
-            - she_seemed_warm
-            - felt_seen
-            durable: true
-          - holder_id: maya
-            subject_id: player
-            content: I liked how the player called me dangerously good, and I couldn't resist teasing the
-              player that the compliment showed excellent taste before admitting the player looked sharp too.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - flirty
-            - joke_that_landed
-            - she_seemed_warm
-            - uncertain
-            durable: true
-          summary: The player opened with a bold compliment about Maya looking dangerously good amid the late-night
-            snacks. Maya answered with an approving smirk, teasing that the player must have excellent taste,
-            then returned the compliment by calling the player sharp. The exchange stayed light and flirty,
-            with the mutual attraction feeling pleasantly inconvenient.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: chat-marcus
     arrange_player_location: kitchen
@@ -406,36 +259,29 @@ turns:
       target_id: marcus
       intent_id: bromance_rib
     golden:
-      criteria: 'A light ribbing between two guys. Marcus is the confident heartthrob — he takes the joke
-        without bristling and fires one back drier. A specific hook into something he cares about is welcome,
-        but the opening beat does not need to force vulnerability. Imagine: "You think I don''t see it? I
-        see it. Try harder, mate."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You’ve been here five minutes and already look ready to run the whole resort. Should
-            we start calling you coach, or is that too generous?
-          npc_dialogue: '*laughs and shakes his head* Careful, mate—my four-year-old nephew gives better orders
-            than you do. But I’ll take coach over “the bloke who fixes everyone’s mess,” so you’re learning
-            quickly.'
+          player_dialogue: Are you actually cooking or just taking charge?
+          npc_dialogue: Somebody has to. You want eggs or commentary?
           npc_tone: playful
           npc_mood_after: happy
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask about his nephew’s wisdom
-            category: bromance
+          - label: Ask for eggs
+            category: friendly
             intent_kind: ask_about_topic
             stat_used: eq
             risk: low
             tone: warmly curious
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: nephew
+            reveal_tag: fixer_reputation
             unlock_threshold: null
-          - label: Challenge his fixer reputation
+          - label: Challenge his cooking
             category: banter
             intent_kind: defend_self
             stat_used: banter
@@ -451,45 +297,8 @@ turns:
   - id: close-marcus
     action: *end_action
     golden:
-      criteria: Memories capture the specific counter-joke or truth beneath Marcus's swagger rather than reducing
-        it to a generic friendly chat.
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: marcus
-            content: I teased Marcus about looking ready to run the whole resort, and his joke about fixing
-              everyone’s mess made the roast feel like the start of an easy friendship.
-            source: direct
-            source_id: null
-            emotional_weight: 4
-            tags:
-            - bromance
-            - funny
-            - friendly_roast
-            - trust_built
-            durable: true
-          - holder_id: marcus
-            subject_id: player
-            content: I laughed when the player called me coach, then shot back that the player gives worse
-              orders than my four-year-old nephew; the player seems easy to banter with.
-            source: direct
-            source_id: null
-            emotional_weight: 4
-            tags:
-            - bromance
-            - funny
-            - friendly_roast
-            - joke_that_landed
-            durable: true
-          summary: The player opened with a playful roast about Marcus looking ready to run the resort. Marcus
-            laughed and fired back that even his four-year-old nephew gives better orders, while joking that
-            he would rather be called coach than the person who fixes everyone’s mess. The exchange stayed
-            light and established an easy bantering dynamic between them.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: move-terrace
     arrange_npc_locations:
@@ -499,7 +308,6 @@ turns:
       kind: move
       target_id: terrace
     golden:
-      criteria: The player walks to the terrace; Liam and Nia are now in earshot.
       calls: []
     checks:
       - location_is:terrace
@@ -513,36 +321,29 @@ turns:
       target_id: liam
       intent_id: deep_ask_life
     golden:
-      criteria: 'A real conversation on the terrace. Liam is the grounded sweetheart — he answers the deeper
-        question honestly, doesn''t perform, and turns the question back in a way that respects the player.
-        Imagine: "I think about it more than I''d admit. Teaching is small. I want it to mean more. ...what
-        about you, why are you really here?"'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: What was life like for you back home, before all this? I’d like to know what shaped
-            you when nobody was watching.
-          npc_dialogue: Back home in Cardiff, I was usually helping Dad restore old houses—dust everywhere,
-            terrible tea, and him pretending not to notice when I got it wrong. I still send half my spare
-            money home, so I suppose I never completely left that life behind.
-          npc_tone: vulnerable
+          player_dialogue: What do you do back home?
+          npc_dialogue: I'm a paramedic in Galway. The shifts are long, but I like knowing where I'm useful.
+          npc_tone: warm
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask what sending money costs
+          - label: Ask about the night shifts
             category: deep
             intent_kind: honest_vulnerable
             stat_used: eq
             risk: medium
             tone: gentle, attentive
             audience_hint: +
-            reveal_tier: 2
-            reveal_tag: family sacrifice
+            reveal_tier: 1
+            reveal_tag: paramedic_work
             unlock_threshold: null
-          - label: Ask what he wants to build
+          - label: Ask why he chose it
             category: supportive
             intent_kind: ask_about_topic
             stat_used: loyalty
@@ -558,58 +359,8 @@ turns:
   - id: close-liam
     action: *end_action
     golden:
-      criteria: Memories should capture a chunk of substance — the actual thing Liam said about meaning, not
-        "we talked on the terrace".
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: liam
-            content: I was struck by how openly Liam described restoring old houses with his dad in Cardiff,
-              especially when he admitted he still sends half his spare money home.
-            source: direct
-            source_id: null
-            emotional_weight: 7
-            tags:
-            - vulnerable
-            - trust_built
-            - felt_seen
-            - deep
-            durable: true
-          - holder_id: liam
-            subject_id: player
-            content: I appreciated that the player asked what shaped me before all this, because it made talking
-              about Dad, the old houses, and the life I still support back home feel safe.
-            source: direct
-            source_id: null
-            emotional_weight: 7
-            tags:
-            - vulnerable
-            - trust_built
-            - felt_seen
-            - deep
-            durable: true
-          - holder_id: nia
-            subject_id: liam
-            content: I saw Liam let the player into a vulnerable story about restoring old houses with his
-              dad and still sending money home.
-            source: witnessed
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - witnessed
-            - saw_them_close
-            - vulnerable
-            - gossip
-            durable: true
-          summary: The player asked Liam what had shaped him before arriving at the resort. Liam opened up
-            about restoring old houses with his dad in Cardiff, the dusty work and terrible tea, and still
-            sending half his spare money home. The exchange took on a warm, vulnerable tone as the player
-            made space for Liam's past.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: chat-nia
     arrange_player_location: terrace
@@ -620,25 +371,19 @@ turns:
       target_id: nia
       intent_id: friendly_compliment_personality
     golden:
-      criteria: 'A genuine personality compliment, returned with grace. Nia is the observant warm friend —
-        she notices the compliment is real, smiles, and gives back a specific read of how the player treats
-        or affects her. Imagine: "That''s a kind thing to say. ...Can I tell you what I noticed about you,
-        actually?"'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You have a lovely way of making people feel noticed without making a fuss. It says
-            something really good about who you are.
-          npc_dialogue: That’s a beautiful thing to say, especially this early. *smiles down at her tea* Neonatal
-            nursing has made me watch for tiny changes in people, so I’m glad you noticed one in me.
+          player_dialogue: You're easy to talk to.
+          npc_dialogue: Give it time. Jordan's already tested that theory.
           npc_tone: warm
           npc_mood_after: happy
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask about tiny changes
+          - label: Ask about Jordan
             category: deep
             intent_kind: ask_about_topic
             stat_used: eq
@@ -646,7 +391,7 @@ turns:
             tone: warm
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: neonatal_nursing
+            reveal_tag: social_attention
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -654,55 +399,8 @@ turns:
   - id: close-nia
     action: *end_action
     golden:
-      criteria: Memories should capture Nia's specific read of the player, not a generic "we connected".
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: nia
-            content: I told Nia that her quiet way of making people feel noticed says something good about
-              who she is, and her sincere smile made the compliment feel like it landed.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - warm
-            - sincere
-            - felt_seen
-            - trust_built
-            durable: true
-          - holder_id: nia
-            subject_id: player
-            content: I was touched that the player noticed how I make people feel seen, and I shared that
-              neonatal nursing has taught me to watch for tiny changes in people.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - warm
-            - sincere
-            - felt_seen
-            - trust_built
-            durable: true
-          - holder_id: liam
-            subject_id: nia
-            content: I saw Nia respond warmly to the player's thoughtful compliment, with the conversation
-              carrying an easy sincerity between them.
-            source: witnessed
-            source_id: null
-            emotional_weight: 3
-            tags:
-            - warm
-            - sincere
-            - saw_them_close
-            durable: true
-          summary: The player offered Nia a thoughtful compliment about her ability to make people feel noticed.
-            Nia received it warmly and explained that neonatal nursing had taught her to watch for tiny changes
-            in people, leaving the exchange sincere and gently connective.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: move-bedroom
     arrange_npc_locations:
@@ -712,7 +410,6 @@ turns:
       kind: move
       target_id: bedroom
     golden:
-      criteria: The player walks into the bedroom; Sophie and Blake are visible.
       calls: []
     checks:
       - location_is:bedroom
@@ -726,25 +423,19 @@ turns:
       target_id: sophie
       intent_id: banter_playful_roast
     golden:
-      criteria: 'Playful social sparring in the bedroom doorway. Sophie is the polished joker — she takes
-        the roast like it''s a serve, returns it sharper, and leaves the door open just enough that the player
-        wants to come back. Imagine: "Cute. Six out of ten for setup, four for delivery. ...try me again later
-        when you''ve had time to think."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You have the courtroom stare down perfectly, Sophie. Should I confess now, or do
-            you need to establish motive before breakfast?
-          npc_dialogue: Confess to trying to make me laugh? Weak evidence, but compelling intent. Careful,
-            though—I’m a Bristol barrister, not a charity case, and that grin won’t carry your entire defence.
+          player_dialogue: You look like you're taking notes on everyone.
+          npc_dialogue: Mentally. You're currently under "interrupts people who are concentrating."
           npc_tone: playful
           npc_mood_after: happy
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask what earns her trust
+          - label: Ask for the full note
             category: deep
             intent_kind: ask_about_topic
             stat_used: eq
@@ -754,7 +445,7 @@ turns:
             reveal_tier: 1
             reveal_tag: trust_standards
             unlock_threshold: null
-          - label: Validate her evidence-first standards
+          - label: Defend the interruption
             category: supportive
             intent_kind: supportive_validate
             stat_used: eq
@@ -770,57 +461,8 @@ turns:
   - id: close-sophie
     action: *end_action
     golden:
-      criteria: Memories should capture the specific bit of the roast that landed — the line, not a vague
-        "we joked around".
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: sophie
-            content: I opened by teasing Sophie about her courtroom stare, and her sharp Bristol barrister
-              comeback made the flirtatious banter feel like a challenge worth taking.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - funny
-            - edgy
-            - flirty
-            - joke_that_landed
-            durable: true
-          - holder_id: sophie
-            subject_id: player
-            content: I liked that the player tried to make me laugh with the courtroom joke, but I made sure
-              the player knew a grin would not carry the whole defence.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - funny
-            - edgy
-            - flirty
-            - uncertain
-            durable: true
-          - holder_id: blake
-            subject_id: sophie
-            content: I saw Sophie and the player trading sharp smiles and courtroom-style jabs, with Sophie
-              keeping the upper hand in the playful exchange.
-            source: witnessed
-            source_id: null
-            emotional_weight: 3
-            tags:
-            - funny
-            - edgy
-            - saw_them_close
-            durable: true
-          summary: The player opened with a playful courtroom roast about Sophie’s stare and asked whether
-            a confession was already in order. Sophie fired back that the player’s intent to make her laugh
-            was compelling but warned that a grin would not carry the whole defence, keeping the exchange
-            sharp and flirtatious.
-          gossip_seeds: []
+      - *first_chat_curator_target
     checks: *close_checks
   - id: chat-blake
     arrange_player_location: bedroom
@@ -831,26 +473,19 @@ turns:
       target_id: blake
       intent_id: bromance_share_strategy
     golden:
-      criteria: 'A quiet read-the-room conversation. Blake is the dry observer — he gives a real strategic
-        take in fewer words than expected, drops one sharp read of another Heartbreaker, and stops short of
-        gossip. Imagine: "I''m watching Maya. Not for me, but she''s the one to read this week. You should
-        be watching her too."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: Be honest—who are you watching in here? I’m not asking for a love story, mate;
-            I want to know who’s actually worth keeping close.
-          npc_dialogue: Sophie, probably. She listens before she speaks, and she hasn’t been scrambling for
-            attention, which usually means she’s either smart or terrifying—possibly both. I’d like to see
-            whether she’s building something real before I put my weight behind her.
+          player_dialogue: Who are you watching?
+          npc_dialogue: Anyone trying too hard. So most of them.
           npc_tone: amused
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask what “real” means to Blake
+          - label: Ask who stands out
             category: deep
             intent_kind: go_deeper
             stat_used: eq
@@ -858,14 +493,14 @@ turns:
             tone: curious
             audience_hint: +
             reveal_tier: 2
-            reveal_tag: blake_definition_of_real
+            reveal_tag: strategic_read
             unlock_threshold: null
-          - label: Back his Sophie read
-            category: supportive
-            intent_kind: supportive_validate
-            stat_used: loyalty
+          - label: Call him a hypocrite
+            category: banter
+            intent_kind: defend_self
+            stat_used: banter
             risk: low
-            tone: warm
+            tone: skeptical
             audience_hint: +
             reveal_tier: 0
             reveal_tag: null
@@ -876,74 +511,6 @@ turns:
   - id: close-blake
     action: *end_action
     golden:
-      criteria: Memories should capture Blake's specific read — naming the Heartbreaker he flagged, not "Blake
-        had thoughts".
       calls:
-      - agent: conversation_curator
-        output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: blake
-            content: I liked that Blake answered my blunt question seriously, naming Sophie as someone he
-              is watching while joking that she might be smart or terrifying; it felt like useful trust between
-              mates.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - bromance
-            - strategy
-            - trust_built
-            - talked_about_sophie
-            - gossip
-            durable: true
-          - holder_id: blake
-            subject_id: sophie
-            content: I told the player that Sophie is the one I am watching because she listens before she
-              speaks and does not scramble for attention, and I want to know whether she is building something
-              real before I back her.
-            source: direct
-            source_id: null
-            emotional_weight: 5
-            tags:
-            - strategy
-            - alliance
-            - talked_about_sophie
-            - gossip
-            - uncertain
-            durable: true
-          - holder_id: sophie
-            subject_id: blake
-            content: I could see Blake and the player sharing an amused, focused conversation that seemed
-              more like alliance-building than flirting.
-            source: witnessed
-            source_id: null
-            emotional_weight: 3
-            tags:
-            - witnessed
-            - saw_them_close
-            - bromance
-            - strategy
-            durable: true
-          summary: The player asked Blake directly who he was watching in the resort, framing it as a strategy
-            question rather than a search for romance. Blake said Sophie stood out because she listened before
-            speaking and avoided scrambling for attention, though he was still deciding whether she was building
-            something real before backing her. The exchange stayed amused and strengthened the sense of a
-            budding strategic friendship between the player and Blake.
-          gossip_seeds:
-          - subject_id: sophie
-            gist: Blake is watching Sophie closely because he thinks her quiet, non-attention-seeking style
-              could mean she is either smart or terrifying.
-            holder_id: player
-            spreadable_to:
-            - sophie
-            - marcus
-            - jordan
-            emotional_weight: 5
-            tags:
-            - strategy
-            - alliance
-            - gossip
+      - *first_chat_curator_target
     checks: *close_checks
