@@ -1,7 +1,7 @@
 name: character-creation
 seed: 11
 initial_phase: morning
-expected_hash: 3b90eaf870ac3fe96c0a551a46ee9bbf655008a52e4387e899d88e3097da9ba9
+expected_hash: ed2440a16ba02469552ff39821ca004a332df7880ab82b9cbb654c646287bce7
 actions:
 - kind: create_character
   payload:

@@ -21,4 +21,4 @@ initial_couples:
   formed_on_day: 3
 actions:
 - kind: private_suite
-expected_hash: 556448556852854cc5002a6b4ff52c24eb5641b21b2d45cba37a0566b4b9b514
+expected_hash: 5b9a42b1c2532e8432fa252e9c645e06366fb022fadcbcdd9a4db416b900f868

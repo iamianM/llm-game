@@ -13,7 +13,7 @@ from src.game.engine.actions import ActionKind, ActionSpec, PlayerAction, availa
 from src.game.engine.intents import available_intents_for
 from src.game.engine.rules import MechanicalResult
 from src.game.engine.turn import run_turn
-from src.game.state.models import FollowUpMenu, GameState, PlayerStats, new_game
+from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, PlayerStats, new_game
 from src.game.state.rng import SeededRng
 
 MAX_BALANCE_TURNS = 120
@@ -107,7 +107,7 @@ def _balance_contextual_options(seed: int) -> TurnContextualOptionsFn:
         _result: MechanicalResult,
         _exchange: Exchange,
         probability: int,
-        _already_present: list[str],
+        _already_present: list[FollowUpOption],
     ) -> FollowUpMenu:
         nonlocal counter
         intent_kind = FOLLOW_UP_INTENTS[(seed + counter) % len(FOLLOW_UP_INTENTS)]

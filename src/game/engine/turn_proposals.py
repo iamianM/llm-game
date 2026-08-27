@@ -45,7 +45,7 @@ def close_proposal_conversation(
         return []
     proposal = ProposalOutcome.model_validate(result.proposal_outcome)
     batches: list[MemoryBatch] = []
-    if state.active_conversation is not None:
+    if state.active_conversation is not None and state.active_conversation.exchanges:
         batches.append(curate_player_conversation(state, state.active_conversation, curator))
     batch = proposal_memory_batch(state, proposal)
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)

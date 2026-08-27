@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: ignore_preserves_original_conversation
       criteria: >
-        Across the complete scenario, ignoring Liam remains engine-owned, clears the pending
-        interruption, keeps the original Chloe conversation active, applies the harsher recorded
-        relationship consequence, and moves Liam away without inventing narrative output.
+        The turn must remain engine-only. It clears Liam's interruption, leaves Chloe as the active
+        conversation, costs Liam exactly 4 affection, and records his forced move away from the pool.
+        Any dialogue, narration, memory, menu, or invented reaction fails the beat.
 seed: 1921
 initial_location: pool
 live_resort_life: false
@@ -56,9 +56,6 @@ turns:
       target_id: liam
       intent_id: ignore_interruption
     golden:
-      criteria: The engine keeps Chloe as the active conversation, clears Liam's pending interruption, records
-        the harsher relationship penalty, and moves Liam away from the pool. No LLM response is expected on
-        this engine-only turn.
       calls: []
     checks:
       - interruption_cleared

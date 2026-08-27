@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: private_suite_foregrounded
       criteria: >
-        The Private Suite remains the dominant, genuinely private beat between only the player
-        and Chloe. A later gather or ceremony must not crowd it out, appear first, or place a
-        third Heartbreaker inside the suite.
+        The Private Suite remains a private beat between only the player and Chloe. The narration
+        must preserve the recorded night spent talking together without inventing a confession,
+        physical intimacy, or another contestant.
 seed: 2020
 initial_day: 5
 initial_phase: evening
@@ -47,17 +47,11 @@ turns:
     action:
       kind: private_suite
     golden:
-      criteria: 'The player and Chloe leave the flame_deck and the suite door closes. The narration should
-        hold on the privacy of it: softer light, fewer cameras, the cast pretending not to listen. Imagine:
-        "He follows her into the suite without saying a word. Outside, the rest of the cast is loud on purpose
-        to give them the room." No other Heartbreaker is named inside the suite.'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: You and Chloe slip away from Sunset Bay’s noise and into a private Paradise Suite night,
-            with the door closing on the rest of the resort. Chloe’s gaze stays on you as your hands find
-            each other, and for one quiet beat, the two of you hold the warmth of being alone together.
+          prose: You and Chloe leave the group and spend the night talking together in the Paradise Suite.
     checks:
       - private_suite_consumed:chloe
       - location_is:private_suite

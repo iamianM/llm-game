@@ -329,6 +329,8 @@ def test_couples_quiz_block_never_leaks_partner_guess_codes() -> None:
     # Display labels are present and quotable.
     assert "audience cool on them" in block
     assert "audience favourite" in block
+    assert "Chloe wrote 'audience cool on them' about you" in block
+    assert "your recorded truth is 'audience favourite'" in block
     # Raw enum codes paired against a key ("low" for perception) were the leak —
     # the value column must now carry the label, never the bare code.
     assert ": low" not in block
@@ -424,7 +426,7 @@ def test_event_narrator_context_names_player_couple() -> None:
     assert "(Chloe)" not in rendered
 
 
-def test_opening_pairing_context_requires_wider_cast_reaction() -> None:
+def test_opening_pairing_context_centers_the_selected_partner() -> None:
     state = new_game(1)
 
     rendered = _render_context(
@@ -439,7 +441,8 @@ def test_opening_pairing_context_requires_wider_cast_reaction() -> None:
     )
 
     assert "full active cast is present" in rendered
-    assert "reaction from someone beyond the newly formed player couple" in rendered
+    assert "selected partner must perform one restrained visible response" in rendered
+    assert "Do not add a reaction from another cast member" in rendered
 
 
 def test_flush_arrival_context_keeps_original_partner_at_sunset_bay() -> None:
@@ -526,6 +529,29 @@ def test_event_producers_emit_display_safe_messages() -> None:
     assert "blake" not in event.message
     assert "Blake" in event.message
     assert "Demo" in event.message
+
+
+def test_validate_event_narration_accepts_passive_npc_proposal_direction() -> None:
+    state = new_game(1)
+
+    validate_event_narration(
+        EventNarration(
+            prose=(
+                "The Flame Deck goes quiet as Maya's proposal to you is accepted. "
+                "You and Maya are now coupled together."
+            )
+        ),
+        [
+            CeremonyEvent(
+                kind="npc_proposal_response",
+                sub_kind="accepted",
+                message="Pairing proposal accepted: Maya asked you.",
+                heartbreaker_id="maya",
+                participant_ids=["maya", "player"],
+            )
+        ],
+        state,
+    )
 
 
 def test_event_narrator_context_supplies_cast_pronouns() -> None:

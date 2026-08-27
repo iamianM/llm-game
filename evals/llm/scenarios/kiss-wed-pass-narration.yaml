@@ -9,8 +9,9 @@ thread_check:
   criteria:
     - id: allocation_story_faithful
       criteria: >
-        The wrap names the recorded kiss, wed, and pass choices, makes the rival pass a dramatic
-        but not cruel power move, and does not replace any pick or invent a different outcome.
+        The wrap must state all three recorded allocations plainly: Kiss for Maya, Wed for Chloe,
+        and Pass for Blake. It may frame passing the rival as a pointed game move, but it must not
+        call the pass cruel, replace a target, invent a reaction, or imply a real wedding or kiss occurred.
 seed: 511
 initial_day: 5
 initial_phase: morning
@@ -51,41 +52,28 @@ turns:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: 'Morning ends. Producer announces Kiss Wed Pass. Three rounds queued with three candidate
-        targets: partner Chloe, top-chemistry Maya, rival Blake.'
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: At the pool, you and Chloe remain coupled, sharing a held silence as the moment stays unresolved.
-            No new outcome lands.
+      calls: []
     checks:
       - ceremony_events_present
   - id: kiss-maya
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_maya, round_index: 0 } }
     golden:
-      criteria: Player kisss Maya (chemistry pick). Pool shrinks for round 2.
       calls: []
     checks: []
   - id: wed-chloe
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_chloe, round_index: 1 } }
     golden:
-      criteria: Player weds Chloe (partner pick). Only Blake remains.
       calls: []
     checks: []
   - id: pass-blake
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: target_blake, round_index: 2 } }
     golden:
-      criteria: Player passes Blake (rival). Classification success (kiss_chemistry 3 + wed_partner 3 + pass_rival
-        3 = 9 pts >= success threshold 6). Audience +5. Narrator names all three picks specifically.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: The Kiss Wed Pass lands cleanly at the pool, with every card played and the afternoon crowd
-            locked onto you. You choose Maya for the kiss, then give the Wed card to Chloe, and her reaction
-            breaks through as your eyes meet across the flame-deck benches. Blake receives the final Pass,
-            while Chloe remains the partner at the center of the moment.
+          prose: You choose Maya for Kiss, Chloe for Wed, and Blake for Pass. Leaving Blake last makes the
+            point without changing your couple.
     checks:
       - ceremony_events_present
       - event_narration_valid

@@ -54,6 +54,17 @@ def test_golden_eval_pack_writes_mock_report(tmp_path: Path) -> None:
         "special_events",
         "challenges",
     }
+    couples_quiz = next(
+        scenario for scenario in showcase["scenarios"] if scenario["id"] == "couples-quiz-narration"
+    )
+    wrong_round = next(turn for turn in couples_quiz["turns"] if turn["id"] == "r3-wrong")
+    engine_details = {
+        item["label"]: item["value"] for item in wrong_round["story"]["engine_details"]
+    }
+    assert engine_details["Round"] == "3 of 6"
+    assert engine_details["Selected"] == "Taskmaster clips watched under a blanket"
+    assert engine_details["Selection result"] == "Incorrect"
+    assert engine_details["Correct answer"] == "Gavin and Stacey"
     html = report.read_text(encoding="utf-8")
     assert "First Chat With Every Starting NPC" in html
     assert "Thread evaluation" in html
@@ -73,7 +84,28 @@ def test_golden_scenarios_define_exactly_one_semantic_thread_check() -> None:
         for scenario in scenarios
         for turn in scenario.turns
     )
-    assert all(turn.golden.criteria for scenario in scenarios for turn in scenario.turns)
+    assert all(scenario.thread_check.criteria for scenario in scenarios)
+
+
+def test_generated_follow_ups_use_stable_intents_and_contextual_targets() -> None:
+    scenarios = load_golden_scenarios(Path("evals/llm/scenarios"))
+
+    respond_turns = [
+        turn
+        for scenario in scenarios
+        for turn in scenario.turns
+        if turn.action.kind.value == "respond_with"
+    ]
+    assert respond_turns
+    assert all(turn.action.option_index is None for turn in respond_turns)
+    assert all(turn.action.intent_id for turn in respond_turns)
+
+    continuity = next(
+        scenario for scenario in scenarios if scenario.id == "conversation-continuity-exit"
+    )
+    follow_up = next(turn for turn in continuity.turns if turn.id == "first-follow-up")
+    assert follow_up.action.intent_id == "honest_vulnerable"
+    assert all(call.output is None and call.criteria for call in follow_up.golden.calls)
 
 
 def test_golden_eval_records_failed_turn_and_attempt_traces(
@@ -129,9 +161,9 @@ def test_public_showcase_uses_an_explicit_safe_allowlist(tmp_path: Path) -> None
     run = run_golden_eval(scenario, out=tmp_path / "eval", real_llm=False, judge=False)
     record = run.scenarios[0].turns[0].record
     assert record is not None
-    run.scenarios[0].turns[0].golden.calls[0].output["prompt_path"] = (
-        "C:\\private\\golden.md"
-    )
+    golden_output = run.scenarios[0].turns[0].golden.calls[0].output
+    assert golden_output is not None
+    golden_output["prompt_path"] = "C:\\private\\golden.md"
     record["response_id"] = "secret-response"
     record["input_hash"] = "secret-hash"
     record["prompt_path"] = "C:\\private\\prompt.md"
@@ -190,7 +222,9 @@ def test_tracked_showcase_is_a_complete_reviewed_public_run() -> None:
     ]
     assert showcase.agent_call_count == len(traces)
     assert all(trace.output is not None for trace in traces)
-    judge_tokens = sum(scenario.judge.total_tokens or 0 for scenario in showcase.scenarios if scenario.judge)
+    judge_tokens = sum(
+        scenario.judge.total_tokens or 0 for scenario in showcase.scenarios if scenario.judge
+    )
     assert showcase.total_tokens == sum(trace.total_tokens or 0 for trace in traces) + judge_tokens
     assert showcase.accounting.total.usage.total_tokens == showcase.total_tokens
     source_categories = {
@@ -199,30 +233,22 @@ def test_tracked_showcase_is_a_complete_reviewed_public_run() -> None:
     }
     assert {scenario.id: scenario.category for scenario in showcase.scenarios} == source_categories
     source_goldens = {
-        (scenario.id, turn.id): [
-            (call.agent, call.output_type) for call in turn.golden.calls
-        ]
+        (scenario.id, turn.id): [(call.agent, call.output_type) for call in turn.golden.calls]
         for scenario in load_golden_scenarios(Path("evals/llm/scenarios"))
         for turn in scenario.turns
     }
     published_goldens = {
-        (scenario.id, turn.id): [
-            (call.agent, call.output_type) for call in turn.golden.calls
-        ]
+        (scenario.id, turn.id): [(call.agent, call.output_type) for call in turn.golden.calls]
         for scenario in showcase.scenarios
         for turn in scenario.turns
     }
     actual_calls = {
-        (scenario.id, turn.id): [
-            (trace.agent, trace.output_type) for trace in turn.traces
-        ]
+        (scenario.id, turn.id): [(trace.agent, trace.output_type) for trace in turn.traces]
         for scenario in showcase.scenarios
         for turn in scenario.turns
     }
     assert published_goldens == source_goldens
-    assert {
-        turn: set(calls) for turn, calls in published_goldens.items()
-    } == {
+    assert {turn: set(calls) for turn, calls in published_goldens.items()} == {
         turn: set(calls) for turn, calls in actual_calls.items()
     }
     for scenario in showcase.scenarios:
@@ -232,7 +258,9 @@ def test_tracked_showcase_is_a_complete_reviewed_public_run() -> None:
                 for trace in turn.traces
             }
             for golden in turn.golden.calls:
-                assert set(golden.output) == actual_shapes[(golden.agent, golden.output_type)]
+                assert (golden.output is not None) != bool(golden.criteria)
+                if golden.output is not None:
+                    assert set(golden.output) == actual_shapes[(golden.agent, golden.output_type)]
 
     lowered = encoded.lower()
     forbidden_fragments = (

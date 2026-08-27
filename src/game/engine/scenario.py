@@ -33,6 +33,7 @@ from src.game.state.models import (
     CharacterCreation,
     Couple,
     FollowUpMenu,
+    FollowUpOption,
     GameState,
     Location,
     Phase,
@@ -165,7 +166,7 @@ def _scripted_contextual_options(
         _result: MechanicalResult,
         _exchange: Exchange,
         _probability: int,
-        _already_present: list[str],
+        _already_present: list[FollowUpOption],
     ) -> FollowUpMenu:
         nonlocal index
         intent_kind = planned[index] if index < len(planned) else None

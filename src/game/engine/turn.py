@@ -144,9 +144,25 @@ def _narrated_events(
     state: GameState,
     events: list[CeremonyEvent],
     event_narrator: EventNarratorFn,
-) -> EventNarration:
-    """Narrate ceremony events through the configured port."""
-    return event_narrator(state, events)
+) -> EventNarration | None:
+    """Narrate resolved player-facing events through the configured port."""
+    narratable = [event for event in events if _event_needs_narration(state, event)]
+    if not narratable:
+        return None
+    return event_narrator(state, narratable)
+
+
+def _event_needs_narration(state: GameState, event: CeremonyEvent) -> bool:
+    """Keep pending state transitions in deterministic UI copy."""
+    if event.kind == "gather_scheduled":
+        return False
+    if (
+        event.kind == "challenge"
+        and state.pending_challenge is not None
+        and state.pending_challenge.result is None
+    ):
+        return False
+    return True
 
 
 def run_turn(
@@ -350,8 +366,9 @@ def _execute_turn(
         active = state.active_conversation
         if active is None or result.action.target_id is None:
             raise ValueError("accept_interruption requires active conversation and target")
-        batch = curate_player_conversation(state, active, agents.conversation_curator)
-        curator_batches.append(batch)
+        if active.exchanges:
+            batch = curate_player_conversation(state, active, agents.conversation_curator)
+            curator_batches.append(batch)
         close_conversation(state, "player_exit")
         new_conversation = start_conversation(state, result.action.target_id, state.turn_index)
         exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
@@ -405,8 +422,9 @@ def _execute_turn(
             if active is None:
                 raise ValueError("RESPOND_WITH requires active conversation")
             conversation = active
-            conversation.pending_options = None
         exchange = _voiced_exchange(state, result, agents.heartbreaker_voice)
+        if action.kind is ActionKind.RESPOND_WITH:
+            conversation.pending_options = None
         append_exchange(conversation, result, exchange, turn_index=state.turn_index)
         bump_target_familiarity(state, conversation.target_id, 1)
         if _is_wheel_exit(result):
@@ -478,7 +496,7 @@ def _execute_turn(
                         kind="npc_proposal_incoming",
                         sub_kind="incoming",
                         message=(
-                            f"{display_name(state, incoming.proposer_id)} wants to ask "
+                            f"{display_name(state, incoming.proposer_id)} asks "
                             f"{player_display_name(state)} to pair."
                         ),
                         heartbreaker_id=incoming.proposer_id,

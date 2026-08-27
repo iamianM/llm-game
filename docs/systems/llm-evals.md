@@ -86,24 +86,25 @@ uv run python -m src.game.cli llm-eval \
 ```
 
 Live calls use role profiles in `src/game/agents/runtime.py`. Shipped defaults
-use `gpt-5.6-luna`: voice and multi-object resort orchestration at `medium`,
-creative narration and other structured utility work at `low`, and the thread
-judge at `medium` reasoning. The medium voice
-profile is an intentional adherence tradeoff: the launch-cast eval was stronger
-at the cost of roughly 1.5 seconds average latency per voice call. `LLM_GAME_MODEL`
-overrides the whole pack; `LLM_GAME_<ROLE>_MODEL` and
+  use `gpt-5.6-luna`: voice and structured option work at `low`, memory extraction,
+  creative narration, and multi-object resort orchestration at `medium`, and the thread
+judge at `high`. In the launch-cast A/B, low-reasoning voice was more concise,
+about 36% faster, and about 10% cheaper than medium. `LLM_GAME_MODEL`
+  overrides the whole pack; `LLM_GAME_<ROLE>_MODEL` and
 `LLM_GAME_<ROLE>_REASONING_EFFORT` isolate a voice, creative, utility,
-orchestrator, or judge experiment without changing prompts or game context.
+  memory, orchestrator, or judge experiment without changing prompts or game context.
 
 ### Hosted showcase
 
 The Vercel app exposes `/evals` as a portfolio-facing view of one curated real
-run. `/evals` gives the result and coverage. `/evals/scenarios/<id>` shows the
-authored expectation, actual output, and evaluation reasons together, with a
-separate run trace for call metadata. Both pages import the reviewed
-`web/data/evals/latest.json` artifact at build time. Each turn compares an
-ordered reviewed golden against the actual ordered agent results using the same
-agent, output-type, and output payload shape. The eval command does not
+run. `/evals` gives the result and coverage. `/evals/scenarios/<id>` keeps the
+engine result, reviewed target, ordered model calls, per-call usage, applied
+game results, and evaluation reasons in one turn view. Both pages import the reviewed
+`web/data/evals/latest.json` artifact at build time. A fixed-input call compares
+a reviewed output against the actual result. A call that consumes earlier model
+text shows contextual review criteria beside its actual output. Both forms lock
+the agent and output type. Engine-applied menus and state
+changes appear with the actual results that produced them. The eval command does not
 deploy a run. A reviewer promotes `showcase.json` into that tracked path, pushes
 the Git commit, and the Vercel Git integration builds the committed snapshot.
 The deployed page does not fetch GitHub data at runtime. General
@@ -139,12 +140,12 @@ report-rendering or judge failure therefore cannot erase the game evidence.
 
 The generated `index.html` is the primary artifact. It shows:
 
-- scenario goal, structured golden results, and comparison criteria;
+- scenario goal, fixed output references, and contextual review criteria;
 - mode, judge status, workers, turns, pass/fail totals, agent calls, latency
   percentiles, and tokens;
 - one whole-thread verdict, its rubric, and judge provenance before turn detail;
 - collapsed deterministic engine and schema checks, with failures expanded;
-- actual dialogue, narration, menus, memories, and engine results;
+- actual dialogue, narration, engine-applied menus, memories, and engine results;
 - agent traces and reasoning summaries; and
 - judge criteria, findings, and prompts when enabled.
 
@@ -182,8 +183,13 @@ a packet green.
 - Mechanical behavior must have deterministic tests before narrative evals.
 - Prefer structural turn checks to rubric criteria whenever the claim is
   machine-testable.
-- Goldens store reviewed agent results in the same shape as actual results.
-  Compare contract fields exactly and natural-language fields semantically.
+- A fixed-input golden stores a reviewed agent result in the same shape as the
+  actual result. Compare contract fields exactly and natural-language fields
+  semantically.
+- A golden for a call that consumes earlier model output stores contextual
+  criteria instead of an alternate transcript. Judge it against the ordered
+  actual thread.
+- Select generated conversation choices by `intent_id`, never `option_index`.
 - Update or delete a stale scenario in the same change that alters the game
   contract. Do not support old scenario shapes with compatibility code.
 - A passing mock pack proves harness and contract health, not live prose quality.

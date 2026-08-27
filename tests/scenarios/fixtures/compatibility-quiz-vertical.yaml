@@ -1,7 +1,7 @@
 name: compatibility-quiz-vertical
 seed: 21
 initial_phase: morning
-expected_hash: 25b232323477a47ea2791b9e410e6b685ca80f5ffa683610d10f6efc4feaffa0
+expected_hash: 40b82e949a25dd5eef7278b0c38bd1d3a3a8aac508fe18f2f387425d11e3f6b6
 actions:
 - kind: ambient
   target_id: ambient_wait

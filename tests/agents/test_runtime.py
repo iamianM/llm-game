@@ -5,8 +5,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from src.game.agents.runtime import (
+    CREATIVE_PROFILE,
     GAME_AGENT_MODEL,
     JUDGE_PROFILE,
+    MEMORY_PROFILE,
     ORCHESTRATOR_PROFILE,
     VOICE_PROFILE,
     AgentTrace,
@@ -46,10 +48,12 @@ def test_reasoning_request_kwargs_use_low_default_and_allow_role_effort() -> Non
     assert kwargs["include"] == ["reasoning.encrypted_content"]
     assert (
         reasoning_request_kwargs(effort=VOICE_PROFILE.reasoning_effort)["reasoning"]["effort"]
-        == "medium"
+        == "low"
     )
-    assert JUDGE_PROFILE.reasoning_effort == "medium"
+    assert JUDGE_PROFILE.reasoning_effort == "high"
     assert ORCHESTRATOR_PROFILE.reasoning_effort == "medium"
+    assert CREATIVE_PROFILE.reasoning_effort == "medium"
+    assert MEMORY_PROFILE.reasoning_effort == "medium"
 
 
 def test_extract_reasoning_summaries_reads_response_output_items() -> None:

@@ -53,13 +53,13 @@ class ShowcaseGoldenCall(BaseModel):
 
     agent: str
     output_type: str
-    output: dict[str, Any]
+    output: dict[str, Any] | None = None
+    criteria: list[str] = Field(default_factory=list)
 
 
 class ShowcaseGolden(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    criteria: str
     calls: list[ShowcaseGoldenCall] = Field(default_factory=list)
 
 
@@ -80,10 +80,18 @@ class ShowcaseChoice(BaseModel):
     risk: str
 
 
+class ShowcaseEngineDetail(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    label: str
+    value: str
+
+
 class ShowcaseStory(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     engine_result: str | None = None
+    engine_details: list[ShowcaseEngineDetail] = Field(default_factory=list)
     relationship_changes: list[str] = Field(default_factory=list)
     dialogue: ShowcaseDialogue | None = None
     narration: str | None = None
@@ -123,6 +131,7 @@ class ShowcaseJudge(BaseModel):
     cost: CostSummary | None = None
     reasoning_summaries: list[str] = Field(default_factory=list)
     criteria: list[str] = Field(default_factory=list)
+    criterion_findings: list[ShowcaseCheck] = Field(default_factory=list)
 
 
 class ShowcaseScenario(BaseModel):
@@ -149,7 +158,7 @@ class ShowcaseProvenance(BaseModel):
 class GoldenEvalShowcase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: Literal[3] = 3
+    schema_version: Literal[6] = 6
     llm_mode: Literal["mock", "real"]
     judge_enabled: bool
     passed: int
@@ -185,10 +194,14 @@ def _scenario(result: GoldenScenarioResult) -> ShowcaseScenario:
     judge = None
     if result.thread_check is not None:
         trace = result.judge_trace
-        cost = summarize_call(
-            trace.model if trace else None,
-            _judge_usage(trace),
-        ) if trace else None
+        cost = (
+            summarize_call(
+                trace.model if trace else None,
+                _judge_usage(trace),
+            )
+            if trace
+            else None
+        )
         judge = ShowcaseJudge(
             result=result.thread_check.result,
             reason=result.thread_check.reason,
@@ -206,6 +219,16 @@ def _scenario(result: GoldenScenarioResult) -> ShowcaseScenario:
             reasoning_summaries=trace.reasoning_summaries if trace else [],
             criteria=[
                 criterion.criteria.strip() for criterion in result.thread_expectation.criteria
+            ],
+            criterion_findings=[
+                ShowcaseCheck(
+                    id=finding.criterion_id,
+                    kind="judge",
+                    result=finding.result,
+                    reason=finding.reason,
+                    evidence=finding.evidence,
+                )
+                for finding in result.thread_check.criterion_findings
             ],
         )
     return ShowcaseScenario(
@@ -227,7 +250,6 @@ def _turn(turn: GoldenTurnResult) -> ShowcaseTurn:
         action=_action_label(turn.action),
         status=_turn_status(turn),
         golden=ShowcaseGolden(
-            criteria=turn.golden.criteria.strip(),
             calls=[_golden_call(call) for call in turn.golden.calls],
         ),
         story=_story(record),
@@ -240,7 +262,8 @@ def _golden_call(call: GoldenAgentResult) -> ShowcaseGoldenCall:
     return ShowcaseGoldenCall(
         agent=call.agent,
         output_type=call.output_type,
-        output=_public_output(call.output_type, call.output),
+        output=_public_output(call.output_type, call.output) if call.output is not None else None,
+        criteria=call.criteria,
     )
 
 
@@ -252,6 +275,7 @@ def _story(record: dict[str, Any]) -> ShowcaseStory:
     commits = record.get("agent_commits")
     return ShowcaseStory(
         engine_result=_engine_result(mechanical),
+        engine_details=_engine_details(record),
         relationship_changes=_relationship_changes(mechanical),
         dialogue=_dialogue(exchange),
         narration=str(narration.get("prose"))
@@ -276,6 +300,104 @@ def _engine_result(value: object) -> str | None:
     if isinstance(tags, list) and tags:
         bits.append("Tags: " + ", ".join(str(tag) for tag in tags))
     return " | ".join(bits)
+
+
+def _engine_details(record: dict[str, Any]) -> list[ShowcaseEngineDetail]:
+    mechanical = record.get("mechanical_result")
+    if not isinstance(mechanical, dict):
+        return []
+    details: list[ShowcaseEngineDetail] = []
+    action = mechanical.get("action")
+    if isinstance(action, dict) and action.get("kind") == "challenge_response":
+        details.extend(_challenge_details(action, record.get("challenge")))
+    private_chat = mechanical.get("private_chat_attempt")
+    if isinstance(private_chat, dict):
+        details.extend(
+            [
+                ShowcaseEngineDetail(
+                    label="Private chat chance", value=f"{private_chat.get('chance', 0)}%"
+                ),
+                ShowcaseEngineDetail(
+                    label="Private chat roll", value=str(private_chat.get("roll", "Not recorded"))
+                ),
+                ShowcaseEngineDetail(
+                    label="Private chat result",
+                    value="Accepted" if private_chat.get("success") else "Rejected",
+                ),
+            ]
+        )
+    proposal = mechanical.get("proposal_outcome")
+    if isinstance(proposal, dict):
+        details.extend(
+            ShowcaseEngineDetail(label=_label(str(key)), value=_display_value(value))
+            for key, value in proposal.items()
+        )
+    audience_delta = mechanical.get("audience_delta")
+    if isinstance(audience_delta, int) and audience_delta:
+        details.append(ShowcaseEngineDetail(label="Audience change", value=f"{audience_delta:+d}"))
+    for movement in _dict_list(mechanical.get("forced_movements")):
+        details.append(
+            ShowcaseEngineDetail(
+                label=f"{_label(str(movement.get('actor_id', 'NPC')))} movement",
+                value=f"{_label(str(movement.get('kind', 'moved')))} to {_label(str(movement.get('target_location', 'unknown')))}",
+            )
+        )
+    return details
+
+
+def _challenge_details(action: dict[str, Any], challenge: object) -> list[ShowcaseEngineDetail]:
+    if not isinstance(challenge, dict):
+        return []
+    payload = action.get("payload")
+    round_index = payload.get("round_index") if isinstance(payload, dict) else None
+    rounds = _dict_list(challenge.get("rounds"))
+    if not isinstance(round_index, int) or round_index < 0 or round_index >= len(rounds):
+        return []
+    round_record = rounds[round_index]
+    choices = _dict_list(round_record.get("choices"))
+    chosen_id = str(round_record.get("chosen_id", ""))
+    chosen = next((choice for choice in choices if str(choice.get("id")) == chosen_id), None)
+    correct = next((choice for choice in choices if choice.get("is_correct") is True), None)
+    details = [
+        ShowcaseEngineDetail(
+            label="Challenge", value=_label(str(challenge.get("kind", "challenge")))
+        ),
+        ShowcaseEngineDetail(label="Round", value=f"{round_index + 1} of {len(rounds)}"),
+        ShowcaseEngineDetail(label="Prompt", value=str(round_record.get("stem", "Not recorded"))),
+        ShowcaseEngineDetail(
+            label="Selected", value=str(chosen.get("label", chosen_id)) if chosen else chosen_id
+        ),
+        ShowcaseEngineDetail(
+            label="Selection result",
+            value="Correct" if chosen and chosen.get("is_correct") is True else "Incorrect",
+        ),
+    ]
+    if correct is not None and correct is not chosen:
+        details.append(
+            ShowcaseEngineDetail(label="Correct answer", value=str(correct.get("label", "")))
+        )
+    if challenge.get("classification"):
+        details.extend(
+            [
+                ShowcaseEngineDetail(
+                    label="Total score", value=str(challenge.get("total_points", 0))
+                ),
+                ShowcaseEngineDetail(
+                    label="Challenge result", value=_label(str(challenge["classification"]))
+                ),
+            ]
+        )
+    return details
+
+
+def _label(value: str) -> str:
+    return value.replace("_", " ").strip().title()
+
+
+def _display_value(value: object) -> str:
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
+    return _label(str(value))
 
 
 def _relationship_changes(value: object) -> list[str]:
@@ -403,7 +525,13 @@ _PUBLIC_OUTPUT_FIELDS: dict[str, tuple[str, ...]] = {
         "npc_interruptions",
         "npc_summoned_elsewhere",
     ),
-    "BackgroundExchange": ("speaker_a_line", "speaker_b_line", "tone"),
+    "BackgroundExchange": (
+        "speaker_a_id",
+        "speaker_b_id",
+        "speaker_a_line",
+        "speaker_b_line",
+        "tone",
+    ),
 }
 
 

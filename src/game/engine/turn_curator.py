@@ -27,7 +27,6 @@ def curate_player_conversation(
     bystander_ids = conversation_bystanders(state, conversation.target_id)
     batch = _curate(state, conversation, bystander_ids, curator)
     batch.kind = "player"
-    conversation.summary = batch.summary or None
     add_memory_batch(state, batch, day=state.day, turn=state.turn_index)
     propagate_gossip_seeds(state, batch.gossip_seeds, day=state.day, turn=state.turn_index)
     emit_revealed_facts(state, conversation)

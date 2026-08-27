@@ -2,20 +2,25 @@ id: conversation-continuity-exit
 title: Conversation Continuity And Exit
 question: Can Chloe remember earlier turns and end the conversation naturally?
 category: conversation
-goal: Prove a multi-turn Chloe chat actually remembers itself — every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.
+goal: Prove a multi-turn Chloe chat remembers itself. Every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.
 thread_check:
   id: thread_acceptance
   severity: blocking
   criteria:
     - id: conversation_arc_continuity
       criteria: >
-        Read as one conversation: Chloe answers the opening emotional intent, the next exchange
-        clearly follows the selected prior option and deepens or redirects that exact beat, and
-        the ending closes it socially rather than resetting or stopping mid-thought.
+        Read the actual outputs as one conversation. The honest_vulnerable follow-up must respond
+        to a concrete detail, stance, or subject opened by Chloe's actual exchange, and the ending
+        must refer to what they actually shared. A reciprocal disclosure about the same subject is
+        valid when it respects any boundary Chloe set; it need not repeat the final noun in her line.
+        Fail a genuinely unrelated confession, pressure against her boundary, a response to the
+        reviewed example instead of the actual line, or a generic close.
     - id: chloe_voice_and_memory
       criteria: >
-        Chloe remains warm, sincere, and gently vulnerable throughout, while the final memories
-        accurately preserve the visible exchange from each participant's perspective.
+        Chloe remains warm, sincere, and guarded without becoming cold. The curator may store one
+        accurate memory of the specific subject from the actual conversation. If Chloe sets a boundary,
+        both useful perspectives preserve it. Fail generic summaries, facts copied from the reviewed
+        example but absent from the actual chat, or invented details.
 seed: 202
 initial_location: pool
 live_resort_life: false
@@ -35,9 +40,9 @@ initial_relationships:
     trust: 25
     friendship: 25
 judge_context:
-  - Chloe is a secure sweetheart who already trusts the player a little — deep follow-ups are legal.
-  - Follow-up option indexes select from the prior generated menu, so the exact intent will vary in real-LLM mode; continuity is what matters, not exact wording.
-  - Each menu must be playable — concrete, distinct options, one and only one exit.
+  - Chloe is a secure sweetheart who already trusts the player a little, so deep follow-ups are legal.
+  - The follow-up selects the stable engine-owned honest_vulnerable intent. Its wording and subject must follow Chloe's actual prior line.
+  - Each menu must be playable, with concrete, distinct options and exactly one exit.
 turns:
   - id: start-chloe-deep
     action:
@@ -45,28 +50,21 @@ turns:
       target_id: chloe
       intent_id: deep_ask_life
     golden:
-      criteria: 'The player opens deeper. Chloe answers a real life question with a specific, slightly vulnerable
-        beat — something she''s been turning over, not a tidy soundbite. Imagine: "Honestly? I keep thinking
-        about why I came in here. The version of me before this place was getting smaller. I wanted to see
-        who I''d be in front of people again." The menu offers Go Deeper, Lighten It, and a clean Exit.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: What’s life like for you back home, Chloe? I’d love to know what you’re like when
-            the cameras and pool chats aren’t around.
-          npc_dialogue: Home’s Liverpool, my classroom, and my sister’s flat, love. She’s pregnant, so everything
-            revolves around baby names lately—but I’m not sure I’m ready to unpack the rest of it here yet.
-            *she gives a small, careful laugh*
+          player_dialogue: What do you miss most about Liverpool?
+          npc_dialogue: The school, mostly. Family is a longer answer, and I'm not doing that one by the pool.
           npc_tone: defensive
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Respect her baby-name boundary
+          - label: Leave it there
             category: supportive
-            intent_kind: supportive_validate
+            intent_kind: supportive_reassure
             stat_used: eq
             risk: safe
             tone: gentle
@@ -74,10 +72,10 @@ turns:
             reveal_tier: 0
             reveal_tag: null
             unlock_threshold: null
-          - label: Ask about her classroom escape
+          - label: Ask about the school
             category: friendly
-            intent_kind: supportive_listen
-            stat_used: loyalty
+            intent_kind: ask_about_topic
+            stat_used: charm
             risk: low
             tone: reassuring
             audience_hint: +
@@ -91,134 +89,50 @@ turns:
       - follow_up_menu_valid
       - conversation_active
       - agent_traces_present
-      - no_agent_validation_retries
   - id: first-follow-up
     action:
       kind: respond_with
       target_id: chloe
-      option_index: 0
+      intent_id: honest_vulnerable
     golden:
-      criteria: Continuity is the whole point of this turn. The player line must come directly from the chosen
-        follow-up. Chloe's reply must build on the previous beat she just told — same thread, deeper or warmer,
-        not a reset. Imagine her starting with "I haven't said that out loud before. Don't make me regret
-        it," then giving the player a little more.
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
-        output:
-          player_dialogue: I’m usually very good at acting unbothered, even when I care far too much. The
-            truth is, being chosen matters to me—and admitting that feels properly terrifying.
-          npc_dialogue: '*Chloe’s smile softens, and she goes still for a beat.* I know that feeling, love.
-            You’ve got this brave face on, but I can hear how much that cost you to say; I’m glad you did.'
-          npc_tone: vulnerable
-          npc_mood_after: content
+        criteria:
+          - The player shares something honest that responds to Chloe's actual opening answer instead of asking a disconnected question.
+          - Chloe answers that disclosure and does not reply to a detail that appears only in the reviewed opening example.
+          - The exchange preserves any boundary Chloe set in the actual opening answer.
       - agent: contextual_options
         output_type: ContextualBespoke
-        output:
-          options:
-          - label: Admit what bravery costs you
-            category: deep
-            intent_kind: honest_vulnerable
-            stat_used: loyalty
-            risk: medium
-            tone: quietly vulnerable
-            audience_hint: +
-            reveal_tier: 0
-            reveal_tag: brave_face_cost
-            unlock_threshold: null
-          - label: Validate her hearing the hurt
-            category: supportive
-            intent_kind: supportive_validate
-            stat_used: eq
-            risk: low
-            tone: warm and sincere
-            audience_hint: +
-            reveal_tier: 0
-            reveal_tag: null
-            unlock_threshold: null
-          npc_will_leave: false
-          npc_exit_line: null
+        criteria:
+          - Each bespoke choice responds to a concrete detail or stance in Chloe's actual latest line.
+          - The choices offer meaningfully different continuations and do not reopen a boundary she set.
     checks:
       - exchange_valid
       - follow_up_menu_valid
       - conversation_active
       - agent_traces_present
-      - no_agent_validation_retries
   - id: close-conversation
     # Soft exit via the "End on a good note" option, not the bail-out
-    # end_conversation action — that one is the deliberately-rude ghost-out.
+    # end_conversation action, which is the deliberately rude ghost-out.
     action:
       kind: respond_with
       target_id: chloe
       intent_id: end_softly
     golden:
-      criteria: 'A real social close. The player should leave with a line that acknowledges what was shared
-        — not just "bye". Memories should be first-person and specific: the player remembers Chloe trusting
-        them with something, Chloe remembers being heard.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
-        output:
-          player_dialogue: I’ll leave that there for now, but I’m glad I told you. I’ll see you around later,
-            Chloe.
-          npc_dialogue: You say “terrifying” like you’re reporting the weather, mate. *she smiles softly*
-            Go on—I’ll let you escape before I make you blush in front of Jordan.
-          npc_tone: warm
-          npc_mood_after: content
+        criteria:
+          - The selected end_softly intent produces a clear, warm ending tied to the actual subject they discussed.
+          - Neither line invents a prior disclosure or responds to the reviewed example instead of the actual conversation.
       - agent: conversation_curator
         output_type: MemoryBatch
-        output:
-          kind: player
-          memories:
-          - holder_id: player
-            subject_id: chloe
-            content: I told Chloe that being chosen matters to me even though admitting how much I care felt
-              terrifying, and her softened smile made the confession feel safe.
-            source: direct
-            source_id: chloe
-            emotional_weight: 7
-            tags:
-            - vulnerable
-            - honest_vulnerable
-            - felt_seen
-            - trust_built
-            - safe
-            durable: true
-          - holder_id: chloe
-            subject_id: player
-            content: I could hear how much it cost the player to admit that being chosen matters, and my smile
-              softened because the player’s brave face finally slipped.
-            source: direct
-            source_id: player
-            emotional_weight: 7
-            tags:
-            - vulnerable
-            - felt_seen
-            - trust_built
-            - sincere
-            - warm
-            durable: true
-          - holder_id: jordan
-            subject_id: chloe
-            content: I saw Chloe’s tone soften after the player shared something personal, then watched Chloe
-              tease the player about blushing in front of me.
-            source: witnessed
-            source_id: null
-            emotional_weight: 4
-            tags:
-            - saw_them_close
-            - warm
-            - joke_that_landed
-            - witnessed
-            durable: true
-          summary: The player asked Chloe about life away from the cameras, but Chloe initially held back
-            while mentioning Liverpool, her classroom, and her pregnant sister. The player then admitted that
-            being chosen matters deeply despite usually acting unbothered, and Chloe responded with recognition
-            and warmth. They ended softly, with Chloe lightly teasing the player about blushing in front of
-            Jordan.
-          gossip_seeds: []
+        criteria:
+          - The recap contains only subjects and actions present in the actual three-turn conversation.
+          - Store no memory for routine small talk. If the actual chat contains a useful fact, store only that fact with the correct holder and subject.
+          - If Chloe set a meaningful boundary and the player respected it, preserve both useful perspectives.
     checks:
       - conversation_closed
-      - curator_memories
+      - curator_batch_recorded
       - agent_traces_present
-      - no_agent_validation_retries

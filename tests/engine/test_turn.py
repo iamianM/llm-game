@@ -15,9 +15,10 @@ from src.game.agents.runtime import (
 )
 from src.game.agents.turn_agents import mock_turn_agents
 from src.game.engine.actions import ActionKind, PlayerAction
+from src.game.engine.ceremonies import CeremonyEvent
 from src.game.engine.memory import add_memory, create_memory
 from src.game.engine.rules import apply_action
-from src.game.engine.turn import run_turn
+from src.game.engine.turn import _narrated_events, run_turn
 from src.game.state.memory import RecapDisposition
 from src.game.state.models import (
     Location,
@@ -398,3 +399,18 @@ def test_walk_away_closes_conversation_and_applies_affection_penalty() -> None:
     assert calls == 1
     assert result.curator_batches
     assert result.curator_batches[0].kind == "player"
+
+
+def test_pending_gather_does_not_call_event_narrator() -> None:
+    state = new_game(1)
+
+    def narrator(*_args):
+        raise AssertionError("pending gathers use deterministic UI copy")
+
+    narration = _narrated_events(
+        state,
+        [CeremonyEvent(kind="gather_scheduled", message="Join the gather.")],
+        narrator,
+    )
+
+    assert narration is None

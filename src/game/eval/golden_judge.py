@@ -20,6 +20,7 @@ from src.game.agents.runtime import (
 from src.game.eval.golden_models import (
     GoldenCheckResult,
     GoldenEvalScenario,
+    JudgeCriterionFinding,
     JudgeTrace,
     ThreadCheckSpec,
 )
@@ -33,6 +34,7 @@ class JudgeReport(BaseModel):
     result: Literal["pass", "fail", "cannot_determine"]
     reason: str
     evidence: str | None = None
+    criterion_findings: list[JudgeCriterionFinding]
 
 
 def run_thread_check(
@@ -53,7 +55,11 @@ def run_thread_check(
     prompt_out.write_text(prompt, encoding="utf-8")
     client = build_game_client()
     started = perf_counter()
-    response, attempts, retry_errors = _request_judge_report(client, prompt)
+    response, attempts, retry_errors = _request_judge_report(
+        client,
+        prompt,
+        scenario.thread_check,
+    )
     report = response.output_parsed
     if report is None:
         result = GoldenCheckResult(
@@ -71,6 +77,7 @@ def run_thread_check(
             reason=report.reason,
             evidence=report.evidence,
             severity=scenario.thread_check.severity,
+            criterion_findings=report.criterion_findings,
         )
     return result, _judge_trace(
         response,
@@ -128,18 +135,36 @@ _RETRYABLE_JUDGE_ERRORS = (
 _JUDGE_ATTEMPTS = 3
 
 
-def _request_judge_report(client: Any, prompt: str) -> tuple[Any, int, list[str]]:
-    """Retry only transient judge failures without rerunning gameplay agents."""
+def _request_judge_report(
+    client: Any,
+    prompt: str,
+    check: ThreadCheckSpec,
+) -> tuple[Any, int, list[str]]:
+    """Retry transient or structured-output failures without rerunning gameplay."""
     retry_errors: list[str] = []
+    request_input = prompt
     for attempt in range(1, _JUDGE_ATTEMPTS + 1):
         try:
             response = client.responses.parse(
                 model=JUDGE_PROFILE.model,
                 instructions=JUDGE_INSTRUCTIONS,
-                input=prompt,
+                input=request_input,
                 text_format=JudgeReport,
                 **reasoning_request_kwargs(effort=JUDGE_PROFILE.reasoning_effort),
             )
+            report = response.output_parsed
+            if report is not None:
+                try:
+                    _validate_judge_report(report, check, json.loads(prompt))
+                except ValueError as exc:
+                    retry_errors.append(f"JudgeValidationError: {exc}")
+                    if attempt == _JUDGE_ATTEMPTS:
+                        raise
+                    request_input = (
+                        f"{prompt}\n\nYour previous report failed schema validation: {exc}. "
+                        "Return a corrected report using only the thread_check criteria."
+                    )
+                    continue
             return response, attempt, retry_errors
         except _RETRYABLE_JUDGE_ERRORS as exc:
             retry_errors.append(f"{type(exc).__name__}: {exc}")
@@ -150,17 +175,99 @@ def _request_judge_report(client: Any, prompt: str) -> tuple[Any, int, list[str]
 
 
 JUDGE_INSTRUCTIONS = (
-    "Review the complete dating-sim scenario as one thread. Judge continuity, voice, "
-    "specificity, and outcome faithfulness across turns rather than grading isolated lines. "
-    "Each golden contains reviewed agent results in the same shape as the actual calls plus semantic "
-    "criteria. Compare natural language by meaning, voice, and continuity rather than exact wording. "
-    "Compare agent identity, output type, and structured contract fields exactly. Engine fields inside each actual "
-    "record are deterministic ground truth for mechanics, participants, outcomes, and state. "
-    "Return pass for a reasonable semantic match, fail for a material mismatch visible in "
-    "the evidence, and cannot_determine only when the thread lacks the needed evidence. "
-    "Do not infer hidden state. Apply every supplied criterion, then return exactly one "
-    "holistic verdict for the scenario's thread_check."
+    "Audit the complete dating-sim scenario as one thread. Inspect every supplied criterion "
+    "against the ordered actions, deterministic engine record, reviewed targets, and actual "
+    "model calls. Engine fields are ground truth for participants, mechanics, outcomes, and state. "
+    "A reviewed target call contains either a fixed output reference or contextual criteria. Fixed "
+    "outputs apply when the call input does not depend on earlier generated prose. Contextual criteria "
+    "apply when a call consumes the actual preceding conversation. Judge those calls against the "
+    "criteria and the ordered actual thread, not against an alternate transcript. Compare fixed prose "
+    "by meaning, voice, continuity, and specificity, not exact wording. Compare agent "
+    "identity, output type, participant ids, and other structured contract fields exactly when the "
+    "rubric requires that match or one actual call consumes another. Treat reviewed natural-language "
+    "outputs as semantic references rather than exact string snapshots. For each "
+    "item under thread_check.criteria, return exactly one criterion_finding in the same order, using "
+    "the exact criterion_id. Do not emit findings for turn ids. Give each "
+    "finding a verdict and a concrete reason. Set the report-level evidence field to null. For each "
+    "failed or indeterminate finding, copy one short exact excerpt from that turn's reviewed target, "
+    "actual output, engine record, or deterministic check into the finding evidence field. Do not "
+    "paraphrase, correct, label, or combine excerpts. Pass findings may leave evidence null. Memory "
+    "holder_id defines whose first-person memory it is: in an NPC-held memory, I/my refers to that "
+    "NPC and the phrase 'the player' correctly names the other participant. When a criterion covers "
+    "dialogue quality, reject therapy framing, trailer-ready speeches, interchangeable wit, instant "
+    "confessions, and repeated stock phrasing even when the schema is valid. Try to falsify the "
+    "criterion; do not award a pass because the "
+    "deterministic checks passed. Use cannot_determine only when required evidence is absent, and do "
+    "not infer hidden state. The overall result must be fail if any criterion fails, cannot_determine "
+    "if none fail and any cannot be determined, and pass only if every criterion passes."
 )
+
+
+def _validate_judge_report(
+    report: JudgeReport,
+    check: ThreadCheckSpec,
+    evidence_payload: dict[str, object],
+) -> None:
+    expected_ids = [criterion.id for criterion in check.criteria]
+    actual_ids = [finding.criterion_id for finding in report.criterion_findings]
+    if actual_ids != expected_ids:
+        raise ValueError(
+            "judge criterion findings must match authored criterion order: "
+            f"expected {expected_ids!r}, got {actual_ids!r}"
+        )
+    finding_results = [finding.result for finding in report.criterion_findings]
+    expected_result: Literal["pass", "fail", "cannot_determine"]
+    if "fail" in finding_results:
+        expected_result = "fail"
+    elif "cannot_determine" in finding_results:
+        expected_result = "cannot_determine"
+    else:
+        expected_result = "pass"
+    if report.result != expected_result:
+        raise ValueError(
+            f"judge overall result must be {expected_result!r} from criterion findings, "
+            f"got {report.result!r}"
+        )
+    if report.evidence is not None:
+        raise ValueError("judge report-level evidence must be null; cite each finding instead")
+    evidence_texts = _thread_evidence_texts(evidence_payload)
+    for finding in report.criterion_findings:
+        if finding.result != "pass" and not finding.evidence:
+            raise ValueError(
+                f"judge finding {finding.criterion_id!r} requires one exact evidence excerpt"
+            )
+        if finding.evidence and not any(
+            finding.evidence in text for text in evidence_texts
+        ):
+            raise ValueError(
+                f"judge finding {finding.criterion_id!r} cited text absent from thread evidence: "
+                f"{finding.evidence!r}"
+            )
+
+
+def _thread_evidence_texts(payload: dict[str, object]) -> list[str]:
+    """Return strings from reviewed targets, actual records, and deterministic checks."""
+    texts: list[str] = []
+
+    def collect(value: object) -> None:
+        if isinstance(value, str):
+            texts.append(value)
+        elif isinstance(value, dict):
+            texts.append(json.dumps(value, sort_keys=True))
+            for item in value.values():
+                collect(item)
+        elif isinstance(value, list):
+            texts.append(json.dumps(value, sort_keys=True))
+            for item in value:
+                collect(item)
+
+    for turn in payload.get("thread", []):
+        if not isinstance(turn, dict):
+            continue
+        collect(turn.get("golden"))
+        collect(turn.get("actual"))
+        collect(turn.get("deterministic_checks"))
+    return texts
 
 
 def _thread_check_payload(check: ThreadCheckSpec) -> dict[str, object]:
@@ -198,11 +305,18 @@ def _actual_payload(record: dict[str, object]) -> dict[str, object]:
 
 
 def _judge_agent_traces(raw: object) -> list[dict[str, object]]:
-    """Keep model outputs but exclude duplicated inputs and judge-biasing reasoning."""
+    """Give the judge accepted outputs, not rejected retry attempts."""
     if not isinstance(raw, list):
         return []
-    keys = ("agent_name", "output_type", "output", "validation_error", "degraded")
-    return [{key: item.get(key) for key in keys} for item in raw if isinstance(item, dict)]
+    keys = ("agent_name", "output_type", "output", "degraded")
+    return [
+        {key: item.get(key) for key in keys}
+        for item in raw
+        if isinstance(item, dict)
+        and item.get("output") is not None
+        and not item.get("validation_error")
+        and not item.get("generation_error")
+    ]
 
 
 def _judge_trace(

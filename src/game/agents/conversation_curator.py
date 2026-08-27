@@ -12,6 +12,7 @@ timestamps, and applies the memories to canonical state.
 from __future__ import annotations
 
 import asyncio
+import re
 from collections.abc import Callable, Sequence
 from functools import cached_property
 from pathlib import Path
@@ -20,7 +21,7 @@ from openai import OpenAI
 
 from src.game.agents.heartbreaker_voice import load_dotenv_local
 from src.game.agents.runtime import (
-    UTILITY_PROFILE,
+    MEMORY_PROFILE,
     AgentGenerationError,
     AgentValidationError,
     begin_agent_attempt,
@@ -41,8 +42,8 @@ from src.game.state.models import (
     NPCNPCConversation,
 )
 
-CONVERSATION_CURATOR_MODEL = UTILITY_PROFILE.model
-CONVERSATION_CURATOR_REASONING_EFFORT = UTILITY_PROFILE.reasoning_effort
+CONVERSATION_CURATOR_MODEL = MEMORY_PROFILE.model
+CONVERSATION_CURATOR_REASONING_EFFORT = MEMORY_PROFILE.reasoning_effort
 CONVERSATION_CURATOR_PROMPT = "src/game/agents/prompts/conversation_curator.md"
 _CONVERSATION_CURATOR_PROMPT_FILE = Path(__file__).parent / "prompts" / "conversation_curator.md"
 
@@ -71,19 +72,27 @@ class OpenAIConversationCurator:
         rendered = _render_context(state, conversation, bystander_ids)
         participant_ids = _participant_ids(conversation)
         bystander_set = set(bystander_ids)
+        required_memory_holders = _required_memory_holders(conversation)
+        min_memories = 1 if _has_specific_future_commitment(conversation) else 0
+        max_memories = 2 if isinstance(conversation, NPCNPCConversation) else max(
+            1,
+            len(required_memory_holders),
+        )
+        reject_trivial_memories = (
+            isinstance(conversation, Conversation) and len(conversation.exchanges) == 1
+        )
         last_error: ValueError | None = None
         for attempt in range(3):
             attempt_number = attempt + 1
             retry_context = rendered
             if last_error is not None:
-                required_holders = ", ".join(sorted(participant_ids))
                 retry_context = (
                     f"{rendered}\n\n"
                     "The previous MemoryBatch failed validation. "
                     f"Validation error: {last_error}. "
                     "Return a corrected MemoryBatch using exact ids from the context, "
-                    "not display names. "
-                    f"You must include at least one direct memory for each participant holder: {required_holders}."
+                    "not display names. An empty memory list is valid when the exchange produced "
+                    "nothing useful for later play."
                 )
             attempt_token = begin_agent_attempt(attempt_number)
             try:
@@ -98,7 +107,16 @@ class OpenAIConversationCurator:
             finally:
                 end_agent_attempt(attempt_token)
             try:
-                validate_memory_batch(batch, state, participant_ids, bystander_set)
+                validate_memory_batch(
+                    batch,
+                    state,
+                    participant_ids,
+                    bystander_set,
+                    required_memory_holders=required_memory_holders,
+                    min_memories=min_memories,
+                    max_memories=max_memories,
+                    reject_trivial_memories=reject_trivial_memories,
+                )
                 return batch
             except ValueError as exc:
                 mark_agent_trace_validation_error("conversation_curator", attempt_number, exc)
@@ -197,13 +215,14 @@ def validate_memory_batch(
     state: GameState,
     participant_ids: set[str],
     bystander_ids: set[str],
+    *,
+    required_memory_holders: set[str] | None = None,
+    min_memories: int = 0,
+    max_memories: int | None = None,
+    reject_trivial_memories: bool = False,
 ) -> None:
     """Fail loud when a memory commit violates the curator contract."""
     valid_ids = {"player", *(heartbreaker.id for heartbreaker in state.heartbreakers)}
-    holders = {memory.holder_id for memory in batch.memories}
-    missing_participants = participant_ids - holders
-    if missing_participants:
-        raise ValueError(f"curator omitted participant memories: {sorted(missing_participants)}")
     for memory in batch.memories:
         if memory.holder_id not in valid_ids:
             raise ValueError(f"unknown memory holder_id: {memory.holder_id}")
@@ -220,6 +239,81 @@ def validate_memory_batch(
             raise ValueError(f"unknown gossip seed holder_id: {seed.holder_id}")
         if seed.subject_id not in valid_ids and seed.subject_id != "resort":
             raise ValueError(f"unknown gossip seed subject_id: {seed.subject_id}")
+    required = required_memory_holders or set()
+    if len(batch.memories) < min_memories:
+        raise ValueError(
+            f"memory batch has {len(batch.memories)} memories; minimum is {min_memories}"
+        )
+    if max_memories is not None and len(batch.memories) > max_memories:
+        raise ValueError(
+            f"memory batch has {len(batch.memories)} memories; maximum is {max_memories}"
+        )
+    if reject_trivial_memories:
+        trivial = [
+            memory
+            for memory in batch.memories
+            if not memory.durable and memory.emotional_weight <= 1
+        ]
+        if trivial:
+            raise ValueError(
+                "single-exchange chat produced a trivial low-weight memory; return an empty "
+                "memory list unless the exchange contains a concrete useful fact"
+            )
+    missing = required - {memory.holder_id for memory in batch.memories}
+    if missing:
+        raise ValueError(f"meaningful boundary is missing memory holders: {sorted(missing)}")
+    for memory in batch.memories:
+        lower = memory.content.lower().strip()
+        important = {"boundary", "promise", "conflict", "betrayal"} & set(memory.tags)
+        if (
+            memory.holder_id != "player"
+            and memory.subject_id == "player"
+            and lower.startswith(("i told the player", "i said to the player"))
+            and not important
+        ):
+            raise ValueError(
+                "participant memory only restates their own current disclosure; "
+                f"keep the other participant's useful memory instead: {memory.holder_id}"
+            )
+
+
+_BOUNDARY_LANGUAGE = re.compile(
+    r"\b(?:do not|don't|not ready|rather not|not now|keep it light|too deep|leave it there)\b",
+    re.IGNORECASE,
+)
+
+_SPECIFIC_FUTURE_COMMITMENT = re.compile(
+    r"\b(?:i|we)(?:['’]ll| will)\s+"
+    r"(?:bring|save|meet|make|show|give|take|join|come|call|ask|tell)\b"
+    r".{0,60}\b(?:next time|tomorrow|tonight|after|before|at)\b",
+    re.IGNORECASE,
+)
+
+_SPECIFIC_FUTURE_MEETING = re.compile(
+    r"\b(?:i|we)(?:['’]ll| will)\s+see\s+you\s+"
+    r"(?:by|at|in|on)\s+.{1,40}\b(?:later|tomorrow|tonight)\b",
+    re.IGNORECASE,
+)
+
+
+def _required_memory_holders(conversation: CuratableConversation) -> set[str]:
+    """Require both perspectives only when a multi-turn boundary was tested."""
+    if isinstance(conversation, NPCNPCConversation) or len(conversation.exchanges) < 2:
+        return set()
+    npc_lines = " ".join(exchange.npc_dialogue for exchange in conversation.exchanges)
+    if not _BOUNDARY_LANGUAGE.search(npc_lines):
+        return set()
+    return {"player", conversation.target_id}
+
+
+def _has_specific_future_commitment(conversation: CuratableConversation) -> bool:
+    if isinstance(conversation, NPCNPCConversation):
+        return False
+    text = _conversation_text(conversation)
+    return bool(
+        _SPECIFIC_FUTURE_COMMITMENT.search(text)
+        or _SPECIFIC_FUTURE_MEETING.search(text)
+    )
 
 
 def _render_context(
@@ -230,6 +324,17 @@ def _render_context(
     if isinstance(conversation, NPCNPCConversation):
         return _render_npc_context(state, conversation, bystander_ids)
     target = _name_for(state, conversation.target_id)
+    required_memory_holders = _required_memory_holders(conversation)
+    requires_future_memory = _has_specific_future_commitment(conversation)
+    memory_limit = (
+        "exactly two, one for each required holder"
+        if required_memory_holders
+        else (
+            "exactly one because the exchange contains a specific future commitment"
+            if requires_future_memory
+            else "at most one; zero is valid"
+        )
+    )
     exchanges = "\n".join(
         (
             f"- intent {exchange.intent_id}; success {exchange.success}; "
@@ -247,8 +352,9 @@ def _render_context(
             _pronoun_line(state, "player"),
             _pronoun_line(state, conversation.target_id),
             f"Bystanders: {_list_ids(bystander_ids)}",
-            f"Required direct memory holders: player, {conversation.target_id}",
-            "Memory holder checklist:",
+            f"Eligible direct memory holders: player, {conversation.target_id}",
+            f"Memory limit for this conversation: {memory_limit}",
+            "Memory holder ids, only when the exchange merits a memory:",
             "- holder_id: player",
             f"- holder_id: {conversation.target_id}",
             f"Valid subject ids: {_valid_subject_ids(state)}",
@@ -340,8 +446,9 @@ def _render_npc_context(
             f"Topic: {conversation.topic}",
             f"Conversation status: {conversation.status}",
             f"Bystanders: {_list_ids(bystander_ids)}",
-            f"Required direct memory holders: {first_id}, {second_id}",
-            "Memory holder checklist:",
+            f"Eligible direct memory holders: {first_id}, {second_id}",
+            "Memory limit for this conversation: at most two, one useful perspective each",
+            "Memory holder ids, only when the exchange merits a memory:",
             f"- holder_id: {first_id}",
             f"- holder_id: {second_id}",
             f"Valid subject ids: {_valid_subject_ids(state)}",

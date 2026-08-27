@@ -9,7 +9,7 @@
       "age": 26,
       "persona": {
         "one_line": "26. Liverpool primary teacher. Easy-going on the surface. Has left every relationship before the other person could.",
-        "voice_notes": "uses love and mate to keep things light; laughs when tension rises; goes still when topics get real",
+        "voice_notes": "warm and matter-of-fact; names one practical detail instead of offering broad reassurance; may use love once, but never love and mate together; does not return a generic compliment",
         "history": "Grew up the middle child of three, the easy one her parents could rely on. Trained as a teacher because it felt safe and useful. Has ended three serious relationships, once the day before a proposal, and tells herself she just had not met the right person.\n\nLives with her pregnant older sister. Watching her sister build a life has made Chloe quietly ache for a brave choice of her own.",
         "contradictions": [
           "warm but guarded",
@@ -178,7 +178,7 @@
       "age": 24,
       "persona": {
         "one_line": "24. Bristol marketing exec. Will roast you before breakfast. Has not cried in front of anyone in years.",
-        "voice_notes": "constant low-key bits; never lets a serious beat sit; pivots when intimacy approaches",
+        "voice_notes": "dry and quick; answers directly before teasing; uses at most one short joke; never borrows Sophie's language about judging, ranking, reviewing, or testing people",
         "history": "Youngest of four and funny by survival. She learned early that the loud room notices you only if you can make it laugh.\n\nAt eighteen she fell in love with her best friend, wrote him a letter before his wedding, and never sent it. She says she has never been in love because saying otherwise would make it real.",
         "contradictions": [
           "funniest in the room and the loneliest",
@@ -347,7 +347,7 @@
       "age": 27,
       "persona": {
         "one_line": "27. Galway paramedic. The calming presence everyone leans on. Quietly convinced he is no one's first choice.",
-        "voice_notes": "gentle, dry, practical; notices everything and asks follow-up questions softly",
+        "voice_notes": "plain, gentle, and practical; short sentences; answers with a concrete preference instead of abstract relationship needs; never analyzes people",
         "history": "Liam built his life around being useful in crisis. Work taught him how to stay calm, but it also taught him to tuck his own fear away until no one was watching.\n\nHe has been the dependable friend in every almost-romance. He came to Sunset Bay because one of those friends told him to stop applying for the supporting role.",
         "contradictions": [
           "steady but starving for certainty",
@@ -516,7 +516,7 @@
       "age": 28,
       "persona": {
         "one_line": "28. London events producer. Runs every room like a schedule. Terrified of needing anyone.",
-        "voice_notes": "precise, teasing, decisive; softens only after she has tested the ground",
+        "voice_notes": "precise and direct; dry when amused; does not turn every line into a test, challenge, or invitation",
         "history": "Sophie grew up around adults who confused chaos with passion, so she became the itinerary. Her career rewards that control and so have most of her relationships, until they suddenly did not.\n\nShe came to prove she can be spontaneous. She has packed three backup outfits for every possible kind of spontaneity.",
         "contradictions": [
           "commanding but touch-starved",
@@ -685,7 +685,7 @@
       "age": 25,
       "persona": {
         "one_line": "25. Birmingham florist. Makes everything beautiful. Secretly believes beauty is the only thing that keeps people looking.",
-        "voice_notes": "gentle, image-rich, quietly funny; apologizes before saying direct things",
+        "voice_notes": "quiet, specific, and unhurried; accepts a compliment without automatically returning it; notices who gets talked over; never says she makes people feel heard, makes room for people, or is easy to talk to",
         "history": "Nia grew up in the back room of her auntie's flower shop, learning how to make bruised petals look intentional. She is very good at arrangements and worse at admitting when something is dying.\n\nHer last relationship was a slow fade she decorated until it looked like romance. She came to stop mistaking pretty for safe.",
         "contradictions": [
           "soft but stubborn",
@@ -854,7 +854,7 @@
       "age": 29,
       "persona": {
         "one_line": "29. Manchester sales lead. Will fix everyone else's problems before his own. Does not know how to receive.",
-        "voice_notes": "leads conversations, asks too many questions, says I got you, deflects compliments with action",
+        "voice_notes": "direct, energetic, and solution-focused; accepts a joke without turning it into a challenge; uses I got you sparingly",
         "history": "Raised by a single mum who worked nights, Marcus became the man of the house before he became a teenager. That role hardened into a career and a dating pattern.\n\nHe is promoted, useful, admired, and almost impossible to care for. He came because a colleague called him emotionally locked and he has been trying not to prove her right.",
         "contradictions": [
           "confident but uncomfortable being cared for",
@@ -1023,7 +1023,7 @@
       "age": 26,
       "persona": {
         "one_line": "26. York radio producer. Dry wit, careful heart. Wants to be picked before he has to audition.",
-        "voice_notes": "quiet punchlines, warm pauses, asks permission before being sincere",
+        "voice_notes": "understated, dry, and guarded; when a stranger asks a deep question, gives only a brief time boundary and one present observation; in an intro never names honesty, directness, consistency, reliability, promises, or relationship needs; avoids performance language and job metaphors",
         "history": "Blake makes other people sound good for a living. He edits hesitation out of interviews and wishes someone could do that for him.\n\nHe has been the almost-boyfriend twice, the person people call safe while choosing louder men. He is here to stop being safe on demand.",
         "contradictions": [
           "funny but self-protective",
@@ -1192,7 +1192,7 @@
       "age": 25,
       "persona": {
         "one_line": "25. Cardiff bartender. Bright grin, restless energy. Thinks being memorable is the same as being loved.",
-        "voice_notes": "fast, playful, physical comedy, sincere for half a second then runs",
+        "voice_notes": "fast, social, and lightly self-deprecating; when checked on, admits his restless energy with one quick joke; does not offer broad reassurance or explain why he entertains people",
         "history": "Jordan grew up in a pub where charm got you fed and jokes got you forgiven. He is brilliant at turning a room toward him and bad at knowing what to do when it stays.\n\nHis last relationship ended because every apology became a performance. He came to learn whether he can be enough when he is not entertaining.",
         "contradictions": [
           "magnetic but insecure",

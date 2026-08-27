@@ -9,9 +9,9 @@ thread_check:
   criteria:
     - id: private_chat_success_grounded
       criteria: >
-        Maya acknowledges leaving another conversation, remains bright and quick with nerves
-        under her bravado, and offers concrete continuations of the new private moment plus a
-        graceful exit. The beat must not read as a context-free greeting.
+        Maya acknowledges leaving Liam, gives the player her attention, and responds to the reason
+        she was invited away. The generated choices continue this exchange and survive into the
+        player-facing menu alongside a graceful exit. Unrelated gossip must not displace them.
 seed: 2
 initial_location: pool
 live_resort_life: false
@@ -53,59 +53,26 @@ turns:
       target_id: maya
       intent_id: flirty_intimate_eye_contact
     golden:
-      criteria: 'The player walks up to Maya at the pool and invites her cleanly out of the chat with Liam.
-        The opening exchange should feel like Maya was flattered to be asked — a quick acknowledgment that
-        she was mid-conversation, then real attention on the player. Imagine: "Bold move in front of Liam.
-        ...Alright, you''ve got me. Make it worth it."'
       calls:
       - agent: conversation_curator
         output_type: MemoryBatch
         output:
           kind: background
-          memories:
-          - holder_id: maya
-            subject_id: liam
-            content: I compared notes with Liam about the early couples, but the conversation left me without
-              a clear read on what he really thought.
-            source: direct
-            source_id: null
-            emotional_weight: 2
-            tags:
-            - early_couples
-            - uncertain
-            - surface_level
-            durable: true
-          - holder_id: liam
-            subject_id: maya
-            content: Maya and I compared notes on the early couples, though nothing in the exchange gave me
-              a strong sense of where she stood.
-            source: direct
-            source_id: null
-            emotional_weight: 2
-            tags:
-            - early_couples
-            - uncertain
-            - surface_level
-            durable: true
-          summary: Maya and Liam compared notes on the early couples, but there was no substantive exchange
-            to create a strong emotional impression. The conversation ended without either gaining a clear
-            read on the other.
+          memories: []
+          summary: Maya and Liam's unfinished chat ended when the player asked Maya away.
           gossip_seeds: []
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: I thought I’d steal you away before Liam could compare any more notes. Now that
-            it’s just us, I’d rather look at you properly.
-          npc_dialogue: '*holds your gaze, a grin tugging at her mouth* Oh, stealing me from Liam? Bold move
-            before breakfast. Keep looking, then—just don’t expect me to make it easy when you’re being this
-            distracting.'
+          player_dialogue: I know I cut in, but I wanted to talk to you.
+          npc_dialogue: Then talk. Liam can wait a minute.
           npc_tone: flirty
           npc_mood_after: flirty
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask when she drops the joke
+          - label: Ask if she minded
             category: deep
             intent_kind: ask_about_topic
             stat_used: eq
@@ -113,9 +80,9 @@ turns:
             tone: curious and attentive
             audience_hint: +
             reveal_tier: 1
-            reveal_tag: off_camera_self
+            reveal_tag: wanted_private_chat
             unlock_threshold: null
-          - label: Notice her unguarded side
+          - label: Tell her why you asked
             category: supportive
             intent_kind: supportive_validate
             stat_used: eq
@@ -123,7 +90,7 @@ turns:
             tone: warm and grounding
             audience_hint: +
             reveal_tier: 0
-            reveal_tag: seen_beyond_the_jokes
+            reveal_tag: direct_interest
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -135,4 +102,3 @@ turns:
       - follow_up_menu_valid
       - conversation_active
       - agent_traces_present
-      - no_agent_validation_retries

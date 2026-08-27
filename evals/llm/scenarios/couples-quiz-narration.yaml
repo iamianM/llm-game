@@ -9,9 +9,12 @@ thread_check:
   criteria:
     - id: couples_quiz_arc_faithful
       criteria: >
-        The full quiz reads as an alternating player/partner exercise and the wrap names the
-        actual recorded mismatch rather than reducing the sequence to a generic score summary
-        or inventing a different answer.
+        The wrap makes both directions clear: the player's answers about Chloe and Chloe's answers
+        about the player. It names a real example in each direction,
+        includes the comfort-show miss, and preserves the recorded partial classification. Total
+        points and match count belong in the adjacent engine result and need not be repeated. Fail
+        if it calls the result a full success, swaps who answered a round, or reduces the scene to
+        a generic score summary.
 seed: 313
 initial_day: 3
 initial_phase: morning
@@ -36,7 +39,7 @@ initial_relationships:
     friendship: 25
 judge_context:
   - The Couples Quiz alternates direction. Even rounds quiz the player about the partner. Odd rounds ask the player to guess what the partner guessed about THEM.
-  - Match = 3 pts, mismatch = 0 pts. Three consecutive mismatches trigger a streak penalty.
+  - Match scoring and any streak penalty are already visible in the engine result beside the prose.
   - Narration must name at least one specific mismatch or match by question text or answer.
 turns:
   - id: morning-to-couples-quiz
@@ -44,61 +47,45 @@ turns:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: Morning ends, the Couples Quiz scene begins. pending_challenge.kind == "couples_quiz". Six
-        rounds queued, alternating between player-about-partner and partner-about-player.
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: At the pool, the Couples Quiz remains pending, leaving the waterline charged with anticipation.
-            Chloe stays beside you, her eyes fixed on you as the unresolved moment hangs between you both.
+      calls: []
     checks:
       - ceremony_events_present
   - id: r1-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 0 } }
     golden:
-      criteria: Player correctly answers about partner. Round 0.
       calls: []
     checks: []
   - id: r2-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 1 } }
     golden:
-      criteria: Player correctly guesses partner's guess. Round 1.
       calls: []
     checks: []
   - id: r3-wrong
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: distractor_0, round_index: 2 } }
     golden:
-      criteria: Player misreads partner trait. Round 2.
       calls: []
     checks: []
   - id: r4-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 3 } }
     golden:
-      criteria: Player correctly guesses partner's guess. Round 3.
       calls: []
     checks: []
   - id: r5-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 4 } }
     golden:
-      criteria: Player correctly answers about partner. Round 4.
       calls: []
     checks: []
   - id: r6-correct
     action: { kind: challenge_response, target_id: chloe, payload: { choice_id: correct, round_index: 5 } }
     golden:
-      criteria: Final round resolves. With 5 of 6 matches, the couple lands in success band; classification
-        == success. Narrator dramatises the flow — the one mismatch in round 3, the partner's reactions —
-        without inventing a different score.
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: 'At the pool, the Couples Quiz ends in a partial result, and the warmth between you and Chloe
-            tightens under the afternoon sun. You and Chloe match on her age and hometown, while you pick
-            “Taskmaster clips watched under a blanket” instead of “Gavin and Stacey” for her comfort show.
-            Chloe’s booth answers also land cleanly: she has written “the Heartthrob,” “a man,” and “audience
-            favourite” about you, and the camera catches your held look across the divide as the quiz closes.'
+          prose: >
+            You know Chloe is twenty-six and from Liverpool, while Chloe correctly predicts your
+            Heartthrob choice and audience answer. Your comfort-show answer is the miss: you choose
+            Taskmaster clips under a blanket instead of Gavin and Stacey. The result is partial.
     checks:
       - ceremony_events_present
       - event_narration_valid

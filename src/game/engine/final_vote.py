@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
-from src.game.engine.audience import couple_audience_score
+from src.game.engine.audience import ranked_audience_couples
 from src.game.state.models import Couple, GameState, RunOutcome
 
 
@@ -15,6 +15,7 @@ class FinalVoteResult(BaseModel):
 
     winner: Couple | None
     runner_up: Couple | None
+    ranked_couples: list[Couple]
     player_rank: int | None
     outcome: RunOutcome
 
@@ -22,11 +23,23 @@ class FinalVoteResult(BaseModel):
 def final_vote(state: GameState) -> FinalVoteResult:
     """Resolve the final Pulse vote and assign ``state.outcome``."""
     if state.outcome is RunOutcome.ELIMINATED:
-        return FinalVoteResult(winner=None, runner_up=None, player_rank=None, outcome=RunOutcome.ELIMINATED)
+        return FinalVoteResult(
+            winner=None,
+            runner_up=None,
+            ranked_couples=[],
+            player_rank=None,
+            outcome=RunOutcome.ELIMINATED,
+        )
     if state.player.eliminated:
         state.outcome = RunOutcome.ELIMINATED
-        return FinalVoteResult(winner=None, runner_up=None, player_rank=None, outcome=RunOutcome.ELIMINATED)
-    ranked = sorted(state.couples, key=lambda couple: (-couple_audience_score(state, couple), _couple_key(couple)))
+        return FinalVoteResult(
+            winner=None,
+            runner_up=None,
+            ranked_couples=[],
+            player_rank=None,
+            outcome=RunOutcome.ELIMINATED,
+        )
+    ranked = ranked_audience_couples(state)
     player_rank: int | None = None
     for index, couple in enumerate(ranked, start=1):
         if state.player.id in {couple.partner_a_id, couple.partner_b_id}:
@@ -43,6 +56,7 @@ def final_vote(state: GameState) -> FinalVoteResult:
     return FinalVoteResult(
         winner=ranked[0] if ranked else None,
         runner_up=ranked[1] if len(ranked) > 1 else None,
+        ranked_couples=ranked,
         player_rank=player_rank,
         outcome=state.outcome,
     )
@@ -65,19 +79,34 @@ def final_vote_message(result: FinalVoteResult, state: GameState) -> str:
     second_person = player.strip().lower() == "you"
     if result.outcome is RunOutcome.WON_AS_COUPLE:
         partner = _player_partner(result.winner, state)
-        return f"Pulse vote: {player} and {partner} win as the top couple."
-    if result.outcome is RunOutcome.RUNNER_UP_COUPLE:
+        outcome = f"{player} and {partner} win as the top couple."
+    elif result.outcome is RunOutcome.RUNNER_UP_COUPLE:
         verb = "finish" if second_person else "finishes"
-        return f"Pulse vote: {player} {verb} as a runner-up couple."
-    if result.outcome is RunOutcome.LEFT_SINGLE:
+        outcome = f"{player} {verb} as a runner-up couple."
+    elif result.outcome is RunOutcome.LEFT_SINGLE:
         verb = "reach" if second_person else "reaches"
-        return f"Pulse vote: {player} {verb} the finale single."
-    verb = "were" if second_person else "was"
-    return f"Pulse vote: {player} {verb} already Heart Out."
+        outcome = f"{player} {verb} the finale single."
+    else:
+        verb = "were" if second_person else "was"
+        outcome = f"{player} {verb} already Heart Out."
+    ranking = _ranking_message(result.ranked_couples, state)
+    return f"Pulse vote: {ranking} {outcome}" if ranking else f"Pulse vote: {outcome}"
 
 
-def _couple_key(couple: Couple) -> str:
-    return "|".join(sorted([couple.partner_a_id, couple.partner_b_id]))
+def _ranking_message(ranked: list[Couple], state: GameState) -> str:
+    placements = ("first", "second", "third", "fourth")
+    entries = [
+        f"{placements[index]} {_couple_names(couple, state)}"
+        for index, couple in enumerate(ranked[: len(placements)])
+    ]
+    return f"Final ranking: {'; '.join(entries)}." if entries else ""
+
+
+def _couple_names(couple: Couple, state: GameState) -> str:
+    return " and ".join(
+        state.player.name if actor_id == state.player.id else _heartbreaker_name(state, actor_id)
+        for actor_id in (couple.partner_a_id, couple.partner_b_id)
+    )
 
 
 def _player_partner(couple: Couple | None, state: GameState) -> str:

@@ -11,7 +11,7 @@ from src.game.agents.contextual_options import (
 )
 from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import AgentValidationError
-from src.game.engine.option_defaults import already_present_intents, assemble_follow_up_menu
+from src.game.engine.option_defaults import already_present_options, assemble_follow_up_menu
 from src.game.engine.results import MechanicalResult
 from src.game.state.models import FollowUpMenu, GameState
 
@@ -24,7 +24,7 @@ def generate_follow_up_menu(
     contextual_options: ContextualOptionsFn,
 ) -> FollowUpMenu:
     """Generate and validate the wheel from defaults plus bespoke options."""
-    already_present = already_present_intents(state, result, exchange)
+    already_present = already_present_options(state, result, exchange)
     raw = contextual_options(state, result, exchange, probability, already_present)
     menu = _assemble_menu(state, result, exchange, raw)
     try:

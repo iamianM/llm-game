@@ -9,9 +9,11 @@ thread_check:
   criteria:
     - id: first_spark_story_faithful
       criteria: >
-        The ceremony preserves the recorded player/Chloe choice and gives it reality-show
-        texture through a held beat, cast awareness, and a specific Chloe reaction. It must not
-        invent an alternate partner, elimination, vote, or later-game twist.
+        The ceremony must preserve the player/Chloe choice and name the full active cast required by
+        the event. It should make Chloe's immediate response small and believable, without assigning
+        jealousy, disappointment, motives, or private feelings to anyone else. It must not invent an
+        alternate partner, elimination, vote, or later-game twist. Another cast member may be shown
+        standing at the ceremony, but does not need a reaction.
 seed: 101
 character_creation:
   archetype_id: heartthrob
@@ -25,7 +27,7 @@ character_creation:
 live_resort_life: false
 judge_context:
   - The engine has already decided the opening couple. The narrator only describes the moment.
-  - Reality TV texture is encouraged — the flame_deck lights, the held breath, a beat that lands.
+  - The flame deck and one restrained, observable response are enough to make the choice visible.
   - The narrator must not invent eliminations, votes, heart_throb arrivals, or a different partner.
 turns:
   - id: couple-with-chloe
@@ -33,19 +35,14 @@ turns:
       kind: pair
       target_id: chloe
     golden:
-      criteria: 'The player crosses the flame_deck and stops in front of Chloe. The narration should sell
-        that exact moment — eyes met, choice landed, Chloe''s small reaction (a breath, a smile she tries
-        to keep cool), and the resort registering a new pair. Imagine: "He walks straight past the noise and
-        stops in front of Chloe. She tries not to smile and fails. Around the flame_deck, everyone is already
-        reading what this means for the rest of the night."'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: 'Under the flame-deck glow, the full active cast—Blake, Chloe, Jordan, Liam, Marcus, Maya,
-            Nia, Sophie, and you—watches the first lock-in land: you and Chloe are coupled. Chloe’s smile
-            breaks through as her hand finds yours, while Jordan’s expression tightens across the firelight,
-            making the choice ripple well beyond the new couple.'
+          prose: >
+            Blake, Jordan, Liam, Marcus, Maya, Nia, and Sophie watch from the flame deck as you stop
+            in front of Chloe. She takes a breath, then lets a small smile show. Your choice is set: you
+            and Chloe are the new couple.
     checks:
       - event_narration_valid
       - agent_traces_present

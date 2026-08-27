@@ -41,7 +41,9 @@ def run_deterministic_check(
             if turn.exchange is None:
                 return _fail(check_id, "turn has no exchange", turn_spec.id)
             validation_state = turn.state if pre_state is None else pre_state
-            validate_exchange(turn.exchange, heartbreaker_voice_context(validation_state, turn.mechanical_result))
+            validate_exchange(
+                turn.exchange, heartbreaker_voice_context(validation_state, turn.mechanical_result)
+            )
             return _pass(check_id, "exchange validates", turn_spec.id)
         if check_id == "mechanical_success":
             if turn.mechanical_result.success is not True:
@@ -55,12 +57,15 @@ def run_deterministic_check(
             if turn.follow_up_menu is None:
                 return _fail(check_id, "turn has no follow-up menu", turn_spec.id)
             validate_follow_up_menu(turn.follow_up_menu)
+            _validate_contextual_options_preserved(turn)
             return _pass(check_id, "follow-up menu validates", turn_spec.id)
         if check_id == "conversation_active":
             target_id = turn.mechanical_result.action.target_id
             active = turn.state.active_conversation
             if active is None or active.target_id != target_id:
-                return _fail(check_id, "active conversation target did not match action", turn_spec.id)
+                return _fail(
+                    check_id, "active conversation target did not match action", turn_spec.id
+                )
             return _pass(check_id, "conversation remains active with target", turn_spec.id)
         if check_id == "conversation_closed":
             if turn.state.active_conversation is not None:
@@ -68,6 +73,10 @@ def run_deterministic_check(
             return _pass(check_id, "conversation is closed", turn_spec.id)
         if check_id == "curator_memories":
             return _check_curator_memories(turn_spec, turn)
+        if check_id == "curator_batch_recorded":
+            if not turn.agent_commits.curator_batches:
+                return _fail(check_id, "no curator batch was recorded", turn_spec.id)
+            return _pass(check_id, "conversation close was reviewed by the curator", turn_spec.id)
         if check_id.startswith("curator_memories_for:"):
             return _check_curator_memories_for(check_id, turn_spec, turn)
         if check_id == "no_exchange":
@@ -86,11 +95,15 @@ def run_deterministic_check(
         if check_id == "ceremony_events_present":
             if not turn.ceremony_events:
                 return _fail(check_id, "turn has no ceremony events", turn_spec.id)
-            return _pass(check_id, f"{len(turn.ceremony_events)} ceremony event(s) recorded", turn_spec.id)
+            return _pass(
+                check_id, f"{len(turn.ceremony_events)} ceremony event(s) recorded", turn_spec.id
+            )
         if check_id == "pending_gather_waiting":
             if turn.state.pending_gather is None:
                 return _fail(check_id, "state has no pending gather", turn_spec.id)
-            return _pass(check_id, f"pending gather: {turn.state.pending_gather.kind}", turn_spec.id)
+            return _pass(
+                check_id, f"pending gather: {turn.state.pending_gather.kind}", turn_spec.id
+            )
         if check_id == "challenge_resolved":
             challenge = turn.state.pending_challenge
             if challenge is None or challenge.result is None:
@@ -101,7 +114,10 @@ def run_deterministic_check(
                 return _fail(check_id, "resolved challenge is still visible", turn_spec.id)
             return _pass(check_id, "resolved challenge is no longer visible", turn_spec.id)
         if check_id == "flush_active":
-            if turn.state.flush_of_hearts_state is None or turn.state.flush_of_hearts_state.returned:
+            if (
+                turn.state.flush_of_hearts_state is None
+                or turn.state.flush_of_hearts_state.returned
+            ):
                 return _fail(check_id, "Flush of Hearts is not active", turn_spec.id)
             return _pass(check_id, "Flush of Hearts is active", turn_spec.id)
         if check_id == "run_outcome_present":
@@ -143,18 +159,23 @@ def run_deterministic_check(
             visible_ids = {
                 heartbreaker.id
                 for heartbreaker in turn.state.heartbreakers
-                if heartbreaker.location_id == turn.state.location_id and not heartbreaker.eliminated
+                if heartbreaker.location_id == turn.state.location_id
+                and not heartbreaker.eliminated
             }
             missing = expected_ids - visible_ids
             if missing:
-                return _fail(check_id, f"missing visible target(s): {sorted(missing)}", turn_spec.id)
+                return _fail(
+                    check_id, f"missing visible target(s): {sorted(missing)}", turn_spec.id
+                )
             return _pass(check_id, f"visible targets include {sorted(expected_ids)}", turn_spec.id)
         if check_id == "agent_traces_present":
             if llm_mode == "mock":
                 return _pass(check_id, "mock mode does not emit live agent traces", turn_spec.id)
             if not turn.agent_traces:
                 return _fail(check_id, "real LLM turn has no agent traces", turn_spec.id)
-            return _pass(check_id, f"captured {len(turn.agent_traces)} agent trace(s)", turn_spec.id)
+            return _pass(
+                check_id, f"captured {len(turn.agent_traces)} agent trace(s)", turn_spec.id
+            )
         if check_id == "engine_state_invariants_preserved":
             return check_engine_state_invariants(turn_spec, turn, pre_state)
         if check_id == "interruption_cleared":
@@ -198,6 +219,27 @@ def run_deterministic_check(
         return _fail(check_id, str(exc), turn_spec.id)
 
 
+def _validate_contextual_options_preserved(turn: object) -> None:
+    """Require every accepted bespoke intent to reach the final menu."""
+    menu = getattr(turn, "follow_up_menu", None)
+    final_intents = {option.intent_kind for option in menu.options}
+    expected_intents: set[str] = set()
+    for trace in getattr(turn, "agent_traces", []):
+        if (
+            trace.agent_name != "contextual_options"
+            or trace.output_type != "ContextualBespoke"
+            or trace.validation_error is not None
+            or not isinstance(trace.output, dict)
+        ):
+            continue
+        for option in trace.output.get("options", []):
+            if isinstance(option, dict) and isinstance(option.get("intent_kind"), str):
+                expected_intents.add(option["intent_kind"])
+    missing = expected_intents - final_intents
+    if missing:
+        raise ValueError(f"final follow-up menu dropped bespoke intents: {sorted(missing)}")
+
+
 def _check_background_kind_isolated(
     check_id: str,
     turn_spec: GoldenTurnSpec,
@@ -209,7 +251,9 @@ def _check_background_kind_isolated(
             continue
         for memory in batch.memories:
             if memory.holder_id == "player" and memory.source == "direct":
-                offenders.append(f"batch kind=background but direct player memory present: {memory.content!r}")
+                offenders.append(
+                    f"batch kind=background but direct player memory present: {memory.content!r}"
+                )
     if offenders:
         return GoldenCheckResult(
             id=check_id,
@@ -222,7 +266,9 @@ def _check_background_kind_isolated(
     return _pass(check_id, "background batches keep player memories witnessed-only", turn_spec.id)
 
 
-def _check_private_chat_recorded(check_id: str, turn_spec: GoldenTurnSpec, turn: object) -> GoldenCheckResult:
+def _check_private_chat_recorded(
+    check_id: str, turn_spec: GoldenTurnSpec, turn: object
+) -> GoldenCheckResult:
     attempt = turn.mechanical_result.private_chat_attempt
     if attempt is None:
         return _fail(check_id, "no private chat attempt was recorded", turn_spec.id)
@@ -245,9 +291,17 @@ def _check_private_chat_outcome(
         return _fail(check_id, "no private chat attempt was recorded", turn_spec.id)
     if attempt.success is not expected:
         label = "succeeded" if attempt.success else "rejected"
-        return _fail(check_id, f"private chat was {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
+        return _fail(
+            check_id,
+            f"private chat was {label}: roll {attempt.roll} vs chance {attempt.chance}",
+            turn_spec.id,
+        )
     label = "succeeded" if expected else "rejected"
-    return _pass(check_id, f"private chat {label}: roll {attempt.roll} vs chance {attempt.chance}", turn_spec.id)
+    return _pass(
+        check_id,
+        f"private chat {label}: roll {attempt.roll} vs chance {attempt.chance}",
+        turn_spec.id,
+    )
 
 
 def _check_npc_conversation_still_active(
@@ -283,7 +337,9 @@ def _check_npc_conversation_closed(
     )
     if blocked_id is None:
         return _fail(check_id, "no blocked NPC conversation recorded", turn_spec.id)
-    still_present = any(conversation.id == blocked_id for conversation in turn.state.npc_conversations)
+    still_present = any(
+        conversation.id == blocked_id for conversation in turn.state.npc_conversations
+    )
     if still_present:
         return _fail(check_id, f"NPC conversation {blocked_id} is still present", turn_spec.id)
     matching_closures = [
@@ -319,8 +375,16 @@ def _check_private_chat_rejection_witness_memory(
         if "saw_private_chat_rejected" in memory.tags and attempt.target_id in memory.tags
     ]
     if not holders:
-        return _fail(check_id, f"no witness memory recorded for rejected private chat with {attempt.target_id}", turn_spec.id)
-    return _pass(check_id, f"rejected private chat witness memory recorded by {sorted(holders)}", turn_spec.id)
+        return _fail(
+            check_id,
+            f"no witness memory recorded for rejected private chat with {attempt.target_id}",
+            turn_spec.id,
+        )
+    return _pass(
+        check_id,
+        f"rejected private chat witness memory recorded by {sorted(holders)}",
+        turn_spec.id,
+    )
 
 
 def _check_no_agent_validation_retries(
@@ -391,13 +455,21 @@ def _check_curator_memories_for(
         if memory.subject_id in {target_id, "player"} and memory.holder_id in {target_id, "player"}
     }
     if {"player", target_id} - holders:
-        return _fail(check_id, f"missing curator memories for player/{target_id}: {sorted(holders)}", turn_spec.id)
+        return _fail(
+            check_id,
+            f"missing curator memories for player/{target_id}: {sorted(holders)}",
+            turn_spec.id,
+        )
     return _pass(check_id, f"curator memories include player and {target_id}", turn_spec.id)
 
 
 def _pass(check_id: str, reason: str, turn_id: str) -> GoldenCheckResult:
-    return GoldenCheckResult(id=check_id, kind="deterministic", result="pass", reason=reason, turn_id=turn_id)
+    return GoldenCheckResult(
+        id=check_id, kind="deterministic", result="pass", reason=reason, turn_id=turn_id
+    )
 
 
 def _fail(check_id: str, reason: str, turn_id: str) -> GoldenCheckResult:
-    return GoldenCheckResult(id=check_id, kind="deterministic", result="fail", reason=reason, turn_id=turn_id)
+    return GoldenCheckResult(
+        id=check_id, kind="deterministic", result="fail", reason=reason, turn_id=turn_id
+    )

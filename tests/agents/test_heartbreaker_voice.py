@@ -16,7 +16,7 @@ from src.game.engine.private_chat import PrivateChatAttempt
 from src.game.engine.results import MechanicalResult
 from src.game.engine.rules import apply_action
 from src.game.state.memory import RecapDisposition
-from src.game.state.models import Gender, Mood, new_game
+from src.game.state.models import Gender, Mood, Phase, RelationshipDelta, new_game
 from src.game.state.rng import SeededRng
 
 
@@ -67,6 +67,29 @@ def test_heartbreaker_voice_context_includes_backstory() -> None:
     context = heartbreaker_voice_context(state, result)
 
     assert "primary school teacher" in context.npc_backstory
+    assert "pregnant older sister" not in context.npc_backstory
+    assert "deeper motives private" in context.npc_persona_summary
+
+
+def test_heartbreaker_voice_context_unlocks_authored_history_after_rapport() -> None:
+    state = new_game(1)
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    chloe.familiarity_with_player = 30
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_resort",
+        ),
+        SeededRng(1),
+    )
+
+    context = heartbreaker_voice_context(state, result)
+
+    assert "pregnant older sister" in context.npc_backstory
+    assert "Contradictions:" in context.npc_persona_summary
+    assert "Secret engine:" not in context.npc_persona_summary
 
 
 def test_heartbreaker_voice_context_signals_established_rapport() -> None:
@@ -109,6 +132,53 @@ def test_heartbreaker_voice_context_signals_fresh_introduction() -> None:
     context = heartbreaker_voice_context(state, result)
 
     assert "barely know the player yet" in context.relationship_summary
+
+
+def test_intro_voice_keeps_private_persona_hidden_after_intro_familiarity_award() -> None:
+    state = new_game(1)
+    state.phase = Phase.INTROS
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.INTRODUCE_TO,
+            target_id="blake",
+            intent_id="intro_deep",
+        ),
+        SeededRng(1),
+    )
+
+    context = heartbreaker_voice_context(state, result)
+
+    assert "familiarity 25/100" in context.relationship_summary
+    assert "deeper motives private" in context.npc_persona_summary
+    assert "Contradictions:" not in context.npc_persona_summary
+    assert context.npc_backstory.startswith("Public profile:")
+
+
+def test_intro_voice_rejects_prior_history_in_either_line() -> None:
+    state = new_game(1)
+    state.phase = Phase.INTROS
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.INTRODUCE_TO,
+            target_id="nia",
+            intent_id="intro_friendly",
+        ),
+        SeededRng(1),
+    )
+    context = heartbreaker_voice_context(state, result)
+
+    with pytest.raises(ValueError, match="prior private conversation"):
+        validate_exchange(
+            Exchange(
+                player_dialogue="I am glad we got another chance to talk.",
+                npc_dialogue="Me too. I was hoping you would come over.",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+            ),
+            context,
+        )
 
 
 def test_heartbreaker_voice_retries_after_validation_failure() -> None:
@@ -299,8 +369,20 @@ def test_heartbreaker_voice_context_includes_successful_private_chat() -> None:
     turn = new_turn_context(context)
 
     assert context.private_chat_context is not None
+    assert context.private_chat_departure_names == ["Liam"]
     assert "opened a private chat with Maya" in turn.turn
     assert "comparing notes on the early couples" in turn.turn
+
+    with pytest.raises(ValueError, match="acknowledge leaving"):
+        validate_exchange(
+            Exchange(
+                player_dialogue="Can I steal you for a minute?",
+                npc_dialogue="You have my attention now.",
+                npc_tone="flirty",
+                npc_mood_after=Mood.FLIRTY,
+            ),
+            context,
+        )
 
 
 def test_heartbreaker_voice_allows_gossip_subject_mentions() -> None:
@@ -328,6 +410,45 @@ def test_heartbreaker_voice_allows_gossip_subject_mentions() -> None:
 
     assert context.gossip_subject_names == ["Blake"]
     validate_exchange(exchange, context)
+
+
+def test_accepted_interruption_requires_acknowledgment() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="liam",
+            intent_id="accept_interruption",
+        ),
+        success=True,
+        relationship_deltas={
+            "chloe": RelationshipDelta(affection=-2),
+            "liam": RelationshipDelta(affection=3),
+        },
+    )
+    context = heartbreaker_voice_context(state, result)
+
+    assert context.interrupted_conversation_names == ["Chloe"]
+    with pytest.raises(ValueError, match="acknowledge the interrupted conversation"):
+        validate_exchange(
+            Exchange(
+                player_dialogue="Go on, Liam. I am listening.",
+                npc_dialogue="Thanks. I wanted to have a quick chat with you.",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+            ),
+            context,
+        )
+
+    validate_exchange(
+        Exchange(
+            player_dialogue="Go on, Liam. I am listening.",
+            npc_dialogue="Thanks. Sorry for cutting in while you were talking with Chloe.",
+            npc_tone="warm",
+            npc_mood_after=Mood.CONTENT,
+        ),
+        context,
+    )
 
 
 def test_heartbreaker_voice_rejects_flush_of_hearts_brand_leak() -> None:

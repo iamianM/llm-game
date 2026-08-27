@@ -1,7 +1,7 @@
 name: producer-text-day2
 seed: 22
 initial_phase: morning
-expected_hash: a46b540d2904a0f6fa61dbbc8664f5aaa33c4e4f3d7ed78f60c5a37ee1cd806f
+expected_hash: b730bb3bfc02474776e8a49847c7ae80c847441745c44e6cd104930ab6791c2f
 actions:
 - kind: ambient
   target_id: ambient_wait

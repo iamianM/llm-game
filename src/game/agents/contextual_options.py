@@ -20,6 +20,10 @@ from openai import OpenAI
 from pydantic import BaseModel, ConfigDict, Field
 
 from src.game.agents.contextual_gossip import with_gossip_options as with_gossip_options
+from src.game.agents.contextual_options_context import (
+    contextual_options_context,
+    render_context,
+)
 from src.game.agents.heartbreaker_voice import Exchange, load_dotenv_local
 from src.game.agents.runtime import (
     UTILITY_PROFILE,
@@ -35,7 +39,7 @@ from src.game.agents.runtime import (
     start_agent_call,
 )
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import FollowUpMenu, FollowUpOption, GameState, Memory
+from src.game.state.models import FollowUpMenu, FollowUpOption, GameState
 
 CONTEXTUAL_OPTIONS_MODEL = UTILITY_PROFILE.model
 CONTEXTUAL_OPTIONS_REASONING_EFFORT = UTILITY_PROFILE.reasoning_effort
@@ -71,30 +75,6 @@ ALLOWED_BESPOKE_INTENTS = {
 FollowUpCategory = Literal["friendly", "flirty", "deep", "banter", "gossip", "supportive", "exit"]
 
 
-class ContextualOptionsContext(BaseModel):
-    """Visible context for the Contextual Options agent."""
-
-    model_config = ConfigDict(extra="forbid")
-
-    npc_name: str
-    npc_archetype: str
-    npc_backstory: str
-    npc_mood: str
-    relationship_summary: str
-    last_npc_dialogue: str
-    last_npc_tone: str
-    recent_history: str
-    charm: int
-    banter: int
-    eq: int
-    spark: int
-    loyalty: int
-    departure_probability: int
-    gossip_memories: str
-    explored_threads: str = "None yet — this is fresh ground."
-    already_present: list[str] = Field(default_factory=list)
-
-
 class ContextualBespoke(BaseModel):
     """Moment-specific additions to a partially-built follow-up wheel.
 
@@ -112,7 +92,7 @@ class ContextualBespoke(BaseModel):
 
 ContextualOptionsResult = ContextualBespoke | FollowUpMenu
 ContextualOptionsFn = Callable[
-    [GameState, MechanicalResult, Exchange, int, list[str]],
+    [GameState, MechanicalResult, Exchange, int, list[FollowUpOption]],
     ContextualOptionsResult,
 ]
 
@@ -134,7 +114,7 @@ class ContextualOptionsAgent:
         result: MechanicalResult,
         exchange: Exchange,
         departure_probability: int,
-        already_present: list[str],
+        already_present: list[FollowUpOption],
     ) -> ContextualBespoke:
         """Generate and validate bespoke contextual additions."""
         context = contextual_options_context(
@@ -144,7 +124,7 @@ class ContextualOptionsAgent:
             departure_probability,
             already_present=already_present,
         )
-        rendered = _render_context(context)
+        rendered = render_context(context)
         last_error: ValueError | None = None
         for attempt in range(3):
             attempt_number = attempt + 1
@@ -155,7 +135,7 @@ class ContextualOptionsAgent:
                     "The previous ContextualBespoke failed validation. "
                     f"Validation error: {last_error}. "
                     "Return a corrected ContextualBespoke with one or two specific options "
-                    "that do not duplicate already_present."
+                    "that do not duplicate an option already supplied by the engine."
                 )
             attempt_token = begin_agent_attempt(attempt_number)
             try:
@@ -170,7 +150,10 @@ class ContextualOptionsAgent:
             finally:
                 end_agent_attempt(attempt_token)
             try:
-                validate_contextual_bespoke(bespoke, context.already_present)
+                validate_contextual_bespoke(
+                    bespoke,
+                    [option.intent_kind for option in context.already_present],
+                )
                 return bespoke
             except ValueError as exc:
                 mark_agent_trace_validation_error("contextual_options", attempt_number, exc)
@@ -205,53 +188,6 @@ class ContextualOptionsAgent:
         if bespoke is None:
             raise ValueError("Contextual Options returned no parsed ContextualBespoke")
         return bespoke
-
-
-def contextual_options_context(
-    state: GameState,
-    result: MechanicalResult,
-    exchange: Exchange,
-    departure_probability: int,
-    *,
-    already_present: list[str],
-) -> ContextualOptionsContext:
-    """Build prompt context for one follow-up menu."""
-    target_id = result.action.target_id
-    target = next(
-        (heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == target_id), None
-    )
-    if target is None:
-        raise ValueError(f"contextual options target not found: {target_id}")
-    stats = state.player.stats
-    recent_history = "No prior exchanges."
-    if state.active_conversation is not None and state.active_conversation.exchanges:
-        recent_history = "\n".join(
-            f"- player tried {record.intent_id}; NPC tone {record.npc_tone}; success {record.success}"
-            for record in state.active_conversation.exchanges
-        )
-    rel = target.relationship
-    return ContextualOptionsContext(
-        npc_name=target.name,
-        npc_archetype=target.archetype,
-        npc_backstory=target.backstory,
-        npc_mood=target.mood.value,
-        relationship_summary=(
-            f"affection {rel.affection}, chemistry {rel.chemistry}, "
-            f"trust {rel.trust}, friendship {rel.friendship}"
-        ),
-        last_npc_dialogue=exchange.npc_dialogue,
-        last_npc_tone=exchange.npc_tone,
-        recent_history=recent_history,
-        charm=stats.charm,
-        banter=stats.banter,
-        eq=stats.eq,
-        spark=stats.spark,
-        loyalty=stats.loyalty,
-        departure_probability=departure_probability,
-        gossip_memories=_gossip_memory_context(state),
-        explored_threads=_explored_threads(state, target.id),
-        already_present=already_present,
-    )
 
 
 def mock_contextual_bespoke(
@@ -360,71 +296,6 @@ def validate_contextual_bespoke(
             raise ValueError("bespoke options must not provide the engine-owned exit")
     if bespoke.npc_will_leave and not bespoke.npc_exit_line:
         raise ValueError("npc_exit_line is required when npc_will_leave is true")
-
-
-def _render_context(context: ContextualOptionsContext) -> str:
-    return "\n".join(
-        [
-            f"NPC name: {context.npc_name}",
-            f"Archetype voice: {context.npc_archetype}",
-            f"Backstory: {context.npc_backstory}",
-            f"Current mood: {context.npc_mood}",
-            f"Relationship summary: {context.relationship_summary}",
-            f"Last NPC line: {context.last_npc_dialogue}",
-            f"Last NPC tone: {context.last_npc_tone}",
-            f"Recent exchange history: {context.recent_history}",
-            "Player stats:",
-            f"charm {context.charm}, banter {context.banter}, eq {context.eq}, "
-            f"spark {context.spark}, loyalty {context.loyalty}",
-            f"Departure probability: {context.departure_probability}",
-            f"already_present: {', '.join(context.already_present) or 'none'}",
-            f"Gossip-eligible memories: {context.gossip_memories}",
-            f"Already explored with this Heartbreaker (past chats — do not re-open):\n{context.explored_threads}",
-            "Write the bespoke follow-up additions now.",
-        ]
-    )
-
-
-def _explored_threads(state: GameState, target_id: str) -> str:
-    """Summarize topics the player has already dug into with this NPC.
-
-    Sourced from the player's own memories about this NPC, which persist
-    across conversations (unlike ``active_conversation`` history, which resets
-    every time the player re-approaches). This lets the agent advance to fresh
-    ground instead of re-opening the same single most-salient backstory beat
-    on the first turn of every new chat. Returns the most recent few in
-    chronological order (oldest first, newest last).
-    """
-    threads = [
-        memory.content.strip()
-        for memory in state.player.memories
-        if memory.subject_id == target_id and memory.content and memory.content.strip()
-    ]
-    if not threads:
-        return "None yet — this is fresh ground."
-    return "\n".join(f"- {content}" for content in threads[-5:])
-
-
-def _gossip_memory_context(state: GameState) -> str:
-    conversation = state.active_conversation
-    if conversation is None or not conversation.gossip_offers:
-        return "None."
-    return "\n".join(_memory_line(state, memory) for memory in conversation.gossip_offers)
-
-
-def _memory_line(state: GameState, memory: Memory) -> str:
-    return (
-        f"- id {memory.id}; subject {_subject_name(state, memory)}; "
-        f"weight {memory.emotional_weight}; tags {', '.join(memory.tags)}; "
-        f"content {memory.content}"
-    )
-
-
-def _subject_name(state: GameState, memory: Memory) -> str:
-    for heartbreaker in state.heartbreakers:
-        if heartbreaker.id == memory.subject_id:
-            return heartbreaker.name
-    return memory.subject_id
 
 
 def _mock_label(intent_kind: str) -> str:

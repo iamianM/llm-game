@@ -268,6 +268,49 @@ def test_gossip_injection_is_idempotent_for_recorded_replay() -> None:
     assert sum(option.category == "gossip" for option in replay_menu.options) == 1
 
 
+def test_gossip_does_not_displace_a_full_menu_of_forward_choices() -> None:
+    """Optional gossip never replaces an exchange-specific player choice."""
+    from src.game.state.models import FollowUpMenu, FollowUpOption
+
+    state = _state_with_chloe_gossip(affection=25)
+    state.active_conversation = Conversation(
+        target_id="chloe",
+        started_on_turn=1,
+        started_on_day=1,
+        gossip_offers=[state.heartbreakers[0].memories[0]],
+    )
+    options = [
+        FollowUpOption(
+            label=label,
+            category=category,
+            intent_kind=intent_kind,
+            stat_used=stat_used,
+            risk=risk,
+            tone=tone,
+        )
+        for label, category, intent_kind, stat_used, risk, tone in [
+            (
+                "Notice her off-camera self",
+                "supportive",
+                "supportive_validate",
+                "eq",
+                "low",
+                "warm",
+            ),
+            ("Ask what silence feels like", "deep", "ask_about_topic", "eq", "medium", "curious"),
+            ("End on a good note", "exit", "end_softly", None, "safe", "warm"),
+            ("Push the flirt", "flirty", "escalate_flirt", "spark", "high", "flirty"),
+            ("Cool the heat", "supportive", "supportive_listen", "eq", "safe", "warm"),
+        ]
+    ]
+    menu = FollowUpMenu(options=options, npc_will_leave=False)
+
+    updated = with_gossip_options(menu, state)
+
+    assert updated == menu
+    assert any(option.intent_kind == "supportive_validate" for option in updated.options)
+
+
 def _state_with_chloe_gossip(*, affection: int):
     state = new_game(1)
     chloe = state.heartbreakers[0]

@@ -9,6 +9,7 @@ import pytest
 from src.game.agents.contextual_options import mock_follow_up_menu
 from src.game.agents.conversation_curator import (
     OpenAIConversationCurator,
+    _has_specific_future_commitment,
     _render_context,
     mock_conversation_curator,
     validate_memory_batch,
@@ -50,7 +51,7 @@ def test_curate_player_conversation_propagates_curator_raise() -> None:
         curate_player_conversation(state, conversation, boom)
 
 
-def test_curator_context_lists_required_memory_holders() -> None:
+def test_curator_context_lists_eligible_memory_holders() -> None:
     state = new_game(1)
     conversation = NPCNPCConversation(
         id="npcconv_context",
@@ -62,10 +63,135 @@ def test_curator_context_lists_required_memory_holders() -> None:
 
     rendered = _render_context(state, conversation, [])
 
-    assert "Required direct memory holders: maya, liam" in rendered
+    assert "Eligible direct memory holders: maya, liam" in rendered
     assert "- holder_id: maya" in rendered
     assert "- holder_id: liam" in rendered
     assert "Valid subject ids:" in rendered
+
+
+def test_curator_accepts_empty_batch_for_routine_conversation() -> None:
+    state = new_game(1)
+    _start_conversation(state)
+
+    validate_memory_batch(
+        MemoryBatch(memories=[], summary="The chat ended without a lasting reveal."),
+        state,
+        {"player", "chloe"},
+        set(),
+    )
+
+
+def test_curator_requires_both_holders_for_a_meaningful_boundary() -> None:
+    state = new_game(1)
+
+    with pytest.raises(ValueError, match="missing memory holders.*chloe"):
+        validate_memory_batch(
+            MemoryBatch(
+                memories=[
+                    MemoryDraft(
+                        holder_id="player",
+                        subject_id="chloe",
+                        content="Chloe said she was not ready to discuss family, so I did not push.",
+                        source="direct",
+                        emotional_weight=3,
+                        tags=["boundary", "respect"],
+                    )
+                ]
+            ),
+            state,
+            {"player", "chloe"},
+            set(),
+            required_memory_holders={"player", "chloe"},
+        )
+
+
+def test_curator_limits_routine_player_conversation_to_one_memory() -> None:
+    state = new_game(1)
+
+    with pytest.raises(ValueError, match="maximum is 1"):
+        validate_memory_batch(
+            MemoryBatch(
+                memories=[
+                    MemoryDraft(
+                        holder_id="player",
+                        subject_id="chloe",
+                        content="Chloe said she spends her evenings marking books.",
+                        source="direct",
+                        emotional_weight=3,
+                        tags=["school", "routine"],
+                    ),
+                    MemoryDraft(
+                        holder_id="chloe",
+                        subject_id="player",
+                        content="The player said home has felt unsettled lately.",
+                        source="direct",
+                        emotional_weight=4,
+                        tags=["home", "vulnerable"],
+                    ),
+                ]
+            ),
+            state,
+            {"player", "chloe"},
+            set(),
+            max_memories=1,
+        )
+
+
+def test_curator_requires_memory_for_specific_future_commitment() -> None:
+    state = new_game(1)
+    _start_conversation(state)
+    conversation = state.active_conversation
+    assert conversation is not None
+    conversation.exchanges[-1].npc_dialogue = (
+        "Thanks, love. I enjoyed it too, and I'll save you a lounger next time."
+    )
+
+    assert _has_specific_future_commitment(conversation) is True
+    with pytest.raises(ValueError, match="minimum is 1"):
+        validate_memory_batch(
+            MemoryBatch(memories=[], summary="They agreed to chat again."),
+            state,
+            {"player", "chloe"},
+            set(),
+            min_memories=1,
+            max_memories=1,
+        )
+
+
+def test_curator_detects_curly_apostrophe_future_meeting() -> None:
+    state = new_game(1)
+    _start_conversation(state)
+    conversation = state.active_conversation
+    assert conversation is not None
+    conversation.exchanges[-1].npc_dialogue = "I’ll see you by the pool later."
+
+    assert _has_specific_future_commitment(conversation) is True
+
+
+def test_curator_rejects_trivial_single_exchange_memory() -> None:
+    state = new_game(1)
+
+    with pytest.raises(ValueError, match="trivial low-weight memory"):
+        validate_memory_batch(
+            MemoryBatch(
+                memories=[
+                    MemoryDraft(
+                        holder_id="player",
+                        subject_id="jordan",
+                        content="Jordan said he felt restless but alright by the pool.",
+                        source="direct",
+                        emotional_weight=1,
+                        tags=["check_in", "mood"],
+                        durable=False,
+                    )
+                ]
+            ),
+            state,
+            {"player", "jordan"},
+            set(),
+            max_memories=1,
+            reject_trivial_memories=True,
+        )
 
 
 def test_curator_context_supplies_pronouns_so_unisex_names_are_not_guessed() -> None:
@@ -128,7 +254,7 @@ def test_curator_request_uses_shared_reasoning_kwargs_without_token_cap() -> Non
 
     assert "max_output_tokens" not in fake_client.responses.kwargs
     assert "temperature" not in fake_client.responses.kwargs
-    assert fake_client.responses.kwargs["reasoning"] == {"effort": "low", "summary": "detailed"}
+    assert fake_client.responses.kwargs["reasoning"] == {"effort": "medium", "summary": "detailed"}
 
 
 @pytest.mark.llm

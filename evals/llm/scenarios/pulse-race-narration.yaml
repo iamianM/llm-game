@@ -9,9 +9,11 @@ thread_check:
   criteria:
     - id: pulse_race_story_faithful
       criteria: >
-        The wrap ties the player's actual guesses to named chemistry pairs and recorded BPM or
-        chemistry values, foregrounds at least the strongest reveal, and never invents a pair
-        outside the matrix or exposes raw internal ids.
+        The wrap names at least one actual player guess, foregrounds the strongest recorded pair,
+        and compares that result with Chloe's recorded result so the result outside the player's
+        couple is clear. The adjacent engine panel holds all three selections, so the prose need not
+        repeat every guess or invent a cast reaction. Fail a list of readings with no relationship
+        implication, an invented pair, or exposed raw ids.
 seed: 707
 initial_day: 2
 initial_phase: morning
@@ -52,15 +54,7 @@ turns:
       kind: ambient
       target_id: ambient_wait
     golden:
-      criteria: Morning burns out. Producer announces Pulse Race. The matrix is computed and three guess rounds
-        are queued. pending_challenge.kind == "heart_rate"; round 1's correct answer is Maya (highest non-partner
-        chemistry at 72).
-      calls:
-      - agent: event_narrator
-        output_type: EventNarration
-        output:
-          prose: At the pool, no resolved ceremony beat lands yet. You and Chloe stay together in the frame,
-            her eyes meeting yours as the moment holds.
+      calls: []
     checks:
       - ceremony_events_present
   - id: round1-pick-maya
@@ -71,7 +65,6 @@ turns:
         choice_id: correct
         round_index: 0
     golden:
-      criteria: Player guesses right — Maya did spike for them. Engine advances to round 2.
       calls: []
     checks: []
   - id: round2-pick-first-option
@@ -82,7 +75,6 @@ turns:
         choice_id: correct
         round_index: 1
     golden:
-      criteria: Player guesses correctly on the partner round too. Advance to round 3.
       calls: []
     checks: []
   - id: round3-final-pick
@@ -93,17 +85,13 @@ turns:
         choice_id: correct
         round_index: 2
     golden:
-      criteria: 'Final guess locks. Three correct = success classification. The narrator writes the wrap:
-        names the strongest matrix pair (player+Maya at 88 BPM), references at least one of the player''s
-        guesses by name, and treats the room''s reveal as the dramatic core.'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: 'The Pulse Race ends in success as you read the room cleanly, choosing Maya when her pulse
-            climbs highest watching you, then naming Blake for Chloe’s standout moment. But the camera catches
-            the sharper spark: Maya’s bit sends your pulse to eighty-eight while she watches, while Chloe
-            and you mirror each other at eighty-two—and Chloe’s eyes stay fixed on you through the reveal.'
+          prose: You correctly pick Maya while you perform, Blake while Chloe performs, and Maya while you
+            watch. Maya watching you and you watching Maya both reach 88 BPM. You and Chloe reach 82 in
+            both directions, so the strongest reaction sits outside your couple.
     checks:
       - ceremony_events_present
       - event_narration_valid

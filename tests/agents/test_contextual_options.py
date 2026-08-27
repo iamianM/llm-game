@@ -17,6 +17,7 @@ from src.game.agents.contextual_options import (
 from src.game.agents.heartbreaker_voice import Exchange
 from src.game.engine.actions import ActionKind, PlayerAction
 from src.game.engine.follow_up_menu import generate_follow_up_menu
+from src.game.engine.private_chat import PrivateChatAttempt
 from src.game.engine.rules import MechanicalResult
 from src.game.state.memory import RecapDisposition
 from src.game.state.models import FollowUpOption, Memory, Mood, RelationshipDelta, new_game
@@ -68,7 +69,24 @@ def test_contextual_options_contract(departure_probability: int, tone: Tone) -> 
         result,
         exchange,
         departure_probability,
-        already_present=["end_softly", "apologize"],
+        already_present=[
+            FollowUpOption(
+                label="End on a good note",
+                category="exit",
+                intent_kind="end_softly",
+                stat_used=None,
+                risk="safe",
+                tone="warm",
+            ),
+            FollowUpOption(
+                label="Apologize honestly",
+                category="supportive",
+                intent_kind="apologize",
+                stat_used="eq",
+                risk="safe",
+                tone="apologetic",
+            ),
+        ],
     )
 
     validate_contextual_bespoke(bespoke, ["end_softly", "apologize"])
@@ -251,6 +269,78 @@ def test_explored_threads_defaults_when_no_prior_memories() -> None:
     ctx = contextual_options_context(state, result, exchange, 10, already_present=[])
 
     assert "fresh ground" in ctx.explored_threads
+
+
+def test_context_includes_engine_option_labels_and_purposes() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="chloe",
+            intent_id="friendly_chat_resort",
+        ),
+        success=True,
+        relationship_deltas={"chloe": RelationshipDelta(affection=2)},
+        tags=["friendly"],
+    )
+    exchange = Exchange(
+        player_dialogue="How are you settling in?",
+        npc_dialogue="I am still finding my feet.",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+    existing = FollowUpOption(
+        label="Ask something real",
+        category="deep",
+        intent_kind="go_deeper",
+        stat_used="eq",
+        risk="medium",
+        tone="vulnerable",
+    )
+
+    ctx = contextual_options_context(
+        state,
+        result,
+        exchange,
+        10,
+        already_present=[existing],
+    )
+
+    assert ctx.already_present[0].label == "Ask something real"
+    assert ctx.already_present[0].category == "deep"
+    assert ctx.already_present[0].intent_kind == "go_deeper"
+
+
+def test_context_marks_the_conversation_left_for_a_private_chat() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.START_CONVERSATION,
+            target_id="maya",
+            intent_id="flirty_intimate_eye_contact",
+        ),
+        success=True,
+        private_chat_attempt=PrivateChatAttempt(
+            target_id="maya",
+            started_from_location="pool",
+            success=True,
+            chance=80,
+            roll=20,
+            blocked_participants=["maya", "liam"],
+            blocked_topic="the early couples",
+        ),
+    )
+    exchange = Exchange(
+        player_dialogue="I wanted a minute with you.",
+        npc_dialogue="Poor Liam. Fine, you have my attention.",
+        npc_tone="flirty",
+        npc_mood_after=Mood.FLIRTY,
+    )
+
+    ctx = contextual_options_context(state, result, exchange, 10, already_present=[])
+
+    assert "away from Liam" in ctx.private_chat_context
+    assert "do not return" in ctx.private_chat_context
 
 
 @pytest.mark.llm

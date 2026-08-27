@@ -1,22 +1,29 @@
 id: day1-intro-round
 title: Day One Intro Round
-question: Can seven first greetings establish seven distinct voices?
+question: Can eight first greetings establish eight distinct voices?
 category: conversation
-goal: Prove first impressions land seven distinct voices in seven actions. Each Heartbreaker should sound recognisably themselves on the first hello.
+goal: Prove first impressions land eight distinct voices in eight actions. Each Heartbreaker should sound recognisably themselves on the first hello.
 thread_check:
   id: thread_acceptance
   severity: blocking
   criteria:
     - id: intro_cast_voice_separation
       criteria: >
-        Across the full greeting circle, the eight Heartbreakers establish distinct voices and
-        respond to their specific introduction intents rather than converging on stock welcomes
-        or interchangeable flirting.
+        Across the greeting circle, the Heartbreakers answer the player's exact approach through
+        their supplied social instincts. Natural overlap between two quiet or warm characters is
+        acceptable. The reviewed lines are voice references, not required jokes or beats. One or
+        two concise warm replies are valid when the other introductions remain distinct. A brief
+        public preference such as reliability is not a confession. A shared ordinary opening word
+        such as "Thanks" is not a reused template when the substance differs. Fail when three or
+        more replies reuse the same full sentence shape and generic stance, three or more voices contradict their
+        direction, a private fear is disclosed, or dialogue assumes a prior private conversation.
     - id: opening_choice_faithful
       criteria: >
-        The final ceremony follows naturally from the introductions and preserves the engine's
-        player/Chloe opening couple without inventing a vote, elimination, or later-game twist.
+        The final ceremony names every participant, follows naturally from the introductions, and
+        preserves the player and Chloe as the opening couple. Fail missing or mismatched cast,
+        an invented vote or elimination, or any later-game twist.
 seed: 404
+initial_location: flame_deck
 character_creation:
   archetype_id: class_clown
   gender: man
@@ -29,176 +36,137 @@ character_creation:
 live_resort_life: false
 judge_context:
   - Day-1 opens with the greeting circle at the flame_deck before First Spark; intros run first, then the player picks an opening partner.
-  - These are intros, not deep conversations — quick, voice-true, leave the door open.
+  - These are quick intros, not deep conversations. Keep each voice true and leave the door open.
+  - A deep intro is not permission to disclose a private relationship need. A concise preference or guarded answer can still be receptive.
   - The Heartbreaker Voice agent should make each intro sound like a different person, not the same template with a new name.
 turns:
   - id: intro-chloe
+    arrange_npc_locations: { chloe: flame_deck }
     action:
       kind: introduce_to
       target_id: chloe
       intent_id: intro_friendly
     golden:
-      criteria: 'A warm friendly hello with Chloe. She is the sweetheart — the opener should leave space and
-        Chloe''s reply lands soft, specific, and curious. Imagine: "I was hoping you''d say hi. I''m Chloe."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: I thought I’d steal you for a quieter minute, love. How’s the pool treating you
-            so far?
-          npc_dialogue: Much better now you’ve rescued me from the loud end, mate. I was telling Jordan about
-            my class back home—one of them would’ve launched himself straight into this pool by now. *laughs,
-            settling back on the lounger*
+          player_dialogue: Hi, Chloe. You all right?
+          npc_dialogue: Ask me again when I remember half these names. I'm Chloe.
           npc_tone: warm
           npc_mood_after: happy
     checks: &intro_checks
       - exchange_valid
       - agent_traces_present
   - id: intro-maya
+    arrange_npc_locations: { maya: flame_deck }
     action:
       kind: introduce_to
       target_id: maya
       intent_id: intro_banter
     golden:
-      criteria: 'A quick banter hello with Maya. She is the bright anxious joker — the first thing she says
-        is a joke that''s also a question. Imagine: "Right, who told you I''d be the funny one? Was it me?"
-        Player line should set up the joke; Maya''s reply should crack it.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You’ve been watching the pool like it’s waiting to deliver a punchline. Should
-            I be worried, or are you about to make this place your next comedy clip?
-          npc_dialogue: '*She points at you, delighted.* Finally, someone recognises the artistic process:
-            judging strangers in swimwear until inspiration strikes. Careful, though—you’re already dangerously
-            close to becoming the favourite bit.'
+          player_dialogue: You look like trouble.
+          npc_dialogue: Bit early to decide that. Give me ten minutes.
           npc_tone: playful
           npc_mood_after: flirty
     checks: *intro_checks
   - id: intro-liam
+    arrange_npc_locations: { liam: flame_deck }
     action:
       kind: introduce_to
       target_id: liam
       intent_id: intro_deep
     golden:
-      criteria: 'A low-pressure deeper hello with Liam. He should answer honestly, not perform vulnerability,
-        and leave space for the conversation to grow. Imagine: "Heavy opener. I respect it. Honestly? I''m
-        just trying not to be the version of me that overthinks every chat in here."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You seem good at making everyone else comfortable, but what actually makes you
-            feel chosen here? I’d rather know that than your polished version.
-          npc_dialogue: '*He looks down briefly, then meets your eyes.* That’s a fair question. I grew up
-            restoring old houses with my dad, so I’m used to spotting the loose bit and quietly fixing it—but
-            at Sunset Bay, I don’t want to be the handy option. I want someone to choose me before things
-            get difficult.'
-          npc_tone: vulnerable
+          player_dialogue: What do you notice first about people?
+          npc_dialogue: Whether they do what they say. Saves a lot of guessing.
+          npc_tone: warm
           npc_mood_after: content
     checks: *intro_checks
   - id: intro-sophie
+    arrange_npc_locations: { sophie: flame_deck }
     action:
       kind: introduce_to
       target_id: sophie
       intent_id: intro_flirty
     golden:
-      criteria: 'A flirty hello with Sophie. She is the polished joker — she takes the flirt with a raised
-        eyebrow and a sharper line back, never soft or naive. Imagine: "Brave choice for a first hello. Try
-        landing it next time."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: I’ve noticed you hold eye contact like you’re waiting for people to blink first.
-            I’m tempted to see what happens if I don’t.
-          npc_dialogue: You noticed—and you’re still holding it, which is either confidence or very poor judgment.
-            *tilts her head, smiling* The barrister in me wants evidence; the woman in me is rather enjoying
-            the experiment.
+          player_dialogue: You're hard to read.
+          npc_dialogue: Good. You've known me thirty seconds.
           npc_tone: flirty
           npc_mood_after: flirty
     checks: *intro_checks
   - id: intro-nia
+    arrange_npc_locations: { nia: flame_deck }
     action:
       kind: introduce_to
       target_id: nia
       intent_id: intro_friendly
     golden:
-      criteria: 'A warm friendly hello with Nia. She notices the player back — something specific, not a generic
-        compliment. Imagine: "You weren''t panicking earlier when everyone was. I noticed. ...I''m Nia."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: There’s something reassuring about talking with you—you make a crowded afternoon
-            feel less noisy. How’s your day actually been?
-          npc_dialogue: That’s a lovely thing to say, honestly. I’ve been quietly pleased that you remember
-            little details when I speak; it makes me feel properly heard, not just politely listened to. *smiles,
-            a little shyly* So yes—my day’s been rather good now.
+          player_dialogue: How's your first night going?
+          npc_dialogue: Fast. I think I've introduced myself to Jordan twice.
           npc_tone: warm
           npc_mood_after: happy
     checks: *intro_checks
   - id: intro-marcus
+    arrange_npc_locations: { marcus: flame_deck }
     action:
       kind: introduce_to
       target_id: marcus
       intent_id: intro_banter
     golden:
-      criteria: 'A banter hello with Marcus. He takes the joke with confident directness, fires one back drier,
-        and lets the player feel the alpha energy without going cruel. Imagine: "Bold. ...Alright, I''ll give
-        you that one. Try it again with a better setup."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: I’m starting to think this pool is less about swimming and more about seeing who
-            cracks first. You look far too comfortable—what’s your strategy?
-          npc_dialogue: Stay sharp, ask better questions, and never let anyone think I’m rattled. But you’ve
-            got a decent read on the room already, so I’ll give you that—now tell me what you’re really watching
-            for.
+          player_dialogue: You sizing everyone up already?
+          npc_dialogue: A little. You learn plenty before breakfast.
           npc_tone: playful
           npc_mood_after: happy
     checks: *intro_checks
   - id: intro-blake
+    arrange_npc_locations: { blake: flame_deck }
     action:
       kind: introduce_to
       target_id: blake
       intent_id: intro_deep
     golden:
-      criteria: 'A deeper hello with Blake. He answers in fewer words than expected, with one specific observation
-        about the resort or the player. Imagine: "Heavy first line. I''ll match it. ...You''re playing this
-        slower than the rest of them. Good."'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You’re funny enough to put people at ease, but you still notice who’s being left
-            out. What keeps you showing up for people when nobody’s making a fuss about it?
-          npc_dialogue: That’s annoyingly perceptive. Playing piano in hotel bars taught me to listen to the
-            quiet gaps—people reveal plenty when they think nobody’s paying attention. If it’s alright to
-            be sincere for a second, I’d rather be the person who stays than the one everyone remembers for
-            being loud.
-          npc_tone: vulnerable
+          player_dialogue: What do you make of everyone so far?
+          npc_dialogue: Too early. I'm still watching.
+          npc_tone: defensive
           npc_mood_after: content
     checks: *intro_checks
   - id: intro-jordan
+    arrange_npc_locations: { jordan: flame_deck }
     action:
       kind: introduce_to
       target_id: jordan
       intent_id: intro_banter
     golden:
-      criteria: 'A banter hello with Jordan. Anxious joker energy — the joke comes fast and the eagerness
-        underneath is visible. Imagine: "Don''t look at me too long, you''ll figure out I planned that line
-        in the mirror." Should be distinct from Maya — Jordan is needier and more male-coded.'
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You’ve got the energy of a man who’d turn choosing a sun lounger into a live final.
-            Is that your natural setting?
-          npc_dialogue: Finally, someone appreciates the craft. I host events in Birmingham, mate—if nobody’s
-            watching, I start presenting the chairs to each other. *grins and nudges your shoulder* You’re
-            good company, though. Don’t make me say it twice; I’ll get sincere and ruin everything.
+          player_dialogue: You planning to let anyone else talk?
+          npc_dialogue: Eventually. I haven't finished my opening statement.
           npc_tone: playful
           npc_mood_after: happy
     checks: *intro_checks
@@ -207,17 +175,12 @@ turns:
       kind: pair
       target_id: chloe
     golden:
-      criteria: 'With introductions done, the player crosses the flame_deck and stops in front of Chloe. Reality-TV
-        beats: the resort registering the choice, Chloe catching the player''s eye, the night settling into
-        a first couple. The narrator does not pre-cast anyone as sent home.'
       calls:
       - agent: event_narrator
         output_type: EventNarration
         output:
-          prose: At the flame deck, the full cast—Blake, Chloe, Jordan, Liam, Marcus, Maya, Nia, Sophie, and
-            you—watches as the Pairing Ceremony locks you and Chloe together. Chloe’s smile breaks through
-            as your hands find each other, while Maya turns toward Liam with a sharp, knowing look as the
-            choice lands across the resort.
+          prose: Blake, Chloe, Jordan, Liam, Marcus, Maya, Nia, Sophie, and you wait around the Flame Deck.
+            You choose Chloe, and she takes the place beside you. The first couple is set.
     checks:
       - event_narration_valid
       - agent_traces_present

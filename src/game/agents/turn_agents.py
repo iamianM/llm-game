@@ -39,10 +39,10 @@ from src.game.agents.resort_orchestrator import (
     mock_resort_orchestrator,
 )
 from src.game.engine.rules import MechanicalResult
-from src.game.state.models import GameState
+from src.game.state.models import FollowUpOption, GameState
 
 TurnContextualOptionsFn = Callable[
-    [GameState, MechanicalResult, Exchange, int, list[str]],
+    [GameState, MechanicalResult, Exchange, int, list[FollowUpOption]],
     ContextualOptionsResult,
 ]
 
@@ -125,7 +125,7 @@ def _mock_contextual_options(
     _result: MechanicalResult,
     _exchange: Exchange,
     _departure_probability: int,
-    _already_present: list[str],
+    _already_present: list[FollowUpOption],
 ) -> ContextualOptionsResult:
     return mock_contextual_bespoke()
 
