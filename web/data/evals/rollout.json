@@ -94,7 +94,7 @@
   },
   "provenance": {
     "published_at": "2026-09-01",
-    "source_revision": null,
+    "source_revision": "8c26f314d0ffd6fcd2a446c1d9ceb4dab041a432",
     "note": "Real-model causal rollout; each turn carries the preceding actual outputs forward."
   },
   "scenarios": [
