@@ -12,6 +12,7 @@ export function EvalHeader() {
       <nav className={styles.nav} aria-label="Evaluation navigation">
         <Link aria-current={pathname === "/evals" ? "page" : undefined} href="/evals">Overview</Link>
         <Link aria-current={pathname.startsWith("/evals/scenarios") ? "page" : undefined} href="/evals/scenarios">Scenarios</Link>
+        <Link aria-current={pathname.startsWith("/evals/rollouts") ? "page" : undefined} href="/evals/rollouts/conversation-continuity-exit">Rollout</Link>
         <Link href="/">Play the game</Link>
       </nav>
     </header>

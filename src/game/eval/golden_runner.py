@@ -13,26 +13,30 @@ import yaml
 from src.game.agents.runtime import recover_agent_traces_after_error
 from src.game.agents.turn_agents import live_turn_agents, mock_turn_agents
 from src.game.cli.commands.play_recording import record_from_turn
-from src.game.engine.character_creation import create_character
-from src.game.engine.phases import PHASE_BUDGETS
 from src.game.engine.turn import run_turn
 from src.game.eval.golden_checks import run_deterministic_check
 from src.game.eval.golden_costs import CallCost, RunAccounting, summarize_call, summarize_calls
 from src.game.eval.golden_judge import run_thread_check
 from src.game.eval.golden_models import (
     CheckResultValue,
+    ExecutionModel,
     GoldenCheckResult,
     GoldenEvalRun,
     GoldenEvalScenario,
     GoldenScenarioResult,
     GoldenTurnResult,
-    GoldenTurnSpec,
     JudgeTrace,
+    ThreadCheckSpec,
+)
+from src.game.eval.golden_replay import (
+    apply_turn_arrangements,
+    build_isolated_turn_input,
+    new_scenario_state,
+    turn_arrangements_payload,
 )
 from src.game.eval.golden_report import render_golden_eval_html
 from src.game.eval.golden_showcase import build_golden_eval_showcase
-from src.game.state.models import GameState, new_game
-from src.game.state.phase_clock import PhaseClock
+from src.game.state.models import GameState
 from src.game.state.rng import SeededRng
 from src.game.state.snapshot import state_hash, state_hash_payload
 
@@ -60,6 +64,7 @@ def run_golden_eval(
     real_llm: bool,
     judge: bool,
     max_workers: int | None = None,
+    execution_model: ExecutionModel = "isolated_golden_replay",
 ) -> GoldenEvalRun:
     """Run scenarios concurrently and write JSON + HTML review artifacts.
 
@@ -76,16 +81,21 @@ def run_golden_eval(
         results: list[GoldenScenarioResult] = []
     else:
 
-        def _run_isolated(scenario: GoldenEvalScenario) -> GoldenScenarioResult:
+        def _run_one(scenario: GoldenEvalScenario) -> GoldenScenarioResult:
             return contextvars.copy_context().run(
-                _run_scenario, scenario, out=out, real_llm=real_llm, judge=judge
+                _run_scenario,
+                scenario,
+                out=out,
+                real_llm=real_llm,
+                judge=judge,
+                execution_model=execution_model,
             )
 
         if worker_count <= 1:
-            results = [_run_isolated(scenario) for scenario in scenarios]
+            results = [_run_one(scenario) for scenario in scenarios]
         else:
             with ThreadPoolExecutor(max_workers=worker_count) as pool:
-                results = list(pool.map(_run_isolated, scenarios))
+                results = list(pool.map(_run_one, scenarios))
     passed = sum(1 for result in results if result.status == "pass")
     failed = sum(1 for result in results if result.status == "fail")
     cannot_determine = sum(1 for result in results if result.status == "cannot_determine")
@@ -100,6 +110,7 @@ def run_golden_eval(
         cannot_determine=cannot_determine,
         accounting=accounting,
         scenarios=results,
+        execution_model=execution_model,
     )
     (out / "artifacts" / "run.json").write_text(run.model_dump_json(indent=2), encoding="utf-8")
     (out / "index.html").write_text(render_golden_eval_html(run), encoding="utf-8")
@@ -171,9 +182,8 @@ def _run_scenario(
     out: Path,
     real_llm: bool,
     judge: bool,
+    execution_model: ExecutionModel,
 ) -> GoldenScenarioResult:
-    state = _new_scenario_state(scenario)
-    rng = SeededRng(scenario.seed)
     agents = (
         live_turn_agents("full" if scenario.live_resort_life else "no_resort_life")
         if real_llm
@@ -181,13 +191,30 @@ def _run_scenario(
     )
     turn_results: list[GoldenTurnResult] = []
     records: list[dict[str, object]] = []
-    for turn_spec in scenario.turns:
-        _apply_turn_arrangements(state, turn_spec)
+    causal_state = new_scenario_state(scenario) if execution_model == "causal_rollout" else None
+    causal_rng = SeededRng(scenario.seed) if execution_model == "causal_rollout" else None
+    for target_index, turn_spec in enumerate(scenario.turns):
+        if execution_model == "isolated_golden_replay":
+            isolated = build_isolated_turn_input(scenario, target_index=target_index)
+            state = isolated.state
+            rng = isolated.rng
+            input_source = "fresh_scenario_state" if target_index == 0 else "reviewed_prefix"
+            input_turn_ids = isolated.replayed_turn_ids
+        else:
+            if causal_state is None or causal_rng is None:
+                raise AssertionError("causal rollout state was not initialized")
+            state = causal_state
+            rng = causal_rng
+            input_source = "fresh_scenario_state" if target_index == 0 else "actual_prefix"
+            input_turn_ids = [turn.id for turn in turn_results]
+        apply_turn_arrangements(state, turn_spec)
         input_hash = state_hash(state_hash_payload(state))
         pre_state = state.model_copy(deep=True)
         try:
             turn = run_turn(state, turn_spec.action, rng, agents)
             state = turn.state
+            if execution_model == "causal_rollout":
+                causal_state = state
             record = cast(dict[str, object], record_from_turn(input_hash, turn_spec.action, turn))
             records.append(record)
             checks = _run_turn_checks(turn_spec, turn, "real" if real_llm else "mock", pre_state)
@@ -195,7 +222,9 @@ def _run_scenario(
                 GoldenTurnResult(
                     id=turn_spec.id,
                     action=turn_spec.action.model_dump(mode="json"),
-                    arrangements=_turn_arrangements_payload(turn_spec),
+                    arrangements=turn_arrangements_payload(turn_spec),
+                    input_source=input_source,
+                    input_turn_ids=input_turn_ids,
                     golden=turn_spec.golden,
                     input_hash=input_hash,
                     output_hash=turn.state_hash,
@@ -216,7 +245,9 @@ def _run_scenario(
                 GoldenTurnResult(
                     id=turn_spec.id,
                     action=turn_spec.action.model_dump(mode="json"),
-                    arrangements=_turn_arrangements_payload(turn_spec),
+                    arrangements=turn_arrangements_payload(turn_spec),
+                    input_source=input_source,
+                    input_turn_ids=input_turn_ids,
                     golden=turn_spec.golden,
                     input_hash=input_hash,
                     record=error_record,
@@ -232,7 +263,8 @@ def _run_scenario(
                     error=str(exc),
                 )
             )
-            break
+            if execution_model == "causal_rollout":
+                break
     (out / "artifacts" / f"{scenario.id}-trace.json").write_text(
         json.dumps(records, indent=2),
         encoding="utf-8",
@@ -242,18 +274,19 @@ def _run_scenario(
     if judge:
         try:
             thread_check, judge_trace = run_thread_check(
-                scenario=scenario,
+                scenario=_judge_scenario(scenario, execution_model),
                 records=records,
                 deterministic_checks=[turn.checks for turn in turn_results],
                 prompt_out=out / "judge-prompts" / f"{scenario.id}.json",
+                execution_model=execution_model,
             )
         except Exception as exc:
             thread_check = GoldenCheckResult(
-                id=scenario.thread_check.id,
+                id=_thread_check_for(scenario, execution_model).id,
                 kind="judge",
                 result="cannot_determine",
                 reason=f"thread judge failed: {exc}",
-                severity=scenario.thread_check.severity,
+                severity=_thread_check_for(scenario, execution_model).severity,
             )
     return GoldenScenarioResult(
         id=scenario.id,
@@ -262,120 +295,31 @@ def _run_scenario(
         category=scenario.category,
         goal=scenario.goal,
         status=_scenario_status(turn_results, thread_check),
-        thread_expectation=scenario.thread_check,
+        thread_expectation=_thread_check_for(scenario, execution_model),
         thread_check=thread_check,
         judge_trace=judge_trace,
         turns=turn_results,
     )
 
 
-def _new_scenario_state(scenario: GoldenEvalScenario) -> GameState:
-    state = new_game(scenario.seed, player_stats=scenario.player_stats)
-    intended_phase = scenario.initial_phase
-    intended_phase_budget = scenario.initial_phase_budget_minutes
-    if scenario.initial_day is not None:
-        state.day = scenario.initial_day
-    if scenario.initial_phase is not None:
-        state.phase = scenario.initial_phase
-        state.phase_clock = PhaseClock(
-            phase=scenario.initial_phase.value,
-            budget_minutes=PHASE_BUDGETS[scenario.initial_phase],
-        )
-    if scenario.initial_phase_budget_minutes is not None:
-        state.phase_clock.budget_minutes = scenario.initial_phase_budget_minutes
-    if scenario.initial_location is not None:
-        state.location_id = scenario.initial_location
-    if scenario.initial_relationships is not None:
-        for heartbreaker in state.heartbreakers:
-            relationship = scenario.initial_relationships.get(heartbreaker.id)
-            if relationship is not None:
-                heartbreaker.relationship = relationship.model_copy(deep=True)
-    if scenario.initial_couples is not None:
-        state.couples = [couple.model_copy(deep=True) for couple in scenario.initial_couples]
-    if scenario.initial_npc_conversations is not None:
-        state.npc_conversations = [
-            conversation.model_copy(deep=True)
-            for conversation in scenario.initial_npc_conversations
-        ]
-    if scenario.character_creation is not None:
-        create_character(
-            state,
-            archetype_id=scenario.character_creation.archetype_id,
-            gender=scenario.character_creation.gender,
-            stats=scenario.character_creation.stats,
-            rerolled=scenario.character_creation.rerolled,
-        )
-        # Day-1 starts in INTROS (greeting circle). Eval scenarios written
-        # against the legacy flow open straight into First Spark or later
-        # turns; fast-forward past intros unless the first scripted turn IS
-        # an intro action so we don't break authored expectations.
-        from src.game.engine.actions import ActionKind as _ActionKind
-        from src.game.engine.phases import PHASE_BUDGETS as _PHASE_BUDGETS
-        from src.game.state.models import Phase as _Phase
-        from src.game.state.phase_clock import PhaseClock as _PhaseClock
-
-        first_turn = scenario.turns[0] if scenario.turns else None
-        opens_with_intro = (
-            first_turn is not None
-            and first_turn.action is not None
-            and first_turn.action.kind is _ActionKind.INTRODUCE_TO
-        )
-        if state.phase is _Phase.INTROS and not opens_with_intro:
-            target_phase = intended_phase if intended_phase is not None else _Phase.MORNING
-            budget = (
-                intended_phase_budget
-                if intended_phase_budget is not None
-                else _PHASE_BUDGETS[target_phase]
+def _thread_check_for(
+    scenario: GoldenEvalScenario,
+    execution_model: ExecutionModel,
+) -> ThreadCheckSpec:
+    if execution_model == "causal_rollout":
+        if scenario.causal_thread_check is None:
+            raise ValueError(
+                f"scenario {scenario.id!r} does not define causal_thread_check"
             )
-            state.phase = target_phase
-            state.phase_clock = _PhaseClock(phase=target_phase.value, budget_minutes=budget)
-            state.intro_completed_ids = [
-                heartbreaker.id
-                for heartbreaker in state.heartbreakers
-                if not heartbreaker.eliminated
-            ]
-            state.intro_memory_created = True
-    return state
+        return scenario.causal_thread_check
+    return scenario.thread_check
 
 
-def _apply_turn_arrangements(state: GameState, turn_spec: GoldenTurnSpec) -> None:
-    if turn_spec.arrange_player_location is not None:
-        state.location_id = turn_spec.arrange_player_location
-    for heartbreaker in state.heartbreakers:
-        location = turn_spec.arrange_npc_locations.get(heartbreaker.id)
-        if location is not None:
-            heartbreaker.location_id = location
-    if turn_spec.arrange_active_conversation is not None:
-        state.active_conversation = turn_spec.arrange_active_conversation.model_copy(deep=True)
-
-
-def _turn_arrangements_payload(turn_spec: GoldenTurnSpec) -> dict[str, object]:
-    payload: dict[str, object] = {}
-    if turn_spec.arrange_player_location is not None:
-        payload["player_location"] = turn_spec.arrange_player_location.value
-    if turn_spec.arrange_npc_locations:
-        payload["npc_locations"] = {
-            heartbreaker_id: location.value
-            for heartbreaker_id, location in turn_spec.arrange_npc_locations.items()
-        }
-    if turn_spec.arrange_active_conversation is not None:
-        conversation = turn_spec.arrange_active_conversation
-        active: dict[str, object] = {"target_id": conversation.target_id}
-        if conversation.pending_interruption is not None:
-            active["pending_interruption"] = conversation.pending_interruption.model_dump(
-                mode="json"
-            )
-        if conversation.pending_options is not None:
-            active["pending_options"] = [
-                {
-                    "label": option.label,
-                    "category": option.category,
-                    "intent_kind": option.intent_kind,
-                }
-                for option in conversation.pending_options.options
-            ]
-        payload["active_conversation"] = active
-    return payload
+def _judge_scenario(
+    scenario: GoldenEvalScenario,
+    execution_model: ExecutionModel,
+) -> GoldenEvalScenario:
+    return scenario.model_copy(update={"thread_check": _thread_check_for(scenario, execution_model)})
 
 
 _UNIVERSAL_CHECKS: tuple[str, ...] = ("engine_state_invariants_preserved",)

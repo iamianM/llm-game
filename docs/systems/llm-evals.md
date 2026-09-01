@@ -28,15 +28,23 @@ Scenarios live in `evals/llm/scenarios/` as typed YAML. A scenario defines
 canonical setup, a fixed seed, one or more legal player actions, an authored
 semantic target, deterministic turn checks, and one holistic thread-check rubric.
 
-For each turn the runner:
+For each target turn the runner:
 
-1. builds or restores canonical engine state;
-2. arranges only the explicit fixture state;
-3. executes the action through `run_turn`;
-4. validates structured engine and agent output;
-5. writes the complete trace artifact; and
-6. optionally makes one judge call over every authored turn, semantic target,
-   engine record, and ordered agent output in the scenario.
+1. builds fresh canonical engine state and seeded RNG;
+2. replays every earlier action through `run_turn` with its reviewed agent outputs;
+3. applies the target turn's explicit arrangements;
+4. executes only the target action with the configured agents;
+5. validates the engine and agent output; and
+6. writes the isolated result and the ids of the reviewed turns used as input.
+
+One generated turn never becomes input to another eval turn. A bad opening can
+fail its own comparison without invalidating the follow-up and closing cases.
+
+The optional `causal_rollout` execution model keeps one state and seeded RNG,
+then carries each actual result into the next turn. Use it for a small number of
+multi-turn scenarios where end-to-end continuity matters. A causal scenario
+must define `causal_thread_check`; its rubric judges the actual sequence rather
+than the reviewed prefix.
 
 Scenarios run independently and in parallel, up to eight workers by default.
 Use `--max-workers 1` for sequential diagnosis.
@@ -100,13 +108,16 @@ The Vercel app exposes `/evals` as a portfolio-facing view of one curated real
 run. `/evals` gives the result and coverage. `/evals/scenarios/<id>` keeps the
 engine result, reviewed target, ordered model calls, per-call usage, applied
 game results, and evaluation reasons in one turn view. Both pages import the reviewed
-`web/data/evals/latest.json` artifact at build time. A fixed-input call compares
-a reviewed output against the actual result. A call that consumes earlier model
-text shows contextual review criteria beside its actual output. Both forms lock
-the agent and output type. Engine-applied menus and state
+`web/data/evals/latest.json` artifact at build time. Every call compares a
+reviewed structured output with the actual result from the same reviewed prefix.
+The artifact records how many prior reviewed turns were replayed. Golden calls
+lock the agent and output type. Engine-applied menus and state
 changes appear with the actual results that produced them. The eval command does not
 deploy a run. A reviewer promotes `showcase.json` into that tracked path, pushes
 the Git commit, and the Vercel Git integration builds the committed snapshot.
+
+`web/data/evals/rollout.json` holds the published causal smoke run. The overview
+links to its actual-prefix sequence separately from the controlled cases.
 The deployed page does not fetch GitHub data at runtime. General
 `review-packet*` directories stay out of deployment, so local playtests are not
 published.
@@ -140,7 +151,7 @@ report-rendering or judge failure therefore cannot erase the game evidence.
 
 The generated `index.html` is the primary artifact. It shows:
 
-- scenario goal, fixed output references, and contextual review criteria;
+- scenario goal and reviewed output references;
 - mode, judge status, workers, turns, pass/fail totals, agent calls, latency
   percentiles, and tokens;
 - one whole-thread verdict, its rubric, and judge provenance before turn detail;
@@ -158,7 +169,7 @@ complete thread at a time, and expand individual turns. Review in this order:
    conclusion.
 4. Use per-call inputs, prompt hashes, latency/tokens, and reasoning summaries to
    locate the responsible model, prompt, or runtime boundary.
-5. Inspect the stored whole-thread judge payload when the judgment itself looks
+5. Inspect the stored whole-scenario judge payload when the judgment itself looks
    wrong.
 
 ## Failure-to-Regression Workflow
@@ -183,12 +194,11 @@ a packet green.
 - Mechanical behavior must have deterministic tests before narrative evals.
 - Prefer structural turn checks to rubric criteria whenever the claim is
   machine-testable.
-- A fixed-input golden stores a reviewed agent result in the same shape as the
-  actual result. Compare contract fields exactly and natural-language fields
+- Every golden stores a reviewed agent result in the same shape as the actual
+  result. Compare contract fields exactly and natural-language fields
   semantically.
-- A golden for a call that consumes earlier model output stores contextual
-  criteria instead of an alternate transcript. Judge it against the ordered
-  actual thread.
+- Rebuild dependent turns from reviewed prior outputs. Never use an earlier
+  generated eval output as input to a later case.
 - Select generated conversation choices by `intent_id`, never `option_index`.
 - Update or delete a stale scenario in the same change that alters the game
   contract. Do not support old scenario shapes with compatibility code.

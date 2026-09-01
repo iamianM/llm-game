@@ -11,6 +11,7 @@ engine code validates the menu and resolves mechanics.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from functools import cached_property
 from pathlib import Path
@@ -153,6 +154,7 @@ class ContextualOptionsAgent:
                 validate_contextual_bespoke(
                     bespoke,
                     [option.intent_kind for option in context.already_present],
+                    forbidden_subject_names=context.closed_conversation_names,
                 )
                 return bespoke
             except ValueError as exc:
@@ -276,6 +278,8 @@ def validate_follow_up_menu(menu: FollowUpMenu) -> None:
 def validate_contextual_bespoke(
     bespoke: ContextualBespoke,
     already_present: list[str],
+    *,
+    forbidden_subject_names: list[str] | None = None,
 ) -> None:
     """Validate the slim Contextual Options output before assembly.
 
@@ -294,6 +298,11 @@ def validate_contextual_bespoke(
             raise ValueError(f"unknown bespoke category: {option.category}")
         if option.category == "exit":
             raise ValueError("bespoke options must not provide the engine-owned exit")
+        for name in forbidden_subject_names or []:
+            if re.search(rf"\b{re.escape(name)}\b", option.label, re.IGNORECASE):
+                raise ValueError(
+                    f"bespoke option reopens the closed conversation with {name}: {option.label}"
+                )
     if bespoke.npc_will_leave and not bespoke.npc_exit_line:
         raise ValueError("npc_exit_line is required when npc_will_leave is true")
 

@@ -39,6 +39,7 @@ class ContextualOptionsContext(BaseModel):
     departure_probability: int
     gossip_memories: str
     private_chat_context: str = "none"
+    closed_conversation_names: list[str] = Field(default_factory=list)
     explored_threads: str = "None yet — this is fresh ground."
     already_present: list[ExistingFollowUpOption] = Field(default_factory=list)
 
@@ -86,6 +87,7 @@ def contextual_options_context(
         departure_probability=departure_probability,
         gossip_memories=_gossip_memory_context(state),
         private_chat_context=_private_chat_context(state, result),
+        closed_conversation_names=_closed_interruption_names(state, result),
         explored_threads=_explored_threads(state, target.id),
         already_present=[
             ExistingFollowUpOption(
@@ -123,6 +125,8 @@ def render_context(context: ContextualOptionsContext) -> str:
             ),
             f"Gossip-eligible memories: {context.gossip_memories}",
             f"Private chat context: {context.private_chat_context}",
+            "Closed conversation after accepted interruption: "
+            f"{_closed_interruption_context(context.closed_conversation_names)}",
             "Already explored with this Heartbreaker (past chats — do not re-open):\n"
             f"{context.explored_threads}",
             "Write the bespoke follow-up additions now.",
@@ -143,6 +147,30 @@ def _private_chat_context(state: GameState, result: MechanicalResult) -> str:
     return (
         f"The player just pulled this Heartbreaker away from {names}. Keep the next choices "
         "on the new private interaction; do not return to the person or topic left behind."
+    )
+
+
+def _closed_interruption_names(state: GameState, result: MechanicalResult) -> list[str]:
+    if result.action.intent_id != "accept_interruption" or result.action.target_id is None:
+        return []
+    closed_ids = {
+        actor_id
+        for actor_id in result.relationship_deltas
+        if actor_id != result.action.target_id
+    }
+    return [
+        heartbreaker.name
+        for heartbreaker in state.heartbreakers
+        if heartbreaker.id in closed_ids
+    ]
+
+
+def _closed_interruption_context(names: list[str]) -> str:
+    if not names:
+        return "none"
+    return (
+        f"{', '.join(names)}. The player ended that chat by accepting this interruption. Keep "
+        "every new option on the current Heartbreaker. Do not resume or discuss the old chat."
     )
 
 

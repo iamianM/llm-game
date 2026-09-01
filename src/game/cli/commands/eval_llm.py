@@ -20,6 +20,12 @@ def add_parser(subparsers: argparse._SubParsersAction[argparse.ArgumentParser]) 
     parser.add_argument("--real-llm", action="store_true", help="use live OpenAI agents")
     parser.add_argument("--judge", action="store_true", help="run optional LLM judge checks")
     parser.add_argument(
+        "--execution-model",
+        choices=("isolated_golden_replay", "causal_rollout"),
+        default="isolated_golden_replay",
+        help="run each turn from reviewed prefixes or carry actual outputs forward",
+    )
+    parser.add_argument(
         "--max-workers",
         type=int,
         default=None,
@@ -37,6 +43,7 @@ def run(args: argparse.Namespace) -> int:
         real_llm=bool(args.real_llm),
         judge=bool(args.judge),
         max_workers=args.max_workers,
+        execution_model=args.execution_model,
     )
     print(f"golden eval report: {Path(args.out) / 'index.html'}")
     print(

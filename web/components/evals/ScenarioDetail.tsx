@@ -12,7 +12,7 @@ import {
   type EvalTurn,
 } from "../../lib/eval-showcase";
 
-export function ScenarioDetail({ scenario }: { scenario: EvalScenario }) {
+export function ScenarioDetail({ scenario, executionModel = "isolated_golden_replay" }: { scenario: EvalScenario; executionModel?: "isolated_golden_replay" | "causal_rollout" }) {
   return (
     <article>
       <header className={styles.scenarioHeader}>
@@ -20,6 +20,7 @@ export function ScenarioDetail({ scenario }: { scenario: EvalScenario }) {
           <Status status={scenario.status} />
           <span>{CATEGORY_LABELS[scenario.category]}</span>
           <span>{turnLabel(scenario.turns.length)}</span>
+          <span>{executionModel === "causal_rollout" ? "Causal rollout" : "Controlled cases"}</span>
         </div>
         <h2>{scenario.title}</h2>
         <p className={styles.question}>{scenario.question}</p>
@@ -54,10 +55,10 @@ function ScenarioEvaluation({ scenario }: { scenario: EvalScenario }) {
         <p className={styles.sourceLabel}>Overall result</p>
         <Status status={scenario.status} />
         <p>{scenarioSummary(scenario)}</p>
-        <p className={styles.definition}>Combines the deterministic turn checks with the one full-scenario judge verdict.</p>
+        <p className={styles.definition}>Combines deterministic turn checks with one full-scenario judge verdict.</p>
       </div>
       <div className={styles.evaluationColumn}>
-        <p className={styles.sourceLabel}>LLM call · thread judge</p>
+        <p className={styles.sourceLabel}>LLM call · scenario judge</p>
         {scenario.judge ? <Status status={scenario.judge.result} /> : <strong>Not run</strong>}
         {scenario.judge && <CallMetrics call={scenario.judge} />}
         {scenario.judge ? (
@@ -85,7 +86,7 @@ function ScenarioEvaluation({ scenario }: { scenario: EvalScenario }) {
               <ol>{scenario.judge.criteria.map((criterion) => <li key={criterion}>{criterion}</li>)}</ol>
             </details>}
           </details>
-        ) : <p>No thread evaluation was recorded.</p>}
+        ) : <p>No scenario evaluation was recorded.</p>}
       </div>
     </section>
   );
@@ -99,6 +100,7 @@ function TurnResult({ turn, index }: { turn: EvalTurn; index: number }) {
     <section className={styles.turnResult}>
       <div className={styles.turnHeader}><h3>{turnTitle(turn.action, index)}</h3><Status status={turn.status} /></div>
       {selectedIntent(turn.action) && <p className={styles.turnIntent}><span>Selected intent</span>{humanize(selectedIntent(turn.action)!)}</p>}
+      <p className={styles.turnReplay} data-testid="turn-input"><span>Input</span>{turnInputLabel(turn)}</p>
       {(turn.story.engine_result || turn.story.relationship_changes.length > 0 || turn.story.engine_details?.length || turn.story.events.length > 0) && (
         <section className={styles.engineResult}>
           <p className={styles.sourceLabel}>Engine result · deterministic</p>
@@ -115,7 +117,7 @@ function TurnResult({ turn, index }: { turn: EvalTurn; index: number }) {
       />}
       <details className={styles.turnEvaluation} open={turn.status !== "pass"}>
         <summary><span>Deterministic engine &amp; schema checks</span><strong>{passing}/{checks.length} passed</strong></summary>
-        <p className={styles.checkIntro}>These checks inspect structured state and model contracts. The thread judge grades meaning and writing quality.</p>
+        <p className={styles.checkIntro}>These checks inspect structured state and model contracts. The scenario judge grades meaning and writing quality.</p>
         <ul className={styles.checkList}>{checks.map((check) => (
           <li className={check.result === "fail" ? styles.checkFail : check.result === "cannot_determine" ? styles.checkReview : ""} key={check.id}>
             <div className={styles.checkHeading}><strong>{sentence(check.reason)}</strong><Status status={check.result} /></div>
@@ -126,6 +128,15 @@ function TurnResult({ turn, index }: { turn: EvalTurn; index: number }) {
       </details>
     </section>
   );
+}
+
+function turnInputLabel(turn: EvalTurn) {
+  if (turn.input_source === "fresh_scenario_state") return "Fresh scenario state";
+  const count = turn.input_turn_ids.length;
+  const noun = count === 1 ? "turn" : "turns";
+  return turn.input_source === "actual_prefix"
+    ? `${count} actual prior ${noun} carried forward`
+    : `${count} reviewed prior ${noun} replayed`;
 }
 
 function AppliedGameResult({ story }: { story: EvalStory }) {
@@ -147,7 +158,6 @@ function ResultList({ label, values }: { label: string; values: string[] }) {
 
 type DisplayCall = Pick<EvalGoldenCall, "agent" | "output_type"> & Partial<EvalTrace> & {
   output?: unknown;
-  criteria?: string[];
 };
 
 function CallComparison({ actualCalls, referenceCalls, story }: { actualCalls: DisplayCall[]; referenceCalls: DisplayCall[]; story: EvalStory }) {
@@ -188,9 +198,6 @@ function AgentResult({ actual, index, reference }: { actual?: DisplayCall; index
 function PairedTraceOutput({ actual, agent, reference }: { actual?: DisplayCall; agent: string; reference?: DisplayCall }) {
   const expectedOutput = reference && isRecord(reference.output) ? reference.output : null;
   const actualOutput = actual && isRecord(actual.output) ? actual.output : null;
-  if (!expectedOutput && reference?.criteria?.length) {
-    return <CriteriaTraceOutput actual={actual} criteria={reference.criteria} />;
-  }
   if (agent === "heartbreaker_voice" && (expectedOutput || actualOutput)) {
     return <ComparisonFields fields={[
       { key: "player", label: "Player line", reference: textValue(expectedOutput?.player_dialogue), actual: textValue(actualOutput?.player_dialogue) },
@@ -222,21 +229,6 @@ function PairedTraceOutput({ actual, agent, reference }: { actual?: DisplayCall;
     reference: reference ? <TraceOutput agent={reference.agent} output={reference.output} /> : <MissingValue>Not expected</MissingValue>,
     actual: actual ? <TraceOutput agent={actual.agent} output={actual.output} /> : <MissingValue>Not recorded</MissingValue>,
   }]} />;
-}
-
-function CriteriaTraceOutput({ actual, criteria }: { actual?: DisplayCall; criteria: string[] }) {
-  return (
-    <div className={styles.criteriaComparison} data-testid="criteria-comparison">
-      <section className={styles.criteriaTarget}>
-        <strong>Reviewed criteria</strong>
-        <ol>{criteria.map((criterion) => <li key={criterion}>{criterion}</li>)}</ol>
-      </section>
-      <section className={styles.contextualActual}>
-        <strong>Actual output from this thread</strong>
-        {actual ? <TraceOutput agent={actual.agent} output={actual.output} /> : <MissingValue>Not recorded</MissingValue>}
-      </section>
-    </div>
-  );
 }
 
 type ComparisonField = { key: string; label: string; reference: ReactNode; actual: ReactNode };

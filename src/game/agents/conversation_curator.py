@@ -295,6 +295,13 @@ _SPECIFIC_FUTURE_MEETING = re.compile(
     re.IGNORECASE,
 )
 
+_SPECIFIC_FUTURE_CONTINUATION = re.compile(
+    r"\bwe\s+can\s+(?:pick\s+(?:this|it)\s+up|continue|carry\s+on)\b"
+    r".{0,60}\b(?:over|at|after|before)\s+"
+    r"(?:breakfast|lunch|dinner|coffee|drinks?|the\s+pool|the\s+firepit)\b",
+    re.IGNORECASE,
+)
+
 
 def _required_memory_holders(conversation: CuratableConversation) -> set[str]:
     """Require both perspectives only when a multi-turn boundary was tested."""
@@ -313,6 +320,7 @@ def _has_specific_future_commitment(conversation: CuratableConversation) -> bool
     return bool(
         _SPECIFIC_FUTURE_COMMITMENT.search(text)
         or _SPECIFIC_FUTURE_MEETING.search(text)
+        or _SPECIFIC_FUTURE_CONTINUATION.search(text)
     )
 
 

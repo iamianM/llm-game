@@ -54,17 +54,23 @@ turns:
       calls:
       - agent: resort_orchestrator
         output_type: ResortUpdate
-        criteria:
-          - Return only legal movements and conversation changes grounded in the supplied resort state.
-          - A continued conversation must use its existing conversation id; a new conversation must use available participants at the selected location.
-          - The update may start, continue, move, or leave the resort unchanged. Do not require the reviewed example's cast pairing.
+        output:
+          npc_movements: []
+          conversation_starts: []
+          conversation_continues:
+          - conversation_id: npcconv_maya_marcus_kitchen
+            nudge: Maya asks Marcus to name the person he is actually watching.
+          conversation_ends: []
+          npc_interruptions: []
+          npc_summoned_elsewhere: []
       - agent: background_dialogue
         output_type: BackgroundExchange
-        criteria:
-          - Apply these criteria to every actual Background Dialogue call produced by the ResortUpdate, even when there is more than one.
-          - Each call must use the exact participants, location, topic, or continuation nudge selected in the actual ResortUpdate.
-          - The speakers answer each other in distinct voices without biography dumps, invented bystanders, or claims that the player heard the off-screen exchange.
-          - A continued Maya and Marcus exchange advances their existing question instead of restarting it.
+        output:
+          speaker_a_id: maya
+          speaker_b_id: marcus
+          speaker_a_line: You keep saying you're watching the couples. I asked who has actually caught your eye.
+          speaker_b_line: Sophie. She notices when someone's story changes, and she never rushes to fill the silence.
+          tone: vulnerable
     checks:
       - resort_update_committed
       - background_kind_isolated

@@ -296,8 +296,9 @@ def validate_exchange(exchange: Exchange, context: HeartbreakerVoiceContext) -> 
             f"{context.private_chat_departure_names}"
         )
     if context.interrupted_conversation_names:
+        npc_line = exchange.npc_dialogue
         mentions_departed_conversation = any(
-            re.search(rf"\b{re.escape(name)}\b", joined)
+            re.search(rf"\b{re.escape(name)}\b", npc_line)
             for name in context.interrupted_conversation_names
         )
         acknowledges_interruption = re.search(
@@ -306,7 +307,7 @@ def validate_exchange(exchange: Exchange, context: HeartbreakerVoiceContext) -> 
             r"|\bjump(?:ed|ing)?\s+in\b"
             r"|\bstep(?:ped|ping)?\s+in\b"
             r"|\b(?:pull|pulled|steal|stole)\s+you\b",
-            joined,
+            npc_line,
             re.IGNORECASE,
         )
         if not mentions_departed_conversation and not acknowledges_interruption:
@@ -314,6 +315,20 @@ def validate_exchange(exchange: Exchange, context: HeartbreakerVoiceContext) -> 
                 "accepted-interruption reply must acknowledge the interrupted conversation with "
                 f"{context.interrupted_conversation_names}"
             )
+        if re.search(r"\b(?:conversation|chat)\s+is\s+closed\b", joined, re.IGNORECASE):
+            raise ValueError("accepted-interruption exchange recites engine state instead of dialogue")
+        for name in context.interrupted_conversation_names:
+            closed_continuation = re.search(
+                rf"\b{re.escape(name)}\b.{{0,60}}\b(?:pick\s+up|resume|continue|carry\s+on|go\s+back)\b"
+                rf"|\b(?:pick\s+up|resume|continue|carry\s+on|go\s+back)\b.{{0,60}}\b{re.escape(name)}\b",
+                npc_line,
+                re.IGNORECASE,
+            )
+            if closed_continuation:
+                raise ValueError(
+                    "accepted-interruption reply tries to resume the closed conversation with "
+                    f"{name}"
+                )
 
 
 def load_dotenv_local(path: Path = Path(".env.local")) -> None:

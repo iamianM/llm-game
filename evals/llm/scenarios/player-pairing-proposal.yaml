@@ -99,10 +99,11 @@ turns:
       calls:
       - agent: conversation_curator
         output_type: MemoryBatch
-        criteria:
-          - Summarize only the actual kitchen exchange that occurred before the proposal.
-          - Keep any memories in each holder's point of view and limited to what that person heard or saw.
-          - A routine flirt may produce no durable memory; do not invent a stronger admission than the exchange contains.
+        output:
+          kind: player
+          memories: []
+          summary: The player caught Maya looking, and she challenged him to act on it.
+          gossip_seeds: []
       - agent: event_narrator
         output_type: EventNarration
         output:

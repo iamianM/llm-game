@@ -3,8 +3,13 @@
 Every YAML in this directory is one scenario for the golden LLM eval. The
 runner loads each file into a [`GoldenEvalScenario`](../../../src/game/eval/golden_models.py)
 and runs every turn through the production [`run_turn`](../../../src/game/engine/turn.py)
-path — same engine the CLI and FastAPI session loop call. There is no
-parallel "eval engine."
+path. Each target turn starts from fresh scenario state. The runner replays all
+earlier reviewed outputs through `run_turn`, then calls the configured agents
+only for the target turn. Earlier live output never changes a later test case.
+
+For a small end-to-end smoke lane, pass `--execution-model causal_rollout`. The
+runner then keeps the actual state and RNG between turns. A scenario used in
+that lane must define `causal_thread_check` for the actual sequence.
 
 Adding a scenario is the way to lock in expected behavior for a beat (a new
 agent, a new ceremony, a new format twist). Every feature that touches an
@@ -77,7 +82,7 @@ turns:
       calls:                            # ordered reviewed agent targets
         - agent: heartbreaker_voice
           output_type: Exchange
-          output:                      # fixed-input call: same shape as the actual result
+          output:                      # required; same shape as the actual result
             player_dialogue: How are you actually feeling this morning?
             npc_dialogue: Honestly, a little more wobbly than I am letting on.
             npc_tone: vulnerable
@@ -96,35 +101,11 @@ turns:
       - no_agent_validation_retries
 ```
 
-Use a full `output` reference when the call input is fixed by the scenario. A
-root conversation turn and an event narration over deterministic engine data
-are common examples.
-
-Do not write an alternate transcript for a call that consumes earlier model
-text. Store contextual `criteria` instead:
-
-```yaml
-  - id: answer-honestly
-    action:
-      kind: respond_with
-      target_id: chloe
-      intent_id: honest_vulnerable
-    golden:
-      calls:
-        - agent: heartbreaker_voice
-          output_type: Exchange
-          criteria:
-            - The player shares something honest that responds to Chloe's actual prior line.
-            - Chloe answers that disclosure without inventing shared history.
-        - agent: contextual_options
-          output_type: ContextualBespoke
-          criteria:
-            - Each choice continues a detail from Chloe's actual latest reply.
-```
-
-Each call must define exactly one of `output` or `criteria`. The judge compares
-a fixed `output` by meaning. It applies contextual `criteria` to the ordered
-actual conversation.
+Every agent call requires a full `output` reference. For target turn N, the
+runner rebuilds the input by replaying the reviewed outputs from turns 1 through
+N-1. It does not replay the live outputs from those turns. The target and the
+actual call therefore describe the same conversation, tool sequence, and engine
+state even when another target turn generated different prose.
 
 For `respond_with`, select an `intent_id`. Never select an `option_index` in an
 eval scenario. Generated option labels and ordering can change while the
@@ -136,7 +117,7 @@ Add any of these to a turn's `checks:` list. The check looks at structured
 fields the engine + agents produce; it never policies prose for length or
 vocabulary (per ENGINEERING.md R7 and R18).
 
-These checks protect exact contracts that the thread judge should not guess.
+These checks protect exact contracts that the scenario judge should not guess.
 The hosted dashboard collapses passing checks into one summary. It opens failed
 checks so a reviewer can read the reason and evidence.
 
@@ -216,15 +197,15 @@ checks so a reviewer can read the reason and evidence.
 
 Every scenario defines exactly one `thread_check:` at scenario scope. After the
 complete trace artifact is written, one judge call receives the scenario goal,
-judge context, every action, each reviewed output or contextual criterion, every engine record, all
-ordered actual agent outputs, and the complete acceptance rubric. It returns one holistic `pass`,
+judge context, every action, each reviewed output, every engine record, all
+isolated actual agent outputs, and the complete acceptance rubric. It returns one holistic `pass`,
 `fail`, or `cannot_determine` verdict for the scenario.
 
-Golden calls lock the expected agent order and output contract. A fixed-input
-call also stores a reviewed example result. A dependent call stores criteria
-that refer to the actual earlier turns, so it does not present a different
-conversation as the target. Natural-language reference fields are semantic
-examples, not exact string snapshots. The single thread rubric describes qualities schemas cannot prove across a sequence:
+Golden calls lock the expected agent order and output contract. Each call stores
+a reviewed result in the actual result shape. Natural-language fields are
+semantic references, not exact string snapshots. For each target turn, the
+judge compares the actual call with its reviewed call and the reviewed prefix,
+not with earlier actual output. The single thread rubric describes qualities schemas cannot prove across a sequence:
 voice consistency, emotional continuity, narrative arc, specificity, and
 faithfulness to the semantic targets and engine-owned outcomes. Use deterministic turn
 checks for shape, contracts, and game state. Never add per-turn semantic judge

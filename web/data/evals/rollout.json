@@ -1,0 +1,861 @@
+{
+  "schema_version": 7,
+  "execution_model": "causal_rollout",
+  "llm_mode": "real",
+  "judge_enabled": true,
+  "passed": 1,
+  "failed": 0,
+  "cannot_determine": 0,
+  "turn_count": 3,
+  "agent_call_count": 6,
+  "total_tokens": 24743,
+  "accounting": {
+    "game_agents": {
+      "usage": {
+        "input_tokens": 13032,
+        "cached_input_tokens": 10602,
+        "cache_write_tokens": 2412,
+        "output_tokens": 1543,
+        "reasoning_tokens": 807,
+        "total_tokens": 14575
+      },
+      "cost": {
+        "currency": "USD",
+        "kind": "exact",
+        "total_usd": 0.00267024,
+        "minimum_usd": null,
+        "maximum_usd": null,
+        "input_usd": 3.6e-6,
+        "cached_input_usd": 0.00021204,
+        "cache_write_usd": 0.000603,
+        "output_usd": 0.0018516,
+        "input_rate_per_million": 0.2,
+        "cached_input_rate_per_million": 0.02,
+        "cache_write_rate_per_million": 0.25,
+        "output_rate_per_million": 1.2,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+        "pricing_as_of": "2026-08-21"
+      }
+    },
+    "judges": {
+      "usage": {
+        "input_tokens": 8207,
+        "cached_input_tokens": 8204,
+        "cache_write_tokens": 0,
+        "output_tokens": 1961,
+        "reasoning_tokens": 1740,
+        "total_tokens": 10168
+      },
+      "cost": {
+        "currency": "USD",
+        "kind": "exact",
+        "total_usd": 0.00251788,
+        "minimum_usd": null,
+        "maximum_usd": null,
+        "input_usd": 6e-7,
+        "cached_input_usd": 0.00016408,
+        "cache_write_usd": 0.0,
+        "output_usd": 0.0023532,
+        "input_rate_per_million": 0.2,
+        "cached_input_rate_per_million": 0.02,
+        "cache_write_rate_per_million": 0.25,
+        "output_rate_per_million": 1.2,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+        "pricing_as_of": "2026-08-21"
+      }
+    },
+    "total": {
+      "usage": {
+        "input_tokens": 21239,
+        "cached_input_tokens": 18806,
+        "cache_write_tokens": 2412,
+        "output_tokens": 3504,
+        "reasoning_tokens": 2547,
+        "total_tokens": 24743
+      },
+      "cost": {
+        "currency": "USD",
+        "kind": "exact",
+        "total_usd": 0.00518812,
+        "minimum_usd": null,
+        "maximum_usd": null,
+        "input_usd": 4.2e-6,
+        "cached_input_usd": 0.00037612,
+        "cache_write_usd": 0.000603,
+        "output_usd": 0.0042048,
+        "input_rate_per_million": 0.2,
+        "cached_input_rate_per_million": 0.02,
+        "cache_write_rate_per_million": 0.25,
+        "output_rate_per_million": 1.2,
+        "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+        "pricing_as_of": "2026-08-21"
+      }
+    }
+  },
+  "provenance": {
+    "published_at": "2026-09-01",
+    "source_revision": null,
+    "note": "Real-model causal rollout; each turn carries the preceding actual outputs forward."
+  },
+  "scenarios": [
+    {
+      "id": "conversation-continuity-exit",
+      "title": "Conversation Continuity And Exit",
+      "question": "Can Chloe remember earlier turns and end the conversation naturally?",
+      "category": "conversation",
+      "goal": "Prove a multi-turn Chloe chat remembers itself. Every line builds on the last, the wheel stays legal, and the close feels like a social ending instead of an exit button.",
+      "status": "pass",
+      "judge": {
+        "result": "pass",
+        "reason": "Both criteria are satisfied across the causal three-turn rollout: the conversation stays on Chloe's home, routines, and uniforms, then ends with a natural social close; Chloe's guarded-to-warm voice is consistent and the stored memories accurately preserve the boundary, the player's disclosure, and the shared exchange.",
+        "evidence": null,
+        "model": "gpt-5.6-luna",
+        "reasoning_effort": "high",
+        "latency_ms": 143022,
+        "input_tokens": 8207,
+        "cached_input_tokens": 8204,
+        "cache_write_tokens": 0,
+        "output_tokens": 1961,
+        "reasoning_tokens": 1740,
+        "total_tokens": 10168,
+        "cost": {
+          "currency": "USD",
+          "kind": "exact",
+          "total_usd": 0.00251788,
+          "minimum_usd": null,
+          "maximum_usd": null,
+          "input_usd": 6e-7,
+          "cached_input_usd": 0.00016408,
+          "cache_write_usd": 0.0,
+          "output_usd": 0.0023532,
+          "input_rate_per_million": 0.2,
+          "cached_input_rate_per_million": 0.02,
+          "cache_write_rate_per_million": 0.25,
+          "output_rate_per_million": 1.2,
+          "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+          "pricing_as_of": "2026-08-21"
+        },
+        "reasoning_summaries": [
+          "**Evaluating prose criteria**\n\nI need to compare the reviewed prose, looking at voice, continuity, and specificity, not just exact matches. The previous line and expected content differ significantly; it seems there's a mismatch in meaning. I should analyze the provided data to see if the actual responses fit the context and expectations. The acceptance criteria suggest that they want a coherent conversation, so I need to judge based on the actual continuity rather than a strict golden standard.",
+          "**Assessing follow-up wording**\n\nThe context suggests that the follow-up wording should align with Chloe's previous line. However, the actual follow-up seems to reflect the most recent output's focus on tidiness, rather than the reviewed line. I need to compare this actual output to the reviewed target. It might be viewed as problematic because the first output doesn’t match. Yet, the criteria call for continuity over exact alignment, so I need to focus on the intent behind the follow-up."
+        ],
+        "criteria": [
+          "Read the three actual turns as one conversation. Each later turn must answer and build on the actual exchange before it without changing the subject, repeating the same question, or inventing history. The final turn must close the actual conversation naturally.",
+          "Chloe remains warm, sincere, and a little guarded across the actual sequence. Any stored memory must accurately summarize facts or commitments from the actual conversation. Fail generic summaries, unsupported facts, therapy language, or a memory that is longer than the useful fact it preserves."
+        ],
+        "criterion_findings": [
+          {
+            "id": "actual_conversation_arc",
+            "kind": "judge",
+            "result": "pass",
+            "reason": "The second turn directly builds on Chloe's flat-tidiness comment with a matching player disclosure, and the third turn follows the washing-machine and uniform thread into a warm, natural goodbye without repeating the same question or inventing history.",
+            "evidence": null
+          },
+          {
+            "id": "actual_voice_and_memory",
+            "kind": "judge",
+            "result": "pass",
+            "reason": "Chloe is initially guarded about personal topics, then becomes warm and playful while remaining sincere. Both stored memories accurately reflect the actual boundary, the player's admission about tidiness and reliability, and the warm close; they are specific rather than generic or therapeutic.",
+            "evidence": null
+          }
+        ]
+      },
+      "turns": [
+        {
+          "id": "start-chloe-deep",
+          "action": "start_conversation | target chloe | intent deep_ask_life",
+          "status": "pass",
+          "input_source": "fresh_scenario_state",
+          "input_turn_ids": [],
+          "golden": {
+            "calls": [
+              {
+                "agent": "heartbreaker_voice",
+                "output_type": "Exchange",
+                "output": {
+                  "player_dialogue": "What do you miss most about Liverpool?",
+                  "npc_dialogue": "The school, mostly. I miss knowing where I fit without having to think about it.",
+                  "npc_tone": "vulnerable",
+                  "npc_mood_after": "content"
+                }
+              },
+              {
+                "agent": "contextual_options",
+                "output_type": "ContextualBespoke",
+                "output": {
+                  "options": [
+                    {
+                      "label": "Ask what makes school feel settled",
+                      "category": "supportive",
+                      "intent_kind": "ask_about_topic",
+                      "stat_used": "eq",
+                      "risk": "safe",
+                      "tone": "attentive",
+                      "audience_hint": "+",
+                      "reveal_tier": 0,
+                      "reveal_tag": null,
+                      "unlock_threshold": null
+                    },
+                    {
+                      "label": "Ask about the school",
+                      "category": "friendly",
+                      "intent_kind": "ask_about_topic",
+                      "stat_used": "charm",
+                      "risk": "low",
+                      "tone": "reassuring",
+                      "audience_hint": "+",
+                      "reveal_tier": 0,
+                      "reveal_tag": null,
+                      "unlock_threshold": null
+                    }
+                  ],
+                  "npc_will_leave": false,
+                  "npc_exit_line": null
+                }
+              }
+            ]
+          },
+          "story": {
+            "engine_result": "Success: no | Chance: 50 | Roll: 98 | Tags: deep, vulnerable",
+            "engine_details": [],
+            "relationship_changes": [
+              "chloe: trust -1"
+            ],
+            "dialogue": {
+              "player": "What’s life like for you back home in Liverpool?",
+              "npc": "It’s mostly school runs, marking books, and trying to keep my little flat tidy. I’d rather not get too personal this early, love.",
+              "tone": "defensive",
+              "mood_after": "content"
+            },
+            "narration": null,
+            "choices": [
+              {
+                "label": "Ask about school runs",
+                "category": "friendly",
+                "risk": "safe"
+              },
+              {
+                "label": "Be honest back",
+                "category": "deep",
+                "risk": "medium"
+              },
+              {
+                "label": "Give them space",
+                "category": "exit",
+                "risk": "safe"
+              },
+              {
+                "label": "Apologize honestly",
+                "category": "supportive",
+                "risk": "safe"
+              },
+              {
+                "label": "Defend yourself",
+                "category": "supportive",
+                "risk": "medium"
+              }
+            ],
+            "events": [],
+            "memories": [],
+            "resort_changes": null
+          },
+          "checks": [
+            {
+              "id": "exchange_valid",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "exchange validates",
+              "evidence": null
+            },
+            {
+              "id": "follow_up_menu_valid",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "follow-up menu validates",
+              "evidence": null
+            },
+            {
+              "id": "conversation_active",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "conversation remains active with target",
+              "evidence": null
+            },
+            {
+              "id": "agent_traces_present",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "captured 2 agent trace(s)",
+              "evidence": null
+            },
+            {
+              "id": "engine_state_invariants_preserved",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "player identity, schema, seed, eliminations, and couples respect the engine boundary",
+              "evidence": null
+            }
+          ],
+          "traces": [
+            {
+              "agent": "heartbreaker_voice",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "low",
+              "output_type": "Exchange",
+              "latency_ms": 2989,
+              "input_tokens": 2377,
+              "cached_input_tokens": 2374,
+              "cache_write_tokens": 0,
+              "output_tokens": 72,
+              "reasoning_tokens": 0,
+              "total_tokens": 2449,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00013448,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00004748,
+                "cache_write_usd": 0.0,
+                "output_usd": 0.0000864,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "player_dialogue": "What’s life like for you back home in Liverpool?",
+                "npc_dialogue": "It’s mostly school runs, marking books, and trying to keep my little flat tidy. I’d rather not get too personal this early, love.",
+                "npc_tone": "defensive",
+                "npc_mood_after": "content"
+              },
+              "reasoning_summaries": [],
+              "attempt": 1
+            },
+            {
+              "agent": "contextual_options",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "low",
+              "output_type": "ContextualBespoke",
+              "latency_ms": 5330,
+              "input_tokens": 1716,
+              "cached_input_tokens": 1457,
+              "cache_write_tokens": 256,
+              "output_tokens": 331,
+              "reasoning_tokens": 187,
+              "total_tokens": 2047,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00049094,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00002914,
+                "cache_write_usd": 0.000064,
+                "output_usd": 0.0003972,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "options": [
+                  {
+                    "label": "Ask about school runs",
+                    "category": "friendly",
+                    "intent_kind": "ask_about_topic",
+                    "stat_used": "charm",
+                    "risk": "safe",
+                    "tone": "warm and interested",
+                    "audience_hint": "+",
+                    "reveal_tier": 0,
+                    "reveal_tag": null,
+                    "unlock_threshold": null
+                  },
+                  {
+                    "label": "Ask about marking books",
+                    "category": "friendly",
+                    "intent_kind": "ask_about_topic",
+                    "stat_used": "eq",
+                    "risk": "safe",
+                    "tone": "respectfully curious",
+                    "audience_hint": "+",
+                    "reveal_tier": 0,
+                    "reveal_tag": null,
+                    "unlock_threshold": null
+                  }
+                ],
+                "npc_will_leave": false,
+                "npc_exit_line": null
+              },
+              "reasoning_summaries": [],
+              "attempt": 1
+            }
+          ]
+        },
+        {
+          "id": "first-follow-up",
+          "action": "respond_with | target chloe | intent honest_vulnerable",
+          "status": "pass",
+          "input_source": "actual_prefix",
+          "input_turn_ids": [
+            "start-chloe-deep"
+          ],
+          "golden": {
+            "calls": [
+              {
+                "agent": "heartbreaker_voice",
+                "output_type": "Exchange",
+                "output": {
+                  "player_dialogue": "I get that. I miss the routines that make home feel like mine more than the big things.",
+                  "npc_dialogue": "Exactly. At school I know where I fit. Here, everyone is still working each other out.",
+                  "npc_tone": "warm",
+                  "npc_mood_after": "content"
+                }
+              },
+              {
+                "agent": "contextual_options",
+                "output_type": "ContextualBespoke",
+                "output": {
+                  "options": [
+                    {
+                      "label": "Ask what she teaches",
+                      "category": "friendly",
+                      "intent_kind": "ask_about_topic",
+                      "stat_used": "charm",
+                      "risk": "low",
+                      "tone": "curious",
+                      "audience_hint": "+",
+                      "reveal_tier": 0,
+                      "reveal_tag": null,
+                      "unlock_threshold": null
+                    },
+                    {
+                      "label": "Admit you feel unsteady too",
+                      "category": "deep",
+                      "intent_kind": "honest_vulnerable",
+                      "stat_used": "eq",
+                      "risk": "medium",
+                      "tone": "open",
+                      "audience_hint": "+",
+                      "reveal_tier": 1,
+                      "reveal_tag": "belonging",
+                      "unlock_threshold": null
+                    }
+                  ],
+                  "npc_will_leave": false,
+                  "npc_exit_line": null
+                }
+              }
+            ]
+          },
+          "story": {
+            "engine_result": "Success: yes | Chance: 65 | Roll: 50 | Tags: honest_vulnerable, medium, sincere",
+            "engine_details": [
+              {
+                "label": "Audience change",
+                "value": "+2"
+              }
+            ],
+            "relationship_changes": [
+              "chloe: affection +2, trust +6"
+            ],
+            "dialogue": {
+              "player": "I’m rubbish at keeping a flat tidy too, but I’m good at getting things done when they matter.",
+              "npc": "That’s fair, love. A lived-in place doesn’t bother me, as long as the washing machine isn’t eating your last clean uniform.",
+              "tone": "warm",
+              "mood_after": "happy"
+            },
+            "narration": null,
+            "choices": [
+              {
+                "label": "Ask about her washing machine",
+                "category": "friendly",
+                "risk": "safe"
+              },
+              {
+                "label": "Share your uniform disaster",
+                "category": "supportive",
+                "risk": "low"
+              },
+              {
+                "label": "End on a good note",
+                "category": "exit",
+                "risk": "safe"
+              },
+              {
+                "label": "Ask about Blake",
+                "category": "gossip",
+                "risk": "medium"
+              },
+              {
+                "label": "Tease them back",
+                "category": "banter",
+                "risk": "low"
+              }
+            ],
+            "events": [],
+            "memories": [],
+            "resort_changes": null
+          },
+          "checks": [
+            {
+              "id": "exchange_valid",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "exchange validates",
+              "evidence": null
+            },
+            {
+              "id": "follow_up_menu_valid",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "follow-up menu validates",
+              "evidence": null
+            },
+            {
+              "id": "conversation_active",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "conversation remains active with target",
+              "evidence": null
+            },
+            {
+              "id": "agent_traces_present",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "captured 2 agent trace(s)",
+              "evidence": null
+            },
+            {
+              "id": "engine_state_invariants_preserved",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "player identity, schema, seed, eliminations, and couples respect the engine boundary",
+              "evidence": null
+            }
+          ],
+          "traces": [
+            {
+              "agent": "heartbreaker_voice",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "low",
+              "output_type": "Exchange",
+              "latency_ms": 3979,
+              "input_tokens": 2615,
+              "cached_input_tokens": 1921,
+              "cache_write_tokens": 691,
+              "output_tokens": 187,
+              "reasoning_tokens": 105,
+              "total_tokens": 2802,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00043617,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00003842,
+                "cache_write_usd": 0.00017275,
+                "output_usd": 0.0002244,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "player_dialogue": "I’m rubbish at keeping a flat tidy too, but I’m good at getting things done when they matter.",
+                "npc_dialogue": "That’s fair, love. A lived-in place doesn’t bother me, as long as the washing machine isn’t eating your last clean uniform.",
+                "npc_tone": "warm",
+                "npc_mood_after": "happy"
+              },
+              "reasoning_summaries": [],
+              "attempt": 1
+            },
+            {
+              "agent": "contextual_options",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "low",
+              "output_type": "ContextualBespoke",
+              "latency_ms": 3129,
+              "input_tokens": 1701,
+              "cached_input_tokens": 1457,
+              "cache_write_tokens": 241,
+              "output_tokens": 256,
+              "reasoning_tokens": 103,
+              "total_tokens": 1957,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00039719,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00002914,
+                "cache_write_usd": 0.00006025,
+                "output_usd": 0.0003072,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "options": [
+                  {
+                    "label": "Ask about her washing machine",
+                    "category": "friendly",
+                    "intent_kind": "ask_about_topic",
+                    "stat_used": "eq",
+                    "risk": "safe",
+                    "tone": "curious and warm",
+                    "audience_hint": "+",
+                    "reveal_tier": 0,
+                    "reveal_tag": null,
+                    "unlock_threshold": null
+                  },
+                  {
+                    "label": "Share your uniform disaster",
+                    "category": "supportive",
+                    "intent_kind": "honest_vulnerable",
+                    "stat_used": "loyalty",
+                    "risk": "low",
+                    "tone": "self-deprecating and open",
+                    "audience_hint": "+",
+                    "reveal_tier": 0,
+                    "reveal_tag": null,
+                    "unlock_threshold": null
+                  }
+                ],
+                "npc_will_leave": false,
+                "npc_exit_line": null
+              },
+              "reasoning_summaries": [],
+              "attempt": 1
+            }
+          ]
+        },
+        {
+          "id": "close-conversation",
+          "action": "respond_with | target chloe | intent end_softly",
+          "status": "pass",
+          "input_source": "actual_prefix",
+          "input_turn_ids": [
+            "start-chloe-deep",
+            "first-follow-up"
+          ],
+          "golden": {
+            "calls": [
+              {
+                "agent": "heartbreaker_voice",
+                "output_type": "Exchange",
+                "output": {
+                  "player_dialogue": "I'll let you get back to your tea. Tell me about the school another time?",
+                  "npc_dialogue": "That I can do. Catch me when it is a bit quieter.",
+                  "npc_tone": "warm",
+                  "npc_mood_after": "happy"
+                }
+              },
+              {
+                "agent": "conversation_curator",
+                "output_type": "MemoryBatch",
+                "output": {
+                  "kind": "player",
+                  "memories": [
+                    {
+                      "holder_id": "player",
+                      "subject_id": "chloe",
+                      "content": "Chloe misses the easy sense of belonging she has at school in Liverpool.",
+                      "source": "direct",
+                      "source_id": null,
+                      "emotional_weight": 4,
+                      "tags": [
+                        "school",
+                        "belonging"
+                      ],
+                      "durable": true
+                    }
+                  ],
+                  "summary": "Chloe and the player connected over how familiar routines create a sense of belonging.",
+                  "gossip_seeds": []
+                }
+              }
+            ]
+          },
+          "story": {
+            "engine_result": "Success: yes | Chance: 90 | Roll: 83 | Tags: end_softly, safe, warm",
+            "engine_details": [],
+            "relationship_changes": [
+              "chloe: trust +1"
+            ],
+            "dialogue": {
+              "player": "I’ll let you get back to rescuing your uniforms from that washing machine.",
+              "npc": "Please do, before it takes the whole wardrobe. It was lovely chatting with you, love.",
+              "tone": "warm",
+              "mood_after": "happy"
+            },
+            "narration": null,
+            "choices": [],
+            "events": [],
+            "memories": [
+              "Summary: The player respected Chloe’s wish to keep things from getting too personal while sharing a little about herself, and they ended the chat warmly.",
+              "player -> chloe: Chloe told me she’d rather not get too personal this early, so I kept things light and let her get back to rescuing her uniforms.",
+              "chloe -> player: The player respected my wish not to get too personal early, shared that she is rubbish at keeping a flat tidy but good at getting things done when they matter, and let me get back to my uniforms."
+            ],
+            "resort_changes": null
+          },
+          "checks": [
+            {
+              "id": "conversation_closed",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "conversation is closed",
+              "evidence": null
+            },
+            {
+              "id": "curator_batch_recorded",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "conversation close was reviewed by the curator",
+              "evidence": null
+            },
+            {
+              "id": "agent_traces_present",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "captured 2 agent trace(s)",
+              "evidence": null
+            },
+            {
+              "id": "engine_state_invariants_preserved",
+              "kind": "deterministic",
+              "result": "pass",
+              "reason": "player identity, schema, seed, eliminations, and couples respect the engine boundary",
+              "evidence": null
+            }
+          ],
+          "traces": [
+            {
+              "agent": "heartbreaker_voice",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "low",
+              "output_type": "Exchange",
+              "latency_ms": 2974,
+              "input_tokens": 2719,
+              "cached_input_tokens": 1921,
+              "cache_write_tokens": 795,
+              "output_tokens": 128,
+              "reasoning_tokens": 62,
+              "total_tokens": 2847,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00039137,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00003842,
+                "cache_write_usd": 0.00019875,
+                "output_usd": 0.0001536,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "player_dialogue": "I’ll let you get back to rescuing your uniforms from that washing machine.",
+                "npc_dialogue": "Please do, before it takes the whole wardrobe. It was lovely chatting with you, love.",
+                "npc_tone": "warm",
+                "npc_mood_after": "happy"
+              },
+              "reasoning_summaries": [
+                "**Finalizing JSON output**\n\nI need to put together a JSON output. I'm focusing on closing the subject about the washing machine and the uniform. I think a player line like, \"Right, I’ll let you get back to your laundry before it claims another uniform,\" would work. The NPC should respond with acceptance, but I shouldn’t invent any current action. There was a recent mention of the machine, so I need to ensure both parts are cohesive."
+              ],
+              "attempt": 1
+            },
+            {
+              "agent": "conversation_curator",
+              "model": "gpt-5.6-luna",
+              "reasoning_effort": "medium",
+              "output_type": "MemoryBatch",
+              "latency_ms": 5543,
+              "input_tokens": 1904,
+              "cached_input_tokens": 1472,
+              "cache_write_tokens": 429,
+              "output_tokens": 569,
+              "reasoning_tokens": 350,
+              "total_tokens": 2473,
+              "cost": {
+                "currency": "USD",
+                "kind": "exact",
+                "total_usd": 0.00082009,
+                "minimum_usd": null,
+                "maximum_usd": null,
+                "input_usd": 6e-7,
+                "cached_input_usd": 0.00002944,
+                "cache_write_usd": 0.00010725,
+                "output_usd": 0.0006828,
+                "input_rate_per_million": 0.2,
+                "cached_input_rate_per_million": 0.02,
+                "cache_write_rate_per_million": 0.25,
+                "output_rate_per_million": 1.2,
+                "pricing_source": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+                "pricing_as_of": "2026-08-21"
+              },
+              "output": {
+                "kind": "player",
+                "memories": [
+                  {
+                    "holder_id": "player",
+                    "subject_id": "chloe",
+                    "content": "Chloe told me she’d rather not get too personal this early, so I kept things light and let her get back to rescuing her uniforms.",
+                    "source": "direct",
+                    "source_id": "chloe",
+                    "emotional_weight": 3,
+                    "tags": [
+                      "boundary",
+                      "respectful",
+                      "trust",
+                      "warm"
+                    ],
+                    "durable": true
+                  },
+                  {
+                    "holder_id": "chloe",
+                    "subject_id": "player",
+                    "content": "The player respected my wish not to get too personal early, shared that she is rubbish at keeping a flat tidy but good at getting things done when they matter, and let me get back to my uniforms.",
+                    "source": "direct",
+                    "source_id": "player",
+                    "emotional_weight": 3,
+                    "tags": [
+                      "boundary",
+                      "respectful",
+                      "sincere",
+                      "warm"
+                    ],
+                    "durable": true
+                  }
+                ],
+                "summary": "The player respected Chloe’s wish to keep things from getting too personal while sharing a little about herself, and they ended the chat warmly.",
+                "gossip_seeds": []
+              },
+              "reasoning_summaries": [],
+              "attempt": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

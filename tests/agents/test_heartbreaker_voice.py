@@ -155,6 +155,31 @@ def test_intro_voice_keeps_private_persona_hidden_after_intro_familiarity_award(
     assert context.npc_backstory.startswith("Public profile:")
 
 
+def test_intro_voice_overrides_post_action_familiarity_and_hides_other_greetings() -> None:
+    state = new_game(1)
+    state.phase = Phase.INTROS
+    maya = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "maya")
+    chloe = next(heartbreaker for heartbreaker in state.heartbreakers if heartbreaker.id == "chloe")
+    maya.location_id = state.location_id
+    chloe.location_id = state.location_id
+    result = apply_action(
+        state,
+        PlayerAction(
+            kind=ActionKind.INTRODUCE_TO,
+            target_id="maya",
+            intent_id="intro_banter",
+        ),
+        SeededRng(1),
+    )
+
+    context = heartbreaker_voice_context(state, result)
+
+    assert "familiarity 25/100" in context.relationship_summary
+    assert "first one-on-one greeting" in context.relationship_summary
+    assert "already met" not in context.relationship_summary
+    assert context.others_present == []
+
+
 def test_intro_voice_rejects_prior_history_in_either_line() -> None:
     state = new_game(1)
     state.phase = Phase.INTROS
@@ -449,6 +474,28 @@ def test_accepted_interruption_requires_acknowledgment() -> None:
         ),
         context,
     )
+
+    with pytest.raises(ValueError, match="resume the closed conversation"):
+        validate_exchange(
+            Exchange(
+                player_dialogue="Go on, Liam. I am listening.",
+                npc_dialogue="Sorry for cutting in. Chloe can pick up where we left off.",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+            ),
+            context,
+        )
+
+    with pytest.raises(ValueError, match="acknowledge the interrupted conversation"):
+        validate_exchange(
+            Exchange(
+                player_dialogue="All right, Chloe's conversation is closed. What did you need?",
+                npc_dialogue="Thanks. I wanted to have a quick chat with you.",
+                npc_tone="warm",
+                npc_mood_after=Mood.CONTENT,
+            ),
+            context,
+        )
 
 
 def test_heartbreaker_voice_rejects_flush_of_hearts_brand_leak() -> None:

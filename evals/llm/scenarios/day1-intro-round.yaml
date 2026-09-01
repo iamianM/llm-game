@@ -14,9 +14,13 @@ thread_check:
         acceptable. The reviewed lines are voice references, not required jokes or beats. One or
         two concise warm replies are valid when the other introductions remain distinct. A brief
         public preference such as reliability is not a confession. A shared ordinary opening word
-        such as "Thanks" is not a reused template when the substance differs. Fail when three or
-        more replies reuse the same full sentence shape and generic stance, three or more voices contradict their
-        direction, a private fear is disclosed, or dialogue assumes a prior private conversation.
+        such as "Thanks" is not a reused template when the substance differs. Each actual turn ran
+        from its reviewed prefix, not from earlier actual lines. Do not compare player wording across
+        isolated actual turns or penalize a later turn for repeating an earlier actual phrase it never
+        received. Judge each NPC reply against its own reviewed target and voice direction. Fail when
+        three or more NPC replies reuse the same full sentence shape and generic stance, three or more
+        voices contradict their direction, a private fear is disclosed, or dialogue assumes an
+        unrecorded interaction.
     - id: opening_choice_faithful
       criteria: >
         The final ceremony names every participant, follows naturally from the introductions, and
