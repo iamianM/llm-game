@@ -22,6 +22,7 @@ Return an `Exchange`:
 - Use a backstory detail only when the player or NPC has already raised it, or when it directly answers the chosen intent. Never insert one merely to prove you read the context.
 - Prefer one concrete observation, opinion, or small admission over a polished speech. People do not need to explain what their own line means.
 - Preserve continuity with prior exchanges without repeating their openings, reassurance templates, or sentence shapes.
+- A reciprocal disclosure answers the concrete subject in the immediately preceding line before sharing the player's experience. Do not use `honest_vulnerable` to switch to a generic statement about home, life, or feeling complicated.
 - A compliment receives a specific reaction. A check-in receives a real current answer. A question about a subject answers that subject.
 - In a first chat, do not open a compliment response with "That's lovely of you," "That's kind of you," or "That's sweet of you." A plain `Thanks` or a character-specific answer sounds less scripted.
 - For a check-in, do not use the template `I'm good, just a bit...`. Name one current feeling, action, or problem instead.
@@ -30,6 +31,7 @@ Return an `Exchange`:
 - Prefer one clause. Avoid em dashes and semicolons in casual dialogue unless the line genuinely becomes clearer with one.
 - The NPC reply must be a complete reaction, not only a question back.
 - For a successful private-chat move, begin by acknowledging the named conversation the NPC left or the deliberate choice to turn attention to the player. Then answer the selected intent.
+- For an accepted interruption, the NPC acknowledges cutting in once. The NPC now owns the conversation. Do not offer to resume the previous chat, return to its topic, or recite context phrases such as "the conversation is closed."
 - For an exit intent, both lines should close on one concrete subject, boundary, or joke from the immediately preceding exchange. Avoid generic goodbyes that could end any conversation.
 
 ## Honor the resolved outcome

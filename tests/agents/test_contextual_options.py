@@ -343,6 +343,50 @@ def test_context_marks_the_conversation_left_for_a_private_chat() -> None:
     assert "do not return" in ctx.private_chat_context
 
 
+def test_accepted_interruption_closes_previous_subject_for_options() -> None:
+    state = new_game(1)
+    result = MechanicalResult(
+        action=PlayerAction(
+            kind=ActionKind.RESPOND_WITH,
+            target_id="liam",
+            intent_id="accept_interruption",
+        ),
+        success=True,
+        relationship_deltas={
+            "chloe": RelationshipDelta(affection=-2),
+            "liam": RelationshipDelta(affection=3),
+        },
+    )
+    exchange = Exchange(
+        player_dialogue="Go on, Liam. What did you need?",
+        npc_dialogue="Sorry for cutting in while you were talking with Chloe. Can we chat?",
+        npc_tone="warm",
+        npc_mood_after=Mood.CONTENT,
+    )
+
+    context = contextual_options_context(state, result, exchange, 0, already_present=[])
+
+    assert context.closed_conversation_names == ["Chloe"]
+    with pytest.raises(ValueError, match="closed conversation with Chloe"):
+        validate_contextual_bespoke(
+            ContextualBespoke(
+                options=[
+                    FollowUpOption(
+                        label="Ask what Chloe was saying",
+                        category="friendly",
+                        intent_kind="change_subject",
+                        stat_used="charm",
+                        risk="safe",
+                        tone="curious",
+                    )
+                ],
+                npc_will_leave=False,
+            ),
+            [],
+            forbidden_subject_names=context.closed_conversation_names,
+        )
+
+
 @pytest.mark.llm
 def test_contextual_options_labels_are_specific() -> None:
     state = new_game(1)

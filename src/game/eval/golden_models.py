@@ -21,6 +21,7 @@ from src.game.state.models import (
 
 CheckResultValue = Literal["pass", "fail", "cannot_determine"]
 CheckSeverity = Literal["blocking", "advisory"]
+ExecutionModel = Literal["isolated_golden_replay", "causal_rollout"]
 EvalCategory = Literal[
     "conversation",
     "social_dynamics",
@@ -52,23 +53,13 @@ class ThreadCheckSpec(BaseModel):
 
 
 class GoldenAgentResult(BaseModel):
-    """One reviewed output reference or contextual acceptance target."""
+    """One reviewed output reference in the same shape as the agent result."""
 
     model_config = ConfigDict(extra="forbid")
 
     agent: str
     output_type: str
-    output: dict[str, Any] | None = None
-    criteria: list[str] = Field(default_factory=list)
-
-    @model_validator(mode="after")
-    def require_one_target_kind(self) -> GoldenAgentResult:
-        """Require either a fixed reference output or criteria, never both."""
-        has_output = self.output is not None
-        has_criteria = bool(self.criteria)
-        if has_output == has_criteria:
-            raise ValueError("golden call requires exactly one of output or criteria")
-        return self
+    output: dict[str, Any]
 
 
 class GoldenTurnTarget(BaseModel):
@@ -136,6 +127,7 @@ class GoldenEvalScenario(BaseModel):
     live_resort_life: bool = False
     judge_context: list[str] = Field(default_factory=list)
     thread_check: ThreadCheckSpec
+    causal_thread_check: ThreadCheckSpec | None = None
     turns: list[GoldenTurnSpec] = Field(min_length=1)
 
 
@@ -183,6 +175,8 @@ class GoldenTurnResult(BaseModel):
     id: str
     action: dict[str, Any]
     arrangements: dict[str, Any] = Field(default_factory=dict)
+    input_source: Literal["fresh_scenario_state", "reviewed_prefix", "actual_prefix"]
+    input_turn_ids: list[str] = Field(default_factory=list)
     golden: GoldenTurnTarget
     input_hash: str
     output_hash: str | None = None
@@ -222,3 +216,4 @@ class GoldenEvalRun(BaseModel):
     cannot_determine: int
     accounting: RunAccounting
     scenarios: list[GoldenScenarioResult]
+    execution_model: ExecutionModel = "isolated_golden_replay"

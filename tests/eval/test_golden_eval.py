@@ -4,6 +4,7 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
+from src.game.agents.heartbreaker_voice import Exchange
 from src.game.agents.runtime import (
     AgentValidationError,
     record_agent_trace,
@@ -87,7 +88,7 @@ def test_golden_scenarios_define_exactly_one_semantic_thread_check() -> None:
     assert all(scenario.thread_check.criteria for scenario in scenarios)
 
 
-def test_generated_follow_ups_use_stable_intents_and_contextual_targets() -> None:
+def test_generated_follow_ups_use_stable_intents_and_full_goldens() -> None:
     scenarios = load_golden_scenarios(Path("evals/llm/scenarios"))
 
     respond_turns = [
@@ -105,7 +106,94 @@ def test_generated_follow_ups_use_stable_intents_and_contextual_targets() -> Non
     )
     follow_up = next(turn for turn in continuity.turns if turn.id == "first-follow-up")
     assert follow_up.action.intent_id == "honest_vulnerable"
-    assert all(call.output is None and call.criteria for call in follow_up.golden.calls)
+    assert all(call.output for call in follow_up.golden.calls)
+
+
+def test_each_target_turn_uses_reviewed_prior_outputs(monkeypatch, tmp_path: Path) -> None:
+    scenario = load_golden_scenarios(
+        Path("evals/llm/scenarios/conversation-continuity-exit.yaml")
+    )[0].model_copy(deep=True)
+    scenario.turns = scenario.turns[:2]
+    first_golden = scenario.turns[0].golden.calls[0].output
+    seen_prior_lines: list[str] = []
+    calls = 0
+    base = mock_turn_agents()
+
+    def divergent_voice(state, result):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return Exchange(
+                player_dialogue="This actual opening deliberately diverged.",
+                npc_dialogue="So did this answer.",
+                npc_tone="warm",
+                npc_mood_after="content",
+            )
+        assert state.active_conversation is not None
+        seen_prior_lines.append(state.active_conversation.exchanges[0].player_dialogue)
+        return base.heartbreaker_voice(state, result)
+
+    monkeypatch.setattr(
+        golden_runner,
+        "mock_turn_agents",
+        lambda: replace(base, heartbreaker_voice=divergent_voice),
+    )
+
+    result = run_golden_eval(
+        [scenario],
+        out=tmp_path / "isolated",
+        real_llm=False,
+        judge=False,
+        max_workers=1,
+    )
+
+    assert result.scenarios[0].turns[1].input_source == "reviewed_prefix"
+    assert result.scenarios[0].turns[1].input_turn_ids == ["start-chloe-deep"]
+    assert seen_prior_lines == [first_golden["player_dialogue"]]
+    assert seen_prior_lines != ["This actual opening deliberately diverged."]
+
+
+def test_causal_rollout_carries_actual_outputs_forward(monkeypatch, tmp_path: Path) -> None:
+    scenario = load_golden_scenarios(
+        Path("evals/llm/scenarios/conversation-continuity-exit.yaml")
+    )[0].model_copy(deep=True)
+    scenario.turns = scenario.turns[:2]
+    seen_prior_lines: list[str] = []
+    calls = 0
+    base = mock_turn_agents()
+
+    def divergent_voice(state, result):
+        nonlocal calls
+        calls += 1
+        if calls == 1:
+            return Exchange(
+                player_dialogue="This actual opening deliberately diverged.",
+                npc_dialogue="So did this answer.",
+                npc_tone="warm",
+                npc_mood_after="content",
+            )
+        assert state.active_conversation is not None
+        seen_prior_lines.append(state.active_conversation.exchanges[0].player_dialogue)
+        return base.heartbreaker_voice(state, result)
+
+    monkeypatch.setattr(
+        golden_runner,
+        "mock_turn_agents",
+        lambda: replace(base, heartbreaker_voice=divergent_voice),
+    )
+
+    result = run_golden_eval(
+        [scenario],
+        out=tmp_path / "causal",
+        real_llm=False,
+        judge=False,
+        max_workers=1,
+        execution_model="causal_rollout",
+    )
+
+    assert result.scenarios[0].turns[1].input_source == "actual_prefix"
+    assert result.scenarios[0].turns[1].input_turn_ids == ["start-chloe-deep"]
+    assert seen_prior_lines == ["This actual opening deliberately diverged."]
 
 
 def test_golden_eval_records_failed_turn_and_attempt_traces(
@@ -258,9 +346,7 @@ def test_tracked_showcase_is_a_complete_reviewed_public_run() -> None:
                 for trace in turn.traces
             }
             for golden in turn.golden.calls:
-                assert (golden.output is not None) != bool(golden.criteria)
-                if golden.output is not None:
-                    assert set(golden.output) == actual_shapes[(golden.agent, golden.output_type)]
+                assert set(golden.output) == actual_shapes[(golden.agent, golden.output_type)]
 
     lowered = encoded.lower()
     forbidden_fragments = (

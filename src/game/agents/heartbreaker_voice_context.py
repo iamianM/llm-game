@@ -127,9 +127,16 @@ def heartbreaker_voice_context(
                     if selected_option is None
                     else (
                         f"The player selected this exact menu action: {selected_option.label}. "
-                        "Continue that subject; do not replace it with a related topic."
+                        "Continue the concrete subject in the most recent NPC line; do not replace it "
+                        "with a related topic or broader subject."
                     )
                 )
+                if selected_option is not None and intent_id == "honest_vulnerable":
+                    intent_label += (
+                        " The player's reciprocal disclosure must first answer or connect to that "
+                        "concrete subject. It cannot switch to a generic statement about home, life, "
+                        "or feeling complicated."
+                    )
             elif intent_id.startswith("share_gossip:"):
                 subject_is_heartbreaker = any(
                     heartbreaker.id == gossip.subject_id for heartbreaker in state.heartbreakers
@@ -182,7 +189,10 @@ def heartbreaker_voice_context(
         attachment_style=target.attachment.value,
         revealed_preferences=revealed_preferences(target),
         npc_mood=target.mood,
-        relationship_summary=_relationship_summary(target),
+        relationship_summary=_relationship_summary(
+            target,
+            force_first_meeting=result.action.kind == ActionKind.INTRODUCE_TO,
+        ),
         intent_category=intent_category,
         intent_label=intent_label,
         is_intro=result.action.kind == ActionKind.INTRODUCE_TO,
@@ -193,7 +203,7 @@ def heartbreaker_voice_context(
         private_chat_departure_names=_private_chat_departure_names(state, result),
         interrupted_conversation_names=_interrupted_conversation_names(state, result),
         mechanical_change_summary=_mechanical_change_summary(result, target.id),
-        others_present=others,
+        others_present=[] if result.action.kind == ActionKind.INTRODUCE_TO else others,
         cast_names=sorted({heartbreaker.name for heartbreaker in state.heartbreakers}),
         cast_pronouns=_cast_pronouns(state),
         gossip_subject_names=_gossip_subject_names_for_intent(state, intent_id, gossip),
@@ -232,8 +242,8 @@ def new_turn_context(context: HeartbreakerVoiceContext) -> NewTurnContext:
             f"Tags: {', '.join(context.tags)}",
             f"Mechanical outcome: {context.outcome}",
             f"Private chat context: {context.private_chat_context or 'none'}",
-            "Interrupted conversation left behind: "
-            f"{_list_or_none(context.interrupted_conversation_names)}",
+            "Closed conversation after accepted interruption: "
+            f"{_closed_interruption_context(context.interrupted_conversation_names)}",
             f"Mechanical changes: {context.mechanical_change_summary}",
             f"Others present: {_list_or_none(context.others_present)}",
             f"Allowed gossip subjects this turn: {_list_or_none(context.gossip_subject_names)}",
@@ -426,13 +436,22 @@ def _prior_exchange_json(record: ExchangeRecord) -> str:
     ).model_dump_json()
 
 
-def _relationship_summary(target: HeartbreakerState) -> str:
+def _relationship_summary(
+    target: HeartbreakerState,
+    *,
+    force_first_meeting: bool = False,
+) -> str:
     relationship = target.relationship
     familiarity = target.familiarity_with_player
+    rapport = (
+        "This is the first one-on-one greeting with the player. No prior private exchange exists."
+        if force_first_meeting
+        else _rapport_phrase(familiarity)
+    )
     return (
         f"affection {relationship.affection}, chemistry {relationship.chemistry}, "
         f"trust {relationship.trust}, friendship {relationship.friendship}, "
-        f"familiarity {familiarity}/100. {_rapport_phrase(familiarity)}"
+        f"familiarity {familiarity}/100. {rapport}"
     )
 
 
@@ -564,6 +583,16 @@ def _interrupted_conversation_names(
 
 def _list_or_none(values: list[str]) -> str:
     return ", ".join(values) if values else "none"
+
+
+def _closed_interruption_context(values: list[str]) -> str:
+    if not values:
+        return "none"
+    return (
+        f"{', '.join(values)}. The player ended that chat by accepting this interruption. "
+        "The new speaker should acknowledge cutting in once. Do not promise to resume the old "
+        "chat or return to its topic."
+    )
 
 
 def _recent_exchange_topics(state: GameState) -> list[str]:

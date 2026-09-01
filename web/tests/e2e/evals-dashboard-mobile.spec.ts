@@ -7,15 +7,17 @@ import { evalShowcase, type EvalScenario } from "../../lib/eval-showcase";
 test("reports the exact recorded token and cost breakdown", () => {
   expect(evalShowcase).not.toBeNull();
   const cost = runCostBreakdown(evalShowcase!);
-  expect(cost.agentTokens).toBe(153_319);
-  expect(cost.judgeTokens).toBe(213_872);
-  expect(cost.totalTokens).toBe(367_191);
-  expect(cost.exactCost).toBeCloseTo(0.08329272);
-  expect(cost.agentCost.total_usd).toBeCloseTo(0.02210642);
-  expect(cost.judgeCost.total_usd).toBeCloseTo(0.0611863);
+  expect(cost.agentTokens).toBe(159_552);
+  expect(cost.judgeTokens).toBe(220_881);
+  expect(cost.totalTokens).toBe(380_433);
+  expect(cost.exactCost).toBeCloseTo(0.0905352);
+  expect(cost.minimumCost).toBeNull();
+  expect(cost.maximumCost).toBeNull();
+  expect(cost.agentCost.total_usd).toBeCloseTo(0.02024708);
+  expect(cost.judgeCost.total_usd).toBeCloseTo(0.07028812);
 });
 
-test("explains deterministic failures separately from the thread evaluation", () => {
+test("explains deterministic failures separately from the scenario evaluation", () => {
   const scenario = {
     id: "mixed-result",
     title: "Mixed result",
@@ -28,6 +30,8 @@ test("explains deterministic failures separately from the thread evaluation", ()
       id: "turn-1",
       action: "start_conversation | target chloe",
       status: "fail",
+      input_source: "fresh_scenario_state",
+      input_turn_ids: [],
       golden: { calls: [] },
       story: { engine_result: null, relationship_changes: [], dialogue: null, narration: null, choices: [], events: [], memories: [], resort_changes: null },
       checks: [{ id: "rule", kind: "deterministic", result: "fail", reason: "A rule failed.", evidence: null }],
@@ -54,11 +58,11 @@ test.describe("public eval dashboard", () => {
     await expect(page.getByText("24 passed", { exact: true })).toBeVisible();
     await expect(page.getByText("0 failed", { exact: true })).toBeVisible();
     await expect(page.getByText("86", { exact: true })).toBeVisible();
-    await expect(page.getByText("71", { exact: true })).toBeVisible();
-    await expect(page.getByText("367,191", { exact: true }).first()).toBeVisible();
-    await expect(page.getByText(/153,319 tokens/)).toBeVisible();
-    await expect(page.getByText(/213,872 tokens/)).toBeVisible();
-    await expect(page.getByText("$0.08", { exact: true })).toBeVisible();
+    await expect(page.getByText("73", { exact: true })).toBeVisible();
+    await expect(page.getByText("380,433", { exact: true }).first()).toBeVisible();
+    await expect(page.getByText(/159,552 tokens/)).toBeVisible();
+    await expect(page.getByText(/220,881 tokens/)).toBeVisible();
+    await expect(page.getByText("$0.09", { exact: true })).toBeVisible();
     await expect(page.getByText("Reviewed, checked-in showcase.json", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Source revision", { exact: true })).toHaveCount(0);
     await expect(page.getByText("Can the game's AI stay in character?")).toHaveCount(0);
@@ -76,7 +80,7 @@ test.describe("public eval dashboard", () => {
   test("compares expected and actual output beside evaluation reasons", async ({ page }, testInfo) => {
     await page.goto("/evals/scenarios/interruption-accept");
     await expect(page.getByRole("heading", { name: "Scenario explorer" })).toHaveCount(0);
-    await expect(page.getByText("LLM call · thread judge", { exact: true })).toBeVisible();
+    await expect(page.getByText("LLM call · scenario judge", { exact: true })).toBeVisible();
     await page.getByText("Why it passed", { exact: true }).click();
     await expect(page.getByText("What the judge reviewed", { exact: true })).toBeVisible();
     const firstField = page.getByTestId("output-comparison-field").first();
@@ -115,13 +119,23 @@ test.describe("public eval dashboard", () => {
     }
   });
 
-  test("uses actual-thread criteria for dependent calls", async ({ page }) => {
+  test("shows the reviewed prefix used for each isolated turn", async ({ page }) => {
     await page.goto("/evals/scenarios/conversation-continuity-exit");
     await expect(page.getByText("Selected intent", { exact: true }).first()).toBeVisible();
-    const contextualTarget = page.getByTestId("criteria-comparison").first();
-    await expect(contextualTarget.getByText("Reviewed criteria", { exact: true })).toBeVisible();
-    await expect(contextualTarget.getByText("Actual output from this thread", { exact: true })).toBeVisible();
-    await expect(contextualTarget.getByText(/responds to Chloe's actual opening answer/i)).toBeVisible();
+    const turnInputs = page.getByTestId("turn-input");
+    await expect(turnInputs.nth(0)).toContainText("Fresh scenario state");
+    await expect(turnInputs.nth(1)).toContainText("1 reviewed prior turn replayed");
+    await expect(turnInputs.nth(2)).toContainText("2 reviewed prior turns replayed");
+    await expect(page.getByText("Reviewed criteria", { exact: true })).toHaveCount(0);
+  });
+
+  test("shows actual-prefix inputs in the causal rollout", async ({ page }) => {
+    await page.goto("/evals/rollouts/conversation-continuity-exit");
+    await expect(page.getByText("Causal rollout", { exact: true })).toBeVisible();
+    const turnInputs = page.getByTestId("turn-input");
+    await expect(turnInputs.nth(0)).toContainText("Fresh scenario state");
+    await expect(turnInputs.nth(1)).toContainText("1 actual prior turn carried forward");
+    await expect(turnInputs.nth(2)).toContainText("2 actual prior turns carried forward");
   });
 
   test("supports search, deep links, and the no-results state", async ({ page }, testInfo) => {

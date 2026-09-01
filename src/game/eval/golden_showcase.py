@@ -53,8 +53,7 @@ class ShowcaseGoldenCall(BaseModel):
 
     agent: str
     output_type: str
-    output: dict[str, Any] | None = None
-    criteria: list[str] = Field(default_factory=list)
+    output: dict[str, Any]
 
 
 class ShowcaseGolden(BaseModel):
@@ -107,6 +106,8 @@ class ShowcaseTurn(BaseModel):
     id: str
     action: str
     status: CheckResultValue
+    input_source: Literal["fresh_scenario_state", "reviewed_prefix", "actual_prefix"]
+    input_turn_ids: list[str] = Field(default_factory=list)
     golden: ShowcaseGolden
     story: ShowcaseStory
     checks: list[ShowcaseCheck] = Field(default_factory=list)
@@ -158,7 +159,8 @@ class ShowcaseProvenance(BaseModel):
 class GoldenEvalShowcase(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    schema_version: Literal[6] = 6
+    schema_version: Literal[7] = 7
+    execution_model: Literal["isolated_golden_replay", "causal_rollout"]
     llm_mode: Literal["mock", "real"]
     judge_enabled: bool
     passed: int
@@ -177,6 +179,7 @@ def build_golden_eval_showcase(run: GoldenEvalRun) -> GoldenEvalShowcase:
     scenarios = [_scenario(result) for result in run.scenarios]
     traces = [trace for scenario in scenarios for turn in scenario.turns for trace in turn.traces]
     return GoldenEvalShowcase(
+        execution_model=run.execution_model,
         llm_mode=run.llm_mode,
         judge_enabled=run.judge_enabled,
         passed=run.passed,
@@ -245,16 +248,23 @@ def _scenario(result: GoldenScenarioResult) -> ShowcaseScenario:
 
 def _turn(turn: GoldenTurnResult) -> ShowcaseTurn:
     record = turn.record if isinstance(turn.record, dict) else {}
+    completed_traces = [
+        trace
+        for trace in _dict_list(record.get("agent_traces"))
+        if isinstance(trace.get("output"), dict)
+    ]
     return ShowcaseTurn(
         id=turn.id,
         action=_action_label(turn.action),
         status=_turn_status(turn),
+        input_source=turn.input_source,
+        input_turn_ids=turn.input_turn_ids,
         golden=ShowcaseGolden(
             calls=[_golden_call(call) for call in turn.golden.calls],
         ),
         story=_story(record),
         checks=[_check(check) for check in turn.checks],
-        traces=[_trace(trace) for trace in _dict_list(record.get("agent_traces"))],
+        traces=[_trace(trace) for trace in completed_traces],
     )
 
 
@@ -262,8 +272,7 @@ def _golden_call(call: GoldenAgentResult) -> ShowcaseGoldenCall:
     return ShowcaseGoldenCall(
         agent=call.agent,
         output_type=call.output_type,
-        output=_public_output(call.output_type, call.output) if call.output is not None else None,
-        criteria=call.criteria,
+        output=_public_output(call.output_type, call.output),
     )
 
 

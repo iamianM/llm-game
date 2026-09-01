@@ -23,10 +23,11 @@ thread_check:
         repeat one choice in two tones, or disconnect from the exchange.
     - id: curator_restraint
       criteria: >
-        Routine first-chat banter should not become durable memory. Empty batches are correct for
-        thin exchanges. Any memory that is returned must preserve a concrete useful fact from the
-        correct holder's perspective. Fail mirrored memories, generic connection summaries, or
-        inflated emotional weight.
+        Judge each close-turn curator against the reviewed chat replayed directly before that close,
+        not against the separate actual chat target. Routine first-chat banter should not become durable
+        memory. Empty batches are correct for thin exchanges. Any memory that is returned must preserve
+        a concrete useful fact from that reviewed chat and the correct holder's perspective. Fail mirrored
+        memories, generic connection summaries, or inflated emotional weight.
 seed: 308
 live_resort_life: false
 initial_phase_budget_minutes: 240
@@ -127,13 +128,13 @@ turns:
       kind: end_conversation
     golden:
       calls:
-      - &first_chat_curator_target
-        agent: conversation_curator
+      - agent: conversation_curator
         output_type: MemoryBatch
-        criteria:
-          - Summarize only the actual chat that immediately precedes this close turn.
-          - Return no memory for routine first-chat banter. Store a memory only for a concrete fact that would matter in a later conversation.
-          - Do not copy a person, subject, or detail from the reviewed opening example unless it also appears in the actual output.
+        output:
+          kind: player
+          memories: []
+          summary: The player and Chloe ended a brief first chat about finding space away from the crowd.
+          gossip_seeds: []
     checks: &close_checks
       - conversation_closed
       - curator_batch_recorded
@@ -145,36 +146,36 @@ turns:
     action:
       kind: start_conversation
       target_id: jordan
-      intent_id: bromance_check_in
+      intent_id: bromance_rib
     golden:
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You always this loud before breakfast?
-          npc_dialogue: Only when I'm nervous, mate. So yes, probably.
+          player_dialogue: You have been here ten minutes and already act like you own the pool.
+          npc_dialogue: Give me another ten and I will start charging for the loungers.
           npc_tone: amused
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask what's got him nervous
-            category: supportive
-            intent_kind: supportive_validate
-            stat_used: eq
-            risk: safe
-            tone: warm
-            audience_hint: +
-            reveal_tier: 0
-            reveal_tag: attention_worry
-            unlock_threshold: null
-          - label: Give him a hard time
+          - label: Ask about the rates
             category: banter
             intent_kind: joke_back
             stat_used: banter
             risk: low
             tone: playful
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: null
+            unlock_threshold: null
+          - label: Claim the best lounger
+            category: friendly
+            intent_kind: defend_self
+            stat_used: charm
+            risk: safe
+            tone: mock-serious
             audience_hint: +
             reveal_tier: 1
             reveal_tag: null
@@ -186,7 +187,13 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Jordan ended a quick joke about him claiming the pool loungers.
+          gossip_seeds: []
     checks: *close_checks
   - id: move-kitchen
     arrange_npc_locations:
@@ -248,7 +255,13 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Maya ended a short flirt about catching each other's attention.
+          gossip_seeds: []
     checks: *close_checks
   - id: chat-marcus
     arrange_player_location: kitchen
@@ -298,7 +311,13 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Marcus ended a playful first chat about breakfast and taking charge.
+          gossip_seeds: []
     checks: *close_checks
   - id: move-terrace
     arrange_npc_locations:
@@ -360,7 +379,21 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories:
+          - holder_id: player
+            subject_id: liam
+            content: Liam is a paramedic in Galway and values knowing where he can be useful.
+            source: direct
+            source_id: null
+            emotional_weight: 4
+            tags: [work, paramedic]
+            durable: true
+          summary: Liam told the player that he works long shifts as a paramedic in Galway.
+          gossip_seeds: []
     checks: *close_checks
   - id: chat-nia
     arrange_player_location: terrace
@@ -369,29 +402,39 @@ turns:
     action:
       kind: start_conversation
       target_id: nia
-      intent_id: friendly_compliment_personality
+      intent_id: friendly_chat_resort
     golden:
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
         output:
-          player_dialogue: You're easy to talk to.
-          npc_dialogue: Give it time. Jordan's already tested that theory.
+          player_dialogue: Does this place make you want to talk more or watch first?
+          npc_dialogue: Watch first. People tell you plenty when they think you are not judging.
           npc_tone: warm
-          npc_mood_after: happy
+          npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Ask about Jordan
+          - label: Ask what she has noticed
             category: deep
             intent_kind: ask_about_topic
             stat_used: eq
-            risk: low
-            tone: warm
+            risk: medium
+            tone: thoughtful
             audience_hint: +
             reveal_tier: 1
             reveal_tag: social_attention
+            unlock_threshold: null
+          - label: Joke that she is judging you
+            category: friendly
+            intent_kind: joke_back
+            stat_used: banter
+            risk: safe
+            tone: playful
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: null
             unlock_threshold: null
           npc_will_leave: false
           npc_exit_line: null
@@ -400,7 +443,13 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Nia ended a first chat about watching the resort before deciding what people are like.
+          gossip_seeds: []
     checks: *close_checks
   - id: move-bedroom
     arrange_npc_locations:
@@ -462,7 +511,13 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Sophie ended a dry first exchange about her mental notes on the cast.
+          gossip_seeds: []
     checks: *close_checks
   - id: chat-blake
     arrange_player_location: bedroom
@@ -512,5 +567,11 @@ turns:
     action: *end_action
     golden:
       calls:
-      - *first_chat_curator_target
+      - agent: conversation_curator
+        output_type: MemoryBatch
+        output:
+          kind: player
+          memories: []
+          summary: The player and Blake ended a brief first chat about who seems to be trying too hard.
+          gossip_seeds: []
     checks: *close_checks

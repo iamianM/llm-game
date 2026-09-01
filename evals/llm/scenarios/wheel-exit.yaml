@@ -2,7 +2,7 @@ id: wheel-exit
 title: Conversation Wheel Exit
 question: Can leaving through dialogue feel voiced and preserve memories?
 category: conversation
-goal: Prove choosing the exit option from a conversation wheel is a voiced, graceful close with curator memories, not the same path as the top-level walk-away action.
+goal: Prove choosing the exit option from a conversation wheel is a voiced, graceful close with curator review, not the same path as the top-level walk-away action.
 thread_check:
   id: thread_acceptance
   severity: blocking
@@ -14,7 +14,8 @@ thread_check:
         later" or "see you around" is not a promise; only a specific plan, time, or commitment needs
         memory. An NPC's immediate exit activity, such as claiming a lounger, does not need memory
         unless it creates a future player-NPC commitment. The reviewed coffee detail is one valid
-        reference, not a required story fact; judge the actual exchange on what it establishes. Fail
+        reference, not a required story fact; judge the actual exchange on what it establishes. If the
+        actual goodbye creates no specific plan, an empty memory list is correct and must not fail. Fail
         on an abrupt cancel, biography filler, inflated memory, or unresolved conversation.
 seed: 2121
 initial_location: pool

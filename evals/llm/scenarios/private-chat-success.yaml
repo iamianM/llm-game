@@ -11,7 +11,11 @@ thread_check:
       criteria: >
         Maya acknowledges leaving Liam, gives the player her attention, and responds to the reason
         she was invited away. The generated choices continue this exchange and survive into the
-        player-facing menu alongside a graceful exit. Unrelated gossip must not displace them.
+        player-facing menu alongside a graceful exit. Compare choices by their meaning, not exact labels.
+        Do not grade the curator's prose: this fixture supplies no Maya-Liam exchange history, and the
+        deterministic checks separately prove that their conversation closed.
+      pass_examples:
+        - Maya says Liam's analysis was boring, holds the player's gaze, and says the player has her attention.
 seed: 2
 initial_location: pool
 live_resort_life: false
@@ -59,7 +63,7 @@ turns:
         output:
           kind: background
           memories: []
-          summary: Maya and Liam's unfinished chat ended when the player asked Maya away.
+          summary: ''
           gossip_seeds: []
       - agent: heartbreaker_voice
         output_type: Exchange

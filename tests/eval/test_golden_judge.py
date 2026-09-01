@@ -44,12 +44,36 @@ def test_thread_judge_prompt_contains_complete_scenario_once() -> None:
         "chloe_voice_and_memory",
     }
     assert all("actual" in turn and "golden" in turn for turn in payload["thread"])
+    assert payload["execution_model"] == "isolated_golden_replay"
+    assert payload["thread"][0]["input_source"]["reviewed_prior_turn_ids"] == []
+    assert payload["thread"][1]["input_source"]["reviewed_prior_turn_ids"] == [
+        "start-chloe-deep"
+    ]
+    assert payload["thread"][1]["input_source"]["actual_prior_turn_ids"] == []
     assert payload["thread"][0]["golden"]["calls"][0]["output_type"] == "Exchange"
-    assert payload["thread"][1]["golden"]["calls"][0]["output"] is None
-    assert payload["thread"][1]["golden"]["calls"][0]["criteria"]
+    assert payload["thread"][1]["golden"]["calls"][0]["output"]["player_dialogue"]
     assert all(
         turn["deterministic_checks"][0]["id"] == "conversation_active" for turn in payload["thread"]
     )
+
+
+def test_causal_judge_prompt_marks_actual_prefix() -> None:
+    scenario = load_golden_scenario(
+        Path("evals/llm/scenarios/conversation-continuity-exit.yaml")
+    )
+    payload = json.loads(
+        build_thread_judge_prompt(
+            scenario=scenario,
+            records=[{} for _turn in scenario.turns],
+            execution_model="causal_rollout",
+        )
+    )
+
+    assert payload["execution_model"] == "causal_rollout"
+    assert payload["thread"][1]["input_source"]["reviewed_prior_turn_ids"] == []
+    assert payload["thread"][1]["input_source"]["actual_prior_turn_ids"] == [
+        "start-chloe-deep"
+    ]
 
 
 def test_thread_judge_prompt_excludes_rejected_agent_attempts() -> None:

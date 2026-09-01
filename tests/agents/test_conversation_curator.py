@@ -168,6 +168,18 @@ def test_curator_detects_curly_apostrophe_future_meeting() -> None:
     assert _has_specific_future_commitment(conversation) is True
 
 
+def test_curator_detects_specific_future_continuation() -> None:
+    state = new_game(1)
+    _start_conversation(state)
+    conversation = state.active_conversation
+    assert conversation is not None
+    conversation.exchanges[-1].npc_dialogue = (
+        "I will let you get back to the pool, but we can pick this up over breakfast."
+    )
+
+    assert _has_specific_future_commitment(conversation) is True
+
+
 def test_curator_rejects_trivial_single_exchange_memory() -> None:
     state = new_game(1)
 

@@ -37,8 +37,7 @@ export type EvalTrace = {
 export type EvalGoldenCall = {
   agent: string;
   output_type: string;
-  output: Record<string, unknown> | null;
-  criteria: string[];
+  output: Record<string, unknown>;
 };
 
 export type EvalGolden = {
@@ -93,6 +92,8 @@ export type EvalTurn = {
   id: string;
   action: string;
   status: EvalStatus;
+  input_source: "fresh_scenario_state" | "reviewed_prefix" | "actual_prefix";
+  input_turn_ids: string[];
   golden: EvalGolden;
   story: EvalStory;
   checks: EvalCheck[];
@@ -128,7 +129,8 @@ export type EvalScenario = {
 };
 
 export type EvalShowcase = {
-  schema_version: 6;
+  schema_version: 7;
+  execution_model: "isolated_golden_replay" | "causal_rollout";
   llm_mode: "mock" | "real";
   judge_enabled: boolean;
   passed: number;
@@ -174,11 +176,12 @@ export function getScenario(id: string) {
   return evalShowcase?.scenarios.find((scenario) => scenario.id === id) ?? null;
 }
 
-function parseShowcase(value: unknown): EvalShowcase | null {
+export function parseShowcase(value: unknown): EvalShowcase | null {
   if (!value || typeof value !== "object") return null;
   const candidate = value as Partial<EvalShowcase>;
   if (
-    candidate.schema_version !== 6 ||
+    candidate.schema_version !== 7 ||
+    !["isolated_golden_replay", "causal_rollout"].includes(candidate.execution_model ?? "") ||
     !Array.isArray(candidate.scenarios) ||
     typeof candidate.passed !== "number" ||
     typeof candidate.turn_count !== "number" ||

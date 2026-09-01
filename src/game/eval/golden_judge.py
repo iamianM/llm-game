@@ -18,6 +18,7 @@ from src.game.agents.runtime import (
     reasoning_request_kwargs,
 )
 from src.game.eval.golden_models import (
+    ExecutionModel,
     GoldenCheckResult,
     GoldenEvalScenario,
     JudgeCriterionFinding,
@@ -43,6 +44,7 @@ def run_thread_check(
     records: list[dict[str, object]],
     deterministic_checks: list[list[GoldenCheckResult]],
     prompt_out: Path,
+    execution_model: ExecutionModel = "isolated_golden_replay",
 ) -> tuple[GoldenCheckResult, JudgeTrace]:
     """Return one holistic verdict for one complete scenario thread."""
     load_dotenv_local()
@@ -50,6 +52,7 @@ def run_thread_check(
         scenario=scenario,
         records=records,
         deterministic_checks=deterministic_checks,
+        execution_model=execution_model,
     )
     prompt_out.parent.mkdir(parents=True, exist_ok=True)
     prompt_out.write_text(prompt, encoding="utf-8")
@@ -59,6 +62,7 @@ def run_thread_check(
         client,
         prompt,
         scenario.thread_check,
+        execution_model,
     )
     report = response.output_parsed
     if report is None:
@@ -93,6 +97,7 @@ def build_thread_judge_prompt(
     scenario: GoldenEvalScenario,
     records: list[dict[str, object]],
     deterministic_checks: list[list[GoldenCheckResult]] | None = None,
+    execution_model: ExecutionModel = "isolated_golden_replay",
 ) -> str:
     """Build the complete-thread evidence payload for one judge call."""
     turns = []
@@ -103,6 +108,15 @@ def build_thread_judge_prompt(
         turns.append(
             {
                 "turn_id": turn_spec.id,
+                "input_source": {
+                    "fresh_scenario_state": True,
+                    "reviewed_prior_turn_ids": [prior.id for prior in scenario.turns[:index]]
+                    if execution_model == "isolated_golden_replay"
+                    else [],
+                    "actual_prior_turn_ids": [prior.id for prior in scenario.turns[:index]]
+                    if execution_model == "causal_rollout"
+                    else [],
+                },
                 "action": turn_spec.action.model_dump(mode="json"),
                 "golden": turn_spec.golden.model_dump(mode="json"),
                 "actual": _actual_payload(record),
@@ -120,6 +134,7 @@ def build_thread_judge_prompt(
         "scenario_title": scenario.title,
         "scenario_goal": scenario.goal,
         "scenario_context": scenario.judge_context,
+        "execution_model": execution_model,
         "thread": turns,
         "thread_check": _thread_check_payload(scenario.thread_check),
     }
@@ -139,6 +154,7 @@ def _request_judge_report(
     client: Any,
     prompt: str,
     check: ThreadCheckSpec,
+    execution_model: ExecutionModel,
 ) -> tuple[Any, int, list[str]]:
     """Retry transient or structured-output failures without rerunning gameplay."""
     retry_errors: list[str] = []
@@ -147,7 +163,7 @@ def _request_judge_report(
         try:
             response = client.responses.parse(
                 model=JUDGE_PROFILE.model,
-                instructions=JUDGE_INSTRUCTIONS,
+                instructions=_judge_instructions(execution_model),
                 input=request_input,
                 text_format=JudgeReport,
                 **reasoning_request_kwargs(effort=JUDGE_PROFILE.reasoning_effort),
@@ -174,33 +190,49 @@ def _request_judge_report(
     raise AssertionError("unreachable judge retry state")
 
 
-JUDGE_INSTRUCTIONS = (
-    "Audit the complete dating-sim scenario as one thread. Inspect every supplied criterion "
-    "against the ordered actions, deterministic engine record, reviewed targets, and actual "
-    "model calls. Engine fields are ground truth for participants, mechanics, outcomes, and state. "
-    "A reviewed target call contains either a fixed output reference or contextual criteria. Fixed "
-    "outputs apply when the call input does not depend on earlier generated prose. Contextual criteria "
-    "apply when a call consumes the actual preceding conversation. Judge those calls against the "
-    "criteria and the ordered actual thread, not against an alternate transcript. Compare fixed prose "
-    "by meaning, voice, continuity, and specificity, not exact wording. Compare agent "
-    "identity, output type, participant ids, and other structured contract fields exactly when the "
-    "rubric requires that match or one actual call consumes another. Treat reviewed natural-language "
-    "outputs as semantic references rather than exact string snapshots. For each "
-    "item under thread_check.criteria, return exactly one criterion_finding in the same order, using "
-    "the exact criterion_id. Do not emit findings for turn ids. Give each "
-    "finding a verdict and a concrete reason. Set the report-level evidence field to null. For each "
-    "failed or indeterminate finding, copy one short exact excerpt from that turn's reviewed target, "
-    "actual output, engine record, or deterministic check into the finding evidence field. Do not "
-    "paraphrase, correct, label, or combine excerpts. Pass findings may leave evidence null. Memory "
-    "holder_id defines whose first-person memory it is: in an NPC-held memory, I/my refers to that "
-    "NPC and the phrase 'the player' correctly names the other participant. When a criterion covers "
-    "dialogue quality, reject therapy framing, trailer-ready speeches, interchangeable wit, instant "
-    "confessions, and repeated stock phrasing even when the schema is valid. Try to falsify the "
-    "criterion; do not award a pass because the "
-    "deterministic checks passed. Use cannot_determine only when required evidence is absent, and do "
-    "not infer hidden state. The overall result must be fail if any criterion fails, cannot_determine "
-    "if none fail and any cannot be determined, and pass only if every criterion passes."
+_COMMON_JUDGE_INSTRUCTIONS = (
+    "Inspect every supplied criterion against the actions, deterministic engine records, reviewed "
+    "outputs, and actual model calls. Engine fields are ground truth for participants, mechanics, "
+    "outcomes, and state. Compare reviewed prose by meaning, voice, continuity, and specificity, not "
+    "exact wording. Compare agent identity, output type, participant ids, and other structured contract "
+    "fields exactly when the rubric requires that match or one actual call consumes another. Treat "
+    "reviewed natural-language outputs as semantic references rather than exact string snapshots. For "
+    "each item under thread_check.criteria, return exactly one criterion_finding in the same order, using "
+    "the exact criterion_id. Do not emit findings for turn ids. Give each finding a verdict and a concrete "
+    "reason. Set the report-level evidence field to null. For each failed or indeterminate finding, copy "
+    "one short exact excerpt from that turn's reviewed target, actual output, engine record, or deterministic "
+    "check into the finding evidence field. Do not paraphrase, correct, label, or combine excerpts. Pass "
+    "findings may leave evidence null. Memory holder_id defines whose first-person memory it is: in an "
+    "NPC-held memory, I/my refers to that NPC and the phrase 'the player' correctly names the other "
+    "participant. When a criterion covers dialogue quality, reject therapy framing, trailer-ready speeches, "
+    "interchangeable wit, instant confessions, and repeated stock phrasing even when the schema is valid. "
+    "Try to falsify the criterion; do not award a pass because the deterministic checks passed. Use "
+    "cannot_determine only when required evidence is absent, and do not infer hidden state. The overall "
+    "result must be fail if any criterion fails, cannot_determine if none fail and any cannot be determined, "
+    "and pass only if every criterion passes."
 )
+
+
+def _judge_instructions(execution_model: ExecutionModel) -> str:
+    if execution_model == "causal_rollout":
+        return (
+            "Audit the complete dating-sim scenario as one causal rollout. The first actual turn ran from "
+            "fresh scenario state; every later actual turn continued from all earlier actual outputs. Judge "
+            "continuity, memory, repetition, and state across the actual sequence. The reviewed calls remain "
+            "turn-level semantic references, not replayed inputs. "
+            + _COMMON_JUDGE_INSTRUCTIONS
+        )
+    return (
+        "Audit the complete dating-sim scenario as isolated golden-replay turns. Every actual turn ran "
+    "from fresh scenario state after the runner replayed all earlier reviewed outputs. Earlier actual "
+    "outputs never become input to a later turn. For turn N, judge the actual calls against that turn's "
+    "reviewed calls and the reviewed calls from turns 1 through N-1. Do not demand continuity with an "
+    "earlier actual output. Calls inside one target turn still run in order. A later call in that target "
+    "may use an earlier actual call from the same target. For example, a closing curator sees the reviewed "
+    "prior conversation plus the actual closing exchange. Treat both as valid evidence. Inspect every "
+        "supplied criterion against the reviewed prefix, not against earlier actual turns. "
+        + _COMMON_JUDGE_INSTRUCTIONS
+    )
 
 
 def _validate_judge_report(

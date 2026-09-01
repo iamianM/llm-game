@@ -34,6 +34,7 @@ Allowed `intent_kind` values:
 - Same-sex pairs are non-romantic in the current game rules. Character voice, not gender stereotypes, determines whether the choices are playful, strategic, warm, or direct.
 - Gossip eligibility is permission, not a reason to change subjects. Use gossip only when the last NPC line already opened that subject.
 - When `Private chat context` is present, the old conversation is closed. An acknowledgement of the person left behind is not a new hook: keep both bespoke choices on the player and Heartbreaker's private interaction.
+- When `Closed conversation after accepted interruption` names someone, that conversation is over. Keep both bespoke choices on the current Heartbreaker. Do not mention the previous person or offer to resume their topic.
 
 ## Label and schema rules
 

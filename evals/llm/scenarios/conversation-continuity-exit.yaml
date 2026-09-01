@@ -9,18 +9,31 @@ thread_check:
   criteria:
     - id: conversation_arc_continuity
       criteria: >
-        Read the actual outputs as one conversation. The honest_vulnerable follow-up must respond
-        to a concrete detail, stance, or subject opened by Chloe's actual exchange, and the ending
-        must refer to what they actually shared. A reciprocal disclosure about the same subject is
-        valid when it respects any boundary Chloe set; it need not repeat the final noun in her line.
-        Fail a genuinely unrelated confession, pressure against her boundary, a response to the
-        reviewed example instead of the actual line, or a generic close.
+        Read each actual output against the reviewed turns replayed before it. The honest_vulnerable
+        follow-up must respond to the school, routines, and belonging in the reviewed opening, and the ending
+        must refer to what the reviewed conversation established. A reciprocal disclosure about the same subject is
+        valid when it stays on the same subject; it need not repeat the final noun in her line.
+        Fail a genuinely unrelated confession, a response to the
+        reviewed prefix, or a generic close.
     - id: chloe_voice_and_memory
       criteria: >
-        Chloe remains warm, sincere, and guarded without becoming cold. The curator may store one
-        accurate memory of the specific subject from the actual conversation. If Chloe sets a boundary,
-        both useful perspectives preserve it. Fail generic summaries, facts copied from the reviewed
-        example but absent from the actual chat, or invented details.
+        Chloe remains warm, sincere, and a little guarded without becoming cold. The curator may store one
+        accurate memory grounded in the reviewed conversation, the actual closing exchange earlier in the
+        same target turn, or both. Fail generic summaries, facts absent from both sources, or invented details.
+causal_thread_check:
+  id: scenario_acceptance
+  severity: blocking
+  criteria:
+    - id: actual_conversation_arc
+      criteria: >
+        Read the three actual turns as one conversation. Each later turn must answer and build on the actual
+        exchange before it without changing the subject, repeating the same question, or inventing history.
+        The final turn must close the actual conversation naturally.
+    - id: actual_voice_and_memory
+      criteria: >
+        Chloe remains warm, sincere, and a little guarded across the actual sequence. Any stored memory must
+        accurately summarize facts or commitments from the actual conversation. Fail generic summaries,
+        unsupported facts, therapy language, or a memory that is longer than the useful fact it preserves.
 seed: 202
 initial_location: pool
 live_resort_life: false
@@ -41,7 +54,7 @@ initial_relationships:
     friendship: 25
 judge_context:
   - Chloe is a secure sweetheart who already trusts the player a little, so deep follow-ups are legal.
-  - The follow-up selects the stable engine-owned honest_vulnerable intent. Its wording and subject must follow Chloe's actual prior line.
+  - The follow-up selects the stable engine-owned honest_vulnerable intent. Its wording and subject must follow Chloe's reviewed prior line.
   - Each menu must be playable, with concrete, distinct options and exactly one exit.
 turns:
   - id: start-chloe-deep
@@ -55,19 +68,19 @@ turns:
         output_type: Exchange
         output:
           player_dialogue: What do you miss most about Liverpool?
-          npc_dialogue: The school, mostly. Family is a longer answer, and I'm not doing that one by the pool.
-          npc_tone: defensive
+          npc_dialogue: The school, mostly. I miss knowing where I fit without having to think about it.
+          npc_tone: vulnerable
           npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
         output:
           options:
-          - label: Leave it there
+          - label: Ask what makes school feel settled
             category: supportive
-            intent_kind: supportive_reassure
+            intent_kind: ask_about_topic
             stat_used: eq
             risk: safe
-            tone: gentle
+            tone: attentive
             audience_hint: +
             reveal_tier: 0
             reveal_tag: null
@@ -98,15 +111,37 @@ turns:
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
-        criteria:
-          - The player shares something honest that responds to Chloe's actual opening answer instead of asking a disconnected question.
-          - Chloe answers that disclosure and does not reply to a detail that appears only in the reviewed opening example.
-          - The exchange preserves any boundary Chloe set in the actual opening answer.
+        output:
+          player_dialogue: I get that. I miss the routines that make home feel like mine more than the big things.
+          npc_dialogue: Exactly. At school I know where I fit. Here, everyone is still working each other out.
+          npc_tone: warm
+          npc_mood_after: content
       - agent: contextual_options
         output_type: ContextualBespoke
-        criteria:
-          - Each bespoke choice responds to a concrete detail or stance in Chloe's actual latest line.
-          - The choices offer meaningfully different continuations and do not reopen a boundary she set.
+        output:
+          options:
+          - label: Ask what she teaches
+            category: friendly
+            intent_kind: ask_about_topic
+            stat_used: charm
+            risk: low
+            tone: curious
+            audience_hint: +
+            reveal_tier: 0
+            reveal_tag: null
+            unlock_threshold: null
+          - label: Admit you feel unsteady too
+            category: deep
+            intent_kind: honest_vulnerable
+            stat_used: eq
+            risk: medium
+            tone: open
+            audience_hint: +
+            reveal_tier: 1
+            reveal_tag: belonging
+            unlock_threshold: null
+          npc_will_leave: false
+          npc_exit_line: null
     checks:
       - exchange_valid
       - follow_up_menu_valid
@@ -123,15 +158,26 @@ turns:
       calls:
       - agent: heartbreaker_voice
         output_type: Exchange
-        criteria:
-          - The selected end_softly intent produces a clear, warm ending tied to the actual subject they discussed.
-          - Neither line invents a prior disclosure or responds to the reviewed example instead of the actual conversation.
+        output:
+          player_dialogue: I'll let you get back to your tea. Tell me about the school another time?
+          npc_dialogue: That I can do. Catch me when it is a bit quieter.
+          npc_tone: warm
+          npc_mood_after: happy
       - agent: conversation_curator
         output_type: MemoryBatch
-        criteria:
-          - The recap contains only subjects and actions present in the actual three-turn conversation.
-          - Store no memory for routine small talk. If the actual chat contains a useful fact, store only that fact with the correct holder and subject.
-          - If Chloe set a meaningful boundary and the player respected it, preserve both useful perspectives.
+        output:
+          kind: player
+          memories:
+          - holder_id: player
+            subject_id: chloe
+            content: Chloe misses the easy sense of belonging she has at school in Liverpool.
+            source: direct
+            source_id: null
+            emotional_weight: 4
+            tags: [school, belonging]
+            durable: true
+          summary: Chloe and the player connected over how familiar routines create a sense of belonging.
+          gossip_seeds: []
     checks:
       - conversation_closed
       - curator_batch_recorded
